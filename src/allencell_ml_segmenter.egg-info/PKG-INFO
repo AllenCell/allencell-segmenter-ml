@@ -1,3 +1,32 @@
+Metadata-Version: 2.1
+Name: allencell-ml-segmenter
+Version: 0.0.1
+Summary: A plugin to leverage ML segmentation in napari.
+Home-page: https://github.com/AllenCell/allencell-ml-segmenter
+Author: brian kim
+Author-email: brian.kim@alleninstitute.org
+License: BSD-3-Clause
+Project-URL: Bug Tracker, https://github.com/AllenCell/allencell-ml-segmenter/issues
+Project-URL: Documentation, https://github.com/AllenCell/allencell-ml-segmenter#README.md
+Project-URL: Source Code, https://github.com/AllenCell/allencell-ml-segmenter
+Project-URL: User Support, https://github.com/AllenCell/allencell-ml-segmenter/issues
+Classifier: Development Status :: 2 - Pre-Alpha
+Classifier: Framework :: napari
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: BSD License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3 :: Only
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Topic :: Scientific/Engineering :: Image Processing
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+Provides-Extra: testing
+License-File: LICENSE
+
 # allencell-ml-segmenter
 
 [![License BSD-3](https://img.shields.io/pypi/l/allencell-ml-segmenter.svg?color=green)](https://github.com/AllenCell/allencell-ml-segmenter/raw/main/LICENSE)
