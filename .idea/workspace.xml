@@ -2,17 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="227a8e3d-0cba-4a6a-a6d6-705b3552713c" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pyproject.toml" beforeDir="false" afterPath="$PROJECT_DIR$/pyproject.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter.egg-info/PKG-INFO" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter.egg-info/SOURCES.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter.egg-info/dependency_links.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter.egg-info/entry_points.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter.egg-info/requires.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter.egg-info/top_level.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/_reader.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/_reader.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/_widget.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/_widget.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
