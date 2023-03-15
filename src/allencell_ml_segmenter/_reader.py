@@ -10,7 +10,6 @@ import numpy as np
 from typing import Union, Callable, List, Tuple, Dict
 
 
-
 def napari_get_reader(path: Union[str, List[str]]) -> Union[Callable, None]:
     """A basic implementation of a Reader contribution.
 
