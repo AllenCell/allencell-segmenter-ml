@@ -11,7 +11,6 @@ clean:  ## clean all build, python, and testing files
 	find . -name '*.pyo' -exec rm -f {} +
 	find . -name '*~' -exec rm -f {} +
 	find . -name '__pycache__' -exec rm -fr {} +
-	rm -fr .tox/
 	rm -fr .coverage
 	rm -fr coverage.xml
 	rm -fr htmlcov/
