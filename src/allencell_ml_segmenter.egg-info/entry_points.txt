@@ -1,0 +1,2 @@
+[napari.manifest]
+allencell-ml-segmenter = allencell_ml_segmenter:napari.yaml
