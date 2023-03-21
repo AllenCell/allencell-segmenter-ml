@@ -1,0 +1,53 @@
+# python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# build
+# Distribution / packaging
+.Python
+venv/
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*,cover
+.hypothesis/
+.napari_cache
+.pytest_cache
+
+# pyenv
+.python-version
+
+# OS
+.DS_Store
+
+# written by setuptools_scm
+*/_version.py
+
+# IDE files
+.idea/
+.vscode
