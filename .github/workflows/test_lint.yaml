@@ -1,6 +1,6 @@
 # CI for github actions built off
 # https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
-name: Python package
+name: Test and lint
 
 on: [push, pull_request]
 
