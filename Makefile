@@ -68,3 +68,30 @@ lint: ## run a lint check / report
 format: ## reformat files with black
 > black --exclude vendor src/allencell_ml_segmenter -l 120
 .PHONY: format
+
+bumpversion-release: venv
+> $(PYTHON) -m bumpversion --list release
+.PHONY: bumpversion-release
+
+bumpversion-major: venv
+> $(PYTHON) -m bumpversion --list major
+.PHONY: bumpversion-major
+
+bumpversion-minor: venv
+> $(PYTHON) -m bumpversion --list minor
+.PHONY: bumpversion-minor
+
+bumpversion-patch: venv
+> $(PYTHON) -m bumpversion --list --allow-dirty patch
+.PHONY: bumpversion-patch
+
+bumpversion-dev: venv
+> $(PYTHON) -m bumpversion --list devbuild
+.PHONY: bumpversion-dev
+
+RELEASE_VERSION_FILE=VERSION
+RELEASE_VERSION=`cat $(RELEASE_VERSION_FILE)`
+
+release:
+> echo $(RELEASE_VERSION)
+> gh release create ${RELEASE_VERSION}
