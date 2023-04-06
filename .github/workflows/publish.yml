@@ -29,8 +29,8 @@ jobs:
           # password: ${{ secrets.PYPI_TOKEN }}
       - name: Get version
         id: vars
-        run: echo "version=$(cat VERSION)" >> $GITHUB_OUTPUT
-      - name: GH Release
-        run: |
-          echo $GITHUB_OUTPUT
-          gh release create 
+        run: cat ./VERSION
+      # - name: GH Release
+        # run: |
+          # echo $GITHUB_OUTPUT
+          # gh release create 
