@@ -6,8 +6,7 @@ on: [push, pull_request]
 
 jobs:
   build:
-    name: ${{ matrix.os }} python${{ matrix.python-version}}
-    runs-on: ${{ matrix.os }}
+    runs-on: [self-hosted, build]
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
