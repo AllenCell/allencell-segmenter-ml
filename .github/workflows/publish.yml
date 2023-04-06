@@ -34,6 +34,8 @@ jobs:
           RELEASE_VERSION=$(<VERSION)
           echo $RELEASE_VERSION
       - name: GH Release
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           echo $RELEASE_VERSION
           gh release create $RELEASE_VERSION 
