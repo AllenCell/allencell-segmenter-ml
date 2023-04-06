@@ -31,7 +31,7 @@ jobs:
         id: vars
         run: |
           cat ./VERSION
-          var=$(<RELEASE_VERSION)
+          RELEASE_VERSION=$(<VERSION)
           echo $RELEASE_VERSION
       - name: GH Release
         run: |
