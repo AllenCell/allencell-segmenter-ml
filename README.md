@@ -21,6 +21,26 @@ and review the napari docs for plugin developers:
 https://napari.org/stable/plugins/index.html
 -->
 
+## Dev setup
+
+*Note on Mac OS, use `gmake` instead of `make`*
+
+First, set up a venv and installing project dependencies into it, use `make install-dev`.
+
+More useful dev tasks:
+* `make clean` [clean the venv and other build/test artifacts]
+* `make test` [Run unit tests]
+* `make lint` [Find lint errors in source code]
+* `make format` [Format source code]
+
+## Releasing
+
+Release a new version and publishing to Pypi is based on a Github Actions workflow.  The steps are:
+
+* Increment the current version using `bumpversion`.  This can be done directly, or using the convenience `make` tasks (eg. `make bumpversion-patch`)
+* Assuming that `main` is up to date with the changes that you intend to release, make a pr from `main` into `release`.  Upon getting required approvals and merging, the new version will be published to Pypi and released on Github.  
+    * Branch protections apply - currently, merging into `release` is restricted to project maintainers.
+
 ## Installation
 
 You can install `allencell-ml-segmenter` via [pip]:
@@ -36,7 +56,7 @@ To install latest development version :
 
 ## Contributing
 
-Contributions are very welcome. Tests can be run with [tox], please ensure
+Contributions are very welcome. Tests can be run with pytest, or `make test`, please ensure
 the coverage at least stays the same before you submit a pull request.
 
 ## License
