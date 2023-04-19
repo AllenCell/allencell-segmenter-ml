@@ -70,28 +70,25 @@ format: ## reformat files with black
 .PHONY: format
 
 bumpversion-release: venv
-> $(PYTHON) -m bumpversion --list release
+> bumpversion --list release
 .PHONY: bumpversion-release
 
 bumpversion-major: venv
-> $(PYTHON) -m bumpversion --list major
+> bumpversion --list major
 .PHONY: bumpversion-major
 
 bumpversion-minor: venv
-> $(PYTHON) -m bumpversion --list minor
+> bumpversion --list minor
 .PHONY: bumpversion-minor
 
 bumpversion-patch: venv
-> $(PYTHON) -m bumpversion --list --allow-dirty patch
+> bumpversion --list --allow-dirty patch
 .PHONY: bumpversion-patch
 
 bumpversion-dev: venv
-> $(PYTHON) -m bumpversion --list devbuild
+> bumpversion --list devbuild
 .PHONY: bumpversion-dev
 
-RELEASE_VERSION_FILE=VERSION
-RELEASE_VERSION=`cat $(RELEASE_VERSION_FILE)`
-
-release:
-> echo $(RELEASE_VERSION)
-> gh release create ${RELEASE_VERSION}
+version: venv
+> $(PYTHON) setup.py --version
+.PHONY: version
