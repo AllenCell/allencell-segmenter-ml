@@ -1,14 +1,13 @@
-from qtpy.QtWidgets import QWidget
 from allencell_ml_segmenter.view.exmaple_view import ExampleView
 import napari
 
-class ExampleController(QWidget):
-    def __init__(self, napari_viewer: napari.Viewer) -> None:
+class ExampleController():
+    def __init__(self, viewer: napari.Viewer) -> None:
         # add all ui elements here
-        self.viewer = napari_viewer
-        self.view: ExampleView = ExampleView(napari_viewer)
+        self.viewer = viewer
+        self.view: ExampleView = ExampleView(viewer)
         # connect buttons from within controller and delegate actions
-        self.view._connect_slots()
+        self._connect_slots()
         self.view.show()
 
     def _on_click(self) -> None:

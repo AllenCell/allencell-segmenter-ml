@@ -2,11 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="227a8e3d-0cba-4a6a-a6d6-705b3552713c" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/controller/example_controller.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/view/exmaple_view.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/controller/example_controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/controller/example_controller.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/napari.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/napari.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/view/example_q_widget.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
