@@ -13,5 +13,6 @@ class TestWidget(QWidget):
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
 
-        self.label: QLabel = QLabel("Showing different widget")
+        self.label: QLabel = QLabel("Added a new widget")
+        self.layout().addWidget(self.label)
 

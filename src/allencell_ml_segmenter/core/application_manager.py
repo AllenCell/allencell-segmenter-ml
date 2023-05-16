@@ -24,3 +24,7 @@ class ApplicationManager():
     @property
     def view_manager(self) -> ViewManager:
         return self._view_manager
+
+    @property
+    def router(self) -> Router:
+        return self._router
