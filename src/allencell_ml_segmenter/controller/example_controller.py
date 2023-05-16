@@ -1,8 +1,10 @@
 from allencell_ml_segmenter.view.exmaple_view import ExampleView
+from qtpy.QtWidgets import QWidget
 import napari
 
-class ExampleController():
+class ExampleController(QWidget):
     def __init__(self, viewer: napari.Viewer) -> None:
+        super().__init__()
         # add all ui elements here
         self.viewer = viewer
         self.view: ExampleView = ExampleView(viewer)
