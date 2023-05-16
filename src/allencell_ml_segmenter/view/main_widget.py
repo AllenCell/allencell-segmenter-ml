@@ -18,10 +18,6 @@ class MainWidget(QWidget):
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
         self._application = ApplicationManager(viewer, self.layout())
-        self.btn: QPushButton = QPushButton("Click me!")
-        self.btn.clicked.connect(self._on_click)
-        self.layout().addWidget(self.btn)
-
-    def _on_click(self) -> None:
-        view = TestView()
-        self._application.view_manager.load_view(view)
+        self.button = QPushButton("click to add a widget")
+        self.button.clicked.connect(self._application._router.show_test_view)
+        self.layout().addWidget(self.button)
