@@ -1,6 +1,7 @@
 import napari
 
 from qtpy.QtWidgets import QLayout
+from napari_allencell_segmenter.core.view_manager import ViewManager
 
 
 class Application():
@@ -12,4 +13,12 @@ class Application():
 
         # object tree
         self._viewer = viewer
-        
+        self.view_manager = ViewManager(root_layout)
+
+    @property
+    def viewer(self) -> napari.Viewer:
+        return self._viewer
+
+    @property
+    def view_manager(self) -> ViewManager:
+        return self._view_manager

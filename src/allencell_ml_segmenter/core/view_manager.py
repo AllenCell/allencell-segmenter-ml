@@ -1,5 +1,5 @@
 from typing import Any
-from napari_allencell_segmenter.core.view import View
+from allencell_ml_segmenter.core.view import View
 from qtpy.QtWidgets import QLayout
 
 
