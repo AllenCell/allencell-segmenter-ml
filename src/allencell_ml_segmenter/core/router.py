@@ -1,5 +1,4 @@
-from aicssegmentation.workflow import WorkflowEngine
-from allencell_ml_segmenter.view.test_widget import TestWidget
+from allencell_ml_segmenter.view.test_view import TestView
 
 
 
@@ -11,7 +10,6 @@ class Router():
             raise ValueError("application")
         self._application = application
         # TODO do some proper dependency injection in the future if the project grows
-        self._workflow_engine = WorkflowEngine()
         self._controller = None
 
     def _handle_navigation(self, controller):
@@ -20,5 +18,7 @@ class Router():
         self._controller = controller
         self._controller.index()
 
-    def show_test_widget(self):
-        view = TestWidget()
+    def show_test_view(self):
+        view = TestView()
+        # do the following in controller
+        self._application._view_manager.load_view(view)

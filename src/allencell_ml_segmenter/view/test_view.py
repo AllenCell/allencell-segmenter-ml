@@ -9,6 +9,7 @@ class TestView(View):
         super().__init__(template_class=MainTemplate)
 
     def load(self, model):
+        self._setup_ui()
         print("loaded")
 
     def _setup_ui(self):
