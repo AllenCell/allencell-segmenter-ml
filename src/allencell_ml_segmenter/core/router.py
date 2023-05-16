@@ -9,7 +9,6 @@ class Router():
         if application is None:
             raise ValueError("application")
         self._application = application
-        # TODO do some proper dependency injection in the future if the project grows
         self._controller = None
 
     def _handle_navigation(self, controller):
@@ -18,7 +17,12 @@ class Router():
         self._controller = controller
         self._controller.index()
 
+    # for testing this does not belong here
     def show_test_view(self):
         view = TestView()
-        # do the following in controller
+        # do the following in controller (controller should manage views)
         self._application._view_manager.load_view(view)
+
+    # Normal pattern
+        # init controller
+        # call handle navigation
