@@ -1,10 +1,11 @@
 import napari
 
 from qtpy.QtWidgets import QLayout
-from napari_allencell_segmenter.core.view_manager import ViewManager
+from allencell_ml_segmenter.core.view_manager import ViewManager
+from allencell_ml_segmenter.core.router import Router
 
 
-class Application():
+class ApplicationManager():
     def __init__(self, viewer: napari.Viewer, root_layout: QLayout):
         if viewer is None:
             raise ValueError("viewer")
@@ -13,7 +14,8 @@ class Application():
 
         # object tree
         self._viewer = viewer
-        self.view_manager = ViewManager(root_layout)
+        self._view_manager = ViewManager(root_layout)
+        self._router = Router(self)
 
     @property
     def viewer(self) -> napari.Viewer:
