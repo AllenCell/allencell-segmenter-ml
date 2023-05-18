@@ -6,7 +6,7 @@ from allencell_ml_segmenter.napari.napari_writer import write_multiple, write_si
 
 from allencell_ml_segmenter.view.main_widget import MainWidget
 
-from allencell_ml_segmenter.controller.example_controller import ExampleController
+from allencell_ml_segmenter.controller.example_controller import TestController
 
 __all__ = (
     "napari_get_reader",
@@ -14,5 +14,5 @@ __all__ = (
     "write_multiple",
     "make_sample_data",
     "MainWidget",
-    "ExampleController",
+    "TestController",
 )
