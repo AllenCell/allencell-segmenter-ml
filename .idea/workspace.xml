@@ -2,15 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="227a8e3d-0cba-4a6a-a6d6-705b3552713c" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/allencell-ml-segmenter.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/allencell-ml-segmenter.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/controller/im2im_contoller.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/model/pub_sub.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/model/test_model.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/controller/example_controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/controller/example_controller.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/core/router.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/core/router.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/core/view.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/core/view.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/core/view_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/core/view_manager.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/view/main_widget.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/view/main_widget.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/view/test_view.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/view/test_view.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/view/test_widget.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/view/test_widget.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -153,23 +153,8 @@
           <option name="timeStamp" value="2" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/allencell_ml_segmenter/controller/example_controller.py</url>
-          <line>12</line>
-          <option name="timeStamp" value="5" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/allencell_ml_segmenter/controller/example_controller.py</url>
-          <line>13</line>
-          <option name="timeStamp" value="6" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/allencell_ml_segmenter/controller/example_controller.py</url>
-          <line>18</line>
-          <option name="timeStamp" value="7" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/allencell_ml_segmenter/core/router.py</url>
-          <line>21</line>
+          <line>24</line>
           <option name="timeStamp" value="8" />
         </line-breakpoint>
       </breakpoints>
