@@ -1,4 +1,5 @@
 from allencell_ml_segmenter.view.test_view import TestView
+from allencell_ml_segmenter.controller.example_controller import TestController
 
 
 
@@ -17,12 +18,6 @@ class Router():
         self._controller = controller
         self._controller.index()
 
-    # for testing this does not belong here
-    def show_test_view(self):
-        view = TestView()
-        # do the following in controller (controller should manage views)
-        self._application._view_manager.load_view(view)
-
-    # Normal pattern
-        # init controller
-        # call handle navigation
+    def navigate_to_test_view(self):
+        controller = TestController(self._application)
+        self._handle_navigation(controller)

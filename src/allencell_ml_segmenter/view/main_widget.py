@@ -19,5 +19,5 @@ class MainWidget(QWidget):
         self.layout().setContentsMargins(0, 0, 0, 0)
         self._application = ApplicationManager(viewer, self.layout())
         self.button = QPushButton("click to add a widget")
-        self.button.clicked.connect(self._application._router.show_test_view)
+        self.button.clicked.connect(self._application._router.navigate_to_test_view)
         self.layout().addWidget(self.button)
