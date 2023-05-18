@@ -46,7 +46,6 @@ class ViewManager:
         self._current_view = _view
 
     def _unload_view(self):
-        print("unloading")
         if self._current_view is not None:
             self._current_view.setParent(None)
             self._current_view.deleteLater()

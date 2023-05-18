@@ -21,5 +21,9 @@ class TestWidget(QWidget):
         self.btn: QPushButton = QPushButton("Start Training")
         self.layout().addWidget(self.btn)
 
+        self.label: QLabel = QLabel("")
+        self.layout().addWidget(self.label)
+
+
 
 
