@@ -1,6 +1,7 @@
-from allencell_ml_segmenter.view.test_view import TestView
+from allencell_ml_segmenter.view.sample_view import SampleViewController
 from allencell_ml_segmenter.controller.example_controller import UiController
-from allencell_ml_segmenter.model.test_model import TestModel
+from allencell_ml_segmenter.controller.im2im_contoller import Im2imContoller
+from allencell_ml_segmenter.model.sample_model import SampleModel
 
 
 
@@ -21,6 +22,7 @@ class Router():
         self._controller.index()
 
     def navigate_to_test_view(self):
-        model = TestModel()
+        model = SampleModel()
         controller = UiController(self._application, model)
+        Im2imContoller(self._application, model) # not referenced, but subscribes to model.
         self._handle_navigation(controller)
