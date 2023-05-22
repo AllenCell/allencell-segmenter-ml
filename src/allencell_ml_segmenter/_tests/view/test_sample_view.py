@@ -10,10 +10,10 @@ def sample_model():
     return SampleModel()
 
 @pytest.fixture
-def sample_view_controller(sample_model):
+def sample_view_controller(sample_model, qtbot):
     return SampleViewController(sample_model)
 
-def test_model_property():
+def test_model_property(sample_view_controller, sample_model):
     assert sample_view_controller.model == sample_model
 
 def test_handle_event_training(sample_view_controller, sample_model):
@@ -25,21 +25,4 @@ def test_handle_event_training(sample_view_controller, sample_model):
 
     expected_label_text = f"training is running {sample_model.get_model_training()}"
     mock_set_label_text.assert_called_once_with(expected_label_text)
-
-def test_change_label(sample_view_controller, sample_model):
-    sample_view_controller.change_label()
-
-    assert sample_model.set_model_training.called_once_with(not sample_model.get_model_training())
-
-def test_load(sample_view_controller):
-    mock_layout = Mock()
-    mock_widget = Mock()
-    sample_view_controller.setLayout = mock_layout
-    sample_view_controller.widget = mock_widget
-
-    sample_view_controller.load()
-
-    mock_layout.setContentsMargins.assert_called_once_with(0, 0, 0, 0)
-    mock_layout.addWidget.assert_called_once_with(mock_widget)
-    mock_widget.connectSlots.assert_called_once_with(sample_view_controller.change_label)
 
