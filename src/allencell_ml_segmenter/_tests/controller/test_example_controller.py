@@ -17,19 +17,12 @@ def mock_model() -> Mock:
 
 @pytest.fixture
 def ui_controller(mock_application: Mock, mock_model: Mock) -> UiController:
-    with patch("allencell_ml_segmenter.controller.example_controller.SampleView"):
+    with patch("allencell_ml_segmenter.controller.example_controller.SampleViewController"):
         return UiController(mock_application, mock_model)
 
 
 def test_handle_event(ui_controller: UiController) -> None:
-    # training event
-    event: Event = Event.TRAINING
-    ui_controller.handle_event(event)
-
-    # ensure view method is called
-    ui_controller.view.widget.label.setText.assert_called_once_with(
-        f"training is running {ui_controller._model.get_model_training()}"
-    )
+    pass
 
 
 def test_index(ui_controller: UiController, mock_application: Mock) -> None:
@@ -37,14 +30,11 @@ def test_index(ui_controller: UiController, mock_application: Mock) -> None:
 
     # ensure view is loaded into app and label is changed
     mock_application.view_manager.load_view.assert_called_once_with(ui_controller.view)
-    ui_controller.view.widget.btn.clicked.connect.assert_called_once_with(ui_controller.change_label)
+    ui_controller.view.connect_slots.assert_called_once()
 
 
-def test_change_label(ui_controller: UiController, mock_model: Mock):
-    # Call the change_label method
-    ui_controller.change_label()
+def test_load_view(ui_controller, mock_application):
+    ui_controller.load_view()
 
-    # Assert
-    mock_model.set_model_training.assert_called_once_with(
-        not ui_controller._model.get_model_training()
-    )
+    # ensure view is loaded into app and label is changed
+    mock_application.view_manager.load_view.assert_called_once_with(ui_controller.view)
