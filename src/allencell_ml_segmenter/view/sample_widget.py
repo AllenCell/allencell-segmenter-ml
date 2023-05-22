@@ -10,8 +10,9 @@ from omegaconf import OmegaConf
 from aics_im2im.train import entry_point_call
 from hydra.core.global_hydra import GlobalHydra
 from hydra.core.hydra_config import HydraConfig
+from typing import Callable
 
-class TestWidget(QWidget):
+class SampleWidget(QWidget):
     def __init__(self):
         super().__init__()
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
@@ -23,6 +24,13 @@ class TestWidget(QWidget):
 
         self.label: QLabel = QLabel("")
         self.layout().addWidget(self.label)
+
+    def setLabelText(self, text: str) -> None:
+        self.label.setText(text)
+
+    def connectSlots(self, function: Callable):
+        self.btn.clicked.connect(function)
+
 
 
 

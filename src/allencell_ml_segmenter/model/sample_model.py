@@ -1,6 +1,6 @@
 from allencell_ml_segmenter.model.pub_sub import Publisher, Event
 
-class TestModel(Publisher):
+class SampleModel(Publisher):
     def __init__(self):
         super().__init__()
         self._model_training: bool = False

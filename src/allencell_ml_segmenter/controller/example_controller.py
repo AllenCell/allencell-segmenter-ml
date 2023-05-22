@@ -1,34 +1,30 @@
-from allencell_ml_segmenter.view.test_view import TestView
+from allencell_ml_segmenter.view.sample_view import SampleViewController
 from allencell_ml_segmenter.model.pub_sub import Subscriber, Event
-from allencell_ml_segmenter.model.test_model import TestModel
+from allencell_ml_segmenter.model.sample_model import SampleModel
 
-
+# higher level ui controller
 class UiController(Subscriber):
-    def __init__(self, application, model: TestModel) -> None:
+    def __init__(self, application, model: SampleModel) -> None:
         super().__init__()
         # add all ui elements here
         self.application = application
-        self._view: TestView = TestView()
-        self._model: TestModel = model
+        self._model: SampleModel = model
+        self._view: SampleViewController = SampleViewController(self._model)
         self._model.subscribe(self)
 
+    @property
+    def view(self):
+        return self._view
+
     def handle_event(self, event: Event):
+        pass
         #TODO change to switch
-        if event == Event.TRAINING:
-            self._view.widget.label.setText(f"training is running {self._model.get_model_training()}")
-            # set training label text method in view
-            # mock view and see if method called
+        # if event == Event.TRAINING:
 
     def index(self):
         # called when loading new controller
         self.load_view()
-        self._connect_slots()
-
-    def _on_click(self) -> None:
-        print("napari has", len(self.viewer.layers), "layers")
-
-    def _connect_slots(self):
-        self._view.widget.btn.clicked.connect(self.change_label)
+        self._view.connect_slots()
 
     def load_view(self):
         """
@@ -36,10 +32,6 @@ class UiController(Subscriber):
         :param: view: the View to load
         """
         return self.application.view_manager.load_view(self._view)
-
-    def change_label(self):
-        self._model.set_model_training(not self._model.get_model_training())
-
 
 
 
