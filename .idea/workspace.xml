@@ -2,16 +2,24 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="227a8e3d-0cba-4a6a-a6d6-705b3552713c" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/controller/im2im_contoller.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/model/pub_sub.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/model/test_model.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/controller/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/controller/test_example_controller.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/view/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/view/test_sample_view.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/setup.cfg" beforeDir="false" afterPath="$PROJECT_DIR$/setup.cfg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/test_reader.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/test_sample_data.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/test_widget.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/test_writer.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/controller/example_controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/controller/example_controller.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/controller/im2im_contoller.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/controller/im2im_contoller.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/core/router.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/core/router.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/core/view_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/core/view_manager.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/model/test_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/model/sample_model.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/view/main_widget.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/view/main_widget.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/view/test_widget.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/view/test_widget.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/view/test_view.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/view/sample_view.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/view/test_widget.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/view/sample_widget.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -60,7 +68,7 @@
       <recent name="$PROJECT_DIR$/src/allencell_ml_segmenter/napari" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.scratch">
+  <component name="RunManager" selected="Python tests.Python tests for test_sample_view.test_handle_event">
     <configuration name="scratch" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="allencell-ml-segmenter" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -82,43 +90,91 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_widget.TestWidget" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_example_controller.test_handle_event" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="allencell-ml-segmenter" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/allencell_ml_segmenter/view" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/controller" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_widget.TestWidget&quot;" />
+      <option name="_new_target" value="&quot;test_example_controller.test_handle_event&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_widget.test_example_q_widget" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_example_controller.test_handle_event_training" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="allencell-ml-segmenter" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="$USER_HOME$/opt/anaconda3/envs/debug/bin/python" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests" />
-      <option name="IS_MODULE_SDK" value="false" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/controller" />
+      <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_widget.test_example_q_widget&quot;" />
+      <option name="_new_target" value="&quot;test_example_controller.test_handle_event_training&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests for test_example_controller.test_index" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="allencell-ml-segmenter" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/controller" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_example_controller.test_index&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests for test_example_controller.test_index_calls_load_view_and_connect_slots" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="allencell-ml-segmenter" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/controller" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_example_controller.test_index_calls_load_view_and_connect_slots&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests for test_sample_view.test_handle_event" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="allencell-ml-segmenter" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/view" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_sample_view.test_handle_event&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
     <list>
       <item itemvalue="Python.scratch" />
-      <item itemvalue="Python tests.Python tests for test_widget.test_example_q_widget" />
-      <item itemvalue="Python tests.Python tests for test_widget.TestWidget" />
+      <item itemvalue="Python tests.Python tests for test_example_controller.test_handle_event" />
+      <item itemvalue="Python tests.Python tests for test_example_controller.test_handle_event_training" />
+      <item itemvalue="Python tests.Python tests for test_example_controller.test_index" />
+      <item itemvalue="Python tests.Python tests for test_example_controller.test_index_calls_load_view_and_connect_slots" />
+      <item itemvalue="Python tests.Python tests for test_sample_view.test_handle_event" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python tests.Python tests for test_widget.TestWidget" />
-        <item itemvalue="Python tests.Python tests for test_widget.test_example_q_widget" />
+        <item itemvalue="Python tests.Python tests for test_sample_view.test_handle_event" />
+        <item itemvalue="Python tests.Python tests for test_example_controller.test_index" />
+        <item itemvalue="Python tests.Python tests for test_example_controller.test_index_calls_load_view_and_connect_slots" />
+        <item itemvalue="Python tests.Python tests for test_example_controller.test_handle_event" />
+        <item itemvalue="Python tests.Python tests for test_example_controller.test_handle_event_training" />
       </list>
     </recent_temporary>
   </component>
@@ -149,13 +205,18 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/allencell_ml_segmenter/core/view_manager.py</url>
-          <line>44</line>
+          <line>43</line>
           <option name="timeStamp" value="2" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/allencell_ml_segmenter/core/router.py</url>
-          <line>24</line>
+          <line>25</line>
           <option name="timeStamp" value="8" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/view/test_sample_view.py</url>
+          <line>17</line>
+          <option name="timeStamp" value="15" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

@@ -1,5 +1,5 @@
 from allencell_ml_segmenter.model.pub_sub import Subscriber, Event
-from allencell_ml_segmenter.model.test_model import TestModel
+from allencell_ml_segmenter.model.sample_model import SampleModel
 import hydra
 from aics_im2im.train import entry_point_call
 from hydra.core.global_hydra import GlobalHydra
@@ -7,10 +7,11 @@ from hydra.core.hydra_config import HydraConfig
 
 
 class Im2imContoller(Subscriber):
-    def __init__(self, model: TestModel):
+    def __init__(self, application, model: SampleModel):
         super().__init__()
         self._model = model
         self._model.subscribe(self)
+        self._application = application
 
     def handle_event(self, event: Event):
         # TODO change to switch

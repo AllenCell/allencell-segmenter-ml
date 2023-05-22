@@ -1,7 +1,7 @@
 import napari
 
 from allencell_ml_segmenter.core.application_manager import ApplicationManager
-from allencell_ml_segmenter.view.test_view import TestView
+from allencell_ml_segmenter.view.sample_view import SampleViewController
 
 from qtpy.QtWidgets import (
     QPushButton,
@@ -21,7 +21,6 @@ class MainWidget(QWidget):
 
         # init app
         self._application = ApplicationManager(viewer, self.layout())
-
 
         # Controller
         self.button = QPushButton("click to add a widget")
