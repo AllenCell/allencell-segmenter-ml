@@ -1,6 +1,6 @@
 from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.view.sample_widget import SampleWidget
-from ._main_template import MainTemplate
+from allencell_ml_segmenter.view._main_template import MainTemplate
 from qtpy.QtWidgets import QVBoxLayout, QPushButton
 from allencell_ml_segmenter.model.sample_model import Event, SampleModel
 from allencell_ml_segmenter.model.pub_sub import Subscriber
