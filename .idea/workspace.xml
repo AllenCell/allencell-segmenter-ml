@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="227a8e3d-0cba-4a6a-a6d6-705b3552713c" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/model/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/model/test_pub_sub.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/view/test_sample_view.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/view/test_sample_view.py" afterDir="false" />
     </list>
@@ -48,11 +50,12 @@
       <recent name="$PROJECT_DIR$/src/allencell_ml_segmenter/model" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests" />
       <recent name="$PROJECT_DIR$/src/allencell_ml_segmenter/view" />
       <recent name="$PROJECT_DIR$/src/allencell_ml_segmenter/napari" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_sample_view.test_load">
+  <component name="RunManager" selected="Python tests.Python tests for test_pub_sub.test_pub_dispatch_multiple">
     <configuration name="scratch" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="allencell-ml-segmenter" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -74,17 +77,31 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_example_controller.test_index" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_pub_sub.test_pub_dispatch" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="allencell-ml-segmenter" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/controller" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/model" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_example_controller.test_index&quot;" />
+      <option name="_new_target" value="&quot;test_pub_sub.test_pub_dispatch&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests for test_pub_sub.test_pub_dispatch_multiple" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="allencell-ml-segmenter" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/model" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_pub_sub.test_pub_dispatch_multiple&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -102,20 +119,6 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_sample_view.test_handle_event_training" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="allencell-ml-segmenter" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/view" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_sample_view.test_handle_event_training&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
     <configuration name="Python tests for test_sample_view.test_load" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="allencell-ml-segmenter" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -130,7 +133,7 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_sample_view.test_model_property" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_sample_view.test_load_and_setup_ui" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="allencell-ml-segmenter" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -140,25 +143,25 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_sample_view.test_model_property&quot;" />
+      <option name="_new_target" value="&quot;test_sample_view.test_load_and_setup_ui&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
     <list>
       <item itemvalue="Python.scratch" />
-      <item itemvalue="Python tests.Python tests for test_example_controller.test_index" />
+      <item itemvalue="Python tests.Python tests for test_pub_sub.test_pub_dispatch" />
+      <item itemvalue="Python tests.Python tests for test_pub_sub.test_pub_dispatch_multiple" />
       <item itemvalue="Python tests.Python tests for test_sample_view.test_change_label" />
-      <item itemvalue="Python tests.Python tests for test_sample_view.test_handle_event_training" />
       <item itemvalue="Python tests.Python tests for test_sample_view.test_load" />
-      <item itemvalue="Python tests.Python tests for test_sample_view.test_model_property" />
+      <item itemvalue="Python tests.Python tests for test_sample_view.test_load_and_setup_ui" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.Python tests for test_pub_sub.test_pub_dispatch_multiple" />
+        <item itemvalue="Python tests.Python tests for test_pub_sub.test_pub_dispatch" />
+        <item itemvalue="Python tests.Python tests for test_sample_view.test_load_and_setup_ui" />
         <item itemvalue="Python tests.Python tests for test_sample_view.test_load" />
         <item itemvalue="Python tests.Python tests for test_sample_view.test_change_label" />
-        <item itemvalue="Python tests.Python tests for test_sample_view.test_model_property" />
-        <item itemvalue="Python tests.Python tests for test_sample_view.test_handle_event_training" />
-        <item itemvalue="Python tests.Python tests for test_example_controller.test_index" />
       </list>
     </recent_temporary>
   </component>
