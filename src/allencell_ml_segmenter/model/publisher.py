@@ -1,10 +1,8 @@
-from abc import ABC, abstractmethod
-from enum import Enum
+from abc import ABC
 from typing import List
+from allencell_ml_segmenter.model.subscriber import Subscriber
+from allencell_ml_segmenter.model.event import Event
 
-
-class Event(Enum):
-    TRAINING = "training"
 
 class Publisher(ABC):
     def __init__(self):
@@ -16,16 +14,3 @@ class Publisher(ABC):
 
     def subscribe(self, subscriber):
         self._subscribers.append(subscriber)
-
-
-class Subscriber(ABC):
-
-    @abstractmethod
-    def handle_event(self, event: Event):
-        pass
-
-
-
-
-
-
