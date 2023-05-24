@@ -6,7 +6,7 @@ from allencell_ml_segmenter.model.publisher import Publisher, Subscriber, Event
 def publisher():
     return Publisher()
 
-
+# Testing publisher with a mock subscriber class that implements handle_event
 class MockSubscriber(Subscriber):
     def __init__(self):
         self.handled_event = None
