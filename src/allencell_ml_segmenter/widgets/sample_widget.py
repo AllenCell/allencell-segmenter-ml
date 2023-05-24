@@ -3,7 +3,7 @@ from qtpy.QtWidgets import (
     QVBoxLayout,
     QWidget,
     QSizePolicy,
-    QLabel
+    QLabel,
 )
 import hydra
 from omegaconf import OmegaConf
@@ -11,6 +11,7 @@ from aics_im2im.train import entry_point_call
 from hydra.core.global_hydra import GlobalHydra
 from hydra.core.hydra_config import HydraConfig
 from typing import Callable
+
 
 class SampleWidget(QWidget):
     def __init__(self):
@@ -30,8 +31,3 @@ class SampleWidget(QWidget):
 
     def connectSlots(self, function: Callable):
         self.btn.clicked.connect(function)
-
-
-
-
-

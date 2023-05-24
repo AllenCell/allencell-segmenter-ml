@@ -1,10 +1,11 @@
 import pytest
-from allencell_ml_segmenter.model.pub_sub import Publisher, Subscriber, Event
+from allencell_ml_segmenter.model.publisher import Publisher, Subscriber, Event
 
 
 @pytest.fixture
 def publisher():
     return Publisher()
+
 
 class MockSubscriber(Subscriber):
     def __init__(self):
@@ -12,6 +13,7 @@ class MockSubscriber(Subscriber):
 
     def handle_event(self, event: Event):
         self.handled_event = event
+
 
 def test_pub_dispatch(publisher):
     subscriber = MockSubscriber()
@@ -21,6 +23,7 @@ def test_pub_dispatch(publisher):
     publisher.dispatch(event)
 
     assert subscriber.handled_event == event
+
 
 def test_pub_dispatch_multiple(publisher):
     subscriber1 = MockSubscriber()
