@@ -1,11 +1,14 @@
-from allencell_ml_segmenter.view.sample_view import SampleViewController
-from allencell_ml_segmenter.controller.example_controller import UiController
-from allencell_ml_segmenter.controller.im2im_contoller import Im2imContoller
-from allencell_ml_segmenter.model.sample_model import SampleModel
+from allencell_ml_segmenter.view.sample_view_controller import (
+    SampleViewController,
+)
+from allencell_ml_segmenter.controller.ui_controller import UiController
+from allencell_ml_segmenter.controller.training_controller import (
+    TrainingController,
+)
+from allencell_ml_segmenter.model.training_model import TrainingModel
 
 
-
-class Router():
+class Router:
     _controller = None
 
     def __init__(self, application):
@@ -22,7 +25,9 @@ class Router():
         self._controller.index()
 
     def navigate_to_test_view(self):
-        model = SampleModel()
+        model = TrainingModel()
         controller = UiController(self._application, model)
-        Im2imContoller(self._application, model) # not referenced, but subscribes to model.
+        TrainingController(
+            self._application, model
+        )  # not referenced, but subscribes to model.
         self._handle_navigation(controller)

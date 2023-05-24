@@ -18,7 +18,9 @@ class View(ABC, QWidget, metaclass=ViewMeta):
         QWidget.__init__(self)
         if template_class is not None:
             if not issubclass(template_class, ViewTemplate):
-                raise TypeError(f"Template type must be a subclass of {ViewTemplate}")
+                raise TypeError(
+                    f"Template type must be a subclass of {ViewTemplate}"
+                )
 
             self._template = template_class()
 

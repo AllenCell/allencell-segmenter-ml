@@ -1,6 +1,6 @@
 import pytest
-from allencell_ml_segmenter.model.sample_model import SampleModel
-from allencell_ml_segmenter.model.pub_sub import Event
+from allencell_ml_segmenter.model.training_model import TrainingModel
+from allencell_ml_segmenter.model.publisher import Event
 
 
 class MockSubscriber:
@@ -10,9 +10,10 @@ class MockSubscriber:
     def handle_event(self, event):
         self.event_received = event
 
+
 @pytest.fixture
 def sample_model():
-    return SampleModel()
+    return TrainingModel()
 
 
 def test_set_model_training(sample_model):

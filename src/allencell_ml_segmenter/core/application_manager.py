@@ -5,7 +5,7 @@ from allencell_ml_segmenter.core.view_manager import ViewManager
 from allencell_ml_segmenter.core.router import Router
 
 
-class ApplicationManager():
+class ApplicationManager:
     def __init__(self, viewer: napari.Viewer, root_layout: QLayout):
         if viewer is None:
             raise ValueError("viewer")

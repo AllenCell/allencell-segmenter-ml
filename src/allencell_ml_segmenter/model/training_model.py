@@ -1,6 +1,7 @@
-from allencell_ml_segmenter.model.pub_sub import Publisher, Event
+from allencell_ml_segmenter.model.publisher import Publisher, Event
 
-class SampleModel(Publisher):
+
+class TrainingModel(Publisher):
     def __init__(self):
         super().__init__()
         self._model_training: bool = False
@@ -11,5 +12,3 @@ class SampleModel(Publisher):
     def set_model_training(self, running: bool):
         self._model_training = running
         self.dispatch(Event.TRAINING)
-
-
