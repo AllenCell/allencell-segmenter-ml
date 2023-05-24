@@ -3,8 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="227a8e3d-0cba-4a6a-a6d6-705b3552713c" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/model/test_publisher.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/model/test_publisher.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/widgets/sample_widget.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/widgets/sample_widget.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/controller/test_ui_controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/controller/test_ui_controller.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/controller/training_controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/controller/training_controller.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
