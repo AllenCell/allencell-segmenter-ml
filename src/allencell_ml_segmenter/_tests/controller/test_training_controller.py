@@ -1,11 +1,10 @@
-import pytest
-from unittest.mock import Mock, patch
-from allencell_ml_segmenter.model.training_model import TrainingModel
-from allencell_ml_segmenter.view.sample_view_controller import (
-    SampleViewController,
+from allencell_ml_segmenter.controller.training_controller import (
+    TrainingController,
 )
+import pytest
+from unittest.mock import Mock
+from allencell_ml_segmenter.model.training_model import TrainingModel
 from allencell_ml_segmenter.model.publisher import Event
-from allencell_ml_segmenter.controller.ui_controller import UiController
 
 
 @pytest.fixture
@@ -19,31 +18,23 @@ def mock_model() -> Mock:
 
 
 @pytest.fixture
-def ui_controller(mock_application: Mock, mock_model: Mock) -> UiController:
-    with patch(
-        "allencell_ml_segmenter.controller.ui_controller.SampleViewController"
-    ):
-        return UiController(mock_application, mock_model)
+def mock_training_service() -> Mock:
+    return Mock()
 
 
-def test_handle_event(ui_controller: UiController) -> None:
-    pass
-
-
-def test_index(ui_controller: UiController, mock_application: Mock) -> None:
-    ui_controller.index()
-
-    # ensure view is loaded into app and label is changed
-    mock_application.view_manager.load_view.assert_called_once_with(
-        ui_controller.view
+@pytest.fixture
+def training_controller(mock_application, mock_model):
+    return TrainingController(
+        mock_application, mock_model
     )
-    ui_controller.view.connect_slots.assert_called_once()
 
 
-def test_load_view(ui_controller, mock_application):
-    ui_controller.load_view()
+def test_handle_event_starts_training_when_model_training_is_true(
+    training_controller, mock_model
+):
+    mock_model.set_model_training(True)
 
-    # ensure view is loaded into app and label is changed
-    mock_application.view_manager.load_view.assert_called_once_with(
-        ui_controller.view
-    )
+    event = Event.TRAINING
+    training_controller.handle_event(event)
+
+    #TODO once method is implemented, test call
