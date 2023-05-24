@@ -23,14 +23,14 @@ def mock_training_service() -> Mock:
 
 
 @pytest.fixture
-def im2im_controller(mock_application, mock_model, mock_training_service):
+def im2im_controller(mock_application, mock_model):
     return TrainingController(
-        mock_application, mock_model, mock_training_service
+        mock_application, mock_model
     )
 
 
 def test_handle_event_starts_training_when_model_training_is_true(
-    im2im_controller, mock_model, mock_training_service
+    im2im_controller, mock_model
 ):
     controller = im2im_controller
     model = mock_model
