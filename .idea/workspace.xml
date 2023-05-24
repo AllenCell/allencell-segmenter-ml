@@ -2,10 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="227a8e3d-0cba-4a6a-a6d6-705b3552713c" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/controller/abc.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/core/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/core/test_application_manager.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/controller/test_training_controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/controller/test_training_controller.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/controller/test_ui_controller.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,8 +22,8 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/controller/abc.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/controller/test_training_controller.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/controller/test_ui_controller.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/view/test_sample_view_controller.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/widgets/test_sample_widget.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/allencell_ml_segmenter/controller/training_controller.py" root0="FORCE_HIGHLIGHTING" />
@@ -44,19 +43,19 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "last_opened_file_path": "/Users/brian.kim/Desktop/work/allencell-ml-segmenter/src/allencell_ml_segmenter/view",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/brian.kim/Desktop/work/allencell-ml-segmenter/src/allencell_ml_segmenter/view&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
   },
-  "keyToStringList": {
-    "com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File": [
-      "Python"
+  &quot;keyToStringList&quot;: {
+    &quot;com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File&quot;: [
+      &quot;Python&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/allencell_ml_segmenter/view" />
@@ -70,7 +69,7 @@
       <recent name="$PROJECT_DIR$/src/allencell_ml_segmenter/napari" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Python tests.Python tests for test_application_manager.test_application_manager_invalid_root_layout">
     <configuration name="scratch" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="allencell-ml-segmenter" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -92,91 +91,91 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for allencell_ml_segmenter._tests.controller.test_training_controller" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_application_manager.test_application_manager" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="allencell-ml-segmenter" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/controller" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/core" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;allencell_ml_segmenter._tests.controller.test_training_controller&quot;" />
+      <option name="_new_target" value="&quot;test_application_manager.test_application_manager&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for allencell_ml_segmenter._tests.controller.test_training_controller.test_handle_event_starts_training_when_model_training_is_true" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_application_manager.test_application_manager_init_invalid_root_layout" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="allencell-ml-segmenter" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/controller" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/core" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;allencell_ml_segmenter._tests.controller.test_training_controller.test_handle_event_starts_training_when_model_training_is_true&quot;" />
+      <option name="_new_target" value="&quot;test_application_manager.test_application_manager_init_invalid_root_layout&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for allencell_ml_segmenter._tests.model.test_training_model.test_set_model_training" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_application_manager.test_application_manager_init_invalid_viewer" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="allencell-ml-segmenter" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/model" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/core" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;allencell_ml_segmenter._tests.model.test_training_model.test_set_model_training&quot;" />
+      <option name="_new_target" value="&quot;test_application_manager.test_application_manager_init_invalid_viewer&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for allencell_ml_segmenter._tests.widgets.test_sample_widget.test_connect_slots" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_application_manager.test_application_manager_invalid_root_layout" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="allencell-ml-segmenter" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/view" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/core" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;allencell_ml_segmenter._tests.widgets.test_sample_widget.test_connect_slots&quot;" />
+      <option name="_new_target" value="&quot;test_application_manager.test_application_manager_invalid_root_layout&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for allencell_ml_segmenter._tests.widgets.test_sample_widget.test_set_label_text" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_application_manager.test_application_manager_invalid_viewer" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="allencell-ml-segmenter" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/view" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/core" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;allencell_ml_segmenter._tests.widgets.test_sample_widget.test_set_label_text&quot;" />
+      <option name="_new_target" value="&quot;test_application_manager.test_application_manager_invalid_viewer&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
     <list>
       <item itemvalue="Python.scratch" />
-      <item itemvalue="Python tests.Python tests for allencell_ml_segmenter._tests.controller.test_training_controller" />
-      <item itemvalue="Python tests.Python tests for allencell_ml_segmenter._tests.controller.test_training_controller.test_handle_event_starts_training_when_model_training_is_true" />
-      <item itemvalue="Python tests.Python tests for allencell_ml_segmenter._tests.model.test_training_model.test_set_model_training" />
-      <item itemvalue="Python tests.Python tests for allencell_ml_segmenter._tests.widgets.test_sample_widget.test_connect_slots" />
-      <item itemvalue="Python tests.Python tests for allencell_ml_segmenter._tests.widgets.test_sample_widget.test_set_label_text" />
+      <item itemvalue="Python tests.Python tests for test_application_manager.test_application_manager" />
+      <item itemvalue="Python tests.Python tests for test_application_manager.test_application_manager_init_invalid_root_layout" />
+      <item itemvalue="Python tests.Python tests for test_application_manager.test_application_manager_init_invalid_viewer" />
+      <item itemvalue="Python tests.Python tests for test_application_manager.test_application_manager_invalid_root_layout" />
+      <item itemvalue="Python tests.Python tests for test_application_manager.test_application_manager_invalid_viewer" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python tests.Python tests for allencell_ml_segmenter._tests.controller.test_training_controller.test_handle_event_starts_training_when_model_training_is_true" />
-        <item itemvalue="Python tests.Python tests for allencell_ml_segmenter._tests.controller.test_training_controller" />
-        <item itemvalue="Python tests.Python tests for allencell_ml_segmenter._tests.widgets.test_sample_widget.test_connect_slots" />
-        <item itemvalue="Python tests.Python tests for allencell_ml_segmenter._tests.widgets.test_sample_widget.test_set_label_text" />
-        <item itemvalue="Python tests.Python tests for allencell_ml_segmenter._tests.model.test_training_model.test_set_model_training" />
+        <item itemvalue="Python tests.Python tests for test_application_manager.test_application_manager_invalid_root_layout" />
+        <item itemvalue="Python tests.Python tests for test_application_manager.test_application_manager_invalid_viewer" />
+        <item itemvalue="Python tests.Python tests for test_application_manager.test_application_manager" />
+        <item itemvalue="Python tests.Python tests for test_application_manager.test_application_manager_init_invalid_root_layout" />
+        <item itemvalue="Python tests.Python tests for test_application_manager.test_application_manager_init_invalid_viewer" />
       </list>
     </recent_temporary>
   </component>
