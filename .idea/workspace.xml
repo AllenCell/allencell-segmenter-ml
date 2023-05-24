@@ -2,32 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="227a8e3d-0cba-4a6a-a6d6-705b3552713c" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/controller/test_im2im_controller.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/model/event.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/model/subscriber.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/services/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/services/training_service.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/widgets/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/controller/test_example_controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/controller/test_example_controller.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/model/test_pub_sub.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/model/test_pub_sub.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/model/test_sample_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/model/test_sample_model.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/view/test_sample_view.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/view/test_sample_view.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/view/test_sample_widget.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/view/test_sample_widget.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/controller/example_controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/controller/ui_controller.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/controller/im2im_contoller.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/controller/training_controller.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/core/application_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/core/application_manager.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/core/router.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/core/router.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/core/view.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/core/view.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/core/view_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/core/view_manager.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/model/pub_sub.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/model/publisher.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/model/sample_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/model/training_model.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/view/_main_template.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/view/_main_template.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/view/main_widget.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/widgets/main_widget.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/view/sample_view.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/view/sample_view_controller.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/view/sample_widget.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/widgets/sample_widget.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/model/test_publisher.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/model/test_publisher.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/allencell_ml_segmenter/widgets/sample_widget.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/allencell_ml_segmenter/widgets/sample_widget.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,10 +22,10 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/controller/test_example_controller.py" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/controller/test_im2im_controller.py" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/view/test_sample_view.py" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/view/test_sample_widget.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/controller/test_training_controller.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/controller/test_ui_controller.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/view/test_sample_view_controller.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/widgets/test_sample_widget.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/allencell_ml_segmenter/controller/training_controller.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/allencell_ml_segmenter/napari/napari_writer.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/allencell_ml_segmenter/napari/sample_data.py" root0="FORCE_HIGHLIGHTING" />
@@ -85,6 +62,7 @@
       <recent name="$PROJECT_DIR$/src/allencell_ml_segmenter/model" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/widgets" />
       <recent name="$PROJECT_DIR$/src/allencell_ml_segmenter/widgets" />
       <recent name="$PROJECT_DIR$/src/allencell_ml_segmenter/_tests" />
       <recent name="$PROJECT_DIR$/src/allencell_ml_segmenter/view" />
@@ -233,7 +211,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/allencell_ml_segmenter/core/router.py</url>
-          <line>25</line>
+          <line>28</line>
           <option name="timeStamp" value="8" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -258,11 +236,11 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/allencell_ml_segmenter/controller/training_controller.py</url>
-          <line>16</line>
+          <line>22</line>
           <option name="timeStamp" value="24" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/controller/test_im2im_controller.py</url>
+          <url>file://$PROJECT_DIR$/src/allencell_ml_segmenter/_tests/controller/test_ui_controller.py</url>
           <line>36</line>
           <option name="timeStamp" value="25" />
         </line-breakpoint>
