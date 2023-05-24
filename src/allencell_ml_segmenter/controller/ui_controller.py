@@ -1,14 +1,17 @@
-from allencell_ml_segmenter.view.sample_view import SampleViewController
-from allencell_ml_segmenter.model.pub_sub import Subscriber, Event
-from allencell_ml_segmenter.model.sample_model import SampleModel
+from allencell_ml_segmenter.view.sample_view_controller import (
+    SampleViewController,
+)
+from allencell_ml_segmenter.model.publisher import Subscriber, Event
+from allencell_ml_segmenter.model.training_model import TrainingModel
+
 
 # higher level ui controller
 class UiController(Subscriber):
-    def __init__(self, application, model: SampleModel) -> None:
+    def __init__(self, application, model: TrainingModel) -> None:
         super().__init__()
         # add all ui elements here
         self.application = application
-        self._model: SampleModel = model
+        self._model: TrainingModel = model
         self._view: SampleViewController = SampleViewController(self._model)
         self._model.subscribe(self)
 
@@ -18,7 +21,7 @@ class UiController(Subscriber):
 
     def handle_event(self, event: Event):
         pass
-        #TODO change to switch
+        # TODO change to switch
         # if event == Event.TRAINING:
 
     def index(self):
@@ -32,9 +35,3 @@ class UiController(Subscriber):
         :param: view: the View to load
         """
         return self.application.view_manager.load_view(self._view)
-
-
-
-
-
-
