@@ -51,3 +51,6 @@ coverage.xml
 # IDE files
 .idea/
 .vscode
+.idea
+.iml
+.iml/
