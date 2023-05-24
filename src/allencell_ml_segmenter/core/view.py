@@ -9,7 +9,7 @@ class ViewMeta(type(QWidget), type(ABC)):
 
 class View(ABC, QWidget, metaclass=ViewMeta):
     """
-    Base class for all Views to derive from
+    Base class for all Views to inherit from
     """
 
     _template = None

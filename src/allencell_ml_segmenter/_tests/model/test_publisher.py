@@ -1,33 +1,23 @@
 import pytest
-from allencell_ml_segmenter.model.publisher import Publisher, Subscriber, Event
-
+from allencell_ml_segmenter.model.publisher import Publisher, Event
+from allencell_ml_segmenter._tests.fakes.fake_subscriber import FakeSubscriber
 
 @pytest.fixture
 def publisher():
     return Publisher()
 
-# Testing publisher with a mock subscriber class that implements handle_event
-class MockSubscriber(Subscriber):
-    def __init__(self):
-        self.handled_event = None
-
-    def handle_event(self, event: Event):
-        self.handled_event = event
-
-
 def test_pub_dispatch(publisher):
-    subscriber = MockSubscriber()
+    subscriber = FakeSubscriber()
     publisher.subscribe(subscriber)
-    event = Event.TRAINING
 
-    publisher.dispatch(event)
+    publisher.dispatch(Event.TRAINING)
 
-    assert subscriber.handled_event == event
+    assert subscriber.handled_event == Event.TRAINING
 
 
 def test_pub_dispatch_multiple(publisher):
-    subscriber1 = MockSubscriber()
-    subscriber2 = MockSubscriber()
+    subscriber1 = FakeSubscriber()
+    subscriber2 = FakeSubscriber()
     publisher.subscribe(subscriber1)
     publisher.subscribe(subscriber2)
 
