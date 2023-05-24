@@ -2,47 +2,12 @@ name: allencell-ml-segmenter
 display_name: Allencell ML Segmenter
 contributions:
   commands:
-    - id: allencell-ml-segmenter.get_reader
-      python_name: allencell_ml_segmenter._reader:napari_get_reader
-      title: Open data with Allencell ML Segmenter
-    - id: allencell-ml-segmenter.write_multiple
-      python_name: allencell_ml_segmenter._writer:write_multiple
-      title: Save multi-layer data with Allencell ML Segmenter
-    - id: allencell-ml-segmenter.write_single_image
-      python_name: allencell_ml_segmenter._writer:write_single_image
-      title: Save image data with Allencell ML Segmenter
-    - id: allencell-ml-segmenter.make_sample_data
-      python_name: allencell_ml_segmenter._sample_data:make_sample_data
-      title: Load sample data from Allencell ML Segmenter
     - id: allencell-ml-segmenter.make_qwidget
-      python_name: allencell_ml_segmenter._widget:ExampleQWidget
+      python_name: allencell_ml_segmenter.view.main_widget:MainWidget
       title: Make example QWidget
-    - id: allencell-ml-segmenter.make_magic_widget
-      python_name: allencell_ml_segmenter._widget:example_magic_widget
-      title: Make example magic widget
-    - id: allencell-ml-segmenter.make_func_widget
-      python_name: allencell_ml_segmenter._widget:example_function_widget
-      title: Make example function widget
   readers:
-    - command: allencell-ml-segmenter.get_reader
-      accepts_directories: false
-      filename_patterns: ['*.npy']
   writers:
-    - command: allencell-ml-segmenter.write_multiple
-      layer_types: ['image*','labels*']
-      filename_extensions: []
-    - command: allencell-ml-segmenter.write_single_image
-      layer_types: ['image']
-      filename_extensions: ['.npy']
   sample_data:
-    - command: allencell-ml-segmenter.make_sample_data
-      display_name: Allencell ML Segmenter
-      key: unique_id.1
   widgets:
     - command: allencell-ml-segmenter.make_qwidget
       display_name: Example QWidget
-    - command: allencell-ml-segmenter.make_magic_widget
-      display_name: Example Magic Widget
-    - command: allencell-ml-segmenter.make_func_widget
-      autogenerate: true
-      display_name: Example Function Widget
