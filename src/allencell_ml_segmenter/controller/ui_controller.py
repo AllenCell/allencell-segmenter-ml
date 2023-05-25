@@ -7,10 +7,9 @@ from allencell_ml_segmenter.model.training_model import TrainingModel
 
 # higher level ui controller
 class UiController(Subscriber):
-    def __init__(self, application, model: TrainingModel) -> None:
+    def __init__(self, model: TrainingModel) -> None:
         super().__init__()
         # add all ui elements here
-        self.application = application
         self._model: TrainingModel = model
         self._view: SampleViewController = SampleViewController(self._model)
         self._model.subscribe(self)
