@@ -24,9 +24,7 @@ def mock_training_service() -> Mock:
 
 @pytest.fixture
 def training_controller(mock_application, mock_model):
-    return TrainingController(
-        mock_application, mock_model
-    )
+    return TrainingController(mock_application, mock_model)
 
 
 def test_handle_event_starts_training_when_model_training_is_true(
@@ -37,4 +35,4 @@ def test_handle_event_starts_training_when_model_training_is_true(
     event = Event.TRAINING
     training_controller.handle_event(event)
 
-    #TODO once method is implemented, test call
+    # TODO once method is implemented, test call

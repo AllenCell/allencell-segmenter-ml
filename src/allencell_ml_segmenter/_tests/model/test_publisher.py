@@ -2,9 +2,11 @@ import pytest
 from allencell_ml_segmenter.model.publisher import Publisher, Event
 from allencell_ml_segmenter._tests.fakes.fake_subscriber import FakeSubscriber
 
+
 @pytest.fixture
 def publisher():
     return Publisher()
+
 
 def test_pub_dispatch(publisher):
     subscriber = FakeSubscriber()

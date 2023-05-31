@@ -9,8 +9,11 @@ from allencell_ml_segmenter.model.main_model import Page
 
 
 class SampleViewController(View, Subscriber):
+    """
+    ViewController for SampleWidget, responsible for handling events and updating the model + UI.
+    """
+
     def __init__(self, main_model: MainModel):
-        # hook up controller here when ready
         super().__init__(template_class=MainTemplate)
         self._main_model = main_model
         self.widget = SampleWidget()
@@ -19,30 +22,48 @@ class SampleViewController(View, Subscriber):
         self.load()
 
     @property
-    def model(self):
+    def model(self) -> TrainingModel:
+        """
+        Model property
+        """
         return self._model
 
-    def handle_event(self, event: Event):
+    def handle_event(self, event: Event) -> None:
+        """
+        Handles Events from the Training Model
+        """
         print("sampleviewcontroller handle event called")
 
         if event == event.TRAINING:
             self.widget.setLabelText("training")
 
-    def change_label(self):
+    def change_label(self) -> None:
+        """
+        Updates model in order to change label in UI
+        """
         print("change label called")
         self._model.set_model_training(not self._model.get_model_training())
 
-    def back_to_main(self):
+    def back_to_main(self) -> None:
+        """
+        Updates model in order to change page back to main.
+        """
         print("back to main called")
         self._main_model.set_current_page(Page.MAIN)
 
     ###################################################
     #                 Setup Section                   #
     ###################################################
-    def load(self):
+    def load(self) -> None:
+        """
+        load function for this view
+        """
         self._setup_ui()
 
-    def _setup_ui(self):
+    def _setup_ui(self) -> None:
+        """
+        setup ui for this view
+        """
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(layout)
