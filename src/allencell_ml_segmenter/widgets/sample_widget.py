@@ -9,6 +9,11 @@ from typing import Callable, List
 
 
 class SampleWidget(QWidget):
+    """
+    A sample widget for training a model.
+
+    """
+
     def __init__(self):
         super().__init__()
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
@@ -31,8 +36,7 @@ class SampleWidget(QWidget):
     def setLabelText(self, text: str) -> None:
         self.label.setText(text)
 
-    def connectSlots(self, functions: List[Callable]):
+    def connectSlots(self, functions: List[Callable]) -> None:
         print("buttons connected")
         for idx, function in enumerate(functions):
             self.btns[idx].clicked.connect(function)
-

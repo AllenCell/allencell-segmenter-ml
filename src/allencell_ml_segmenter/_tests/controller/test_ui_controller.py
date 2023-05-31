@@ -5,7 +5,9 @@ from allencell_ml_segmenter.view.sample_view_controller import (
     SampleViewController,
 )
 from allencell_ml_segmenter.model.publisher import Event
-from allencell_ml_segmenter.controller.ui_controller import UiController
+from allencell_ml_segmenter.controller.sample_controller import (
+    SampleController,
+)
 
 
 @pytest.fixture
@@ -19,18 +21,22 @@ def mock_model() -> Mock:
 
 
 @pytest.fixture
-def ui_controller(mock_application: Mock, mock_model: Mock) -> UiController:
+def ui_controller(
+    mock_application: Mock, mock_model: Mock
+) -> SampleController:
     with patch(
         "allencell_ml_segmenter.controller.ui_controller.SampleViewController"
     ):
-        return UiController(mock_application, mock_model)
+        return SampleController(mock_application, mock_model)
 
 
-def test_handle_event(ui_controller: UiController) -> None:
+def test_handle_event(ui_controller: SampleController) -> None:
     pass
 
 
-def test_index(ui_controller: UiController, mock_application: Mock) -> None:
+def test_index(
+    ui_controller: SampleController, mock_application: Mock
+) -> None:
     ui_controller.index()
 
     # ensure view is loaded into app and label is changed
