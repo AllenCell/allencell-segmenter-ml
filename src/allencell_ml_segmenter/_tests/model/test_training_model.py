@@ -3,6 +3,7 @@ from allencell_ml_segmenter.model.training_model import TrainingModel
 from allencell_ml_segmenter.model.publisher import Event
 from allencell_ml_segmenter._tests.fakes.fake_subscriber import FakeSubscriber
 
+
 @pytest.fixture
 def sample_model():
     return TrainingModel()

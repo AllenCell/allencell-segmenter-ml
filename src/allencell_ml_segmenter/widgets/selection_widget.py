@@ -3,12 +3,14 @@ from qtpy.QtWidgets import (
     QVBoxLayout,
     QWidget,
     QSizePolicy,
-    QLabel,
 )
-from typing import Callable
 
 
 class SelectionWidget(QWidget):
+    """
+    A sample widget with two buttons for selecting between training and prediction views.
+    """
+
     def __init__(self):
         super().__init__()
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
@@ -23,6 +25,3 @@ class SelectionWidget(QWidget):
         # add buttons
         self.layout().addWidget(self.training_button)
         self.layout().addWidget(self.prediction_button)
-
-
-
