@@ -1,19 +1,30 @@
-from qtpy.QtWidgets import QFrame, QVBoxLayout, QScrollArea, QLabel
+from qtpy.QtWidgets import QFrame, QVBoxLayout, QScrollArea
 from qtpy.QtCore import Qt
 
 from allencell_ml_segmenter.core.view import ViewTemplate
 
 
 class MainTemplate(ViewTemplate):
+    """
+    Main template used to initialize views
+
+    """
+
     def __init__(self):
         super().__init__()
         self._container = QFrame()
         self._container.setObjectName("mainContainer")
 
     def get_container(self) -> QFrame:
+        """
+        Getter for current container, returns QFrame
+        """
         return self._container
 
     def load(self):
+        """
+        default view settings called on load()
+        """
         layout = QVBoxLayout()
         self.setLayout(layout)
 
