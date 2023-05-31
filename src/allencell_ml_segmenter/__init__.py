@@ -9,7 +9,9 @@ from allencell_ml_segmenter.napari.napari_writer import (
 
 from allencell_ml_segmenter.widgets.main_widget import MainWidget
 
-from allencell_ml_segmenter.controller.ui_controller import UiController
+from allencell_ml_segmenter.controller.sample_controller import (
+    SampleController,
+)
 
 __all__ = (
     "napari_get_reader",
@@ -17,5 +19,5 @@ __all__ = (
     "write_multiple",
     "make_sample_data",
     "MainWidget",
-    "UiController",
+    "SampleController",
 )

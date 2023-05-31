@@ -1,19 +1,30 @@
 import napari
-from allencell_ml_segmenter.core.application_manager import ApplicationManager
 from qtpy.QtWidgets import QPushButton, QVBoxLayout, QWidget, QSizePolicy
 from allencell_ml_segmenter.model.main_model import MainModel, Page
-from allencell_ml_segmenter.view.main_view_controller import MainViewController
 from allencell_ml_segmenter.model.subscriber import Subscriber
 from allencell_ml_segmenter.model.event import MainEvent
-from allencell_ml_segmenter.view.sample_view_controller import SampleViewController
+from allencell_ml_segmenter.view.sample_view_controller import (
+    SampleViewController,
+)
 from allencell_ml_segmenter.core.view_manager import ViewManager
-from allencell_ml_segmenter.model.training_model import TrainingModel
+
 
 class MainMeta(type(QWidget), type(Subscriber)):
+    """
+    Metaclass for MainWidget
+
+    """
+
     pass
 
 
 class MainWidget(QWidget, Subscriber, metaclass=MainMeta):
+    """
+    Main widget that is displayed in the plugin window. This widget is an empty Qwidget that supports adding and removing different
+    views from the main layout by responding to MainEvents.
+
+    """
+
     def __init__(self, viewer: napari.Viewer):
         super().__init__()
         # basic styling
@@ -21,20 +32,29 @@ class MainWidget(QWidget, Subscriber, metaclass=MainMeta):
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
 
-        # Controller
+        # Buttons
         self.training_button = QPushButton("Training View")
         self.training_button.clicked.connect(self.open_training_view)
         self.prediction_button = QPushButton("Prediction View")
         self.active_view = None
 
-        self.mainmodel = MainModel()
+        # Model
+        self.mainmodel: MainModel = MainModel()
         self.mainmodel.subscribe(self)
 
+        # Controller and view manager
         self.training_view_controller = SampleViewController(self.mainmodel)
         self.view_manager = ViewManager(self.layout())
         self.open_main_view()
+        self.viewer: napari.Viewer = viewer
 
-    def handle_event(self, event: MainEvent):
+    def handle_event(self, event: MainEvent) -> None:
+        """
+        Handle event function for the main widget, which handles MainEvents.
+
+        inputs:
+            event - MaintEvent
+        """
         print("main handle event called")
         # remove a view if already being displayed
         if self.active_view is not None:
@@ -51,9 +71,14 @@ class MainWidget(QWidget, Subscriber, metaclass=MainMeta):
             self.active_view = self.training_view_controller
             self.layout().addWidget(self.active_view)
 
-    def open_training_view(self):
+    def open_training_view(self) -> None:
+        """
+        Open the training view
+        """
         self.mainmodel.set_current_page(Page.TRAINING)
 
-    def open_main_view(self):
+    def open_main_view(self) -> None:
+        """
+        Open the main view
+        """
         self.mainmodel.set_current_page(Page.MAIN)
-
