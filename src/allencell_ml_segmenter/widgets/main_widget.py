@@ -1,13 +1,12 @@
 import napari
-from qtpy.QtWidgets import QPushButton, QVBoxLayout, QWidget, QSizePolicy
+from qtpy.QtWidgets import QPushButton, QVBoxLayout, QWidget, QSizePolicy, QStackedWidget
 from allencell_ml_segmenter.model.main_model import MainModel, Page
 from allencell_ml_segmenter.model.subscriber import Subscriber
 from allencell_ml_segmenter.model.event import MainEvent
 from allencell_ml_segmenter.view.sample_view_controller import (
     SampleViewController,
 )
-from allencell_ml_segmenter.core.view_manager import ViewManager
-
+from allencell_ml_segmenter.widgets.selection_widget import SelectionWidget
 
 class MainMeta(type(QWidget), type(Subscriber)):
     """
@@ -32,44 +31,39 @@ class MainWidget(QWidget, Subscriber, metaclass=MainMeta):
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
 
-        # Buttons
-        self.training_button = QPushButton("Training View")
-        self.training_button.clicked.connect(self.open_training_view)
-        self.prediction_button = QPushButton("Prediction View")
-        self.active_view = None
-
         # Model
         self.mainmodel: MainModel = MainModel()
         self.mainmodel.subscribe(self)
 
-        # Controller and view manager
+        # Widget stack
+        self.stacked_widget = QStackedWidget()
+        # add main page
+        self.selection_widget = SelectionWidget(self.mainmodel)
+        self.stacked_widget.addWidget(self.selection_widget)
+        # add training page
         self.training_view_controller = SampleViewController(self.mainmodel)
-        self.view_manager = ViewManager(self.layout())
+        self.stacked_widget.addWidget(self.training_view_controller)
+
+        self.layout().addWidget(self.stacked_widget)
         self.open_main_view()
+
         self.viewer: napari.Viewer = viewer
+
+        self.stacked_widget.setCurrentIndex(1)
 
     def handle_event(self, event: MainEvent) -> None:
         """
         Handle event function for the main widget, which handles MainEvents.
 
         inputs:
-            event - MaintEvent
+            event - MainEvent
         """
         print("main handle event called")
         # remove a view if already being displayed
-        if self.active_view is not None:
-            self.layout().removeWidget(self.active_view)
-
         if event == MainEvent.MAIN:
-            # add buttons
-            self.layout().addWidget(self.training_button)
-            self.layout().addWidget(self.prediction_button)
+            self.stacked_widget.setCurrentIndex(0)
         elif event == MainEvent.TRAINING:
-            self.layout().removeWidget(self.training_button)
-            self.layout().removeWidget(self.prediction_button)
-
-            self.active_view = self.training_view_controller
-            self.layout().addWidget(self.active_view)
+            self.stacked_widget.setCurrentIndex(1)
 
     def open_training_view(self) -> None:
         """

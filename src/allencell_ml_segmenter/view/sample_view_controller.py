@@ -1,6 +1,5 @@
 from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.widgets.sample_widget import SampleWidget
-from allencell_ml_segmenter.view._main_template import MainTemplate
 from qtpy.QtWidgets import QVBoxLayout
 from allencell_ml_segmenter.model.training_model import Event, TrainingModel
 from allencell_ml_segmenter.model.publisher import Subscriber
@@ -14,12 +13,21 @@ class SampleViewController(View, Subscriber):
     """
 
     def __init__(self, main_model: MainModel):
-        super().__init__(template_class=MainTemplate)
+        super().__init__()
+        layout = QVBoxLayout()
+        layout.setContentsMargins(0, 0, 0, 0)
+        self.setLayout(layout)
+
+        # models
         self._main_model = main_model
-        self.widget = SampleWidget()
         self._model = TrainingModel()
         self.model.subscribe(self)
-        self.load()
+
+        # init widget and connect slots
+        widget = SampleWidget()
+        widget.connectSlots([self.change_label, self.back_to_main])
+        layout.addWidget(widget)
+
 
     @property
     def model(self) -> TrainingModel:
@@ -50,22 +58,3 @@ class SampleViewController(View, Subscriber):
         """
         print("back to main called")
         self._main_model.set_current_page(Page.MAIN)
-
-    ###################################################
-    #                 Setup Section                   #
-    ###################################################
-    def load(self) -> None:
-        """
-        load function for this view
-        """
-        self._setup_ui()
-
-    def _setup_ui(self) -> None:
-        """
-        setup ui for this view
-        """
-        layout = QVBoxLayout()
-        layout.setContentsMargins(0, 0, 0, 0)
-        self.setLayout(layout)
-        layout.addWidget(self.widget)
-        self.widget.connectSlots([self.change_label, self.back_to_main])
