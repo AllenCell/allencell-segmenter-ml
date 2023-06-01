@@ -26,9 +26,6 @@ class SampleWidget(QWidget):
         self.layout().addWidget(self.btn)
         self.btns.append(self.btn)
 
-        self.label: QLabel = QLabel("")
-        self.layout().addWidget(self.label)
-
         self.return_btn: QPushButton = QPushButton("Return")
         self.layout().addWidget(self.return_btn)
         self.btns.append(self.return_btn)
