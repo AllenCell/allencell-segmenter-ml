@@ -41,9 +41,6 @@ class SampleViewController(View, Subscriber):
         """
         print("sampleviewcontroller handle event called")
 
-        if event == event.TRAINING:
-            self.widget.setLabelText("training")
-
     def change_label(self) -> None:
         """
         Updates model in order to change label in UI

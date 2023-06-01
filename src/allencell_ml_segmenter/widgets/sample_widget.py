@@ -30,9 +30,6 @@ class SampleWidget(QWidget):
         self.layout().addWidget(self.return_btn)
         self.btns.append(self.return_btn)
 
-    def setLabelText(self, text: str) -> None:
-        self.label.setText(text)
-
     def connectSlots(self, functions: List[Callable]) -> None:
         print("buttons connected")
         for idx, function in enumerate(functions):
