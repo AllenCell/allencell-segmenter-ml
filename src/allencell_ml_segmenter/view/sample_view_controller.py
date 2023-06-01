@@ -28,7 +28,6 @@ class SampleViewController(View, Subscriber):
         widget.connectSlots([self.change_label, self.back_to_main])
         layout.addWidget(widget)
 
-
     @property
     def model(self) -> TrainingModel:
         """
