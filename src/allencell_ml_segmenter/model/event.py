@@ -7,14 +7,6 @@ class Event(Enum):
     """
 
     TRAINING = "training"
-
-
-class MainEvent(Enum):
-    """
-    Events that determine which page to show.
-    """
-
-    MAIN = "main"
-    TRAINING = "training"
     PREDICTION = "prediction"
-    CURATION = "curation"
+    MAIN = "main"
+    CHANGE_VIEW = "change_view"

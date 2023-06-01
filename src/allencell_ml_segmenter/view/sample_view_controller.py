@@ -4,7 +4,6 @@ from qtpy.QtWidgets import QVBoxLayout
 from allencell_ml_segmenter.model.training_model import Event, TrainingModel
 from allencell_ml_segmenter.model.publisher import Subscriber
 from allencell_ml_segmenter.model.main_model import MainModel
-from allencell_ml_segmenter.model.main_model import Page
 
 
 class SampleViewController(View, Subscriber):
@@ -52,5 +51,5 @@ class SampleViewController(View, Subscriber):
         """
         Updates model in order to change page back to main.
         """
-        print("back to main called")
-        self._main_model.set_current_page(Page.MAIN)
+        # print("back to main called")
+        # self._main_model.set_current_view(Page.MAIN)
