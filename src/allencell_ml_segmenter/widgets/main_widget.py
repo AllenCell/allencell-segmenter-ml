@@ -1,5 +1,11 @@
 import napari
-from qtpy.QtWidgets import QPushButton, QVBoxLayout, QWidget, QSizePolicy, QStackedWidget
+from qtpy.QtWidgets import (
+    QPushButton,
+    QVBoxLayout,
+    QWidget,
+    QSizePolicy,
+    QStackedWidget,
+)
 from allencell_ml_segmenter.model.main_model import MainModel, Page
 from allencell_ml_segmenter.model.subscriber import Subscriber
 from allencell_ml_segmenter.model.event import MainEvent
@@ -7,6 +13,7 @@ from allencell_ml_segmenter.view.sample_view_controller import (
     SampleViewController,
 )
 from allencell_ml_segmenter.widgets.selection_widget import SelectionWidget
+
 
 class MainMeta(type(QWidget), type(Subscriber)):
     """

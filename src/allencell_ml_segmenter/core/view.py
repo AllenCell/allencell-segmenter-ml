@@ -16,5 +16,3 @@ class View(ABC, QWidget, metaclass=ViewMeta):
 
     def __init__(self):
         QWidget.__init__(self)
-
-
