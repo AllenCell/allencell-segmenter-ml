@@ -5,7 +5,7 @@ from qtpy.QtWidgets import (
     QSizePolicy,
 )
 
-from allencell_ml_segmenter.model.main_model import MainModel, Page
+from allencell_ml_segmenter.model.main_model import MainModel
 
 
 class SelectionWidget(QWidget):
@@ -13,7 +13,7 @@ class SelectionWidget(QWidget):
     A sample widget with two buttons for selecting between training and prediction views.
     """
 
-    def __init__(self, model: MainModel):
+    def __init__(self, model: MainModel, training_view: QWidget):
         super().__init__()
         # self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
         self.setLayout(QVBoxLayout())
@@ -22,16 +22,17 @@ class SelectionWidget(QWidget):
         # Controller
         self.training_button = QPushButton("Training View")
         self.training_button.clicked.connect(
-            lambda: self.model.set_current_page(Page.TRAINING)
+            lambda: self.model.set_current_view(training_view)
         )
-        self.prediction_button = QPushButton("Prediction View")
-        self.prediction_button.clicked.connect(
-            lambda: self.model.set_current_page(Page.PREDICTION)
-        )
+        self.back_button = QPushButton("training View")
+        # self.back_button.clicked.connect(
+        #     # lambda: self.model.set_current_view(training_view)
+        # )
 
         # add buttons
         self.layout().addWidget(self.training_button)
-        self.layout().addWidget(self.prediction_button)
+        self.layout().addWidget(self.back_button)
 
         # model
         self.model = model
+

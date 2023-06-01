@@ -1,16 +1,14 @@
 import napari
 from qtpy.QtWidgets import (
-    QPushButton,
     QVBoxLayout,
-    QWidget,
     QSizePolicy,
     QStackedWidget,
 )
 
 from allencell_ml_segmenter.core.view import View
-from allencell_ml_segmenter.model.main_model import MainModel, Page
+from allencell_ml_segmenter.model.main_model import MainModel
 from allencell_ml_segmenter.model.subscriber import Subscriber
-from allencell_ml_segmenter.model.event import MainEvent
+from allencell_ml_segmenter.model.event import Event
 from allencell_ml_segmenter.view.sample_view_controller import (
     SampleViewController,
 )
@@ -41,47 +39,31 @@ class MainWidget(QStackedWidget, Subscriber, metaclass=MainMeta):
         self.layout().setContentsMargins(0, 0, 0, 0)
 
         # Model
-        self.mainmodel: MainModel = MainModel()
-        self.mainmodel.subscribe(self)
+        self.model: MainModel = MainModel()
+        self.model.subscribe(self)
 
         self.view_to_index = dict()
 
-        # add main page
-        self.selection_view = SelectionWidget(self.mainmodel)
-        self.initalize_view(self.selection_view)
-
         # add training page
-        self.training_view = SampleViewController(self.mainmodel)
+        self.training_view = SampleViewController(self.model)
         self.initalize_view(self.training_view)
 
-        self.open_main_view()
+        # add main page
+        self.selection_view = SelectionWidget(self.model, self.training_view)
+        self.initalize_view(self.selection_view)
+
         self.viewer: napari.Viewer = viewer
 
-    def handle_event(self, event: MainEvent) -> None:
+        self.model.set_current_view(self.selection_view)
+
+    def handle_event(self, event: Event) -> None:
         """
         Handle event function for the main widget, which handles MainEvents.
 
         inputs:
             event - MainEvent
         """
-        print("main handle event called")
-        # remove a view if already being displayed
-        if event == MainEvent.MAIN:
-            self.set_view(self.selection_view)
-        elif event == MainEvent.TRAINING:
-            self.set_view(self.training_view)
-
-    def open_training_view(self) -> None:
-        """
-        Open the training view
-        """
-        self.mainmodel.set_current_page(Page.TRAINING)
-
-    def open_main_view(self) -> None:
-        """
-        Open the main view
-        """
-        self.mainmodel.set_current_page(Page.MAIN)
+        self.set_view(self.model.get_current_view())
 
     def set_view(self, view: View) -> None:
         """
