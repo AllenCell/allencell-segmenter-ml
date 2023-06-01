@@ -6,6 +6,8 @@ from qtpy.QtWidgets import (
     QSizePolicy,
     QStackedWidget,
 )
+
+from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.model.main_model import MainModel, Page
 from allencell_ml_segmenter.model.subscriber import Subscriber
 from allencell_ml_segmenter.model.event import MainEvent
@@ -15,7 +17,7 @@ from allencell_ml_segmenter.view.sample_view_controller import (
 from allencell_ml_segmenter.widgets.selection_widget import SelectionWidget
 
 
-class MainMeta(type(QWidget), type(Subscriber)):
+class MainMeta(type(QStackedWidget), type(Subscriber)):
     """
     Metaclass for MainWidget
 
@@ -24,7 +26,7 @@ class MainMeta(type(QWidget), type(Subscriber)):
     pass
 
 
-class MainWidget(QWidget, Subscriber, metaclass=MainMeta):
+class MainWidget(QStackedWidget, Subscriber, metaclass=MainMeta):
     """
     Main widget that is displayed in the plugin window. This widget is an empty Qwidget that supports adding and removing different
     views from the main layout by responding to MainEvents.
@@ -42,21 +44,18 @@ class MainWidget(QWidget, Subscriber, metaclass=MainMeta):
         self.mainmodel: MainModel = MainModel()
         self.mainmodel.subscribe(self)
 
-        # Widget stack
-        self.stacked_widget = QStackedWidget()
+        self.view_to_index = dict()
+
         # add main page
-        self.selection_widget = SelectionWidget(self.mainmodel)
-        self.stacked_widget.addWidget(self.selection_widget)
+        self.selection_view = SelectionWidget(self.mainmodel)
+        self.initalize_view(self.selection_view)
+
         # add training page
-        self.training_view_controller = SampleViewController(self.mainmodel)
-        self.stacked_widget.addWidget(self.training_view_controller)
+        self.training_view = SampleViewController(self.mainmodel)
+        self.initalize_view(self.training_view)
 
-        self.layout().addWidget(self.stacked_widget)
         self.open_main_view()
-
         self.viewer: napari.Viewer = viewer
-
-        self.stacked_widget.setCurrentIndex(1)
 
     def handle_event(self, event: MainEvent) -> None:
         """
@@ -68,9 +67,9 @@ class MainWidget(QWidget, Subscriber, metaclass=MainMeta):
         print("main handle event called")
         # remove a view if already being displayed
         if event == MainEvent.MAIN:
-            self.stacked_widget.setCurrentIndex(0)
+            self.set_view(self.selection_view)
         elif event == MainEvent.TRAINING:
-            self.stacked_widget.setCurrentIndex(1)
+            self.set_view(self.training_view)
 
     def open_training_view(self) -> None:
         """
@@ -83,3 +82,17 @@ class MainWidget(QWidget, Subscriber, metaclass=MainMeta):
         Open the main view
         """
         self.mainmodel.set_current_page(Page.MAIN)
+
+    def set_view(self, view: View) -> None:
+        """
+        Set the current view
+        """
+        self.setCurrentIndex(self.view_to_index[view])
+
+    def initalize_view(self, view: View) -> None:
+        # QStackedWidget count method keeps track of how many child widgets have been added
+        self.view_to_index[view] = self.count()
+        self.addWidget(view)
+
+
+
