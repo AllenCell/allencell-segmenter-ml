@@ -1,9 +1,9 @@
 import pytest
 from unittest.mock import Mock
-from allencell_ml_segmenter.widgets.sample_widget import SampleWidget
+from allencell_ml_segmenter.widgets.training_widget import TrainingWidget
 from allencell_ml_segmenter.model.training_model import TrainingModel
-from allencell_ml_segmenter.view.sample_view_controller import (
-    SampleViewController,
+from allencell_ml_segmenter.view.training_view_controller import (
+    TrainingViewController,
 )
 
 from qtpy.QtWidgets import QVBoxLayout
@@ -16,7 +16,7 @@ def sample_model():
 
 @pytest.fixture
 def sample_view_controller(sample_model, qtbot):
-    return SampleViewController(sample_model)
+    return TrainingViewController(sample_model)
 
 
 def test_model_property(sample_view_controller, sample_model):
@@ -46,4 +46,4 @@ def test_change_label(sample_view_controller, sample_model):
 def test_load_and_setup_ui(sample_view_controller):
     sample_view_controller.load()
     assert isinstance(sample_view_controller.layout(), QVBoxLayout)
-    assert isinstance(sample_view_controller.widget, SampleWidget)
+    assert isinstance(sample_view_controller.widget, TrainingWidget)

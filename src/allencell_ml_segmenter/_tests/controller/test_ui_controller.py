@@ -1,12 +1,12 @@
 import pytest
 from unittest.mock import Mock, patch
 from allencell_ml_segmenter.model.training_model import TrainingModel
-from allencell_ml_segmenter.view.sample_view_controller import (
-    SampleViewController,
+from allencell_ml_segmenter.view.training_view_controller import (
+    TrainingViewController,
 )
 from allencell_ml_segmenter.model.publisher import Event
-from allencell_ml_segmenter.controller.sample_controller import (
-    SampleController,
+from allencell_ml_segmenter.controller.training_controller import (
+    TrainingController,
 )
 
 
@@ -23,19 +23,19 @@ def mock_model() -> Mock:
 @pytest.fixture
 def ui_controller(
     mock_application: Mock, mock_model: Mock
-) -> SampleController:
+) -> TrainingController:
     with patch(
         "allencell_ml_segmenter.controller.ui_controller.SampleViewController"
     ):
-        return SampleController(mock_application, mock_model)
+        return TrainingController(mock_application, mock_model)
 
 
-def test_handle_event(ui_controller: SampleController) -> None:
+def test_handle_event(ui_controller: TrainingController) -> None:
     pass
 
 
 def test_index(
-    ui_controller: SampleController, mock_application: Mock
+    ui_controller: TrainingController, mock_application: Mock
 ) -> None:
     ui_controller.index()
 

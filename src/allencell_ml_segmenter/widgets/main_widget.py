@@ -9,8 +9,8 @@ from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.model.main_model import MainModel
 from allencell_ml_segmenter.model.subscriber import Subscriber
 from allencell_ml_segmenter.model.event import Event
-from allencell_ml_segmenter.view.sample_view_controller import (
-    SampleViewController,
+from allencell_ml_segmenter.view.training_view_controller import (
+    TrainingViewController,
 )
 from allencell_ml_segmenter.widgets.selection_widget import SelectionWidget
 
@@ -33,6 +33,8 @@ class MainWidget(QStackedWidget, Subscriber, metaclass=MainMeta):
 
     def __init__(self, viewer: napari.Viewer):
         super().__init__()
+        self.viewer: napari.Viewer = viewer
+
         # basic styling
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
         self.setLayout(QVBoxLayout())
@@ -45,16 +47,15 @@ class MainWidget(QStackedWidget, Subscriber, metaclass=MainMeta):
         self.view_to_index = dict()
 
         # add training page
-        self.training_view = SampleViewController(self.model)
-        self.initalize_view(self.training_view)
+        training_view = TrainingViewController(self.model)
+        self.initalize_view(training_view)
 
         # add main page
-        self.selection_view = SelectionWidget(self.model, self.training_view)
-        self.initalize_view(self.selection_view)
+        selection_view = SelectionWidget(self.model)
+        self.initalize_view(selection_view)
 
-        self.viewer: napari.Viewer = viewer
-
-        self.model.set_current_view(self.selection_view)
+        # start on selection view
+        self.model.set_current_view(selection_view)
 
     def handle_event(self, event: Event) -> None:
         """

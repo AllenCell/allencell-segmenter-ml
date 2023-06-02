@@ -17,7 +17,9 @@ class Publisher(ABC):
         """
         Dispatches an event to all subscribers
         """
+        print("dispatching events")
         for i in self._subscribers:
+            print(f"dispatching event {i}")
             i.handle_event(event)
 
     def subscribe(self, subscriber):

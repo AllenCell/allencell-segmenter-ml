@@ -5,6 +5,7 @@ from qtpy.QtWidgets import (
     QSizePolicy,
 )
 
+from allencell_ml_segmenter.model.event import Event
 from allencell_ml_segmenter.model.main_model import MainModel
 
 
@@ -13,7 +14,7 @@ class SelectionWidget(QWidget):
     A sample widget with two buttons for selecting between training and prediction views.
     """
 
-    def __init__(self, model: MainModel, training_view: QWidget):
+    def __init__(self, model: MainModel):
         super().__init__()
         # self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
         self.setLayout(QVBoxLayout())
@@ -22,17 +23,24 @@ class SelectionWidget(QWidget):
         # Controller
         self.training_button = QPushButton("Training View")
         self.training_button.clicked.connect(
-            lambda: self.model.set_current_view(training_view)
+            lambda: self.model.dispatch(Event.TRAINING_SELECTED)
         )
-        self.back_button = QPushButton("training View")
-        # self.back_button.clicked.connect(
-        #     # lambda: self.model.set_current_view(training_view)
-        # )
+        self.prediction_button = QPushButton("Prediction View")
+        self.prediction_button.clicked.connect(
+            lambda: self.model.dispatch(Event.PREDICTION_SELECTED)
+        )
 
         # add buttons
         self.layout().addWidget(self.training_button)
-        self.layout().addWidget(self.back_button)
+        self.layout().addWidget(self.prediction_button)
 
         # model
         self.model = model
+        self.model.subscribe(self)
+
+    def handle_event(self, event: Event) -> None:
+        if event == Event.MAIN_SELECTED:
+            self.model.set_current_view(self)
+
+
 
