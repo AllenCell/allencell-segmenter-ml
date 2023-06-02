@@ -8,7 +8,7 @@ from qtpy.QtWidgets import (
 from typing import Callable, List
 
 
-class SampleWidget(QWidget):
+class TrainingWidget(QWidget):
     """
     A sample widget for training a model.
 
@@ -34,3 +34,4 @@ class SampleWidget(QWidget):
         print("buttons connected")
         for idx, function in enumerate(functions):
             self.btns[idx].clicked.connect(function)
+

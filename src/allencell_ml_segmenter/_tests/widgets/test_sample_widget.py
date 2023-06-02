@@ -1,10 +1,10 @@
 import pytest
-from allencell_ml_segmenter.widgets.sample_widget import SampleWidget
+from allencell_ml_segmenter.widgets.training_widget import TrainingWidget
 
 
 @pytest.fixture
 def sample_widget(qtbot):
-    return SampleWidget()
+    return TrainingWidget()
 
 
 def test_set_label_text(sample_widget):
