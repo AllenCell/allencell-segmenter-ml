@@ -44,15 +44,16 @@ class MainWidget(QStackedWidget, Subscriber, metaclass=MainMeta):
         self.model: MainModel = MainModel()
         self.model.subscribe(self)
 
+        # Dictionaries of views to index values
         self.view_to_index = dict()
 
         # add training page
         training_view = TrainingViewController(self.model)
-        self.initalize_view(training_view)
+        self.initialize_view(training_view)
 
         # add main page
         selection_view = SelectionWidget(self.model)
-        self.initalize_view(selection_view)
+        self.initialize_view(selection_view)
 
         # start on selection view
         self.model.set_current_view(selection_view)
@@ -68,11 +69,11 @@ class MainWidget(QStackedWidget, Subscriber, metaclass=MainMeta):
 
     def set_view(self, view: View) -> None:
         """
-        Set the current view
+        Set the current view, must be initialized first
         """
         self.setCurrentIndex(self.view_to_index[view])
 
-    def initalize_view(self, view: View) -> None:
+    def initialize_view(self, view: View) -> None:
         # QStackedWidget count method keeps track of how many child widgets have been added
         self.view_to_index[view] = self.count()
         self.addWidget(view)
