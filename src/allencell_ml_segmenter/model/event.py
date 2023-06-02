@@ -10,3 +10,6 @@ class Event(Enum):
     PREDICTION = "prediction"
     MAIN = "main"
     CHANGE_VIEW = "change_view"
+    TRAINING_SELECTED = "training_selected"
+    PREDICTION_SELECTED = "prediction_selected"
+    MAIN_SELECTED = "main_selected"
