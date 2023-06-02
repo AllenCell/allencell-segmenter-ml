@@ -6,9 +6,9 @@ from allencell_ml_segmenter.model.publisher import Subscriber
 from allencell_ml_segmenter.model.main_model import MainModel
 
 
-class TrainingViewController(View, Subscriber):
+class TrainingView(View, Subscriber):
     """
-    ViewController for SampleWidget, responsible for handling events and updating the model + UI.
+    View that is a subscriber for TrainingWidget, responsible for handling events and updating the model + UI.
     """
 
     def __init__(self, main_model: MainModel):
@@ -19,12 +19,11 @@ class TrainingViewController(View, Subscriber):
 
         # models
         self._main_model = main_model
-        # self._model = TrainingModel()
         self._main_model.subscribe(self)
 
         # init widget and connect slots
         widget = TrainingWidget()
-        widget.connectSlots([self.change_label, self.back_to_main])
+        widget.connectSlots([self.back_to_main, self.back_to_main])
         layout.addWidget(widget)
 
     def handle_event(self, event: Event) -> None:
@@ -34,13 +33,6 @@ class TrainingViewController(View, Subscriber):
         print("recieved event in training view controller")
         if event == Event.TRAINING_SELECTED:
             self._main_model.set_current_view(self)
-
-    def change_label(self) -> None:
-        """
-        Updates model in order to change label in UI
-        """
-        print("change label called")
-        # self._model.set_model_training(not self._model.get_model_training())
 
     def back_to_main(self) -> None:
         """

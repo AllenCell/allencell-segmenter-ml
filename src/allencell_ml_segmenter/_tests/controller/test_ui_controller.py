@@ -1,8 +1,8 @@
 import pytest
 from unittest.mock import Mock, patch
 from allencell_ml_segmenter.model.training_model import TrainingModel
-from allencell_ml_segmenter.view.training_view_controller import (
-    TrainingViewController,
+from allencell_ml_segmenter.view.training_view import (
+    TrainingView,
 )
 from allencell_ml_segmenter.model.publisher import Event
 from allencell_ml_segmenter.controller.training_controller import (
