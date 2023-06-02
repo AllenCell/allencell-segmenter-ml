@@ -9,8 +9,8 @@ from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.model.main_model import MainModel
 from allencell_ml_segmenter.model.subscriber import Subscriber
 from allencell_ml_segmenter.model.event import Event
-from allencell_ml_segmenter.view.training_view_controller import (
-    TrainingViewController,
+from allencell_ml_segmenter.view.training_view import (
+    TrainingView,
 )
 from allencell_ml_segmenter.widgets.selection_widget import SelectionWidget
 
@@ -48,7 +48,7 @@ class MainWidget(QStackedWidget, Subscriber, metaclass=MainMeta):
         self.view_to_index = dict()
 
         # add training page
-        training_view = TrainingViewController(self.model)
+        training_view = TrainingView(self.model)
         self.initialize_view(training_view)
 
         # add main page
