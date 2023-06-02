@@ -5,7 +5,7 @@ from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.model.main_model import MainModel
 from allencell_ml_segmenter.model.subscriber import Subscriber
 from allencell_ml_segmenter.model.event import Event
-from allencell_ml_segmenter.view.training_view_controller import TrainingViewController
+from allencell_ml_segmenter.view.training_view import TrainingView
 from allencell_ml_segmenter.widgets.selection_widget import SelectionWidget
 from allencell_ml_segmenter.widgets.main_widget import MainWidget
 from unittest.mock import Mock
@@ -24,7 +24,7 @@ def test_init(viewer, qtbot):
 
 def test_handle_event(viewer, qtbot):
     main_widget = MainWidget(viewer)
-    training_view = TrainingViewController(main_widget.model)
+    training_view = TrainingView(main_widget.model)
     main_widget.initialize_view(training_view)
     assert main_widget.currentIndex() != main_widget.view_to_index[training_view]
 
