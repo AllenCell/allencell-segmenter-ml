@@ -1,5 +1,5 @@
 import pytest
-from allencell_ml_segmenter.model.training_model import TrainingModel
+from allencell_ml_segmenter.models.training_model import TrainingModel
 from allencell_ml_segmenter.core.publisher import Event
 from allencell_ml_segmenter._tests.fakes.fake_subscriber import FakeSubscriber
 

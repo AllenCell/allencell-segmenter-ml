@@ -4,9 +4,8 @@ from qtpy.QtWidgets import (
     QWidget,
 )
 
-from allencell_ml_segmenter.core.event import Event
-from allencell_ml_segmenter.model.main_model import MainModel
-
+from allencell_ml_segmenter.core import Event
+from allencell_ml_segmenter.models import MainModel
 
 class SelectionWidget(QWidget):
     """
@@ -33,13 +32,10 @@ class SelectionWidget(QWidget):
         self.layout().addWidget(self.training_button)
         self.layout().addWidget(self.prediction_button)
 
-        # model
+        # models
         self.model = model
         self.model.subscribe(self)
 
     def handle_event(self, event: Event) -> None:
         if event == Event.MAIN_SELECTED:
             self.model.set_current_view(self)
-
-
-
