@@ -1,7 +1,7 @@
 from abc import ABC
 from typing import List
 
-from allencell_ml_segmenter.core import Subscriber, Event
+from . import Subscriber, Event
 
 
 class Publisher(ABC):
@@ -20,7 +20,7 @@ class Publisher(ABC):
         for i in self._subscribers:
             i.handle_event(event)
 
-    def subscribe(self, subscriber):
+    def subscribe(self, subscriber: Subscriber):
         """
         subscribes a subscriber to this publisher
         """
