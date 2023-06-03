@@ -1,16 +1,15 @@
+from typing import Callable, List
+
 from qtpy.QtWidgets import (
     QPushButton,
     QVBoxLayout,
     QWidget,
     QSizePolicy,
-    QLabel,
 )
-from typing import Callable, List
-
 
 class TrainingWidget(QWidget):
     """
-    A sample widget for training a model.
+    A sample widget for training a models.
 
     """
 
@@ -31,7 +30,5 @@ class TrainingWidget(QWidget):
         self.btns.append(self.return_btn)
 
     def connectSlots(self, functions: List[Callable]) -> None:
-        print("buttons connected")
         for idx, function in enumerate(functions):
             self.btns[idx].clicked.connect(function)
-
