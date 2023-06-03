@@ -2,10 +2,9 @@ from qtpy.QtWidgets import (
     QPushButton,
     QVBoxLayout,
     QWidget,
-    QSizePolicy,
 )
 
-from allencell_ml_segmenter.model.event import Event
+from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.model.main_model import MainModel
 
 

@@ -1,6 +1,6 @@
-from allencell_ml_segmenter.core.view import View
-from allencell_ml_segmenter.model.event import Event
-from allencell_ml_segmenter.model.publisher import Publisher
+from allencell_ml_segmenter.view.view import View
+from allencell_ml_segmenter.core.event import Event
+from allencell_ml_segmenter.core.publisher import Publisher
 
 class MainModel(Publisher):
     """
