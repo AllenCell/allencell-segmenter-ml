@@ -1,9 +1,8 @@
-from allencell_ml_segmenter._tests.fakes.fake_subscriber import FakeSubscriber
 import pytest
 from unittest.mock import Mock
-from allencell_ml_segmenter.core.view import View
+from allencell_ml_segmenter.view.view import View
 from allencell_ml_segmenter.model.main_model import MainModel
-from allencell_ml_segmenter.model.publisher import Event
+from allencell_ml_segmenter.core.publisher import Event
 from allencell_ml_segmenter._tests.fakes.fake_subscriber import FakeSubscriber
 
 @pytest.fixture
@@ -16,7 +15,7 @@ def fake_subscriber():
 
 def test_init(main_model):
     assert main_model._current_view == None
-    assert main_model._subscribers.len() == 0
+    assert len(main_model._subscribers) == 0
 
 def test_get_current_view(main_model):
     assert main_model.get_current_view() == None
