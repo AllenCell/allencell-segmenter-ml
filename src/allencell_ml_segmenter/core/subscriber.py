@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from allencell_ml_segmenter.model.event import Event
+from allencell_ml_segmenter.core.event import Event
 
 
 class Subscriber(ABC):

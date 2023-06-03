@@ -1,4 +1,4 @@
-from allencell_ml_segmenter.model.publisher import Publisher, Event
+from allencell_ml_segmenter.core.publisher import Publisher, Event
 
 
 class TrainingModel(Publisher):

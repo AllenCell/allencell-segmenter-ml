@@ -1,5 +1,5 @@
-from allencell_ml_segmenter.model.subscriber import Subscriber
-from allencell_ml_segmenter.model.event import Event
+from allencell_ml_segmenter.core.subscriber import Subscriber
+from allencell_ml_segmenter.core.event import Event
 
 
 # Testing publishers with this mock subscriber class
