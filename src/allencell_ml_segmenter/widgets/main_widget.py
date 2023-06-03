@@ -5,14 +5,10 @@ from qtpy.QtWidgets import (
     QStackedWidget,
 )
 
-from allencell_ml_segmenter.view.view import View
-from allencell_ml_segmenter.model.main_model import MainModel
-from allencell_ml_segmenter.core.subscriber import Subscriber
-from allencell_ml_segmenter.core.event import Event
-from allencell_ml_segmenter.view.training_view import (
-    TrainingView,
-)
-from allencell_ml_segmenter.widgets.selection_widget import SelectionWidget
+from allencell_ml_segmenter.core import Subscriber, Event
+from allencell_ml_segmenter.models import MainModel
+from allencell_ml_segmenter.views import View, TrainingView
+from allencell_ml_segmenter.widgets import SelectionWidget
 
 
 class MainMeta(type(QStackedWidget), type(Subscriber)):
@@ -55,7 +51,7 @@ class MainWidget(QStackedWidget, Subscriber, metaclass=MainMeta):
         selection_view = SelectionWidget(self.model)
         self.initialize_view(selection_view)
 
-        # start on selection view
+        # start on selection views
         self.model.set_current_view(selection_view)
 
     def handle_event(self, event: Event) -> None:
@@ -69,7 +65,7 @@ class MainWidget(QStackedWidget, Subscriber, metaclass=MainMeta):
 
     def set_view(self, view: View) -> None:
         """
-        Set the current view, must be initialized first
+        Set the current views, must be initialized first
         """
         self.setCurrentIndex(self.view_to_index[view])
 
@@ -77,6 +73,3 @@ class MainWidget(QStackedWidget, Subscriber, metaclass=MainMeta):
         # QStackedWidget count method keeps track of how many child widgets have been added
         self.view_to_index[view] = self.count()
         self.addWidget(view)
-
-
-
