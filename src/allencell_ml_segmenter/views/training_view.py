@@ -1,9 +1,9 @@
-from allencell_ml_segmenter.view.view import View
-from allencell_ml_segmenter.widgets.training_widget import TrainingWidget
 from qtpy.QtWidgets import QVBoxLayout
-from allencell_ml_segmenter.models.training_model import Event
-from allencell_ml_segmenter.core.publisher import Subscriber
-from allencell_ml_segmenter.models.main_model import MainModel
+
+from allencell_ml_segmenter.core import Subscriber, Event
+from allencell_ml_segmenter.models import MainModel
+from allencell_ml_segmenter.views import View
+from allencell_ml_segmenter.widgets import TrainingWidget
 
 
 class TrainingView(View, Subscriber):
