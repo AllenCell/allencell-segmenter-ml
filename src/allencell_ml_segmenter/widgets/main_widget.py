@@ -5,10 +5,10 @@ from qtpy.QtWidgets import (
     QStackedWidget,
 )
 
-from allencell_ml_segmenter.core.view import View
+from allencell_ml_segmenter.view.view import View
 from allencell_ml_segmenter.model.main_model import MainModel
-from allencell_ml_segmenter.model.subscriber import Subscriber
-from allencell_ml_segmenter.model.event import Event
+from allencell_ml_segmenter.core.subscriber import Subscriber
+from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.view.training_view import (
     TrainingView,
 )
