@@ -2,9 +2,10 @@ from allencell_ml_segmenter.view.view import View
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.publisher import Publisher
 
+
 class MainModel(Publisher):
     """
-    Main model for this application
+    Main models for this application
     """
 
     def __init__(self):
