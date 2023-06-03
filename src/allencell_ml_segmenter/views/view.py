@@ -1,6 +1,6 @@
-from abc import ABC, abstractmethod
-from typing import Any
-from qtpy.QtWidgets import QWidget, QFrame
+from abc import ABC
+
+from qtpy.QtWidgets import QWidget
 
 
 class ViewMeta(type(QWidget), type(ABC)):
