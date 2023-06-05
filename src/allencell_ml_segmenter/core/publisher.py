@@ -1,7 +1,8 @@
 from abc import ABC
 from typing import List
 
-from . import Subscriber, Event
+from allencell_ml_segmenter.core.subscriber import Subscriber
+from allencell_ml_segmenter.core.event import Event
 
 
 class Publisher(ABC):
