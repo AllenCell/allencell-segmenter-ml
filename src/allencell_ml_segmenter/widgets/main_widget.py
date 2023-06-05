@@ -5,10 +5,12 @@ from qtpy.QtWidgets import (
     QStackedWidget,
 )
 
-from allencell_ml_segmenter.core import Subscriber, Event
-from allencell_ml_segmenter.models import MainModel
-from allencell_ml_segmenter.views import View, TrainingView
-from allencell_ml_segmenter.widgets import SelectionWidget
+from allencell_ml_segmenter.core.subscriber import Subscriber
+from allencell_ml_segmenter.core.event import Event
+from allencell_ml_segmenter.models.main_model import MainModel
+from allencell_ml_segmenter.views.view import View
+from allencell_ml_segmenter.views.training_view import TrainingView
+from allencell_ml_segmenter.widgets.selection_widget import SelectionWidget
 
 
 class MainMeta(type(QStackedWidget), type(Subscriber)):

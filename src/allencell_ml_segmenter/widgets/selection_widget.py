@@ -4,8 +4,8 @@ from qtpy.QtWidgets import (
     QWidget,
 )
 
-from allencell_ml_segmenter.core import Event
-from allencell_ml_segmenter.models import MainModel
+from allencell_ml_segmenter.core.event import Event
+from allencell_ml_segmenter.models.main_model import MainModel
 
 class SelectionWidget(QWidget):
     """
