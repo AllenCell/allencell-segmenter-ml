@@ -56,8 +56,12 @@ clean:
 > rm -fr ./venv
 .PHONY: clean
 
-test: install-test-lint ## run pytest with coverage report
+test: install-test-lint ## run pytest
 > pytest
+.PHONY: test
+
+test-cov: install-test-lint ## run pytest with coverage report
+> pytest --cov=allencell_ml_segmenter
 .PHONY: test
 
 lint: ## run a lint check / report
