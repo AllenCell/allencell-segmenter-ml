@@ -1,0 +1,28 @@
+from abc import ABC
+from typing import List
+
+from allencell_ml_segmenter.core.subscriber import Subscriber
+from allencell_ml_segmenter.core.event import Event
+
+
+class Publisher(ABC):
+    """
+    ABC publisher class
+    """
+
+    def __init__(self):
+        # list of subscribers subscribed to this publisher
+        self._subscribers: List[Subscriber] = list()
+
+    def dispatch(self, event: Event):
+        """
+        Dispatches an event to all subscribers
+        """
+        for i in self._subscribers:
+            i.handle_event(event)
+
+    def subscribe(self, subscriber: Subscriber):
+        """
+        subscribes a subscriber to this publisher
+        """
+        self._subscribers.append(subscriber)
