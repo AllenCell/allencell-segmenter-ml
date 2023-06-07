@@ -59,6 +59,10 @@ To install latest development version :
 Contributions are very welcome. Tests can be run with pytest, or `make test`, please ensure
 the coverage at least stays the same before you submit a pull request.
 
+To check coverage, run pytest with the '--cov' flag:
+    `pytest --cov=allencell_ml_segmenter`
+or use `make test-cov`.
+
 ## License
 
 Distributed under the terms of the [BSD-3] license,
