@@ -7,9 +7,10 @@ from qtpy.QtWidgets import (
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.models.main_model import MainModel
 
+
 class SelectionWidget(QWidget):
     """
-    A sample widget with two buttons for selecting between training and prediction views.
+    A sample widget with two buttons for selecting between training and example views.
     """
 
     def __init__(self, model: MainModel):
@@ -23,14 +24,14 @@ class SelectionWidget(QWidget):
         self.training_button.clicked.connect(
             lambda: self.model.dispatch(Event.TRAINING_SELECTED)
         )
-        self.prediction_button = QPushButton("Prediction View")
-        self.prediction_button.clicked.connect(
-            lambda: self.model.dispatch(Event.PREDICTION_SELECTED)
+        self.example_button = QPushButton("Example View")
+        self.example_button.clicked.connect(
+            lambda: self.model.dispatch(Event.EXAMPLE_SELECTED)
         )
 
         # add buttons
         self.layout().addWidget(self.training_button)
-        self.layout().addWidget(self.prediction_button)
+        self.layout().addWidget(self.example_button)
 
         # models
         self.model = model

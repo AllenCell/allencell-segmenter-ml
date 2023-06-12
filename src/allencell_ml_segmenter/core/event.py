@@ -13,3 +13,5 @@ class Event(Enum):
     TRAINING_SELECTED = "training_selected"
     PREDICTION_SELECTED = "prediction_selected"
     MAIN_SELECTED = "main_selected"
+    EXAMPLE = "example"
+    EXAMPLE_SELECTED = "example_selected"

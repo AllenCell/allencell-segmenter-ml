@@ -11,6 +11,7 @@ from allencell_ml_segmenter.models.main_model import MainModel
 from allencell_ml_segmenter.views.view import View
 from allencell_ml_segmenter.views.training_view import TrainingView
 from allencell_ml_segmenter.widgets.selection_widget import SelectionWidget
+from allencell_ml_segmenter.views.example_view import ExampleView
 
 
 class MainMeta(type(QStackedWidget), type(Subscriber)):
@@ -48,6 +49,10 @@ class MainWidget(QStackedWidget, Subscriber, metaclass=MainMeta):
         # add training page
         training_view = TrainingView(self.model)
         self.initialize_view(training_view)
+
+        # add example page
+        example_view = ExampleView(self.model)
+        self.initialize_view(example_view)
 
         # add main page
         selection_view = SelectionWidget(self.model)
