@@ -17,7 +17,7 @@ class ExampleWidget(QWidget):
 
         self.responsive_widgets: List[QWidget] = []
 
-        self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
+        self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
 
@@ -31,7 +31,6 @@ class ExampleWidget(QWidget):
         # Add checkboxes to the same row
         checkbox_layout.addWidget(self.first_option)
         checkbox_layout.addWidget(self.second_option)
-        checkbox_layout.setContentsMargins(0, 0, 0, 0)
 
         # Textbox
         self.textbox: QLineEdit = QLineEdit()
@@ -77,14 +76,10 @@ class ExampleWidget(QWidget):
         self.layout().addLayout(button_layout)
 
     def connect_slots(self, functions: List[Callable]) -> None:
-        """
-        changes holds corresponding 'clicked', 'valueChanged', etc.
-        Use exec() after building the f-string to run what you want.
-        """
-        for idx, function in enumerate(functions):
-            if idx < 2:
-                self.responsive_widgets[idx].stateChanged.connect(function)
-            elif idx == 2:
-                self.responsive_widgets[idx].valueChanged.connect(function)
+        for idx, widget in enumerate(self.responsive_widgets):
+            if isinstance(widget, QCheckBox):
+                widget.stateChanged.connect(functions[idx])
+            elif isinstance(widget, QSlider):
+                widget.valueChanged.connect(functions[idx])
             else:
-                self.responsive_widgets[idx].clicked.connect(function)
+                widget.clicked.connect(functions[idx])
