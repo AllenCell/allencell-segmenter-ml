@@ -64,4 +64,39 @@ def test_get_checked_and_unchecked_rows(check_box_list_widget):
     unchecked_rows = check_box_list_widget.getUncheckedRows()
     assert unchecked_rows == [0, 2]
 
+def test_remove_checked_rows(check_box_list_widget):
+    check_box_list_widget.add_item("1")
+    check_box_list_widget.add_item("2")
+    check_box_list_widget.add_item("3")
+    check_box_list_widget.add_item("4")
+    check_box_list_widget.item(0).setCheckState(Qt.Checked)
+    check_box_list_widget.item(2).setCheckState(Qt.Checked)
+
+    check_box_list_widget.removeCheckedRows()
+
+    assert check_box_list_widget.count() == 2
+    assert check_box_list_widget.item(0).text() == "2"
+    assert check_box_list_widget.item(1).text() == "4"
+
+def test_remove_unchecked_rows(check_box_list_widget):
+    check_box_list_widget.add_item("1")
+    check_box_list_widget.add_item("2")
+    check_box_list_widget.add_item("3")
+    check_box_list_widget.add_item("4")
+    # index 1 and 3 are checked, so 0 and 2 are not
+    # initially boxes are unchecked
+    check_box_list_widget.item(1).setCheckState(Qt.Checked)
+    check_box_list_widget.item(3).setCheckState(Qt.Checked)
+
+    check_box_list_widget.removeUncheckedRows()
+
+    assert check_box_list_widget.count() == 2
+    assert check_box_list_widget.item(0).text() == "2"
+    assert check_box_list_widget.item(1).text() == "4"
+
+
+
+
+
+
 
