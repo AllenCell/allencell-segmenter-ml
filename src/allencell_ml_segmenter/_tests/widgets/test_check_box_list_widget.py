@@ -3,9 +3,9 @@ from unittest.mock import Mock
 from qtpy.QtWidgets import QListWidgetItem
 from qtpy.QtCore import Qt
 
-from allencell_ml_segmenter.widgets.check_box_list_widget import CheckBoxListWidget
-
-
+from allencell_ml_segmenter.widgets.check_box_list_widget import (
+    CheckBoxListWidget,
+)
 
 
 @pytest.fixture
@@ -20,7 +20,9 @@ def test_init(check_box_list_widget):
         check_box_list_widget._show_tool_tip
     )
     assert check_box_list_widget.itemChanged.isConnected(
-        check_box_list_widget._send_checked_signal)
+        check_box_list_widget._send_checked_signal
+    )
+
 
 def test_add_item(check_box_list_widget):
     # check_box_list_widget.add_item() accepts strings or QListWidgetItems
@@ -33,6 +35,7 @@ def test_add_item(check_box_list_widget):
     assert isinstance(check_box_list_widget.item(1), QListWidgetItem)
     assert check_box_list_widget.item(1).text() == "2"
 
+
 def test_toggle_state(check_box_list_widget):
     check_box_list_widget.add_item("1")
     check_box_list_widget.add_item("2")
@@ -44,6 +47,7 @@ def test_toggle_state(check_box_list_widget):
     check_box_list_widget.toggleState(Qt.Unchecked)
     for i in range(check_box_list_widget.count()):
         assert check_box_list_widget.item(i).checkState() == Qt.Unchecked
+
 
 def test_get_checked_and_unchecked_rows(check_box_list_widget):
     check_box_list_widget.add_item("1")
@@ -64,6 +68,7 @@ def test_get_checked_and_unchecked_rows(check_box_list_widget):
     unchecked_rows = check_box_list_widget.getUncheckedRows()
     assert unchecked_rows == [0, 2]
 
+
 def test_remove_checked_rows(check_box_list_widget):
     check_box_list_widget.add_item("1")
     check_box_list_widget.add_item("2")
@@ -77,6 +82,7 @@ def test_remove_checked_rows(check_box_list_widget):
     assert check_box_list_widget.count() == 2
     assert check_box_list_widget.item(0).text() == "2"
     assert check_box_list_widget.item(1).text() == "4"
+
 
 def test_remove_unchecked_rows(check_box_list_widget):
     check_box_list_widget.add_item("1")
@@ -93,10 +99,3 @@ def test_remove_unchecked_rows(check_box_list_widget):
     assert check_box_list_widget.count() == 2
     assert check_box_list_widget.item(0).text() == "2"
     assert check_box_list_widget.item(1).text() == "4"
-
-
-
-
-
-
-
