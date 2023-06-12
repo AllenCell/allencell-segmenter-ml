@@ -7,6 +7,7 @@ from qtpy.QtWidgets import (
     QSizePolicy,
 )
 
+
 class TrainingWidget(QWidget):
     """
     A sample widget for training a models.

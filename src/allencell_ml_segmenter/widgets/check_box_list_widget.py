@@ -1,6 +1,7 @@
 from qtpy.QtWidgets import QListWidget, QListWidgetItem
 from typing import Union
-from qtpy.QtCore import (Qt, Signal)
+from qtpy.QtCore import Qt, Signal
+
 
 class CheckBoxListWidget(QListWidget):
     checkedSignal: Signal = Signal(int, Qt.CheckState)
@@ -61,4 +62,4 @@ class CheckBoxListWidget(QListWidget):
         if self.fontMetrics().boundingRect(text).width() > self.width():
             self.setToolTip(text)
         else:
-            self.setToolTip('')
+            self.setToolTip("")
