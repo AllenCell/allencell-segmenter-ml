@@ -24,14 +24,14 @@ class SelectionWidget(QWidget):
         self.training_button.clicked.connect(
             lambda: self.model.dispatch(Event.TRAINING_SELECTED)
         )
-        self.example_button = QPushButton("Example View")
-        self.example_button.clicked.connect(
+        self.prediction_button = QPushButton("Example View")
+        self.prediction_button.clicked.connect(
             lambda: self.model.dispatch(Event.EXAMPLE_SELECTED)
         )
 
         # add buttons
         self.layout().addWidget(self.training_button)
-        self.layout().addWidget(self.example_button)
+        self.layout().addWidget(self.prediction_button)
 
         # models
         self.model = model

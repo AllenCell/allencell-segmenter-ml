@@ -26,7 +26,7 @@ def test_init(selection_widget):
     assert isinstance(selection_widget.training_button, QPushButton)
     assert selection_widget.training_button.text() == "Training View"
     assert isinstance(selection_widget.prediction_button, QPushButton)
-    assert selection_widget.prediction_button.text() == "Prediction View"
+    assert selection_widget.prediction_button.text() == "Example View"
 
 
 def test_training_button(selection_widget):
@@ -38,4 +38,4 @@ def test_training_button(selection_widget):
 def test_prediction_button_click(selection_widget):
     selection_widget.prediction_button.click()
     assert selection_widget.model.dispatch_called
-    assert selection_widget.model.dispatch_event == Event.PREDICTION_SELECTED
+    assert selection_widget.model.dispatch_event == Event.EXAMPLE_SELECTED
