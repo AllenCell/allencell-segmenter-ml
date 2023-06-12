@@ -14,6 +14,7 @@ class ExampleView(View, Subscriber):
     """
     View that is a subscriber for ExampleWidget, responsible for handling events and updating the models + UI.
     """
+
     def __init__(self, main_model: MainModel):
         super().__init__()
         layout: QVBoxLayout = QVBoxLayout()
@@ -26,9 +27,15 @@ class ExampleView(View, Subscriber):
 
         # init self.widget and connect slots
         self.widget: ExampleWidget = ExampleWidget()
-        self.widget.connect_slots([self.on_first_option_click, self.on_second_option_click,
-                                  self.update_slider_label, self.on_save_click,
-                                  self.back_to_main])
+        self.widget.connect_slots(
+            [
+                self.on_first_option_click,
+                self.on_second_option_click,
+                self.update_slider_label,
+                self.on_save_click,
+                self.back_to_main,
+            ]
+        )
         layout.addWidget(self.widget)
 
     def handle_event(self, event: Event) -> None:
@@ -68,7 +75,9 @@ class ExampleView(View, Subscriber):
 
         # Ask user to choose a checkbox if none are selected
         if not any(map(lambda x: x.isChecked(), self.widget.options)):
-            QMessageBox.warning(self, "Cannot save!", "You must select an option.")
+            QMessageBox.warning(
+                self, "Cannot save!", "You must select an option."
+            )
             return
 
         # Grab text from text box
@@ -103,7 +112,9 @@ class ExampleView(View, Subscriber):
         self.widget.slider.repaint()
 
         # Write status to test.yaml
-        if not os.path.isfile("./test.yaml"): # TODO: change file path, "./" refers to desktop rn
+        if not os.path.isfile(
+            "./test.yaml"
+        ):  # TODO: change file path, "./" refers to desktop rn
             with open("./test.yaml", "w") as file:
                 yaml.dump({0: status_dict}, file)
         else:

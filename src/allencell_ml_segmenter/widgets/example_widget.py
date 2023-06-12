@@ -1,8 +1,14 @@
 from qtpy.QtWidgets import (
-    QWidget, QSizePolicy, QVBoxLayout,
-    QHBoxLayout, QCheckBox, QLineEdit,
-    QComboBox, QSlider, QPushButton,
-    QLabel
+    QWidget,
+    QSizePolicy,
+    QVBoxLayout,
+    QHBoxLayout,
+    QCheckBox,
+    QLineEdit,
+    QComboBox,
+    QSlider,
+    QPushButton,
+    QLabel,
 )
 from qtpy.QtCore import Qt
 from typing import List, Callable
@@ -12,6 +18,7 @@ class ExampleWidget(QWidget):
     """
     An example widget meant to display various on-screen UI elements.
     """
+
     def __init__(self):
         super().__init__()
 
