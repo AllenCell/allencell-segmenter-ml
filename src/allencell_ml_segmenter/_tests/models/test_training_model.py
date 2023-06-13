@@ -11,7 +11,7 @@ def training_model():
 
 def test_set_model_training(training_model):
     subscriber = FakeSubscriber()
-    training_model.subscribe(subscriber)
+    training_model.subscribe(Event.TRAINING, subscriber)
 
     training_model.set_model_training(True)
 

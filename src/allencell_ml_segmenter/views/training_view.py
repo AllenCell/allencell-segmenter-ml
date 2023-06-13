@@ -20,7 +20,9 @@ class TrainingView(View, Subscriber):
 
         # models
         self._main_model = main_model
-        self._main_model.subscribe(self)
+        self._main_model.subscribe(Event.TRAINING_SELECTED,
+                                   self,
+                                   lambda e: self._main_model.set_current_view(self))
 
         # init widget and connect slots
         widget = TrainingWidget()
@@ -29,10 +31,7 @@ class TrainingView(View, Subscriber):
 
     def handle_event(self, event: Event) -> None:
         """
-        Handles Events from the Training Model
         """
-        if event == Event.TRAINING_SELECTED:
-            self._main_model.set_current_view(self)
 
     def back_to_main(self) -> None:
         """
