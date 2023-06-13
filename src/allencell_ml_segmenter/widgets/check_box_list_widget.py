@@ -19,12 +19,19 @@ class CheckBoxListWidget(QListWidget):
     def add_item(self, item: Union[str, QListWidgetItem]) -> None:
         if isinstance(item, str):
             item_add = QListWidgetItem(item)
+        elif isinstance(item, QListWidgetItem):
+            item_add = item
+        else:
+            raise TypeError(
+                "Item added to CheckBoxListWidget must be a string or QListWidgetItem, but"
+                f"got {type(item)} instead"
+            )
         # set checkable and unchecked by default
         item_add.setFlags(item_add.flags() | Qt.ItemIsUserCheckable)
         item_add.setCheckState(Qt.Unchecked)
         super().addItem(item_add)
 
-    def toggleState(self, state) -> None:
+    def setAllState(self, state) -> None:
         for i in range(self.count()):
             item = self.item(i)
             if item.checkState() != state:
