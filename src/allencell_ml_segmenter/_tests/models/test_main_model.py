@@ -16,13 +16,8 @@ def fake_subscriber():
     return FakeSubscriber()
 
 
-def test_init(main_model):
-    assert main_model._current_view == None
-    assert len(main_model._subscribers) == 0
-
-
 def test_get_current_view(main_model):
-    assert main_model.get_current_view() == None
+    assert main_model.get_current_view() is None
     mock_view = Mock(spec=View)
     main_model._current_view = mock_view
 
@@ -32,14 +27,7 @@ def test_get_current_view(main_model):
 def test_set_current_view(main_model, fake_subscriber):
     # set a mock views
     mock_view = Mock(spec=View)
-    main_model.set_current_view(mock_view)
-    assert main_model._current_view == mock_view
-    # set subscriber
-    assert len(main_model._subscribers) == 0
-    main_model.subscribe(fake_subscriber)
-
+    main_model.subscribe(Event.CHANGE_VIEW, fake_subscriber)
     main_model.set_current_view(mock_view)
 
-    assert main_model._current_view == mock_view
-    assert len(main_model._subscribers) == 1
     assert fake_subscriber.handled_event == Event.CHANGE_VIEW
