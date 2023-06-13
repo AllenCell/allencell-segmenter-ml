@@ -29,6 +29,17 @@ class ExampleWidget(QWidget):
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
 
+        # Textbox
+        self.textbox: QLineEdit = QLineEdit()
+        self.textbox.setPlaceholderText("Type here")
+        self.responsive_widgets.append(self.textbox)
+
+        # Dropdown
+        self.dropdown: QComboBox = QComboBox()
+        self.dropdown.addItems(["One", "Two", "Three"])
+        self.responsive_widgets.append(self.dropdown)
+
+        # Checkboxes
         checkbox_layout: QHBoxLayout = QHBoxLayout()
 
         self.first_option: QCheckBox = QCheckBox("Option 1")
@@ -39,14 +50,6 @@ class ExampleWidget(QWidget):
         # Add checkboxes to the same row
         checkbox_layout.addWidget(self.first_option)
         checkbox_layout.addWidget(self.second_option)
-
-        # Textbox
-        self.textbox: QLineEdit = QLineEdit()
-        self.textbox.setPlaceholderText("Type here")
-
-        # Dropdown
-        self.dropdown: QComboBox = QComboBox()
-        self.dropdown.addItems(["One", "Two", "Three"])
 
         # Slider
         self.slider: QSlider = QSlider(Qt.Horizontal)
@@ -85,7 +88,11 @@ class ExampleWidget(QWidget):
 
     def connect_slots(self, functions: List[Callable]) -> None:
         for idx, widget in enumerate(self.responsive_widgets):
-            if isinstance(widget, QCheckBox):
+            if isinstance(widget, QLineEdit):
+                widget.textChanged.connect(functions[idx])
+            elif isinstance(widget, QComboBox):
+                widget.currentTextChanged.connect(functions[idx])
+            elif isinstance(widget, QCheckBox):
                 widget.stateChanged.connect(functions[idx])
             elif isinstance(widget, QSlider):
                 widget.valueChanged.connect(functions[idx])

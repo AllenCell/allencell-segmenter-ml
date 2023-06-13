@@ -16,19 +16,19 @@ def viewer():
 def test_init(viewer, qtbot):
     main_widget = MainWidget(viewer)
     assert isinstance(main_widget, QStackedWidget)
-    assert isinstance(main_widget.model, MainModel)
+    assert isinstance(main_widget.main_model, MainModel)
     assert len(main_widget.view_to_index) > 0  # need at least one views loaded
 
 
 def test_handle_event(viewer, qtbot):
     main_widget = MainWidget(viewer)
-    training_view = TrainingView(main_widget.model)
+    training_view = TrainingView(main_widget.main_model)
     main_widget.initialize_view(training_view)
     assert (
         main_widget.currentIndex() != main_widget.view_to_index[training_view]
     )
 
-    main_widget.model.set_current_view(training_view)
+    main_widget.main_model.set_current_view(training_view)
 
     assert (
         main_widget.currentIndex() == main_widget.view_to_index[training_view]

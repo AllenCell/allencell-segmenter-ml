@@ -10,6 +10,7 @@ class ExampleModel(Publisher):
     def __init__(self):
         super().__init__()
         # Current state of example model usage
+        self.saved: bool = False
         self._model_in_use: bool = False
 
         # Set fields related to widget
@@ -36,3 +37,7 @@ class ExampleModel(Publisher):
         """
         self._model_in_use = running
         self.dispatch(Event.EXAMPLE)
+
+    def save(self, save_status: bool) -> None:
+        self.saved = save_status
+        self.dispatch(Event.SAVE)

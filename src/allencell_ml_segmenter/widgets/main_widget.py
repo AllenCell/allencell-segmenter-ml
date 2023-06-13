@@ -8,6 +8,7 @@ from qtpy.QtWidgets import (
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.models.main_model import MainModel
+from allencell_ml_segmenter.models.example_model import ExampleModel
 from allencell_ml_segmenter.views.view import View
 from allencell_ml_segmenter.views.training_view import TrainingView
 from allencell_ml_segmenter.widgets.selection_widget import SelectionWidget
@@ -39,27 +40,30 @@ class MainWidget(QStackedWidget, Subscriber, metaclass=MainMeta):
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
 
-        # Model
-        self.model: MainModel = MainModel()
-        self.model.subscribe(self)
+        # Models
+        self.main_model: MainModel = MainModel()
+        self.main_model.subscribe(self)
+
+        self.example_model: ExampleModel = ExampleModel()
+        self.example_model.subscribe(self)
 
         # Dictionaries of views to index values
         self.view_to_index = dict()
 
         # add training page
-        training_view = TrainingView(self.model)
+        training_view = TrainingView(self.main_model)
         self.initialize_view(training_view)
 
         # add example page
-        example_view = ExampleView(self.model)
+        example_view = ExampleView(self.main_model, self.example_model)
         self.initialize_view(example_view)
 
         # add main page
-        selection_view = SelectionWidget(self.model)
+        selection_view = SelectionWidget(self.main_model)
         self.initialize_view(selection_view)
 
         # start on selection views
-        self.model.set_current_view(selection_view)
+        self.main_model.set_current_view(selection_view)
 
     def handle_event(self, event: Event) -> None:
         """
@@ -68,7 +72,7 @@ class MainWidget(QStackedWidget, Subscriber, metaclass=MainMeta):
         inputs:
             event - MainEvent
         """
-        self.set_view(self.model.get_current_view())
+        self.set_view(self.main_model.get_current_view())
 
     def set_view(self, view: View) -> None:
         """
