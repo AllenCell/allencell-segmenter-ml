@@ -7,6 +7,7 @@ from qtpy.QtWidgets import (
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.models.main_model import MainModel
 
+
 class SelectionWidget(QWidget):
     """
     A sample widget with two buttons for selecting between training and prediction views.
@@ -34,7 +35,7 @@ class SelectionWidget(QWidget):
 
         # models
         self.model = model
-        self.model.subscribe(self)
+        self.model.subscribe(Event.MAIN_SELECTED, self)
 
     def handle_event(self, event: Event) -> None:
         if event == Event.MAIN_SELECTED:
