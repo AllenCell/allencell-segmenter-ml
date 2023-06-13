@@ -40,7 +40,7 @@ class MainWidget(QStackedWidget, Subscriber, metaclass=MainMeta):
 
         # Model
         self.model: MainModel = MainModel()
-        self.model.subscribe(self)
+        self.model.subscribe(Event.CHANGE_VIEW, self)
 
         # Dictionaries of views to index values
         self.view_to_index = dict()
