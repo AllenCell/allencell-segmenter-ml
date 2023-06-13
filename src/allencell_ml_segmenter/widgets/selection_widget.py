@@ -32,15 +32,9 @@ class SelectionWidget(QWidget):
             lambda: self.model.dispatch(Event.PREDICTION_SELECTED)
         )
 
-        test_widget = CheckBoxListWidget()
-        test_widget.add_item("test1")
-        test_widget.add_item("test2")
-        test_widget.add_item("test3")
-
         # add buttons
         self.layout().addWidget(self.training_button)
         self.layout().addWidget(self.prediction_button)
-        self.layout().addWidget(test_widget)
 
         # models
         self.model = model

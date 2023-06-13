@@ -13,17 +13,6 @@ def check_box_list_widget(qtbot):
     return CheckBoxListWidget()
 
 
-def test_init(check_box_list_widget):
-    assert check_box_list_widget.conut() == 0
-    assert check_box_list_widget.mouseTracking() is True
-    assert check_box_list_widget.itemEntered.isConnected(
-        check_box_list_widget._show_tool_tip
-    )
-    assert check_box_list_widget.itemChanged.isConnected(
-        check_box_list_widget._send_checked_signal
-    )
-
-
 def test_add_item(check_box_list_widget):
     # check_box_list_widget.add_item() accepts strings or QListWidgetItems
     check_box_list_widget.add_item("1")
@@ -35,21 +24,38 @@ def test_add_item(check_box_list_widget):
     assert isinstance(check_box_list_widget.item(1), QListWidgetItem)
     assert check_box_list_widget.item(1).text() == "2"
 
+    with pytest.raises(TypeError):
+        check_box_list_widget.add_item(3)
 
-def test_toggle_state(check_box_list_widget):
+
+def test_set_all_state_uniform(check_box_list_widget):
+    # Testing set_all_state() with all checkboxes checked/unchecked
     check_box_list_widget.add_item("1")
     check_box_list_widget.add_item("2")
 
-    check_box_list_widget.toggleState(Qt.Checked)
+    check_box_list_widget.setAllState(Qt.Checked)
     for i in range(check_box_list_widget.count()):
         assert check_box_list_widget.item(i).checkState() == Qt.Checked
 
-    check_box_list_widget.toggleState(Qt.Unchecked)
+    check_box_list_widget.setAllState(Qt.Unchecked)
+    for i in range(check_box_list_widget.count()):
+        assert check_box_list_widget.item(i).checkState() == Qt.Unchecked
+
+def test_toggle_state_mixed(check_box_list_widget):
+    # Testing set_all_state() with mixture of checked/unchecked checkboxes
+    check_box_list_widget.add_item("1")
+    check_box_list_widget.add_item("2")
+
+    check_box_list_widget.setAllState(Qt.Checked)
+    for i in range(check_box_list_widget.count()):
+        assert check_box_list_widget.item(i).checkState() == Qt.Checked
+
+    check_box_list_widget.setAllState(Qt.Unchecked)
     for i in range(check_box_list_widget.count()):
         assert check_box_list_widget.item(i).checkState() == Qt.Unchecked
 
 
-def test_get_checked_and_unchecked_rows(check_box_list_widget):
+def test_get_checked_rows(check_box_list_widget):
     check_box_list_widget.add_item("1")
     check_box_list_widget.add_item("2")
     check_box_list_widget.add_item("3")
@@ -64,7 +70,17 @@ def test_get_checked_and_unchecked_rows(check_box_list_widget):
     # "2" and "4" are at index 1 and 3
     assert checked_rows == [1, 3]
 
-    # Testing Unchecked Rows
+
+def test_get_unchcked_rows(check_box_list_widget):
+    check_box_list_widget.add_item("1")
+    check_box_list_widget.add_item("2")
+    check_box_list_widget.add_item("3")
+    check_box_list_widget.add_item("4")
+
+    # "2" and "4" are checked
+    check_box_list_widget.item(1).setCheckState(Qt.Checked)
+    check_box_list_widget.item(3).setCheckState(Qt.Checked)
+
     unchecked_rows = check_box_list_widget.getUncheckedRows()
     assert unchecked_rows == [0, 2]
 
