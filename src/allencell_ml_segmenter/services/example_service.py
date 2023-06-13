@@ -14,6 +14,9 @@ class ExampleService(Subscriber):
         self._example_model.subscribe(self)
 
     def handle_event(self, event: Event) -> None:
+        """
+        Gathers field values from the example model instance and writes to test.yaml.
+        """
         if event == Event.SAVE:
             field_to_value: Dict[str, Any] = {
                 "text": self._example_model.text,
