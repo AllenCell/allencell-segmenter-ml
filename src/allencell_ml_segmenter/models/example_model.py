@@ -12,6 +12,18 @@ class ExampleModel(Publisher):
         # Current state of example model usage
         self._model_in_use: bool = False
 
+        # Set fields related to widget
+        # TODO: edit in future commit when I implement the model (and add typing)
+        self.text, self.option, self.choice, self.slider = (
+            None,
+            None,
+            None,
+            None,
+        )
+
+        # TODO: read in test.yaml and figure out the true index
+        self.index = 0
+
     def get_model_usage_state(self) -> bool:
         """
         Getter to get the current state of the model's usage

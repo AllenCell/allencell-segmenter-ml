@@ -24,6 +24,7 @@ class ExampleWidget(QWidget):
 
         self.responsive_widgets: List[QWidget] = []
 
+        # Vertical size policy has a big impact on QLabel behavior
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)

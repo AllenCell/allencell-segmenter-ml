@@ -15,3 +15,4 @@ class Event(Enum):
     MAIN_SELECTED = "main_selected"
     EXAMPLE = "example"
     EXAMPLE_SELECTED = "example_selected"
+    SAVE = "save"
