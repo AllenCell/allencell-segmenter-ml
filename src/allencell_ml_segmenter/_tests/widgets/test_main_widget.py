@@ -4,7 +4,7 @@ from qtpy.QtWidgets import QStackedWidget
 from allencell_ml_segmenter.views.view import View
 from allencell_ml_segmenter.models.main_model import MainModel
 from allencell_ml_segmenter.views.training_view import TrainingView
-from allencell_ml_segmenter.widgets.main_widget import MainWidget
+from allencell_ml_segmenter.main.main_widget import MainWidget
 from unittest.mock import Mock
 
 

@@ -12,6 +12,8 @@ class MainModel(Publisher):
         super().__init__()
         # Current page of the UI
         self._current_view: View = None
+        self.training_running: bool = False
+        self.perdictions_running: bool = False
 
     def get_current_view(self) -> bool:
         """
@@ -25,3 +27,29 @@ class MainModel(Publisher):
         """
         self._current_view = view
         self.dispatch(Event.CHANGE_VIEW)
+
+    def get_training_running(self) -> bool:
+        """
+        getter/property for training running
+        """
+        return self.training_running
+    
+    def set_training_running(self, training_running: bool):     
+        """
+        Set the training running in the UI and dispatch a MainEvent
+        """
+        self.training_running = training_running
+        self.dispatch(Event.TRAINING)   
+
+    def get_perdictions_running(self) -> bool:   
+        """
+        getter/property for perdictions running
+        """
+        return self.perdictions_running
+    
+    def set_perdictions_running(self, perdictions_running: bool):   
+        """
+        Set the perdictions running in the UI and dispatch a MainEvent
+        """
+        self.perdictions_running = perdictions_running
+        self.dispatch(Event.PREDICTIONS)
