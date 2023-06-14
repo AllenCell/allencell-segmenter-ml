@@ -1,5 +1,4 @@
 import pytest
-from unittest.mock import Mock
 from qtpy.QtWidgets import QListWidgetItem
 from qtpy.QtCore import Qt
 
@@ -29,9 +28,12 @@ def test_add_item(check_box_list_widget):
 
 
 def test_set_all_state_uniform(check_box_list_widget):
-    # Testing set_all_state() with all checkboxes checked/unchecked
+    # Testing set_all_state() with mixture of checked/unchecked checkboxes
     check_box_list_widget.add_item("1")
     check_box_list_widget.add_item("2")
+    check_box_list_widget.add_item("3")
+    check_box_list_widget.item(0).setCheckState(Qt.Checked)
+    check_box_list_widget.item(1).setCheckState(Qt.Unchecked)
 
     check_box_list_widget.setAllState(Qt.Checked)
     for i in range(check_box_list_widget.count()):
@@ -41,8 +43,8 @@ def test_set_all_state_uniform(check_box_list_widget):
     for i in range(check_box_list_widget.count()):
         assert check_box_list_widget.item(i).checkState() == Qt.Unchecked
 
-def test_toggle_state_mixed(check_box_list_widget):
-    # Testing set_all_state() with mixture of checked/unchecked checkboxes
+def test_toggle_state_uniform(check_box_list_widget):
+    # Testing set_all_state() with all checkboxes checked/unchecked
     check_box_list_widget.add_item("1")
     check_box_list_widget.add_item("2")
 
