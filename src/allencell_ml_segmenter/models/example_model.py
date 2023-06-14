@@ -17,8 +17,8 @@ class ExampleModel(Publisher):
 
         # Set default values for fields related to widget
         self.text: str = ""
-        self.option: str = "One"
-        self.choice: int = None
+        self.option: int = None
+        self.choice: str = "One"
         self.slider: int = 0
 
         # Read in test.yaml and figure out the proper index

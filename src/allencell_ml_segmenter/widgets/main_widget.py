@@ -13,6 +13,7 @@ from allencell_ml_segmenter.views.view import View
 from allencell_ml_segmenter.views.training_view import TrainingView
 from allencell_ml_segmenter.widgets.selection_widget import SelectionWidget
 from allencell_ml_segmenter.views.example_view import ExampleView
+from allencell_ml_segmenter.services.example_service import ExampleService
 
 
 class MainMeta(type(QStackedWidget), type(Subscriber)):
@@ -46,6 +47,11 @@ class MainWidget(QStackedWidget, Subscriber, metaclass=MainMeta):
 
         self.example_model: ExampleModel = ExampleModel()
         self.example_model.subscribe(self)
+
+        # Service
+        self.example_service: ExampleService = ExampleService(
+            self.example_model
+        )
 
         # Dictionaries of views to index values
         self.view_to_index = dict()
