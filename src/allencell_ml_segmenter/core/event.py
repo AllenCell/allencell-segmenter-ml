@@ -6,8 +6,11 @@ class Event(Enum):
     Different application Events
     """
 
+    # Process events
     TRAINING = "training"
     PREDICTION = "prediction"
+    
+    # View selection events
     MAIN = "main"
     CHANGE_VIEW = "change_view"
     TRAINING_SELECTED = "training_selected"
