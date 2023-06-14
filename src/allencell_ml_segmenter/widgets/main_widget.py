@@ -48,7 +48,7 @@ class MainWidget(QStackedWidget, Subscriber, metaclass=MainMeta):
         self.example_model: ExampleModel = ExampleModel()
         self.example_model.subscribe(self)
 
-        # Service
+        # TODO: Service
         self.example_service: ExampleService = ExampleService(
             self.example_model
         )
