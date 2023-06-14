@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import Mock
 from allencell_ml_segmenter.views.view import View
-from allencell_ml_segmenter.models.main_model import MainModel
+from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.core.publisher import Event
 from allencell_ml_segmenter._tests.fakes.fake_subscriber import FakeSubscriber
 

@@ -1,7 +1,7 @@
 import pytest
 from qtpy.QtWidgets import QPushButton
 from allencell_ml_segmenter.core.event import Event
-from allencell_ml_segmenter.models.main_model import MainModel
+from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.widgets.selection_widget import SelectionWidget
 
 
