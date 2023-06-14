@@ -35,7 +35,7 @@ class SelectionWidget(QWidget):
 
         # models
         self.model = model
-        self.model.subscribe(self)
+        self.model.subscribe(Event.MAIN_SELECTED, self)
 
     def handle_event(self, event: Event) -> None:
         if event == Event.MAIN_SELECTED:

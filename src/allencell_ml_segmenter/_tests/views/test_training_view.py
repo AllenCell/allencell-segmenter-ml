@@ -28,10 +28,16 @@ def test_model_property(training_view, main_model):
     assert training_view._main_model == main_model
 
 
-def test_handle_event_training_selected(training_view, main_model, qtbot):
-    training_view.handle_event(Event.TRAINING_SELECTED)
+def integration_test_handle_event_training_selected(training_view):
+    # ARRANGE
+    model = MainModel()
+    TrainingView(model)
 
-    main_model.set_current_view.assert_called_once_with(training_view)
+    # ACT
+    model.dispatch(Event.TRAINING_SELECTED)
+
+    # ASSERT
+    model.set_current_view.assert_called_once_with(training_view)
 
 
 def test_back_to_main(training_view, main_model, qtbot):

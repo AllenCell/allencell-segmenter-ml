@@ -41,17 +41,9 @@ class MainWidget(QStackedWidget, Subscriber, metaclass=MainMeta):
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
 
-        # Models
-        self.main_model: MainModel = MainModel()
-        self.main_model.subscribe(self)
-
-        self.example_model: ExampleModel = ExampleModel()
-        self.example_model.subscribe(self)
-
-        # TODO: Service
-        self.example_service: ExampleService = ExampleService(
-            self.example_model
-        )
+        # Model
+        self.model: MainModel = MainModel()
+        self.model.subscribe(Event.CHANGE_VIEW, self)
 
         # Dictionaries of views to index values
         self.view_to_index = dict()

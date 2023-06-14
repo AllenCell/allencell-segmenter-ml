@@ -2,11 +2,9 @@ from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.event import Event
 
 
-# Testing publishers with this mock subscriber class
-# that implements handle_event
 class FakeSubscriber(Subscriber):
     """
-    Testing publishers with this mock subscriber class
+    Testing publishers with this fake subscriber class
     that implements handle_event
     """
 
