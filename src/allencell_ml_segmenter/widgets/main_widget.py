@@ -49,19 +49,19 @@ class MainWidget(QStackedWidget, Subscriber, metaclass=MainMeta):
         self.view_to_index = dict()
 
         # add training page
-        training_view = TrainingView(self.main_model)
+        training_view = TrainingView(self.model)
         self.initialize_view(training_view)
 
         # add example page
-        example_view = ExampleView(self.main_model, self.example_model)
+        example_view = ExampleView(self.model)
         self.initialize_view(example_view)
 
         # add main page
-        selection_view = SelectionWidget(self.main_model)
+        selection_view = SelectionWidget(self.model)
         self.initialize_view(selection_view)
 
         # start on selection views
-        self.main_model.set_current_view(selection_view)
+        self.model.set_current_view(selection_view)
 
     def handle_event(self, event: Event) -> None:
         """
@@ -70,7 +70,7 @@ class MainWidget(QStackedWidget, Subscriber, metaclass=MainMeta):
         inputs:
             event - MainEvent
         """
-        self.set_view(self.main_model.get_current_view())
+        self.set_view(self.model.get_current_view())
 
     def set_view(self, view: View) -> None:
         """

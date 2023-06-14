@@ -7,6 +7,7 @@ from allencell_ml_segmenter.models.main_model import MainModel
 from allencell_ml_segmenter.models.example_model import ExampleModel
 from allencell_ml_segmenter.views.view import View
 from allencell_ml_segmenter.widgets.example_widget import ExampleWidget
+from allencell_ml_segmenter.services.example_service import ExampleService
 
 
 class ExampleView(View, Subscriber):
@@ -14,7 +15,7 @@ class ExampleView(View, Subscriber):
     View that is a subscriber for ExampleWidget, responsible for handling events and updating the models + UI.
     """
 
-    def __init__(self, main_model: MainModel, example_model: ExampleModel):
+    def __init__(self, main_model: MainModel):
         super().__init__()
         layout: QVBoxLayout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
@@ -22,10 +23,18 @@ class ExampleView(View, Subscriber):
 
         # models
         self._main_model: MainModel = main_model
-        self._main_model.subscribe(self)
+        self._main_model.subscribe(Event.EXAMPLE_SELECTED, self)
 
-        self._example_model: ExampleModel = example_model
-        self._example_model.subscribe(self)
+        self._example_model: ExampleModel = ExampleModel()
+
+        # Service - must subscribe to example model before view, or info gets deleted
+        self.example_service: ExampleService = ExampleService(
+            self._example_model
+        )
+        self._example_model.subscribe(Event.SAVE, self.example_service)
+
+        # Subscribe view
+        self._example_model.subscribe(Event.SAVE, self)
 
         # init self.widget and connect slots
         self.widget: ExampleWidget = ExampleWidget()
@@ -57,15 +66,7 @@ class ExampleView(View, Subscriber):
             dialog.exec_()
 
             # Reset fields to initial values
-            self.widget.textbox.setText("")
-            for option in self.widget.options:
-                option.setCheckState(Qt.Unchecked)
-            self.widget.dropdown.setCurrentIndex(0)
-            self.widget.slider.setTracking(True)
-            self.widget.slider.setValue(0)
-            self.widget.slider.setSliderPosition(0)
-            self.widget.slider.update()
-            self.widget.slider.repaint()
+            self.reset_field_values()
 
     def textbox_changed(self, s: str) -> None:
         """Textbox (QLineEdit) slot."""
@@ -112,3 +113,19 @@ class ExampleView(View, Subscriber):
         Updates models in order to change page back to main.
         """
         self._main_model.dispatch(Event.MAIN_SELECTED)
+
+    def reset_field_values(self) -> None:
+        """
+        Do not do this before writing values to test.yaml. The reset process
+        will trigger valueChanged, stateChanged, etc. events that mistakenly
+        update the example model.
+        """
+        self.widget.textbox.setText("")
+        for option in self.widget.options:
+            option.setCheckState(Qt.Unchecked)
+        self.widget.dropdown.setCurrentIndex(0)
+        self.widget.slider.setTracking(True)
+        self.widget.slider.setValue(0)
+        self.widget.slider.setSliderPosition(0)
+        self.widget.slider.update()
+        self.widget.slider.repaint()

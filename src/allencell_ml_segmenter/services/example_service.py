@@ -11,7 +11,7 @@ class ExampleService(Subscriber):
 
         # models
         self._example_model: ExampleModel = example_model
-        self._example_model.subscribe(self)
+        self._example_model.subscribe(Event.SAVE, self)
 
     def handle_event(self, event: Event) -> None:
         """
