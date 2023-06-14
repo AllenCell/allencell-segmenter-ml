@@ -2,7 +2,7 @@ from qtpy.QtWidgets import QVBoxLayout
 
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.event import Event
-from allencell_ml_segmenter.models.main_model import MainModel
+from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.views.view import View
 from allencell_ml_segmenter.sample.sample_state_widget import SampleStateWidget
 from typing import List

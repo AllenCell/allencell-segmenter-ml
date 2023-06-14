@@ -5,7 +5,7 @@ from qtpy.QtWidgets import (
     QLabel,
 )
 
-from allencell_ml_segmenter.models.main_model import MainModel
+from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.views.view import View
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.event import Event
