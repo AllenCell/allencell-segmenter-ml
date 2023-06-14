@@ -12,9 +12,6 @@ class ExampleModel(Publisher):
     def __init__(self):
         super().__init__()
 
-        # Current save state
-        self.saved: bool = False
-
         # Set default values for fields related to widget
         self.text: str = ""
         self.option: int = None
@@ -31,15 +28,8 @@ class ExampleModel(Publisher):
                 )
                 self.index: int = len(previous_entries)
 
-    def get_model_save_state(self) -> bool:
-        """
-        Getter to get the current save state of the model.
-        """
-        return self.saved
-
-    def save(self, save_status: bool) -> None:
+    def save(self) -> None:
         """
         Setter to set the current save state and dispatch a save event to subs.
         """
-        self.saved = save_status
         self.dispatch(Event.SAVE)

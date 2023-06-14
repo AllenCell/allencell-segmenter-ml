@@ -106,7 +106,7 @@ class ExampleView(View, Subscriber):
                 self, "Cannot save!", "You must select an option."
             )
         else:
-            self._example_model.save(True)
+            self._example_model.save()
 
     def back_to_main(self) -> None:
         """

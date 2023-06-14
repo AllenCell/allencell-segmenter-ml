@@ -1,9 +1,8 @@
 from allencell_ml_segmenter.core.event import Event
 
 
-class FakeEventHandler():
-    """
-    """
+class FakeEventHandler:
+    """ """
 
     def __init__(self):
         self.handled = False
