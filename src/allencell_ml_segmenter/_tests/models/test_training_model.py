@@ -11,12 +11,12 @@ def training_model():
 
 def test_set_model_training(training_model):
     subscriber = FakeSubscriber()
-    training_model.subscribe(Event.TRAINING, subscriber)
+    training_model.subscribe(Event.PROCESS_TRAINING, subscriber)
 
     training_model.set_model_training(True)
 
     assert training_model._model_training
-    assert subscriber.handled_event == Event.TRAINING
+    assert subscriber.handled_event == Event.PROCESS_TRAINING
 
 
 def test_get_model_training(training_model):

@@ -23,4 +23,4 @@ class TrainingModel(Publisher):
         Setter to set the current state of the models training
         """
         self._model_training = running
-        self.dispatch(Event.TRAINING)
+        self.dispatch(Event.PROCESS_TRAINING)

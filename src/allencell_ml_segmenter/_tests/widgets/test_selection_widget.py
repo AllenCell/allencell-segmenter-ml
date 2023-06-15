@@ -32,10 +32,10 @@ def test_init(selection_widget):
 def test_training_button(selection_widget):
     selection_widget.training_button.click()
     assert selection_widget.model.dispatch_called
-    assert selection_widget.model.dispatch_event == Event.TRAINING_SELECTED
+    assert selection_widget.model.dispatch_event == Event.VIEW_SELECTION_TRAINING
 
 
 def test_prediction_button_click(selection_widget):
     selection_widget.prediction_button.click()
     assert selection_widget.model.dispatch_called
-    assert selection_widget.model.dispatch_event == Event.PREDICTION_SELECTED
+    assert selection_widget.model.dispatch_event == Event.VIEW_SELECTION_PREDICTION
