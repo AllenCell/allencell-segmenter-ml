@@ -26,7 +26,7 @@ def integration_test_handle_event_training_selected(training_view):
     SampleView(model)
 
     # ACT
-    model.dispatch(Event.TRAINING_SELECTED)
+    model.dispatch(Event.VIEW_SELECTION_TRAINING)
 
     # ASSERT
     model.set_current_view.assert_called_once_with(training_view)
