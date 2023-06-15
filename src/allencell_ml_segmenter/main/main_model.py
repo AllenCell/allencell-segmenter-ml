@@ -26,7 +26,7 @@ class MainModel(Publisher):
         Set the current page in the UI and dispatch a MainEvent
         """
         self._current_view = view
-        self.dispatch(Event.CHANGE_VIEW)
+        self.dispatch(Event.ACTION_CHANGE_VIEW)
 
     def get_training_running(self) -> bool:
         """
@@ -39,7 +39,7 @@ class MainModel(Publisher):
         Set the training running in the UI and dispatch a MainEvent
         """
         self.training_running = training_running
-        self.dispatch(Event.TRAINING)   
+        self.dispatch(Event.PROCESS_TRAINING)   
 
     def get_perdictions_running(self) -> bool:   
         """
