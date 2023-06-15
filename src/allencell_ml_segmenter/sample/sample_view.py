@@ -38,7 +38,7 @@ class SampleView(View, Subscriber):
         self.layout().addWidget(self.btn)
 
         self.return_btn: QPushButton = QPushButton("Return")
-        self.return_btn.clicked.connect(lambda: self._main_model.dispatch(Event.MAIN_SELECTED))
+        self.return_btn.clicked.connect(lambda: self._main_model.dispatch(Event.VIEW_SELECTION_MAIN))
         self.layout().addWidget(self.return_btn)
 
         self.state_widget = SampleStateWidget(self._main_model)
@@ -46,11 +46,11 @@ class SampleView(View, Subscriber):
 
         # events
 
-        self._main_model.subscribe(Event.TRAINING_SELECTED,
+        self._main_model.subscribe(Event.VIEW_SELECTION_TRAINING,
                                    self,
                                    lambda e: self._main_model.set_current_view(self))
         
-        self._main_model.subscribe(Event.TRAINING, self, 
+        self._main_model.subscribe(Event.PROCESS_TRAINING, self, 
                              lambda e: self.btn.setText("Stop Training") 
                              if self._main_model.get_training_running() 
                              else self.btn.setText("Start Training"))
