@@ -40,22 +40,22 @@ class SampleView(View, Subscriber):
 
         # children
 
+        self._select_files_widget = SampleSelectFilesWidget(self._sample_model)
+        self.layout().addWidget(self._select_files_widget)
+
         self._btn: QPushButton = QPushButton("Start Training")
         self._btn.clicked.connect(lambda: self._service.run())
         self.layout().addWidget(self._btn)
 
+        self.state_widget = SampleStateWidget(self._sample_model)
+        layout.addWidget(self.state_widget)
+        
+        self._results_list_widget = SampleResultsListWidget(self._sample_model)
+        self.layout().addWidget(self._results_list_widget)
+
         self._return_btn: QPushButton = QPushButton("Return")
         self._return_btn.clicked.connect(lambda: self._main_model.dispatch(Event.VIEW_SELECTION_MAIN))
         self.layout().addWidget(self._return_btn)
-
-        self._select_files_widget = SampleSelectFilesWidget(self._sample_model)
-        self.layout().addWidget(self._select_files_widget)
-
-        # self._results_list_widget = SampleResultsListWidget(self._sample_model)
-        # self.layout().addWidget(self._results_list_widget)
-
-        self.state_widget = SampleStateWidget(self._sample_model)
-        layout.addWidget(self.state_widget)
 
         # events
 
