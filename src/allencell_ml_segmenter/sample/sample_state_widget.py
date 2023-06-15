@@ -1,11 +1,10 @@
 from qtpy.QtWidgets import (
     QVBoxLayout,
-    QWidget,
     QSizePolicy,
     QLabel,
 )
 
-from allencell_ml_segmenter.main.main_model import MainModel
+from allencell_ml_segmenter.sample.sample_model import SampleModel
 from allencell_ml_segmenter.views.view import View
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.event import Event
@@ -20,22 +19,28 @@ class SampleStateWidget(View, Subscriber):
 
     """
 
-    def __init__(self, model: MainModel):
+    def __init__(self, model: SampleModel):
         super().__init__()
-        self.main_model = model
+        self._sample_model = model
+
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
-        self.label = QLabel(TRAINING_NOT_RUNNING)
-        self.layout().addWidget(self.label)
 
-        model.subscribe(Event.PROCESS_TRAINING, self, self.update_label)
+        self._label = QLabel(TRAINING_NOT_RUNNING)
+        self.layout().addWidget(self._label)
 
-    def update_label(self, event):
-        if self.main_model.get_training_running():
-            self.label.setText(TRAINING_RUNNING)
+        self._sample_model.subscribe(Event.PROCESS_TRAINING, self, self.update_label_with_state)
+        self._sample_model.subscribe(Event.PROCESS_TRAINING_ERROR, self, self.update_label_with_error)
+
+    def update_label_with_state(self, event):
+        if self._sample_model.get_process_running():
+            self._label.setText(TRAINING_RUNNING)
         else:
-            self.label.setText(TRAINING_NOT_RUNNING)
+            self._label.setText(TRAINING_NOT_RUNNING)
+
+    def update_label_with_error(self, event):
+        self._label.setText(self._sample_model.get_error_message())
 
     def handle_event(self, event):
         pass

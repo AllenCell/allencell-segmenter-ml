@@ -5,7 +5,7 @@ from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.views.view import View
 from allencell_ml_segmenter.sample.sample_state_widget import SampleStateWidget
-from typing import List
+from allencell_ml_segmenter.sample.sample_model import SampleModel
 
 from qtpy.QtWidgets import (
     QPushButton,
@@ -13,9 +13,11 @@ from qtpy.QtWidgets import (
     QSizePolicy,
 )
 
+from allencell_ml_segmenter.sample.process.service import SampleProcessService
+
 class SampleView(View, Subscriber):
     """
-    View that is a subscriber for TrainingWidget, responsible for handling events and updating the models + UI.
+    Sample that orchestrates widgets, managing complex behavior.
     """
 
     def __init__(self, main_model: MainModel):
@@ -31,17 +33,20 @@ class SampleView(View, Subscriber):
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
         self.setLayout(QVBoxLayout())
 
+        self._sample_model = SampleModel()
+        self._service = SampleProcessService(self._sample_model)
+
         # children
 
-        self.btn: QPushButton = QPushButton("Start Training")
-        self.btn.clicked.connect(lambda: self._main_model.set_training_running(not self._main_model.get_training_running()))
-        self.layout().addWidget(self.btn)
+        self._btn: QPushButton = QPushButton("Start Training")
+        self._btn.clicked.connect(lambda: self._service.run())
+        self.layout().addWidget(self._btn)
 
-        self.return_btn: QPushButton = QPushButton("Return")
-        self.return_btn.clicked.connect(lambda: self._main_model.dispatch(Event.VIEW_SELECTION_MAIN))
-        self.layout().addWidget(self.return_btn)
+        self._return_btn: QPushButton = QPushButton("Return")
+        self._return_btn.clicked.connect(lambda: self._main_model.dispatch(Event.VIEW_SELECTION_MAIN))
+        self.layout().addWidget(self._return_btn)
 
-        self.state_widget = SampleStateWidget(self._main_model)
+        self.state_widget = SampleStateWidget(self._sample_model)
         layout.addWidget(self.state_widget)
 
         # events
@@ -51,9 +56,9 @@ class SampleView(View, Subscriber):
                                    lambda e: self._main_model.set_current_view(self))
         
         self._main_model.subscribe(Event.PROCESS_TRAINING, self, 
-                             lambda e: self.btn.setText("Stop Training") 
+                             lambda e: self._btn.setText("Stop Training") 
                              if self._main_model.get_training_running() 
-                             else self.btn.setText("Start Training"))
+                             else self._btn.setText("Start Training"))
 
     def handle_event(self, event: Event) -> None:
         """
