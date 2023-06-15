@@ -5,6 +5,8 @@ from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.views.view import View
 from allencell_ml_segmenter.sample.sample_state_widget import SampleStateWidget
+from allencell_ml_segmenter.sample.sample_results_list_widget import SampleResultsListWidget
+from allencell_ml_segmenter.sample.sample_select_files_widget import SampleSelectFilesWidget
 from allencell_ml_segmenter.sample.sample_model import SampleModel
 
 from qtpy.QtWidgets import (
@@ -45,6 +47,12 @@ class SampleView(View, Subscriber):
         self._return_btn: QPushButton = QPushButton("Return")
         self._return_btn.clicked.connect(lambda: self._main_model.dispatch(Event.VIEW_SELECTION_MAIN))
         self.layout().addWidget(self._return_btn)
+
+        self._select_files_widget = SampleSelectFilesWidget(self._sample_model)
+        self.layout().addWidget(self._select_files_widget)
+
+        # self._results_list_widget = SampleResultsListWidget(self._sample_model)
+        # self.layout().addWidget(self._results_list_widget)
 
         self.state_widget = SampleStateWidget(self._sample_model)
         layout.addWidget(self.state_widget)
