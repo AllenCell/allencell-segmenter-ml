@@ -1,5 +1,4 @@
 import asyncio
-from qtpy.QtWidgets import QVBoxLayout
 
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.event import Event
@@ -17,6 +16,7 @@ from qtpy.QtWidgets import (
 )
 
 from allencell_ml_segmenter.sample.process.service import SampleProcessService
+
 
 class SampleView(View, Subscriber):
     """

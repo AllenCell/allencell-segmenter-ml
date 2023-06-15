@@ -1,7 +1,5 @@
-import asyncio
-import time
-from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.sample.sample_model import SampleModel
+
 
 class SampleProcessService():
     """
@@ -22,9 +20,9 @@ class SampleProcessService():
         Returns:
             dict: Output data.
         """
-        if(self._sample_model.get_process_running()):
+        if (self._sample_model.get_process_running()):
             return
-        elif(self._sample_model.get_training_input_files() is None or len(self._sample_model.get_training_input_files()) == 0):
+        elif (self._sample_model.get_training_input_files() is None or len(self._sample_model.get_training_input_files()) == 0):
             self._sample_model.set_error_message("No Training File Selected")
         else:
             self._sample_model.set_process_running(True)

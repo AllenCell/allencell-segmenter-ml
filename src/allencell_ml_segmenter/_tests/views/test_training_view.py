@@ -3,7 +3,6 @@ from unittest.mock import Mock
 from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.core.publisher import Event
 from allencell_ml_segmenter.sample.sample_view import SampleView
-from allencell_ml_segmenter.sample.sample_state_widget import SampleStateWidget
 
 
 @pytest.fixture
@@ -30,4 +29,3 @@ def integration_test_handle_event_training_selected(training_view):
 
     # ASSERT
     model.set_current_view.assert_called_once_with(training_view)
-

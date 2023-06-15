@@ -1,6 +1,4 @@
 import pytest
-from qtpy.QtWidgets import QPushButton
-from unittest.mock import Mock
 from allencell_ml_segmenter.sample.sample_state_widget import SampleStateWidget
 from allencell_ml_segmenter.main.main_model import MainModel
 

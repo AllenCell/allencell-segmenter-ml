@@ -9,6 +9,7 @@ from qtpy.QtWidgets import (
     QPushButton,
 )
 
+
 class SampleResultsListWidget(View, Subscriber):
     """
     """
@@ -34,10 +35,8 @@ class SampleResultsListWidget(View, Subscriber):
         self.layout().addWidget(self._clear_btn)
 
     def clear_training_output_files(self):
-        for i in reversed(range(self.layout().count())): 
+        for i in reversed(range(self.layout().count())):
             self.layout().itemAt(i).widget().setParent(None)
 
     def handle_event(self, event: Event) -> None:
         pass
-
-    

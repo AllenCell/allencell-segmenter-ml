@@ -8,11 +8,11 @@ from allencell_ml_segmenter.views.view import View
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from qtpy.QtWidgets import QPushButton
 
+
 class SampleSelectFilesWidget(View, Subscriber):
     """
     Sets training files in the model.
     """
-
 
     def __init__(self, model: SampleModel):
         super().__init__()
