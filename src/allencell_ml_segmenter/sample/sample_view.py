@@ -63,11 +63,6 @@ class SampleView(View, Subscriber):
         self._main_model.subscribe(Event.VIEW_SELECTION_TRAINING,
                                    self,
                                    lambda e: self._main_model.set_current_view(self))
-        
-        # self._main_model.subscribe(Event.PROCESS_TRAINING, self, 
-        #                      lambda e: self._btn.setText("Stop Training") 
-        #                      if self._main_model.get_training_running() 
-        #                      else self._btn.setText("Start Training"))
 
     def handle_event(self, event: Event) -> None:
         """
