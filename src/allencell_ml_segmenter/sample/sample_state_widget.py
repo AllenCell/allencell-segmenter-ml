@@ -31,7 +31,8 @@ class SampleStateWidget(View, Subscriber):
         self.layout().addWidget(self._label)
 
         self._sample_model.subscribe(Event.PROCESS_TRAINING, self, self.update_label_with_state)
-        self._sample_model.subscribe(Event.PROCESS_TRAINING_ERROR, self, self.update_label_with_error)
+        self._sample_model.subscribe(Event.PROCESS_TRAINING_SHOW_ERROR, self, self.update_label_with_error)
+        self._sample_model.subscribe(Event.PROCESS_TRAINING_CLEAR_ERROR, self, self.update_label_with_state)
 
     def update_label_with_state(self, event):
         if self._sample_model.get_process_running():
