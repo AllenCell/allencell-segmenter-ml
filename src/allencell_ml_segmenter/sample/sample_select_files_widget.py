@@ -23,7 +23,7 @@ class SampleSelectFilesWidget(View, Subscriber):
         self.layout().setContentsMargins(0, 0, 0, 0)
 
         self._btn = QPushButton("Select Files")
-        self._btn.clicked.connect(lambda: self._model.set_training_input_files(["/path/to/file1", "/path/to/file2"]))
+        self._btn.clicked.connect(lambda: self._model.set_training_input_files(["/path/to/file1", "/path/to/file2", "/path/to/file3", "/path/to/file4", "/path/to/file5"]))
 
         self.layout().addWidget(self._btn)
 
