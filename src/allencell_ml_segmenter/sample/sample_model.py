@@ -25,24 +25,12 @@ class SampleModel(Publisher):
         getter/property for training input files
         """
         return self._training_input_files
-    
-    def set_training_input_files(self, training_input_files: list):
-        """
-        Set the training input files in the UI and dispatch a MainEvent
-        """
-        self._training_input_files = training_input_files
 
     def get_training_output_files(self) -> list:
         """
         getter/property for training output files
         """
         return self._training_output_files
-
-    def append_training_input_files(self, training_input_files: list):
-        """
-        Append to the training input files in the UI and dispatch a MainEvent
-        """
-        self._training_input_files.extend(training_input_files)
 
     def get_error_message(self) -> str:
         """
@@ -59,13 +47,14 @@ class SampleModel(Publisher):
         Set the error message in the UI and dispatch a MainEvent
         """
         self._error_message = error_message
-        self.dispatch(Event.PROCESS_TRAINING_ERROR)
+        self.dispatch(Event.PROCESS_TRAINING_SHOW_ERROR)
 
     def set_process_running(self, process_running: bool):
         """
         Set the process running in the UI and dispatch a MainEvent
         """
         self._process_running = process_running
+        self.dispatch(Event.PROCESS_TRAINING_CLEAR_ERROR)
         self.dispatch(Event.PROCESS_TRAINING)
 
     def append_training_output_files(self, training_output_files: list):
@@ -73,4 +62,19 @@ class SampleModel(Publisher):
         Append to the training output files in the UI and dispatch a MainEvent
         """
         self._training_output_files.extend(training_output_files)
+        self.dispatch(Event.PROCESS_TRAINING_CLEAR_ERROR)
         self.dispatch(Event.PROCESS_TRAINING_PROGRESS)
+
+    def append_training_input_files(self, training_input_files: list):
+        """
+        Append to the training input files in the UI and dispatch a MainEvent
+        """
+        self._training_input_files.extend(training_input_files)
+        self.dispatch(Event.PROCESS_TRAINING_CLEAR_ERROR)
+
+    def set_training_input_files(self, training_input_files: list):
+        """
+        Set the training input files in the UI and dispatch a MainEvent
+        """
+        self._training_input_files = training_input_files
+        self.dispatch(Event.PROCESS_TRAINING_CLEAR_ERROR)
