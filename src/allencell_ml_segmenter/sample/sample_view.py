@@ -1,3 +1,4 @@
+import asyncio
 from qtpy.QtWidgets import QVBoxLayout
 
 from allencell_ml_segmenter.core.subscriber import Subscriber
@@ -44,12 +45,12 @@ class SampleView(View, Subscriber):
         self.layout().addWidget(self._select_files_widget)
 
         self._btn: QPushButton = QPushButton("Start Training")
-        self._btn.clicked.connect(lambda: self._service.run())
+        self._btn.clicked.connect(lambda: asyncio.run(self._service.run()))
         self.layout().addWidget(self._btn)
 
         self.state_widget = SampleStateWidget(self._sample_model)
         layout.addWidget(self.state_widget)
-        
+
         self._results_list_widget = SampleResultsListWidget(self._sample_model)
         self.layout().addWidget(self._results_list_widget)
 
