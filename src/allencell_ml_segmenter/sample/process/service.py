@@ -1,3 +1,6 @@
+import asyncio
+import time
+from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.sample.sample_model import SampleModel
 
 class SampleProcessService():
@@ -8,7 +11,7 @@ class SampleProcessService():
     def __init__(self, sample_model: SampleModel):
         self._sample_model = sample_model
 
-    def run(self):
+    async def run(self):
         """
         Run the service.
 
@@ -24,6 +27,8 @@ class SampleProcessService():
         elif(self._sample_model.get_training_input_files() is None or len(self._sample_model.get_training_input_files()) == 0):
             self._sample_model.set_error_message("No Training File Selected")
         else:
-            self._sample_model.set_process_running(not self._sample_model.get_process_running())
+            self._sample_model.set_process_running(True)
             for file in self._sample_model.get_training_input_files():
+                # await asyncio.sleep(1)
                 self._sample_model.append_training_output_files([file])
+            self._sample_model.set_process_running(False)
