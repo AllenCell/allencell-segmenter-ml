@@ -37,7 +37,6 @@ class SampleModel(Publisher):
         getter/property for error message
         """
         return self._error_message
-    
 
     # Methods for setting state and dispatching events#
     ###################################################

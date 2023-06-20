@@ -6,13 +6,13 @@ class Event(Enum):
     Different application Events
     """
 
-    # Process events.  This signals long running process is active.  Porgress updates should be shown to the user. 
+    # Process events.  This signals long running process is active.  Porgress updates should be shown to the user.
     PROCESS_TRAINING = "training"
     PROCESS_TRAINING_PROGRESS = "training_progress"
     PROCESS_TRAINING_SHOW_ERROR = "training_error"
     PROCESS_TRAINING_CLEAR_ERROR = "training_clear_error"
     PROCESS_PREDICTION = "prediction"
-    
+
     # Action events.  This signals a change in the UI.  These are a direct result of a user action
     ACTION_CHANGE_VIEW = "change_view"
     ACTION_START_TRAINING = "start_training"
