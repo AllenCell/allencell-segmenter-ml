@@ -30,4 +30,3 @@ def integration_test_handle_event_training_selected(training_view):
 
     # ASSERT
     model.set_current_view.assert_called_once_with(training_view)
-

@@ -25,4 +25,3 @@ class MainModel(Publisher):
         """
         self._current_view = view
         self.dispatch(Event.ACTION_CHANGE_VIEW)
-

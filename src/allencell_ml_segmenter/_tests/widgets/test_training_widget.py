@@ -11,7 +11,7 @@ def sample_widget(qtbot):
 
 
 # def test_init(sample_widget):
-    # assert isinstance(sample_widget.btn, QPushButton)
-    # assert sample_widget.btn.text() == "Start Training"
-    # assert isinstance(sample_widget.return_btn, QPushButton)
-    # assert sample_widget.return_btn.text() == "Return"
+# assert isinstance(sample_widget.btn, QPushButton)
+# assert sample_widget.btn.text() == "Start Training"
+# assert isinstance(sample_widget.return_btn, QPushButton)
+# assert sample_widget.return_btn.text() == "Return"
