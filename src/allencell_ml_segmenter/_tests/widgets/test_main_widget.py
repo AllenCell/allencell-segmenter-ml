@@ -24,15 +24,11 @@ def test_handle_event(viewer, qtbot):
     main_widget = MainWidget(viewer)
     sample_view = SampleView(main_widget.model)
     main_widget.initialize_view(sample_view)
-    assert (
-        main_widget.currentIndex() != main_widget.view_to_index[sample_view]
-    )
+    assert main_widget.currentIndex() != main_widget.view_to_index[sample_view]
 
     main_widget.model.set_current_view(sample_view)
 
-    assert (
-        main_widget.currentIndex() == main_widget.view_to_index[sample_view]
-    )
+    assert main_widget.currentIndex() == main_widget.view_to_index[sample_view]
 
 
 def test_main_widget_set_view(viewer, qtbot):

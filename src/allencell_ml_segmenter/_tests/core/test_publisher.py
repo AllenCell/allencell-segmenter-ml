@@ -1,6 +1,8 @@
 import pytest
 from allencell_ml_segmenter.core.publisher import Publisher, Event
-from allencell_ml_segmenter._tests.fakes.fake_event_handler import FakeEventHandler
+from allencell_ml_segmenter._tests.fakes.fake_event_handler import (
+    FakeEventHandler,
+)
 from allencell_ml_segmenter._tests.fakes.fake_subscriber import FakeSubscriber
 
 
@@ -21,7 +23,9 @@ def test_pub_dispatch(publisher):
 def test_pub_dispatch_explicit_handler(publisher: Publisher):
     subscriber = FakeSubscriber()
     fake_event_handler = FakeEventHandler()
-    publisher.subscribe(Event.PROCESS_TRAINING, subscriber, fake_event_handler.handle)
+    publisher.subscribe(
+        Event.PROCESS_TRAINING, subscriber, fake_event_handler.handle
+    )
 
     # ACT
     publisher.dispatch(Event.PROCESS_TRAINING)

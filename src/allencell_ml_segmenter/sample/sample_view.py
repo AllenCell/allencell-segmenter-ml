@@ -6,8 +6,12 @@ from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.views.view import View
 from allencell_ml_segmenter.sample.sample_state_widget import SampleStateWidget
-from allencell_ml_segmenter.sample.sample_results_list_widget import SampleResultsListWidget
-from allencell_ml_segmenter.sample.sample_select_files_widget import SampleSelectFilesWidget
+from allencell_ml_segmenter.sample.sample_results_list_widget import (
+    SampleResultsListWidget,
+)
+from allencell_ml_segmenter.sample.sample_select_files_widget import (
+    SampleSelectFilesWidget,
+)
 from allencell_ml_segmenter.sample.sample_model import SampleModel
 
 from qtpy.QtWidgets import (
@@ -17,6 +21,7 @@ from qtpy.QtWidgets import (
 )
 
 from allencell_ml_segmenter.sample.process.service import SampleProcessService
+
 
 class SampleView(View, Subscriber):
     """
@@ -55,15 +60,18 @@ class SampleView(View, Subscriber):
         self.layout().addWidget(self._results_list_widget)
 
         self._return_btn: QPushButton = QPushButton("Return")
-        self._return_btn.clicked.connect(lambda: self._main_model.dispatch(Event.VIEW_SELECTION_MAIN))
+        self._return_btn.clicked.connect(
+            lambda: self._main_model.dispatch(Event.VIEW_SELECTION_MAIN)
+        )
         self.layout().addWidget(self._return_btn)
 
         # events
 
-        self._main_model.subscribe(Event.VIEW_SELECTION_TRAINING,
-                                   self,
-                                   lambda e: self._main_model.set_current_view(self))
+        self._main_model.subscribe(
+            Event.VIEW_SELECTION_TRAINING,
+            self,
+            lambda e: self._main_model.set_current_view(self),
+        )
 
     def handle_event(self, event: Event) -> None:
-        """
-        """
+        """ """
