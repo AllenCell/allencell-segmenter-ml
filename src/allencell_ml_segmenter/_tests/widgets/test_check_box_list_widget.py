@@ -23,6 +23,7 @@ def test_add_item(check_box_list_widget):
     assert isinstance(check_box_list_widget.item(1), QListWidgetItem)
     assert check_box_list_widget.item(1).text() == "2"
 
+def test_add_item_invalid_throws_error(check_box_list_widget):
     with pytest.raises(TypeError):
         check_box_list_widget.add_item(3)
 
