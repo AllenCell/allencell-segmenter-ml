@@ -25,7 +25,6 @@ from allencell_ml_segmenter.prediction.label_with_hint_widget import (
 
 
 class ModelInputWidget(View, Subscriber):
-    # TODO: figure out metaclass so a widget does not have to be a view
     """
     Handles model input, preprocessing selection, and
     postprocessing selection for prediction.
@@ -35,58 +34,48 @@ class ModelInputWidget(View, Subscriber):
         super().__init__()
         # self._model = model -> pass model in as a parameter later
 
-        # TODO: make sure this is the desired size policy
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
 
-        # self.setStyleSheet("margin: 5px")
-
-        # horizontal layout with title + question button
-        title_layout: QHBoxLayout = QHBoxLayout()
-        title_layout.setSpacing(0)
+        # title + hint at the top
         self.model_label_with_hint: LabelWithHint = LabelWithHint("Model")
-        title_layout.addWidget(
-            self.model_label_with_hint, alignment=Qt.AlignLeft
-        )
 
-        # horizontal layout with select label, question button, & file selector
+        # horizontal layout containing widgets related to file selection
         selection_layout: QHBoxLayout = QHBoxLayout()
         selection_layout.setSpacing(0)
         self.selection_label_with_hint: LabelWithHint = LabelWithHint(
             "Select an existing model"
         )
+
+        self.input_button: InputButton = InputButton()
+        self.input_button.button.clicked.connect(self.get_file_name)
+
         selection_layout.addWidget(
             self.selection_label_with_hint, alignment=Qt.AlignLeft
         )
-        self.input_button: InputButton = InputButton()
-        self.input_button.button.clicked.connect(self.get_file_name)
         selection_layout.addWidget(self.input_button, alignment=Qt.AlignLeft)
 
-        # horizontal layout with preprocessing label, question button, & label
+        # horizontal layout containing widgets related to preprocessing
         preprocessing_layout: QHBoxLayout = QHBoxLayout()
         preprocessing_layout.setSpacing(0)
         self.preprocessing_label_with_hint: LabelWithHint = LabelWithHint(
             "Preprocessing method"
         )
-        preprocessing_layout.addWidget(
-            self.preprocessing_label_with_hint, alignment=Qt.AlignLeft
-        )
 
         # TODO: make this dynamic
         self.method: QLabel = QLabel("simple cutoff")
         self.method.setStyleSheet("margin-left: 25px")
+
+        preprocessing_layout.addWidget(
+            self.preprocessing_label_with_hint, alignment=Qt.AlignLeft
+        )
         preprocessing_layout.addWidget(self.method, alignment=Qt.AlignLeft)
 
-        # horizontal layout with postprocessing label & question button
-        postprocessing_layout: QHBoxLayout = QHBoxLayout()
-        postprocessing_layout.setSpacing(0)
+        # label and hint for postprocessing
         self.postprocessing_label_with_hint: LabelWithHint = LabelWithHint(
             "Postprocessing methods"
-        )
-        postprocessing_layout.addWidget(
-            self.postprocessing_label_with_hint, alignment=Qt.AlignLeft
         )
 
         # horizontal layout with radio button list and various input boxes to its right
@@ -123,20 +112,24 @@ class ModelInputWidget(View, Subscriber):
 
         bottom_layout.addLayout(bottom_right_layout)
 
-        # add layouts to overarching layout
-        self.layout().addLayout(title_layout)
+        # add inner widgets and layouts to overarching layout
+        self.layout().addWidget(
+            self.model_label_with_hint, alignment=Qt.AlignLeft
+        )
         self.layout().addLayout(selection_layout)
         self.layout().addLayout(preprocessing_layout)
-        self.layout().addLayout(postprocessing_layout)
+        self.layout().addWidget(
+            self.postprocessing_label_with_hint, alignment=Qt.AlignLeft
+        )
         self.layout().addLayout(bottom_layout)
 
     def handle_event(self, event: Event):
         pass
 
     def get_file_name(self):
-        file_name = QFileDialog.getOpenFileName(self, 'Open file')
+        file_name = QFileDialog.getOpenFileName(self, "Open file")
         self.input_button.text_display.setReadOnly(False)
-        self.input_button.text_display.setText(str(file_name))    # looks very weird
+        self.input_button.text_display.setText(file_name[0])
         self.input_button.text_display.setReadOnly(True)
 
 
@@ -144,8 +137,8 @@ class MainWindow(QMainWindow):
     # remove once widget is completely figured out
     """For display/debugging purposes."""
 
-    def __init__(self, *args, **kwargs):
-        super(MainWindow, self).__init__(*args, **kwargs)
+    def __init__(self):
+        super(MainWindow, self).__init__()
 
         self.setWindowTitle("WIP - Model Input Widget")
 
