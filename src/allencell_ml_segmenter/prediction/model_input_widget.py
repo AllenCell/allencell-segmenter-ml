@@ -124,7 +124,17 @@ class ModelInputWidget(View, Subscriber):
         for idx, box in enumerate(
             [self.top_input_box, self.mid_input_box, self.bottom_input_box]
         ):
+            # prohibit edits until the appropriate radio button is checked
+            if isinstance(box, QLineEdit):
+                box.setReadOnly(True)
+            else:  # only other possibility is a combo box
+                box.setEditable(False)
             grid_layout.addWidget(box, idx, 2)
+
+        # connect radio buttons to slots
+        self.top_button.toggled.connect(self.top_radio_button_slot)
+        self.mid_button.toggled.connect(self.mid_radio_button_slot)
+        self.bottom_button.toggled.connect(self.bottom_radio_button_slot)
 
         # add inner widgets and layouts to overarching layout
         self.layout().addWidget(
@@ -146,9 +156,37 @@ class ModelInputWidget(View, Subscriber):
         self.input_button.text_display.setText(file_name[0])
         self.input_button.text_display.setReadOnly(True)
 
+    def top_radio_button_slot(self) -> None:
+        # TODO: gray out styling
+        # make only the top input field editable
+        if self.top_button.isChecked():
+            self.top_input_box.setReadOnly(False)
+            self.mid_input_box.setEditable(False)
+            self.bottom_input_box.setReadOnly(True)
+        else:
+            self.top_input_box.setReadOnly(True)
+
+    def mid_radio_button_slot(self) -> None:
+        # make only middle input field editable
+        if self.mid_button.isChecked():
+            self.top_input_box.setReadOnly(True)
+            self.mid_input_box.setEditable(True)
+            self.bottom_input_box.setReadOnly(True)
+        else:
+            self.mid_input_box.setEditable(False)
+
+    def bottom_radio_button_slot(self) -> None:
+        # make only bottom input field editable
+        if self.bottom_button.isChecked():
+            self.top_input_box.setReadOnly(True)
+            self.mid_input_box.setEditable(False)
+            self.bottom_input_box.setReadOnly(False)
+        else:
+            self.bottom_input_box.setReadOnly(True)
+
 
 class MainWindow(QMainWindow):
-    # remove once widget is completely figured out
+    # TODO: remove once widget is completely figured out
     """For display/debugging purposes."""
 
     def __init__(self):
