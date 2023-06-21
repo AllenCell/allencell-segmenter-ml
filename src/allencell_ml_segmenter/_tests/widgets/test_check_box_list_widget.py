@@ -23,6 +23,7 @@ def test_add_item(check_box_list_widget):
     assert isinstance(check_box_list_widget.item(1), QListWidgetItem)
     assert check_box_list_widget.item(1).text() == "2"
 
+
 def test_add_item_invalid_throws_error(check_box_list_widget):
     with pytest.raises(TypeError):
         check_box_list_widget.add_item(3)
@@ -43,6 +44,7 @@ def test_set_all_state_uniform(check_box_list_widget):
     check_box_list_widget.setAllState(Qt.Unchecked)
     for i in range(check_box_list_widget.count()):
         assert check_box_list_widget.item(i).checkState() == Qt.Unchecked
+
 
 def test_toggle_state_uniform(check_box_list_widget):
     # Testing set_all_state() with all checkboxes checked/unchecked
