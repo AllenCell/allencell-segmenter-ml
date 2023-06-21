@@ -9,7 +9,7 @@ from qtpy.QtWidgets import (
     QLineEdit,
     QComboBox,
     QGridLayout,
-    QRadioButton
+    QRadioButton,
 )
 from qtpy.QtCore import Qt
 
@@ -96,10 +96,10 @@ class ModelInputWidget(View, Subscriber):
         self.mid_button: QRadioButton = QRadioButton()
         self.bottom_button: QRadioButton = QRadioButton()
 
-        for idx, button in enumerate([self.top_button, self.mid_button, self.bottom_button]):
-            button.setStyleSheet(
-                "margin-left: 25px; margin-right: 6 px"
-            )
+        for idx, button in enumerate(
+            [self.top_button, self.mid_button, self.bottom_button]
+        ):
+            button.setStyleSheet("margin-left: 25px; margin-right: 6 px")
             grid_layout.addWidget(button, idx, 0)
 
         # initialize and add radio button labels to grid
@@ -116,14 +116,14 @@ class ModelInputWidget(View, Subscriber):
         self.top_input_box.setPlaceholderText("0.5")
 
         self.mid_input_box: QComboBox = QComboBox()
-        self.mid_input_box.addItems(
-            ["Select value", "Example 1", "Example 2"]
-        )
+        self.mid_input_box.addItems(["Select value", "Example 1", "Example 2"])
 
         self.bottom_input_box: QLineEdit = QLineEdit()
         self.bottom_input_box.setPlaceholderText("input value")
 
-        for idx, box in enumerate([self.top_input_box, self.mid_input_box, self.bottom_input_box]):
+        for idx, box in enumerate(
+            [self.top_input_box, self.mid_input_box, self.bottom_input_box]
+        ):
             grid_layout.addWidget(box, idx, 2)
 
         # add inner widgets and layouts to overarching layout
