@@ -40,14 +40,17 @@ class ModelInputWidget(View, Subscriber):
         self.layout().setContentsMargins(0, 0, 0, 0)
 
         # title + hint at the top
-        self.model_label_with_hint: LabelWithHint = LabelWithHint("Model")
+        self.model_label_with_hint: LabelWithHint = LabelWithHint()
+        self.model_label_with_hint.set_label_text("Model")
+        self.model_label_with_hint.set_hint("this is a test")
 
         # horizontal layout containing widgets related to file selection
         selection_layout: QHBoxLayout = QHBoxLayout()
         selection_layout.setSpacing(0)
-        self.selection_label_with_hint: LabelWithHint = LabelWithHint(
-            "Select an existing model"
-        )
+
+        self.selection_label_with_hint: LabelWithHint = LabelWithHint()
+        self.selection_label_with_hint.set_label_text("Select an existing model")
+        self.selection_label_with_hint.set_hint("this is another test")
 
         self.input_button: InputButton = InputButton()
         self.input_button.button.clicked.connect(self.get_file_name)
@@ -60,9 +63,10 @@ class ModelInputWidget(View, Subscriber):
         # horizontal layout containing widgets related to preprocessing
         preprocessing_layout: QHBoxLayout = QHBoxLayout()
         preprocessing_layout.setSpacing(0)
-        self.preprocessing_label_with_hint: LabelWithHint = LabelWithHint(
-            "Preprocessing method"
-        )
+
+        self.preprocessing_label_with_hint: LabelWithHint = LabelWithHint()
+        self.preprocessing_label_with_hint.set_label_text("Preprocessing method")
+        self.preprocessing_label_with_hint.set_hint("this is the penultimate test")
 
         # TODO: make this dynamic
         self.method: QLabel = QLabel("simple cutoff")
@@ -74,9 +78,9 @@ class ModelInputWidget(View, Subscriber):
         preprocessing_layout.addWidget(self.method, alignment=Qt.AlignLeft)
 
         # label and hint for postprocessing
-        self.postprocessing_label_with_hint: LabelWithHint = LabelWithHint(
-            "Postprocessing methods"
-        )
+        self.postprocessing_label_with_hint: LabelWithHint = LabelWithHint()
+        self.postprocessing_label_with_hint.set_label_text("Postprocessing methods")
+        self.postprocessing_label_with_hint.set_hint("this is the final test")
 
         # horizontal layout with radio button list and various input boxes to its right
         bottom_layout: QHBoxLayout = QHBoxLayout()
@@ -123,10 +127,10 @@ class ModelInputWidget(View, Subscriber):
         )
         self.layout().addLayout(bottom_layout)
 
-    def handle_event(self, event: Event):
+    def handle_event(self, event: Event) -> None:
         pass
 
-    def get_file_name(self):
+    def get_file_name(self) -> None:
         file_name = QFileDialog.getOpenFileName(self, "Open file")
         self.input_button.text_display.setReadOnly(False)
         self.input_button.text_display.setText(file_name[0])
