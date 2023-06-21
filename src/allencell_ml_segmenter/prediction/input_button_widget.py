@@ -45,6 +45,7 @@ class InputButton(QWidget):
         self.button: QPushButton = QPushButton("Browse")
         # self.button.setStyleSheet("padding-left: 12px; padding-right: 12px; padding-top: 4px; padding-bottom: 2px;")
         self.button.setStyleSheet(
-            "padding: 5px; border: 2px solid gray;"
+            "padding: 5px; border: 2px solid gray; background-color: #e8ecfc"
         )  # background-color?
+        self.button.clicked.connect(lambda: print("lol"))
         self.layout().addWidget(self.button, alignment=Qt.AlignLeft)
