@@ -8,12 +8,10 @@ from qtpy.QtWidgets import (
     QSizePolicy,
     QLineEdit,
     QComboBox,
+    QGridLayout,
+    QRadioButton
 )
 from qtpy.QtCore import Qt
-
-from allencell_ml_segmenter.prediction.radio_button_list_widget import (
-    RadioButtonList,
-)
 
 from allencell_ml_segmenter.views.view import View
 from allencell_ml_segmenter.core.subscriber import Subscriber
@@ -32,7 +30,6 @@ class ModelInputWidget(View, Subscriber):
 
     def __init__(self):
         super().__init__()
-        # self._model = model -> pass model in as a parameter later
 
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
@@ -90,39 +87,44 @@ class ModelInputWidget(View, Subscriber):
         )
         self.postprocessing_label_with_hint.set_hint("this is the final test")
 
-        # horizontal layout with radio button list and various input boxes to its right
-        bottom_layout: QHBoxLayout = QHBoxLayout()
-        bottom_layout.setSpacing(0)
+        # grid layout containing widgets related to postprocessing
+        grid_layout: QGridLayout = QGridLayout()
+        grid_layout.setSpacing(0)
 
-        self.radio_button_list: RadioButtonList = RadioButtonList(
-            [
-                "simple threshold cutoff",
-                "auto threshold",
-                "customized operations",
-            ]
-        )
-        bottom_layout.addWidget(self.radio_button_list)
+        # initialize and add radio buttons to grid
+        self.top_button: QRadioButton = QRadioButton()
+        self.mid_button: QRadioButton = QRadioButton()
+        self.bottom_button: QRadioButton = QRadioButton()
 
-        bottom_layout.addStretch(4)
+        for idx, button in enumerate([self.top_button, self.mid_button, self.bottom_button]):
+            button.setStyleSheet(
+                "margin-left: 25px; margin-right: 6 px"
+            )
+            grid_layout.addWidget(button, idx, 0)
 
-        bottom_right_layout: QVBoxLayout = QVBoxLayout()
-        bottom_right_layout.setSpacing(0)
+        # initialize and add radio button labels to grid
+        top_label: QLabel = QLabel("simple threshold cutoff")
+        mid_label: QLabel = QLabel("auto threshold")
+        bottom_label: QLabel = QLabel("customized operations")
 
+        for idx, label in enumerate([top_label, mid_label, bottom_label]):
+            label.setStyleSheet("margin-right: 25px")
+            grid_layout.addWidget(label, idx, 1)
+
+        # initialize and add input fields to grid
         self.top_input_box: QLineEdit = QLineEdit()
         self.top_input_box.setPlaceholderText("0.5")
-        bottom_right_layout.addWidget(self.top_input_box)
 
-        self.middle_input_box: QComboBox = QComboBox()
-        self.middle_input_box.addItems(
+        self.mid_input_box: QComboBox = QComboBox()
+        self.mid_input_box.addItems(
             ["Select value", "Example 1", "Example 2"]
         )
-        bottom_right_layout.addWidget(self.middle_input_box)
 
         self.bottom_input_box: QLineEdit = QLineEdit()
         self.bottom_input_box.setPlaceholderText("input value")
-        bottom_right_layout.addWidget(self.bottom_input_box)
 
-        bottom_layout.addLayout(bottom_right_layout)
+        for idx, box in enumerate([self.top_input_box, self.mid_input_box, self.bottom_input_box]):
+            grid_layout.addWidget(box, idx, 2)
 
         # add inner widgets and layouts to overarching layout
         self.layout().addWidget(
@@ -133,7 +135,7 @@ class ModelInputWidget(View, Subscriber):
         self.layout().addWidget(
             self.postprocessing_label_with_hint, alignment=Qt.AlignLeft
         )
-        self.layout().addLayout(bottom_layout)
+        self.layout().addLayout(grid_layout)
 
     def handle_event(self, event: Event) -> None:
         pass
