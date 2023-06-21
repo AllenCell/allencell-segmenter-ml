@@ -1,5 +1,5 @@
 from qtpy.QtWidgets import (
-    QWidget,
+    QFileDialog,
     QLabel,
     QHBoxLayout,
     QVBoxLayout,
@@ -10,7 +10,6 @@ from qtpy.QtWidgets import (
     QComboBox,
 )
 from qtpy.QtCore import Qt
-from qtpy.QtGui import QPalette, QColor, QPixmap
 
 from allencell_ml_segmenter.prediction.radio_button_list_widget import (
     RadioButtonList,
@@ -62,6 +61,7 @@ class ModelInputWidget(View, Subscriber):
             self.selection_label_with_hint, alignment=Qt.AlignLeft
         )
         self.input_button: InputButton = InputButton()
+        self.input_button.button.clicked.connect(self.get_file_name)
         selection_layout.addWidget(self.input_button, alignment=Qt.AlignLeft)
 
         # horizontal layout with preprocessing label, question button, & label
@@ -132,6 +132,12 @@ class ModelInputWidget(View, Subscriber):
 
     def handle_event(self, event: Event):
         pass
+
+    def get_file_name(self):
+        file_name = QFileDialog.getOpenFileName(self, 'Open file')
+        self.input_button.text_display.setReadOnly(False)
+        self.input_button.text_display.setText(str(file_name))    # looks very weird
+        self.input_button.text_display.setReadOnly(True)
 
 
 class MainWindow(QMainWindow):
