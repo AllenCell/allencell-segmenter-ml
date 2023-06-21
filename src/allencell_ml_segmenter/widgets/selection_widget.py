@@ -6,6 +6,10 @@ from qtpy.QtWidgets import (
 
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.models.main_model import MainModel
+from allencell_ml_segmenter.widgets.check_box_list_widget import (
+    CheckBoxListWidget,
+)
+
 
 
 class SelectionWidget(QWidget):
