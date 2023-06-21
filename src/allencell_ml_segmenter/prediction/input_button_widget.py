@@ -9,22 +9,21 @@ from qtpy.QtCore import Qt
 
 
 class InputButton(QWidget):
+    """
+    Compound widget consisting of QLineEdit and QPushButton side-by-side.
+    Useful for selecting files and displaying the chosen file path.
+    """
+
     def __init__(self):
         super().__init__()
 
-        # TODO: decide on size policy
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
         self.setLayout(QHBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.layout().setSpacing(0)
 
-        # TODO: make the text that is displayed responsive to whatever file is selected
-
-        # self.text_display: QLabel = QLabel("Choose a model")
-        # self.text_display.setStyleSheet("border: 2px solid gray; margin-right: 2px")
-        # self.layout().addWidget(self.text_display, alignment=Qt.AlignLeft)
-
+        # text box that will eventually display the chosen file path
         self.text_display: QLineEdit = QLineEdit()
         self.text_display.setPlaceholderText("Choose a file...")
         self.text_display.setStyleSheet(
@@ -34,16 +33,14 @@ class InputButton(QWidget):
             + "padding-top: 4px; "
             + "padding-bottom: 4px"
         )
-        self.text_display.setReadOnly(
-            True
-        )  # TODO: potentially problematic for event handlers!!!
+        self.text_display.setReadOnly(True)
 
-        self.layout().addWidget(self.text_display, alignment=Qt.AlignLeft)
-
-        # TODO: does the border on the button render it unusable?
+        # button to open file explorer
         self.button: QPushButton = QPushButton("Browse")
-        # self.button.setStyleSheet("padding-left: 12px; padding-right: 12px; padding-top: 4px; padding-bottom: 2px;")
         self.button.setStyleSheet(
             "padding: 5px; border: 2px solid gray; background-color: #e8ecfc"
-        ) # background color is ugly for dark mode... how to reconcile differences btw dark and light mode?
+        )
+
+        # add widgets to layout
+        self.layout().addWidget(self.text_display, alignment=Qt.AlignLeft)
         self.layout().addWidget(self.button, alignment=Qt.AlignLeft)

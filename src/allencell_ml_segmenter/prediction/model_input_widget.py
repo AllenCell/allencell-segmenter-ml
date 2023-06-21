@@ -49,7 +49,9 @@ class ModelInputWidget(View, Subscriber):
         selection_layout.setSpacing(0)
 
         self.selection_label_with_hint: LabelWithHint = LabelWithHint()
-        self.selection_label_with_hint.set_label_text("Select an existing model")
+        self.selection_label_with_hint.set_label_text(
+            "Select an existing model"
+        )
         self.selection_label_with_hint.set_hint("this is another test")
 
         self.input_button: InputButton = InputButton()
@@ -65,8 +67,12 @@ class ModelInputWidget(View, Subscriber):
         preprocessing_layout.setSpacing(0)
 
         self.preprocessing_label_with_hint: LabelWithHint = LabelWithHint()
-        self.preprocessing_label_with_hint.set_label_text("Preprocessing method")
-        self.preprocessing_label_with_hint.set_hint("this is the penultimate test")
+        self.preprocessing_label_with_hint.set_label_text(
+            "Preprocessing method"
+        )
+        self.preprocessing_label_with_hint.set_hint(
+            "this is the penultimate test"
+        )
 
         # TODO: make this dynamic
         self.method: QLabel = QLabel("simple cutoff")
@@ -79,7 +85,9 @@ class ModelInputWidget(View, Subscriber):
 
         # label and hint for postprocessing
         self.postprocessing_label_with_hint: LabelWithHint = LabelWithHint()
-        self.postprocessing_label_with_hint.set_label_text("Postprocessing methods")
+        self.postprocessing_label_with_hint.set_label_text(
+            "Postprocessing methods"
+        )
         self.postprocessing_label_with_hint.set_hint("this is the final test")
 
         # horizontal layout with radio button list and various input boxes to its right

@@ -19,7 +19,9 @@ class RadioButtonEntry(QWidget):
         self.layout().setSpacing(0)
 
         self.button: QRadioButton = QRadioButton()
-        self.button.setStyleSheet("margin-left: 25px; margin-right: 6 px")
+        self.button.setStyleSheet(
+            self.button.styleSheet() + "margin-left: 25px; margin-right: 6 px"
+        )
         # self.button.setStyleSheet("margin: 5px 6px 5px 25px")
         self.layout().addWidget(self.button)
 
