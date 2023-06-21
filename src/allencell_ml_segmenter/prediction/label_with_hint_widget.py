@@ -4,25 +4,31 @@ from qtpy.QtCore import Qt
 
 
 class LabelWithHint(QWidget):
-    # eventually pass in (a) text for the QLabel and (b) pop-up text for the question button
-    def __init__(self, text: str, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    """
+    Compound widget with text label and question mark icon for clear access to tool tips.
+    """
+    def __init__(self):
+        super().__init__()
 
-        # TODO: decide on size policy
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
         self.setLayout(QHBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.layout().setSpacing(0)
 
-        title: QLabel = QLabel(text)
-        title.setStyleSheet("margin-left: 8px")
-        self.layout().addWidget(title, alignment=Qt.AlignLeft)
+        self.label: QLabel = QLabel("")
+        self.label.setStyleSheet("margin-left: 8px")
+        self.layout().addWidget(self.label, alignment=Qt.AlignLeft)
 
-        # TODO: hook this up to an event handler responsive to mouse hovers
-        self.pixmap_container: QLabel = QLabel()
-        im = QPixmap("../assets/icons/question-circle.svg")
-        self.pixmap_container.setPixmap(im)
-        self.pixmap_container.setStyleSheet("margin-right: 10px")
-        self.layout().addWidget(self.pixmap_container, alignment=Qt.AlignLeft)
+        self.question_mark: QLabel = QLabel()
+        self.question_mark.setPixmap(QPixmap("../assets/icons/question-circle.svg"))
+        self.question_mark.setStyleSheet("margin-right: 10px")
+
+        self.layout().addWidget(self.question_mark, alignment=Qt.AlignLeft)
         self.layout().addStretch(6)
+
+    def set_label_text(self, text: str) -> None:
+        self.label.setText(text)
+
+    def set_hint(self, hint: str):
+        self.question_mark.setToolTip(hint)
