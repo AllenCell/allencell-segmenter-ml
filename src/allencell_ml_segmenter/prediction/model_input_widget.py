@@ -42,6 +42,8 @@ class ModelInputWidget(View, Subscriber):
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
 
+        # self.setStyleSheet("margin: 5px")
+
         # horizontal layout with title + question button
         title_layout: QHBoxLayout = QHBoxLayout()
         title_layout.setSpacing(0)
@@ -59,8 +61,8 @@ class ModelInputWidget(View, Subscriber):
         selection_layout.addWidget(
             self.selection_label_with_hint, alignment=Qt.AlignLeft
         )
-        self.file_searcher: InputButton = InputButton()
-        selection_layout.addWidget(self.file_searcher, alignment=Qt.AlignLeft)
+        self.input_button: InputButton = InputButton()
+        selection_layout.addWidget(self.input_button, alignment=Qt.AlignLeft)
 
         # horizontal layout with preprocessing label, question button, & label
         preprocessing_layout: QHBoxLayout = QHBoxLayout()
