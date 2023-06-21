@@ -148,13 +148,18 @@ class ModelInputWidget(View, Subscriber):
         pass
 
     def get_file_name(self) -> None:
+        """
+        Displays file path on label portion of input button.
+        """
         file_name = QFileDialog.getOpenFileName(self, "Open file")
         self.input_button.text_display.setReadOnly(False)
         self.input_button.text_display.setText(file_name[0])
         self.input_button.text_display.setReadOnly(True)
 
     def top_radio_button_slot(self) -> None:
-        # make only the top input field editable
+        """
+        Prohibits usage of non-related input fields if top button is checked.
+        """
         if self.top_button.isChecked():
             self.top_input_box.setEnabled(True)
             self.mid_input_box.setEnabled(False)
@@ -163,7 +168,9 @@ class ModelInputWidget(View, Subscriber):
             self.top_input_box.setEnabled(False)
 
     def mid_radio_button_slot(self) -> None:
-        # make only middle input field editable
+        """
+        Prohibits usage of non-related input fields if middle button is checked.
+        """
         if self.mid_button.isChecked():
             self.top_input_box.setEnabled(False)
             self.mid_input_box.setEnabled(True)
@@ -172,7 +179,9 @@ class ModelInputWidget(View, Subscriber):
             self.mid_input_box.setEnabled(False)
 
     def bottom_radio_button_slot(self) -> None:
-        # make only bottom input field editable
+        """
+        Prohibits usage of non-related input fields if bottom button is checked.
+        """
         if self.bottom_button.isChecked():
             self.top_input_box.setEnabled(False)
             self.mid_input_box.setEnabled(False)
