@@ -33,116 +33,43 @@ class ModelInputWidget(View, Subscriber):
 
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
-        self.setLayout(QVBoxLayout())
-        self.layout().setContentsMargins(0, 0, 0, 0)
-
-        # title + hint at the top
+        # instantiate widgets
         self.model_label_with_hint: LabelWithHint = LabelWithHint()
-        self.model_label_with_hint.set_label_text("Model")
-        self.model_label_with_hint.set_hint("this is a test")
-
-        # horizontal layout containing widgets related to file selection
-        selection_layout: QHBoxLayout = QHBoxLayout()
-        selection_layout.setSpacing(0)
-
         self.selection_label_with_hint: LabelWithHint = LabelWithHint()
-        self.selection_label_with_hint.set_label_text(
-            "Select an existing model"
-        )
-        self.selection_label_with_hint.set_hint("this is another test")
-
         self.input_button: InputButton = InputButton()
-        self.input_button.button.clicked.connect(self.get_file_name)
-
-        selection_layout.addWidget(
-            self.selection_label_with_hint, alignment=Qt.AlignLeft
-        )
-        selection_layout.addWidget(self.input_button, alignment=Qt.AlignLeft)
-
-        # horizontal layout containing widgets related to preprocessing
-        preprocessing_layout: QHBoxLayout = QHBoxLayout()
-        preprocessing_layout.setSpacing(0)
-
         self.preprocessing_label_with_hint: LabelWithHint = LabelWithHint()
-        self.preprocessing_label_with_hint.set_label_text(
-            "Preprocessing method"
-        )
-        self.preprocessing_label_with_hint.set_hint(
-            "this is the penultimate test"
-        )
-
-        # TODO: make this dynamic
         self.method: QLabel = QLabel("simple cutoff")
-        self.method.setStyleSheet("margin-left: 25px")
-
-        preprocessing_layout.addWidget(
-            self.preprocessing_label_with_hint, alignment=Qt.AlignLeft
-        )
-        preprocessing_layout.addWidget(self.method, alignment=Qt.AlignLeft)
-
-        # label and hint for postprocessing
         self.postprocessing_label_with_hint: LabelWithHint = LabelWithHint()
-        self.postprocessing_label_with_hint.set_label_text(
-            "Postprocessing methods"
-        )
-        self.postprocessing_label_with_hint.set_hint("this is the final test")
 
-        # grid layout containing widgets related to postprocessing
-        grid_layout: QGridLayout = QGridLayout()
-        grid_layout.setSpacing(0)
-
-        # initialize and add radio buttons to grid
+        # radio buttons
         self.top_button: QRadioButton = QRadioButton()
         self.mid_button: QRadioButton = QRadioButton()
         self.bottom_button: QRadioButton = QRadioButton()
 
-        for idx, button in enumerate(
-            [self.top_button, self.mid_button, self.bottom_button]
-        ):
-            button.setStyleSheet("margin-left: 25px; margin-right: 6 px")
-            grid_layout.addWidget(button, idx, 0)
+        self.buttons = [self.top_button, self.mid_button, self.bottom_button]
 
-        # initialize and add radio button labels to grid
+        # labels for the radio buttons
         top_label: QLabel = QLabel("simple threshold cutoff")
         mid_label: QLabel = QLabel("auto threshold")
         bottom_label: QLabel = QLabel("customized operations")
 
-        for idx, label in enumerate([top_label, mid_label, bottom_label]):
-            label.setStyleSheet("margin-right: 25px")
-            grid_layout.addWidget(label, idx, 1)
+        self.labels = [top_label, mid_label, bottom_label]
 
-        # initialize and add input fields to grid
+        # input fields corresponding to radio buttons & their labels
         self.top_input_box: QLineEdit = QLineEdit()
-        self.top_input_box.setPlaceholderText("0.5")
-
         self.mid_input_box: QComboBox = QComboBox()
-        self.mid_input_box.addItems(["Select value", "Example 1", "Example 2"])
-
         self.bottom_input_box: QLineEdit = QLineEdit()
-        self.bottom_input_box.setPlaceholderText("input value")
 
-        for idx, box in enumerate(
-            [self.top_input_box, self.mid_input_box, self.bottom_input_box]
-        ):
-            # prohibit edits until the appropriate radio button is checked
-            box.setEnabled(False)
-            grid_layout.addWidget(box, idx, 2)
+        self.boxes = [
+            self.top_input_box,
+            self.mid_input_box,
+            self.bottom_input_box,
+        ]
 
-        # connect radio buttons to slots
-        self.top_button.toggled.connect(self.top_radio_button_slot)
-        self.mid_button.toggled.connect(self.mid_radio_button_slot)
-        self.bottom_button.toggled.connect(self.bottom_radio_button_slot)
-
-        # add inner widgets and layouts to overarching layout
-        self.layout().addWidget(
-            self.model_label_with_hint, alignment=Qt.AlignLeft
-        )
-        self.layout().addLayout(selection_layout)
-        self.layout().addLayout(preprocessing_layout)
-        self.layout().addWidget(
-            self.postprocessing_label_with_hint, alignment=Qt.AlignLeft
-        )
-        self.layout().addLayout(grid_layout)
+        # finish default set-up
+        self.call_setters()
+        self.build_layouts()
+        self.configure_slots()
 
     def handle_event(self, event: Event) -> None:
         pass
@@ -188,6 +115,113 @@ class ModelInputWidget(View, Subscriber):
             self.bottom_input_box.setEnabled(True)
         else:
             self.bottom_input_box.setEnabled(False)
+
+    def call_setters(self) -> None:
+        """
+        Sets pertinent default values for all widget fields.
+        """
+        # title + hint
+        self.model_label_with_hint.set_label_text("Model")
+        self.model_label_with_hint.set_hint("this is a test")
+
+        # selection label + hint
+        self.selection_label_with_hint.set_label_text(
+            "Select an existing model"
+        )
+        self.selection_label_with_hint.set_hint("this is another test")
+
+        # preprocessing label + hint
+        self.preprocessing_label_with_hint.set_label_text(
+            "Preprocessing method"
+        )
+        self.preprocessing_label_with_hint.set_hint(
+            "this is the penultimate test"
+        )
+
+        # styling for label for preprocessing method
+        self.method.setStyleSheet("margin-left: 25px")
+
+        # postprocessing label + hint
+        self.postprocessing_label_with_hint.set_label_text(
+            "Postprocessing methods"
+        )
+        self.postprocessing_label_with_hint.set_hint("this is the final test")
+
+        # add styling to buttons and labels
+        for button in self.buttons:
+            button.setStyleSheet("margin-left: 25px; margin-right: 6 px")
+        for label in self.labels:
+            label.setStyleSheet("margin-right: 25px")
+
+        # set default values for input fields
+        self.top_input_box.setPlaceholderText("0.5")
+        self.mid_input_box.addItems(["Select value", "Example 1", "Example 2"])
+        self.bottom_input_box.setPlaceholderText("input value")
+
+        # prohibit input until a radio button is selected
+        for box in self.boxes:
+            box.setEnabled(False)
+
+    def build_layouts(self) -> None:
+        """
+        Places previously instantiated widgets into respective layouts.
+        """
+        # initial set-up
+        self.setLayout(QVBoxLayout())
+        self.layout().setContentsMargins(0, 0, 0, 0)
+
+        # horizontal layout containing widgets related to file selection
+        selection_layout: QHBoxLayout = QHBoxLayout()
+        selection_layout.setSpacing(0)
+
+        selection_layout.addWidget(
+            self.selection_label_with_hint, alignment=Qt.AlignLeft
+        )
+        selection_layout.addWidget(self.input_button, alignment=Qt.AlignLeft)
+
+        # horizontal layout containing widgets related to preprocessing
+        preprocessing_layout: QHBoxLayout = QHBoxLayout()
+        preprocessing_layout.setSpacing(0)
+
+        preprocessing_layout.addWidget(
+            self.preprocessing_label_with_hint, alignment=Qt.AlignLeft
+        )
+        preprocessing_layout.addWidget(self.method, alignment=Qt.AlignLeft)
+
+        # grid layout containing widgets related to postprocessing
+        grid_layout: QGridLayout = QGridLayout()
+        grid_layout.setSpacing(0)
+
+        # add all pertinent widgets to the grid
+        for idx, button in enumerate(self.buttons):
+            grid_layout.addWidget(button, idx, 0)
+        for idx, label in enumerate(self.labels):
+            grid_layout.addWidget(label, idx, 1)
+        for idx, box in enumerate(self.boxes):
+            grid_layout.addWidget(box, idx, 2)
+
+        # add inner widgets and layouts to overarching layout
+        self.layout().addWidget(
+            self.model_label_with_hint, alignment=Qt.AlignLeft
+        )
+        self.layout().addLayout(selection_layout)
+        self.layout().addLayout(preprocessing_layout)
+        self.layout().addWidget(
+            self.postprocessing_label_with_hint, alignment=Qt.AlignLeft
+        )
+        self.layout().addLayout(grid_layout)
+
+    def configure_slots(self) -> None:
+        """
+        Connects widgets to their respective event handlers.
+        """
+        # connect input button to file-retrieving slot
+        self.input_button.button.clicked.connect(self.get_file_name)
+
+        # connect radio buttons to slots
+        self.top_button.toggled.connect(self.top_radio_button_slot)
+        self.mid_button.toggled.connect(self.mid_radio_button_slot)
+        self.bottom_button.toggled.connect(self.bottom_radio_button_slot)
 
 
 class MainWindow(QMainWindow):
