@@ -206,24 +206,3 @@ class ModelInputWidget(View, Subscriber):
         self.top_button.toggled.connect(self.top_radio_button_slot)
         self.mid_button.toggled.connect(self.mid_radio_button_slot)
         self.bottom_button.toggled.connect(self.bottom_radio_button_slot)
-
-
-class MainWindow(QMainWindow):
-    # TODO: remove once widget is completely figured out
-    """For display/debugging purposes."""
-
-    def __init__(self):
-        super(MainWindow, self).__init__()
-
-        self.setWindowTitle("WIP - Model Input Widget")
-
-        widget: ModelInputWidget = ModelInputWidget()
-        self.setCentralWidget(widget)
-
-
-app: QApplication = QApplication([])
-
-window: MainWindow = MainWindow()
-window.show()
-
-app.exec_()
