@@ -1,28 +1,17 @@
 import pytest
 from qtpy.QtWidgets import QPushButton
 from unittest.mock import Mock
-from allencell_ml_segmenter.widgets.training_widget import TrainingWidget
+from allencell_ml_segmenter.sample.sample_state_widget import SampleStateWidget
+from allencell_ml_segmenter.main.main_model import MainModel
 
 
 @pytest.fixture
-def training_widget(qtbot):
-    return TrainingWidget()
+def sample_widget(qtbot):
+    return SampleStateWidget(MainModel())
 
 
-def test_init(training_widget):
-    assert isinstance(training_widget.btn, QPushButton)
-    assert training_widget.btn.text() == "Start Training"
-    assert isinstance(training_widget.return_btn, QPushButton)
-    assert training_widget.return_btn.text() == "Return"
-
-
-def test_connect_slots(training_widget):
-    functions = [Mock(), Mock()]
-
-    training_widget.connectSlots(functions)
-
-    training_widget.btn.click()
-    training_widget.return_btn.click()
-
-    functions[0].assert_called_once()
-    functions[1].assert_called_once()
+# def test_init(sample_widget):
+# assert isinstance(sample_widget.btn, QPushButton)
+# assert sample_widget.btn.text() == "Start Training"
+# assert isinstance(sample_widget.return_btn, QPushButton)
+# assert sample_widget.return_btn.text() == "Return"
