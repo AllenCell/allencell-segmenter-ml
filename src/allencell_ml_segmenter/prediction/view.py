@@ -1,6 +1,8 @@
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.main.main_model import MainModel
+from allencell_ml_segmenter.prediction.model import PredictionModel
+from allencell_ml_segmenter.prediction.service import ModelFileService
 from allencell_ml_segmenter.views.view import View
 from allencell_ml_segmenter.prediction.model_input_widget import ModelInputWidget
 from qtpy.QtWidgets import QVBoxLayout, QSizePolicy, QPushButton
@@ -15,6 +17,9 @@ class PredictionView(View, Subscriber):
         super().__init__()
 
         self._main_model: MainModel = main_model
+        self._prediction_model: PredictionModel = PredictionModel()
+
+        self.service: ModelFileService = ModelFileService(self._prediction_model)
 
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
@@ -23,7 +28,7 @@ class PredictionView(View, Subscriber):
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
         self.setLayout(QVBoxLayout())
 
-        model_input_widget: ModelInputWidget = ModelInputWidget()
+        model_input_widget: ModelInputWidget = ModelInputWidget(self._prediction_model)
         self.layout().addWidget(model_input_widget)
 
         self._return_btn: QPushButton = QPushButton("Return")
