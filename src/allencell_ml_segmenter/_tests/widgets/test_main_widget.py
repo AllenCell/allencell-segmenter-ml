@@ -2,9 +2,9 @@ import pytest
 import napari
 from qtpy.QtWidgets import QStackedWidget
 from allencell_ml_segmenter.views.view import View
-from allencell_ml_segmenter.models.main_model import MainModel
-from allencell_ml_segmenter.views.training_view import TrainingView
-from allencell_ml_segmenter.widgets.main_widget import MainWidget
+from allencell_ml_segmenter.main.main_model import MainModel
+from allencell_ml_segmenter.sample.sample_view import SampleView
+from allencell_ml_segmenter.main.main_widget import MainWidget
 from unittest.mock import Mock
 
 
@@ -22,17 +22,13 @@ def test_init(viewer, qtbot):
 
 def test_handle_event(viewer, qtbot):
     main_widget = MainWidget(viewer)
-    training_view = TrainingView(main_widget.model)
-    main_widget.initialize_view(training_view)
-    assert (
-        main_widget.currentIndex() != main_widget.view_to_index[training_view]
-    )
+    sample_view = SampleView(main_widget.model)
+    main_widget.initialize_view(sample_view)
+    assert main_widget.currentIndex() != main_widget.view_to_index[sample_view]
 
-    main_widget.model.set_current_view(training_view)
+    main_widget.model.set_current_view(sample_view)
 
-    assert (
-        main_widget.currentIndex() == main_widget.view_to_index[training_view]
-    )
+    assert main_widget.currentIndex() == main_widget.view_to_index[sample_view]
 
 
 def test_main_widget_set_view(viewer, qtbot):
