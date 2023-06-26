@@ -7,7 +7,7 @@ from allencell_ml_segmenter.napari.napari_writer import (
     write_single_image,
 )
 
-from allencell_ml_segmenter.widgets.main_widget import MainWidget
+from allencell_ml_segmenter.main.main_widget import MainWidget
 
 
 __all__ = (

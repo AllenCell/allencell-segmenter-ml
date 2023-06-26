@@ -5,11 +5,7 @@ from qtpy.QtWidgets import (
 )
 
 from allencell_ml_segmenter.core.event import Event
-from allencell_ml_segmenter.models.main_model import MainModel
-from allencell_ml_segmenter.widgets.check_box_list_widget import (
-    CheckBoxListWidget,
-)
-
+from allencell_ml_segmenter.main.main_model import MainModel
 
 
 class SelectionWidget(QWidget):
@@ -26,11 +22,11 @@ class SelectionWidget(QWidget):
         # Controller
         self.training_button = QPushButton("Training View")
         self.training_button.clicked.connect(
-            lambda: self.model.dispatch(Event.TRAINING_SELECTED)
+            lambda: self.model.dispatch(Event.VIEW_SELECTION_TRAINING)
         )
         self.prediction_button = QPushButton("Prediction View")
         self.prediction_button.clicked.connect(
-            lambda: self.model.dispatch(Event.PREDICTION_SELECTED)
+            lambda: self.model.dispatch(Event.VIEW_SELECTION_PREDICTION)
         )
 
         # add buttons
@@ -39,8 +35,8 @@ class SelectionWidget(QWidget):
 
         # models
         self.model = model
-        self.model.subscribe(Event.MAIN_SELECTED, self)
+        self.model.subscribe(Event.VIEW_SELECTION_MAIN, self)
 
     def handle_event(self, event: Event) -> None:
-        if event == Event.MAIN_SELECTED:
+        if event == Event.VIEW_SELECTION_MAIN:
             self.model.set_current_view(self)
