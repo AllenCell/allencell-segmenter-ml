@@ -4,7 +4,9 @@ from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.prediction.model import PredictionModel
 from allencell_ml_segmenter.prediction.service import ModelFileService
 from allencell_ml_segmenter.views.view import View
-from allencell_ml_segmenter.prediction.model_input_widget import ModelInputWidget
+from allencell_ml_segmenter.prediction.model_input_widget import (
+    ModelInputWidget,
+)
 from qtpy.QtWidgets import QVBoxLayout, QSizePolicy, QPushButton
 
 
