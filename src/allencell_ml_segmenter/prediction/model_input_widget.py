@@ -11,6 +11,7 @@ from qtpy.QtWidgets import (
 from qtpy.QtCore import Qt
 
 from allencell_ml_segmenter.prediction.slider_with_labels_widget import SliderWithLabels
+from allencell_ml_segmenter.prediction.model import PredictionModel
 from allencell_ml_segmenter.views.view import View
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.event import Event
@@ -26,8 +27,10 @@ class ModelInputWidget(View, Subscriber):
     postprocessing selection for prediction.
     """
 
-    def __init__(self):
+    def __init__(self, model: PredictionModel):
         super().__init__()
+
+        self.model = model
 
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
@@ -60,6 +63,12 @@ class ModelInputWidget(View, Subscriber):
             self.mid_input_box,
         ]
 
+        self.model.subscribe(
+            Event.ACTION_PREDICTION_PREPROCESSING_METHOD_SELECTED,
+            self,
+            lambda e: self.method.setText(self.model.get_preprocessing_method()),
+        )
+
         # finish default set-up
         self.call_setters()
         self.build_layouts()
@@ -72,10 +81,12 @@ class ModelInputWidget(View, Subscriber):
         """
         Displays file path on label portion of input button.
         """
-        file_name = QFileDialog.getOpenFileName(self, "Open file")
+        file_path = QFileDialog.getOpenFileName(self, "Open file")[0]
         self.input_button.text_display.setReadOnly(False)
-        self.input_button.text_display.setText(file_name[0])
+        self.input_button.text_display.setText(file_path)
         self.input_button.text_display.setReadOnly(True)
+
+        self.model.set_file_path(file_path)
 
     def top_radio_button_slot(self) -> None:
         """
