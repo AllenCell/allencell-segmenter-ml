@@ -1,7 +1,5 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
-    QMainWindow,
-    QApplication,
     QWidget,
     QSizePolicy,
     QHBoxLayout,
@@ -13,10 +11,15 @@ from PyQt5.QtWidgets import (
 
 
 class SliderWithLabels(QWidget):
+    """
+    Compound widget: slider with lower and upper bounds clearly indicated
+    and an adjacent textbox displaying the current value.
+    """
+
     def __init__(self):
         super().__init__()
 
-        self.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)  # TODO
+        self.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
 
         layout: QHBoxLayout = QHBoxLayout()
         self.setLayout(layout)
@@ -33,11 +36,15 @@ class SliderWithLabels(QWidget):
 
         self.label: QLineEdit = QLineEdit()
         self.label.setPlaceholderText("0")
+        self.label.setMaxLength(4)
 
         self.add_to_layouts()
         self.connect_to_handlers()
 
-    def add_to_layouts(self):
+    def add_to_layouts(self) -> None:
+        """
+        Adds pertinent widgets and layouts to the overall layout.
+        """
         self.upper_layout.addWidget(self.lower_bound, alignment=Qt.AlignLeft)
         self.upper_layout.addWidget(self.upper_bound, alignment=Qt.AlignRight)
 
@@ -48,5 +55,7 @@ class SliderWithLabels(QWidget):
         self.layout().addWidget(self.label)
 
     def connect_to_handlers(self):
-        # TODO
+        # TODO: instead of having the slider respond to the label and vice versa,
+        #  have both set the field in the model, which dispatches a "slider change" event
+        #  that both listen and respond to when appropriate
         pass

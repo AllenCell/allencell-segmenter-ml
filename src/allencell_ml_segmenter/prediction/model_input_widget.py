@@ -3,10 +3,7 @@ from qtpy.QtWidgets import (
     QLabel,
     QHBoxLayout,
     QVBoxLayout,
-    QApplication,
-    QMainWindow,
     QSizePolicy,
-    QLineEdit,
     QComboBox,
     QGridLayout,
     QRadioButton,
@@ -39,7 +36,7 @@ class ModelInputWidget(View, Subscriber):
         self.selection_label_with_hint: LabelWithHint = LabelWithHint()
         self.input_button: InputButton = InputButton()
         self.preprocessing_label_with_hint: LabelWithHint = LabelWithHint()
-        self.method: QLabel = QLabel("simple cutoff")
+        self.method: QLabel = QLabel("n/a")
         self.postprocessing_label_with_hint: LabelWithHint = LabelWithHint()
 
         # radio buttons
@@ -55,7 +52,6 @@ class ModelInputWidget(View, Subscriber):
         self.labels = [top_label, mid_label]
 
         # input fields corresponding to radio buttons & their labels
-        # self.top_input_box: QLineEdit = QLineEdit()
         self.top_input_box: SliderWithLabels = SliderWithLabels()
         self.mid_input_box: QComboBox = QComboBox()
 
@@ -131,8 +127,23 @@ class ModelInputWidget(View, Subscriber):
             label.setStyleSheet("margin-right: 25px")
 
         # set default values for input fields
-        # TODO: self.top_input_box.setPlaceholderText("0.5")
-        self.mid_input_box.addItems(["Select value", "Example 1", "Example 2"])
+        self.mid_input_box.addItems(
+            [
+                "select a method",
+                "isodata",
+                "li",
+                "local",
+                "mean",
+                "minimum",
+                "multiotsu",
+                "niblack",
+                "otsu",
+                "savola",
+                "triangle",
+                "yen",
+                "try all",
+            ]
+        )
 
         # prohibit input until a radio button is selected
         for box in self.boxes:
@@ -189,24 +200,3 @@ class ModelInputWidget(View, Subscriber):
         # connect radio buttons to slots
         self.top_button.toggled.connect(self.top_radio_button_slot)
         self.mid_button.toggled.connect(self.mid_radio_button_slot)
-
-
-class MainWindow(QMainWindow):
-    # TODO: remove once widget is completely figured out
-    """For display/debugging purposes."""
-
-    def __init__(self):
-        super(MainWindow, self).__init__()
-
-        self.setWindowTitle("WIP - Model Input Widget")
-
-        widget: ModelInputWidget = ModelInputWidget()
-        self.setCentralWidget(widget)
-
-
-app: QApplication = QApplication([])
-
-window: MainWindow = MainWindow()
-window.show()
-
-app.exec_()
