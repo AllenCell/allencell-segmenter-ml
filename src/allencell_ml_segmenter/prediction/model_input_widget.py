@@ -13,6 +13,7 @@ from qtpy.QtWidgets import (
 )
 from qtpy.QtCore import Qt
 
+from allencell_ml_segmenter.prediction.slider_with_labels_widget import SliderWithLabels
 from allencell_ml_segmenter.views.view import View
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.event import Event
@@ -54,7 +55,8 @@ class ModelInputWidget(View, Subscriber):
         self.labels = [top_label, mid_label]
 
         # input fields corresponding to radio buttons & their labels
-        self.top_input_box: QLineEdit = QLineEdit()
+        # self.top_input_box: QLineEdit = QLineEdit()
+        self.top_input_box: SliderWithLabels = SliderWithLabels()
         self.mid_input_box: QComboBox = QComboBox()
 
         self.boxes = [
@@ -86,7 +88,6 @@ class ModelInputWidget(View, Subscriber):
         if self.top_button.isChecked():
             self.top_input_box.setEnabled(True)
             self.mid_input_box.setEnabled(False)
-            self.bottom_input_box.setEnabled(False)
         else:
             self.top_input_box.setEnabled(False)
 
@@ -97,7 +98,6 @@ class ModelInputWidget(View, Subscriber):
         if self.mid_button.isChecked():
             self.top_input_box.setEnabled(False)
             self.mid_input_box.setEnabled(True)
-            self.bottom_input_box.setEnabled(False)
         else:
             self.mid_input_box.setEnabled(False)
 
@@ -131,7 +131,7 @@ class ModelInputWidget(View, Subscriber):
             label.setStyleSheet("margin-right: 25px")
 
         # set default values for input fields
-        self.top_input_box.setPlaceholderText("0.5")
+        # TODO: self.top_input_box.setPlaceholderText("0.5")
         self.mid_input_box.addItems(["Select value", "Example 1", "Example 2"])
 
         # prohibit input until a radio button is selected
