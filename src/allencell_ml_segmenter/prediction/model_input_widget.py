@@ -44,26 +44,22 @@ class ModelInputWidget(View, Subscriber):
         # radio buttons
         self.top_button: QRadioButton = QRadioButton()
         self.mid_button: QRadioButton = QRadioButton()
-        self.bottom_button: QRadioButton = QRadioButton()
 
-        self.buttons = [self.top_button, self.mid_button, self.bottom_button]
+        self.buttons = [self.top_button, self.mid_button]
 
         # labels for the radio buttons
         top_label: QLabel = QLabel("simple threshold cutoff")
         mid_label: QLabel = QLabel("auto threshold")
-        bottom_label: QLabel = QLabel("customized operations")
 
-        self.labels = [top_label, mid_label, bottom_label]
+        self.labels = [top_label, mid_label]
 
         # input fields corresponding to radio buttons & their labels
         self.top_input_box: QLineEdit = QLineEdit()
         self.mid_input_box: QComboBox = QComboBox()
-        self.bottom_input_box: QLineEdit = QLineEdit()
 
         self.boxes = [
             self.top_input_box,
             self.mid_input_box,
-            self.bottom_input_box,
         ]
 
         # finish default set-up
@@ -105,17 +101,6 @@ class ModelInputWidget(View, Subscriber):
         else:
             self.mid_input_box.setEnabled(False)
 
-    def bottom_radio_button_slot(self) -> None:
-        """
-        Prohibits usage of non-related input fields if bottom button is checked.
-        """
-        if self.bottom_button.isChecked():
-            self.top_input_box.setEnabled(False)
-            self.mid_input_box.setEnabled(False)
-            self.bottom_input_box.setEnabled(True)
-        else:
-            self.bottom_input_box.setEnabled(False)
-
     def call_setters(self) -> None:
         """
         Sets pertinent default values for all widget fields.
@@ -125,26 +110,18 @@ class ModelInputWidget(View, Subscriber):
         self.model_label_with_hint.set_hint("this is a test")
 
         # selection label + hint
-        self.selection_label_with_hint.set_label_text(
-            "Select an existing model"
-        )
+        self.selection_label_with_hint.set_label_text("Select an existing model")
         self.selection_label_with_hint.set_hint("this is another test")
 
         # preprocessing label + hint
-        self.preprocessing_label_with_hint.set_label_text(
-            "Preprocessing method"
-        )
-        self.preprocessing_label_with_hint.set_hint(
-            "this is the penultimate test"
-        )
+        self.preprocessing_label_with_hint.set_label_text("Preprocessing method")
+        self.preprocessing_label_with_hint.set_hint("this is the penultimate test")
 
         # styling for label for preprocessing method
         self.method.setStyleSheet("margin-left: 25px")
 
         # postprocessing label + hint
-        self.postprocessing_label_with_hint.set_label_text(
-            "Postprocessing methods"
-        )
+        self.postprocessing_label_with_hint.set_label_text("Postprocessing methods")
         self.postprocessing_label_with_hint.set_hint("this is the final test")
 
         # add styling to buttons and labels
@@ -156,7 +133,6 @@ class ModelInputWidget(View, Subscriber):
         # set default values for input fields
         self.top_input_box.setPlaceholderText("0.5")
         self.mid_input_box.addItems(["Select value", "Example 1", "Example 2"])
-        self.bottom_input_box.setPlaceholderText("input value")
 
         # prohibit input until a radio button is selected
         for box in self.boxes:
@@ -174,18 +150,14 @@ class ModelInputWidget(View, Subscriber):
         selection_layout: QHBoxLayout = QHBoxLayout()
         selection_layout.setSpacing(0)
 
-        selection_layout.addWidget(
-            self.selection_label_with_hint, alignment=Qt.AlignLeft
-        )
+        selection_layout.addWidget(self.selection_label_with_hint, alignment=Qt.AlignLeft)
         selection_layout.addWidget(self.input_button, alignment=Qt.AlignLeft)
 
         # horizontal layout containing widgets related to preprocessing
         preprocessing_layout: QHBoxLayout = QHBoxLayout()
         preprocessing_layout.setSpacing(0)
 
-        preprocessing_layout.addWidget(
-            self.preprocessing_label_with_hint, alignment=Qt.AlignLeft
-        )
+        preprocessing_layout.addWidget(self.preprocessing_label_with_hint, alignment=Qt.AlignLeft)
         preprocessing_layout.addWidget(self.method, alignment=Qt.AlignLeft)
 
         # grid layout containing widgets related to postprocessing
@@ -201,14 +173,10 @@ class ModelInputWidget(View, Subscriber):
             grid_layout.addWidget(box, idx, 2)
 
         # add inner widgets and layouts to overarching layout
-        self.layout().addWidget(
-            self.model_label_with_hint, alignment=Qt.AlignLeft
-        )
+        self.layout().addWidget(self.model_label_with_hint, alignment=Qt.AlignLeft)
         self.layout().addLayout(selection_layout)
         self.layout().addLayout(preprocessing_layout)
-        self.layout().addWidget(
-            self.postprocessing_label_with_hint, alignment=Qt.AlignLeft
-        )
+        self.layout().addWidget(self.postprocessing_label_with_hint, alignment=Qt.AlignLeft)
         self.layout().addLayout(grid_layout)
 
     def configure_slots(self) -> None:
@@ -221,7 +189,6 @@ class ModelInputWidget(View, Subscriber):
         # connect radio buttons to slots
         self.top_button.toggled.connect(self.top_radio_button_slot)
         self.mid_button.toggled.connect(self.mid_radio_button_slot)
-        self.bottom_button.toggled.connect(self.bottom_radio_button_slot)
 
 
 class MainWindow(QMainWindow):
