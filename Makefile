@@ -70,7 +70,7 @@ lint: ## run a lint check / report
 .PHONY: lint
 
 format: ## reformat files with black
-> black --exclude vendor src/allencell_ml_segmenter -l 120
+> black --exclude vendor src/allencell_ml_segmenter
 .PHONY: format
 
 bumpversion-release: venv
