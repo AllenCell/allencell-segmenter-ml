@@ -37,9 +37,7 @@ class InputButton(QWidget):
 
         # button to open file explorer
         self.button: QPushButton = QPushButton("Browse")
-        self.button.setStyleSheet(
-            "padding: 5px; border: 2px solid gray; background-color: #e8ecfc"
-        )
+        self.button.setStyleSheet("padding: 5px; border: 2px solid gray; background-color: #e8ecfc")
 
         # add widgets to layout
         self.layout().addWidget(self.text_display, alignment=Qt.AlignLeft)

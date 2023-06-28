@@ -22,9 +22,7 @@ class LabelWithHint(QWidget):
         self.layout().addWidget(self.label, alignment=Qt.AlignLeft)
 
         self.question_mark: QLabel = QLabel()
-        self.question_mark.setPixmap(
-            QPixmap("../assets/icons/question-circle.svg")
-        )
+        self.question_mark.setPixmap(QPixmap("../assets/icons/question-circle.svg"))
         self.question_mark.setStyleSheet("margin-right: 10px")
 
         self.layout().addWidget(self.question_mark, alignment=Qt.AlignLeft)
