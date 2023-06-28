@@ -11,6 +11,7 @@ from qtpy.QtWidgets import (
 )
 from qtpy.QtCore import Qt
 
+from allencell_ml_segmenter.prediction.slider_with_labels_widget import SliderWithLabels
 from allencell_ml_segmenter.prediction.model import PredictionModel
 from allencell_ml_segmenter.views.view import View
 from allencell_ml_segmenter.core.subscriber import Subscriber
@@ -39,7 +40,7 @@ class ModelInputWidget(View, Subscriber):
         self.selection_label_with_hint: LabelWithHint = LabelWithHint()
         self.input_button: InputButton = InputButton()
         self.preprocessing_label_with_hint: LabelWithHint = LabelWithHint()
-        self.method: QLabel = QLabel("simple cutoff")
+        self.method: QLabel = QLabel("n/a")
         self.postprocessing_label_with_hint: LabelWithHint = LabelWithHint()
 
         # radio buttons
@@ -47,24 +48,22 @@ class ModelInputWidget(View, Subscriber):
         self.mid_button: QRadioButton = QRadioButton()
         self.bottom_button: QRadioButton = QRadioButton()
 
-        self.buttons = [self.top_button, self.mid_button, self.bottom_button]
+        self.buttons = [self.top_button, self.mid_button]
 
         # labels for the radio buttons
         top_label: QLabel = QLabel("simple threshold cutoff")
         mid_label: QLabel = QLabel("auto threshold")
-        bottom_label: QLabel = QLabel("customized operations")
 
-        self.labels = [top_label, mid_label, bottom_label]
+        self.labels = [top_label, mid_label]
 
         # input fields corresponding to radio buttons & their labels
-        self.top_input_box: QLineEdit = QLineEdit()
+        self.top_input_box: SliderWithLabels = SliderWithLabels()
         self.mid_input_box: QComboBox = QComboBox()
         self.bottom_input_box: QLineEdit = QLineEdit()
 
         self.boxes = [
             self.top_input_box,
             self.mid_input_box,
-            self.bottom_input_box,
         ]
 
         self.model.subscribe(
@@ -99,7 +98,6 @@ class ModelInputWidget(View, Subscriber):
         if self.top_button.isChecked():
             self.top_input_box.setEnabled(True)
             self.mid_input_box.setEnabled(False)
-            self.bottom_input_box.setEnabled(False)
         else:
             self.top_input_box.setEnabled(False)
 
@@ -110,20 +108,8 @@ class ModelInputWidget(View, Subscriber):
         if self.mid_button.isChecked():
             self.top_input_box.setEnabled(False)
             self.mid_input_box.setEnabled(True)
-            self.bottom_input_box.setEnabled(False)
         else:
             self.mid_input_box.setEnabled(False)
-
-    def bottom_radio_button_slot(self) -> None:
-        """
-        Prohibits usage of non-related input fields if bottom button is checked.
-        """
-        if self.bottom_button.isChecked():
-            self.top_input_box.setEnabled(False)
-            self.mid_input_box.setEnabled(False)
-            self.bottom_input_box.setEnabled(True)
-        else:
-            self.bottom_input_box.setEnabled(False)
 
     def call_setters(self) -> None:
         """
@@ -155,9 +141,28 @@ class ModelInputWidget(View, Subscriber):
             label.setStyleSheet("margin-right: 25px")
 
         # set default values for input fields
-        self.top_input_box.setPlaceholderText("0.5")
-        self.mid_input_box.addItems(["Select value", "Example 1", "Example 2"])
-        self.bottom_input_box.setPlaceholderText("input value")
+        self.mid_input_box.addItems(
+            [
+                "isodata",
+                "li",
+                "local",
+                "mean",
+                "minimum",
+                "multiotsu",
+                "niblack",
+                "otsu",
+                "savola",
+                "triangle",
+                "yen",
+                "try all",
+            ]
+        )
+
+        # set up disappearing placeholder text
+        self.mid_input_box.setEditable(True)
+        self.mid_input_box.setCurrentIndex(-1)
+        self.mid_input_box.setPlaceholderText("select a method")
+        self.mid_input_box.setEditable(False)
 
         # prohibit input until a radio button is selected
         for box in self.boxes:
@@ -214,4 +219,3 @@ class ModelInputWidget(View, Subscriber):
         # connect radio buttons to slots
         self.top_button.toggled.connect(self.top_radio_button_slot)
         self.mid_button.toggled.connect(self.mid_radio_button_slot)
-        self.bottom_button.toggled.connect(self.bottom_radio_button_slot)
