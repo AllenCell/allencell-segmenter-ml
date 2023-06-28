@@ -129,7 +129,6 @@ class ModelInputWidget(View, Subscriber):
         # set default values for input fields
         self.mid_input_box.addItems(
             [
-                "select a method",
                 "isodata",
                 "li",
                 "local",
@@ -144,6 +143,12 @@ class ModelInputWidget(View, Subscriber):
                 "try all",
             ]
         )
+
+        # set up disappearing placeholder text
+        self.mid_input_box.setEditable(True)
+        self.mid_input_box.setCurrentIndex(-1)
+        self.mid_input_box.setPlaceholderText("select a method")
+        self.mid_input_box.setEditable(False)
 
         # prohibit input until a radio button is selected
         for box in self.boxes:

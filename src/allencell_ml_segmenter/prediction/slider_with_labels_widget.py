@@ -35,7 +35,7 @@ class SliderWithLabels(QWidget):
         self.slider.setRange(0, 100)  # divide by 100 to get the actual value
 
         self.label: QLineEdit = QLineEdit()
-        self.label.setPlaceholderText("0")
+        self.label.setPlaceholderText("0.xx")  # does this placeholder text set off any weird event that breaks stuff
         self.label.setMaxLength(4)
 
         self.add_to_layouts()
