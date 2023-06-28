@@ -30,7 +30,9 @@ class SampleStateWidget(View, Subscriber):
         self._label = QLabel(TRAINING_NOT_RUNNING)
         self.layout().addWidget(self._label)
 
-        self._sample_model.subscribe(Event.PROCESS_TRAINING, self, self.update_label_with_state)
+        self._sample_model.subscribe(
+            Event.PROCESS_TRAINING, self, self.update_label_with_state
+        )
         self._sample_model.subscribe(
             Event.PROCESS_TRAINING_SHOW_ERROR,
             self,
