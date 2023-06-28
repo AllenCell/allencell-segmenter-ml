@@ -18,7 +18,9 @@ def sample_state_widget(sample_model):
     return SampleStateWidget(sample_model)
 
 
-def test_handles_process_training_evt(qtbot, sample_state_widget, sample_model):
+def test_handles_process_training_evt(
+    qtbot, sample_state_widget, sample_model
+):
     # ARRANGE
     qtbot.addWidget(sample_state_widget)
 
@@ -29,7 +31,9 @@ def test_handles_process_training_evt(qtbot, sample_state_widget, sample_model):
     assert sample_state_widget._label.text() == TRAINING_RUNNING
 
 
-def test_handles_process_training_show_error_evt(qtbot, sample_state_widget, sample_model):
+def test_handles_process_training_show_error_evt(
+    qtbot, sample_state_widget, sample_model
+):
     # ARRANGE
     qtbot.addWidget(sample_state_widget)
 
