@@ -161,6 +161,8 @@ class ModelInputWidget(View, Subscriber):
         # set up disappearing placeholder text
         self.mid_input_box.setEditable(True)
         self.mid_input_box.setCurrentIndex(-1)
+
+        # TODO: check that the user has selected an option other than the placeholder text when "run" is pressed
         self.mid_input_box.setPlaceholderText("select a method")
         self.mid_input_box.setEditable(False)
 

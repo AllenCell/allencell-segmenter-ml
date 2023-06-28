@@ -1,4 +1,5 @@
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QDoubleValidator
 from PyQt5.QtWidgets import (
     QWidget,
     QSizePolicy,
@@ -35,7 +36,14 @@ class SliderWithLabels(QWidget):
         self.slider.setRange(0, 100)  # divide by 100 to get the actual value
 
         self.label: QLineEdit = QLineEdit()
-        self.label.setPlaceholderText("0.xx")  # does this placeholder text set off any weird event that breaks stuff
+        self.label.setPlaceholderText(
+            "0.xx - 1"
+        )  # does this placeholder text set off any weird event that breaks stuff
+
+        # TODO: when they hit "run", check to see that this input is valid and halt running if not
+        validator: QDoubleValidator = QDoubleValidator()
+        validator.setRange(0, 1, 2)
+        self.label.setValidator(validator)
         self.label.setMaxLength(4)
 
         self.add_to_layouts()
