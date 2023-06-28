@@ -11,13 +11,17 @@ class Publisher(ABC):
 
     def __init__(self):
         # Map of Event -> Subscriber -> Handler function
-        self._events_to_subscriber_handlers = {event: dict() for event in [e.value for e in Event]}
+        self._events_to_subscriber_handlers = {
+            event: dict() for event in [e.value for e in Event]
+        }
 
     def dispatch(self, event: Event):
         """
         Dispatches an event to all subscribers
         """
-        for _, handler in self._events_to_subscriber_handlers[event.value].items():
+        for _, handler in self._events_to_subscriber_handlers[
+            event.value
+        ].items():
             handler(event)
 
     def subscribe(self, event: Event, subscriber: Subscriber, handler=None):
