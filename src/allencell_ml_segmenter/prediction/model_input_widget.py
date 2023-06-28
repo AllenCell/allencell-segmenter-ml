@@ -11,7 +11,9 @@ from qtpy.QtWidgets import (
 )
 from qtpy.QtCore import Qt
 
-from allencell_ml_segmenter.prediction.slider_with_labels_widget import SliderWithLabels
+from allencell_ml_segmenter.prediction.slider_with_labels_widget import (
+    SliderWithLabels,
+)
 from allencell_ml_segmenter.prediction.model import PredictionModel
 from allencell_ml_segmenter.views.view import View
 from allencell_ml_segmenter.core.subscriber import Subscriber
@@ -69,7 +71,9 @@ class ModelInputWidget(View, Subscriber):
         self.model.subscribe(
             Event.ACTION_PREDICTION_PREPROCESSING_METHOD_SELECTED,
             self,
-            lambda e: self.method.setText(self.model.get_preprocessing_method()),
+            lambda e: self.method.setText(
+                self.model.get_preprocessing_method()
+            ),
         )
 
         # finish default set-up

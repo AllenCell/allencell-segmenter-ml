@@ -65,4 +65,6 @@ class PredictionModel(Publisher):
         Sets postprocessing threshold selected by user.
         """
         self.postprocessing_threshold = threshold
-        self.dispatch(Event.ACTION_PREDICTION_POSTPROCESSING_THRESHOLD_SELECTED)
+        self.dispatch(
+            Event.ACTION_PREDICTION_POSTPROCESSING_THRESHOLD_SELECTED
+        )
