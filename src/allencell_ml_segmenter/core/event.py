@@ -17,9 +17,15 @@ class Event(Enum):
     ACTION_CHANGE_VIEW = "change_view"
     ACTION_START_TRAINING = "start_training"
     ACTION_PREDICTION_MODEL_FILE_SELECTED = "model_file_selected"
-    ACTION_PREDICTION_PREPROCESSING_METHOD_SELECTED = "preprocessing_method_selected"
-    ACTION_PREDICTION_POSTPROCESSING_METHOD_SELECTED = "postprocessing_method_selected"
-    ACTION_PREDICTION_POSTPROCESSING_THRESHOLD_SELECTED = "postprocessing_threshold_selected"
+    ACTION_PREDICTION_PREPROCESSING_METHOD_SELECTED = (
+        "preprocessing_method_selected"
+    )
+    ACTION_PREDICTION_POSTPROCESSING_METHOD_SELECTED = (
+        "postprocessing_method_selected"
+    )
+    ACTION_PREDICTION_POSTPROCESSING_THRESHOLD_SELECTED = (
+        "postprocessing_threshold_selected"
+    )
 
     # View selection events.  These can stem from a user action, or from a process (ie prediction process ends, and a new view is shown automatically).
     VIEW_SELECTION_TRAINING = "training_selected"
