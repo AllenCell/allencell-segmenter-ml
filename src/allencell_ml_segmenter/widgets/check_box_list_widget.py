@@ -23,7 +23,8 @@ class CheckBoxListWidget(QListWidget):
             item_add = item
         else:
             raise TypeError(
-                "Item added to CheckBoxListWidget must be a string or QListWidgetItem, but" f"got {type(item)} instead"
+                "Item added to CheckBoxListWidget must be a string or QListWidgetItem, but"
+                f"got {type(item)} instead"
             )
         # set checkable and unchecked by default
         item_add.setFlags(item_add.flags() | Qt.ItemIsUserCheckable)
