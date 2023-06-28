@@ -21,9 +21,13 @@ class SelectionWidget(QWidget):
 
         # Controller
         self.training_button = QPushButton("Training View")
-        self.training_button.clicked.connect(lambda: self.model.dispatch(Event.VIEW_SELECTION_TRAINING))
+        self.training_button.clicked.connect(
+            lambda: self.model.dispatch(Event.VIEW_SELECTION_TRAINING)
+        )
         self.prediction_button = QPushButton("Prediction View")
-        self.prediction_button.clicked.connect(lambda: self.model.dispatch(Event.VIEW_SELECTION_PREDICTION))
+        self.prediction_button.clicked.connect(
+            lambda: self.model.dispatch(Event.VIEW_SELECTION_PREDICTION)
+        )
 
         # add buttons
         self.layout().addWidget(self.training_button)

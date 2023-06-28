@@ -60,7 +60,9 @@ class SampleView(View, Subscriber):
         self.layout().addWidget(self._results_list_widget)
 
         self._return_btn: QPushButton = QPushButton("Return")
-        self._return_btn.clicked.connect(lambda: self._main_model.dispatch(Event.VIEW_SELECTION_MAIN))
+        self._return_btn.clicked.connect(
+            lambda: self._main_model.dispatch(Event.VIEW_SELECTION_MAIN)
+        )
         self.layout().addWidget(self._return_btn)
 
         # events
