@@ -67,16 +67,25 @@ def test_postprocessing_simple_threshold(prediction_view):
     prediction_view.model_input_widget.top_input_box.slider.setValue(29)
 
     # ASSERT
-    assert prediction_view._prediction_model.get_postprocessing_simple_threshold() == .29
+    assert (
+        prediction_view._prediction_model.get_postprocessing_simple_threshold()
+        == 0.29
+    )
 
     # ACT
     prediction_view.model_input_widget.top_input_box.label.setText("0.77")
 
     # ASSERT
-    assert prediction_view._prediction_model.get_postprocessing_simple_threshold() == .77
+    assert (
+        prediction_view._prediction_model.get_postprocessing_simple_threshold()
+        == 0.77
+    )
 
     # ACT
     prediction_view.model_input_widget.top_input_box.slider.setValue(41)
 
     # ASSERT
-    assert prediction_view._prediction_model.get_postprocessing_simple_threshold() == .41
+    assert (
+        prediction_view._prediction_model.get_postprocessing_simple_threshold()
+        == 0.41
+    )
