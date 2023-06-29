@@ -61,13 +61,22 @@ class PredictionModel(Publisher):
         """
         return self.postprocessing_simple_threshold
 
-    def set_postprocessing_simple_threshold(self, threshold: float) -> None:
+    def set_postprocessing_simple_threshold_from_slider(self, threshold: float) -> None:
         """
-        Sets simple threshold selected by user.
+        Sets simple threshold selected by user from the slider.
         """
         self.postprocessing_simple_threshold = threshold
         self.dispatch(
-            Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_SELECTED
+            Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_MOVED
+        )
+
+    def set_postprocessing_simple_threshold_from_label(self, threshold: float) -> None:
+        """
+        Sets simple threshold input into the label by the user.
+        """
+        self.postprocessing_simple_threshold = threshold
+        self.dispatch(
+            Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_TYPED
         )
 
     def get_postprocessing_auto_threshold(self) -> str:
