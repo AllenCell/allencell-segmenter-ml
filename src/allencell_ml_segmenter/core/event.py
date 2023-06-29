@@ -23,8 +23,11 @@ class Event(Enum):
     ACTION_PREDICTION_POSTPROCESSING_METHOD_SELECTED = (
         "postprocessing_method_selected"
     )
-    ACTION_PREDICTION_POSTPROCESSING_THRESHOLD_SELECTED = (
-        "postprocessing_threshold_selected"
+    ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_SELECTED = (
+        "postprocessing_simple_threshold_selected"
+    )
+    ACTION_PREDICTION_POSTPROCESSING_AUTO_THRESHOLD_SELECTED = (
+        "postprocessing_auto_threshold_selected"
     )
 
     # View selection events.  These can stem from a user action, or from a process (ie prediction process ends, and a new view is shown automatically).

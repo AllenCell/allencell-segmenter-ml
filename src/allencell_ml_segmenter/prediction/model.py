@@ -13,7 +13,8 @@ class PredictionModel(Publisher):
         self.file_path: str = None
         self.preprocessing_method: str = None
         self.postprocessing_method: str = None
-        self.postprocessing_threshold: float = None
+        self.postprocessing_simple_threshold: float = None
+        self.postprocessing_auto_threshold: str = None
 
     def get_file_path(self) -> str:
         """
@@ -54,17 +55,32 @@ class PredictionModel(Publisher):
         self.postprocessing_method = method
         self.dispatch(Event.ACTION_PREDICTION_POSTPROCESSING_METHOD_SELECTED)
 
-    def get_postprocessing_threshold(self) -> float:
+    def get_postprocessing_simple_threshold(self) -> float:
         """
-        Gets postprocessing threshold selected by user.
+        Gets simple threshold selected by user.
         """
-        return self.postprocessing_threshold
+        return self.postprocessing_simple_threshold
 
-    def set_postprocessing_threshold(self, threshold: float) -> None:
+    def set_postprocessing_simple_threshold(self, threshold: float) -> None:
         """
-        Sets postprocessing threshold selected by user.
+        Sets simple threshold selected by user.
         """
-        self.postprocessing_threshold = threshold
+        self.postprocessing_simple_threshold = threshold
         self.dispatch(
-            Event.ACTION_PREDICTION_POSTPROCESSING_THRESHOLD_SELECTED
+            Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_SELECTED
+        )
+
+    def get_postprocessing_auto_threshold(self) -> str:
+        """
+        Gets auto threshold selected by user.
+        """
+        return self.postprocessing_auto_threshold
+
+    def set_postprocessing_auto_threshold(self, threshold: str) -> None:
+        """
+        Sets auto threshold selected by user.
+        """
+        self.postprocessing_auto_threshold = threshold
+        self.dispatch(
+            Event.ACTION_PREDICTION_POSTPROCESSING_AUTO_THRESHOLD_SELECTED
         )
