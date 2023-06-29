@@ -32,10 +32,10 @@ class PredictionView(View, Subscriber):
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
         self.setLayout(QVBoxLayout())
 
-        model_input_widget: ModelInputWidget = ModelInputWidget(
+        self.model_input_widget: ModelInputWidget = ModelInputWidget(
             self._prediction_model
         )
-        self.layout().addWidget(model_input_widget)
+        self.layout().addWidget(self.model_input_widget)
 
         self._return_btn: QPushButton = QPushButton("Return")
         self._return_btn.clicked.connect(
