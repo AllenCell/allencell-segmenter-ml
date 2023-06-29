@@ -1,6 +1,5 @@
 import pytest
 
-from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.prediction.view import PredictionView
 
@@ -15,9 +14,9 @@ def prediction_view(main_model, qtbot):
     return PredictionView(main_model)
 
 
-def test_prediction_view(prediction_view):
+def test_preprocessing_method(prediction_view):
     # ACT
-    prediction_view._main_model.dispatch(Event.VIEW_SELECTION_PREDICTION)
+    prediction_view._prediction_model.set_file_path("random string")
 
     # ASSERT
-    assert prediction_view._main_model.get_current_view() == prediction_view
+    assert prediction_view.model_input_widget.method.text() == "foo"
