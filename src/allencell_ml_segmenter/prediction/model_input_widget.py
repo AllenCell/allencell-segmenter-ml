@@ -53,10 +53,10 @@ class ModelInputWidget(View, Subscriber):
         self.buttons = [self.top_button, self.mid_button]
 
         # labels for the radio buttons
-        top_label: QLabel = QLabel("simple threshold cutoff")
-        mid_label: QLabel = QLabel("auto threshold")
+        self.top_label: QLabel = QLabel("simple threshold cutoff")
+        self.mid_label: QLabel = QLabel("auto threshold")
 
-        self.labels = [top_label, mid_label]
+        self.labels = [self.top_label, self.mid_label]
 
         # input fields corresponding to radio buttons & their labels
         self.top_input_box: SliderWithLabels = SliderWithLabels()
@@ -99,21 +99,17 @@ class ModelInputWidget(View, Subscriber):
         """
         Prohibits usage of non-related input fields if top button is checked.
         """
-        if self.top_button.isChecked():
-            self.top_input_box.setEnabled(True)
-            self.mid_input_box.setEnabled(False)
-        else:
-            self.top_input_box.setEnabled(False)
+        self.top_input_box.setEnabled(True)
+        self.mid_input_box.setEnabled(False)
+        self.model.set_postprocessing_method(self.top_label.text())
 
     def mid_radio_button_slot(self) -> None:
         """
         Prohibits usage of non-related input fields if middle button is checked.
         """
-        if self.mid_button.isChecked():
-            self.top_input_box.setEnabled(False)
-            self.mid_input_box.setEnabled(True)
-        else:
-            self.mid_input_box.setEnabled(False)
+        self.top_input_box.setEnabled(False)
+        self.mid_input_box.setEnabled(True)
+        self.model.set_postprocessing_method(self.mid_label.text())
 
     def call_setters(self) -> None:
         """
@@ -175,6 +171,7 @@ class ModelInputWidget(View, Subscriber):
         self.mid_input_box.setCurrentIndex(-1)
 
         # TODO: check that the user has selected an option other than the placeholder text when "run" is pressed
+        # TODO: also check that one of the two radio buttons has been selected
         self.mid_input_box.setPlaceholderText("select a method")
         self.mid_input_box.setEditable(False)
 
