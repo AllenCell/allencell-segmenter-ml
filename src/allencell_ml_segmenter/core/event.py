@@ -23,8 +23,11 @@ class Event(Enum):
     ACTION_PREDICTION_POSTPROCESSING_METHOD_SELECTED = (
         "postprocessing_method_selected"
     )
-    ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_SELECTED = (
-        "postprocessing_simple_threshold_selected"
+    ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_MOVED = (
+        "postprocessing_simple_threshold_moved"
+    )
+    ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_TYPED = (
+        "postprocessing_simple_threshold_typed"
     )
     ACTION_PREDICTION_POSTPROCESSING_AUTO_THRESHOLD_SELECTED = (
         "postprocessing_auto_threshold_selected"

@@ -4,7 +4,6 @@ from qtpy.QtWidgets import (
     QHBoxLayout,
     QVBoxLayout,
     QSizePolicy,
-    QLineEdit,
     QComboBox,
     QGridLayout,
     QRadioButton,
@@ -48,7 +47,6 @@ class ModelInputWidget(View, Subscriber):
         # radio buttons
         self.top_button: QRadioButton = QRadioButton()
         self.mid_button: QRadioButton = QRadioButton()
-        self.bottom_button: QRadioButton = QRadioButton()
 
         self.buttons = [self.top_button, self.mid_button]
 
@@ -61,7 +59,6 @@ class ModelInputWidget(View, Subscriber):
         # input fields corresponding to radio buttons & their labels
         self.top_input_box: SliderWithLabels = SliderWithLabels()
         self.mid_input_box: QComboBox = QComboBox()
-        self.bottom_input_box: QLineEdit = QLineEdit()
 
         self.boxes = [
             self.top_input_box,
@@ -74,6 +71,18 @@ class ModelInputWidget(View, Subscriber):
             lambda e: self.method.setText(
                 self.model.get_preprocessing_method()
             ),
+        )
+
+        self.model.subscribe(
+            Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_MOVED,
+            self,
+            lambda e: self.update_simple_threshold_label()
+        )
+
+        self.model.subscribe(
+            Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_TYPED,
+            self,
+            lambda e: self.update_simple_threshold_slider()
         )
 
         # finish default set-up
@@ -110,6 +119,20 @@ class ModelInputWidget(View, Subscriber):
         self.top_input_box.setEnabled(False)
         self.mid_input_box.setEnabled(True)
         self.model.set_postprocessing_method(self.mid_label.text())
+
+    def update_simple_threshold_label(self) -> None:
+        threshold: float = self.model.get_postprocessing_simple_threshold()
+        # TODO: figure out minimal combo
+        self.top_input_box.label.setText(str(threshold))
+
+    def update_simple_threshold_slider(self) -> None:
+        threshold: float = self.model.get_postprocessing_simple_threshold()
+        # TODO: figure out minimal combo
+        self.top_input_box.slider.setTracking(True)
+        self.top_input_box.slider.setValue(round(threshold * 100))
+        self.top_input_box.slider.setSliderPosition(round(threshold * 100))
+        self.top_input_box.slider.update()
+        self.top_input_box.slider.repaint()
 
     def call_setters(self) -> None:
         """
@@ -240,6 +263,9 @@ class ModelInputWidget(View, Subscriber):
         self.mid_button.toggled.connect(self.mid_radio_button_slot)
 
         # connect input boxes to slots
+        self.top_input_box.label.textChanged.connect(lambda s: self.model.set_postprocessing_simple_threshold_from_label(float(s)))
+        self.top_input_box.slider.valueChanged.connect(lambda v: self.model.set_postprocessing_simple_threshold_from_slider(v / 100))
+
         self.mid_input_box.currentTextChanged.connect(
             lambda s: self.model.set_postprocessing_auto_threshold(s)
         )
