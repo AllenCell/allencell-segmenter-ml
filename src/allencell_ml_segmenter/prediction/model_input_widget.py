@@ -238,3 +238,8 @@ class ModelInputWidget(View, Subscriber):
         # connect radio buttons to slots
         self.top_button.toggled.connect(self.top_radio_button_slot)
         self.mid_button.toggled.connect(self.mid_radio_button_slot)
+
+        # connect input boxes to slots
+        self.mid_input_box.currentTextChanged.connect(
+            lambda s: self.model.set_postprocessing_auto_threshold(s)
+        )
