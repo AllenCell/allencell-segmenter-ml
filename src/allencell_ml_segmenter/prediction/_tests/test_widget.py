@@ -20,3 +20,29 @@ def test_preprocessing_method(prediction_view):
 
     # ASSERT
     assert prediction_view.model_input_widget.method.text() == "foo"
+
+
+def test_postprocessing_simple_threshold_ui(prediction_view):
+    # ACT
+    prediction_view.model_input_widget.top_input_box.slider.setValue(29)
+
+    # ASSERT
+    assert (
+        prediction_view.model_input_widget.top_input_box.label.text() == "0.29"
+    )
+
+    # ACT
+    prediction_view.model_input_widget.top_input_box.label.setText("0.77")
+
+    # ASSERT
+    assert (
+        prediction_view.model_input_widget.top_input_box.slider.value() == 77
+    )
+
+    # ACT
+    prediction_view.model_input_widget.top_input_box.slider.setValue(41)
+
+    # ASSERT
+    assert (
+        prediction_view.model_input_widget.top_input_box.label.text() == "0.41"
+    )
