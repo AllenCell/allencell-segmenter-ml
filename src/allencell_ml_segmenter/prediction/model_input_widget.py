@@ -76,13 +76,13 @@ class ModelInputWidget(View, Subscriber):
         self.model.subscribe(
             Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_MOVED,
             self,
-            lambda e: self.update_simple_threshold_label()
+            lambda e: self.update_simple_threshold_label(),
         )
 
         self.model.subscribe(
             Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_TYPED,
             self,
-            lambda e: self.update_simple_threshold_slider()
+            lambda e: self.update_simple_threshold_slider(),
         )
 
         # finish default set-up
@@ -263,8 +263,16 @@ class ModelInputWidget(View, Subscriber):
         self.mid_button.toggled.connect(self.mid_radio_button_slot)
 
         # connect input boxes to slots
-        self.top_input_box.label.textChanged.connect(lambda s: self.model.set_postprocessing_simple_threshold_from_label(float(s)))
-        self.top_input_box.slider.valueChanged.connect(lambda v: self.model.set_postprocessing_simple_threshold_from_slider(v / 100))
+        self.top_input_box.label.textChanged.connect(
+            lambda s: self.model.set_postprocessing_simple_threshold_from_label(
+                float(s)
+            )
+        )
+        self.top_input_box.slider.valueChanged.connect(
+            lambda v: self.model.set_postprocessing_simple_threshold_from_slider(
+                v / 100
+            )
+        )
 
         self.mid_input_box.currentTextChanged.connect(
             lambda s: self.model.set_postprocessing_auto_threshold(s)
