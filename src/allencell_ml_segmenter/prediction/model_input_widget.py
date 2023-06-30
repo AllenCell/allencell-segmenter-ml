@@ -1,5 +1,4 @@
 from qtpy.QtWidgets import (
-    QFileDialog,
     QLabel,
     QHBoxLayout,
     QVBoxLayout,
@@ -35,148 +34,139 @@ class ModelInputWidget(View, Subscriber):
     def __init__(self, model: PredictionModel):
         super().__init__()
 
-        self.model = model
+        self._model = model
 
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
         # instantiate widgets
-        self.model_label_with_hint: LabelWithHint = LabelWithHint()
-        self.selection_label_with_hint: LabelWithHint = LabelWithHint()
-        self.input_button: InputButton = InputButton()
-        self.preprocessing_label_with_hint: LabelWithHint = LabelWithHint()
-        self.method: QLabel = QLabel("n/a")
-        self.postprocessing_label_with_hint: LabelWithHint = LabelWithHint()
+        self._model_label_with_hint: LabelWithHint = LabelWithHint()
+        self._selection_label_with_hint: LabelWithHint = LabelWithHint()
+        self._input_button: InputButton = InputButton(self._model)
+        self._preprocessing_label_with_hint: LabelWithHint = LabelWithHint()
+        self._method_label: QLabel = QLabel("n/a")
+        self._postprocessing_label_with_hint: LabelWithHint = LabelWithHint()
 
         # radio buttons
-        self.top_button: QRadioButton = QRadioButton()
-        self.bottom_button: QRadioButton = QRadioButton()
+        self._top_button: QRadioButton = QRadioButton()
+        self._bottom_button: QRadioButton = QRadioButton()
 
-        self.buttons = [self.top_button, self.bottom_button]
+        self._buttons = [self._top_button, self._bottom_button]
 
         # labels for the radio buttons
-        self.top_label: QLabel = QLabel(self.TOP_TEXT)
-        self.bottom_label: QLabel = QLabel(self.BOTTOM_TEXT)
+        self._top_label: QLabel = QLabel(self.TOP_TEXT)
+        self._bottom_label: QLabel = QLabel(self.BOTTOM_TEXT)
 
-        self.labels = [self.top_label, self.bottom_label]
+        self._labels = [self._top_label, self._bottom_label]
 
         # input fields corresponding to radio buttons & their labels
-        self.top_input_box: SliderWithLabels = SliderWithLabels()
-        self.bottom_input_box: QComboBox = QComboBox()
+        self._top_input_box: SliderWithLabels = SliderWithLabels(
+            0, 1, self._model
+        )
+        self._bottom_input_box: QComboBox = QComboBox()
 
-        self.boxes = [
-            self.top_input_box,
-            self.bottom_input_box,
+        self._boxes = [
+            self._top_input_box,
+            self._bottom_input_box,
         ]
 
-        self.model.subscribe(
+        self._model.subscribe(
             Event.ACTION_PREDICTION_PREPROCESSING_METHOD_SELECTED,
             self,
-            lambda e: self.method.setText(
-                self.model.get_preprocessing_method()
+            lambda e: self._method_label.setText(
+                self._model.get_preprocessing_method()
             ),
         )
 
-        self.model.subscribe(
+        self._model.subscribe(
             Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_MOVED,
             self,
             lambda e: self.update_simple_threshold_label(),
         )
 
-        self.model.subscribe(
+        self._model.subscribe(
             Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_TYPED,
             self,
             lambda e: self.update_simple_threshold_slider(),
         )
 
         # finish default set-up
-        self.call_setters()
-        self.build_layouts()
-        self.configure_slots()
+        self._call_setters()
+        self._build_layouts()
+        self._configure_slots()
 
     def handle_event(self, event: Event) -> None:
         pass
 
-    def get_file_name(self) -> None:
-        """
-        Displays file path on label portion of input button.
-        """
-        file_path = QFileDialog.getOpenFileName(self, "Open file")[0]
-        self.input_button.text_display.setReadOnly(False)
-        self.input_button.text_display.setText(file_path)
-        self.input_button.text_display.setReadOnly(True)
-
-        self.model.set_file_path(file_path)
-
-    def top_radio_button_slot(self) -> None:
+    def _top_radio_button_slot(self) -> None:
         """
         Prohibits usage of non-related input fields if top button is checked.
         """
-        self.top_input_box.setEnabled(True)
-        self.bottom_input_box.setEnabled(False)
-        self.model.set_postprocessing_method(self.TOP_TEXT)
+        self._top_input_box.setEnabled(True)
+        self._bottom_input_box.setEnabled(False)
+        self._model.set_postprocessing_method(self.TOP_TEXT)
 
-    def bottom_radio_button_slot(self) -> None:
+    def _bottom_radio_button_slot(self) -> None:
         """
         Prohibits usage of non-related input fields if bottom button is checked.
         """
-        self.top_input_box.setEnabled(False)
-        self.bottom_input_box.setEnabled(True)
-        self.model.set_postprocessing_method(self.BOTTOM_TEXT)
+        self._top_input_box.setEnabled(False)
+        self._bottom_input_box.setEnabled(True)
+        self._model.set_postprocessing_method(self.BOTTOM_TEXT)
 
     def update_simple_threshold_label(self) -> None:
-        threshold: float = self.model.get_postprocessing_simple_threshold()
-        self.top_input_box.label.setText(str(threshold))
+        threshold: float = self._model.get_postprocessing_simple_threshold()
+        self._top_input_box._label.setText(str(threshold))
 
     def update_simple_threshold_slider(self) -> None:
-        threshold: float = self.model.get_postprocessing_simple_threshold()
+        threshold: float = self._model.get_postprocessing_simple_threshold()
         # TODO: figure out minimal combo
 
         # TODO: pass threshold to method of top_input_box
-        self.top_input_box.slider.setTracking(True)
-        self.top_input_box.slider.setValue(round(threshold * 100))
-        self.top_input_box.slider.setSliderPosition(round(threshold * 100))
-        self.top_input_box.slider.update()
-        self.top_input_box.slider.repaint()
+        self._top_input_box._slider.setTracking(True)
+        self._top_input_box._slider.setValue(round(threshold * 100))
+        self._top_input_box._slider.setSliderPosition(round(threshold * 100))
+        self._top_input_box._slider.update()
+        self._top_input_box._slider.repaint()
 
-    def call_setters(self) -> None:
+    def _call_setters(self) -> None:
         """
         Sets pertinent default values for all widget fields.
         """
         # title + hint
-        self.model_label_with_hint.set_label_text("Model")
-        self.model_label_with_hint.set_hint("this is a test")
+        self._model_label_with_hint.set_label_text("Model")
+        self._model_label_with_hint.set_hint("this is a test")
 
         # selection label + hint
-        self.selection_label_with_hint.set_label_text(
+        self._selection_label_with_hint.set_label_text(
             "Select an existing model"
         )
-        self.selection_label_with_hint.set_hint("this is another test")
+        self._selection_label_with_hint.set_hint("this is another test")
 
         # preprocessing label + hint
-        self.preprocessing_label_with_hint.set_label_text(
+        self._preprocessing_label_with_hint.set_label_text(
             "Preprocessing method"
         )
-        self.preprocessing_label_with_hint.set_hint(
+        self._preprocessing_label_with_hint.set_hint(
             "this is the penultimate test"
         )
 
         # styling for label for preprocessing method
-        self.method.setStyleSheet("margin-left: 25px")
+        self._method_label.setStyleSheet("margin-left: 25px")
 
         # postprocessing label + hint
-        self.postprocessing_label_with_hint.set_label_text(
+        self._postprocessing_label_with_hint.set_label_text(
             "Postprocessing methods"
         )
-        self.postprocessing_label_with_hint.set_hint("this is the final test")
+        self._postprocessing_label_with_hint.set_hint("this is the final test")
 
         # add styling to buttons and labels
-        for button in self.buttons:
+        for button in self._buttons:
             button.setStyleSheet("margin-left: 25px; margin-right: 6 px")
-        for label in self.labels:
+        for label in self._labels:
             label.setStyleSheet("margin-right: 25px")
 
         # set default values for input fields
-        self.bottom_input_box.addItems(
+        self._bottom_input_box.addItems(
             [
                 "isodata",
                 "li",
@@ -194,19 +184,19 @@ class ModelInputWidget(View, Subscriber):
         )
 
         # set up disappearing placeholder text
-        self.bottom_input_box.setEditable(True)
-        self.bottom_input_box.setCurrentIndex(-1)
+        self._bottom_input_box.setEditable(True)
+        self._bottom_input_box.setCurrentIndex(-1)
 
         # TODO: check that the user has selected an option other than the placeholder text when "run" is pressed
         # TODO: also check that one of the two radio buttons has been selected
-        self.bottom_input_box.setPlaceholderText("select a method")
-        self.bottom_input_box.setEditable(False)
+        self._bottom_input_box.setPlaceholderText("select a method")
+        self._bottom_input_box.setEditable(False)
 
         # prohibit input until a radio button is selected
-        for box in self.boxes:
+        for box in self._boxes:
             box.setEnabled(False)
 
-    def build_layouts(self) -> None:
+    def _build_layouts(self) -> None:
         """
         Places previously instantiated widgets into respective layouts.
         """
@@ -219,65 +209,65 @@ class ModelInputWidget(View, Subscriber):
         selection_layout.setSpacing(0)
 
         selection_layout.addWidget(
-            self.selection_label_with_hint, alignment=Qt.AlignLeft
+            self._selection_label_with_hint, alignment=Qt.AlignLeft
         )
-        selection_layout.addWidget(self.input_button, alignment=Qt.AlignLeft)
+        selection_layout.addWidget(self._input_button, alignment=Qt.AlignLeft)
 
         # horizontal layout containing widgets related to preprocessing
         preprocessing_layout: QHBoxLayout = QHBoxLayout()
         preprocessing_layout.setSpacing(0)
 
         preprocessing_layout.addWidget(
-            self.preprocessing_label_with_hint, alignment=Qt.AlignLeft
+            self._preprocessing_label_with_hint, alignment=Qt.AlignLeft
         )
-        preprocessing_layout.addWidget(self.method, alignment=Qt.AlignLeft)
+        preprocessing_layout.addWidget(
+            self._method_label, alignment=Qt.AlignLeft
+        )
 
         # grid layout containing widgets related to postprocessing
         grid_layout: QGridLayout = QGridLayout()
         grid_layout.setSpacing(0)
 
         # add all pertinent widgets to the grid
-        for idx, button in enumerate(self.buttons):
+        for idx, button in enumerate(self._buttons):
             grid_layout.addWidget(button, idx, 0)
-        for idx, label in enumerate(self.labels):
+        for idx, label in enumerate(self._labels):
             grid_layout.addWidget(label, idx, 1)
-        for idx, box in enumerate(self.boxes):
+        for idx, box in enumerate(self._boxes):
             grid_layout.addWidget(box, idx, 2)
 
         # add inner widgets and layouts to overarching layout
         self.layout().addWidget(
-            self.model_label_with_hint, alignment=Qt.AlignLeft
+            self._model_label_with_hint, alignment=Qt.AlignLeft
         )
         self.layout().addLayout(selection_layout)
         self.layout().addLayout(preprocessing_layout)
         self.layout().addWidget(
-            self.postprocessing_label_with_hint, alignment=Qt.AlignLeft
+            self._postprocessing_label_with_hint, alignment=Qt.AlignLeft
         )
         self.layout().addLayout(grid_layout)
 
-    def configure_slots(self) -> None:
+    def _configure_slots(self) -> None:
         """
         Connects widgets to their respective event handlers.
         """
-        # connect input button to file-retrieving slot
-        self.input_button.button.clicked.connect(self.get_file_name)
-
         # connect radio buttons to slots
-        self.top_button.toggled.connect(self.top_radio_button_slot)
-        self.bottom_button.toggled.connect(self.bottom_radio_button_slot)
+        self._top_button.toggled.connect(self._top_radio_button_slot)
+        self._bottom_button.toggled.connect(self._bottom_radio_button_slot)
 
         # connect input boxes to slots
-        self.top_input_box.label.textChanged.connect(
-            lambda s: self.model.set_postprocessing_simple_threshold_from_label(  # TODO: dispatch in caller
+        # TODO: move to slider_with_labels_widget.py
+        self._top_input_box._label.textChanged.connect(
+            lambda s: self._model.set_postprocessing_simple_threshold_from_label(  # TODO: dispatch in caller
                 float(s)  # TODO: take care of empty string case
             )
         )
-        self.top_input_box.slider.valueChanged.connect(
-            lambda v: self.model.set_postprocessing_simple_threshold_from_slider(
+        self._top_input_box._slider.valueChanged.connect(
+            lambda v: self._model.set_postprocessing_simple_threshold_from_slider(
                 v / 100
             )
         )
 
-        self.bottom_input_box.currentTextChanged.connect(
-            lambda s: self.model.set_postprocessing_auto_threshold(s)
+        self._bottom_input_box.currentTextChanged.connect(
+            lambda s: self._model.set_postprocessing_auto_threshold(s)
         )

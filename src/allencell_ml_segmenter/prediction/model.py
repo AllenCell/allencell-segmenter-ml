@@ -10,56 +10,56 @@ class PredictionModel(Publisher):
     def __init__(self):
         super().__init__()
 
-        self.file_path: str = None
-        self.preprocessing_method: str = None
-        self.postprocessing_method: str = None
-        self.postprocessing_simple_threshold: float = None
-        self.postprocessing_auto_threshold: str = None
+        self._file_path: str = None
+        self._preprocessing_method: str = None
+        self._postprocessing_method: str = None
+        self._postprocessing_simple_threshold: float = None
+        self._postprocessing_auto_threshold: str = None
 
     def get_file_path(self) -> str:
         """
         Gets path to model.
         """
-        return self.file_path
+        return self._file_path
 
     def set_file_path(self, path: str) -> None:
         """
         Sets path to model.
         """
-        self.file_path = path
+        self._file_path = path
         self.dispatch(Event.ACTION_PREDICTION_MODEL_FILE_SELECTED)
 
     def get_preprocessing_method(self) -> str:
         """
         Gets preprocessing method associated with currently-selected model.
         """
-        return self.preprocessing_method
+        return self._preprocessing_method
 
     def set_preprocessing_method(self, method: str) -> None:
         """
         Sets preprocessing method associated with model after the service parses the file.
         """
-        self.preprocessing_method = method
+        self._preprocessing_method = method
         self.dispatch(Event.ACTION_PREDICTION_PREPROCESSING_METHOD_SELECTED)
 
     def get_postprocessing_method(self) -> str:
         """
         Gets postprocessing method selected by user.
         """
-        return self.postprocessing_method
+        return self._postprocessing_method
 
     def set_postprocessing_method(self, method: str) -> None:
         """
         Sets postprocessing method selected by user.
         """
-        self.postprocessing_method = method
+        self._postprocessing_method = method
         self.dispatch(Event.ACTION_PREDICTION_POSTPROCESSING_METHOD_SELECTED)
 
     def get_postprocessing_simple_threshold(self) -> float:
         """
         Gets simple threshold selected by user.
         """
-        return self.postprocessing_simple_threshold
+        return self._postprocessing_simple_threshold
 
     def set_postprocessing_simple_threshold_from_slider(
         self, threshold: float
@@ -67,7 +67,7 @@ class PredictionModel(Publisher):
         """
         Sets simple threshold selected by user from the slider.
         """
-        self.postprocessing_simple_threshold = threshold
+        self._postprocessing_simple_threshold = threshold
         self.dispatch(
             Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_MOVED
         )
@@ -78,7 +78,7 @@ class PredictionModel(Publisher):
         """
         Sets simple threshold input into the label by the user.
         """
-        self.postprocessing_simple_threshold = threshold
+        self._postprocessing_simple_threshold = threshold
         self.dispatch(
             Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_TYPED
         )
@@ -87,13 +87,13 @@ class PredictionModel(Publisher):
         """
         Gets auto threshold selected by user.
         """
-        return self.postprocessing_auto_threshold
+        return self._postprocessing_auto_threshold
 
     def set_postprocessing_auto_threshold(self, threshold: str) -> None:
         """
         Sets auto threshold selected by user.
         """
-        self.postprocessing_auto_threshold = threshold
+        self._postprocessing_auto_threshold = threshold
         self.dispatch(
             Event.ACTION_PREDICTION_POSTPROCESSING_AUTO_THRESHOLD_SELECTED
         )
