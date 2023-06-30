@@ -33,7 +33,7 @@ def test_postprocessing_method(prediction_view):
     )
 
     # ACT
-    model_input_widget.mid_radio_button_slot()
+    model_input_widget.bottom_radio_button_slot()
 
     # ASSERT
     assert (
@@ -44,7 +44,7 @@ def test_postprocessing_method(prediction_view):
 
 def test_postprocessing_auto_threshold(prediction_view):
     # ACT
-    prediction_view.model_input_widget.mid_input_box.setCurrentIndex(4)
+    prediction_view.model_input_widget.bottom_input_box.setCurrentIndex(4)
 
     # ASSERT
     assert (
@@ -53,7 +53,7 @@ def test_postprocessing_auto_threshold(prediction_view):
     )
 
     # ACT
-    prediction_view.model_input_widget.mid_input_box.setCurrentIndex(6)
+    prediction_view.model_input_widget.bottom_input_box.setCurrentIndex(6)
 
     # ASSERT
     assert (
