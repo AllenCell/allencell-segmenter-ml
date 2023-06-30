@@ -115,18 +115,11 @@ class ModelInputWidget(View, Subscriber):
 
     def update_simple_threshold_label(self) -> None:
         threshold: float = self._model.get_postprocessing_simple_threshold()
-        self._top_input_box._label.setText(str(threshold))
+        self._top_input_box.set_label_value(threshold)
 
     def update_simple_threshold_slider(self) -> None:
         threshold: float = self._model.get_postprocessing_simple_threshold()
-        # TODO: figure out minimal combo
-
-        # TODO: pass threshold to method of top_input_box
-        self._top_input_box._slider.setTracking(True)
-        self._top_input_box._slider.setValue(round(threshold * 100))
-        self._top_input_box._slider.setSliderPosition(round(threshold * 100))
-        self._top_input_box._slider.update()
-        self._top_input_box._slider.repaint()
+        self._top_input_box.set_slider_value(threshold)
 
     def _call_setters(self) -> None:
         """
@@ -255,19 +248,7 @@ class ModelInputWidget(View, Subscriber):
         self._top_button.toggled.connect(self._top_radio_button_slot)
         self._bottom_button.toggled.connect(self._bottom_radio_button_slot)
 
-        # connect input boxes to slots
-        # TODO: move to slider_with_labels_widget.py
-        self._top_input_box._label.textChanged.connect(
-            lambda s: self._model.set_postprocessing_simple_threshold_from_label(  # TODO: dispatch in caller
-                float(s)  # TODO: take care of empty string case
-            )
-        )
-        self._top_input_box._slider.valueChanged.connect(
-            lambda v: self._model.set_postprocessing_simple_threshold_from_slider(
-                v / 100
-            )
-        )
-
+        # connect bottom input box to slot
         self._bottom_input_box.currentTextChanged.connect(
             lambda s: self._model.set_postprocessing_auto_threshold(s)
         )
