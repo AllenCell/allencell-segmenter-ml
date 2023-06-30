@@ -24,7 +24,7 @@ def test_postprocessing_method(prediction_view):
     )
 
     # ACT
-    model_input_widget.top_radio_button_slot()
+    model_input_widget._top_radio_button_slot()
 
     # ASSERT
     assert (
@@ -33,7 +33,7 @@ def test_postprocessing_method(prediction_view):
     )
 
     # ACT
-    model_input_widget.bottom_radio_button_slot()
+    model_input_widget._bottom_radio_button_slot()
 
     # ASSERT
     assert (
@@ -44,7 +44,7 @@ def test_postprocessing_method(prediction_view):
 
 def test_postprocessing_auto_threshold(prediction_view):
     # ACT
-    prediction_view.model_input_widget.bottom_input_box.setCurrentIndex(4)
+    prediction_view._model_input_widget._bottom_input_box.setCurrentIndex(4)
 
     # ASSERT
     assert (
@@ -53,7 +53,7 @@ def test_postprocessing_auto_threshold(prediction_view):
     )
 
     # ACT
-    prediction_view.model_input_widget.bottom_input_box.setCurrentIndex(6)
+    prediction_view._model_input_widget._bottom_input_box.setCurrentIndex(6)
 
     # ASSERT
     assert (
@@ -64,7 +64,7 @@ def test_postprocessing_auto_threshold(prediction_view):
 
 def test_postprocessing_simple_threshold(prediction_view):
     # ACT
-    prediction_view.model_input_widget.top_input_box.slider.setValue(29)
+    prediction_view._model_input_widget._top_input_box._slider.setValue(29)
 
     # ASSERT
     assert (
@@ -73,7 +73,7 @@ def test_postprocessing_simple_threshold(prediction_view):
     )
 
     # ACT
-    prediction_view.model_input_widget.top_input_box.label.setText("0.77")
+    prediction_view._model_input_widget._top_input_box._label.setText("0.77")
 
     # ASSERT
     assert (
@@ -82,7 +82,7 @@ def test_postprocessing_simple_threshold(prediction_view):
     )
 
     # ACT
-    prediction_view.model_input_widget.top_input_box.slider.setValue(41)
+    prediction_view._model_input_widget._top_input_box._slider.setValue(41)
 
     # ASSERT
     assert (
