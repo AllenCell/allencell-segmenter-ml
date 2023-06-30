@@ -130,6 +130,8 @@ class ModelInputWidget(View, Subscriber):
     def update_simple_threshold_slider(self) -> None:
         threshold: float = self.model.get_postprocessing_simple_threshold()
         # TODO: figure out minimal combo
+
+        # TODO: pass threshold to method of top_input_box
         self.top_input_box.slider.setTracking(True)
         self.top_input_box.slider.setValue(round(threshold * 100))
         self.top_input_box.slider.setSliderPosition(round(threshold * 100))
@@ -266,8 +268,8 @@ class ModelInputWidget(View, Subscriber):
 
         # connect input boxes to slots
         self.top_input_box.label.textChanged.connect(
-            lambda s: self.model.set_postprocessing_simple_threshold_from_label(
-                float(s)
+            lambda s: self.model.set_postprocessing_simple_threshold_from_label(  # TODO: dispatch in caller
+                float(s)  # TODO: take care of empty string case
             )
         )
         self.top_input_box.slider.valueChanged.connect(

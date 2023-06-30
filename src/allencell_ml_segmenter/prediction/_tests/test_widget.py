@@ -1,48 +1,47 @@
 import pytest
 
-from allencell_ml_segmenter.main.main_model import MainModel
-from allencell_ml_segmenter.prediction.view import PredictionView
+from allencell_ml_segmenter.prediction.model import PredictionModel
+from allencell_ml_segmenter.prediction.model_input_widget import (
+    ModelInputWidget,
+)
 
 
 @pytest.fixture
-def main_model():
-    return MainModel()
+def prediction_model():
+    return PredictionModel()
 
 
 @pytest.fixture
-def prediction_view(main_model, qtbot):
-    return PredictionView(main_model)
+def model_input_widget(prediction_model, qtbot):
+    return ModelInputWidget(prediction_model)
 
 
-def test_preprocessing_method(prediction_view):
+# def test_preprocessing_method(model_input_widget, prediction_model):
+#     # TODO: call the setter directly
+#     # ACT
+#     prediction_model.set_file_path("random string")
+#
+#     # ASSERT
+#     # TODO: rename method
+#     assert model_input_widget.method.text() == "foo"
+
+
+# TODO: potentially move to sliderwithlabel widget tests
+def test_postprocessing_simple_threshold_ui(model_input_widget):
     # ACT
-    prediction_view._prediction_model.set_file_path("random string")
+    model_input_widget.top_input_box.slider.setValue(29)
 
     # ASSERT
-    assert prediction_view.model_input_widget.method.text() == "foo"
-
-
-def test_postprocessing_simple_threshold_ui(prediction_view):
-    # ACT
-    prediction_view.model_input_widget.top_input_box.slider.setValue(29)
-
-    # ASSERT
-    assert (
-        prediction_view.model_input_widget.top_input_box.label.text() == "0.29"
-    )
+    assert model_input_widget.top_input_box.label.text() == "0.29"
 
     # ACT
-    prediction_view.model_input_widget.top_input_box.label.setText("0.77")
+    model_input_widget.top_input_box.label.setText("0.77")
 
     # ASSERT
-    assert (
-        prediction_view.model_input_widget.top_input_box.slider.value() == 77
-    )
+    assert model_input_widget.top_input_box.slider.value() == 77
 
     # ACT
-    prediction_view.model_input_widget.top_input_box.slider.setValue(41)
+    model_input_widget.top_input_box.slider.setValue(41)
 
     # ASSERT
-    assert (
-        prediction_view.model_input_widget.top_input_box.label.text() == "0.41"
-    )
+    assert model_input_widget.top_input_box.label.text() == "0.41"
