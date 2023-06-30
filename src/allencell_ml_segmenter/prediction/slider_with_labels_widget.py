@@ -10,6 +10,8 @@ from PyQt5.QtWidgets import (
     QLineEdit,
 )
 
+from allencell_ml_segmenter.core.publisher import Publisher
+
 
 class SliderWithLabels(QWidget):
     """
@@ -17,52 +19,56 @@ class SliderWithLabels(QWidget):
     and an adjacent textbox displaying the current value.
     """
 
-    def __init__(self):  # TODO: pass bounds
+    def __init__(self, lower_bound: int, upper_bound: int, model: Publisher):
         super().__init__()
 
         self.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
 
+        self._model: Publisher = model
+
         layout: QHBoxLayout = QHBoxLayout()
         self.setLayout(layout)
 
-        self.left_layout: QVBoxLayout = QVBoxLayout()
-        self.left_layout.setSpacing(0)
-        self.upper_layout: QHBoxLayout = QHBoxLayout()
+        self._left_layout: QVBoxLayout = QVBoxLayout()
+        self._left_layout.setSpacing(0)
+        self._upper_layout: QHBoxLayout = QHBoxLayout()
 
-        self.lower_bound: QLabel = QLabel("0")
-        self.upper_bound: QLabel = QLabel("1")
+        self._low: QLabel = QLabel(str(lower_bound))
+        self._high: QLabel = QLabel(str(upper_bound))
 
-        self.slider: QSlider = QSlider(Qt.Horizontal)
-        self.slider.setRange(0, 100)  # divide by 100 to get the actual value
+        self._slider: QSlider = QSlider(Qt.Horizontal)
+        self._slider.setRange(
+            lower_bound, round(100 * upper_bound)
+        )  # divide by 100 to get the actual value
 
-        self.label: QLineEdit = QLineEdit()
-        self.label.setPlaceholderText(
-            "0.xx - 1"
+        self._label: QLineEdit = QLineEdit()
+        self._label.setPlaceholderText(
+            f"{lower_bound}.xx - {upper_bound}"
         )  # does this placeholder text set off any weird event that breaks stuff
 
         # TODO: when they hit "run", check to see that this input is valid and halt running if not
         validator: QDoubleValidator = QDoubleValidator()
-        validator.setRange(0, 1, 2)
-        self.label.setValidator(validator)
-        self.label.setMaxLength(4)
+        validator.setRange(lower_bound, upper_bound, 2)
+        self._label.setValidator(validator)
+        self._label.setMaxLength(4)
 
-        self.add_to_layouts()
-        self.connect_to_handlers()
+        self._add_to_layouts()
+        self._connect_to_handlers()
 
-    def add_to_layouts(self) -> None:
+    def _add_to_layouts(self) -> None:
         """
         Adds pertinent widgets and layouts to the overall layout.
         """
-        self.upper_layout.addWidget(self.lower_bound, alignment=Qt.AlignLeft)
-        self.upper_layout.addWidget(self.upper_bound, alignment=Qt.AlignRight)
+        self._upper_layout.addWidget(self._low, alignment=Qt.AlignLeft)
+        self._upper_layout.addWidget(self._high, alignment=Qt.AlignRight)
 
-        self.left_layout.addLayout(self.upper_layout)
-        self.left_layout.addWidget(self.slider)
+        self._left_layout.addLayout(self._upper_layout)
+        self._left_layout.addWidget(self._slider)
 
-        self.layout().addLayout(self.left_layout)
-        self.layout().addWidget(self.label)
+        self.layout().addLayout(self._left_layout)
+        self.layout().addWidget(self._label)
 
-    def connect_to_handlers(self):
+    def _connect_to_handlers(self):
         # TODO: instead of having the slider respond to the label and vice versa,
         #  have both set the field in the model, which dispatches a "slider change" event
         #  that both listen and respond to when appropriate
