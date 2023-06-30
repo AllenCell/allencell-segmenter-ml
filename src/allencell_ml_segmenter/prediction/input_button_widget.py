@@ -8,7 +8,7 @@ from qtpy.QtWidgets import (
 )
 from qtpy.QtCore import Qt
 
-from allencell_ml_segmenter.core.publisher import Publisher
+from allencell_ml_segmenter.prediction.model import PredictionModel
 
 
 class InputButton(QWidget):
@@ -17,10 +17,10 @@ class InputButton(QWidget):
     Useful for selecting files and displaying the chosen file path.
     """
 
-    def __init__(self, model: Publisher):
+    def __init__(self, model: PredictionModel):
         super().__init__()
 
-        self._model: Publisher = model
+        self._model: PredictionModel = model
 
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
