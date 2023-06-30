@@ -10,7 +10,8 @@ from PyQt5.QtWidgets import (
     QLineEdit,
 )
 
-from allencell_ml_segmenter.core.publisher import Publisher
+from allencell_ml_segmenter.core.event import Event
+from allencell_ml_segmenter.prediction.model import PredictionModel
 
 
 class SliderWithLabels(QWidget):
@@ -19,12 +20,14 @@ class SliderWithLabels(QWidget):
     and an adjacent textbox displaying the current value.
     """
 
-    def __init__(self, lower_bound: int, upper_bound: int, model: Publisher):
+    def __init__(
+        self, lower_bound: int, upper_bound: int, model: PredictionModel
+    ):
         super().__init__()
 
         self.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
 
-        self._model: Publisher = model
+        self._model: PredictionModel = model
 
         layout: QHBoxLayout = QHBoxLayout()
         self.setLayout(layout)
@@ -68,8 +71,44 @@ class SliderWithLabels(QWidget):
         self.layout().addLayout(self._left_layout)
         self.layout().addWidget(self._label)
 
-    def _connect_to_handlers(self):
-        # TODO: instead of having the slider respond to the label and vice versa,
-        #  have both set the field in the model, which dispatches a "slider change" event
-        #  that both listen and respond to when appropriate
-        pass
+    def _label_slot(self, s: str) -> None:
+        """
+        Updates slider in response to label.
+        """
+        if not s:
+            num: float = 0
+        else:
+            num: float = float(s)
+
+        self._model.set_postprocessing_simple_threshold_from_label(num)
+        self._model.dispatch(
+            Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_TYPED
+        )
+
+    def _slider_slot(self, v: int) -> None:
+        """
+        Updates label in response to slider.
+        """
+        self._model.set_postprocessing_simple_threshold_from_slider(v / 100)
+        self._model.dispatch(
+            Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_MOVED
+        )
+
+    def _connect_to_handlers(self) -> None:
+        """
+        Connects slider and label to their respective slots.
+        """
+        self._label.textChanged.connect(self._label_slot)
+        self._slider.valueChanged.connect(self._slider_slot)
+
+    def set_slider_value(self, v: float) -> None:
+        """
+        Adjusts on-screen slider positioning in relation to stored state.
+        """
+        self._slider.setValue(round(v * 100))
+
+    def set_label_value(self, v: float) -> None:
+        """
+        Adjusts on-screen label in relation to stored state.
+        """
+        self._label.setText(str(v))
