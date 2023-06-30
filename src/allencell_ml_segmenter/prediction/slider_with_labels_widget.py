@@ -80,7 +80,7 @@ class SliderWithLabels(QWidget):
         else:
             num: float = float(s)
 
-        self._model.set_postprocessing_simple_threshold_from_label(num)
+        self._model.set_postprocessing_simple_threshold(num)
         self._model.dispatch(
             Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_TYPED
         )
@@ -89,7 +89,7 @@ class SliderWithLabels(QWidget):
         """
         Updates label in response to slider.
         """
-        self._model.set_postprocessing_simple_threshold_from_slider(v / 100)
+        self._model.set_postprocessing_simple_threshold(v / 100)
         self._model.dispatch(
             Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_MOVED
         )
