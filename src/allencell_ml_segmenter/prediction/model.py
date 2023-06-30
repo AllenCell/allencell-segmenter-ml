@@ -27,7 +27,7 @@ class PredictionModel(Publisher):
         Sets path to model.
         """
         self._file_path = path
-        self.dispatch(Event.ACTION_PREDICTION_MODEL_FILE_SELECTED)
+        self.dispatch(Event.ACTION_PREDICTION_MODEL_FILE)
 
     def get_preprocessing_method(self) -> str:
         """
@@ -40,7 +40,7 @@ class PredictionModel(Publisher):
         Sets preprocessing method associated with model after the service parses the file.
         """
         self._preprocessing_method = method
-        self.dispatch(Event.ACTION_PREDICTION_PREPROCESSING_METHOD_SELECTED)
+        self.dispatch(Event.ACTION_PREDICTION_PREPROCESSING_METHOD)
 
     def get_postprocessing_method(self) -> str:
         """
@@ -53,7 +53,7 @@ class PredictionModel(Publisher):
         Sets postprocessing method selected by user.
         """
         self._postprocessing_method = method
-        self.dispatch(Event.ACTION_PREDICTION_POSTPROCESSING_METHOD_SELECTED)
+        self.dispatch(Event.ACTION_PREDICTION_POSTPROCESSING_METHOD)
 
     def get_postprocessing_simple_threshold(self) -> float:
         """
@@ -61,19 +61,9 @@ class PredictionModel(Publisher):
         """
         return self._postprocessing_simple_threshold
 
-    def set_postprocessing_simple_threshold_from_slider(
-        self, threshold: float
-    ) -> None:
+    def set_postprocessing_simple_threshold(self, threshold: float) -> None:
         """
         Sets simple threshold selected by user from the slider.
-        """
-        self._postprocessing_simple_threshold = threshold
-
-    def set_postprocessing_simple_threshold_from_label(
-        self, threshold: float
-    ) -> None:
-        """
-        Sets simple threshold input into the label by the user.
         """
         self._postprocessing_simple_threshold = threshold
 
@@ -88,6 +78,4 @@ class PredictionModel(Publisher):
         Sets auto threshold selected by user.
         """
         self._postprocessing_auto_threshold = threshold
-        self.dispatch(
-            Event.ACTION_PREDICTION_POSTPROCESSING_AUTO_THRESHOLD_SELECTED
-        )
+        self.dispatch(Event.ACTION_PREDICTION_POSTPROCESSING_AUTO_THRESHOLD)

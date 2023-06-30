@@ -70,7 +70,7 @@ class ModelInputWidget(View, Subscriber):
         ]
 
         self._model.subscribe(
-            Event.ACTION_PREDICTION_PREPROCESSING_METHOD_SELECTED,
+            Event.ACTION_PREDICTION_PREPROCESSING_METHOD,
             self,
             lambda e: self._method_label.setText(
                 self._model.get_preprocessing_method()
