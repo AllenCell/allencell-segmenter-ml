@@ -29,6 +29,9 @@ class ModelInputWidget(View, Subscriber):
     postprocessing selection for prediction.
     """
 
+    TOP_TEXT: str = "simple threshold cutoff"
+    BOTTOM_TEXT: str = "auto threshold"
+
     def __init__(self, model: PredictionModel):
         super().__init__()
 
@@ -46,23 +49,23 @@ class ModelInputWidget(View, Subscriber):
 
         # radio buttons
         self.top_button: QRadioButton = QRadioButton()
-        self.mid_button: QRadioButton = QRadioButton()
+        self.bottom_button: QRadioButton = QRadioButton()
 
-        self.buttons = [self.top_button, self.mid_button]
+        self.buttons = [self.top_button, self.bottom_button]
 
         # labels for the radio buttons
-        self.top_label: QLabel = QLabel("simple threshold cutoff")
-        self.mid_label: QLabel = QLabel("auto threshold")
+        self.top_label: QLabel = QLabel(self.TOP_TEXT)
+        self.bottom_label: QLabel = QLabel(self.BOTTOM_TEXT)
 
-        self.labels = [self.top_label, self.mid_label]
+        self.labels = [self.top_label, self.bottom_label]
 
         # input fields corresponding to radio buttons & their labels
         self.top_input_box: SliderWithLabels = SliderWithLabels()
-        self.mid_input_box: QComboBox = QComboBox()
+        self.bottom_input_box: QComboBox = QComboBox()
 
         self.boxes = [
             self.top_input_box,
-            self.mid_input_box,
+            self.bottom_input_box,
         ]
 
         self.model.subscribe(
@@ -109,20 +112,19 @@ class ModelInputWidget(View, Subscriber):
         Prohibits usage of non-related input fields if top button is checked.
         """
         self.top_input_box.setEnabled(True)
-        self.mid_input_box.setEnabled(False)
-        self.model.set_postprocessing_method(self.top_label.text())
+        self.bottom_input_box.setEnabled(False)
+        self.model.set_postprocessing_method(self.TOP_TEXT)
 
-    def mid_radio_button_slot(self) -> None:
+    def bottom_radio_button_slot(self) -> None:
         """
-        Prohibits usage of non-related input fields if middle button is checked.
+        Prohibits usage of non-related input fields if bottom button is checked.
         """
         self.top_input_box.setEnabled(False)
-        self.mid_input_box.setEnabled(True)
-        self.model.set_postprocessing_method(self.mid_label.text())
+        self.bottom_input_box.setEnabled(True)
+        self.model.set_postprocessing_method(self.BOTTOM_TEXT)
 
     def update_simple_threshold_label(self) -> None:
         threshold: float = self.model.get_postprocessing_simple_threshold()
-        # TODO: figure out minimal combo
         self.top_input_box.label.setText(str(threshold))
 
     def update_simple_threshold_slider(self) -> None:
@@ -172,7 +174,7 @@ class ModelInputWidget(View, Subscriber):
             label.setStyleSheet("margin-right: 25px")
 
         # set default values for input fields
-        self.mid_input_box.addItems(
+        self.bottom_input_box.addItems(
             [
                 "isodata",
                 "li",
@@ -190,13 +192,13 @@ class ModelInputWidget(View, Subscriber):
         )
 
         # set up disappearing placeholder text
-        self.mid_input_box.setEditable(True)
-        self.mid_input_box.setCurrentIndex(-1)
+        self.bottom_input_box.setEditable(True)
+        self.bottom_input_box.setCurrentIndex(-1)
 
         # TODO: check that the user has selected an option other than the placeholder text when "run" is pressed
         # TODO: also check that one of the two radio buttons has been selected
-        self.mid_input_box.setPlaceholderText("select a method")
-        self.mid_input_box.setEditable(False)
+        self.bottom_input_box.setPlaceholderText("select a method")
+        self.bottom_input_box.setEditable(False)
 
         # prohibit input until a radio button is selected
         for box in self.boxes:
@@ -260,7 +262,7 @@ class ModelInputWidget(View, Subscriber):
 
         # connect radio buttons to slots
         self.top_button.toggled.connect(self.top_radio_button_slot)
-        self.mid_button.toggled.connect(self.mid_radio_button_slot)
+        self.bottom_button.toggled.connect(self.bottom_radio_button_slot)
 
         # connect input boxes to slots
         self.top_input_box.label.textChanged.connect(
@@ -274,6 +276,6 @@ class ModelInputWidget(View, Subscriber):
             )
         )
 
-        self.mid_input_box.currentTextChanged.connect(
+        self.bottom_input_box.currentTextChanged.connect(
             lambda s: self.model.set_postprocessing_auto_threshold(s)
         )
