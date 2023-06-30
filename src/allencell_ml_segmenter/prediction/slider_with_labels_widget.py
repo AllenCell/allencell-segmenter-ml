@@ -17,7 +17,7 @@ class SliderWithLabels(QWidget):
     and an adjacent textbox displaying the current value.
     """
 
-    def __init__(self):
+    def __init__(self):  # TODO: pass bounds
         super().__init__()
 
         self.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
