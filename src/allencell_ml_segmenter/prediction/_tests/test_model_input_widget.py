@@ -1,4 +1,5 @@
 import pytest
+from qtpy.QtCore import Qt
 
 from allencell_ml_segmenter.prediction.model import PredictionModel
 from allencell_ml_segmenter.prediction.model_input_widget import (
@@ -16,42 +17,32 @@ def model_input_widget(prediction_model, qtbot):
     return ModelInputWidget(prediction_model)
 
 
-def test_postprocessing_method(model_input_widget):
+def test_postprocessing_method(model_input_widget, prediction_model, qtbot):
     # ACT
-    # TODO: use qtbot actions instead
-    model_input_widget._top_radio_button_slot()
+    qtbot.mouseClick(model_input_widget._top_button, Qt.LeftButton)
 
     # ASSERT
     assert (
-        model_input_widget._model.get_postprocessing_method()
+        prediction_model.get_postprocessing_method()
         == "simple threshold cutoff"
     )
 
     # ACT
-    model_input_widget._bottom_radio_button_slot()
+    qtbot.mouseClick(model_input_widget._bottom_button, Qt.LeftButton)
 
     # ASSERT
-    assert (
-        model_input_widget._model.get_postprocessing_method()
-        == "auto threshold"
-    )
+    assert prediction_model.get_postprocessing_method() == "auto threshold"
 
 
-def test_postprocessing_auto_threshold(model_input_widget):
+def test_postprocessing_auto_threshold(model_input_widget, prediction_model):
     # ACT
     model_input_widget._bottom_input_box.setCurrentIndex(4)
 
     # ASSERT
-    assert (
-        model_input_widget._model.get_postprocessing_auto_threshold()
-        == "minimum"
-    )
+    assert prediction_model.get_postprocessing_auto_threshold() == "minimum"
 
     # ACT
     model_input_widget._bottom_input_box.setCurrentIndex(6)
 
     # ASSERT
-    assert (
-        model_input_widget._model.get_postprocessing_auto_threshold()
-        == "niblack"
-    )
+    assert prediction_model.get_postprocessing_auto_threshold() == "niblack"
