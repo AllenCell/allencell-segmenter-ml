@@ -15,9 +15,9 @@ def prediction_view(main_model, qtbot):
     return PredictionView(main_model)
 
 
-def test_prediction_view(prediction_view):
+def test_prediction_view(prediction_view, main_model):
     # ACT
-    prediction_view._main_model.dispatch(Event.VIEW_SELECTION_PREDICTION)
+    main_model.dispatch(Event.VIEW_SELECTION_PREDICTION)
 
     # ASSERT
-    assert prediction_view._main_model.get_current_view() == prediction_view
+    assert main_model.get_current_view() == prediction_view
