@@ -58,6 +58,18 @@ class SliderWithLabels(QWidget):
         self._add_to_layouts()
         self._connect_to_handlers()
 
+        self._model.subscribe(
+            Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_MOVED,
+            self,
+            lambda e: self.update_simple_threshold_label(),
+        )
+
+        self._model.subscribe(
+            Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_TYPED,
+            self,
+            lambda e: self.update_simple_threshold_slider(),
+        )
+
     def _add_to_layouts(self) -> None:
         """
         Adds pertinent widgets and layouts to the overall layout.
@@ -112,3 +124,11 @@ class SliderWithLabels(QWidget):
         Adjusts on-screen label in relation to stored state.
         """
         self._label.setText(str(v))
+
+    def update_simple_threshold_label(self) -> None:
+        threshold: float = self._model.get_postprocessing_simple_threshold()
+        self.set_label_value(threshold)
+
+    def update_simple_threshold_slider(self) -> None:
+        threshold: float = self._model.get_postprocessing_simple_threshold()
+        self.set_slider_value(threshold)

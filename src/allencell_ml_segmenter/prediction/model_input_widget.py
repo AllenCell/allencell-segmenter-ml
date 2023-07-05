@@ -77,18 +77,6 @@ class ModelInputWidget(View, Subscriber):
             ),
         )
 
-        self._model.subscribe(
-            Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_MOVED,
-            self,
-            lambda e: self.update_simple_threshold_label(),
-        )
-
-        self._model.subscribe(
-            Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_TYPED,
-            self,
-            lambda e: self.update_simple_threshold_slider(),
-        )
-
         # finish default set-up
         self._call_setters()
         self._build_layouts()
@@ -112,14 +100,6 @@ class ModelInputWidget(View, Subscriber):
         self._top_input_box.setEnabled(False)
         self._bottom_input_box.setEnabled(True)
         self._model.set_postprocessing_method(self.BOTTOM_TEXT)
-
-    def update_simple_threshold_label(self) -> None:
-        threshold: float = self._model.get_postprocessing_simple_threshold()
-        self._top_input_box.set_label_value(threshold)
-
-    def update_simple_threshold_slider(self) -> None:
-        threshold: float = self._model.get_postprocessing_simple_threshold()
-        self._top_input_box.set_slider_value(threshold)
 
     def _call_setters(self) -> None:
         """
