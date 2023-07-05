@@ -1,12 +1,124 @@
 import pytest
 
-from allencell_ml_segmenter.main.main_model import MainModel
-from allencell_ml_segmenter.prediction.model_input_widget import (
-    ModelInputWidget,
-)
-from allencell_ml_segmenter.prediction.view import PredictionView
+from allencell_ml_segmenter.core.event import Event
+from allencell_ml_segmenter.prediction.model import PredictionModel
+from allencell_ml_segmenter._tests.fakes.fake_subscriber import FakeSubscriber
 
 
 @pytest.fixture
-def main_model():
-    return MainModel()
+def prediction_model():
+    return PredictionModel()
+
+
+def test_file_path(prediction_model):
+    # ARRANGE
+    subscriber: FakeSubscriber = FakeSubscriber()
+    prediction_model.subscribe(Event.ACTION_PREDICTION_MODEL_FILE, subscriber)
+
+    # ACT
+    prediction_model.set_file_path("example path")
+
+    # ASSERT
+    assert prediction_model.get_file_path() == "example path"
+    assert subscriber.handled_event == Event.ACTION_PREDICTION_MODEL_FILE
+
+
+def test_preprocessing_method(prediction_model):
+    # ARRANGE
+    subscriber: FakeSubscriber = FakeSubscriber()
+    prediction_model.subscribe(
+        Event.ACTION_PREDICTION_PREPROCESSING_METHOD, subscriber
+    )
+
+    # ACT
+    prediction_model.set_preprocessing_method("example method")
+
+    # ASSERT
+    assert prediction_model.get_preprocessing_method() == "example method"
+    assert (
+        subscriber.handled_event
+        == Event.ACTION_PREDICTION_PREPROCESSING_METHOD
+    )
+
+
+def test_postprocessing_method(prediction_model):
+    # ARRANGE
+    subscriber: FakeSubscriber = FakeSubscriber()
+    prediction_model.subscribe(
+        Event.ACTION_PREDICTION_POSTPROCESSING_METHOD, subscriber
+    )
+
+    # ACT
+    prediction_model.set_postprocessing_method("example method")
+
+    # ASSERT
+    assert prediction_model.get_postprocessing_method() == "example method"
+    assert (
+        subscriber.handled_event
+        == Event.ACTION_PREDICTION_POSTPROCESSING_METHOD
+    )
+
+
+def test_postprocessing_simple_threshold_typed(prediction_model):
+    # ARRANGE
+    subscriber: FakeSubscriber = FakeSubscriber()
+    prediction_model.subscribe(
+        Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_TYPED,
+        subscriber,
+    )
+
+    # ACT
+    prediction_model.set_postprocessing_simple_threshold(0.01)
+    prediction_model.dispatch(
+        Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_TYPED
+    )  # dispatch separately
+
+    # ASSERT
+    assert prediction_model.get_postprocessing_simple_threshold() == 0.01
+    assert (
+        subscriber.handled_event
+        == Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_TYPED
+    )
+
+
+def test_postprocessing_simple_threshold_moved(prediction_model):
+    # ARRANGE
+    subscriber: FakeSubscriber = FakeSubscriber()
+    prediction_model.subscribe(
+        Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_MOVED,
+        subscriber,
+    )
+
+    # ACT
+    prediction_model.set_postprocessing_simple_threshold(0.01)
+    prediction_model.dispatch(
+        Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_MOVED
+    )  # dispatch separately
+
+    # ASSERT
+    assert prediction_model.get_postprocessing_simple_threshold() == 0.01
+    assert (
+        subscriber.handled_event
+        == Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_MOVED
+    )
+
+
+def test_postprocessing_auto_threshold(prediction_model):
+    # ARRANGE
+    subscriber: FakeSubscriber = FakeSubscriber()
+    prediction_model.subscribe(
+        Event.ACTION_PREDICTION_POSTPROCESSING_AUTO_THRESHOLD, subscriber
+    )
+
+    # ACT
+    prediction_model.set_postprocessing_auto_threshold("example threshold")
+
+    # ASSERT
+    assert (
+        prediction_model.get_postprocessing_auto_threshold()
+        == "example threshold"
+    )
+    assert (
+        subscriber.handled_event
+        == Event.ACTION_PREDICTION_POSTPROCESSING_AUTO_THRESHOLD
+    )

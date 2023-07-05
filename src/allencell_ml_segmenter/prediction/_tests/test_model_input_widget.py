@@ -18,6 +18,7 @@ def model_input_widget(prediction_model, qtbot):
 
 def test_postprocessing_method(model_input_widget):
     # ACT
+    # TODO: use qtbot actions instead
     model_input_widget._top_radio_button_slot()
 
     # ASSERT
