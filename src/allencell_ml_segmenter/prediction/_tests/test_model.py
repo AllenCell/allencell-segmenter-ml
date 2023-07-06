@@ -12,6 +12,7 @@ def prediction_model():
 
 def test_file_path(prediction_model):
     # ARRANGE
+    event_under_test: Event = Event.ACTION_PREDICTION_MODEL_FILE
     subscriber: FakeSubscriber = FakeSubscriber()
     prediction_model.subscribe(Event.ACTION_PREDICTION_MODEL_FILE, subscriber)
 
@@ -20,11 +21,12 @@ def test_file_path(prediction_model):
 
     # ASSERT
     assert prediction_model.get_file_path() == "example path"
-    assert subscriber.handled_event == Event.ACTION_PREDICTION_MODEL_FILE
+    assert subscriber.handled_event == event_under_test
 
 
 def test_preprocessing_method(prediction_model):
     # ARRANGE
+    event_under_test: Event = Event.ACTION_PREDICTION_PREPROCESSING_METHOD
     subscriber: FakeSubscriber = FakeSubscriber()
     prediction_model.subscribe(
         Event.ACTION_PREDICTION_PREPROCESSING_METHOD, subscriber
@@ -35,14 +37,12 @@ def test_preprocessing_method(prediction_model):
 
     # ASSERT
     assert prediction_model.get_preprocessing_method() == "example method"
-    assert (
-        subscriber.handled_event
-        == Event.ACTION_PREDICTION_PREPROCESSING_METHOD
-    )
+    assert subscriber.handled_event == event_under_test
 
 
 def test_postprocessing_method(prediction_model):
     # ARRANGE
+    event_under_test: Event = Event.ACTION_PREDICTION_POSTPROCESSING_METHOD
     subscriber: FakeSubscriber = FakeSubscriber()
     prediction_model.subscribe(
         Event.ACTION_PREDICTION_POSTPROCESSING_METHOD, subscriber
@@ -53,14 +53,14 @@ def test_postprocessing_method(prediction_model):
 
     # ASSERT
     assert prediction_model.get_postprocessing_method() == "example method"
-    assert (
-        subscriber.handled_event
-        == Event.ACTION_PREDICTION_POSTPROCESSING_METHOD
-    )
+    assert subscriber.handled_event == event_under_test
 
 
 def test_postprocessing_simple_threshold_typed(prediction_model):
     # ARRANGE
+    event_under_test: Event = (
+        Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_TYPED
+    )
     subscriber: FakeSubscriber = FakeSubscriber()
     prediction_model.subscribe(
         Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_TYPED,
@@ -75,14 +75,14 @@ def test_postprocessing_simple_threshold_typed(prediction_model):
 
     # ASSERT
     assert prediction_model.get_postprocessing_simple_threshold() == 0.01
-    assert (
-        subscriber.handled_event
-        == Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_TYPED
-    )
+    assert subscriber.handled_event == event_under_test
 
 
 def test_postprocessing_simple_threshold_moved(prediction_model):
     # ARRANGE
+    event_under_test: Event = (
+        Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_MOVED
+    )
     subscriber: FakeSubscriber = FakeSubscriber()
     prediction_model.subscribe(
         Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_MOVED,
@@ -97,14 +97,14 @@ def test_postprocessing_simple_threshold_moved(prediction_model):
 
     # ASSERT
     assert prediction_model.get_postprocessing_simple_threshold() == 0.01
-    assert (
-        subscriber.handled_event
-        == Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_MOVED
-    )
+    assert subscriber.handled_event == event_under_test
 
 
 def test_postprocessing_auto_threshold(prediction_model):
     # ARRANGE
+    event_under_test: Event = (
+        Event.ACTION_PREDICTION_POSTPROCESSING_AUTO_THRESHOLD
+    )
     subscriber: FakeSubscriber = FakeSubscriber()
     prediction_model.subscribe(
         Event.ACTION_PREDICTION_POSTPROCESSING_AUTO_THRESHOLD, subscriber
@@ -118,7 +118,4 @@ def test_postprocessing_auto_threshold(prediction_model):
         prediction_model.get_postprocessing_auto_threshold()
         == "example threshold"
     )
-    assert (
-        subscriber.handled_event
-        == Event.ACTION_PREDICTION_POSTPROCESSING_AUTO_THRESHOLD
-    )
+    assert subscriber.handled_event == event_under_test
