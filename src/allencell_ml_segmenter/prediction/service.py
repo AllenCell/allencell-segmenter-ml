@@ -13,7 +13,7 @@ class ModelFileService(Subscriber):
         self._model = model
 
         self._model.subscribe(
-            Event.ACTION_PREDICTION_MODEL_FILE_SELECTED,
+            Event.ACTION_PREDICTION_MODEL_FILE,
             self,
             lambda e: self.extract_preprocessing_method(),
         )
