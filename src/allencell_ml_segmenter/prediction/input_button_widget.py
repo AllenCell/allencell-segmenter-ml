@@ -1,3 +1,4 @@
+from PyQt5.QtWidgets import QFileDialog
 from qtpy.QtWidgets import (
     QWidget,
     QSizePolicy,
@@ -7,6 +8,8 @@ from qtpy.QtWidgets import (
 )
 from qtpy.QtCore import Qt
 
+from allencell_ml_segmenter.prediction.model import PredictionModel
+
 
 class InputButton(QWidget):
     """
@@ -14,8 +17,10 @@ class InputButton(QWidget):
     Useful for selecting files and displaying the chosen file path.
     """
 
-    def __init__(self):
+    def __init__(self, model: PredictionModel):
         super().__init__()
+
+        self._model: PredictionModel = model
 
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
@@ -24,23 +29,36 @@ class InputButton(QWidget):
         self.layout().setSpacing(0)
 
         # text box that will eventually display the chosen file path
-        self.text_display: QLineEdit = QLineEdit()
-        self.text_display.setPlaceholderText("Choose a file...")
-        self.text_display.setStyleSheet(
+        self._text_display: QLineEdit = QLineEdit()
+        self._text_display.setPlaceholderText("Choose a file...")
+        self._text_display.setStyleSheet(
             "border-left: 2px solid gray; "
             + "border-top: 2px solid gray; "
             + "border-bottom: 2px solid gray; "
             + "padding-top: 4px; "
             + "padding-bottom: 4px"
         )
-        self.text_display.setReadOnly(True)
+        self._text_display.setReadOnly(True)
 
         # button to open file explorer
-        self.button: QPushButton = QPushButton("Browse")
-        self.button.setStyleSheet(
+        self._button: QPushButton = QPushButton("Browse")
+        self._button.setStyleSheet(
             "padding: 5px; border: 2px solid gray; background-color: #e8ecfc"
         )
 
         # add widgets to layout
-        self.layout().addWidget(self.text_display, alignment=Qt.AlignLeft)
-        self.layout().addWidget(self.button, alignment=Qt.AlignLeft)
+        self.layout().addWidget(self._text_display, alignment=Qt.AlignLeft)
+        self.layout().addWidget(self._button, alignment=Qt.AlignLeft)
+
+        # connect to slot
+        self._button.clicked.connect(self.set_file_text)
+
+    def set_file_text(self) -> None:
+        """
+        Gets and displays file path on label portion of input button.
+        """
+        file_path: str = QFileDialog.getOpenFileName(self, "Open file")[0]
+        self._text_display.setReadOnly(False)
+        self._text_display.setText(file_path)
+        self._text_display.setReadOnly(True)
+        self._model.set_file_path(file_path)
