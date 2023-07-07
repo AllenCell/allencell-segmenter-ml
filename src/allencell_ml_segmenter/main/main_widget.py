@@ -54,9 +54,7 @@ class MainWidget(QStackedWidget, Subscriber, metaclass=MainMeta):
         self.initialize_view(sample_view)
 
         # add selection page
-        # selection_view = SelectionWidget(self.model)
-        # self.initialize_view(selection_view)
-        selection_view = PredictionFileInput()
+        selection_view = SelectionWidget(self.model)
         self.initialize_view(selection_view)
 
         # add prediction page
