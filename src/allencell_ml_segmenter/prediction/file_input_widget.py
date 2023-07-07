@@ -4,6 +4,7 @@ from qtpy.QtWidgets import QLabel
 from qtpy.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QSizePolicy, QRadioButton, QLineEdit, QPushButton
 from allencell_ml_segmenter.views.view import View
 from allencell_ml_segmenter.core.subscriber import Subscriber
+from allencell_ml_segmenter.core.directories import Directories
 
 class PredictionFileInput(QWidget):
     """
@@ -22,7 +23,7 @@ class PredictionFileInput(QWidget):
         horiz_layout.addWidget(self.radio_on_screen)
         question_label = QLabel()
         question_label.setStyleSheet("margin-left: 0px; margin-right: 0px;")
-        question_label.setPixmap(QPixmap("/Users/brian.kim/Desktop/work/allencell-ml-segmenter/src/allencell_ml_segmenter/assets/icons/question-circle.svg"))
+        question_label.setPixmap(QPixmap(Directories.get_assets_dir() / "icons" / "question.png"))
         horiz_layout.addWidget(question_label)
         self.layout().addLayout(horiz_layout)
 
