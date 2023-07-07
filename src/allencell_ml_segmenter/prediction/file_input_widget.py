@@ -79,8 +79,13 @@ class PredictionFileInput(QWidget):
         grid_layout = QGridLayout()
 
         image_input_label = LabelWithHint("Image input channel: ")
+        image_input_label.align_left()
+
         self.channel_select_dropdown = QComboBox()
+
         output_dir_label = LabelWithHint("Output directory: ")
+        output_dir_label.align_left()
+
         self.browse_output_edit = InputButton(self._model)
 
         grid_layout.addWidget(image_input_label, 0, 0)
