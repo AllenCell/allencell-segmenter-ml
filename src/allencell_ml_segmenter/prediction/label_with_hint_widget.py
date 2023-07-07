@@ -36,7 +36,19 @@ class LabelWithHint(QWidget):
         self.layout().addStretch(6)
 
     def set_label_text(self, text: str) -> None:
+        """
+        Sets the text of the label.
+        """
         self._label.setText(text)
 
-    def set_hint(self, hint: str):
+    def set_hint(self, hint: str) -> None:
+        """
+        Sets the tooltip to be displayed when the question icon is hovered over.
+        """
         self._question_mark.setToolTip(hint)
+
+    def align_left(self) -> None:
+        """
+        Removes the automatically included left margin.
+        """
+        self._label.setStyleSheet("margin-left: 0px")
