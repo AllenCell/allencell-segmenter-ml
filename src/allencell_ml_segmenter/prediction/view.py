@@ -21,7 +21,7 @@ class PredictionView(View, Subscriber):
         self._main_model: MainModel = main_model
         self._prediction_model: PredictionModel = PredictionModel()
 
-        self.service: ModelFileService = ModelFileService(
+        self._service: ModelFileService = ModelFileService(
             self._prediction_model
         )
 
@@ -32,10 +32,10 @@ class PredictionView(View, Subscriber):
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
         self.setLayout(QVBoxLayout())
 
-        self.model_input_widget: ModelInputWidget = ModelInputWidget(
+        self._model_input_widget: ModelInputWidget = ModelInputWidget(
             self._prediction_model
         )
-        self.layout().addWidget(self.model_input_widget)
+        self.layout().addWidget(self._model_input_widget)
 
         self._return_btn: QPushButton = QPushButton("Return")
         self._return_btn.clicked.connect(
