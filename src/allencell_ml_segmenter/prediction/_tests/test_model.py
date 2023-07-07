@@ -14,7 +14,7 @@ def test_file_path(prediction_model):
     # ARRANGE
     event_under_test: Event = Event.ACTION_PREDICTION_MODEL_FILE
     subscriber: FakeSubscriber = FakeSubscriber()
-    prediction_model.subscribe(Event.ACTION_PREDICTION_MODEL_FILE, subscriber)
+    prediction_model.subscribe(event_under_test, subscriber)
 
     # ACT
     prediction_model.set_file_path("example path")
@@ -28,9 +28,7 @@ def test_preprocessing_method(prediction_model):
     # ARRANGE
     event_under_test: Event = Event.ACTION_PREDICTION_PREPROCESSING_METHOD
     subscriber: FakeSubscriber = FakeSubscriber()
-    prediction_model.subscribe(
-        Event.ACTION_PREDICTION_PREPROCESSING_METHOD, subscriber
-    )
+    prediction_model.subscribe(event_under_test, subscriber)
 
     # ACT
     prediction_model.set_preprocessing_method("example method")
@@ -44,9 +42,7 @@ def test_postprocessing_method(prediction_model):
     # ARRANGE
     event_under_test: Event = Event.ACTION_PREDICTION_POSTPROCESSING_METHOD
     subscriber: FakeSubscriber = FakeSubscriber()
-    prediction_model.subscribe(
-        Event.ACTION_PREDICTION_POSTPROCESSING_METHOD, subscriber
-    )
+    prediction_model.subscribe(event_under_test, subscriber)
 
     # ACT
     prediction_model.set_postprocessing_method("example method")
@@ -62,16 +58,11 @@ def test_postprocessing_simple_threshold_typed(prediction_model):
         Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_TYPED
     )
     subscriber: FakeSubscriber = FakeSubscriber()
-    prediction_model.subscribe(
-        Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_TYPED,
-        subscriber,
-    )
+    prediction_model.subscribe(event_under_test, subscriber)
 
     # ACT
     prediction_model.set_postprocessing_simple_threshold(0.01)
-    prediction_model.dispatch(
-        Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_TYPED
-    )  # dispatch separately
+    prediction_model.dispatch(event_under_test)  # dispatch separately
 
     # ASSERT
     assert prediction_model.get_postprocessing_simple_threshold() == 0.01
@@ -84,16 +75,11 @@ def test_postprocessing_simple_threshold_moved(prediction_model):
         Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_MOVED
     )
     subscriber: FakeSubscriber = FakeSubscriber()
-    prediction_model.subscribe(
-        Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_MOVED,
-        subscriber,
-    )
+    prediction_model.subscribe(event_under_test, subscriber)
 
     # ACT
     prediction_model.set_postprocessing_simple_threshold(0.01)
-    prediction_model.dispatch(
-        Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_MOVED
-    )  # dispatch separately
+    prediction_model.dispatch(event_under_test)  # dispatch separately
 
     # ASSERT
     assert prediction_model.get_postprocessing_simple_threshold() == 0.01
@@ -106,9 +92,7 @@ def test_postprocessing_auto_threshold(prediction_model):
         Event.ACTION_PREDICTION_POSTPROCESSING_AUTO_THRESHOLD
     )
     subscriber: FakeSubscriber = FakeSubscriber()
-    prediction_model.subscribe(
-        Event.ACTION_PREDICTION_POSTPROCESSING_AUTO_THRESHOLD, subscriber
-    )
+    prediction_model.subscribe(event_under_test, subscriber)
 
     # ACT
     prediction_model.set_postprocessing_auto_threshold("example threshold")
