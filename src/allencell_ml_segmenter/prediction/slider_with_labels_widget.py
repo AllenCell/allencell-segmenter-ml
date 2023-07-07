@@ -111,13 +111,13 @@ class SliderWithLabels(QWidget):
         self._label.textChanged.connect(self._label_slot)
         self._slider.valueChanged.connect(self._slider_slot)
 
-    def _update_slider_value(self, v: float) -> None:
+    def set_slider_value(self, v: float) -> None:
         """
         Adjusts on-screen slider positioning in relation to stored state.
         """
         self._slider.setValue(round(v * 100))
 
-    def _update_label_value(self, v: float) -> None:
+    def set_label_value(self, v: float) -> None:
         """
         Adjusts on-screen label in relation to stored state.
         """
@@ -125,8 +125,8 @@ class SliderWithLabels(QWidget):
 
     def _update_simple_threshold_label(self) -> None:
         threshold: float = self._model.get_postprocessing_simple_threshold()
-        self._update_label_value(threshold)
+        self.set_label_value(threshold)
 
     def _update_simple_threshold_slider(self) -> None:
         threshold: float = self._model.get_postprocessing_simple_threshold()
-        self._update_slider_value(threshold)
+        self.set_slider_value(threshold)
