@@ -1,12 +1,8 @@
-from PyQt5.QtWidgets import QFrame, QListWidget
-from qtpy.QtGui import QPixmap
 from qtpy.QtCore import Qt
-from qtpy.QtWidgets import QLabel
 from qtpy.QtWidgets import (
     QWidget,
     QVBoxLayout,
     QHBoxLayout,
-    QSizePolicy,
     QRadioButton,
     QLineEdit,
     QPushButton,
@@ -16,9 +12,6 @@ from qtpy.QtWidgets import (
 from allencell_ml_segmenter.prediction.label_with_hint_widget import (
     LabelWithHint,
 )
-from allencell_ml_segmenter.views.view import View
-from allencell_ml_segmenter.core.subscriber import Subscriber
-from allencell_ml_segmenter.core.directories import Directories
 from allencell_ml_segmenter.widgets.check_box_list_widget import (
     CheckBoxListWidget,
 )
@@ -40,20 +33,16 @@ class PredictionFileInput(QWidget):
 
         # radiobox for images from napari
         horiz_layout = QHBoxLayout()
-        horiz_layout.setSpacing(0)  # NEW
+        horiz_layout.setSpacing(0)
 
-        # OLD: self.radio_on_screen = QRadioButton("Select on-screen image:")
-        self._radio_on_screen = QRadioButton()  # NEW
+        self._radio_on_screen = QRadioButton()
 
         horiz_layout.addWidget(self._radio_on_screen)
 
-        # OLD: question_label = QLabel()
-        # OLD: question_label.setPixmap(QPixmap(f"{Directories.get_assets_dir()}/icons/question-circle.svg"))
-        question_label = LabelWithHint(PredictionFileInput.TOP_TEXT)  # NEW
-
+        question_label = LabelWithHint(PredictionFileInput.TOP_TEXT)
         horiz_layout.addWidget(question_label)
 
-        horiz_layout.addStretch(60)  # NEW
+        horiz_layout.addStretch(60)
 
         self.layout().addLayout(horiz_layout)
 
@@ -68,22 +57,18 @@ class PredictionFileInput(QWidget):
 
         # radiobox for images from directory
         horiz_layout = QHBoxLayout()
-        horiz_layout.setSpacing(0)  # NEW
+        horiz_layout.setSpacing(0)
 
-        # OLD: self.radio_directory = QRadioButton("Select image(s) from directory:")
-        self.radio_directory = QRadioButton()  # NEW
+        self.radio_directory = QRadioButton()
 
         horiz_layout.addWidget(self.radio_directory)
 
-        # OLD: question_label = QLabel()
-        # OLD: question_label.setPixmap(QPixmap(f"{Directories.get_assets_dir()}/icons/question-circle.svg"))
-        question_label = LabelWithHint(PredictionFileInput.BOTTOM_TEXT)  # NEW
-
+        question_label = LabelWithHint(PredictionFileInput.BOTTOM_TEXT)
         horiz_layout.addWidget(question_label)
+
+        horiz_layout.addStretch(5)
+
         self.browse_dir_edit = QLineEdit()
-
-        horiz_layout.addStretch(5)  # NEW
-
         horiz_layout.addWidget(self.browse_dir_edit)
         self.browse_dir_button = QPushButton("Browse")
         horiz_layout.addWidget(self.browse_dir_button)
