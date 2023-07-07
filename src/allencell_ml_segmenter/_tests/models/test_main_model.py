@@ -29,8 +29,10 @@ def test_set_current_view(main_model, fake_subscriber):
     mock_view = Mock(spec=View)
 
     # ARRANGE
-    main_model.subscribe(Event.ACTION_CHANGE_VIEW, fake_subscriber, fake_subscriber.handle)
-    
+    main_model.subscribe(
+        Event.ACTION_CHANGE_VIEW, fake_subscriber, fake_subscriber.handle
+    )
+
     # ACT
     main_model.set_current_view(mock_view)
 

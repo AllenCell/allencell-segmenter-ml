@@ -10,10 +10,11 @@ def training_model():
 
 
 def test_set_model_training(training_model):
-
     # ARRANGE
     subscriber = FakeSubscriber()
-    training_model.subscribe(Event.PROCESS_TRAINING, subscriber, subscriber.handle)
+    training_model.subscribe(
+        Event.PROCESS_TRAINING, subscriber, subscriber.handle
+    )
 
     # ACT
     training_model.set_model_training(True)
