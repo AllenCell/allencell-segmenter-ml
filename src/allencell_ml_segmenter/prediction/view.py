@@ -1,6 +1,9 @@
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.main.main_model import MainModel
+from allencell_ml_segmenter.prediction.file_input_widget import (
+    PredictionFileInput,
+)
 from allencell_ml_segmenter.prediction.model import PredictionModel
 from allencell_ml_segmenter.prediction.service import ModelFileService
 from allencell_ml_segmenter.views.view import View
@@ -31,6 +34,11 @@ class PredictionView(View, Subscriber):
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
         self.setLayout(QVBoxLayout())
+
+        self._file_input_widget: PredictionFileInput = PredictionFileInput(
+            self._prediction_model
+        )
+        self.layout().addWidget(self._file_input_widget)
 
         self._model_input_widget: ModelInputWidget = ModelInputWidget(
             self._prediction_model

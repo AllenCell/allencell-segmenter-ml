@@ -1,17 +1,18 @@
+from PyQt5.QtWidgets import QGridLayout
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
     QWidget,
     QVBoxLayout,
     QHBoxLayout,
     QRadioButton,
-    QLineEdit,
-    QPushButton,
     QComboBox,
 )
 
+from allencell_ml_segmenter.prediction.input_button_widget import InputButton
 from allencell_ml_segmenter.prediction.label_with_hint_widget import (
     LabelWithHint,
 )
+from allencell_ml_segmenter.prediction.model import PredictionModel
 from allencell_ml_segmenter.widgets.check_box_list_widget import (
     CheckBoxListWidget,
 )
@@ -25,8 +26,11 @@ class PredictionFileInput(QWidget):
     TOP_TEXT: str = "Select on-screen image(s)"
     BOTTOM_TEXT: str = "Select image(s) from a directory"
 
-    def __init__(self):
+    def __init__(self, model: PredictionModel):
         super().__init__()
+
+        self._model = model
+
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.layout().setAlignment(Qt.AlignTop)
@@ -68,27 +72,32 @@ class PredictionFileInput(QWidget):
 
         horiz_layout.addStretch(5)
 
-        self.browse_dir_edit = QLineEdit()
+        self.browse_dir_edit = InputButton(self._model)
         horiz_layout.addWidget(self.browse_dir_edit)
-        self.browse_dir_button = QPushButton("Browse")
-        horiz_layout.addWidget(self.browse_dir_button)
         self.layout().addLayout(horiz_layout)
 
-        horiz_layout = QHBoxLayout()
+        grid_layout = QGridLayout()
+
         image_input_label = LabelWithHint("Image input channel: ")
         self.channel_select_dropdown = QComboBox()
-        horiz_layout.addWidget(image_input_label)
-        horiz_layout.addWidget(self.channel_select_dropdown)
-        self.layout().addLayout(horiz_layout)
-
-        horiz_layout = QHBoxLayout()
         output_dir_label = LabelWithHint("Output directory: ")
-        horiz_layout.addWidget(output_dir_label)
-        self.out_dir_edit = QLineEdit()
-        horiz_layout.addWidget(self.out_dir_edit)
-        self.browse_output_dir_button = QPushButton("Browse")
-        horiz_layout.addWidget(self.browse_output_dir_button)
-        self.layout().addLayout(horiz_layout)
+        self.browse_output_edit = InputButton(self._model)
+
+        grid_layout.addWidget(image_input_label, 0, 0)
+        grid_layout.addWidget(self.channel_select_dropdown, 0, 2)
+
+        hor1 = QHBoxLayout()
+        hor1.addStretch(5)
+
+        hor2 = QHBoxLayout()
+        hor2.addStretch(5)
+
+        grid_layout.addLayout(hor1, 0, 1)
+        grid_layout.addLayout(hor2, 1, 1)
+
+        grid_layout.addWidget(output_dir_label, 1, 0)
+        grid_layout.addWidget(self.browse_output_edit, 1, 2)
+
+        self.layout().addLayout(grid_layout)
 
         # seperator_line = QFrame()
-        self.layout().addStretch()  # add stretch to bottom to push to top
