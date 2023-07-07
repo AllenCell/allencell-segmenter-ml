@@ -10,17 +10,14 @@ def training_model():
 
 
 def test_set_model_training(training_model):
+
+    # ARRANGE
     subscriber = FakeSubscriber()
-    training_model.subscribe(Event.PROCESS_TRAINING, subscriber)
+    training_model.subscribe(Event.PROCESS_TRAINING, subscriber, subscriber.handle)
 
+    # ACT
     training_model.set_model_training(True)
 
-    assert training_model._model_training
-    assert subscriber.handled_event == Event.PROCESS_TRAINING
-
-
-def test_get_model_training(training_model):
-    assert not training_model.get_model_training()
-
-    training_model.set_model_training(True)
+    # ASSERT
     assert training_model.get_model_training()
+    assert subscriber.was_handled(Event.PROCESS_TRAINING)

@@ -27,7 +27,12 @@ def test_get_current_view(main_model):
 def test_set_current_view(main_model, fake_subscriber):
     # set a mock views
     mock_view = Mock(spec=View)
-    main_model.subscribe(Event.ACTION_CHANGE_VIEW, fake_subscriber)
+
+    # ARRANGE
+    main_model.subscribe(Event.ACTION_CHANGE_VIEW, fake_subscriber, fake_subscriber.handle)
+    
+    # ACT
     main_model.set_current_view(mock_view)
 
-    assert fake_subscriber.handled_event == Event.ACTION_CHANGE_VIEW
+    # ASSERT
+    assert fake_subscriber.was_handled(Event.ACTION_CHANGE_VIEW)

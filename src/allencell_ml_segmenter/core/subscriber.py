@@ -8,6 +8,3 @@ class Subscriber(ABC):
     ABC subscriber class
     """
 
-    @abstractmethod
-    def handle_event(self, event: Event):
-        pass

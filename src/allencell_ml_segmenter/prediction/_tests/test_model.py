@@ -14,42 +14,42 @@ def test_file_path(prediction_model):
     # ARRANGE
     event_under_test: Event = Event.ACTION_PREDICTION_MODEL_FILE
     subscriber: FakeSubscriber = FakeSubscriber()
-    prediction_model.subscribe(event_under_test, subscriber)
+    prediction_model.subscribe(event_under_test, subscriber, subscriber.handle)
 
     # ACT
     prediction_model.set_file_path("example path")
 
     # ASSERT
     assert prediction_model.get_file_path() == "example path"
-    assert subscriber.handled_event == event_under_test
+    assert subscriber.was_handled(event_under_test)
 
 
 def test_preprocessing_method(prediction_model):
     # ARRANGE
     event_under_test: Event = Event.ACTION_PREDICTION_PREPROCESSING_METHOD
     subscriber: FakeSubscriber = FakeSubscriber()
-    prediction_model.subscribe(event_under_test, subscriber)
+    prediction_model.subscribe(event_under_test, subscriber, subscriber.handle)
 
     # ACT
     prediction_model.set_preprocessing_method("example method")
 
     # ASSERT
     assert prediction_model.get_preprocessing_method() == "example method"
-    assert subscriber.handled_event == event_under_test
+    assert subscriber.was_handled(event_under_test)
 
 
 def test_postprocessing_method(prediction_model):
     # ARRANGE
     event_under_test: Event = Event.ACTION_PREDICTION_POSTPROCESSING_METHOD
     subscriber: FakeSubscriber = FakeSubscriber()
-    prediction_model.subscribe(event_under_test, subscriber)
+    prediction_model.subscribe(event_under_test, subscriber, subscriber.handle)
 
     # ACT
     prediction_model.set_postprocessing_method("example method")
 
     # ASSERT
     assert prediction_model.get_postprocessing_method() == "example method"
-    assert subscriber.handled_event == event_under_test
+    assert subscriber.was_handled(event_under_test)
 
 
 def test_postprocessing_simple_threshold_typed(prediction_model):
@@ -58,7 +58,7 @@ def test_postprocessing_simple_threshold_typed(prediction_model):
         Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_TYPED
     )
     subscriber: FakeSubscriber = FakeSubscriber()
-    prediction_model.subscribe(event_under_test, subscriber)
+    prediction_model.subscribe(event_under_test, subscriber, subscriber.handle)
 
     # ACT
     prediction_model.set_postprocessing_simple_threshold(0.01)
@@ -66,7 +66,7 @@ def test_postprocessing_simple_threshold_typed(prediction_model):
 
     # ASSERT
     assert prediction_model.get_postprocessing_simple_threshold() == 0.01
-    assert subscriber.handled_event == event_under_test
+    assert subscriber.was_handled(event_under_test)
 
 
 def test_postprocessing_simple_threshold_moved(prediction_model):
@@ -75,7 +75,7 @@ def test_postprocessing_simple_threshold_moved(prediction_model):
         Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_MOVED
     )
     subscriber: FakeSubscriber = FakeSubscriber()
-    prediction_model.subscribe(event_under_test, subscriber)
+    prediction_model.subscribe(event_under_test, subscriber, subscriber.handle)
 
     # ACT
     prediction_model.set_postprocessing_simple_threshold(0.01)
@@ -83,7 +83,7 @@ def test_postprocessing_simple_threshold_moved(prediction_model):
 
     # ASSERT
     assert prediction_model.get_postprocessing_simple_threshold() == 0.01
-    assert subscriber.handled_event == event_under_test
+    assert subscriber.was_handled(event_under_test)
 
 
 def test_postprocessing_auto_threshold(prediction_model):
@@ -92,7 +92,7 @@ def test_postprocessing_auto_threshold(prediction_model):
         Event.ACTION_PREDICTION_POSTPROCESSING_AUTO_THRESHOLD
     )
     subscriber: FakeSubscriber = FakeSubscriber()
-    prediction_model.subscribe(event_under_test, subscriber)
+    prediction_model.subscribe(event_under_test, subscriber, subscriber.handle)
 
     # ACT
     prediction_model.set_postprocessing_auto_threshold("example threshold")
@@ -102,4 +102,4 @@ def test_postprocessing_auto_threshold(prediction_model):
         prediction_model.get_postprocessing_auto_threshold()
         == "example threshold"
     )
-    assert subscriber.handled_event == event_under_test
+    assert subscriber.was_handled(event_under_test)
