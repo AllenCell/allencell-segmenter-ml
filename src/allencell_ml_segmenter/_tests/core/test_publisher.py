@@ -18,7 +18,6 @@ def test_pub_dispatch(publisher):
     # ACT
     publisher.dispatch(event_under_test)
 
-
     assert subscriber.was_handled(event_under_test)
 
 
@@ -27,9 +26,7 @@ def test_pub_dispatch_explicit_handler(publisher: Publisher):
     event_under_test = Event.PROCESS_TRAINING
 
     # ARRANGE
-    publisher.subscribe(
-        event_under_test, subscriber, subscriber.handle
-    )
+    publisher.subscribe(event_under_test, subscriber, subscriber.handle)
 
     # ACT
     publisher.dispatch(event_under_test)
@@ -44,8 +41,12 @@ def test_pub_dispatch_multiple(publisher: Publisher):
     subscriber2 = FakeSubscriber()
 
     # ARRANGE
-    publisher.subscribe(Event.PROCESS_TRAINING, subscriber1, subscriber1.handle)
-    publisher.subscribe(Event.PROCESS_TRAINING, subscriber2, subscriber2.handle)
+    publisher.subscribe(
+        Event.PROCESS_TRAINING, subscriber1, subscriber1.handle
+    )
+    publisher.subscribe(
+        Event.PROCESS_TRAINING, subscriber2, subscriber2.handle
+    )
 
     # ACT
     publisher.dispatch(Event.PROCESS_TRAINING)
