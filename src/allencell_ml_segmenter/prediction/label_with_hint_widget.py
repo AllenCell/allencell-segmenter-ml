@@ -8,7 +8,7 @@ class LabelWithHint(QWidget):
     Compound widget with text label and question mark icon for clear access to tool tips.
     """
 
-    def __init__(self):
+    def __init__(self, label_text: str = ""):
         super().__init__()
 
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
@@ -19,6 +19,7 @@ class LabelWithHint(QWidget):
 
         self.label: QLabel = QLabel("")
         self.label.setStyleSheet("margin-left: 8px")
+        self.label.setText(label_text)
         self.layout().addWidget(self.label, alignment=Qt.AlignLeft)
 
         self.question_mark: QLabel = QLabel()
