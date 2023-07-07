@@ -12,7 +12,9 @@ from allencell_ml_segmenter.prediction.view import PredictionView
 from allencell_ml_segmenter.views.view import View
 from allencell_ml_segmenter.sample.sample_view import SampleView
 from allencell_ml_segmenter.widgets.selection_widget import SelectionWidget
-from allencell_ml_segmenter.prediction.file_input_widget import PredictionFileInput
+from allencell_ml_segmenter.prediction.file_input_widget import (
+    PredictionFileInput,
+)
 
 
 class MainMeta(type(QStackedWidget), type(Subscriber)):

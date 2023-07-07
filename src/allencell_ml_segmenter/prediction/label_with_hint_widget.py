@@ -2,6 +2,8 @@ from qtpy.QtWidgets import QWidget, QSizePolicy, QHBoxLayout, QLabel
 from qtpy.QtGui import QPixmap
 from qtpy.QtCore import Qt
 
+from allencell_ml_segmenter.core.directories import Directories
+
 
 class LabelWithHint(QWidget):
     """
@@ -24,7 +26,9 @@ class LabelWithHint(QWidget):
 
         self._question_mark: QLabel = QLabel()
         self._question_mark.setPixmap(
-            QPixmap("../assets/icons/question-circle.svg")
+            QPixmap(
+                f"{Directories.get_assets_dir()}/icons/question-circle.svg"
+            )
         )
         self._question_mark.setStyleSheet("margin-right: 10px")
 
