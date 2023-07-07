@@ -17,22 +17,22 @@ class LabelWithHint(QWidget):
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.layout().setSpacing(0)
 
-        self.label: QLabel = QLabel("")
-        self.label.setStyleSheet("margin-left: 8px")
-        self.label.setText(label_text)
-        self.layout().addWidget(self.label, alignment=Qt.AlignLeft)
+        self._label: QLabel = QLabel("")
+        self._label.setStyleSheet("margin-left: 8px")
+        self._label.setText(label_text)
+        self.layout().addWidget(self._label, alignment=Qt.AlignLeft)
 
-        self.question_mark: QLabel = QLabel()
-        self.question_mark.setPixmap(
+        self._question_mark: QLabel = QLabel()
+        self._question_mark.setPixmap(
             QPixmap("../assets/icons/question-circle.svg")
         )
-        self.question_mark.setStyleSheet("margin-right: 10px")
+        self._question_mark.setStyleSheet("margin-right: 10px")
 
-        self.layout().addWidget(self.question_mark, alignment=Qt.AlignLeft)
+        self.layout().addWidget(self._question_mark, alignment=Qt.AlignLeft)
         self.layout().addStretch(6)
 
     def set_label_text(self, text: str) -> None:
-        self.label.setText(text)
+        self._label.setText(text)
 
     def set_hint(self, hint: str):
-        self.question_mark.setToolTip(hint)
+        self._question_mark.setToolTip(hint)
