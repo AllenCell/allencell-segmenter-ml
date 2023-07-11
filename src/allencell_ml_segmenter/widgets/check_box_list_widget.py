@@ -11,6 +11,8 @@ class CheckBoxListWidget(QListWidget):
         self.setMouseTracking(True)
         self.itemEntered.connect(self._show_tool_tip)
         self.itemChanged.connect(self._send_checked_signal)
+        self.setMaximumHeight(100)
+        self.setStyleSheet("margin-top: 0px;")
 
     def _send_checked_signal(self, item: QListWidgetItem) -> None:
         idx: int = self.row(item)
