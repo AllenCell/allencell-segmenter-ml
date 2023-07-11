@@ -96,6 +96,6 @@ class PredictionFileInput(QWidget):
         grid_layout.addWidget(self.browse_output_edit, 1, 1)
 
         grid_layout.setColumnStretch(0, 1)
-        grid_layout.setColumnStretch(1, 0.9)
+        grid_layout.setColumnStretch(1, 0)
 
         self.layout().addLayout(grid_layout)
