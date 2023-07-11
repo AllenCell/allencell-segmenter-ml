@@ -28,7 +28,10 @@ def test_set_hint_updates_question_mark_tooltip(label_with_hint):
     # Assert
     assert label_with_hint._question_mark.toolTip() == "This is a hint"
 
+
 def test_layout_contains_label_and_question_mark(label_with_hint):
     # Act/Assert
     assert label_with_hint.layout().indexOf(label_with_hint._label) != -1
-    assert label_with_hint.layout().indexOf(label_with_hint._question_mark) != -1
+    assert (
+        label_with_hint.layout().indexOf(label_with_hint._question_mark) != -1
+    )

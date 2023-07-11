@@ -1,7 +1,9 @@
 import pytest
 from qtpy.QtCore import Qt
 from unittest.mock import patch, Mock
-from allencell_ml_segmenter.prediction.model_input_widget import ModelInputWidget
+from allencell_ml_segmenter.prediction.model_input_widget import (
+    ModelInputWidget,
+)
 from allencell_ml_segmenter.prediction.model import PredictionModel
 
 
@@ -30,14 +32,17 @@ def test_bottom_radio_button_slot(qtbot, model_input_widget):
 
     assert not model_input_widget._simple_thresh_slider.isEnabled()
     assert model_input_widget._auto_thresh_selection.isEnabled()
-    assert model_input_widget._model.get_postprocessing_method() == ModelInputWidget.BOTTOM_TEXT
+    assert (
+        model_input_widget._model.get_postprocessing_method()
+        == ModelInputWidget.BOTTOM_TEXT
+    )
 
 
 def test_call_setters(model_input_widget):
     """
     Test the _call_setters method of ModelInputWidget.
     """
-    #TODO: fix after magicgui fix
+    # TODO: fix after magicgui fix
     model_input_widget._call_setters()
 
     # Test default values for input fields
@@ -56,7 +61,9 @@ def test_configure_slots(qtbot, model_input_widget):
     Test the _configure_slots method of ModelInputWidget.
     """
     # Simulate selecting an option in the bottom input box
-    with patch.object(model_input_widget._model, "set_postprocessing_auto_threshold") as mock_set_threshold:
+    with patch.object(
+        model_input_widget._model, "set_postprocessing_auto_threshold"
+    ) as mock_set_threshold:
         model_input_widget._auto_thresh_selection.setCurrentIndex(0)
         qtbot.wait(100)
 
@@ -78,7 +85,10 @@ def test_postprocessing_method(model_input_widget, qtbot):
     qtbot.mouseClick(model_input_widget._bottom_button, Qt.LeftButton)
 
     # ASSERT
-    assert model_input_widget._model.get_postprocessing_method() == "auto threshold"
+    assert (
+        model_input_widget._model.get_postprocessing_method()
+        == "auto threshold"
+    )
 
 
 def test_postprocessing_auto_threshold(model_input_widget):
@@ -86,10 +96,16 @@ def test_postprocessing_auto_threshold(model_input_widget):
     model_input_widget._auto_thresh_selection.setCurrentIndex(4)
 
     # ASSERT
-    assert model_input_widget._model.get_postprocessing_auto_threshold() == "minimum"
+    assert (
+        model_input_widget._model.get_postprocessing_auto_threshold()
+        == "minimum"
+    )
 
     # ACT
     model_input_widget._auto_thresh_selection.setCurrentIndex(6)
 
     # ASSERT
-    assert model_input_widget._model.get_postprocessing_auto_threshold() == "niblack"
+    assert (
+        model_input_widget._model.get_postprocessing_auto_threshold()
+        == "niblack"
+    )
