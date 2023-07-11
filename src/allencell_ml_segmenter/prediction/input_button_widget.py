@@ -35,15 +35,15 @@ class InputButton(QWidget):
             "border-left: 2px solid gray; "
             + "border-top: 2px solid gray; "
             + "border-bottom: 2px solid gray; "
-            + "padding-top: 4px; "
-            + "padding-bottom: 4px"
+            + "padding-top: 3px; "
+            + "padding-bottom: 3px"
         )
         self._text_display.setReadOnly(True)
 
         # button to open file explorer
         self._button: QPushButton = QPushButton("Browse")
         self._button.setStyleSheet(
-            "padding: 5px; border: 2px solid gray; background-color: #e8ecfc"
+            "padding: 5px; border: 2px solid gray; background-color: darkorchid"
         )
 
         # add widgets to layout
@@ -56,6 +56,8 @@ class InputButton(QWidget):
     def _update_file_text(self) -> None:
         """
         Gets and displays file path on label portion of input button.
+        Caution - currently operates under the assumption that only
+        one input button is hooked up to the model.
         """
         file_path: str = QFileDialog.getOpenFileName(self, "Open file")[0]
         self._text_display.setReadOnly(False)
