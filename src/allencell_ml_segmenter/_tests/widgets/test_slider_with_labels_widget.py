@@ -5,33 +5,33 @@
 #     SliderWithLabels,
 # )
 # from PyQt5.QtTest import QTest
-# 
-#
-# # TODO redo tests once replaced with magicgui floatslider
+
+
+# TODO redo tests once replaced with magicgui floatslider
 # @pytest.fixture
 # def prediction_model():
 #     return PredictionModel()
-#
-#
+
+
 # @pytest.fixture
 # def slider_with_labels(prediction_model, qtbot):
 #     return SliderWithLabels(0, 100, prediction_model)
-#
-#
+
+
 # def test_label_update_model(slider_with_labels):
-#     # ACT
+# ACT
 #     QTest.keyClicks(slider_with_labels._label, "3")
-#
+
 #     # Assert
 #     assert (
 #         slider_with_labels._model.get_postprocessing_simple_threshold() == 3.0
 #     )
+
+# TODO: redo test once replaced with magicgui floatslider
+# # ACT
+# QTest.keyClicks(slider_with_labels._label, "30")
 #
-#     # TODO: redo test once replaced with magicgui floatslider
-#     # # ACT
-#     # QTest.keyClicks(slider_with_labels._label, "30")
-#     #
-#     # # Assert
-#     # assert (
-#     #     slider_with_labels._model.get_postprocessing_simple_threshold() == 30
-#     # )
+# # Assert
+# assert (
+#     slider_with_labels._model.get_postprocessing_simple_threshold() == 30
+# )

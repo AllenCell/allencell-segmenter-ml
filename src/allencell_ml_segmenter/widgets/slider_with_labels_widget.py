@@ -25,12 +25,10 @@ class SliderWithLabels(QWidget):
     ):
         super().__init__()
 
-        self.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
-
         self._model: PredictionModel = model
 
-        layout: QHBoxLayout = QHBoxLayout()
-        self.setLayout(layout)
+        self.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        self.setLayout(QHBoxLayout())
 
         self._left_layout: QVBoxLayout = QVBoxLayout()
         self._left_layout.setSpacing(0)
@@ -61,13 +59,13 @@ class SliderWithLabels(QWidget):
         self._model.subscribe(
             Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_MOVED,
             self,
-            lambda e: self.update_simple_threshold_label(),
+            lambda e: self._update_simple_threshold_label(),
         )
 
         self._model.subscribe(
             Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_TYPED,
             self,
-            lambda e: self.update_simple_threshold_slider(),
+            lambda e: self._update_simple_threshold_slider(),
         )
 
     def _add_to_layouts(self) -> None:
@@ -125,10 +123,10 @@ class SliderWithLabels(QWidget):
         """
         self._label.setText(str(v))
 
-    def update_simple_threshold_label(self) -> None:
+    def _update_simple_threshold_label(self) -> None:
         threshold: float = self._model.get_postprocessing_simple_threshold()
         self.set_label_value(threshold)
 
-    def update_simple_threshold_slider(self) -> None:
+    def _update_simple_threshold_slider(self) -> None:
         threshold: float = self._model.get_postprocessing_simple_threshold()
         self.set_slider_value(threshold)
