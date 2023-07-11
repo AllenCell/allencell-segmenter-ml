@@ -49,6 +49,7 @@ class PredictionView(View, Subscriber):
         self._return_btn.clicked.connect(
             lambda: self._main_model.dispatch(Event.VIEW_SELECTION_MAIN)
         )
+        self._return_btn.setStyleSheet("margin-top: 50px")
         self.layout().addWidget(self._return_btn)
 
         self._main_model.subscribe(
