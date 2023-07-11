@@ -55,7 +55,7 @@ def test_postprocessing_method(prediction_model):
 def test_postprocessing_simple_threshold(prediction_model):
     # ARRANGE
     event_under_test: Event = (
-        Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_TYPED
+        Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD
     )
     subscriber: FakeSubscriber = FakeSubscriber()
     prediction_model.subscribe(event_under_test, subscriber)
@@ -65,23 +65,6 @@ def test_postprocessing_simple_threshold(prediction_model):
 
     # ASSERT
     assert prediction_model.get_postprocessing_simple_threshold() == 0.01
-
-
-def test_postprocessing_simple_threshold_moved(prediction_model):
-    # ARRANGE
-    event_under_test: Event = (
-        Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_MOVED
-    )
-    subscriber: FakeSubscriber = FakeSubscriber()
-    prediction_model.subscribe(event_under_test, subscriber)
-
-    # ACT
-    prediction_model.set_postprocessing_simple_threshold(0.01)
-    prediction_model.dispatch(event_under_test)  # dispatch separately
-
-    # ASSERT
-    assert prediction_model.get_postprocessing_simple_threshold() == 0.01
-    assert subscriber.handled_event == event_under_test
 
 
 def test_postprocessing_auto_threshold(prediction_model):

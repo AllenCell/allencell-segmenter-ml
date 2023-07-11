@@ -242,7 +242,12 @@ class ModelInputWidget(View, Subscriber):
             self._bottom_postproc_button_slot
         )
 
-        # connect bottom input box to slot
+        # connect postprocessing simple threshold slider to slot
+        self._simple_thresh_slider.changed.connect(
+            lambda v: self._model.set_postprocessing_simple_threshold(v)
+        )
+
+        # connect auto threshold selection to slot
         self._auto_thresh_selection.currentTextChanged.connect(
             lambda s: self._model.set_postprocessing_auto_threshold(s)
         )
