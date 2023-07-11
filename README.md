@@ -4,7 +4,7 @@
 [![PyPI](https://img.shields.io/pypi/v/allencell-ml-segmenter.svg?color=green)](https://pypi.org/project/allencell-ml-segmenter)
 [![Python Version](https://img.shields.io/pypi/pyversions/allencell-ml-segmenter.svg?color=green)](https://python.org)
 [![tests](https://github.com/AllenCell/allencell-ml-segmenter/workflows/tests/badge.svg)](https://github.com/AllenCell/allencell-ml-segmenter/actions)
-[![codecov](https://codecov.io/gh/AllenCell/allencell-ml-segmenter/branch/main/graph/badge.svg)](https://codecov.io/gh/AllenCell/allencell-ml-segmenter)
+[![codecov](https://codecov.io/gh/AllenCell/allencell-ml-segmenter/branch/main/graph/badge.svg?token=E976SiYFP6)](https://codecov.io/gh/AllenCell/allencell-ml-segmenter)
 [![napari hub](https://img.shields.io/endpoint?url=https://api.napari-hub.org/shields/allencell-ml-segmenter)](https://napari-hub.org/plugins/allencell-ml-segmenter)
 
 A plugin to leverage ML segmentation in napari.
