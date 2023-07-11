@@ -128,7 +128,7 @@ class ModelInputWidget(View, Subscriber):
         )
 
         # styling for label for preprocessing method
-        self._method_label.setStyleSheet("margin-left: 25px")
+        self._method_label.setStyleSheet("margin-left: 60px")
 
         # postprocessing label + hint
         self._postprocessing_label_with_hint.set_label_text(
@@ -191,7 +191,7 @@ class ModelInputWidget(View, Subscriber):
         selection_layout.addWidget(
             self._selection_label_with_hint, alignment=Qt.AlignLeft
         )
-        selection_layout.addWidget(self._input_button, alignment=Qt.AlignLeft)
+        selection_layout.addWidget(self._input_button, alignment=Qt.AlignRight)
 
         # horizontal layout containing widgets related to preprocessing
         preprocessing_layout: QHBoxLayout = QHBoxLayout()
