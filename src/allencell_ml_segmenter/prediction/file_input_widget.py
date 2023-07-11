@@ -90,18 +90,12 @@ class PredictionFileInput(QWidget):
         self.browse_output_edit = InputButton(self._model)
 
         grid_layout.addWidget(image_input_label, 0, 0)
-        grid_layout.addWidget(self.channel_select_dropdown, 0, 2)
-
-        hor1 = QHBoxLayout()
-        hor1.addStretch(5)
-
-        hor2 = QHBoxLayout()
-        hor2.addStretch(5)
-
-        grid_layout.addLayout(hor1, 0, 1)
-        grid_layout.addLayout(hor2, 1, 1)
+        grid_layout.addWidget(self.channel_select_dropdown, 0, 1)
 
         grid_layout.addWidget(output_dir_label, 1, 0)
-        grid_layout.addWidget(self.browse_output_edit, 1, 2)
+        grid_layout.addWidget(self.browse_output_edit, 1, 1)
+
+        grid_layout.setColumnStretch(0, 1)
+        grid_layout.setColumnStretch(1, 0.9)
 
         self.layout().addLayout(grid_layout)
