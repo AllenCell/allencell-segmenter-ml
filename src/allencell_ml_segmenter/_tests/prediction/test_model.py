@@ -66,6 +66,7 @@ def test_postprocessing_simple_threshold(prediction_model):
     # ASSERT
     assert prediction_model.get_postprocessing_simple_threshold() == 0.01
 
+
 def test_postprocessing_simple_threshold_moved(prediction_model):
     # ARRANGE
     event_under_test: Event = (
@@ -100,4 +101,3 @@ def test_postprocessing_auto_threshold(prediction_model):
         prediction_model.get_postprocessing_auto_threshold()
         == "example threshold"
     )
-
