@@ -8,10 +8,8 @@ from qtpy.QtWidgets import (
     QRadioButton,
 )
 from qtpy.QtCore import Qt
+from magicgui.widgets import FloatSlider
 
-from allencell_ml_segmenter.widgets.slider_with_labels_widget import (
-    SliderWithLabels,
-)
 from allencell_ml_segmenter.prediction.model import PredictionModel
 from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.core.subscriber import Subscriber
@@ -50,17 +48,23 @@ class ModelInputWidget(View, Subscriber):
         self._top_postproc_button: QRadioButton = QRadioButton()
         self._bottom_postproc_button: QRadioButton = QRadioButton()
 
-        self._postproc_buttons = [self._top_postproc_button, self._bottom_postproc_button]
+        self._postproc_buttons = [
+            self._top_postproc_button,
+            self._bottom_postproc_button,
+        ]
 
         # labels for the radio buttons
         self._top_postproc_label: QLabel = QLabel(self.TOP_TEXT)
         self._bottom_postproc_label: QLabel = QLabel(self.BOTTOM_TEXT)
 
-        self._postproc_labels = [self._top_postproc_label, self._bottom_postproc_label]
+        self._postproc_labels = [
+            self._top_postproc_label,
+            self._bottom_postproc_label,
+        ]
 
         # input fields corresponding to radio buttons & their labels
-        self._simple_thresh_slider: SliderWithLabels = SliderWithLabels(
-            0, 1, self._model
+        self._simple_thresh_slider: FloatSlider = FloatSlider(
+            min=0, max=100, step=1, readout=True
         )
         self._auto_thresh_selection: QComboBox = QComboBox()
 
@@ -89,7 +93,7 @@ class ModelInputWidget(View, Subscriber):
         """
         Prohibits usage of non-related input fields if top button is checked.
         """
-        self._simple_thresh_slider.setEnabled(True)
+        self._simple_thresh_slider.native.setEnabled(True)
         self._auto_thresh_selection.setEnabled(False)
         self._model.set_postprocessing_method(self.TOP_TEXT)
 
@@ -97,7 +101,7 @@ class ModelInputWidget(View, Subscriber):
         """
         Prohibits usage of non-related input fields if bottom button is checked.
         """
-        self._simple_thresh_slider.setEnabled(False)
+        self._simple_thresh_slider.native.setEnabled(False)
         self._auto_thresh_selection.setEnabled(True)
         self._model.set_postprocessing_method(self.BOTTOM_TEXT)
 
@@ -167,7 +171,10 @@ class ModelInputWidget(View, Subscriber):
 
         # prohibit input until a radio button is selected
         for selection in self._postprocessing_selections:
-            selection.setEnabled(False)
+            if isinstance(selection, FloatSlider):
+                selection.native.setEnabled(False)
+            else:
+                selection.setEnabled(False)
 
     def _build_layouts(self) -> None:
         """
@@ -207,7 +214,10 @@ class ModelInputWidget(View, Subscriber):
         for idx, label in enumerate(self._postproc_labels):
             grid_layout.addWidget(label, idx, 1)
         for idx, selection in enumerate(self._postprocessing_selections):
-            grid_layout.addWidget(selection, idx, 2)
+            if isinstance(selection, FloatSlider):
+                grid_layout.addWidget(selection.native, idx, 2)
+            else:
+                grid_layout.addWidget(selection, idx, 2)
 
         # add inner widgets and layouts to overarching layout
         self.layout().addWidget(
@@ -225,8 +235,12 @@ class ModelInputWidget(View, Subscriber):
         Connects widgets to their respective event handlers.
         """
         # connect radio buttons to slots
-        self._top_postproc_button.toggled.connect(self._top_postproc_button_slot)
-        self._bottom_postproc_button.toggled.connect(self._bottom_postproc_button_slot)
+        self._top_postproc_button.toggled.connect(
+            self._top_postproc_button_slot
+        )
+        self._bottom_postproc_button.toggled.connect(
+            self._bottom_postproc_button_slot
+        )
 
         # connect bottom input box to slot
         self._auto_thresh_selection.currentTextChanged.connect(
