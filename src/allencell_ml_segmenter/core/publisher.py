@@ -24,12 +24,10 @@ class Publisher(ABC):
         ].items():
             handler(event)
 
-    def subscribe(self, event: Event, subscriber: Subscriber, handler=None):
+    def subscribe(self, event: Event, subscriber: Subscriber, handler):
         """
         subscribes a subscriber to this publisher
         """
-        if handler is None:
-            handler = subscriber.handle_event
         self._events_to_subscriber_handlers[event.value][subscriber] = handler
 
     def unsubscribe(self, event: Event, subscriber: Subscriber):
