@@ -47,16 +47,16 @@ class ModelInputWidget(View, Subscriber):
         self._postprocessing_label_with_hint: LabelWithHint = LabelWithHint()
 
         # radio buttons
-        self._top_button: QRadioButton = QRadioButton()
-        self._bottom_button: QRadioButton = QRadioButton()
+        self._top_postproc_button: QRadioButton = QRadioButton()
+        self._bottom_postproc_button: QRadioButton = QRadioButton()
 
-        self._buttons = [self._top_button, self._bottom_button]
+        self._postproc_buttons = [self._top_postproc_button, self._bottom_postproc_button]
 
         # labels for the radio buttons
-        self._top_label: QLabel = QLabel(self.TOP_TEXT)
-        self._bottom_label: QLabel = QLabel(self.BOTTOM_TEXT)
+        self._top_postproc_label: QLabel = QLabel(self.TOP_TEXT)
+        self._bottom_postproc_label: QLabel = QLabel(self.BOTTOM_TEXT)
 
-        self._labels = [self._top_label, self._bottom_label]
+        self._postproc_labels = [self._top_postproc_label, self._bottom_postproc_label]
 
         # input fields corresponding to radio buttons & their labels
         self._simple_thresh_slider: SliderWithLabels = SliderWithLabels(
@@ -85,7 +85,7 @@ class ModelInputWidget(View, Subscriber):
     def handle_event(self, event: Event) -> None:
         pass
 
-    def _top_radio_button_slot(self) -> None:
+    def _top_postproc_button_slot(self) -> None:
         """
         Prohibits usage of non-related input fields if top button is checked.
         """
@@ -93,7 +93,7 @@ class ModelInputWidget(View, Subscriber):
         self._auto_thresh_selection.setEnabled(False)
         self._model.set_postprocessing_method(self.TOP_TEXT)
 
-    def _bottom_radio_button_slot(self) -> None:
+    def _bottom_postproc_button_slot(self) -> None:
         """
         Prohibits usage of non-related input fields if bottom button is checked.
         """
@@ -133,9 +133,9 @@ class ModelInputWidget(View, Subscriber):
         self._postprocessing_label_with_hint.set_hint("this is the final test")
 
         # add styling to buttons and labels
-        for button in self._buttons:
+        for button in self._postproc_buttons:
             button.setStyleSheet("margin-left: 25px; margin-right: 6 px")
-        for label in self._labels:
+        for label in self._postproc_labels:
             label.setStyleSheet("margin-right: 25px")
 
         # set default values for input fields
@@ -166,8 +166,8 @@ class ModelInputWidget(View, Subscriber):
         self._auto_thresh_selection.setEditable(False)
 
         # prohibit input until a radio button is selected
-        for box in self._postprocessing_selections:
-            box.setEnabled(False)
+        for selection in self._postprocessing_selections:
+            selection.setEnabled(False)
 
     def _build_layouts(self) -> None:
         """
@@ -202,12 +202,12 @@ class ModelInputWidget(View, Subscriber):
         grid_layout.setSpacing(0)
 
         # add all pertinent widgets to the grid
-        for idx, button in enumerate(self._buttons):
+        for idx, button in enumerate(self._postproc_buttons):
             grid_layout.addWidget(button, idx, 0)
-        for idx, label in enumerate(self._labels):
+        for idx, label in enumerate(self._postproc_labels):
             grid_layout.addWidget(label, idx, 1)
-        for idx, box in enumerate(self._postprocessing_selections):
-            grid_layout.addWidget(box, idx, 2)
+        for idx, selection in enumerate(self._postprocessing_selections):
+            grid_layout.addWidget(selection, idx, 2)
 
         # add inner widgets and layouts to overarching layout
         self.layout().addWidget(
@@ -225,8 +225,8 @@ class ModelInputWidget(View, Subscriber):
         Connects widgets to their respective event handlers.
         """
         # connect radio buttons to slots
-        self._top_button.toggled.connect(self._top_radio_button_slot)
-        self._bottom_button.toggled.connect(self._bottom_radio_button_slot)
+        self._top_postproc_button.toggled.connect(self._top_postproc_button_slot)
+        self._bottom_postproc_button.toggled.connect(self._bottom_postproc_button_slot)
 
         # connect bottom input box to slot
         self._auto_thresh_selection.currentTextChanged.connect(
