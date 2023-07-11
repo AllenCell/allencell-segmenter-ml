@@ -30,7 +30,7 @@ def test_bottom_radio_button_slot(qtbot, model_input_widget):
     # Enable the bottom input box and disable the top input box
     model_input_widget._bottom_postproc_button_slot()
 
-    assert not model_input_widget._simple_thresh_slider.isEnabled()
+    assert not model_input_widget._simple_thresh_slider.native.isEnabled()
     assert model_input_widget._auto_thresh_selection.isEnabled()
     assert (
         model_input_widget._model.get_postprocessing_method()
