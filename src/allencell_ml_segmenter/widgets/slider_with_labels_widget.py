@@ -12,6 +12,7 @@ from PyQt5.QtWidgets import (
 
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.prediction.model import PredictionModel
+from magicgui.widgets import FloatSlider
 
 
 class SliderWithLabels(QWidget):
@@ -21,7 +22,7 @@ class SliderWithLabels(QWidget):
     """
 
     def __init__(
-        self, lower_bound: int, upper_bound: int, model: PredictionModel
+        self, lower_bound: int, upper_bound: int, step:int, model: PredictionModel
     ):
         super().__init__()
 
@@ -39,10 +40,13 @@ class SliderWithLabels(QWidget):
         self._low: QLabel = QLabel(str(lower_bound))
         self._high: QLabel = QLabel(str(upper_bound))
 
-        self._slider: QSlider = QSlider(Qt.Horizontal)
-        self._slider.setRange(
-            lower_bound, round(100 * upper_bound)
-        )  # divide by 100 to get the actual value
+        self._slider: FloatSlider = FloatSlider()
+        self._slider.min = lower_bound
+        self._slider.max = upper_bound
+        self._slider.step = step
+        self._slider.value = lower_bound # default value lower bound for now
+        self._slider.native.setStyleSheet("QWidget { background-color: transparent; }")
+        self._slider = self._slider.native
 
         self._label: QLineEdit = QLineEdit()
         self._label.setPlaceholderText(
