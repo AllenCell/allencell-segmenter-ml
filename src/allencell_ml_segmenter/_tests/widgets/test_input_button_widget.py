@@ -15,12 +15,15 @@ def input_button(qtbot):
     """
     return InputButton(Mock(spec=PredictionModel))
 
+
 def test_set_file_text(qtbot, input_button, monkeypatch):
     """
     Test the set_file_text method of InputButton.
     """
     # Arrange
-    with patch.object(QFileDialog, "getOpenFileName", return_value=("/path/to/file", "")):
+    with patch.object(
+        QFileDialog, "getOpenFileName", return_value=("/path/to/file", "")
+    ):
         # Act
         qtbot.mouseClick(input_button._button, Qt.LeftButton)
         assert input_button._text_display.text() == "/path/to/file"
