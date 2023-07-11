@@ -6,15 +6,14 @@ from allencell_ml_segmenter.widgets.slider_with_labels_widget import (
 )
 from PyQt5.QtTest import QTest
 
-
-
+#TODO redo tests once replaced with magicgui floatslider
 @pytest.fixture
 def prediction_model():
     return PredictionModel()
 
 @pytest.fixture
 def slider_with_labels(prediction_model, qtbot):
-    return SliderWithLabels(0, 100, 1, prediction_model)
+    return SliderWithLabels(0, 100, prediction_model)
 
 def test_label_update_model(slider_with_labels):
     # ACT
