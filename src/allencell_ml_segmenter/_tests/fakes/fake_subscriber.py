@@ -5,11 +5,14 @@ from allencell_ml_segmenter.core.event import Event
 class FakeSubscriber(Subscriber):
     """
     Testing publishers with this fake subscriber class
-    that implements handle_event
+    using the fake event handler
     """
 
     def __init__(self):
-        self.handled_event = None
+        self.handled = {}
 
-    def handle_event(self, event: Event):
-        self.handled_event = event
+    def handle(self, event: Event):
+        self.handled[event] = True
+
+    def was_handled(self, event: Event):
+        return event in self.handled
