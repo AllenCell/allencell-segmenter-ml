@@ -33,7 +33,8 @@ class PredictionFileInput(QWidget):
 
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
-        self.layout().setAlignment(Qt.AlignTop)
+
+        self.layout().setAlignment(Qt.AlignVCenter)
 
         # radiobox for images from napari
         horiz_layout = QHBoxLayout()
@@ -104,5 +105,3 @@ class PredictionFileInput(QWidget):
         grid_layout.addWidget(self.browse_output_edit, 1, 2)
 
         self.layout().addLayout(grid_layout)
-
-        # seperator_line = QFrame()
