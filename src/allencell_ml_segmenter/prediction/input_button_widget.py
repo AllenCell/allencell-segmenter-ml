@@ -56,6 +56,8 @@ class InputButton(QWidget):
     def set_file_text(self) -> None:
         """
         Gets and displays file path on label portion of input button.
+        Caution - currently operates under the assumption that only
+        one input button is hooked up to the model.
         """
         file_path: str = QFileDialog.getOpenFileName(self, "Open file")[0]
         self._text_display.setReadOnly(False)
