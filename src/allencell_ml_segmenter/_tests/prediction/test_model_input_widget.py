@@ -26,7 +26,7 @@ def test_bottom_radio_button_slot(qtbot, model_input_widget):
     Test the _bottom_radio_button_slot method of ModelInputWidget.
     """
     # Enable the bottom input box and disable the top input box
-    model_input_widget._bottom_radio_button_slot()
+    model_input_widget._bottom_postproc_button_slot()
 
     assert not model_input_widget._simple_thresh_slider.isEnabled()
     assert model_input_widget._auto_thresh_selection.isEnabled()
@@ -66,7 +66,7 @@ def test_configure_slots(qtbot, model_input_widget):
 
 def test_postprocessing_method(model_input_widget, qtbot):
     # ACT
-    qtbot.mouseClick(model_input_widget._top_button, Qt.LeftButton)
+    qtbot.mouseClick(model_input_widget._top_postproc_button, Qt.LeftButton)
 
     # ASSERT
     assert (
@@ -75,7 +75,7 @@ def test_postprocessing_method(model_input_widget, qtbot):
     )
 
     # ACT
-    qtbot.mouseClick(model_input_widget._bottom_button, Qt.LeftButton)
+    qtbot.mouseClick(model_input_widget._bottom_postproc_button, Qt.LeftButton)
 
     # ASSERT
     assert model_input_widget._model.get_postprocessing_method() == "auto threshold"
