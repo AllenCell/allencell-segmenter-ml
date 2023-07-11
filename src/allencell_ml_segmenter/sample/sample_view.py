@@ -1,10 +1,9 @@
 import asyncio
-from qtpy.QtWidgets import QVBoxLayout
 
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.main.main_model import MainModel
-from allencell_ml_segmenter.views.view import View
+from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.sample.sample_state_widget import SampleStateWidget
 from allencell_ml_segmenter.sample.sample_results_list_widget import (
     SampleResultsListWidget,

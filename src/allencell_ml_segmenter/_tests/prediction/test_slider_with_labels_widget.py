@@ -1,7 +1,7 @@
 import pytest
 
 from allencell_ml_segmenter.prediction.model import PredictionModel
-from allencell_ml_segmenter.prediction.slider_with_labels_widget import (
+from allencell_ml_segmenter.widgets.slider_with_labels_widget import (
     SliderWithLabels,
 )
 
