@@ -60,7 +60,7 @@ class ModelInputWidget(View, Subscriber):
 
         # input fields corresponding to radio buttons & their labels
         self._top_input_box: SliderWithLabels = SliderWithLabels(
-            0, 1, .1, self._model
+            0, 1, self._model
         )
         self._bottom_input_box: QComboBox = QComboBox()
 
