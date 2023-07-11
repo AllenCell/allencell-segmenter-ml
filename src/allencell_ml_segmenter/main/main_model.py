@@ -1,4 +1,4 @@
-from allencell_ml_segmenter.views.view import View
+from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.publisher import Publisher
 
