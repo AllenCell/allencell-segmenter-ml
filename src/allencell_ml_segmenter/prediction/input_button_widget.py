@@ -51,9 +51,9 @@ class InputButton(QWidget):
         self.layout().addWidget(self._button, alignment=Qt.AlignLeft)
 
         # connect to slot
-        self._button.clicked.connect(self.set_file_text)
+        self._button.clicked.connect(self._update_file_text)
 
-    def set_file_text(self) -> None:
+    def _update_file_text(self) -> None:
         """
         Gets and displays file path on label portion of input button.
         """
