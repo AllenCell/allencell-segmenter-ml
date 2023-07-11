@@ -28,8 +28,8 @@ def test_bottom_radio_button_slot(qtbot, model_input_widget):
     # Enable the bottom input box and disable the top input box
     model_input_widget._bottom_radio_button_slot()
 
-    assert not model_input_widget._top_input_box.isEnabled()
-    assert model_input_widget._bottom_input_box.isEnabled()
+    assert not model_input_widget._simple_thresh_slider.isEnabled()
+    assert model_input_widget._auto_thresh_selection.isEnabled()
     assert model_input_widget._model.get_postprocessing_method() == ModelInputWidget.BOTTOM_TEXT
 
 
@@ -57,7 +57,7 @@ def test_configure_slots(qtbot, model_input_widget):
     """
     # Simulate selecting an option in the bottom input box
     with patch.object(model_input_widget._model, "set_postprocessing_auto_threshold") as mock_set_threshold:
-        model_input_widget._bottom_input_box.setCurrentIndex(0)
+        model_input_widget._auto_thresh_selection.setCurrentIndex(0)
         qtbot.wait(100)
 
     # Verify that the corresponding method was called on the model
@@ -83,13 +83,13 @@ def test_postprocessing_method(model_input_widget, qtbot):
 
 def test_postprocessing_auto_threshold(model_input_widget):
     # ACT
-    model_input_widget._bottom_input_box.setCurrentIndex(4)
+    model_input_widget._auto_thresh_selection.setCurrentIndex(4)
 
     # ASSERT
     assert model_input_widget._model.get_postprocessing_auto_threshold() == "minimum"
 
     # ACT
-    model_input_widget._bottom_input_box.setCurrentIndex(6)
+    model_input_widget._auto_thresh_selection.setCurrentIndex(6)
 
     # ASSERT
     assert model_input_widget._model.get_postprocessing_auto_threshold() == "niblack"

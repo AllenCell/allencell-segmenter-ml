@@ -59,14 +59,14 @@ class ModelInputWidget(View, Subscriber):
         self._labels = [self._top_label, self._bottom_label]
 
         # input fields corresponding to radio buttons & their labels
-        self._top_input_box: SliderWithLabels = SliderWithLabels(
+        self._simple_thresh_slider: SliderWithLabels = SliderWithLabels(
             0, 1, self._model
         )
-        self._bottom_input_box: QComboBox = QComboBox()
+        self._auto_thresh_selection: QComboBox = QComboBox()
 
-        self._boxes = [
-            self._top_input_box,
-            self._bottom_input_box,
+        self._postprocessing_selections = [
+            self._simple_thresh_slider,
+            self._auto_thresh_selection,
         ]
 
         self._model.subscribe(
@@ -89,16 +89,16 @@ class ModelInputWidget(View, Subscriber):
         """
         Prohibits usage of non-related input fields if top button is checked.
         """
-        self._top_input_box.setEnabled(True)
-        self._bottom_input_box.setEnabled(False)
+        self._simple_thresh_slider.setEnabled(True)
+        self._auto_thresh_selection.setEnabled(False)
         self._model.set_postprocessing_method(self.TOP_TEXT)
 
     def _bottom_radio_button_slot(self) -> None:
         """
         Prohibits usage of non-related input fields if bottom button is checked.
         """
-        self._top_input_box.setEnabled(False)
-        self._bottom_input_box.setEnabled(True)
+        self._simple_thresh_slider.setEnabled(False)
+        self._auto_thresh_selection.setEnabled(True)
         self._model.set_postprocessing_method(self.BOTTOM_TEXT)
 
     def _call_setters(self) -> None:
@@ -139,7 +139,7 @@ class ModelInputWidget(View, Subscriber):
             label.setStyleSheet("margin-right: 25px")
 
         # set default values for input fields
-        self._bottom_input_box.addItems(
+        self._auto_thresh_selection.addItems(
             [
                 "isodata",
                 "li",
@@ -157,16 +157,16 @@ class ModelInputWidget(View, Subscriber):
         )
 
         # set up disappearing placeholder text
-        self._bottom_input_box.setEditable(True)
-        self._bottom_input_box.setCurrentIndex(-1)
+        self._auto_thresh_selection.setEditable(True)
+        self._auto_thresh_selection.setCurrentIndex(-1)
 
         # TODO: check that the user has selected an option other than the placeholder text when "run" is pressed
         # TODO: also check that one of the two radio buttons has been selected
-        self._bottom_input_box.setPlaceholderText("select a method")
-        self._bottom_input_box.setEditable(False)
+        self._auto_thresh_selection.setPlaceholderText("select a method")
+        self._auto_thresh_selection.setEditable(False)
 
         # prohibit input until a radio button is selected
-        for box in self._boxes:
+        for box in self._postprocessing_selections:
             box.setEnabled(False)
 
     def _build_layouts(self) -> None:
@@ -206,7 +206,7 @@ class ModelInputWidget(View, Subscriber):
             grid_layout.addWidget(button, idx, 0)
         for idx, label in enumerate(self._labels):
             grid_layout.addWidget(label, idx, 1)
-        for idx, box in enumerate(self._boxes):
+        for idx, box in enumerate(self._postprocessing_selections):
             grid_layout.addWidget(box, idx, 2)
 
         # add inner widgets and layouts to overarching layout
@@ -229,6 +229,6 @@ class ModelInputWidget(View, Subscriber):
         self._bottom_button.toggled.connect(self._bottom_radio_button_slot)
 
         # connect bottom input box to slot
-        self._bottom_input_box.currentTextChanged.connect(
+        self._auto_thresh_selection.currentTextChanged.connect(
             lambda s: self._model.set_postprocessing_auto_threshold(s)
         )
