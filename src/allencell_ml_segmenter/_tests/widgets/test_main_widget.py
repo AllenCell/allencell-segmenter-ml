@@ -1,7 +1,7 @@
 import pytest
 import napari
 from qtpy.QtWidgets import QStackedWidget
-from allencell_ml_segmenter.views.view import View
+from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.sample.sample_view import SampleView
 from allencell_ml_segmenter.main.main_widget import MainWidget
