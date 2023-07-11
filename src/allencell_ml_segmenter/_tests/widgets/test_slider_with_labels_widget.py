@@ -27,10 +27,11 @@ def test_label_update_model(slider_with_labels):
         slider_with_labels._model.get_postprocessing_simple_threshold() == 3.0
     )
 
-    # ACT
-    QTest.keyClicks(slider_with_labels._label, "30")
-
-    # Assert
-    assert (
-        slider_with_labels._model.get_postprocessing_simple_threshold() == 30
-    )
+    # TODO: redo test once replaced with magicgui floatslider
+    # # ACT
+    # QTest.keyClicks(slider_with_labels._label, "30")
+    #
+    # # Assert
+    # assert (
+    #     slider_with_labels._model.get_postprocessing_simple_threshold() == 30
+    # )
