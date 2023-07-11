@@ -9,11 +9,11 @@ from qtpy.QtWidgets import (
 )
 from qtpy.QtCore import Qt
 
-from allencell_ml_segmenter.prediction.slider_with_labels_widget import (
+from allencell_ml_segmenter.widgets.slider_with_labels_widget import (
     SliderWithLabels,
 )
 from allencell_ml_segmenter.prediction.model import PredictionModel
-from allencell_ml_segmenter.views.view import View
+from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.widgets.input_button_widget import InputButton

@@ -5,7 +5,7 @@ from qtpy.QtWidgets import (
 )
 
 from allencell_ml_segmenter.sample.sample_model import SampleModel
-from allencell_ml_segmenter.views.view import View
+from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.event import Event
 
