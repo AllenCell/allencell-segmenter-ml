@@ -8,10 +8,8 @@ from qtpy.QtWidgets import (
     QComboBox,
 )
 
-from allencell_ml_segmenter.prediction.input_button_widget import InputButton
-from allencell_ml_segmenter.prediction.label_with_hint_widget import (
-    LabelWithHint,
-)
+from allencell_ml_segmenter.widgets.input_button_widget import InputButton
+from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 from allencell_ml_segmenter.prediction.model import PredictionModel
 from allencell_ml_segmenter.widgets.check_box_list_widget import (
     CheckBoxListWidget,
