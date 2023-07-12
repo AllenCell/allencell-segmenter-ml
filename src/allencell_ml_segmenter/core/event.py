@@ -19,11 +19,8 @@ class Event(Enum):
     ACTION_PREDICTION_MODEL_FILE = "model_file"
     ACTION_PREDICTION_PREPROCESSING_METHOD = "preprocessing_method"
     ACTION_PREDICTION_POSTPROCESSING_METHOD = "postprocessing_method"
-    ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_MOVED = (
-        "postprocessing_simple_threshold_moved"
-    )
-    ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD_TYPED = (
-        "postprocessing_simple_threshold_typed"
+    ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD = (
+        "postprocessing_simple_threshold"
     )
     ACTION_PREDICTION_POSTPROCESSING_AUTO_THRESHOLD = (
         "postprocessing_auto_threshold"
