@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QGridLayout
+from PyQt5.QtWidgets import QGridLayout, QLabel
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
     QWidget,
@@ -33,6 +33,11 @@ class PredictionFileInput(QWidget):
         self.layout().setContentsMargins(0, 0, 0, 0)
 
         self.layout().setAlignment(Qt.AlignVCenter)
+
+        title: QLabel = QLabel("Input image(s)")
+        title.setStyleSheet("background-color: #D9D9D9")
+        title.setMaximumHeight(40)
+        self.layout().addWidget(title)
 
         # radiobox for images from napari
         horiz_layout = QHBoxLayout()
@@ -77,13 +82,11 @@ class PredictionFileInput(QWidget):
 
         grid_layout = QGridLayout()
 
-        image_input_label = LabelWithHint("Image input channel: ")
-        image_input_label.align_left()
+        image_input_label = LabelWithHint("Image input channel")
 
         self.channel_select_dropdown = QComboBox()
 
-        output_dir_label = LabelWithHint("Output directory: ")
-        output_dir_label.align_left()
+        output_dir_label = LabelWithHint("Output directory")
 
         self.browse_output_edit = InputButton(self._model)
 
