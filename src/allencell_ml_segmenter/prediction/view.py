@@ -1,3 +1,5 @@
+from PyQt5.QtWidgets import QFrame
+
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.main.main_model import MainModel
@@ -38,18 +40,32 @@ class PredictionView(View, Subscriber):
         self._file_input_widget: PredictionFileInput = PredictionFileInput(
             self._prediction_model
         )
-        self.layout().addWidget(self._file_input_widget)
 
         self._model_input_widget: ModelInputWidget = ModelInputWidget(
             self._prediction_model
         )
-        self.layout().addWidget(self._model_input_widget)
+
+        # Border will not appear unless set on dummies
+        top_container, top_dummy = QVBoxLayout(), QFrame()
+        bottom_container, bottom_dummy = QVBoxLayout(), QFrame()
+
+        top_container.addWidget(self._file_input_widget)
+        top_dummy.setLayout(top_container)
+        top_dummy.setObjectName("top")
+        top_dummy.setStyleSheet("#top {border: 1px solid #D9D9D9}")
+        self.layout().addWidget(top_dummy)
+
+        bottom_container.addWidget(self._model_input_widget)
+        bottom_dummy.setLayout(bottom_container)
+        bottom_dummy.setObjectName("bot")
+        bottom_dummy.setStyleSheet("#bot {border: 1px solid #D9D9D9}")
+        self.layout().addWidget(bottom_dummy)
 
         self._return_btn: QPushButton = QPushButton("Return")
         self._return_btn.clicked.connect(
             lambda: self._main_model.dispatch(Event.VIEW_SELECTION_MAIN)
         )
-        self._return_btn.setStyleSheet("margin-top: 50px")
+        self._return_btn.setStyleSheet("margin-top: 45px")
         self.layout().addWidget(self._return_btn)
 
         self._main_model.subscribe(
