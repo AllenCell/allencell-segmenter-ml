@@ -223,9 +223,7 @@ class ModelInputWidget(View, Subscriber):
                 grid_layout.addWidget(selection, idx, 2)
 
         # add inner widgets and layouts to overarching layout
-        self.layout().addWidget(
-            self._model_label_with_hint, alignment=Qt.AlignLeft
-        )
+        self.layout().addWidget(self._model_label_with_hint)
         self.layout().addLayout(selection_layout)
         self.layout().addLayout(preprocessing_layout)
         self.layout().addWidget(
