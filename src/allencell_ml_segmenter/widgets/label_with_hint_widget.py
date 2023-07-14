@@ -21,7 +21,7 @@ class LabelWithHint(QWidget):
 
         self._label: QLabel = QLabel("")
         self._label.setText(label_text)
-        self.layout().addWidget(self._label, alignment=Qt.AlignLeft)
+        self.layout().addWidget(self._label)
 
         self._question_mark: QLabel = QLabel()
         self._question_mark.setPixmap(
@@ -31,7 +31,7 @@ class LabelWithHint(QWidget):
         )
         self._question_mark.setStyleSheet("margin-right: 10px")
 
-        self.layout().addWidget(self._question_mark, alignment=Qt.AlignLeft)
+        self.layout().addWidget(self._question_mark)
         self.layout().addStretch(6)
 
     def set_label_text(self, text: str) -> None:
