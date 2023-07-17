@@ -114,7 +114,6 @@ class ModelInputWidget(View, Subscriber):
         self._model_label_with_hint.set_hint("this is a test")
         self._model_label_with_hint.setStyleSheet("background-color: #D9D9D9")
         self._model_label_with_hint.setMaximumHeight(40)
-        # self._model_label_with_hint._question_mark.setStyleSheet(f"padding-right: {self.width() - 80}")
 
         # selection label + hint
         self._selection_label_with_hint.set_label_text(
