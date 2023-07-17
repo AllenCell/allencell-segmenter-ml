@@ -1,5 +1,4 @@
 from PyQt5.QtWidgets import QGridLayout, QLabel
-from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
     QWidget,
     QVBoxLayout,
@@ -32,8 +31,6 @@ class PredictionFileInput(QWidget):
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
 
-        self.layout().setAlignment(Qt.AlignVCenter)
-
         title: QLabel = QLabel("Input image(s)")
         title.setStyleSheet("background-color: #D9D9D9")
         title.setMaximumHeight(40)
@@ -53,11 +50,6 @@ class PredictionFileInput(QWidget):
         horiz_layout.addStretch(60)
 
         self.layout().addLayout(horiz_layout)
-
-        # seperator_line = QFrame()
-        # seperator_line.setFrameShape(QFrame.HLine)
-        # seperator_line.setFrameShadow(QFrame.Sunken)
-        # horiz_layout.addWidget(seperator_line)
 
         # list of available images on napari
         self.image_list = CheckBoxListWidget()
