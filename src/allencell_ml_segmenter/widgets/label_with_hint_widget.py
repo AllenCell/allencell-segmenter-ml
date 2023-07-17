@@ -46,6 +46,11 @@ class LabelWithHint(QWidget):
         """
         self._question_mark.setToolTip(hint)
 
+        # guard against errant highlighting
+        self._question_mark.setStyleSheet(
+            "QToolTip {background-color: #282c34}"
+        )
+
     def paintEvent(self, event):
         """
         Overrides the default paint event to set the background color.
