@@ -32,9 +32,9 @@ class InputButton(QWidget):
         self._text_display: QLineEdit = QLineEdit()
         self._text_display.setPlaceholderText("Choose a file...")
         self._text_display.setStyleSheet(
-            "border-left: 2px solid gray; "
-            + "border-top: 2px solid gray; "
-            + "border-bottom: 2px solid gray; "
+            "border-left: 2px solid #D9D9D9; "
+            + "border-top: 2px solid #D9D9D9; "
+            + "border-bottom: 2px solid #D9D9D9; "
             + "padding-top: 3px; "
             + "padding-bottom: 3px"
         )
@@ -43,7 +43,7 @@ class InputButton(QWidget):
         # button to open file explorer
         self._button: QPushButton = QPushButton("Browse")
         self._button.setStyleSheet(
-            "padding: 5px; border: 2px solid gray; background-color: #1890FF"
+            "padding: 5px; border: 2px solid #D9D9D9; background-color: #1890FF"
         )
 
         # add widgets to layout
