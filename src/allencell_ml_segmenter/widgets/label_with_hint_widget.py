@@ -1,6 +1,6 @@
+from PyQt5.QtGui import QPainter, QPalette
 from qtpy.QtWidgets import QWidget, QSizePolicy, QHBoxLayout, QLabel
 from qtpy.QtGui import QPixmap
-from qtpy.QtCore import Qt
 
 from allencell_ml_segmenter.core.directories import Directories
 
@@ -45,3 +45,12 @@ class LabelWithHint(QWidget):
         Sets the tooltip to be displayed when the question icon is hovered over.
         """
         self._question_mark.setToolTip(hint)
+
+    def paintEvent(self, event):
+        """
+        Overrides the default paint event to set the background color.
+        """
+        painter = QPainter(self)
+        painter.fillRect(
+            self.rect(), self.palette().color(QPalette.Background)
+        )
