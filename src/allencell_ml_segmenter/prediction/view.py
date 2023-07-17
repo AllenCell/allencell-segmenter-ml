@@ -52,7 +52,9 @@ class PredictionView(View, Subscriber):
         top_container.addWidget(self._file_input_widget)
         top_dummy.setLayout(top_container)
         top_dummy.setObjectName("top")
-        top_dummy.setStyleSheet("#top {border: 1px solid #D9D9D9}")
+        top_dummy.setStyleSheet(
+            "#top {border: 1px solid #D9D9D9; margin: 40px 0px 40px}"
+        )
         self.layout().addWidget(top_dummy)
 
         bottom_container.addWidget(self._model_input_widget)
@@ -65,7 +67,7 @@ class PredictionView(View, Subscriber):
         self._return_btn.clicked.connect(
             lambda: self._main_model.dispatch(Event.VIEW_SELECTION_MAIN)
         )
-        self._return_btn.setStyleSheet("margin-top: 45px")
+        self._return_btn.setStyleSheet("margin-top: 40px")
         self.layout().addWidget(self._return_btn)
 
         self._main_model.subscribe(
