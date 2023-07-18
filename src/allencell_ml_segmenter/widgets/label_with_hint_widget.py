@@ -1,4 +1,4 @@
-from PyQt5.QtGui import QPainter, QPalette
+from PyQt5.QtGui import QPainter, QPalette, QPaintEvent
 from qtpy.QtWidgets import QWidget, QSizePolicy, QHBoxLayout, QLabel
 from qtpy.QtGui import QPixmap
 
@@ -51,7 +51,7 @@ class LabelWithHint(QWidget):
             "QToolTip {background-color: #282c34}"
         )
 
-    def paintEvent(self, event):
+    def paintEvent(self, event: QPaintEvent) -> None:
         """
         Overrides the default paint event to set the background color.
         """
