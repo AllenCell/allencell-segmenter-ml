@@ -37,7 +37,7 @@ class ModelInputWidget(View, Subscriber):
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
         # instantiate widgets
-        self._model_label_with_hint: LabelWithHint = LabelWithHint()
+        self._model_label: QLabel = QLabel("Model")
         self._selection_label_with_hint: LabelWithHint = LabelWithHint()
         self._input_button: InputButton = InputButton(self._model)
         self._preprocessing_label_with_hint: LabelWithHint = LabelWithHint()
@@ -109,10 +109,6 @@ class ModelInputWidget(View, Subscriber):
         """
         Sets pertinent default values for all widget fields.
         """
-        # title + hint
-        self._model_label_with_hint.set_label_text("Model")
-        self._model_label_with_hint.set_hint("this is a test")
-
         # selection label + hint
         self._selection_label_with_hint.set_label_text(
             "Select an existing model"
@@ -220,9 +216,7 @@ class ModelInputWidget(View, Subscriber):
                 grid_layout.addWidget(selection, idx, 2)
 
         # add inner widgets and layouts to overarching layout
-        self.layout().addWidget(
-            self._model_label_with_hint, alignment=Qt.AlignLeft
-        )
+        self.layout().addWidget(self._model_label, alignment=Qt.AlignLeft)
         self.layout().addLayout(selection_layout)
         self.layout().addLayout(preprocessing_layout)
         self.layout().addWidget(
