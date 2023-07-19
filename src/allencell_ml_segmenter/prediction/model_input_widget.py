@@ -1,3 +1,4 @@
+from PyQt5.QtWidgets import QFrame
 from qtpy.QtWidgets import (
     QLabel,
     QHBoxLayout,
@@ -38,7 +39,9 @@ class ModelInputWidget(View, Subscriber):
 
         # instantiate widgets
         # TODO: have title be in-line with the border if possible (QGroupBox)
-        self._model_label_with_hint: LabelWithHint = LabelWithHint()
+        self.title_frame = QFrame()
+        self.title = QLabel("Model", self)
+
         self._selection_label_with_hint: LabelWithHint = LabelWithHint()
 
         self._input_button: InputButton = InputButton(self._model)
@@ -112,12 +115,15 @@ class ModelInputWidget(View, Subscriber):
         """
         Sets pertinent default values for all widget fields.
         """
-        # title + hint
-        self._model_label_with_hint.set_label_text("Model")
-        self._model_label_with_hint.set_hint("this is a test")
-        # TODO: remove background color once title has been positioned
-        self._model_label_with_hint.setStyleSheet("background-color: #D9D9D9")
-        self._model_label_with_hint.setMaximumHeight(40)
+        # title frame
+        self.title_frame.setStyleSheet(
+            """
+                    TitleBorderFrame { 
+                        border: 1px solid #AAAAAA; 
+                        border-radius: 5px; 
+                    }
+                """
+        )
 
         # selection label + hint
         self._selection_label_with_hint.set_label_text(
@@ -190,6 +196,11 @@ class ModelInputWidget(View, Subscriber):
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
 
+        self.title_frame.setLayout(QVBoxLayout())
+
+        self.layout().addWidget(self.title)
+        self.layout().addWidget(self.title_frame)
+
         # horizontal layout containing widgets related to file selection
         selection_layout: QHBoxLayout = QHBoxLayout()
         selection_layout.setSpacing(0)
@@ -226,13 +237,12 @@ class ModelInputWidget(View, Subscriber):
                 grid_layout.addWidget(selection, idx, 2)
 
         # add inner widgets and layouts to overarching layout
-        self.layout().addWidget(self._model_label_with_hint)
-        self.layout().addLayout(selection_layout)
-        self.layout().addLayout(preprocessing_layout)
-        self.layout().addWidget(
+        self.title_frame.layout().addLayout(selection_layout)
+        self.title_frame.layout().addLayout(preprocessing_layout)
+        self.title_frame.layout().addWidget(
             self._postprocessing_label_with_hint, alignment=Qt.AlignLeft
         )
-        self.layout().addLayout(grid_layout)
+        self.title_frame.layout().addLayout(grid_layout)
 
     def _configure_slots(self) -> None:
         """

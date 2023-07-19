@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QGridLayout, QLabel
+from PyQt5.QtWidgets import QGridLayout, QLabel, QFrame
 from qtpy.QtWidgets import (
     QWidget,
     QVBoxLayout,
@@ -31,13 +31,21 @@ class PredictionFileInput(QWidget):
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
 
-        # TODO: have title be in-line with the border if possible (QGroupBox)
-        title: QLabel = QLabel("Input image(s)")
+        title_frame = QFrame()
+        title_frame.setLayout(QVBoxLayout())
+        title_frame.setStyleSheet(
+            """
+            TitleBorderFrame { 
+                border: 1px solid #AAAAAA; 
+                border-radius: 5px; 
+            }
+        """
+        )
 
-        # TODO: remove background color once title has been positioned
-        title.setStyleSheet("background-color: #D9D9D9")
-        title.setMaximumHeight(20)
+        title = QLabel("Input image(s)", self)
+
         self.layout().addWidget(title)
+        self.layout().addWidget(title_frame)
 
         # TODO: insert prompt ("Select input image(s):")
 
@@ -55,11 +63,11 @@ class PredictionFileInput(QWidget):
 
         horiz_layout.addStretch(60)
 
-        self.layout().addLayout(horiz_layout)
+        title_frame.layout().addLayout(horiz_layout)
 
         # list of available images on napari
         self.image_list = CheckBoxListWidget()
-        self.layout().addWidget(self.image_list)
+        title_frame.layout().addWidget(self.image_list)
 
         # radiobox for images from directory
         horiz_layout = QHBoxLayout()
@@ -77,7 +85,7 @@ class PredictionFileInput(QWidget):
 
         self.browse_dir_edit = InputButton(self._model, "Select directory...")
         horiz_layout.addWidget(self.browse_dir_edit)
-        self.layout().addLayout(horiz_layout)
+        title_frame.layout().addLayout(horiz_layout)
 
         # TODO: add in disclaimer: “Accept csv file, see instruction” (link leads to tutorial, use dummy link for now)
 
@@ -108,4 +116,4 @@ class PredictionFileInput(QWidget):
         grid_layout.setColumnStretch(0, 1)
         grid_layout.setColumnStretch(1, 0)
 
-        self.layout().addLayout(grid_layout)
+        title_frame.layout().addLayout(grid_layout)
