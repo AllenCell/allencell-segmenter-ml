@@ -50,22 +50,18 @@ class PredictionView(View, Subscriber):
             self._prediction_model
         )
 
-        # Border will not appear unless set on dummies
+        # Dummy divs allow for easy alignment
         top_container, top_dummy = QVBoxLayout(), QFrame()
         bottom_container, bottom_dummy = QVBoxLayout(), QFrame()
 
         top_container.addWidget(self._file_input_widget)
         top_dummy.setLayout(top_container)
         top_dummy.setObjectName("top")
-        top_dummy.setStyleSheet(
-            "#top {border: 1px solid #D9D9D9; margin: 0px 0px 40px}"
-        )
+        top_dummy.setStyleSheet("#top {margin: 0px 0px 20px}")
         self.layout().addWidget(top_dummy)
 
         bottom_container.addWidget(self._model_input_widget)
         bottom_dummy.setLayout(bottom_container)
-        bottom_dummy.setObjectName("bot")
-        bottom_dummy.setStyleSheet("#bot {border: 1px solid #D9D9D9}")
         self.layout().addWidget(bottom_dummy)
 
         self._return_btn: QPushButton = QPushButton("Return")
