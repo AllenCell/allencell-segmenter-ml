@@ -36,7 +36,7 @@ class PredictionFileInput(QWidget):
 
         # TODO: remove background color once title has been positioned
         title.setStyleSheet("background-color: #D9D9D9")
-        title.setMaximumHeight(40)
+        title.setMaximumHeight(20)
         self.layout().addWidget(title)
 
         # TODO: insert prompt ("Select input image(s):")
