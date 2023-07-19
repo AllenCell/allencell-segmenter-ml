@@ -24,7 +24,7 @@ class InputButton(QWidget):
 
         self._model: PredictionModel = model
 
-        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        self.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
 
         self.setLayout(QHBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)

@@ -136,7 +136,7 @@ class ModelInputWidget(View, Subscriber):
         )
 
         # styling for label for preprocessing method
-        self._method_label.setStyleSheet("margin-left: 60px")
+        self._method_label.setStyleSheet(f"margin-right: 160px")
 
         # postprocessing label + hint
         self._postprocessing_label_with_hint.set_label_text(
@@ -214,7 +214,7 @@ class ModelInputWidget(View, Subscriber):
             self._preprocessing_label_with_hint, alignment=Qt.AlignLeft
         )
         preprocessing_layout.addWidget(
-            self._method_label, alignment=Qt.AlignLeft
+            self._method_label, alignment=Qt.AlignRight
         )
 
         # grid layout containing widgets related to postprocessing
@@ -231,6 +231,8 @@ class ModelInputWidget(View, Subscriber):
                 grid_layout.addWidget(selection.native, idx, 2)
             else:
                 grid_layout.addWidget(selection, idx, 2)
+
+        grid_layout.setColumnStretch(1, 1)
 
         # add inner widgets and layouts to overarching layout
         self.title_frame.layout().addLayout(selection_layout)

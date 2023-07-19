@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QGridLayout, QLabel, QFrame
+from PyQt5.QtWidgets import QGridLayout, QLabel, QFrame, QSizePolicy
 from qtpy.QtWidgets import (
     QWidget,
     QVBoxLayout,
@@ -30,6 +30,7 @@ class PredictionFileInput(QWidget):
 
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
+        self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
 
         title_frame = QFrame()
         title_frame.setLayout(QVBoxLayout())
@@ -52,20 +53,18 @@ class PredictionFileInput(QWidget):
         horiz_layout.setSpacing(0)
 
         self._radio_on_screen = QRadioButton()
-        self._radio_on_screen.setStyleSheet("margin-left: 50px")
+        self._radio_on_screen.setStyleSheet("margin-left: 40px")
 
         horiz_layout.addWidget(self._radio_on_screen)
 
         question_label = LabelWithHint(PredictionFileInput.TOP_TEXT)
         horiz_layout.addWidget(question_label)
 
-        horiz_layout.addStretch(60)
-
         title_frame.layout().addLayout(horiz_layout)
 
         # list of available images on napari
         self.image_list = CheckBoxListWidget()
-        self.image_list.setStyleSheet("margin-left: 50px")
+        self.image_list.setStyleSheet("margin-left: 40px")
         title_frame.layout().addWidget(self.image_list)
 
         # radiobox for images from directory
@@ -74,7 +73,7 @@ class PredictionFileInput(QWidget):
 
         # TODO: Gray out input button if associated radio button not selected
         self.radio_directory = QRadioButton()
-        self.radio_directory.setStyleSheet("margin-left: 50px")
+        self.radio_directory.setStyleSheet("margin-left: 40px")
 
         horiz_layout.addWidget(self.radio_directory)
 
