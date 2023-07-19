@@ -40,18 +40,19 @@ class PredictionFileInput(QWidget):
         )
 
         title = QLabel("Input image(s)", self)
+        title.setStyleSheet("font-weight: bold")
 
         self.layout().addWidget(title)
         self.layout().addWidget(title_frame)
 
-        # TODO: insert prompt ("Select input image(s):")
+        title_frame.layout().addWidget(QLabel("Select input image(s):"))
 
         # radiobox for images from napari
-        # TODO: indent appropriate elements
         horiz_layout = QHBoxLayout()
         horiz_layout.setSpacing(0)
 
         self._radio_on_screen = QRadioButton()
+        self._radio_on_screen.setStyleSheet("margin-left: 50px")
 
         horiz_layout.addWidget(self._radio_on_screen)
 
@@ -64,6 +65,7 @@ class PredictionFileInput(QWidget):
 
         # list of available images on napari
         self.image_list = CheckBoxListWidget()
+        self.image_list.setStyleSheet("margin-left: 50px")
         title_frame.layout().addWidget(self.image_list)
 
         # radiobox for images from directory
@@ -72,6 +74,7 @@ class PredictionFileInput(QWidget):
 
         # TODO: Gray out input button if associated radio button not selected
         self.radio_directory = QRadioButton()
+        self.radio_directory.setStyleSheet("margin-left: 50px")
 
         horiz_layout.addWidget(self.radio_directory)
 
