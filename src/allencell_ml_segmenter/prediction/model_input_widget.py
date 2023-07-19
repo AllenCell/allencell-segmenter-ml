@@ -115,11 +115,13 @@ class ModelInputWidget(View, Subscriber):
         """
         Sets pertinent default values for all widget fields.
         """
-        # title frame
+        # title frame + title
         self.title_frame.setObjectName("tf")
         self.title_frame.setStyleSheet(
             "#tf {border: 1px solid #AAAAAA; border-radius: 5px}"
         )
+        self.title.setStyleSheet("font-weight: bold")
+
         # selection label + hint
         self._selection_label_with_hint.set_label_text(
             "Select an existing model"
