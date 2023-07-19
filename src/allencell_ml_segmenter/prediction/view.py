@@ -1,4 +1,5 @@
-from PyQt5.QtWidgets import QFrame
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QFrame, QLabel
 
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.subscriber import Subscriber
@@ -34,10 +35,12 @@ class PredictionView(View, Subscriber):
         layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(layout)
         self.layout().setContentsMargins(0, 0, 0, 0)
-        self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
+        self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
         self.setLayout(QVBoxLayout())
 
-        # TODO: create and add prediction view title ("SEGMENTATION PREDICTION")
+        self._title: QLabel = QLabel("SEGMENTATION PREDICTION", self)
+        self._title.setStyleSheet("font-weight: bold; margin: 10px 0px")
+        self.layout().addWidget(self._title, alignment=Qt.AlignCenter)
 
         self._file_input_widget: PredictionFileInput = PredictionFileInput(
             self._prediction_model
@@ -55,7 +58,7 @@ class PredictionView(View, Subscriber):
         top_dummy.setLayout(top_container)
         top_dummy.setObjectName("top")
         top_dummy.setStyleSheet(
-            "#top {border: 1px solid #D9D9D9; margin: 40px 0px 40px}"
+            "#top {border: 1px solid #D9D9D9; margin: 0px 0px 40px}"
         )
         self.layout().addWidget(top_dummy)
 
