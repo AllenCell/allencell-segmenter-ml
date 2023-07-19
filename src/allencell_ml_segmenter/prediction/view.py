@@ -37,6 +37,8 @@ class PredictionView(View, Subscriber):
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
         self.setLayout(QVBoxLayout())
 
+        # TODO: create and add prediction view title ("SEGMENTATION PREDICTION")
+
         self._file_input_widget: PredictionFileInput = PredictionFileInput(
             self._prediction_model
         )
@@ -69,6 +71,8 @@ class PredictionView(View, Subscriber):
         )
         self._return_btn.setStyleSheet("margin-top: 40px")
         self.layout().addWidget(self._return_btn)
+
+        # TODO: replace return button (?) with run button
 
         self._main_model.subscribe(
             Event.VIEW_SELECTION_PREDICTION,

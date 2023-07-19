@@ -26,7 +26,7 @@ class ModelInputWidget(View, Subscriber):
     postprocessing selection for prediction.
     """
 
-    TOP_TEXT: str = "simple threshold cutoff"
+    TOP_TEXT: str = "simple threshold"
     BOTTOM_TEXT: str = "auto threshold"
 
     def __init__(self, model: PredictionModel):
@@ -37,8 +37,11 @@ class ModelInputWidget(View, Subscriber):
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
         # instantiate widgets
+        # TODO: have title be in-line with the border if possible (QGroupBox)
         self._model_label_with_hint: LabelWithHint = LabelWithHint()
         self._selection_label_with_hint: LabelWithHint = LabelWithHint()
+
+        # TODO: edit placeholder text
         self._input_button: InputButton = InputButton(self._model)
         self._preprocessing_label_with_hint: LabelWithHint = LabelWithHint()
         self._method_label: QLabel = QLabel("n/a")
@@ -63,6 +66,7 @@ class ModelInputWidget(View, Subscriber):
         ]
 
         # input fields corresponding to radio buttons & their labels
+        # TODO: show bounds of slider; make sure typed input field looks editable; add carat controls if possible
         self._simple_thresh_slider: FloatSlider = FloatSlider(
             min=0, max=100, step=1, readout=True
         )
@@ -112,6 +116,7 @@ class ModelInputWidget(View, Subscriber):
         # title + hint
         self._model_label_with_hint.set_label_text("Model")
         self._model_label_with_hint.set_hint("this is a test")
+        # TODO: remove background color once title has been positioned
         self._model_label_with_hint.setStyleSheet("background-color: #D9D9D9")
         self._model_label_with_hint.setMaximumHeight(40)
 
