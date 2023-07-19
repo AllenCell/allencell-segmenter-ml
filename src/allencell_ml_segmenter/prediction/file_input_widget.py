@@ -20,8 +20,8 @@ class PredictionFileInput(QWidget):
     A widget containing file inputs for the input to a model prediction.
     """
 
-    TOP_TEXT: str = "Select on-screen image(s)"
-    BOTTOM_TEXT: str = "Select image(s) from a directory"
+    TOP_TEXT: str = "On-screen image(s)"
+    BOTTOM_TEXT: str = "Image(s) from a directory"
 
     def __init__(self, model: PredictionModel):
         super().__init__()
@@ -31,12 +31,18 @@ class PredictionFileInput(QWidget):
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
 
+        # TODO: have title be in-line with the border if possible (QGroupBox)
         title: QLabel = QLabel("Input image(s)")
+
+        # TODO: remove background color once title has been positioned
         title.setStyleSheet("background-color: #D9D9D9")
         title.setMaximumHeight(40)
         self.layout().addWidget(title)
 
+        # TODO: insert prompt ("Select input image(s):")
+
         # radiobox for images from napari
+        # TODO: indent appropriate elements
         horiz_layout = QHBoxLayout()
         horiz_layout.setSpacing(0)
 
@@ -59,6 +65,7 @@ class PredictionFileInput(QWidget):
         horiz_layout = QHBoxLayout()
         horiz_layout.setSpacing(0)
 
+        # TODO: Gray out input button if associated radio button not selected
         self.radio_directory = QRadioButton()
 
         horiz_layout.addWidget(self.radio_directory)
@@ -68,18 +75,23 @@ class PredictionFileInput(QWidget):
 
         horiz_layout.addStretch(5)
 
+        # TODO: edit placeholder text
         self.browse_dir_edit = InputButton(self._model)
         horiz_layout.addWidget(self.browse_dir_edit)
         self.layout().addLayout(horiz_layout)
+
+        # TODO: add in disclaimer: “Accept csv file, see instruction” (link leads to tutorial, use dummy link for now)
 
         grid_layout = QGridLayout()
 
         image_input_label = LabelWithHint("Image input channel")
 
+        # TODO: Default guide text (“select a channel index”) from image input channel combo box
         self.channel_select_dropdown = QComboBox()
 
         output_dir_label = LabelWithHint("Output directory")
 
+        # TODO: edit placeholder text
         self.browse_output_edit = InputButton(self._model)
 
         grid_layout.addWidget(image_input_label, 0, 0)
