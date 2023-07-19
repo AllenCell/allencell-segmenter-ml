@@ -41,7 +41,6 @@ class ModelInputWidget(View, Subscriber):
         self._model_label_with_hint: LabelWithHint = LabelWithHint()
         self._selection_label_with_hint: LabelWithHint = LabelWithHint()
 
-        # TODO: edit placeholder text
         self._input_button: InputButton = InputButton(self._model)
         self._preprocessing_label_with_hint: LabelWithHint = LabelWithHint()
         self._method_label: QLabel = QLabel("n/a")
