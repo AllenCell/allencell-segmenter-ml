@@ -17,7 +17,9 @@ class InputButton(QWidget):
     Useful for selecting files and displaying the chosen file path.
     """
 
-    def __init__(self, model: PredictionModel):
+    def __init__(
+        self, model: PredictionModel, placeholder: str = "Choose a file..."
+    ):
         super().__init__()
 
         self._model: PredictionModel = model
@@ -30,7 +32,7 @@ class InputButton(QWidget):
 
         # text box that will eventually display the chosen file path
         self._text_display: QLineEdit = QLineEdit()
-        self._text_display.setPlaceholderText("Choose a file...")
+        self._text_display.setPlaceholderText(placeholder)
         self._text_display.setStyleSheet(
             "border-left: 2px solid #D9D9D9; "
             + "border-top: 2px solid #D9D9D9; "
