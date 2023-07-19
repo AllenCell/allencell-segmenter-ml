@@ -20,8 +20,6 @@ class InputButton(QWidget):
     def __init__(
         self, model: PredictionModel, placeholder: str = "Select file..."
     ):
-        # TODO: round and separate components
-        # TODO: remove border
         super().__init__()
 
         self._model: PredictionModel = model
@@ -36,18 +34,16 @@ class InputButton(QWidget):
         self._text_display: QLineEdit = QLineEdit()
         self._text_display.setPlaceholderText(placeholder)
         self._text_display.setStyleSheet(
-            "border-left: 2px solid #D9D9D9; "
-            + "border-top: 2px solid #D9D9D9; "
-            + "border-bottom: 2px solid #D9D9D9; "
-            + "padding-top: 3px; "
-            + "padding-bottom: 3px"
+            "padding-top: 3px; "
+            + "padding-bottom: 3px; "
+            + "border-radius: 2px"
         )
         self._text_display.setReadOnly(True)
 
         # button to open file explorer
         self._button: QPushButton = QPushButton("Browse")
         self._button.setStyleSheet(
-            "padding: 5px; border: 2px solid #D9D9D9; background-color: #1890FF"
+            "margin-left: 5px; background-color: #007ACC"
         )
 
         # add widgets to layout

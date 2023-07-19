@@ -38,7 +38,6 @@ class ModelInputWidget(View, Subscriber):
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
         # instantiate widgets
-        # TODO: have title be in-line with the border if possible (QGroupBox)
         self.title_frame = QFrame()
         self.title = QLabel("Model", self)
 
