@@ -33,13 +33,10 @@ class PredictionFileInput(QWidget):
 
         title_frame = QFrame()
         title_frame.setLayout(QVBoxLayout())
+
+        title_frame.setObjectName("tf")
         title_frame.setStyleSheet(
-            """
-            TitleBorderFrame { 
-                border: 1px solid #AAAAAA; 
-                border-radius: 5px; 
-            }
-        """
+            "#tf {border: 1px solid #AAAAAA; border-radius: 5px}"
         )
 
         title = QLabel("Input image(s)", self)
