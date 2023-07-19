@@ -75,8 +75,7 @@ class PredictionFileInput(QWidget):
 
         horiz_layout.addStretch(5)
 
-        # TODO: edit placeholder text
-        self.browse_dir_edit = InputButton(self._model)
+        self.browse_dir_edit = InputButton(self._model, "Select directory...")
         horiz_layout.addWidget(self.browse_dir_edit)
         self.layout().addLayout(horiz_layout)
 
@@ -86,13 +85,19 @@ class PredictionFileInput(QWidget):
 
         image_input_label = LabelWithHint("Image input channel")
 
-        # TODO: Default guide text (“select a channel index”) from image input channel combo box
         self.channel_select_dropdown = QComboBox()
+
+        # set up disappearing placeholder text
+        self.channel_select_dropdown.setCurrentIndex(-1)
+        self.channel_select_dropdown.setPlaceholderText(
+            "select a channel index"
+        )
 
         output_dir_label = LabelWithHint("Output directory")
 
-        # TODO: edit placeholder text
-        self.browse_output_edit = InputButton(self._model)
+        self.browse_output_edit = InputButton(
+            self._model, "Select directory..."
+        )
 
         grid_layout.addWidget(image_input_label, 0, 0)
         grid_layout.addWidget(self.channel_select_dropdown, 0, 1)

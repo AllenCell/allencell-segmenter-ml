@@ -18,8 +18,10 @@ class InputButton(QWidget):
     """
 
     def __init__(
-        self, model: PredictionModel, placeholder: str = "Choose a file..."
+        self, model: PredictionModel, placeholder: str = "Select file..."
     ):
+        # TODO: round and separate components
+        # TODO: remove border
         super().__init__()
 
         self._model: PredictionModel = model
