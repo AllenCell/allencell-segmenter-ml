@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QFrame
+from PyQt5.QtWidgets import QFrame, QDoubleSpinBox, QSlider
 from qtpy.QtWidgets import (
     QLabel,
     QHBoxLayout,
@@ -29,6 +29,9 @@ class ModelInputWidget(View, Subscriber):
 
     TOP_TEXT: str = "simple threshold"
     BOTTOM_TEXT: str = "auto threshold"
+    MIN: int = 0
+    MAX: int = 100
+    STEP: int = 1
 
     def __init__(self, model: PredictionModel):
         super().__init__()
@@ -69,7 +72,10 @@ class ModelInputWidget(View, Subscriber):
         # input fields corresponding to radio buttons & their labels
         # TODO: show bounds of slider; make sure typed input field looks editable; add carat controls if possible
         self._simple_thresh_slider: FloatSlider = FloatSlider(
-            min=0, max=100, step=1, readout=True
+            min=ModelInputWidget.MIN,
+            max=ModelInputWidget.MAX,
+            step=ModelInputWidget.STEP,
+            readout=True,
         )
         self._auto_thresh_selection: QComboBox = QComboBox()
 
@@ -149,6 +155,15 @@ class ModelInputWidget(View, Subscriber):
             button.setStyleSheet("margin-left: 25px; margin-right: 6 px")
         for label in self._postproc_labels:
             label.setStyleSheet("margin-right: 25px")
+
+        # slider's spinbox
+        spinbox: QDoubleSpinBox = (
+            self._simple_thresh_slider.native.layout().itemAt(1).widget()
+        )
+        spinbox.setObjectName("sb")
+        spinbox.setStyleSheet(
+            "#sb {margin-bottom: 5px; background-color: #414851}"
+        )
 
         # set default values for input fields
         self._auto_thresh_selection.addItems(
