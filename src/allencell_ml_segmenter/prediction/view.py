@@ -58,22 +58,17 @@ class PredictionView(View, Subscriber):
 
         top_container.addWidget(self._file_input_widget)
         top_dummy.setLayout(top_container)
-        top_dummy.setObjectName("top")
-        top_dummy.setStyleSheet("#top {margin: 0px 0px 20px}")
+        # top_dummy.setObjectName("top")
+        # top_dummy.setStyleSheet("#top {margin: 0px 0px 10px}")
         self.layout().addWidget(top_dummy)
 
         bottom_container.addWidget(self._model_input_widget)
         bottom_dummy.setLayout(bottom_container)
         self.layout().addWidget(bottom_dummy)
 
-        self._return_btn: QPushButton = QPushButton("Return")
-        self._return_btn.clicked.connect(
-            lambda: self._main_model.dispatch(Event.VIEW_SELECTION_MAIN)
-        )
-        self._return_btn.setStyleSheet("margin-top: 40px")
-        self.layout().addWidget(self._return_btn)
-
-        # TODO: replace return button (?) with run button
+        self._run_btn: QPushButton = QPushButton("Run")
+        self._run_btn.setStyleSheet("background-color: #007ACC")
+        self.layout().addWidget(self._run_btn)
 
         self._main_model.subscribe(
             Event.VIEW_SELECTION_PREDICTION,
