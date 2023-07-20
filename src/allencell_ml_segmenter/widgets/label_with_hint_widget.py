@@ -52,3 +52,9 @@ class LabelWithHint(QWidget):
         Removes the automatically included left margin.
         """
         self._label.setStyleSheet("margin-left: 0px")
+
+    def add_right_space(self, marg: int) -> None:
+        """
+        Sets margin-right such that the question mark icon is not cramped.
+        """
+        self._question_mark.setStyleSheet(f"margin-right: {marg}")

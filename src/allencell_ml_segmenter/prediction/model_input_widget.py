@@ -26,7 +26,7 @@ class ModelInputWidget(View, Subscriber):
     postprocessing selection for prediction.
     """
 
-    TOP_TEXT: str = "simple threshold cutoff"
+    TOP_TEXT: str = "simple threshold"
     BOTTOM_TEXT: str = "auto threshold"
 
     def __init__(self, model: PredictionModel):
@@ -37,7 +37,7 @@ class ModelInputWidget(View, Subscriber):
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
         # instantiate widgets
-        self._model_label_with_hint: LabelWithHint = LabelWithHint()
+        self._model_label: QLabel = QLabel("Model")
         self._selection_label_with_hint: LabelWithHint = LabelWithHint()
         self._input_button: InputButton = InputButton(self._model)
         self._preprocessing_label_with_hint: LabelWithHint = LabelWithHint()
@@ -54,8 +54,10 @@ class ModelInputWidget(View, Subscriber):
         ]
 
         # labels for the radio buttons
-        self._top_postproc_label: QLabel = QLabel(self.TOP_TEXT)
-        self._bottom_postproc_label: QLabel = QLabel(self.BOTTOM_TEXT)
+        self._top_postproc_label: LabelWithHint = LabelWithHint(self.TOP_TEXT)
+        self._bottom_postproc_label: LabelWithHint = LabelWithHint(
+            self.BOTTOM_TEXT
+        )
 
         self._postproc_labels = [
             self._top_postproc_label,
@@ -109,22 +111,20 @@ class ModelInputWidget(View, Subscriber):
         """
         Sets pertinent default values for all widget fields.
         """
-        # title + hint
-        self._model_label_with_hint.set_label_text("Model")
-        self._model_label_with_hint.set_hint("this is a test")
-
         # selection label + hint
         self._selection_label_with_hint.set_label_text(
             "Select an existing model"
         )
-        self._selection_label_with_hint.set_hint("this is another test")
+        self._selection_label_with_hint.set_hint(
+            "Path to packaged model output from training."
+        )
 
         # preprocessing label + hint
         self._preprocessing_label_with_hint.set_label_text(
             "Preprocessing method"
         )
         self._preprocessing_label_with_hint.set_hint(
-            "this is the penultimate test"
+            "Image processing steps (e.g. normalization, smoothing) to run prior to segmentation. NOTE: this should be consistent with the image preprocessing used for training and only changed in rare circumstances."
         )
 
         # styling for label for preprocessing method
@@ -134,13 +134,23 @@ class ModelInputWidget(View, Subscriber):
         self._postprocessing_label_with_hint.set_label_text(
             "Postprocessing methods"
         )
-        self._postprocessing_label_with_hint.set_hint("this is the final test")
+        self._postprocessing_label_with_hint.set_hint(
+            "Method for turning model-predicted probabilities into binary masks."
+        )
+
+        # Radio label hints
+        self._top_postproc_label.set_hint(
+            "Threshold predicted probabilities at a specific value."
+        )
+        self._bottom_postproc_label.set_hint(
+            "Automatically choose a threshold at which to binarize predicted probabilities."
+        )
 
         # add styling to buttons and labels
         for button in self._postproc_buttons:
             button.setStyleSheet("margin-left: 25px; margin-right: 6 px")
         for label in self._postproc_labels:
-            label.setStyleSheet("margin-right: 25px")
+            label.add_right_space(25)
 
         # set default values for input fields
         self._auto_thresh_selection.addItems(
@@ -220,9 +230,7 @@ class ModelInputWidget(View, Subscriber):
                 grid_layout.addWidget(selection, idx, 2)
 
         # add inner widgets and layouts to overarching layout
-        self.layout().addWidget(
-            self._model_label_with_hint, alignment=Qt.AlignLeft
-        )
+        self.layout().addWidget(self._model_label, alignment=Qt.AlignLeft)
         self.layout().addLayout(selection_layout)
         self.layout().addLayout(preprocessing_layout)
         self.layout().addWidget(
