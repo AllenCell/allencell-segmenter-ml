@@ -38,6 +38,8 @@ class PredictionView(View, Subscriber):
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
         self.setLayout(QVBoxLayout())
 
+        self.setStyleSheet("color: #F0F1F2")
+
         self._title: QLabel = QLabel("SEGMENTATION PREDICTION", self)
         self._title.setStyleSheet("font-weight: bold; margin: 10px 0px")
         self.layout().addWidget(self._title, alignment=Qt.AlignCenter)
