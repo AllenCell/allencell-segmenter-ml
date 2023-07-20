@@ -78,7 +78,7 @@ def test_postprocessing_method(model_input_widget, qtbot):
     # ASSERT
     assert (
         model_input_widget._model.get_postprocessing_method()
-        == "simple threshold cutoff"
+        == "simple threshold"
     )
 
     # ACT
