@@ -54,6 +54,7 @@ class PredictionFileInput(QWidget):
         horiz_layout.setSpacing(0)
 
         self._radio_on_screen = QRadioButton()
+        self._radio_on_screen.toggled.connect(self._on_screen_slot)
         self._radio_on_screen.setStyleSheet("margin-left: 40px")
 
         horiz_layout.addWidget(self._radio_on_screen)
@@ -77,8 +78,8 @@ class PredictionFileInput(QWidget):
         horiz_layout = QHBoxLayout()
         horiz_layout.setSpacing(0)
 
-        # TODO: Gray out input button if associated radio button not selected
         self.radio_directory = QRadioButton()
+        self.radio_directory.toggled.connect(self._from_directory_slot)
         self.radio_directory.setStyleSheet("margin-left: 40px")
 
         horiz_layout.addWidget(self.radio_directory)
@@ -108,8 +109,6 @@ class PredictionFileInput(QWidget):
         self.browse_dir_edit = InputButton(self._model, "Select directory...")
         horiz_layout.addWidget(self.browse_dir_edit)
         title_frame.layout().addLayout(horiz_layout)
-
-        # TODO: add in disclaimer: “Accept csv file, see instruction” (link leads to tutorial, use dummy link for now)
 
         grid_layout = QGridLayout()
 
@@ -141,3 +140,13 @@ class PredictionFileInput(QWidget):
         grid_layout.setColumnStretch(1, 0)
 
         title_frame.layout().addLayout(grid_layout)
+
+    def _on_screen_slot(self) -> None:
+        """Prohibits usage of non-related input fields if top button is checked."""
+        self.image_list.setEnabled(True)
+        self.browse_dir_edit.setEnabled(False)
+
+    def _from_directory_slot(self) -> None:
+        """Prohibits usage of non-related input fields if bottom button is checked."""
+        self.image_list.setEnabled(False)
+        self.browse_dir_edit.setEnabled(True)
