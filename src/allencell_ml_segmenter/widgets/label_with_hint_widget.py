@@ -29,7 +29,6 @@ class LabelWithHint(QWidget):
                 f"{Directories.get_assets_dir()}/icons/question-circle.svg"
             )
         )
-        self._question_mark.setStyleSheet("margin-right: 10px")
 
         self.layout().addWidget(self._question_mark)
         self.layout().addStretch(6)
@@ -59,3 +58,9 @@ class LabelWithHint(QWidget):
         painter.fillRect(
             self.rect(), self.palette().color(QPalette.Background)
         )
+
+    def add_right_space(self, marg: int) -> None:
+        """
+        Sets margin-right such that the question mark icon is not cramped.
+        """
+        self._question_mark.setStyleSheet(f"margin-right: {marg}")

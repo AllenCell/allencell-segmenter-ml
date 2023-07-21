@@ -57,7 +57,12 @@ class PredictionFileInput(QWidget):
 
         horiz_layout.addWidget(self._radio_on_screen)
 
-        question_label = LabelWithHint(PredictionFileInput.TOP_TEXT)
+        question_label: LabelWithHint = LabelWithHint(
+            PredictionFileInput.TOP_TEXT
+        )
+        question_label.set_hint(
+            "Select images to segment from the napari viewer. All images should have the same number and ordering of channels."
+        )
         horiz_layout.addWidget(question_label)
 
         title_frame.layout().addLayout(horiz_layout)
@@ -78,6 +83,10 @@ class PredictionFileInput(QWidget):
         horiz_layout.addWidget(self.radio_directory)
 
         question_label = LabelWithHint(PredictionFileInput.BOTTOM_TEXT)
+        question_label.set_hint(
+            "Select images to segment from a folder. All images should have the same number and ordering of channels."
+        )
+        question_label.add_right_space(10)
         horiz_layout.addWidget(question_label)
 
         horiz_layout.addStretch(5)
@@ -91,6 +100,7 @@ class PredictionFileInput(QWidget):
         grid_layout = QGridLayout()
 
         image_input_label = LabelWithHint("Image input channel")
+        image_input_label.set_hint("0-indexed channel in image to segment.")
 
         self.channel_select_dropdown = QComboBox()
 
@@ -101,6 +111,7 @@ class PredictionFileInput(QWidget):
         )
 
         output_dir_label = LabelWithHint("Output directory")
+        output_dir_label.set_hint("Location to save segmentations.")
 
         self.browse_output_edit = InputButton(
             self._model, "Select directory..."
