@@ -34,16 +34,37 @@ class InputButton(QWidget):
         self._text_display: QLineEdit = QLineEdit()
         self._text_display.setPlaceholderText(placeholder)
         self._text_display.setStyleSheet(
-            "padding-top: 3px; "
-            + "padding-bottom: 3px; "
-            + "border-radius: 2px"
+            """
+            QLineEdit {
+                padding-top: 3px;
+                padding-bottom: 3px;
+                border-radius: 2px;
+                color: #F0F1F2
+            }
+            QLineEdit:disabled {
+                color: #868E93
+            }
+        """
         )
         self._text_display.setReadOnly(True)
 
         # button to open file explorer
         self._button: QPushButton = QPushButton("Browse")
         self._button.setStyleSheet(
-            "margin-left: 5px; background-color: #007ACC"
+            """
+            QPushButton {
+                margin-left: 5px;
+                background-color: #007ACC;
+                color: #F0F1F2
+            }
+            QPushButton:disabled {
+                background-color: #00489D
+            }
+            QPushButton:pressed {
+                background-color: #5A626C;
+                color: #868E93;
+            }
+        """
         )
 
         # add widgets to layout
