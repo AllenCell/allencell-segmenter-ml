@@ -41,8 +41,8 @@ class ModelInputWidget(View, Subscriber):
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
         # instantiate widgets
-        self.title_frame = QFrame()
-        self.title = QLabel("Model", self)
+        self._title_frame = QFrame()
+        self._title = QLabel("Model", self)
 
         self._selection_label_with_hint: LabelWithHint = LabelWithHint()
 
@@ -126,11 +126,11 @@ class ModelInputWidget(View, Subscriber):
         Sets pertinent default values for all widget fields.
         """
         # title frame + title
-        self.title_frame.setObjectName("tf")
-        self.title_frame.setStyleSheet(
+        self._title_frame.setObjectName("tf")
+        self._title_frame.setStyleSheet(
             "#tf {border: 1px solid #AAAAAA; border-radius: 5px}"
         )
-        self.title.setStyleSheet("font-weight: bold")
+        self._title.setStyleSheet("font-weight: bold")
 
         # selection label + hint
         self._selection_label_with_hint.set_label_text(
@@ -233,10 +233,10 @@ class ModelInputWidget(View, Subscriber):
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
 
-        self.title_frame.setLayout(QVBoxLayout())
+        self._title_frame.setLayout(QVBoxLayout())
 
-        self.layout().addWidget(self.title)
-        self.layout().addWidget(self.title_frame)
+        self.layout().addWidget(self._title)
+        self.layout().addWidget(self._title_frame)
 
         # horizontal layout containing widgets related to file selection
         selection_layout: QHBoxLayout = QHBoxLayout()
@@ -289,12 +289,12 @@ class ModelInputWidget(View, Subscriber):
         grid_layout.setColumnStretch(1, 1)
 
         # add inner widgets and layouts to overarching layout
-        self.title_frame.layout().addLayout(selection_layout)
-        self.title_frame.layout().addLayout(preprocessing_layout)
-        self.title_frame.layout().addWidget(
+        self._title_frame.layout().addLayout(selection_layout)
+        self._title_frame.layout().addLayout(preprocessing_layout)
+        self._title_frame.layout().addWidget(
             self._postprocessing_label_with_hint, alignment=Qt.AlignLeft
         )
-        self.title_frame.layout().addLayout(grid_layout)
+        self._title_frame.layout().addLayout(grid_layout)
 
     def _configure_slots(self) -> None:
         """

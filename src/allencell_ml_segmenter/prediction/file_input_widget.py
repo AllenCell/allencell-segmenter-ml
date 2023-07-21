@@ -1,4 +1,3 @@
-from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QGridLayout, QLabel, QFrame, QSizePolicy
 from qtpy.QtWidgets import (
     QWidget,
@@ -70,19 +69,19 @@ class PredictionFileInput(QWidget):
         title_frame.layout().addLayout(horiz_layout)
 
         # list of available images on napari
-        self.image_list = CheckBoxListWidget()
-        self.image_list.setStyleSheet("margin-left: 40px")
-        title_frame.layout().addWidget(self.image_list)
+        self._image_list = CheckBoxListWidget()
+        self._image_list.setStyleSheet("margin-left: 40px")
+        title_frame.layout().addWidget(self._image_list)
 
         # radiobox for images from directory
         horiz_layout = QHBoxLayout()
         horiz_layout.setSpacing(0)
 
-        self.radio_directory = QRadioButton()
-        self.radio_directory.toggled.connect(self._from_directory_slot)
-        self.radio_directory.setStyleSheet("margin-left: 40px")
+        self._radio_directory = QRadioButton()
+        self._radio_directory.toggled.connect(self._from_directory_slot)
+        self._radio_directory.setStyleSheet("margin-left: 40px")
 
-        horiz_layout.addWidget(self.radio_directory)
+        horiz_layout.addWidget(self._radio_directory)
 
         image_dir_layout: QVBoxLayout = QVBoxLayout()
 
@@ -106,8 +105,8 @@ class PredictionFileInput(QWidget):
 
         horiz_layout.addStretch(5)
 
-        self.browse_dir_edit = InputButton(self._model, "Select directory...")
-        horiz_layout.addWidget(self.browse_dir_edit)
+        self._browse_dir_edit = InputButton(self._model, "Select directory...")
+        horiz_layout.addWidget(self._browse_dir_edit)
         title_frame.layout().addLayout(horiz_layout)
 
         grid_layout = QGridLayout()
@@ -115,26 +114,26 @@ class PredictionFileInput(QWidget):
         image_input_label = LabelWithHint("Image input channel")
         image_input_label.set_hint("0-indexed channel in image to segment.")
 
-        self.channel_select_dropdown = QComboBox()
+        self._channel_select_dropdown = QComboBox()
 
         # set up disappearing placeholder text
-        self.channel_select_dropdown.setCurrentIndex(-1)
-        self.channel_select_dropdown.setPlaceholderText(
+        self._channel_select_dropdown.setCurrentIndex(-1)
+        self._channel_select_dropdown.setPlaceholderText(
             "select a channel index"
         )
 
         output_dir_label = LabelWithHint("Output directory")
         output_dir_label.set_hint("Location to save segmentations.")
 
-        self.browse_output_edit = InputButton(
+        self._browse_output_edit = InputButton(
             self._model, "Select directory..."
         )
 
         grid_layout.addWidget(image_input_label, 0, 0)
-        grid_layout.addWidget(self.channel_select_dropdown, 0, 1)
+        grid_layout.addWidget(self._channel_select_dropdown, 0, 1)
 
         grid_layout.addWidget(output_dir_label, 1, 0)
-        grid_layout.addWidget(self.browse_output_edit, 1, 1)
+        grid_layout.addWidget(self._browse_output_edit, 1, 1)
 
         grid_layout.setColumnStretch(0, 1)
         grid_layout.setColumnStretch(1, 0)
@@ -143,10 +142,10 @@ class PredictionFileInput(QWidget):
 
     def _on_screen_slot(self) -> None:
         """Prohibits usage of non-related input fields if top button is checked."""
-        self.image_list.setEnabled(True)
-        self.browse_dir_edit.setEnabled(False)
+        self._image_list.setEnabled(True)
+        self._browse_dir_edit.setEnabled(False)
 
     def _from_directory_slot(self) -> None:
         """Prohibits usage of non-related input fields if bottom button is checked."""
-        self.image_list.setEnabled(False)
-        self.browse_dir_edit.setEnabled(True)
+        self._image_list.setEnabled(False)
+        self._browse_dir_edit.setEnabled(True)
