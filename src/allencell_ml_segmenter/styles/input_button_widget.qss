@@ -1,0 +1,25 @@
+#textDisplay {
+    padding-top: 3px;
+    padding-bottom: 3px;
+    border-radius: 2px;
+    color: #F0F1F2;
+}
+
+#textDisplay:disabled {
+    color: #868E93;
+}
+
+#button {
+    margin-left: 5px;
+    background-color: #007ACC;
+    color: #F0F1F2;
+}
+
+#button:disabled {
+    background-color: #00489D;
+}
+
+#button:pressed {
+    background-color: #5A626C;
+    color: #868E93;
+}

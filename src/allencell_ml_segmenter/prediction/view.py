@@ -1,6 +1,7 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QFrame, QLabel
 
+from allencell_ml_segmenter._style import Style
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.main.main_model import MainModel
@@ -38,19 +39,19 @@ class PredictionView(View, Subscriber):
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
         self.setLayout(QVBoxLayout())
 
-        self.setStyleSheet("color: #F0F1F2")
-
         self._title: QLabel = QLabel("SEGMENTATION PREDICTION", self)
-        self._title.setStyleSheet("font-weight: bold; margin: 10px 0px")
+        self._title.setObjectName("title")
         self.layout().addWidget(self._title, alignment=Qt.AlignCenter)
 
         self._file_input_widget: PredictionFileInput = PredictionFileInput(
             self._prediction_model
         )
+        self._file_input_widget.setObjectName("fileInput")
 
         self._model_input_widget: ModelInputWidget = ModelInputWidget(
             self._prediction_model
         )
+        self._model_input_widget.setObjectName("modelInput")
 
         # Dummy divs allow for easy alignment
         top_container, top_dummy = QVBoxLayout(), QFrame()
@@ -58,8 +59,6 @@ class PredictionView(View, Subscriber):
 
         top_container.addWidget(self._file_input_widget)
         top_dummy.setLayout(top_container)
-        # top_dummy.setObjectName("top")
-        # top_dummy.setStyleSheet("#top {margin: 0px 0px 10px}")
         self.layout().addWidget(top_dummy)
 
         bottom_container.addWidget(self._model_input_widget)
@@ -67,7 +66,7 @@ class PredictionView(View, Subscriber):
         self.layout().addWidget(bottom_dummy)
 
         self._run_btn: QPushButton = QPushButton("Run")
-        self._run_btn.setStyleSheet("background-color: #007ACC")
+        self._run_btn.setObjectName("run")
         self.layout().addWidget(self._run_btn)
 
         self._main_model.subscribe(
@@ -75,6 +74,8 @@ class PredictionView(View, Subscriber):
             self,
             lambda e: self._main_model.set_current_view(self),
         )
+
+        self.setStyleSheet(Style.get_stylesheet("prediction_view.qss"))
 
     def handle_event(self, event: Event) -> None:
         pass
