@@ -33,21 +33,18 @@ class PredictionFileInput(QWidget):
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
 
-        title_frame = QFrame()
-        title_frame.setLayout(QVBoxLayout())
+        frame = QFrame()
+        frame.setLayout(QVBoxLayout())
 
-        title_frame.setObjectName("tf")
-        title_frame.setStyleSheet(
-            "#tf {border: 1px solid #AAAAAA; border-radius: 5px}"
-        )
+        frame.setObjectName("frame")
 
         title = QLabel("Input image(s)", self)
-        title.setStyleSheet("font-weight: bold")
+        title.setObjectName("title")
 
         self.layout().addWidget(title)
-        self.layout().addWidget(title_frame)
+        self.layout().addWidget(frame)
 
-        title_frame.layout().addWidget(QLabel("Select input image(s):"))
+        frame.layout().addWidget(QLabel("Select input image(s):"))
 
         # radiobox for images from napari
         horiz_layout = QHBoxLayout()
@@ -55,7 +52,7 @@ class PredictionFileInput(QWidget):
 
         self._radio_on_screen = QRadioButton()
         self._radio_on_screen.toggled.connect(self._on_screen_slot)
-        self._radio_on_screen.setStyleSheet("margin-left: 40px")
+        self._radio_on_screen.setObjectName("onScreen")
 
         horiz_layout.addWidget(self._radio_on_screen)
 
@@ -67,13 +64,13 @@ class PredictionFileInput(QWidget):
         )
         horiz_layout.addWidget(question_label)
 
-        title_frame.layout().addLayout(horiz_layout)
+        frame.layout().addLayout(horiz_layout)
 
         # list of available images on napari
         self._image_list = CheckBoxListWidget()
         self._image_list.setEnabled(False)
-        self._image_list.setStyleSheet("margin-left: 40px")
-        title_frame.layout().addWidget(self._image_list)
+        self._image_list.setObjectName("imageList")
+        frame.layout().addWidget(self._image_list)
 
         # radiobox for images from directory
         horiz_layout = QHBoxLayout()
@@ -81,7 +78,7 @@ class PredictionFileInput(QWidget):
 
         self._radio_directory = QRadioButton()
         self._radio_directory.toggled.connect(self._from_directory_slot)
-        self._radio_directory.setStyleSheet("margin-left: 40px")
+        self._radio_directory.setObjectName("radioDirectory")
 
         horiz_layout.addWidget(self._radio_directory)
 
@@ -97,27 +94,9 @@ class PredictionFileInput(QWidget):
         guide_text.setText(
             "Accepts CSV files, <a href='https://www.allencell.org/segmenter.html'>see instructions</a>"
         )
+        guide_text.setObjectName("guideText")
         guide_text.setTextFormat(Qt.RichText)
         guide_text.setOpenExternalLinks(True)
-        guide_text.setStyleSheet(
-            """
-            QLabel {
-                font-size: 8px;
-                color: #868E93;
-            }
-            a {
-                color: #007ACC;
-                text-decoration: none;
-            }
-            a:hover {
-                text-decoration: underline;
-            }
-            a:active {
-                color: #41B3FF;
-                text-decoration: underline;
-            }
-        """
-        )
 
         image_dir_layout.addWidget(question_label)
         image_dir_layout.addWidget(guide_text)
@@ -129,7 +108,7 @@ class PredictionFileInput(QWidget):
         self._browse_dir_edit = InputButton(self._model, "Select directory...")
         self._browse_dir_edit.setEnabled(False)
         horiz_layout.addWidget(self._browse_dir_edit)
-        title_frame.layout().addLayout(horiz_layout)
+        frame.layout().addLayout(horiz_layout)
 
         grid_layout = QGridLayout()
 
@@ -160,7 +139,7 @@ class PredictionFileInput(QWidget):
         grid_layout.setColumnStretch(0, 1)
         grid_layout.setColumnStretch(1, 0)
 
-        title_frame.layout().addLayout(grid_layout)
+        frame.layout().addLayout(grid_layout)
 
     def _on_screen_slot(self) -> None:
         """Prohibits usage of non-related input fields if top button is checked."""

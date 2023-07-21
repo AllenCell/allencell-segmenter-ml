@@ -8,6 +8,7 @@ from qtpy.QtWidgets import (
 )
 from qtpy.QtCore import Qt
 
+from allencell_ml_segmenter._style import Style
 from allencell_ml_segmenter.prediction.model import PredictionModel
 
 
@@ -33,39 +34,12 @@ class InputButton(QWidget):
         # text box that will eventually display the chosen file path
         self._text_display: QLineEdit = QLineEdit()
         self._text_display.setPlaceholderText(placeholder)
-        self._text_display.setStyleSheet(
-            """
-            QLineEdit {
-                padding-top: 3px;
-                padding-bottom: 3px;
-                border-radius: 2px;
-                color: #F0F1F2
-            }
-            QLineEdit:disabled {
-                color: #868E93
-            }
-        """
-        )
+        self._text_display.setObjectName("textDisplay")
         self._text_display.setReadOnly(True)
 
         # button to open file explorer
         self._button: QPushButton = QPushButton("Browse")
-        self._button.setStyleSheet(
-            """
-            QPushButton {
-                margin-left: 5px;
-                background-color: #007ACC;
-                color: #F0F1F2
-            }
-            QPushButton:disabled {
-                background-color: #00489D
-            }
-            QPushButton:pressed {
-                background-color: #5A626C;
-                color: #868E93;
-            }
-        """
-        )
+        self._button.setObjectName("button")
 
         # add widgets to layout
         self.layout().addWidget(self._text_display, alignment=Qt.AlignLeft)
@@ -73,6 +47,9 @@ class InputButton(QWidget):
 
         # connect to slot
         self._button.clicked.connect(self._update_file_text)
+
+        # connect to stylesheet
+        self.setStyleSheet(Style.get_stylesheet("input_button_widget.qss"))
 
     def _update_file_text(self) -> None:
         """
