@@ -1,3 +1,4 @@
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QGridLayout, QLabel, QFrame, QSizePolicy
 from qtpy.QtWidgets import (
     QWidget,
@@ -82,12 +83,25 @@ class PredictionFileInput(QWidget):
 
         horiz_layout.addWidget(self.radio_directory)
 
+        image_dir_layout: QVBoxLayout = QVBoxLayout()
+
         question_label = LabelWithHint(PredictionFileInput.BOTTOM_TEXT)
         question_label.set_hint(
             "Select images to segment from a folder. All images should have the same number and ordering of channels."
         )
         question_label.add_right_space(10)
-        horiz_layout.addWidget(question_label)
+
+        guide_text: QLabel = QLabel()
+        guide_text.setText(
+            "<font color=#868E93>Accepts CSV files,</font> <a href='https://www.allencell.org/segmenter.html'>see instructions</a>"
+        )
+        guide_text.setOpenExternalLinks(True)
+        guide_text.setStyleSheet("font-size: 8px")
+
+        image_dir_layout.addWidget(question_label)
+        image_dir_layout.addWidget(guide_text)
+
+        horiz_layout.addLayout(image_dir_layout)
 
         horiz_layout.addStretch(5)
 

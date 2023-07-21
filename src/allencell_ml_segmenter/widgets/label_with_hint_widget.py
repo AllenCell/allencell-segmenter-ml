@@ -29,6 +29,7 @@ class LabelWithHint(QWidget):
                 f"{Directories.get_assets_dir()}/icons/question-circle.svg"
             )
         )
+        self._question_mark.setObjectName("qm")
 
         self.layout().addWidget(self._question_mark)
         self.layout().addStretch(6)
@@ -45,11 +46,6 @@ class LabelWithHint(QWidget):
         """
         self._question_mark.setToolTip(hint)
 
-        # guard against errant highlighting
-        self._question_mark.setStyleSheet(
-            "QToolTip {background-color: #282c34}"
-        )
-
     def paintEvent(self, event: QPaintEvent) -> None:
         """
         Overrides the default paint event to set the background color.
@@ -63,4 +59,6 @@ class LabelWithHint(QWidget):
         """
         Sets margin-right such that the question mark icon is not cramped.
         """
-        self._question_mark.setStyleSheet(f"margin-right: {marg}")
+        self._question_mark.setStyleSheet(
+            "#qm {margin-right: " + str(marg) + "}"
+        )
