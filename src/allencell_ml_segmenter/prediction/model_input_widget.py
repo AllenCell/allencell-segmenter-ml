@@ -125,6 +125,18 @@ class ModelInputWidget(View, Subscriber):
         """
         Sets pertinent default values for all widget fields.
         """
+        # overall
+        self.setStyleSheet(
+            """
+            QComboBox {
+                color: #F0F1F2
+            }
+            QComboBox:disabled {
+                color: #868E93
+            }
+        """
+        )
+
         # title frame + title
         self._title_frame.setObjectName("tf")
         self._title_frame.setStyleSheet(
