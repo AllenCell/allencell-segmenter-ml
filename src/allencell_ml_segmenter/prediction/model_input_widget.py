@@ -79,6 +79,9 @@ class ModelInputWidget(View, Subscriber):
             step=ModelInputWidget.STEP,
             readout=True,
         )
+        self._lower_bound = QLabel(str(ModelInputWidget.MIN))
+        self._upper_bound = QLabel(str(ModelInputWidget.MAX))
+
         self._auto_thresh_selection: QComboBox = QComboBox()
 
         self._postprocessing_selections = [
@@ -170,14 +173,23 @@ class ModelInputWidget(View, Subscriber):
         for label in self._postproc_labels:
             label.add_right_space(25)
 
-        # slider's spinbox
+        # slider + spinbox
+        slider: QSlider = (
+            self._simple_thresh_slider.native.layout().itemAt(0).widget()
+        )
+        slider.setStyleSheet("margin-right: 20px")
+
         spinbox: QDoubleSpinBox = (
             self._simple_thresh_slider.native.layout().itemAt(1).widget()
         )
         spinbox.setObjectName("sb")
         spinbox.setStyleSheet(
-            "#sb {margin-bottom: 5px; background-color: #414851}"
+            "#sb {padding: 0px; margin-bottom: 5px; background-color: #414851}"
         )
+
+        # slider's bounds
+        self._lower_bound.setStyleSheet("margin-right: 57px; font-size: 10px")
+        self._upper_bound.setStyleSheet("font-size: 10px")
 
         # set default values for input fields
         self._auto_thresh_selection.addItems(
@@ -250,14 +262,27 @@ class ModelInputWidget(View, Subscriber):
         grid_layout: QGridLayout = QGridLayout()
         grid_layout.setSpacing(0)
 
+        # slider bounds
+        horiz_layout: QHBoxLayout = QHBoxLayout()
+        horiz_layout.addWidget(self._lower_bound)
+        horiz_layout.addWidget(self._upper_bound, Qt.AlignLeft)
+        horiz_layout.setSpacing(0)
+
+        # slider + bounds
+        vert_layout: QVBoxLayout = QVBoxLayout()
+        vert_layout.addLayout(horiz_layout)
+        vert_layout.addWidget(self._simple_thresh_slider.native)
+
         # add all pertinent widgets to the grid
         for idx, button in enumerate(self._postproc_buttons):
             grid_layout.addWidget(button, idx, 0)
         for idx, label in enumerate(self._postproc_labels):
             grid_layout.addWidget(label, idx, 1)
-        for idx, selection in enumerate(self._postprocessing_selections):
-            if isinstance(selection, FloatSlider):
-                grid_layout.addWidget(selection.native, idx, 2)
+        for idx, selection in enumerate(
+            [vert_layout, self._auto_thresh_selection]
+        ):
+            if isinstance(selection, QVBoxLayout):
+                grid_layout.addLayout(selection, idx, 2)
             else:
                 grid_layout.addWidget(selection, idx, 2)
 
