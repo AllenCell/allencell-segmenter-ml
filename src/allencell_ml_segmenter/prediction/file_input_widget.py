@@ -1,3 +1,4 @@
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QGridLayout, QLabel, QFrame, QSizePolicy
 from qtpy.QtWidgets import (
     QWidget,
@@ -70,6 +71,7 @@ class PredictionFileInput(QWidget):
 
         # list of available images on napari
         self._image_list = CheckBoxListWidget()
+        self._image_list.setEnabled(False)
         self._image_list.setStyleSheet("margin-left: 40px")
         title_frame.layout().addWidget(self._image_list)
 
@@ -93,10 +95,29 @@ class PredictionFileInput(QWidget):
 
         guide_text: QLabel = QLabel()
         guide_text.setText(
-            "<font color=#868E93>Accepts CSV files,</font> <a href='https://www.allencell.org/segmenter.html'>see instructions</a>"
+            "Accepts CSV files, <a href='https://www.allencell.org/segmenter.html'>see instructions</a>"
         )
+        guide_text.setTextFormat(Qt.RichText)
         guide_text.setOpenExternalLinks(True)
-        guide_text.setStyleSheet("font-size: 8px")
+        guide_text.setStyleSheet(
+            """
+            QLabel {
+                font-size: 8px;
+                color: #868E93;
+            }
+            a {
+                color: #007ACC;
+                text-decoration: none;
+            }
+            a:hover {
+                text-decoration: underline;
+            }
+            a:active {
+                color: #41B3FF;
+                text-decoration: underline;
+            }
+        """
+        )
 
         image_dir_layout.addWidget(question_label)
         image_dir_layout.addWidget(guide_text)
@@ -106,6 +127,7 @@ class PredictionFileInput(QWidget):
         horiz_layout.addStretch(5)
 
         self._browse_dir_edit = InputButton(self._model, "Select directory...")
+        self._browse_dir_edit.setEnabled(False)
         horiz_layout.addWidget(self._browse_dir_edit)
         title_frame.layout().addLayout(horiz_layout)
 
