@@ -1,3 +1,5 @@
+from typing import List
+
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QGridLayout, QLabel, QFrame, QSizePolicy
 from qtpy.QtWidgets import (
@@ -105,7 +107,13 @@ class PredictionFileInput(QWidget):
 
         horiz_layout.addStretch(5)
 
-        self._browse_dir_edit = InputButton(self._model, "Select directory...")
+        self._browse_dir_edit = InputButton(
+            self._model,
+            lambda dir: self._model.set_input_image_paths(
+                self.map_input_file_directory_to_path_list(dir)
+            ),
+            "Select directory...",
+        )
         self._browse_dir_edit.setEnabled(False)
         horiz_layout.addWidget(self._browse_dir_edit)
         frame.layout().addLayout(horiz_layout)
@@ -127,7 +135,9 @@ class PredictionFileInput(QWidget):
         output_dir_label.set_hint("Location to save segmentations.")
 
         self._browse_output_edit = InputButton(
-            self._model, "Select directory..."
+            self._model,
+            lambda dir: self._model.set_output_directory(dir),
+            "Select directory...",
         )
 
         grid_layout.addWidget(image_input_label, 0, 0)
@@ -150,3 +160,12 @@ class PredictionFileInput(QWidget):
         """Prohibits usage of non-related input fields if bottom button is checked."""
         self._image_list.setEnabled(False)
         self._browse_dir_edit.setEnabled(True)
+
+    def map_input_file_directory_to_path_list(
+        self, input_file_directory: str
+    ) -> List[str]:
+        """
+        Maps a directory of input files to a list of file paths.
+        """
+        # TODO: replace with correct implementation, OR implement this in a service instead
+        return ["foo"]
