@@ -39,11 +39,13 @@ coverage.xml
 .napari_cache
 .pytest_cache
 
-# pyenv
+# pyenvß
 .python-version
 
 # OS
 .DS_Store
+src/.DS_Store
+src/allencell_ml_segmenter/.DS_Store
 
 # written by setuptools_scm
 */_version.py
