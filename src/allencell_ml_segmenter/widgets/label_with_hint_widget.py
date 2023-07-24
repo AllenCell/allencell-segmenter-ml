@@ -1,6 +1,6 @@
+from PyQt5.QtGui import QPainter, QPalette, QPaintEvent
 from qtpy.QtWidgets import QWidget, QSizePolicy, QHBoxLayout, QLabel
 from qtpy.QtGui import QPixmap
-from qtpy.QtCore import Qt
 
 from allencell_ml_segmenter.core.directories import Directories
 
@@ -20,9 +20,8 @@ class LabelWithHint(QWidget):
         self.layout().setSpacing(0)
 
         self._label: QLabel = QLabel("")
-        self._label.setStyleSheet("margin-left: 8px")
         self._label.setText(label_text)
-        self.layout().addWidget(self._label, alignment=Qt.AlignLeft)
+        self.layout().addWidget(self._label)
 
         self._question_mark: QLabel = QLabel()
         self._question_mark.setPixmap(
@@ -30,9 +29,9 @@ class LabelWithHint(QWidget):
                 f"{Directories.get_assets_dir()}/icons/question-circle.svg"
             )
         )
-        self._question_mark.setStyleSheet("margin-right: 10px")
+        self._question_mark.setObjectName("qm")
 
-        self.layout().addWidget(self._question_mark, alignment=Qt.AlignLeft)
+        self.layout().addWidget(self._question_mark)
         self.layout().addStretch(6)
 
     def set_label_text(self, text: str) -> None:
@@ -47,14 +46,10 @@ class LabelWithHint(QWidget):
         """
         self._question_mark.setToolTip(hint)
 
-    def align_left(self) -> None:
-        """
-        Removes the automatically included left margin.
-        """
-        self._label.setStyleSheet("margin-left: 0px")
-
     def add_right_space(self, marg: int) -> None:
         """
         Sets margin-right such that the question mark icon is not cramped.
         """
-        self._question_mark.setStyleSheet(f"margin-right: {marg}")
+        self._question_mark.setStyleSheet(
+            "#qm {margin-right: " + str(marg) + "}"
+        )
