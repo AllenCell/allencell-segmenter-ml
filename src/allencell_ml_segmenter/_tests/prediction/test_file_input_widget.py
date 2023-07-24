@@ -1,4 +1,9 @@
+from unittest.mock import patch
+
 import pytest
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QFileDialog
+
 from allencell_ml_segmenter.prediction.file_input_widget import (
     PredictionFileInput,
 )
@@ -33,3 +38,20 @@ def test_bottom_radio_button_slot(qtbot, file_input_widget):
 
     assert not file_input_widget._image_list.isEnabled()
     assert file_input_widget._browse_dir_edit.isEnabled()
+
+
+def test_preprocessing_method(qtbot, file_input_widget, monkeypatch):
+    # ARRANGE
+    with patch.object(
+        QFileDialog, "getOpenFileName", return_value=("/path/to/file", "")
+    ):
+        # ACT
+        qtbot.mouseClick(
+            file_input_widget._browse_dir_edit._button, Qt.LeftButton
+        )
+        assert file_input_widget._model.get_preprocessing_method() is None
+
+        qtbot.mouseClick(
+            file_input_widget._browse_output_edit._button, Qt.LeftButton
+        )
+        assert file_input_widget._model.get_preprocessing_method() is None

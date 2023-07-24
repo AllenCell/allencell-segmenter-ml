@@ -1,4 +1,5 @@
 import pytest
+from PyQt5.QtWidgets import QFileDialog
 from qtpy.QtCore import Qt
 from unittest.mock import patch, Mock
 from allencell_ml_segmenter.prediction.model_input_widget import (
@@ -69,6 +70,17 @@ def test_configure_slots(qtbot, model_input_widget):
 
     # Verify that the corresponding method was called on the model
     mock_set_threshold.assert_called_once_with("isodata")
+
+
+# TODO: not working
+# def test_preprocessing_method(qtbot, model_input_widget, monkeypatch):
+#     # ARRANGE
+#     with patch.object(
+#         QFileDialog, "getOpenFileName", return_value=("/path/to/file", "")
+#     ):
+#         # ACT
+#         qtbot.mouseClick(model_input_widget._input_button._button, Qt.LeftButton)
+#         assert model_input_widget._model.get_preprocessing_method() == 'foo'
 
 
 # TODO: Investigate why this test fails (manual clicks seem to indicate that the desired behavior is happening, but qtbot disagrees)
