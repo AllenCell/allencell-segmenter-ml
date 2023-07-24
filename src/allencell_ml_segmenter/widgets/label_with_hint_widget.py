@@ -46,15 +46,6 @@ class LabelWithHint(QWidget):
         """
         self._question_mark.setToolTip(hint)
 
-    def paintEvent(self, event: QPaintEvent) -> None:
-        """
-        Overrides the default paint event to set the background color.
-        """
-        painter = QPainter(self)
-        painter.fillRect(
-            self.rect(), self.palette().color(QPalette.Background)
-        )
-
     def add_right_space(self, marg: int) -> None:
         """
         Sets margin-right such that the question mark icon is not cramped.
