@@ -18,10 +18,6 @@ Examples: https://doc.qt.io/qt-5/stylesheet-examples.html#customizing-specific-w
     background-color: #007ACC;
 }
 
-#modelInput QComboBox{
-    color: #F0F1F2;
-}
-
 #modelInput QComboBox:disabled {
     color: #868E93;
 }
@@ -47,7 +43,6 @@ Examples: https://doc.qt.io/qt-5/stylesheet-examples.html#customizing-specific-w
 #modelInput #slider {
     margin-right: 20px;
 }
-
 
 #modelInput #spinbox:disabled {
     color: #868E93;
