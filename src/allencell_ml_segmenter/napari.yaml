@@ -5,9 +5,19 @@ contributions:
     - id: allencell-ml-segmenter.make_qwidget
       python_name: allencell_ml_segmenter.main.main_widget:MainWidget
       title: Make example QWidget
+    - id: allencell-ml-segmenter.make_prediction_entry
+      python_name: allencell_ml_segmenter.example_entry_points.prediction:PredictionEntryPoint
+      title: Make example prediction view
+    - id: allencell-ml-segmenter.make_training_entry
+      python_name: allencell_ml_segmenter.example_entry_points.training:TrainingEntryPoint
+      title: Make example training view
   readers:
   writers:
   sample_data:
   widgets:
     - command: allencell-ml-segmenter.make_qwidget
       display_name: Example QWidget
+    - command: allencell-ml-segmenter.make_prediction_entry
+      display_name: Example prediction view
+    - command: allencell-ml-segmenter.make_training_entry
+      display_name: Example training view
