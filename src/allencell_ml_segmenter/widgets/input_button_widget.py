@@ -8,6 +8,7 @@ from qtpy.QtWidgets import (
 )
 from qtpy.QtCore import Qt
 
+from allencell_ml_segmenter._style import Style
 from allencell_ml_segmenter.prediction.model import PredictionModel
 
 
@@ -17,12 +18,14 @@ class InputButton(QWidget):
     Useful for selecting files and displaying the chosen file path.
     """
 
-    def __init__(self, model: PredictionModel):
+    def __init__(
+        self, model: PredictionModel, placeholder: str = "Select file..."
+    ):
         super().__init__()
 
         self._model: PredictionModel = model
 
-        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        self.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
 
         self.setLayout(QHBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
@@ -30,21 +33,13 @@ class InputButton(QWidget):
 
         # text box that will eventually display the chosen file path
         self._text_display: QLineEdit = QLineEdit()
-        self._text_display.setPlaceholderText("Choose a file...")
-        self._text_display.setStyleSheet(
-            "border-left: 2px solid gray; "
-            + "border-top: 2px solid gray; "
-            + "border-bottom: 2px solid gray; "
-            + "padding-top: 3px; "
-            + "padding-bottom: 3px"
-        )
+        self._text_display.setPlaceholderText(placeholder)
+        self._text_display.setObjectName("textDisplay")
         self._text_display.setReadOnly(True)
 
         # button to open file explorer
         self._button: QPushButton = QPushButton("Browse")
-        self._button.setStyleSheet(
-            "padding: 5px; border: 2px solid gray; background-color: darkorchid"
-        )
+        self._button.setObjectName("button")
 
         # add widgets to layout
         self.layout().addWidget(self._text_display, alignment=Qt.AlignLeft)
@@ -52,6 +47,9 @@ class InputButton(QWidget):
 
         # connect to slot
         self._button.clicked.connect(self._update_file_text)
+
+        # connect to stylesheet
+        self.setStyleSheet(Style.get_stylesheet("input_button_widget.qss"))
 
     def _update_file_text(self) -> None:
         """

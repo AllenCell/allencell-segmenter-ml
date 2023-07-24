@@ -1,3 +1,4 @@
+from PyQt5.QtWidgets import QFrame, QDoubleSpinBox, QSlider
 from qtpy.QtWidgets import (
     QLabel,
     QHBoxLayout,
@@ -28,6 +29,9 @@ class ModelInputWidget(View, Subscriber):
 
     TOP_TEXT: str = "simple threshold"
     BOTTOM_TEXT: str = "auto threshold"
+    MIN: int = 0
+    MAX: int = 100
+    STEP: int = 1
 
     def __init__(self, model: PredictionModel):
         super().__init__()
@@ -37,8 +41,11 @@ class ModelInputWidget(View, Subscriber):
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
         # instantiate widgets
-        self._model_label: QLabel = QLabel("Model")
+        self._frame = QFrame()
+        self._title = QLabel("Model", self)
+
         self._selection_label_with_hint: LabelWithHint = LabelWithHint()
+
         self._input_button: InputButton = InputButton(self._model)
         self._preprocessing_label_with_hint: LabelWithHint = LabelWithHint()
         self._method_label: QLabel = QLabel("n/a")
@@ -66,8 +73,14 @@ class ModelInputWidget(View, Subscriber):
 
         # input fields corresponding to radio buttons & their labels
         self._simple_thresh_slider: FloatSlider = FloatSlider(
-            min=0, max=100, step=1, readout=True
+            min=ModelInputWidget.MIN,
+            max=ModelInputWidget.MAX,
+            step=ModelInputWidget.STEP,
+            readout=True,
         )
+        self._lower_bound = QLabel(str(ModelInputWidget.MIN))
+        self._upper_bound = QLabel(str(ModelInputWidget.MAX))
+
         self._auto_thresh_selection: QComboBox = QComboBox()
 
         self._postprocessing_selections = [
@@ -111,6 +124,10 @@ class ModelInputWidget(View, Subscriber):
         """
         Sets pertinent default values for all widget fields.
         """
+        # title frame + title
+        self._frame.setObjectName("frame")
+        self._title.setObjectName("title")
+
         # selection label + hint
         self._selection_label_with_hint.set_label_text(
             "Select an existing model"
@@ -128,7 +145,7 @@ class ModelInputWidget(View, Subscriber):
         )
 
         # styling for label for preprocessing method
-        self._method_label.setStyleSheet("margin-left: 60px")
+        self._method_label.setObjectName("methodLabel")
 
         # postprocessing label + hint
         self._postprocessing_label_with_hint.set_label_text(
@@ -146,11 +163,29 @@ class ModelInputWidget(View, Subscriber):
             "Automatically choose a threshold at which to binarize predicted probabilities."
         )
 
-        # add styling to buttons and labels
-        for button in self._postproc_buttons:
-            button.setStyleSheet("margin-left: 25px; margin-right: 6 px")
-        for label in self._postproc_labels:
-            label.add_right_space(25)
+        # slider + spinbox
+        slider: QSlider = (
+            self._simple_thresh_slider.native.layout().itemAt(0).widget()
+        )
+        slider.setObjectName("slider")
+
+        spinbox: QDoubleSpinBox = (
+            self._simple_thresh_slider.native.layout().itemAt(1).widget()
+        )
+        spinbox.setObjectName("spinbox")
+        spinbox.setStyleSheet(
+            """
+            #spinbox {
+                padding: 0px;
+                margin-bottom: 5px;
+                background-color: #414851;
+            }
+        """
+        )
+
+        # slider's bounds
+        self._lower_bound.setObjectName("lowerBound")
+        self._upper_bound.setObjectName("upperBound")
 
         # set default values for input fields
         self._auto_thresh_selection.addItems(
@@ -194,6 +229,11 @@ class ModelInputWidget(View, Subscriber):
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
 
+        self._frame.setLayout(QVBoxLayout())
+
+        self.layout().addWidget(self._title)
+        self.layout().addWidget(self._frame)
+
         # horizontal layout containing widgets related to file selection
         selection_layout: QHBoxLayout = QHBoxLayout()
         selection_layout.setSpacing(0)
@@ -211,32 +251,46 @@ class ModelInputWidget(View, Subscriber):
             self._preprocessing_label_with_hint, alignment=Qt.AlignLeft
         )
         preprocessing_layout.addWidget(
-            self._method_label, alignment=Qt.AlignLeft
+            self._method_label, alignment=Qt.AlignRight
         )
 
         # grid layout containing widgets related to postprocessing
         grid_layout: QGridLayout = QGridLayout()
         grid_layout.setSpacing(0)
 
+        # slider bounds
+        horiz_layout: QHBoxLayout = QHBoxLayout()
+        horiz_layout.addWidget(self._lower_bound)
+        horiz_layout.addWidget(self._upper_bound, Qt.AlignLeft)
+        horiz_layout.setSpacing(0)
+
+        # slider + bounds
+        vert_layout: QVBoxLayout = QVBoxLayout()
+        vert_layout.addLayout(horiz_layout)
+        vert_layout.addWidget(self._simple_thresh_slider.native)
+
         # add all pertinent widgets to the grid
         for idx, button in enumerate(self._postproc_buttons):
             grid_layout.addWidget(button, idx, 0)
         for idx, label in enumerate(self._postproc_labels):
             grid_layout.addWidget(label, idx, 1)
-        for idx, selection in enumerate(self._postprocessing_selections):
-            if isinstance(selection, FloatSlider):
-                grid_layout.addWidget(selection.native, idx, 2)
+        for idx, selection in enumerate(
+            [vert_layout, self._auto_thresh_selection]
+        ):
+            if isinstance(selection, QVBoxLayout):
+                grid_layout.addLayout(selection, idx, 2)
             else:
                 grid_layout.addWidget(selection, idx, 2)
 
+        grid_layout.setColumnStretch(1, 1)
+
         # add inner widgets and layouts to overarching layout
-        self.layout().addWidget(self._model_label, alignment=Qt.AlignLeft)
-        self.layout().addLayout(selection_layout)
-        self.layout().addLayout(preprocessing_layout)
-        self.layout().addWidget(
+        self._frame.layout().addLayout(selection_layout)
+        self._frame.layout().addLayout(preprocessing_layout)
+        self._frame.layout().addWidget(
             self._postprocessing_label_with_hint, alignment=Qt.AlignLeft
         )
-        self.layout().addLayout(grid_layout)
+        self._frame.layout().addLayout(grid_layout)
 
     def _configure_slots(self) -> None:
         """
