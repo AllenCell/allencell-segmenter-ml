@@ -19,7 +19,10 @@ class InputButton(QWidget):
     """
 
     def __init__(
-        self, model: PredictionModel, placeholder: str = "Select file..."
+        self,
+        model: PredictionModel,
+        model_set_file_path_function=None,
+        placeholder: str = "Select file...",
     ):
         super().__init__()
 
@@ -30,6 +33,8 @@ class InputButton(QWidget):
         self.setLayout(QHBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.layout().setSpacing(0)
+
+        self._model_set_file_path_function = model_set_file_path_function
 
         # text box that will eventually display the chosen file path
         self._text_display: QLineEdit = QLineEdit()
@@ -57,8 +62,10 @@ class InputButton(QWidget):
         Caution - currently operates under the assumption that only
         one input button is hooked up to the model.
         """
+        # TODO: shouldn't always be a file; sometimes should be a directory
         file_path: str = QFileDialog.getOpenFileName(self, "Open file")[0]
         self._text_display.setReadOnly(False)
         self._text_display.setText(file_path)
         self._text_display.setReadOnly(True)
-        self._model.set_file_path(file_path)
+        if self._model_set_file_path_function:
+            self._model_set_file_path_function(file_path)

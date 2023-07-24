@@ -46,7 +46,9 @@ class ModelInputWidget(View, Subscriber):
 
         self._selection_label_with_hint: LabelWithHint = LabelWithHint()
 
-        self._input_button: InputButton = InputButton(self._model)
+        self._input_button: InputButton = InputButton(
+            self._model, lambda path: self._model.set_model_path(path)
+        )
         self._preprocessing_label_with_hint: LabelWithHint = LabelWithHint()
         self._method_label: QLabel = QLabel("n/a")
         self._postprocessing_label_with_hint: LabelWithHint = LabelWithHint()
