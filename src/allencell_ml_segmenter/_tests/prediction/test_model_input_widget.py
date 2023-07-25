@@ -19,16 +19,38 @@ def model_input_widget(qtbot):
 def test_top_radio_button_slot(qtbot, model_input_widget):
     """
     Test the _top_radio_button_slot method of ModelInputWidget.
-    TODO: replace test once magicgui is being used for top widget
     """
-    pass
+    # Disable all input boxes
+    model_input_widget._top_postproc_button_slot()
+
+    assert not model_input_widget._simple_thresh_slider.native.isEnabled()
+    assert not model_input_widget._auto_thresh_selection.isEnabled()
+    assert (
+        model_input_widget._model.get_postprocessing_method()
+        == ModelInputWidget.TOP_TEXT
+    )
+
+
+def test_mid_radio_button_slot(qtbot, model_input_widget):
+    """
+    Test the _mid_radio_button_slot method of ModelInputWidget.
+    """
+    # Enable the middle input box and disable the bottom one
+    model_input_widget._mid_postproc_button_slot()
+
+    assert model_input_widget._simple_thresh_slider.native.isEnabled()
+    assert not model_input_widget._auto_thresh_selection.isEnabled()
+    assert (
+        model_input_widget._model.get_postprocessing_method()
+        == ModelInputWidget.MID_TEXT
+    )
 
 
 def test_bottom_radio_button_slot(qtbot, model_input_widget):
     """
     Test the _bottom_radio_button_slot method of ModelInputWidget.
     """
-    # Enable the bottom input box and disable the top input box
+    # Enable the bottom input box and disable the middle one
     model_input_widget._bottom_postproc_button_slot()
 
     assert not model_input_widget._simple_thresh_slider.native.isEnabled()
@@ -86,7 +108,7 @@ def test_configure_slots(qtbot, model_input_widget):
 # TODO: Investigate why this test fails (manual clicks seem to indicate that the desired behavior is happening, but qtbot disagrees)
 # def test_postprocessing_method(model_input_widget, qtbot):
 #     # ACT
-#     qtbot.mouseClick(model_input_widget._top_postproc_button, Qt.LeftButton)
+#     qtbot.mouseClick(model_input_widget._mid_postproc_button, Qt.LeftButton)
 #
 #     # ASSERT
 #     assert (

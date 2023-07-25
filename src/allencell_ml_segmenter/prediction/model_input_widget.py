@@ -27,7 +27,8 @@ class ModelInputWidget(View, Subscriber):
     postprocessing selection for prediction.
     """
 
-    TOP_TEXT: str = "simple threshold"
+    TOP_TEXT: str = "none"
+    MID_TEXT: str = "simple threshold"
     BOTTOM_TEXT: str = "auto threshold"
     MIN: int = 0
     MAX: int = 100
@@ -55,21 +56,27 @@ class ModelInputWidget(View, Subscriber):
 
         # radio buttons
         self._top_postproc_button: QRadioButton = QRadioButton()
+        self._mid_postproc_button: QRadioButton = QRadioButton()
         self._bottom_postproc_button: QRadioButton = QRadioButton()
 
         self._postproc_buttons = [
             self._top_postproc_button,
+            self._mid_postproc_button,
             self._bottom_postproc_button,
         ]
 
         # labels for the radio buttons
-        self._top_postproc_label: LabelWithHint = LabelWithHint(self.TOP_TEXT)
+        self._top_postproc_label: QLabel = QLabel(ModelInputWidget.TOP_TEXT)
+        self._mid_postproc_label: LabelWithHint = LabelWithHint(
+            ModelInputWidget.MID_TEXT
+        )
         self._bottom_postproc_label: LabelWithHint = LabelWithHint(
-            self.BOTTOM_TEXT
+            ModelInputWidget.BOTTOM_TEXT
         )
 
         self._postproc_labels = [
             self._top_postproc_label,
+            self._mid_postproc_label,
             self._bottom_postproc_label,
         ]
 
@@ -108,11 +115,24 @@ class ModelInputWidget(View, Subscriber):
 
     def _top_postproc_button_slot(self) -> None:
         """
+        Prohibits usage of non-related input fields if "none" button is checked.
+        """
+        # disable middle
+        self._simple_thresh_slider.native.setEnabled(False)
+
+        # disable bottom
+        self._auto_thresh_selection.setEnabled(False)
+
+        # set postprocessing method
+        self._model.set_postprocessing_method(ModelInputWidget.TOP_TEXT)
+
+    def _mid_postproc_button_slot(self) -> None:
+        """
         Prohibits usage of non-related input fields if top button is checked.
         """
         self._simple_thresh_slider.native.setEnabled(True)
         self._auto_thresh_selection.setEnabled(False)
-        self._model.set_postprocessing_method(self.TOP_TEXT)
+        self._model.set_postprocessing_method(ModelInputWidget.MID_TEXT)
 
     def _bottom_postproc_button_slot(self) -> None:
         """
@@ -120,7 +140,7 @@ class ModelInputWidget(View, Subscriber):
         """
         self._simple_thresh_slider.native.setEnabled(False)
         self._auto_thresh_selection.setEnabled(True)
-        self._model.set_postprocessing_method(self.BOTTOM_TEXT)
+        self._model.set_postprocessing_method(ModelInputWidget.BOTTOM_TEXT)
 
     def _call_setters(self) -> None:
         """
@@ -158,7 +178,7 @@ class ModelInputWidget(View, Subscriber):
         )
 
         # Radio label hints
-        self._top_postproc_label.set_hint(
+        self._mid_postproc_label.set_hint(
             "Threshold predicted probabilities at a specific value."
         )
         self._bottom_postproc_label.set_hint(
@@ -212,7 +232,7 @@ class ModelInputWidget(View, Subscriber):
         self._auto_thresh_selection.setCurrentIndex(-1)
 
         # TODO: check that the user has selected an option other than the placeholder text when "run" is pressed
-        # TODO: also check that one of the two radio buttons has been selected
+        # TODO: also check that one of the three radio buttons has been selected
         self._auto_thresh_selection.setPlaceholderText("select a method")
         self._auto_thresh_selection.setEditable(False)
 
@@ -280,9 +300,9 @@ class ModelInputWidget(View, Subscriber):
             [vert_layout, self._auto_thresh_selection]
         ):
             if isinstance(selection, QVBoxLayout):
-                grid_layout.addLayout(selection, idx, 2)
+                grid_layout.addLayout(selection, idx + 1, 2)
             else:
-                grid_layout.addWidget(selection, idx, 2)
+                grid_layout.addWidget(selection, idx + 1, 2)
 
         grid_layout.setColumnStretch(1, 1)
 
@@ -301,6 +321,9 @@ class ModelInputWidget(View, Subscriber):
         # connect radio buttons to slots
         self._top_postproc_button.toggled.connect(
             self._top_postproc_button_slot
+        )
+        self._mid_postproc_button.toggled.connect(
+            self._mid_postproc_button_slot
         )
         self._bottom_postproc_button.toggled.connect(
             self._bottom_postproc_button_slot
