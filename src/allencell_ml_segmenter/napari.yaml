@@ -3,7 +3,7 @@ display_name: Allencell ML Segmenter
 contributions:
   commands:
     - id: allencell-ml-segmenter.make_qwidget
-      python_name: allencell_ml_segmenter.main.main_widget:MainWidget
+      python_name: allencell_ml_segmenter.main.main_widget:MainTabWidget
       title: Make example QWidget
   readers:
   writers:
