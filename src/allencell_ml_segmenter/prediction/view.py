@@ -2,9 +2,6 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QFrame, QLabel
 
 from allencell_ml_segmenter._style import Style
-from allencell_ml_segmenter.core.event import Event
-from allencell_ml_segmenter.core.subscriber import Subscriber
-from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.prediction.file_input_widget import (
     PredictionFileInput,
 )
@@ -17,15 +14,14 @@ from allencell_ml_segmenter.prediction.model_input_widget import (
 from qtpy.QtWidgets import QVBoxLayout, QSizePolicy, QPushButton
 
 
-class PredictionView(View, Subscriber):
+class PredictionView(View):
     """
     Holds the image and model input widgets for prediction.
     """
 
-    def __init__(self, main_model: MainModel):
+    def __init__(self):
         super().__init__()
 
-        self._main_model: MainModel = main_model
         self._prediction_model: PredictionModel = PredictionModel()
 
         self._service: ModelFileService = ModelFileService(
@@ -69,13 +65,4 @@ class PredictionView(View, Subscriber):
         self._run_btn.setObjectName("run")
         self.layout().addWidget(self._run_btn)
 
-        self._main_model.subscribe(
-            Event.VIEW_SELECTION_PREDICTION,
-            self,
-            lambda e: self._main_model.set_current_view(self),
-        )
-
         self.setStyleSheet(Style.get_stylesheet("prediction_view.qss"))
-
-    def handle_event(self, event: Event) -> None:
-        pass
