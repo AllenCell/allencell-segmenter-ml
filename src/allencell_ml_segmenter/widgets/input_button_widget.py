@@ -1,3 +1,5 @@
+from typing import Callable
+
 from PyQt5.QtWidgets import QFileDialog
 from qtpy.QtWidgets import (
     QWidget,
@@ -19,7 +21,10 @@ class InputButton(QWidget):
     """
 
     def __init__(
-        self, model: PredictionModel, placeholder: str = "Select file..."
+        self,
+        model: PredictionModel,
+        model_set_file_path_function: Callable,
+        placeholder: str = "Select file...",
     ):
         super().__init__()
 
@@ -30,6 +35,8 @@ class InputButton(QWidget):
         self.setLayout(QHBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.layout().setSpacing(0)
+
+        self._set_path_function = model_set_file_path_function
 
         # text box that will eventually display the chosen file path
         self._text_display: QLineEdit = QLineEdit()
@@ -46,19 +53,19 @@ class InputButton(QWidget):
         self.layout().addWidget(self._button, alignment=Qt.AlignLeft)
 
         # connect to slot
-        self._button.clicked.connect(self._update_file_text)
-
+        self._button.clicked.connect(
+            lambda: self._update_path_text(
+                QFileDialog.getOpenFileName(self, "Open file")[0]
+            )
+        )
         # connect to stylesheet
         self.setStyleSheet(Style.get_stylesheet("input_button_widget.qss"))
 
-    def _update_file_text(self) -> None:
+    def _update_path_text(self, path: str) -> None:
         """
-        Gets and displays file path on label portion of input button.
-        Caution - currently operates under the assumption that only
-        one input button is hooked up to the model.
+        Displays path on label portion of input button.
         """
-        file_path: str = QFileDialog.getOpenFileName(self, "Open file")[0]
         self._text_display.setReadOnly(False)
-        self._text_display.setText(file_path)
+        self._text_display.setText(path)
         self._text_display.setReadOnly(True)
-        self._model.set_file_path(file_path)
+        self._set_path_function(path)

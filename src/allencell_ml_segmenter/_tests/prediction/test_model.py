@@ -10,17 +10,46 @@ def prediction_model():
     return PredictionModel()
 
 
-def test_file_path(prediction_model):
+def test_input_image_paths(prediction_model):
+    # no event currently dispatched
+    # ACT
+    prediction_model.set_input_image_paths(
+        ["example path " + str(i) for i in range(10)]
+    )
+
+    # ASSERT
+    assert prediction_model.get_input_image_paths() == [
+        "example path " + str(i) for i in range(10)
+    ]
+
+
+def test_image_input_channel_index(prediction_model):
+    # ACT
+    prediction_model.set_image_input_channel_index(17)
+
+    # ASSERT
+    assert prediction_model.get_image_input_channel_index() == 17
+
+
+def test_output_directory(prediction_model):
+    # ACT
+    prediction_model.set_output_directory("example directory")
+
+    # ASSERT
+    assert prediction_model.get_output_directory() == "example directory"
+
+
+def test_model_path(prediction_model):
     # ARRANGE
     event_under_test: Event = Event.ACTION_PREDICTION_MODEL_FILE
     subscriber: FakeSubscriber = FakeSubscriber()
     prediction_model.subscribe(event_under_test, subscriber, subscriber.handle)
 
     # ACT
-    prediction_model.set_file_path("example path")
+    prediction_model.set_model_path("example path")
 
     # ASSERT
-    assert prediction_model.get_file_path() == "example path"
+    assert prediction_model.get_model_path() == "example path"
     assert subscriber.was_handled(event_under_test)
 
 
