@@ -2,6 +2,8 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QFrame, QLabel
 
 from allencell_ml_segmenter._style import Style
+from allencell_ml_segmenter.core.event import Event
+from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.prediction.file_input_widget import (
     PredictionFileInput,
 )
@@ -19,9 +21,10 @@ class PredictionView(View):
     Holds the image and model input widgets for prediction.
     """
 
-    def __init__(self):
+    def __init__(self, main_model: MainModel):
         super().__init__()
 
+        self._main_model = main_model
         self._prediction_model: PredictionModel = PredictionModel()
 
         self._service: ModelFileService = ModelFileService(
@@ -66,3 +69,9 @@ class PredictionView(View):
         self.layout().addWidget(self._run_btn)
 
         self.setStyleSheet(Style.get_stylesheet("prediction_view.qss"))
+
+        self._main_model.subscribe(
+            Event.PROCESS_TRAINING_COMPLETE,
+            self,
+            lambda e: self._main_model.set_current_view(self),
+        )
