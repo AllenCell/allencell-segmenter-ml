@@ -13,7 +13,7 @@ def test_service(prediction_model):
     ModelFileService(prediction_model)
 
     # ACT
-    prediction_model.set_file_path("random string")
+    prediction_model.set_model_path("random string")
 
     # ASSERT STATE
     assert prediction_model.get_preprocessing_method() == "foo"
