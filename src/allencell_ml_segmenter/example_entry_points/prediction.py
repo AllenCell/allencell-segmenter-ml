@@ -25,7 +25,7 @@ class PredictionEntryPoint(View):
         super().__init__()
 
         self.viewer = viewer
-        # TODO: close a plugin that's running (dockwidget, dockapp?)
+        self.viewer.window.remove_dock_widget("all")
 
         self._prediction_model: PredictionModel = PredictionModel()
 

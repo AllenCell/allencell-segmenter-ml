@@ -33,6 +33,7 @@ class TrainingEntryPoint(View):
         # init
 
         self.viewer = viewer
+        self.viewer.window.remove_dock_widget("all")
 
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
