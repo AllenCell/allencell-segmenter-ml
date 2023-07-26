@@ -11,6 +11,7 @@ class Event(Enum):
     PROCESS_TRAINING_PROGRESS = "training_progress"
     PROCESS_TRAINING_SHOW_ERROR = "training_error"
     PROCESS_TRAINING_CLEAR_ERROR = "training_clear_error"
+    PROCESS_TRAINING_COMPLETE = "training_complete"
     PROCESS_PREDICTION = "prediction"
 
     # Action events.  This signals a change in the UI.  These are a direct result of a user action
