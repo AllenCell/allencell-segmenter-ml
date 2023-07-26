@@ -1,6 +1,8 @@
 import asyncio
 
+from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.view import View
+from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.sample.sample_state_widget import SampleStateWidget
 from allencell_ml_segmenter.sample.sample_results_list_widget import (
     SampleResultsListWidget,
@@ -24,10 +26,12 @@ class SampleView(View):
     Sample that orchestrates widgets, managing complex behavior.
     """
 
-    def __init__(self):
+    def __init__(self, main_model: MainModel):
         super().__init__()
 
         # init
+
+        self._main_model = main_model
 
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
@@ -53,3 +57,9 @@ class SampleView(View):
 
         self._results_list_widget = SampleResultsListWidget(self._sample_model)
         self.layout().addWidget(self._results_list_widget)
+
+        dummy_btn = QPushButton("Dummy Button")
+        dummy_btn.clicked.connect(
+            lambda: self._main_model.dispatch(Event.PROCESS_TRAINING_COMPLETE)
+        )
+        self.layout().addWidget(dummy_btn)
