@@ -161,11 +161,11 @@ class PredictionFileInput(QWidget):
         self._image_list.setEnabled(False)
         self._browse_dir_edit.setEnabled(True)
 
+    # TODO: replace with correct implementation and move to a service
     def map_input_file_directory_to_path_list(
         self, input_file_directory: str
     ) -> List[str]:
         """
         Maps a directory of input files to a list of file paths.
         """
-        # TODO: replace with correct implementation, OR implement this in a service instead
         return ["foo"]

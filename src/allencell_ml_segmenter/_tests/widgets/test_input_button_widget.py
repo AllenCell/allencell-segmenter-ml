@@ -13,12 +13,14 @@ def input_button(qtbot):
     """
     Fixture that creates an instance of InputButton for testing.
     """
-    return InputButton(Mock(spec=PredictionModel))
+    return InputButton(
+        Mock(spec=PredictionModel), model_set_file_path_function=Mock()
+    )
 
 
 def test_set_file_text(qtbot, input_button, monkeypatch):
     """
-    Test the set_file_text method of InputButton.
+    Test the _update_path_text method of InputButton for file use cases.
     """
     # Arrange
     with patch.object(
