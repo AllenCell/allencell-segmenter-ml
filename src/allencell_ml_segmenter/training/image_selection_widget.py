@@ -65,7 +65,9 @@ class ImageSelectionWidget(QWidget):
 
         channel_label: LabelWithHint = LabelWithHint("Image channel")
         channel_combo_box: QComboBox = QComboBox()
-        channel_combo_box.setCurrentIndex(-1) # need to set this to see placeholdertext
+        channel_combo_box.setCurrentIndex(
+            -1
+        )  # need to set this to see placeholdertext
         channel_combo_box.setPlaceholderText("Select an option")
 
         frame.layout().addWidget(channel_label, 1, 0)
