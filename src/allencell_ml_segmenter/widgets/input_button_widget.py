@@ -11,6 +11,7 @@ from qtpy.QtWidgets import (
 from qtpy.QtCore import Qt
 
 from allencell_ml_segmenter._style import Style
+from allencell_ml_segmenter.core.publisher import Publisher
 from allencell_ml_segmenter.prediction.model import PredictionModel
 
 
@@ -22,13 +23,13 @@ class InputButton(QWidget):
 
     def __init__(
         self,
-        model: PredictionModel,
+        model: Publisher,
         model_set_file_path_function: Callable,
         placeholder: str = "Select file...",
     ):
         super().__init__()
 
-        self._model: PredictionModel = model
+        self._model: Publisher = model
 
         self.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
 
