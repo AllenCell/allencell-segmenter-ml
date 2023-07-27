@@ -48,6 +48,7 @@ class ImageSelectionWidget(QWidget):
         directory_input_button: InputButton = InputButton(
             temp_fake_model, lambda: None, "Select directory..."
         )  # TODO: pass in actual training model
+        frame.layout().addWidget(directory_label, 0, 0)
 
         guide_text: QLabel = QLabel()
         guide_text.setText(
@@ -60,23 +61,15 @@ class ImageSelectionWidget(QWidget):
         directory_layout: QVBoxLayout = QVBoxLayout()
         directory_layout.addWidget(directory_input_button)
         directory_layout.addWidget(guide_text)
-
-        directory_widgets = [directory_label, directory_layout]
+        frame.layout().addLayout(directory_layout, 0, 1)
 
         channel_label: LabelWithHint = LabelWithHint("Image channel")
         channel_combo_box: QComboBox = QComboBox()
         channel_combo_box.setCurrentIndex(-1)
         channel_combo_box.setPlaceholderText("Select an option")
-        channel_widgets = [channel_label, channel_combo_box]
 
-        # add widgets to grid
-        for idx, widget in enumerate(directory_widgets):
-            if isinstance(widget, QVBoxLayout):
-                frame.layout().addLayout(widget, 0, idx)
-            else:
-                frame.layout().addWidget(widget, 0, idx)
-        for idx, widget in enumerate(channel_widgets):
-            frame.layout().addWidget(widget, 1, idx)
+        frame.layout().addWidget(channel_label, 1, 0)
+        frame.layout().addWidget(channel_combo_box, 1, 1)
 
         # apply styling
         self.setStyleSheet("prediction_view.qss")  # TODO: revisit styling
