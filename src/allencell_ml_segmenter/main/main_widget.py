@@ -10,6 +10,7 @@ from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.prediction.view import PredictionView
 from allencell_ml_segmenter.sample.sample_view import SampleView
+from allencell_ml_segmenter.training.view import TrainingView
 from allencell_ml_segmenter.core.subscriber import Subscriber
 
 
@@ -46,7 +47,7 @@ class MainTabWidget(QTabWidget, Subscriber, metaclass=MainMeta):
         prediction_view = PredictionView(self.model)
         self.initialize_view(prediction_view, "Prediction")
 
-        training_view = SampleView(self.model)
+        training_view = TrainingView(self.model)
         self.initialize_view(training_view, "Training")
 
     def handle_event(self, event: Event) -> None:
