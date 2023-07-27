@@ -1,4 +1,3 @@
-from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
     QWidget,
     QVBoxLayout,
@@ -13,8 +12,6 @@ from PyQt5.QtWidgets import (
     QCheckBox,
 )
 
-from allencell_ml_segmenter.prediction.model import PredictionModel
-from allencell_ml_segmenter.widgets.input_button_widget import InputButton
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 
 
