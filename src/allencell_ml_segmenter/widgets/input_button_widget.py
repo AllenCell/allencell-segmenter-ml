@@ -12,6 +12,7 @@ from qtpy.QtCore import Qt
 
 from allencell_ml_segmenter._style import Style
 from allencell_ml_segmenter.core.publisher import Publisher
+from allencell_ml_segmenter.core.publisher import Publisher
 
 
 class InputButton(QWidget):
