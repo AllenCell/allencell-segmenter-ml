@@ -19,7 +19,7 @@ class TrainingView(View, Subscriber):
 
         self._main_model: MainModel = main_model
         # self._training_model: TrainingModel = TrainingModel()
-        
+
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
