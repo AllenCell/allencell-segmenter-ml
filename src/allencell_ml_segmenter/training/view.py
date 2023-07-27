@@ -1,13 +1,13 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
-    QVBoxLayout,
-    QSizePolicy,
     QLabel,
     QPushButton,
     QFrame,
 )
 
 from allencell_ml_segmenter._style import Style
+from PyQt5.QtWidgets import QVBoxLayout, QSizePolicy
+
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.view import View
