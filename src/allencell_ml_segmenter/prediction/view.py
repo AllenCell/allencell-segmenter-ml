@@ -35,9 +35,7 @@ class PredictionView(View, Subscriber):
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(layout)
-        self.layout().setContentsMargins(0, 0, 0, 0)
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
-        self.setLayout(QVBoxLayout())
 
         self._title: QLabel = QLabel("SEGMENTATION PREDICTION", self)
         self._title.setObjectName("title")

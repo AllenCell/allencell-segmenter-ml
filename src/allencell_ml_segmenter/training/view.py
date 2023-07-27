@@ -20,12 +20,10 @@ class TrainingView(View, Subscriber):
         self._main_model: MainModel = main_model
         # self._training_model: TrainingModel = TrainingModel()
 
-        layout = QVBoxLayout()
+        layout: QVBoxLayout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(layout)
-        self.layout().setContentsMargins(0, 0, 0, 0)
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
-        self.setLayout(QVBoxLayout())
 
         self.layout().addWidget(ImageSelectionWidget())
 
