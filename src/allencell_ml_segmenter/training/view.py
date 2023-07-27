@@ -7,6 +7,9 @@ from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.training.image_selection_widget import (
     ImageSelectionWidget,
 )
+from allencell_ml_segmenter.training.model_selection_widget import (
+    ModelSelectionWidget,
+)
 
 
 class TrainingView(View, Subscriber):
@@ -25,9 +28,13 @@ class TrainingView(View, Subscriber):
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
 
         self.layout().addWidget(ImageSelectionWidget())
+        self.layout().addWidget(ModelSelectionWidget())
 
         self._main_model.subscribe(
             Event.VIEW_SELECTION_TRAINING,
             self,
             lambda e: self._main_model.set_current_view(self),
         )
+
+        # apply styling
+        self.setStyleSheet("prediction_view.qss")  # TODO: revisit styling
