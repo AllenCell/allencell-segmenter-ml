@@ -10,6 +10,7 @@ from PyQt5.QtWidgets import (
     QHBoxLayout,
     QRadioButton,
     QLineEdit,
+    QCheckBox,
 )
 
 from allencell_ml_segmenter.prediction.model import PredictionModel
@@ -44,7 +45,8 @@ class ModelSelectionWidget(QWidget):
         self.layout().addWidget(frame)
 
         # model selection components
-        frame.layout().addWidget(QLabel("Select a model:"))
+        # TODO: convert certain variables to instance variables once model is implemented if their state will be tracked
+        frame.layout().addWidget(LabelWithHint("Select a model:"))
 
         grid_layout: QGridLayout = QGridLayout()
 
@@ -60,10 +62,66 @@ class ModelSelectionWidget(QWidget):
         label_existing: LabelWithHint = LabelWithHint("Existing model")
         grid_layout.addWidget(label_existing, 1, 1)
 
-        combo_box_existing: QComboBox = QComboBox()
-        combo_box_existing.setCurrentIndex(-1)
-        combo_box_existing.setPlaceholderText("Select an option")
-        grid_layout.addWidget(combo_box_existing, 1, 2)
+        self.combo_box_existing: QComboBox = QComboBox()
+        self.combo_box_existing.setCurrentIndex(-1)
+        self.combo_box_existing.setPlaceholderText("Select an option")
+        grid_layout.addWidget(self.combo_box_existing, 1, 2)
+
+        frame.layout().addLayout(grid_layout)
+
+        # bottom half
+        grid_layout: QGridLayout = QGridLayout()
+
+        structure_size_label: LabelWithHint = LabelWithHint("Structure size")
+        grid_layout.addWidget(structure_size_label, 0, 0)
+
+        structure_size_combo_box: QComboBox = QComboBox()
+        structure_size_combo_box.setCurrentIndex(-1)
+        structure_size_combo_box.setPlaceholderText("Select an option")
+        structure_size_combo_box.addItems(["small", "med", "large"])
+        grid_layout.addWidget(structure_size_combo_box, 0, 1)
+
+        image_dimensions_label: LabelWithHint = LabelWithHint(
+            "Image dimension"
+        )
+        grid_layout.addWidget(image_dimensions_label, 1, 0)
+
+        dimension_choice_layout: QHBoxLayout = QHBoxLayout()
+
+        radio_3d: QRadioButton = QRadioButton()
+        label_3d: LabelWithHint = LabelWithHint("3D")
+
+        radio_2d: QRadioButton = QRadioButton()
+        label_2d: LabelWithHint = LabelWithHint("2D")
+
+        dimension_choice_layout.addWidget(radio_3d)
+        dimension_choice_layout.addWidget(label_3d)
+        dimension_choice_layout.addWidget(radio_2d)
+        dimension_choice_layout.addWidget(label_2d)
+
+        grid_layout.addLayout(dimension_choice_layout, 1, 1)
+
+        training_step_label: LabelWithHint = LabelWithHint("Training step")
+        grid_layout.addWidget(training_step_label, 2, 0)
+
+        training_step_input: QLineEdit = QLineEdit()  # TODO: placeholder text?
+        grid_layout.addWidget(training_step_input, 2, 1)
+
+        timeout_layout: QHBoxLayout = QHBoxLayout()
+
+        checkbox: QCheckBox = QCheckBox()
+        timeout_layout.addWidget(checkbox)
+
+        left_text: QLabel = QLabel("Time out after")
+        timeout_layout.addWidget(left_text)
+
+        hour_input: QLineEdit = QLineEdit()
+        timeout_layout.addWidget(hour_input)
+
+        right_text: LabelWithHint = LabelWithHint("hours")
+        timeout_layout.addWidget(right_text)
+
+        grid_layout.addLayout(timeout_layout, 3, 1)
 
         frame.layout().addLayout(grid_layout)
 
