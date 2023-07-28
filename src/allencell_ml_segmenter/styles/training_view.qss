@@ -1,10 +1,3 @@
-/*
-Global stylesheet
-
-Qt stylesheet reference: https://doc.qt.io/qtforpython-5/overviews/stylesheet-syntax.html
-Examples: https://doc.qt.io/qt-5/stylesheet-examples.html#customizing-specific-widgets
-*/
-
 * {
     color: #F0F1F2;
 }
@@ -12,4 +5,51 @@ Examples: https://doc.qt.io/qt-5/stylesheet-examples.html#customizing-specific-w
 #title {
     font-weight: bold;
     margin: 10px 0px;
+}
+
+#trainBtn {
+    background-color: #007ACC;
+    margin-top: 40px;
+}
+
+#modelSelection QComboBox:disabled {
+    color: #868E93;
+}
+
+#imageSelection #frame {
+    border: 1px solid #AAAAAA;
+    border-radius: 5px;
+}
+
+#modelSelection #frame {
+    border: 1px solid #AAAAAA;
+    border-radius: 5px;
+}
+
+#imageSelection #title {
+    font-weight: bold;
+}
+
+#modelSelection #title {
+    font-weight: bold;
+}
+
+#modelSelection QRadioButton {
+    margin-left: 25px;
+    margin-right: 6px;
+}
+
+#imageSelection #guideText {
+    font-size: 8px;
+    color: #868E93;
+    margin: 1px 0px 5px;
+}
+
+#modelSelection #structureSizeComboBox, #modelSelection #3DRadio, #modelSelection #trainingStepInput, #modelSelection #timeoutCheckbox {
+    margin-left: 60px;
+}
+
+#modelSelection #timeoutHourInput:disabled {
+    background-color: #414851;
+    color: #868E93;
 }
