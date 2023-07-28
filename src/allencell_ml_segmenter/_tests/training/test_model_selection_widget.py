@@ -1,4 +1,6 @@
 import pytest
+from PyQt5.QtCore import Qt
+
 from allencell_ml_segmenter.training.model_selection_widget import (
     ModelSelectionWidget,
 )
@@ -32,3 +34,23 @@ def test_radio_existing_slot(qtbot, model_selection_widget):
 
     # ASSERT
     assert model_selection_widget.combo_box_existing.isEnabled()
+
+
+def test_checkbox_slot(qtbot, model_selection_widget):
+    """
+    Test the slot connected to the checkbox.
+    """
+    # ASSERT (QLineEdit related to timeout limit is disabled by default)
+    assert not model_selection_widget.hour_input.isEnabled()
+
+    # ACT (enable QLineEdit related to timeout limit)
+    model_selection_widget._checkbox_slot(Qt.Checked)
+
+    # ASSERT
+    assert model_selection_widget.hour_input.isEnabled()
+
+    # ACT (disable QLineEdit related to timeout limit)
+    model_selection_widget._checkbox_slot(Qt.Unchecked)
+
+    # ASSERT
+    assert not model_selection_widget.hour_input.isEnabled()
