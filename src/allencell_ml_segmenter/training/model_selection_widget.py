@@ -62,12 +62,12 @@ class ModelSelectionWidget(QWidget):
         label_existing: LabelWithHint = LabelWithHint("Existing model")
         grid_layout.addWidget(label_existing, 1, 1)
 
-        self.combo_box_existing: QComboBox = QComboBox()
-        self.combo_box_existing.setCurrentIndex(-1)
-        self.combo_box_existing.setPlaceholderText("Select an option")
-        self.combo_box_existing.setEnabled(False)
-        self.combo_box_existing.setMinimumWidth(306)
-        grid_layout.addWidget(self.combo_box_existing, 1, 2)
+        self._combo_box_existing: QComboBox = QComboBox()
+        self._combo_box_existing.setCurrentIndex(-1)
+        self._combo_box_existing.setPlaceholderText("Select an option")
+        self._combo_box_existing.setEnabled(False)
+        self._combo_box_existing.setMinimumWidth(306)
+        grid_layout.addWidget(self._combo_box_existing, 1, 2)
 
         frame.layout().addLayout(grid_layout)
 
@@ -124,20 +124,20 @@ class ModelSelectionWidget(QWidget):
         timeout_layout: QHBoxLayout = QHBoxLayout()
         timeout_layout.setSpacing(0)
 
-        self.checkbox: QCheckBox = QCheckBox()
-        self.checkbox.setObjectName("timeoutCheckbox")
-        self.checkbox.stateChanged.connect(self._checkbox_slot)
-        timeout_layout.addWidget(self.checkbox)
+        self._checkbox: QCheckBox = QCheckBox()
+        self._checkbox.setObjectName("timeoutCheckbox")
+        self._checkbox.stateChanged.connect(self._checkbox_slot)
+        timeout_layout.addWidget(self._checkbox)
 
         left_text: QLabel = QLabel("Time out after")
         timeout_layout.addWidget(left_text)
 
-        self.hour_input: QLineEdit = QLineEdit()
-        self.hour_input.setObjectName("timeoutHourInput")
-        self.hour_input.setEnabled(False)
-        self.hour_input.setMaximumWidth(30)
-        self.hour_input.setPlaceholderText("0")
-        timeout_layout.addWidget(self.hour_input)
+        self._hour_input: QLineEdit = QLineEdit()
+        self._hour_input.setObjectName("timeoutHourInput")
+        self._hour_input.setEnabled(False)
+        self._hour_input.setMaximumWidth(30)
+        self._hour_input.setPlaceholderText("0")
+        timeout_layout.addWidget(self._hour_input)
 
         right_text: LabelWithHint = LabelWithHint("hours")
         timeout_layout.addWidget(right_text, alignment=Qt.AlignLeft)
@@ -155,7 +155,7 @@ class ModelSelectionWidget(QWidget):
         Disables interaction with the combo box below.
         """
         # TODO: call corresponding setter once model is implemented
-        self.combo_box_existing.setEnabled(False)
+        self._combo_box_existing.setEnabled(False)
 
     def _radio_existing_slot(self) -> None:
         """
@@ -163,14 +163,14 @@ class ModelSelectionWidget(QWidget):
         Enables interaction with the neighboring combo box.
         """
         # TODO: call corresponding setter (likely same as above) once model is implemented
-        self.combo_box_existing.setEnabled(True)
+        self._combo_box_existing.setEnabled(True)
 
     def _checkbox_slot(self, checked: Qt.CheckState) -> None:
         """
-        Triggered when the user selects the "time out after" checkbox.
+        Triggered when the user selects the "time out after" _checkbox.
         Enables/disables interaction with the neighboring hour input based on checkstate.
         """
         if checked == Qt.Checked:
-            self.hour_input.setEnabled(True)
+            self._hour_input.setEnabled(True)
         else:
-            self.hour_input.setEnabled(False)
+            self._hour_input.setEnabled(False)
