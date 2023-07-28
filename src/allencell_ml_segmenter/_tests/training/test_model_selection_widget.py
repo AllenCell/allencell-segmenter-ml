@@ -1,5 +1,6 @@
 import pytest
 from PyQt5.QtCore import Qt
+from pytestqt.qtbot import QtBot
 
 from allencell_ml_segmenter.training.model_selection_widget import (
     ModelSelectionWidget,
@@ -7,14 +8,16 @@ from allencell_ml_segmenter.training.model_selection_widget import (
 
 
 @pytest.fixture
-def model_selection_widget(qtbot):
+def model_selection_widget(qtbot: QtBot):
     """
     Fixture that creates an instance of ModelSelectionWidget for testing.
     """
     return ModelSelectionWidget()
 
 
-def test_radio_new_slot(qtbot, model_selection_widget):
+def test_radio_new_slot(
+    qtbot: QtBot, model_selection_widget: ModelSelectionWidget
+) -> None:
     """
     Test the slot connected to the top radio button.
     """
@@ -22,10 +25,12 @@ def test_radio_new_slot(qtbot, model_selection_widget):
     model_selection_widget._radio_new_slot()
 
     # ASSERT
-    assert not model_selection_widget.combo_box_existing.isEnabled()
+    assert not model_selection_widget._combo_box_existing.isEnabled()
 
 
-def test_radio_existing_slot(qtbot, model_selection_widget):
+def test_radio_existing_slot(
+    qtbot: QtBot, model_selection_widget: ModelSelectionWidget
+) -> None:
     """
     Test the slot connected to the bottom radio button.
     """
@@ -33,24 +38,26 @@ def test_radio_existing_slot(qtbot, model_selection_widget):
     model_selection_widget._radio_existing_slot()
 
     # ASSERT
-    assert model_selection_widget.combo_box_existing.isEnabled()
+    assert model_selection_widget._combo_box_existing.isEnabled()
 
 
-def test_checkbox_slot(qtbot, model_selection_widget):
+def test_checkbox_slot(
+    qtbot: QtBot, model_selection_widget: ModelSelectionWidget
+) -> None:
     """
-    Test the slot connected to the checkbox.
+    Test the slot connected to the _checkbox.
     """
     # ASSERT (QLineEdit related to timeout limit is disabled by default)
-    assert not model_selection_widget.hour_input.isEnabled()
+    assert not model_selection_widget._hour_input.isEnabled()
 
     # ACT (enable QLineEdit related to timeout limit)
     model_selection_widget._checkbox_slot(Qt.Checked)
 
     # ASSERT
-    assert model_selection_widget.hour_input.isEnabled()
+    assert model_selection_widget._hour_input.isEnabled()
 
     # ACT (disable QLineEdit related to timeout limit)
     model_selection_widget._checkbox_slot(Qt.Unchecked)
 
     # ASSERT
-    assert not model_selection_widget.hour_input.isEnabled()
+    assert not model_selection_widget._hour_input.isEnabled()
