@@ -124,9 +124,6 @@ class ModelSelectionWidget(QWidget):
 
         frame.layout().addLayout(grid_layout)
 
-        # apply styling
-        self.setStyleSheet("prediction_view.qss")  # TODO: revisit styling
-
     def _radio_new_slot(self) -> None:
         """
         Triggered when the user selects the "start a new model" radio button.
