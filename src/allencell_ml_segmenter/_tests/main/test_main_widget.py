@@ -1,6 +1,7 @@
 import pytest
 import napari
 from PyQt5.QtWidgets import QTabWidget
+from pytestqt.qtbot import QtBot
 
 from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.main.main_model import MainModel
@@ -15,9 +16,9 @@ def viewer():
     return Mock(spec=napari.Viewer)
 
 
-def test_manual_tab_switching(viewer, qtbot):
+def test_manual_tab_switching(viewer: napari.Viewer, qtbot: QtBot) -> None:
     # ARRANGE
-    main_widget = MainTabWidget(viewer)
+    main_widget: MainTabWidget = MainTabWidget(viewer)
 
     # ASSERT (default view is prediction)
     assert isinstance(main_widget.currentWidget(), PredictionView)
@@ -37,16 +38,16 @@ def test_manual_tab_switching(viewer, qtbot):
     assert isinstance(main_widget.currentWidget(), PredictionView)
 
 
-def test_init(viewer, qtbot):
-    main_widget = MainTabWidget(viewer)
+def test_init(viewer: napari.Viewer, qtbot: QtBot) -> None:
+    main_widget: MainTabWidget = MainTabWidget(viewer)
     assert isinstance(main_widget, QTabWidget)
     assert isinstance(main_widget.model, MainModel)
     assert len(main_widget.view_to_index) > 0  # need at least one view loaded
 
 
-def test_main_widget_set_view(viewer, qtbot):
-    main_widget = MainTabWidget(viewer)
-    view = View()
+def test_main_widget_set_view(viewer: napari.Viewer, qtbot: QtBot):
+    main_widget: MainTabWidget = MainTabWidget(viewer)
+    view: View = View()
     main_widget.initialize_view(view, "Example")
 
     main_widget.set_view(view)
@@ -54,9 +55,9 @@ def test_main_widget_set_view(viewer, qtbot):
     assert main_widget.currentIndex() == main_widget.view_to_index[view]
 
 
-def test_main_widget_initialize_view(viewer, qtbot):
-    main_widget = MainTabWidget(viewer)
-    view = View()
+def test_main_widget_initialize_view(viewer: napari.Viewer, qtbot: QtBot):
+    main_widget: MainTabWidget = MainTabWidget(viewer)
+    view: View = View()
 
     main_widget.initialize_view(view, "Example")
 
