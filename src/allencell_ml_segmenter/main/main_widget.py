@@ -36,18 +36,20 @@ class MainTabWidget(QTabWidget, Subscriber, metaclass=MainMeta):
         self.layout().setContentsMargins(0, 0, 0, 0)
 
         # main model
-        self.model: MainModel = MainModel()
-        self.model.subscribe(Event.ACTION_CHANGE_VIEW, self, self.handle_event)
+        self._model: MainModel = MainModel()
+        self._model.subscribe(
+            Event.ACTION_CHANGE_VIEW, self, self.handle_event
+        )
 
         # keep track of views
-        self.view_to_index = dict()
+        self._view_to_index = dict()
 
         # initialize the tabs
-        prediction_view = PredictionView(self.model)
-        self.initialize_view(prediction_view, "Prediction")
+        self._prediction_view = PredictionView(self._model)
+        self._initialize_view(self._prediction_view, "Prediction")
 
-        training_view = SampleView(self.model)
-        self.initialize_view(training_view, "Training")
+        self._training_view = SampleView(self._model)
+        self._initialize_view(self._training_view, "Training")
 
     def handle_event(self, event: Event) -> None:
         """
@@ -56,15 +58,15 @@ class MainTabWidget(QTabWidget, Subscriber, metaclass=MainMeta):
         inputs:
             event - MainEvent
         """
-        self.set_view(self.model.get_current_view())
+        self._set_view(self._model.get_current_view())
 
-    def set_view(self, view: View) -> None:
+    def _set_view(self, view: View) -> None:
         """
         Set the current views, must be initialized first
         """
-        self.setCurrentIndex(self.view_to_index[view])
+        self.setCurrentIndex(self._view_to_index[view])
 
-    def initialize_view(self, view: View, title: str) -> None:
+    def _initialize_view(self, view: View, title: str) -> None:
         # QTabWidget count method keeps track of how many child widgets have been added
-        self.view_to_index[view] = self.count()
+        self._view_to_index[view] = self.count()
         self.addTab(view, title)
