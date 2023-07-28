@@ -8,7 +8,7 @@ from allencell_ml_segmenter.training.model_selection_widget import (
 
 
 @pytest.fixture
-def model_selection_widget(qtbot: QtBot):
+def model_selection_widget() -> ModelSelectionWidget:
     """
     Fixture that creates an instance of ModelSelectionWidget for testing.
     """
@@ -25,7 +25,7 @@ def test_radio_new_slot(
     model_selection_widget._combo_box_existing.setEnabled(
         True
     )  # explicitly enable the combobox to see if it gets disabled
-    model_selection_widget._radio_new_slot()
+    model_selection_widget._radio_new_model_slot()
 
     # ASSERT
     assert not model_selection_widget._combo_box_existing.isEnabled()
@@ -41,7 +41,7 @@ def test_radio_existing_slot(
     model_selection_widget._combo_box_existing.setEnabled(
         False
     )  # explicitly disable the combobox to see if it gets enabled
-    model_selection_widget._radio_existing_slot()
+    model_selection_widget._radio_existing_model_slot()
 
     # ASSERT
     assert model_selection_widget._combo_box_existing.isEnabled()
