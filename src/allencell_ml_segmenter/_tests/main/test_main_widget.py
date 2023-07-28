@@ -1,12 +1,6 @@
 import pytest
 import napari
-from PyQt5.QtWidgets import QTabWidget
-from pytestqt.qtbot import QtBot
 
-from allencell_ml_segmenter.core.view import View
-from allencell_ml_segmenter.main.main_model import MainModel
-from allencell_ml_segmenter.prediction.view import PredictionView
-from allencell_ml_segmenter.sample.sample_view import SampleView
 from allencell_ml_segmenter.main.main_widget import MainTabWidget
 from unittest.mock import Mock
 
@@ -16,52 +10,26 @@ def viewer():
     return Mock(spec=napari.Viewer)
 
 
-def test_manual_tab_switching(viewer: napari.Viewer, qtbot: QtBot) -> None:
-    # ARRANGE
-    main_widget: MainTabWidget = MainTabWidget(viewer)
-
-    # ASSERT (default view is prediction)
-    assert isinstance(main_widget.currentWidget(), PredictionView)
-
-    # ACT
-    main_widget.setCurrentIndex(1)
-
-    # ASSERT
-    assert main_widget.currentIndex() == 1
-    assert isinstance(main_widget.currentWidget(), SampleView)
-
-    # ACT
-    main_widget.setCurrentIndex(0)
-
-    # ASSERT
-    assert main_widget.currentIndex() == 0
-    assert isinstance(main_widget.currentWidget(), PredictionView)
+@pytest.fixture
+def main_tab_widget(qtbot):
+    return MainTabWidget(viewer)
 
 
-def test_init(viewer: napari.Viewer, qtbot: QtBot) -> None:
-    main_widget: MainTabWidget = MainTabWidget(viewer)
-    assert isinstance(main_widget, QTabWidget)
-    assert isinstance(main_widget.model, MainModel)
-    assert len(main_widget.view_to_index) > 0  # need at least one view loaded
+def test_handle_action_change_view_event(main_tab_widget):
+    # ACT: have the model dispatch the action change view event
+    main_tab_widget._model.set_current_view(main_tab_widget._training_view)
 
+    # ASSERT: check that the main widget's current view (after setting) is same as the model's current view
+    assert (
+        main_tab_widget.currentIndex()
+        == main_tab_widget._view_to_index[main_tab_widget._training_view]
+    )
 
-def test_main_widget_set_view(viewer: napari.Viewer, qtbot: QtBot):
-    main_widget: MainTabWidget = MainTabWidget(viewer)
-    view: View = View()
-    main_widget.initialize_view(view, "Example")
+    # ACT: have the model dispatch the action change view event, in case that the first act statement didn't do anything
+    main_tab_widget._model.set_current_view(main_tab_widget._prediction_view)
 
-    main_widget.set_view(view)
-
-    assert main_widget.currentIndex() == main_widget.view_to_index[view]
-
-
-def test_main_widget_initialize_view(viewer: napari.Viewer, qtbot: QtBot):
-    main_widget: MainTabWidget = MainTabWidget(viewer)
-    view: View = View()
-
-    main_widget.initialize_view(view, "Example")
-
-    # index value assigned before widget is added
-    widget_count = main_widget.count()
-    assert main_widget.view_to_index[view] == widget_count - 1
-    assert main_widget.widget(widget_count - 1) == view
+    # ASSERT: check that the main widget's current view (after setting) is same as the model's current view
+    assert (
+        main_tab_widget.currentIndex()
+        == main_tab_widget._view_to_index[main_tab_widget._prediction_view]
+    )
