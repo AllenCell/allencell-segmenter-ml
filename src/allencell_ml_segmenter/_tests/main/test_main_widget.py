@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import QTabWidget
 from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.prediction.view import PredictionView
-from allencell_ml_segmenter.sample.sample_view import SampleView
+from allencell_ml_segmenter.training.view import TrainingView
 from allencell_ml_segmenter.main.main_widget import MainTabWidget
 from unittest.mock import Mock
 
@@ -27,7 +27,7 @@ def test_manual_tab_switching(viewer, qtbot):
 
     # ASSERT
     assert main_widget.currentIndex() == 1
-    assert isinstance(main_widget.currentWidget(), SampleView)
+    assert isinstance(main_widget.currentWidget(), TrainingView)
 
     # ACT
     main_widget.setCurrentIndex(0)
