@@ -33,12 +33,13 @@ class PredictionView(View):
 
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(0)
         self.setLayout(layout)
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
 
         self._title: QLabel = QLabel("SEGMENTATION PREDICTION", self)
         self._title.setObjectName("title")
-        self.layout().addWidget(self._title, alignment=Qt.AlignCenter)
+        self.layout().addWidget(self._title, alignment=Qt.AlignHCenter)
 
         self._file_input_widget: PredictionFileInput = PredictionFileInput(
             self._prediction_model
