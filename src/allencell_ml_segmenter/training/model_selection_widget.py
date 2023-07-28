@@ -48,14 +48,14 @@ class ModelSelectionWidget(QWidget):
         grid_layout: QGridLayout = QGridLayout()
 
         radio_new: QRadioButton = QRadioButton()
-        radio_new.toggled.connect(self._radio_new_slot)
+        radio_new.toggled.connect(self._radio_new_model_slot)
         grid_layout.addWidget(radio_new, 0, 0)
 
         label_new: LabelWithHint = LabelWithHint("Start a new model")
         grid_layout.addWidget(label_new, 0, 1)
 
         radio_existing: QRadioButton = QRadioButton()
-        radio_existing.toggled.connect(self._radio_existing_slot)
+        radio_existing.toggled.connect(self._radio_existing_model_slot)
         grid_layout.addWidget(radio_existing, 1, 0)
 
         label_existing: LabelWithHint = LabelWithHint("Existing model")
@@ -69,7 +69,7 @@ class ModelSelectionWidget(QWidget):
         frame.layout().addLayout(grid_layout)
 
         # bottom half
-        grid_layout: QGridLayout = QGridLayout()
+        grid_layout = QGridLayout()
 
         structure_size_label: LabelWithHint = LabelWithHint("Structure size")
         grid_layout.addWidget(structure_size_label, 0, 0)
@@ -108,8 +108,8 @@ class ModelSelectionWidget(QWidget):
 
         timeout_layout: QHBoxLayout = QHBoxLayout()
 
-        checkbox: QCheckBox = QCheckBox()
-        timeout_layout.addWidget(checkbox)
+        timeout_checkbox: QCheckBox = QCheckBox()
+        timeout_layout.addWidget(timeout_checkbox)
 
         left_text: QLabel = QLabel("Time out after")
         timeout_layout.addWidget(left_text)
@@ -127,7 +127,7 @@ class ModelSelectionWidget(QWidget):
         # apply styling
         self.setStyleSheet("prediction_view.qss")  # TODO: revisit styling
 
-    def _radio_new_slot(self) -> None:
+    def _radio_new_model_slot(self) -> None:
         """
         Triggered when the user selects the "start a new model" radio button.
         Disables interaction with the combo box below.
@@ -135,7 +135,7 @@ class ModelSelectionWidget(QWidget):
         # TODO: call corresponding setter once model is implemented
         self.combo_box_existing.setEnabled(False)
 
-    def _radio_existing_slot(self) -> None:
+    def _radio_existing_model_slot(self) -> None:
         """
         Triggered when the user selects the "existing model" radio button.
         Enables interaction with the neighboring combo box.
