@@ -12,7 +12,6 @@ from qtpy.QtCore import Qt
 
 from allencell_ml_segmenter._style import Style
 from allencell_ml_segmenter.core.publisher import Publisher
-from allencell_ml_segmenter.prediction.model import PredictionModel
 
 
 class InputButton(QWidget):
@@ -70,3 +69,9 @@ class InputButton(QWidget):
         self._text_display.setText(path)
         self._text_display.setReadOnly(True)
         self._set_path_function(path)
+
+    def elongate(self, min_width: int) -> None:
+        """
+        Increases the width of the input button _text_display.
+        """
+        self._text_display.setMinimumWidth(min_width)
