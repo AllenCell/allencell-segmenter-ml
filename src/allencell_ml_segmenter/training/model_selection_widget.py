@@ -1,3 +1,4 @@
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
     QWidget,
     QVBoxLayout,
@@ -64,6 +65,8 @@ class ModelSelectionWidget(QWidget):
         self.combo_box_existing: QComboBox = QComboBox()
         self.combo_box_existing.setCurrentIndex(-1)
         self.combo_box_existing.setPlaceholderText("Select an option")
+        self.combo_box_existing.setEnabled(False)
+        self.combo_box_existing.setMinimumWidth(306)
         grid_layout.addWidget(self.combo_box_existing, 1, 2)
 
         frame.layout().addLayout(grid_layout)
@@ -75,6 +78,7 @@ class ModelSelectionWidget(QWidget):
         grid_layout.addWidget(structure_size_label, 0, 0)
 
         structure_size_combo_box: QComboBox = QComboBox()
+        structure_size_combo_box.setObjectName("structureSizeComboBox")
         structure_size_combo_box.setCurrentIndex(-1)
         structure_size_combo_box.setPlaceholderText("Select an option")
         structure_size_combo_box.addItems(["small", "med", "large"])
@@ -86,8 +90,10 @@ class ModelSelectionWidget(QWidget):
         grid_layout.addWidget(image_dimensions_label, 1, 0)
 
         dimension_choice_layout: QHBoxLayout = QHBoxLayout()
+        dimension_choice_layout.setSpacing(0)
 
         radio_3d: QRadioButton = QRadioButton()
+        radio_3d.setObjectName("3DRadio")
         label_3d: LabelWithHint = LabelWithHint("3D")
 
         radio_2d: QRadioButton = QRadioButton()
@@ -95,32 +101,51 @@ class ModelSelectionWidget(QWidget):
 
         dimension_choice_layout.addWidget(radio_3d)
         dimension_choice_layout.addWidget(label_3d)
-        dimension_choice_layout.addWidget(radio_2d)
-        dimension_choice_layout.addWidget(label_2d)
+        dimension_choice_layout.addWidget(radio_2d, alignment=Qt.AlignLeft)
+        dimension_choice_layout.addWidget(label_2d, alignment=Qt.AlignLeft)
+        dimension_choice_layout.addStretch(10)
+        dimension_choice_layout.setContentsMargins(0, 0, 0, 0)
 
-        grid_layout.addLayout(dimension_choice_layout, 1, 1)
+        dimension_choice_dummy: QWidget = (
+            QWidget()
+        )  # stops interference with other radio buttons
+        dimension_choice_dummy.setLayout(dimension_choice_layout)
+
+        grid_layout.addWidget(dimension_choice_dummy, 1, 1)
 
         training_step_label: LabelWithHint = LabelWithHint("Training step")
         grid_layout.addWidget(training_step_label, 2, 0)
 
         training_step_input: QLineEdit = QLineEdit()  # TODO: placeholder text?
+        training_step_input.setPlaceholderText("1000")
+        training_step_input.setObjectName("trainingStepInput")
         grid_layout.addWidget(training_step_input, 2, 1)
 
         timeout_layout: QHBoxLayout = QHBoxLayout()
+        timeout_layout.setSpacing(0)
 
         checkbox: QCheckBox = QCheckBox()
+        checkbox.setObjectName("timeoutCheckbox")
+        # TODO: connect to slot
         timeout_layout.addWidget(checkbox)
 
         left_text: QLabel = QLabel("Time out after")
         timeout_layout.addWidget(left_text)
 
-        hour_input: QLineEdit = QLineEdit()
-        timeout_layout.addWidget(hour_input)
+        self.hour_input: QLineEdit = QLineEdit()
+        self.hour_input.setObjectName("timeoutHourInput")
+        self.hour_input.setEnabled(False)
+        self.hour_input.setMaximumWidth(30)
+        self.hour_input.setPlaceholderText("0")
+        timeout_layout.addWidget(self.hour_input)
 
         right_text: LabelWithHint = LabelWithHint("hours")
-        timeout_layout.addWidget(right_text)
+        timeout_layout.addWidget(right_text, alignment=Qt.AlignLeft)
+        timeout_layout.addStretch()
 
         grid_layout.addLayout(timeout_layout, 3, 1)
+        grid_layout.setColumnStretch(1, 8)
+        grid_layout.setColumnStretch(0, 3)
 
         frame.layout().addLayout(grid_layout)
 
