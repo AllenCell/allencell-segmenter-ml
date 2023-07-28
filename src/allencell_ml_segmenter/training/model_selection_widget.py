@@ -124,10 +124,10 @@ class ModelSelectionWidget(QWidget):
         timeout_layout: QHBoxLayout = QHBoxLayout()
         timeout_layout.setSpacing(0)
 
-        checkbox: QCheckBox = QCheckBox()
-        checkbox.setObjectName("timeoutCheckbox")
-        # TODO: connect to slot
-        timeout_layout.addWidget(checkbox)
+        self.checkbox: QCheckBox = QCheckBox()
+        self.checkbox.setObjectName("timeoutCheckbox")
+        self.checkbox.stateChanged.connect(self._checkbox_slot)
+        timeout_layout.addWidget(self.checkbox)
 
         left_text: QLabel = QLabel("Time out after")
         timeout_layout.addWidget(left_text)
@@ -164,3 +164,13 @@ class ModelSelectionWidget(QWidget):
         """
         # TODO: call corresponding setter (likely same as above) once model is implemented
         self.combo_box_existing.setEnabled(True)
+
+    def _checkbox_slot(self, checked: Qt.CheckState) -> None:
+        """
+        Triggered when the user selects the "time out after" checkbox.
+        Enables/disables interaction with the neighboring hour input based on checkstate.
+        """
+        if checked == Qt.Checked:
+            self.hour_input.setEnabled(True)
+        else:
+            self.hour_input.setEnabled(False)
