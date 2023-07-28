@@ -72,6 +72,3 @@ class ImageSelectionWidget(QWidget):
 
         frame.layout().addWidget(channel_label, 1, 0)
         frame.layout().addWidget(channel_combo_box, 1, 1)
-
-        # apply styling
-        self.setStyleSheet("prediction_view.qss")  # TODO: revisit styling
