@@ -37,6 +37,7 @@ class ImageSelectionWidget(QWidget):
 
         frame: QFrame = QFrame()
         frame.setLayout(QGridLayout())
+        frame.layout().setSpacing(0)
         frame.setObjectName("frame")
         self.layout().addWidget(frame)
 
@@ -47,8 +48,10 @@ class ImageSelectionWidget(QWidget):
         )  # TODO: get rid of this
         directory_input_button: InputButton = InputButton(
             temp_fake_model, lambda: None, "Select directory..."
-        )  # TODO: pass in actual training model
-        frame.layout().addWidget(directory_label, 0, 0)
+        )  # TODO: pass in actual training model and setter
+        directory_input_button.elongate(248)
+
+        frame.layout().addWidget(directory_label, 0, 0, Qt.AlignVCenter)
 
         guide_text: QLabel = QLabel()
         guide_text.setText(
@@ -58,17 +61,17 @@ class ImageSelectionWidget(QWidget):
         guide_text.setTextFormat(Qt.RichText)
         guide_text.setOpenExternalLinks(True)
 
-        directory_layout: QVBoxLayout = QVBoxLayout()
-        directory_layout.addWidget(directory_input_button)
-        directory_layout.addWidget(guide_text)
-        frame.layout().addLayout(directory_layout, 0, 1)
+        frame.layout().addWidget(directory_input_button, 0, 1, Qt.AlignVCenter)
+        frame.layout().addWidget(guide_text, 1, 1, Qt.AlignTop)
 
         channel_label: LabelWithHint = LabelWithHint("Image channel")
+
         channel_combo_box: QComboBox = QComboBox()
         channel_combo_box.setCurrentIndex(
             -1
         )  # need to set this to see placeholdertext
+        channel_combo_box.setMinimumWidth(306)
         channel_combo_box.setPlaceholderText("Select an option")
 
-        frame.layout().addWidget(channel_label, 1, 0)
-        frame.layout().addWidget(channel_combo_box, 1, 1)
+        frame.layout().addWidget(channel_label, 2, 0)
+        frame.layout().addWidget(channel_combo_box, 2, 1)
