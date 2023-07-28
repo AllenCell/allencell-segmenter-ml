@@ -1,0 +1,15 @@
+/*
+Global stylesheet
+
+Qt stylesheet reference: https://doc.qt.io/qtforpython-5/overviews/stylesheet-syntax.html
+Examples: https://doc.qt.io/qt-5/stylesheet-examples.html#customizing-specific-widgets
+*/
+
+* {
+    color: #F0F1F2;
+}
+
+#title {
+    font-weight: bold;
+    margin: 10px 0px;
+}
