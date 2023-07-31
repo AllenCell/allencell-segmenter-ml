@@ -8,7 +8,7 @@ class Directories:
     Provides safe paths to common module directories
     """
 
-    _module_base_dir = Path(allencell_ml_segmenter.__file__).parent
+    _module_base_dir: Path = Path(allencell_ml_segmenter.__file__).parent
 
     @classmethod
     def get_assets_dir(cls) -> str:

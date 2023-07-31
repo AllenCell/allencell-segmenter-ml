@@ -26,7 +26,7 @@ class ModelSelectionWidget(QWidget):
     def __init__(self):  # TODO: take in training model as a parameter
         super().__init__()
 
-        # self._model = model
+        # self._model: TrainingModel = model
 
         # widget skeleton
         self.setLayout(QVBoxLayout())

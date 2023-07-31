@@ -49,8 +49,10 @@ class TrainingView(View, Subscriber):
         model_selection_widget.setObjectName("modelSelection")
 
         # Dummy divs allow for easy alignment
-        top_container, top_dummy = QVBoxLayout(), QFrame()
-        bottom_container, bottom_dummy = QVBoxLayout(), QFrame()
+        top_container: QVBoxLayout = QVBoxLayout()
+        top_dummy: QFrame = QFrame()
+        bottom_container: QVBoxLayout = QVBoxLayout()
+        bottom_dummy: QFrame = QFrame()
 
         top_container.addWidget(image_selection_widget)
         top_dummy.setLayout(top_container)
