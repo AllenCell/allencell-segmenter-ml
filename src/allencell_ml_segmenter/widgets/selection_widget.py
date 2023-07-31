@@ -34,7 +34,7 @@ class SelectionWidget(QWidget):
         self.layout().addWidget(self.prediction_button)
 
         # models
-        self.model = model
+        self.model: MainModel = model
         self.model.subscribe(
             Event.VIEW_SELECTION_MAIN, self, self.handle_event
         )
