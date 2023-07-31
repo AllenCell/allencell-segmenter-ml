@@ -1,3 +1,5 @@
+from typing import Dict
+
 import napari
 from PyQt5.QtWidgets import QTabWidget
 from qtpy.QtWidgets import (
@@ -9,8 +11,6 @@ from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.prediction.view import PredictionView
-from allencell_ml_segmenter.sample.sample_view import SampleView
-from allencell_ml_segmenter.training.view import TrainingView
 from allencell_ml_segmenter.training.view import TrainingView
 from allencell_ml_segmenter.core.subscriber import Subscriber
 
@@ -44,13 +44,13 @@ class MainTabWidget(QTabWidget, Subscriber, metaclass=MainMeta):
         )
 
         # keep track of views
-        self._view_to_index = dict()
+        self._view_to_index: Dict[View, int] = dict()
 
         # initialize the tabs
-        self._prediction_view = PredictionView(self._model)
+        self._prediction_view: PredictionView = PredictionView(self._model)
         self._initialize_view(self._prediction_view, "Prediction")
 
-        training_view = TrainingView(self._model)
+        training_view: TrainingView = TrainingView(self._model)
         self._initialize_view(training_view, "Training")
 
     def handle_event(self, event: Event) -> None:
