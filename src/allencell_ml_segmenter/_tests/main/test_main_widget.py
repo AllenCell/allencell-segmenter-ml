@@ -1,6 +1,7 @@
+from typing import Set
+
 import pytest
 import napari
-from PyQt5.QtWidgets import QTabWidget
 
 from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.main.main_model import MainModel
@@ -15,52 +16,21 @@ def viewer():
     return Mock(spec=napari.Viewer)
 
 
-def test_manual_tab_switching(viewer, qtbot):
+@pytest.fixture
+def main_tab_widget(qtbot):
+    return MainTabWidget(viewer)
+
+
+def test_handle_action_change_view_event(main_tab_widget):
     # ARRANGE
-    main_widget = MainTabWidget(viewer)
+    views: Set[View] = main_tab_widget._view_to_index.keys()
 
-    # ASSERT (default view is prediction)
-    assert isinstance(main_widget.currentWidget(), PredictionView)
+    for view in views:
+        # ACT: have the model dispatch the action change view event
+        main_tab_widget._model.set_current_view(view)
 
-    # ACT
-    main_widget.setCurrentIndex(1)
-
-    # ASSERT
-    assert main_widget.currentIndex() == 1
-    assert isinstance(main_widget.currentWidget(), TrainingView)
-
-    # ACT
-    main_widget.setCurrentIndex(0)
-
-    # ASSERT
-    assert main_widget.currentIndex() == 0
-    assert isinstance(main_widget.currentWidget(), PredictionView)
-
-
-def test_init(viewer, qtbot):
-    main_widget = MainTabWidget(viewer)
-    assert isinstance(main_widget, QTabWidget)
-    assert isinstance(main_widget.model, MainModel)
-    assert len(main_widget.view_to_index) > 0  # need at least one view loaded
-
-
-def test_main_widget_set_view(viewer, qtbot):
-    main_widget = MainTabWidget(viewer)
-    view = View()
-    main_widget.initialize_view(view, "Example")
-
-    main_widget.set_view(view)
-
-    assert main_widget.currentIndex() == main_widget.view_to_index[view]
-
-
-def test_main_widget_initialize_view(viewer, qtbot):
-    main_widget = MainTabWidget(viewer)
-    view = View()
-
-    main_widget.initialize_view(view, "Example")
-
-    # index value assigned before widget is added
-    widget_count = main_widget.count()
-    assert main_widget.view_to_index[view] == widget_count - 1
-    assert main_widget.widget(widget_count - 1) == view
+        # ASSERT: check that the main widget's current view (after setting) is same as the model's current view
+        assert (
+            main_tab_widget.currentIndex()
+            == main_tab_widget._view_to_index[view]
+        )
