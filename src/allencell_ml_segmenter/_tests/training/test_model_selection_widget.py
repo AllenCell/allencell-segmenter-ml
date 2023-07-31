@@ -22,6 +22,9 @@ def test_radio_new_slot(
     Test the slot connected to the top radio button.
     """
     # ACT (disable combo box)
+    model_selection_widget._combo_box_existing.setEnabled(
+        True
+    )  # explicitly enable the combobox to see if it gets disabled
     model_selection_widget._radio_new_slot()
 
     # ASSERT
@@ -35,6 +38,9 @@ def test_radio_existing_slot(
     Test the slot connected to the bottom radio button.
     """
     # ACT (enable combo box)
+    model_selection_widget._combo_box_existing.setEnabled(
+        False
+    )  # explicitly disable the combobox to see if it gets enabled
     model_selection_widget._radio_existing_slot()
 
     # ASSERT
