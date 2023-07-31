@@ -126,7 +126,9 @@ class ModelSelectionWidget(QWidget):
 
         self._timeout_checkbox: QCheckBox = QCheckBox()
         self._timeout_checkbox.setObjectName("timeoutCheckbox")
-        self._timeout_checkbox.stateChanged.connect(self._timeout_checkbox_slot)
+        self._timeout_checkbox.stateChanged.connect(
+            self._timeout_checkbox_slot
+        )
         timeout_layout.addWidget(self._timeout_checkbox)
 
         timeout_left_text: QLabel = QLabel("Time out after")
