@@ -1,3 +1,5 @@
+from typing import List, Any
+
 from PyQt5.QtWidgets import QFrame, QDoubleSpinBox, QSlider
 from qtpy.QtWidgets import (
     QLabel,
@@ -37,13 +39,13 @@ class ModelInputWidget(View, Subscriber):
     def __init__(self, model: PredictionModel):
         super().__init__()
 
-        self._model = model
+        self._model: PredictionModel = model
 
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
         # instantiate widgets
-        self._frame = QFrame()
-        self._title = QLabel("Model", self)
+        self._frame: QFrame = QFrame()
+        self._title: QLabel = QLabel("Model", self)
 
         self._selection_label_with_hint: LabelWithHint = LabelWithHint()
 
@@ -59,7 +61,7 @@ class ModelInputWidget(View, Subscriber):
         self._mid_postproc_button: QRadioButton = QRadioButton()
         self._bottom_postproc_button: QRadioButton = QRadioButton()
 
-        self._postproc_buttons = [
+        self._postproc_buttons: List[QRadioButton] = [
             self._top_postproc_button,
             self._mid_postproc_button,
             self._bottom_postproc_button,
@@ -74,7 +76,7 @@ class ModelInputWidget(View, Subscriber):
             ModelInputWidget.BOTTOM_TEXT
         )
 
-        self._postproc_labels = [
+        self._postproc_labels: List[Any] = [
             self._top_postproc_label,
             self._mid_postproc_label,
             self._bottom_postproc_label,
@@ -87,12 +89,12 @@ class ModelInputWidget(View, Subscriber):
             step=ModelInputWidget.STEP,
             readout=True,
         )
-        self._lower_bound = QLabel(str(ModelInputWidget.MIN))
-        self._upper_bound = QLabel(str(ModelInputWidget.MAX))
+        self._lower_bound: QLabel = QLabel(str(ModelInputWidget.MIN))
+        self._upper_bound: QLabel = QLabel(str(ModelInputWidget.MAX))
 
         self._auto_thresh_selection: QComboBox = QComboBox()
 
-        self._postprocessing_selections = [
+        self._postprocessing_selections: List[Any] = [
             self._simple_thresh_slider,
             self._auto_thresh_selection,
         ]
