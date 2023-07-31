@@ -49,8 +49,8 @@ class MainTabWidget(QTabWidget, Subscriber, metaclass=MainMeta):
         self._prediction_view = PredictionView(self._model)
         self._initialize_view(self._prediction_view, "Prediction")
 
-        training_view = TrainingView(self.model)
-        self.initialize_view(training_view, "Training")
+        training_view = TrainingView(self._model)
+        self._initialize_view(training_view, "Training")
 
     def handle_event(self, event: Event) -> None:
         """
