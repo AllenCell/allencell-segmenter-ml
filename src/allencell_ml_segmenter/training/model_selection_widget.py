@@ -124,23 +124,23 @@ class ModelSelectionWidget(QWidget):
         timeout_layout: QHBoxLayout = QHBoxLayout()
         timeout_layout.setSpacing(0)
 
-        self._checkbox: QCheckBox = QCheckBox()
-        self._checkbox.setObjectName("timeoutCheckbox")
-        self._checkbox.stateChanged.connect(self._checkbox_slot)
-        timeout_layout.addWidget(self._checkbox)
+        self._timeout_checkbox: QCheckBox = QCheckBox()
+        self._timeout_checkbox.setObjectName("timeoutCheckbox")
+        self._timeout_checkbox.stateChanged.connect(self._timeout_checkbox_slot)
+        timeout_layout.addWidget(self._timeout_checkbox)
 
-        left_text: QLabel = QLabel("Time out after")
-        timeout_layout.addWidget(left_text)
+        timeout_left_text: QLabel = QLabel("Time out after")
+        timeout_layout.addWidget(timeout_left_text)
 
-        self._hour_input: QLineEdit = QLineEdit()
-        self._hour_input.setObjectName("timeoutHourInput")
-        self._hour_input.setEnabled(False)
-        self._hour_input.setMaximumWidth(30)
-        self._hour_input.setPlaceholderText("0")
-        timeout_layout.addWidget(self._hour_input)
+        self._timeout_hour_input: QLineEdit = QLineEdit()
+        self._timeout_hour_input.setObjectName("timeoutHourInput")
+        self._timeout_hour_input.setEnabled(False)
+        self._timeout_hour_input.setMaximumWidth(30)
+        self._timeout_hour_input.setPlaceholderText("0")
+        timeout_layout.addWidget(self._timeout_hour_input)
 
-        right_text: LabelWithHint = LabelWithHint("hours")
-        timeout_layout.addWidget(right_text, alignment=Qt.AlignLeft)
+        timeout_right_text: LabelWithHint = LabelWithHint("hours")
+        timeout_layout.addWidget(timeout_right_text, alignment=Qt.AlignLeft)
         timeout_layout.addStretch()
 
         grid_layout.addLayout(timeout_layout, 3, 1)
@@ -165,12 +165,12 @@ class ModelSelectionWidget(QWidget):
         # TODO: call corresponding setter (likely same as above) once model is implemented
         self._combo_box_existing.setEnabled(True)
 
-    def _checkbox_slot(self, checked: Qt.CheckState) -> None:
+    def _timeout_checkbox_slot(self, checked: Qt.CheckState) -> None:
         """
-        Triggered when the user selects the "time out after" _checkbox.
+        Triggered when the user selects the "time out after" _timeout_checkbox.
         Enables/disables interaction with the neighboring hour input based on checkstate.
         """
         if checked == Qt.Checked:
-            self._hour_input.setEnabled(True)
+            self._timeout_hour_input.setEnabled(True)
         else:
-            self._hour_input.setEnabled(False)
+            self._timeout_hour_input.setEnabled(False)
