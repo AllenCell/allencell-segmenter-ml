@@ -24,14 +24,14 @@ class PredictionView(View):
     def __init__(self, main_model: MainModel):
         super().__init__()
 
-        self._main_model = main_model
+        self._main_model: MainModel = main_model
         self._prediction_model: PredictionModel = PredictionModel()
 
         self._service: ModelFileService = ModelFileService(
             self._prediction_model
         )
 
-        layout = QVBoxLayout()
+        layout: QVBoxLayout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
         self.setLayout(layout)
@@ -52,8 +52,10 @@ class PredictionView(View):
         self._model_input_widget.setObjectName("modelInput")
 
         # Dummy divs allow for easy alignment
-        top_container, top_dummy = QVBoxLayout(), QFrame()
-        bottom_container, bottom_dummy = QVBoxLayout(), QFrame()
+        top_container: QVBoxLayout = QVBoxLayout()
+        top_dummy: QFrame = QFrame()
+        bottom_container: QVBoxLayout = QVBoxLayout()
+        bottom_dummy: QFrame = QFrame()
 
         top_container.addWidget(self._file_input_widget)
         top_dummy.setLayout(top_container)

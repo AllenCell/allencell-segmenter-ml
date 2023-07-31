@@ -10,7 +10,7 @@ class ModelFileService(Subscriber):
 
     def __init__(self, model: PredictionModel):
         super().__init__()
-        self._model = model
+        self._model: PredictionModel = model
 
         self._model.subscribe(
             Event.ACTION_PREDICTION_MODEL_FILE,
