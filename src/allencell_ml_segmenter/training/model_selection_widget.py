@@ -111,14 +111,14 @@ class ModelSelectionWidget(QWidget):
         timeout_checkbox: QCheckBox = QCheckBox()
         timeout_layout.addWidget(timeout_checkbox)
 
-        left_text: QLabel = QLabel("Time out after")
-        timeout_layout.addWidget(left_text)
+        timeout_left_text: QLabel = QLabel("Time out after")
+        timeout_layout.addWidget(timeout_left_text)
 
-        hour_input: QLineEdit = QLineEdit()
-        timeout_layout.addWidget(hour_input)
+        timeout_hour_input: QLineEdit = QLineEdit()
+        timeout_layout.addWidget(timeout_hour_input)
 
-        right_text: LabelWithHint = LabelWithHint("hours")
-        timeout_layout.addWidget(right_text)
+        timeout_right_text: LabelWithHint = LabelWithHint("hours")
+        timeout_layout.addWidget(timeout_right_text)
 
         grid_layout.addLayout(timeout_layout, 3, 1)
 
