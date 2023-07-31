@@ -47,7 +47,7 @@ class ImageSelectionWidget(QWidget):
             PredictionModel()
         )  # TODO: get rid of this
         directory_input_button: InputButton = InputButton(
-            temp_fake_model, lambda: None, "Select directory..."
+            temp_fake_model, lambda dummy: None, "Select directory..."
         )  # TODO: pass in actual training model and setter
         directory_input_button.elongate(248)
 
