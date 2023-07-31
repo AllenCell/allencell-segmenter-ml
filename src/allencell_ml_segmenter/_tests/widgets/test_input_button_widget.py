@@ -29,3 +29,18 @@ def test_set_file_text(qtbot, input_button, monkeypatch):
         # Act
         qtbot.mouseClick(input_button._button, Qt.LeftButton)
         assert input_button._text_display.text() == "/path/to/file"
+
+
+def test_elongate(input_button: InputButton) -> None:
+    """
+    Test the elongate method of InputButton.
+    """
+    # ARRANGE
+    initial_width: int = input_button._text_display.width()
+    expected_width: int = initial_width + 100
+
+    # ACT
+    input_button.elongate(expected_width)
+
+    # ASSERT
+    assert input_button._text_display.width() == expected_width
