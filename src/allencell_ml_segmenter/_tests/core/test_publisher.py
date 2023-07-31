@@ -4,13 +4,13 @@ from allencell_ml_segmenter._tests.fakes.fake_subscriber import FakeSubscriber
 
 
 @pytest.fixture
-def publisher():
+def publisher() -> Publisher:
     return Publisher()
 
 
-def test_pub_dispatch(publisher):
-    subscriber = FakeSubscriber()
-    event_under_test = Event.PROCESS_TRAINING
+def test_pub_dispatch(publisher: Publisher) -> None:
+    subscriber: FakeSubscriber = FakeSubscriber()
+    event_under_test: Event = Event.PROCESS_TRAINING
 
     # ARRANGE
     publisher.subscribe(event_under_test, subscriber, subscriber.handle)
@@ -21,9 +21,9 @@ def test_pub_dispatch(publisher):
     assert subscriber.was_handled(event_under_test)
 
 
-def test_pub_dispatch_explicit_handler(publisher: Publisher):
-    subscriber = FakeSubscriber()
-    event_under_test = Event.PROCESS_TRAINING
+def test_pub_dispatch_explicit_handler(publisher: Publisher) -> None:
+    subscriber: FakeSubscriber = FakeSubscriber()
+    event_under_test: Event = Event.PROCESS_TRAINING
 
     # ARRANGE
     publisher.subscribe(event_under_test, subscriber, subscriber.handle)
@@ -35,10 +35,10 @@ def test_pub_dispatch_explicit_handler(publisher: Publisher):
     assert subscriber.was_handled(event_under_test)
 
 
-def test_pub_dispatch_multiple(publisher: Publisher):
-    subscriber1 = FakeSubscriber()
+def test_pub_dispatch_multiple(publisher: Publisher) -> None:
+    subscriber1: FakeSubscriber = FakeSubscriber()
 
-    subscriber2 = FakeSubscriber()
+    subscriber2: FakeSubscriber = FakeSubscriber()
 
     # ARRANGE
     publisher.subscribe(
@@ -56,9 +56,9 @@ def test_pub_dispatch_multiple(publisher: Publisher):
     assert subscriber2.was_handled(Event.PROCESS_TRAINING)
 
 
-def test_pub_unsubscribe(publisher: Publisher):
-    subscriber = FakeSubscriber()
-    event_under_test = Event.PROCESS_TRAINING
+def test_pub_unsubscribe(publisher: Publisher) -> None:
+    subscriber: FakeSubscriber = FakeSubscriber()
+    event_under_test: Event = Event.PROCESS_TRAINING
 
     # ARRANGE
     publisher.subscribe(event_under_test, subscriber, subscriber.handle)
@@ -71,8 +71,8 @@ def test_pub_unsubscribe(publisher: Publisher):
     assert subscriber.was_handled(event_under_test) is False
 
 
-def test_pub_unsubscribe_unknown(publisher: Publisher):
-    subscriber = FakeSubscriber()
+def test_pub_unsubscribe_unknown(publisher: Publisher) -> None:
+    subscriber: FakeSubscriber = FakeSubscriber()
 
     # ACT
     publisher.unsubscribe(Event.PROCESS_TRAINING, subscriber)

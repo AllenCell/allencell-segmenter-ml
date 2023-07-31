@@ -2,6 +2,7 @@ from typing import Set
 
 import pytest
 import napari
+from pytestqt.qtbot import QtBot
 
 from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.main.main_model import MainModel
@@ -12,16 +13,18 @@ from unittest.mock import Mock
 
 
 @pytest.fixture
-def viewer():
+def viewer() -> napari.Viewer:
     return Mock(spec=napari.Viewer)
 
 
 @pytest.fixture
-def main_tab_widget(qtbot):
+def main_tab_widget(qtbot: QtBot) -> MainTabWidget:
     return MainTabWidget(viewer)
 
 
-def test_handle_action_change_view_event(main_tab_widget):
+def test_handle_action_change_view_event(
+    main_tab_widget: MainTabWidget,
+) -> None:
     # ARRANGE
     views: Set[View] = main_tab_widget._view_to_index.keys()
 

@@ -51,7 +51,7 @@ def test_checkbox_slot(
     qtbot: QtBot, model_selection_widget: ModelSelectionWidget
 ) -> None:
     """
-    Test the slot connected to the _checkbox.
+    Test the slot connected to the checkbox.
     """
     # ASSERT (QLineEdit related to timeout limit is disabled by default)
     assert not model_selection_widget._timeout_hour_input.isEnabled()

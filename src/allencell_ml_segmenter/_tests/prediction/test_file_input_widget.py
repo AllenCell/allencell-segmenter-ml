@@ -3,6 +3,7 @@ from unittest.mock import patch
 import pytest
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QFileDialog
+from pytestqt.qtbot import QtBot
 
 from allencell_ml_segmenter.prediction.file_input_widget import (
     PredictionFileInput,
@@ -11,36 +12,44 @@ from allencell_ml_segmenter.prediction.model import PredictionModel
 
 
 @pytest.fixture
-def file_input_widget(qtbot):
+def file_input_widget(qtbot: QtBot):
     """
     Fixture that creates an instance of ModelInputWidget for testing.
     """
     return PredictionFileInput(PredictionModel())
 
 
-def test_top_radio_button_slot(qtbot, file_input_widget):
+def test_top_radio_button_slot(
+    qtbot: QtBot, file_input_widget: PredictionFileInput
+) -> None:
     """
     Test the _top_radio_button_slot method of PredictionFileInput.
     """
-    # Disable the bottom input button and enable the top _checkbox list widget
+    # Disable the bottom input button and enable the top checkbox list widget
     file_input_widget._on_screen_slot()
 
     assert file_input_widget._image_list.isEnabled()
     assert not file_input_widget._browse_dir_edit.isEnabled()
 
 
-def test_bottom_radio_button_slot(qtbot, file_input_widget):
+def test_bottom_radio_button_slot(
+    qtbot: QtBot, file_input_widget: PredictionFileInput
+) -> None:
     """
     Test the _bottom_radio_button_slot method of PredictionFileInput.
     """
-    # Enable the bottom input button and disable the top _checkbox list widget
+    # Enable the bottom input button and disable the top checkbox list widget
     file_input_widget._from_directory_slot()
 
     assert not file_input_widget._image_list.isEnabled()
     assert file_input_widget._browse_dir_edit.isEnabled()
 
 
-def test_preprocessing_method(qtbot, file_input_widget, monkeypatch):
+def test_preprocessing_method(
+    qtbot: QtBot,
+    file_input_widget: PredictionFileInput,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     """
     Test that the input buttons in file_input_widget do not affect the state related
     to the model_input_widget. This test was introduced because any input button instance
