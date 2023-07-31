@@ -11,7 +11,7 @@ from qtpy.QtWidgets import (
 from qtpy.QtCore import Qt
 
 from allencell_ml_segmenter._style import Style
-from allencell_ml_segmenter.prediction.model import PredictionModel
+from allencell_ml_segmenter.core.publisher import Publisher
 
 
 class InputButton(QWidget):
@@ -22,13 +22,13 @@ class InputButton(QWidget):
 
     def __init__(
         self,
-        model: PredictionModel,
+        model: Publisher,
         model_set_file_path_function: Callable,
         placeholder: str = "Select file...",
     ):
         super().__init__()
 
-        self._model: PredictionModel = model
+        self._model: Publisher = model
 
         self.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
 
@@ -69,3 +69,9 @@ class InputButton(QWidget):
         self._text_display.setText(path)
         self._text_display.setReadOnly(True)
         self._set_path_function(path)
+
+    def elongate(self, min_width: int) -> None:
+        """
+        Increases the width of the input button _text_display.
+        """
+        self._text_display.setMinimumWidth(min_width)
