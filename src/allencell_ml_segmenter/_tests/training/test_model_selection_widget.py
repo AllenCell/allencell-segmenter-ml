@@ -54,16 +54,16 @@ def test_checkbox_slot(
     Test the slot connected to the _checkbox.
     """
     # ASSERT (QLineEdit related to timeout limit is disabled by default)
-    assert not model_selection_widget._hour_input.isEnabled()
+    assert not model_selection_widget._timeout_hour_input.isEnabled()
 
     # ACT (enable QLineEdit related to timeout limit)
-    model_selection_widget._checkbox_slot(Qt.Checked)
+    model_selection_widget._timeout_checkbox_slot(Qt.Checked)
 
     # ASSERT
-    assert model_selection_widget._hour_input.isEnabled()
+    assert model_selection_widget._timeout_hour_input.isEnabled()
 
     # ACT (disable QLineEdit related to timeout limit)
-    model_selection_widget._checkbox_slot(Qt.Unchecked)
+    model_selection_widget._timeout_checkbox_slot(Qt.Unchecked)
 
     # ASSERT
-    assert not model_selection_widget._hour_input.isEnabled()
+    assert not model_selection_widget._timeout_hour_input.isEnabled()
