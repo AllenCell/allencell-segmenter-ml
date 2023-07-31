@@ -1,4 +1,6 @@
 import pytest
+from pytestqt.qtbot import QtBot
+
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.sample.sample_model import SampleModel
 from allencell_ml_segmenter.sample.sample_state_widget import (
@@ -9,17 +11,19 @@ from allencell_ml_segmenter.sample.sample_state_widget import (
 
 
 @pytest.fixture
-def sample_model():
+def sample_model() -> SampleModel:
     return SampleModel()
 
 
 @pytest.fixture
-def sample_state_widget(sample_model):
+def sample_state_widget(sample_model: SampleModel) -> SampleStateWidget:
     return SampleStateWidget(sample_model)
 
 
 def test_handles_process_training_evt(
-    qtbot, sample_state_widget, sample_model
+    qtbot: QtBot,
+    sample_state_widget: SampleStateWidget,
+    sample_model: SampleModel,
 ):
     # ARRANGE
     qtbot.addWidget(sample_state_widget)
@@ -32,7 +36,9 @@ def test_handles_process_training_evt(
 
 
 def test_handles_process_training_show_error_evt(
-    qtbot, sample_state_widget, sample_model
+    qtbot: QtBot,
+    sample_state_widget: SampleStateWidget,
+    sample_model: SampleModel,
 ):
     # ARRANGE
     qtbot.addWidget(sample_state_widget)
