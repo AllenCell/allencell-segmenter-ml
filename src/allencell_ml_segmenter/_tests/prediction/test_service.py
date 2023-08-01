@@ -4,11 +4,11 @@ from allencell_ml_segmenter.prediction.service import ModelFileService
 
 
 @pytest.fixture
-def prediction_model():
+def prediction_model() -> PredictionModel:
     return PredictionModel()
 
 
-def test_service(prediction_model):
+def test_service(prediction_model: PredictionModel) -> None:
     # ARRANGE
     ModelFileService(prediction_model)
 
