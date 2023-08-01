@@ -75,9 +75,14 @@ def test_preprocessing_method(
         qtbot.mouseClick(
             file_input_widget._browse_dir_edit._button, Qt.LeftButton
         )
+
+        # ASSERT
         assert file_input_widget._model.get_preprocessing_method() is None
 
+        # ACT
         qtbot.mouseClick(
             file_input_widget._browse_output_edit._button, Qt.LeftButton
         )
+
+        # ASSERT
         assert file_input_widget._model.get_preprocessing_method() is None
