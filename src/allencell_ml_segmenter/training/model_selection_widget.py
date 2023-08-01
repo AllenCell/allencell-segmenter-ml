@@ -48,16 +48,18 @@ class ModelSelectionWidget(QWidget):
 
         grid_layout: QGridLayout = QGridLayout()
 
-        radio_new: QRadioButton = QRadioButton()
-        radio_new.toggled.connect(self._radio_new_model_slot)
-        grid_layout.addWidget(radio_new, 0, 0)
+        self._radio_new_model: QRadioButton = QRadioButton()
+        self._radio_new_model.toggled.connect(self._radio_new_model_slot)
+        grid_layout.addWidget(self._radio_new_model, 0, 0)
 
         label_new: LabelWithHint = LabelWithHint("Start a new model")
         grid_layout.addWidget(label_new, 0, 1)
 
-        radio_existing: QRadioButton = QRadioButton()
-        radio_existing.toggled.connect(self._radio_existing_model_slot)
-        grid_layout.addWidget(radio_existing, 1, 0)
+        self._radio_existing_model: QRadioButton = QRadioButton()
+        self._radio_existing_model.toggled.connect(
+            self._radio_existing_model_slot
+        )
+        grid_layout.addWidget(self._radio_existing_model, 1, 0)
 
         label_existing: LabelWithHint = LabelWithHint("Existing model")
         grid_layout.addWidget(label_existing, 1, 1)
