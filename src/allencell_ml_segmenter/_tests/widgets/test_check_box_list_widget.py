@@ -8,11 +8,11 @@ from allencell_ml_segmenter.widgets.check_box_list_widget import (
 
 
 @pytest.fixture
-def check_box_list_widget(qtbot):
+def check_box_list_widget(qtbot) -> CheckBoxListWidget:
     return CheckBoxListWidget()
 
 
-def test_add_item(check_box_list_widget):
+def test_add_item(check_box_list_widget: CheckBoxListWidget) -> None:
     # check_box_list_widget.add_item() accepts strings or QListWidgetItems
     check_box_list_widget.add_item("1")
     check_box_list_widget.add_item((QListWidgetItem("2")))
@@ -24,12 +24,16 @@ def test_add_item(check_box_list_widget):
     assert check_box_list_widget.item(1).text() == "2"
 
 
-def test_add_item_invalid_throws_error(check_box_list_widget):
+def test_add_item_invalid_throws_error(
+    check_box_list_widget: CheckBoxListWidget,
+) -> None:
     with pytest.raises(TypeError):
         check_box_list_widget.add_item(3)
 
 
-def test_set_all_state_uniform(check_box_list_widget):
+def test_set_all_state_uniform(
+    check_box_list_widget: CheckBoxListWidget,
+) -> None:
     # Testing set_all_state() with mixture of checked/unchecked checkboxes
     check_box_list_widget.add_item("1")
     check_box_list_widget.add_item("2")
@@ -46,7 +50,9 @@ def test_set_all_state_uniform(check_box_list_widget):
         assert check_box_list_widget.item(i).checkState() == Qt.Unchecked
 
 
-def test_toggle_state_uniform(check_box_list_widget):
+def test_toggle_state_uniform(
+    check_box_list_widget: CheckBoxListWidget,
+) -> None:
     # Testing set_all_state() with all checkboxes checked/unchecked
     check_box_list_widget.add_item("1")
     check_box_list_widget.add_item("2")
@@ -60,7 +66,7 @@ def test_toggle_state_uniform(check_box_list_widget):
         assert check_box_list_widget.item(i).checkState() == Qt.Unchecked
 
 
-def test_get_checked_rows(check_box_list_widget):
+def test_get_checked_rows(check_box_list_widget: CheckBoxListWidget) -> None:
     check_box_list_widget.add_item("1")
     check_box_list_widget.add_item("2")
     check_box_list_widget.add_item("3")
@@ -76,7 +82,7 @@ def test_get_checked_rows(check_box_list_widget):
     assert checked_rows == [1, 3]
 
 
-def test_get_unchcked_rows(check_box_list_widget):
+def test_get_unchcked_rows(check_box_list_widget: CheckBoxListWidget) -> None:
     check_box_list_widget.add_item("1")
     check_box_list_widget.add_item("2")
     check_box_list_widget.add_item("3")
@@ -90,7 +96,9 @@ def test_get_unchcked_rows(check_box_list_widget):
     assert unchecked_rows == [0, 2]
 
 
-def test_remove_checked_rows(check_box_list_widget):
+def test_remove_checked_rows(
+    check_box_list_widget: CheckBoxListWidget,
+) -> None:
     check_box_list_widget.add_item("1")
     check_box_list_widget.add_item("2")
     check_box_list_widget.add_item("3")
@@ -105,7 +113,9 @@ def test_remove_checked_rows(check_box_list_widget):
     assert check_box_list_widget.item(1).text() == "4"
 
 
-def test_remove_unchecked_rows(check_box_list_widget):
+def test_remove_unchecked_rows(
+    check_box_list_widget: CheckBoxListWidget,
+) -> None:
     check_box_list_widget.add_item("1")
     check_box_list_widget.add_item("2")
     check_box_list_widget.add_item("3")

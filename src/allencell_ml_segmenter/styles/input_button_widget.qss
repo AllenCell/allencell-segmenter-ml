@@ -16,10 +16,11 @@
 }
 
 #button:disabled {
-    background-color: #00489D;
+    background-color: #5A626C;
+    color: #868E93;
 }
 
 #button:pressed {
-    background-color: #5A626C;
-    color: #868E93;
+    background-color: #00489D;
+    color: #F0F1F2;
 }

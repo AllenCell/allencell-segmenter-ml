@@ -1,7 +1,9 @@
 import pytest
+from unittest.mock import patch
+
 from PyQt5.QtWidgets import QFileDialog
-from qtpy.QtCore import Qt
-from unittest.mock import patch, Mock
+from pytestqt.qtbot import QtBot
+
 from allencell_ml_segmenter.prediction.model_input_widget import (
     ModelInputWidget,
 )
@@ -9,14 +11,16 @@ from allencell_ml_segmenter.prediction.model import PredictionModel
 
 
 @pytest.fixture
-def model_input_widget(qtbot):
+def model_input_widget(qtbot: QtBot):
     """
     Fixture that creates an instance of ModelInputWidget for testing.
     """
     return ModelInputWidget(PredictionModel())
 
 
-def test_top_radio_button_slot(qtbot, model_input_widget):
+def test_top_radio_button_slot(
+    qtbot: QtBot, model_input_widget: ModelInputWidget
+) -> None:
     """
     Test the _top_radio_button_slot method of ModelInputWidget.
     """
@@ -31,7 +35,9 @@ def test_top_radio_button_slot(qtbot, model_input_widget):
     )
 
 
-def test_mid_radio_button_slot(qtbot, model_input_widget):
+def test_mid_radio_button_slot(
+    qtbot: QtBot, model_input_widget: ModelInputWidget
+) -> None:
     """
     Test the _mid_radio_button_slot method of ModelInputWidget.
     """
@@ -46,7 +52,9 @@ def test_mid_radio_button_slot(qtbot, model_input_widget):
     )
 
 
-def test_bottom_radio_button_slot(qtbot, model_input_widget):
+def test_bottom_radio_button_slot(
+    qtbot: QtBot, model_input_widget: ModelInputWidget
+) -> None:
     """
     Test the _bottom_radio_button_slot method of ModelInputWidget.
     """
@@ -61,7 +69,7 @@ def test_bottom_radio_button_slot(qtbot, model_input_widget):
     )
 
 
-def test_call_setters(model_input_widget):
+def test_call_setters(model_input_widget: ModelInputWidget) -> None:
     """
     Test the _call_setters method of ModelInputWidget.
     """
@@ -79,7 +87,9 @@ def test_call_setters(model_input_widget):
     # assert not model_input_widget._bottom_input_box.isEnabled()
 
 
-def test_configure_slots(qtbot, model_input_widget):
+def test_configure_slots(
+    qtbot: QtBot, model_input_widget: ModelInputWidget
+) -> None:
     """
     Test the _configure_slots method of ModelInputWidget.
     """
@@ -95,7 +105,7 @@ def test_configure_slots(qtbot, model_input_widget):
 
 
 # TODO: not working
-# def test_preprocessing_method(qtbot, model_input_widget, monkeypatch):
+# def test_preprocessing_method(qtbot: QtBot, model_input_widget: ModelInputWidget, monkeypatch: pytest.MonkeyPatch) -> None:
 #     # ARRANGE
 #     with patch.object(
 #         QFileDialog, "getOpenFileName", return_value=("/path/to/file", "")
@@ -106,7 +116,7 @@ def test_configure_slots(qtbot, model_input_widget):
 
 
 # TODO: Investigate why this test fails (manual clicks seem to indicate that the desired behavior is happening, but qtbot disagrees)
-# def test_postprocessing_method(model_input_widget, qtbot):
+# def test_postprocessing_method(qtbot: QtBot, model_input_widget: ModelInputWidget) -> None:
 #     # ACT
 #     qtbot.mouseClick(model_input_widget._mid_postproc_button, Qt.LeftButton)
 #
@@ -126,7 +136,9 @@ def test_configure_slots(qtbot, model_input_widget):
 #     )
 
 
-def test_postprocessing_auto_threshold(model_input_widget):
+def test_postprocessing_auto_threshold(
+    model_input_widget: ModelInputWidget,
+) -> None:
     # ACT
     model_input_widget._auto_thresh_selection.setCurrentIndex(4)
 

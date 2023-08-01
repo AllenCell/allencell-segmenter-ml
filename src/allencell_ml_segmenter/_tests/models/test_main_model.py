@@ -7,26 +7,28 @@ from allencell_ml_segmenter._tests.fakes.fake_subscriber import FakeSubscriber
 
 
 @pytest.fixture
-def main_model():
+def main_model() -> MainModel:
     return MainModel()
 
 
 @pytest.fixture
-def fake_subscriber():
+def fake_subscriber() -> FakeSubscriber:
     return FakeSubscriber()
 
 
-def test_get_current_view(main_model):
+def test_get_current_view(main_model: MainModel) -> None:
     assert main_model.get_current_view() is None
-    mock_view = Mock(spec=View)
+    mock_view: View = Mock(spec=View)
     main_model._current_view = mock_view
 
     assert main_model.get_current_view() == mock_view
 
 
-def test_set_current_view(main_model, fake_subscriber):
+def test_set_current_view(
+    main_model: MainModel, fake_subscriber: FakeSubscriber
+) -> None:
     # set a mock views
-    mock_view = Mock(spec=View)
+    mock_view: View = Mock(spec=View)
 
     # ARRANGE
     main_model.subscribe(
