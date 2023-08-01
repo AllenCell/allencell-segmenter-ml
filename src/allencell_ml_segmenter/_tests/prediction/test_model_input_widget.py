@@ -24,9 +24,15 @@ def test_top_radio_button_slot(
     """
     Test the _top_radio_button_slot method of ModelInputWidget.
     """
-    # Disable all input boxes
-    model_input_widget._top_postproc_button_slot()
+    # ARRANGE - explicitly enable all input UI elements (slider and combo box)
+    model_input_widget._simple_thresh_slider.native.setEnabled(True)
+    model_input_widget._auto_thresh_selection.setEnabled(True)
 
+    # ACT
+    with qtbot.waitSignals([model_input_widget._top_postproc_button.toggled]):
+        model_input_widget._top_postproc_button.click()
+
+    # ASSERT - both input UI elements should be disabled, postprocessing method should be set to TOP_TEXT
     assert not model_input_widget._simple_thresh_slider.native.isEnabled()
     assert not model_input_widget._auto_thresh_selection.isEnabled()
     assert (
@@ -41,9 +47,15 @@ def test_mid_radio_button_slot(
     """
     Test the _mid_radio_button_slot method of ModelInputWidget.
     """
-    # Enable the middle input box and disable the bottom one
-    model_input_widget._mid_postproc_button_slot()
+    # ARRANGE - explicitly disable the slider and enable the combo box
+    model_input_widget._simple_thresh_slider.native.setEnabled(False)
+    model_input_widget._auto_thresh_selection.setEnabled(True)
 
+    # ACT
+    with qtbot.waitSignals([model_input_widget._mid_postproc_button.toggled]):
+        model_input_widget._mid_postproc_button.click()
+
+    # ASSERT - slider should be enabled, combo box should be disabled, postprocessing method should be set to MID_TEXT
     assert model_input_widget._simple_thresh_slider.native.isEnabled()
     assert not model_input_widget._auto_thresh_selection.isEnabled()
     assert (
@@ -58,9 +70,17 @@ def test_bottom_radio_button_slot(
     """
     Test the _bottom_radio_button_slot method of ModelInputWidget.
     """
-    # Enable the bottom input box and disable the middle one
-    model_input_widget._bottom_postproc_button_slot()
+    # ARRANGE - explicitly enable the slider and disable the combo box
+    model_input_widget._simple_thresh_slider.native.setEnabled(True)
+    model_input_widget._auto_thresh_selection.setEnabled(False)
 
+    # ACT
+    with qtbot.waitSignals(
+        [model_input_widget._bottom_postproc_button.toggled]
+    ):
+        model_input_widget._bottom_postproc_button.click()
+
+    # ASSERT - slider should be disabled, combo box should be enabled, postprocessing method should be set to BOTTOM_TEXT
     assert not model_input_widget._simple_thresh_slider.native.isEnabled()
     assert model_input_widget._auto_thresh_selection.isEnabled()
     assert (
@@ -104,36 +124,59 @@ def test_configure_slots(
     mock_set_threshold.assert_called_once_with("isodata")
 
 
-# TODO: not working
-# def test_preprocessing_method(qtbot: QtBot, model_input_widget: ModelInputWidget, monkeypatch: pytest.MonkeyPatch) -> None:
-#     # ARRANGE
-#     with patch.object(
-#         QFileDialog, "getOpenFileName", return_value=("/path/to/file", "")
-#     ):
-#         # ACT
-#         qtbot.mouseClick(model_input_widget._input_button._button, Qt.LeftButton)
-#         assert model_input_widget._model.get_preprocessing_method() == 'foo'
+def test_model_path(
+    qtbot: QtBot, model_input_widget: ModelInputWidget
+) -> None:
+    """
+    Tests that selecting a model file updates the model path.
+    """
+    # ARRANGE
+    with patch.object(
+        QFileDialog, "getOpenFileName", return_value=("/path/to/file", "")
+    ):
+        with qtbot.waitSignals(
+            [model_input_widget._input_button._button.clicked]
+        ):
+            model_input_widget._input_button._button.click()
+
+    # ASSERT
+    assert model_input_widget._model.get_model_path() == "/path/to/file"
 
 
-# TODO: Investigate why this test fails (manual clicks seem to indicate that the desired behavior is happening, but qtbot disagrees)
-# def test_postprocessing_method(qtbot: QtBot, model_input_widget: ModelInputWidget) -> None:
-#     # ACT
-#     qtbot.mouseClick(model_input_widget._mid_postproc_button, Qt.LeftButton)
-#
-#     # ASSERT
-#     assert (
-#         model_input_widget._model.get_postprocessing_method()
-#         == "simple threshold"
-#     )
-#
-#     # ACT
-#     qtbot.mouseClick(model_input_widget._bottom_postproc_button, Qt.LeftButton)
-#
-#     # ASSERT
-#     assert (
-#         model_input_widget._model.get_postprocessing_method()
-#         == "auto threshold"
-#     )
+def test_postprocessing_method(
+    qtbot: QtBot, model_input_widget: ModelInputWidget
+) -> None:
+    # ACT
+    with qtbot.waitSignals([model_input_widget._top_postproc_button.toggled]):
+        model_input_widget._top_postproc_button.click()
+
+    # ASSERT
+    assert (
+        model_input_widget._model.get_postprocessing_method()
+        == ModelInputWidget.TOP_TEXT
+    )
+
+    # ACT
+    with qtbot.waitSignals([model_input_widget._mid_postproc_button.toggled]):
+        model_input_widget._mid_postproc_button.click()
+
+    # ASSERT
+    assert (
+        model_input_widget._model.get_postprocessing_method()
+        == ModelInputWidget.MID_TEXT
+    )
+
+    # ACT
+    with qtbot.waitSignals(
+        [model_input_widget._bottom_postproc_button.toggled]
+    ):
+        model_input_widget._bottom_postproc_button.click()
+
+    # ASSERT
+    assert (
+        model_input_widget._model.get_postprocessing_method()
+        == ModelInputWidget.BOTTOM_TEXT
+    )
 
 
 def test_postprocessing_auto_threshold(
