@@ -6,11 +6,11 @@ from allencell_ml_segmenter._tests.fakes.fake_subscriber import FakeSubscriber
 
 
 @pytest.fixture
-def prediction_model():
+def prediction_model() -> PredictionModel:
     return PredictionModel()
 
 
-def test_input_image_paths(prediction_model):
+def test_input_image_paths(prediction_model: PredictionModel) -> None:
     # no event currently dispatched
     # ACT
     prediction_model.set_input_image_paths(
@@ -23,7 +23,7 @@ def test_input_image_paths(prediction_model):
     ]
 
 
-def test_image_input_channel_index(prediction_model):
+def test_image_input_channel_index(prediction_model: PredictionModel) -> None:
     # ACT
     prediction_model.set_image_input_channel_index(17)
 
@@ -31,7 +31,7 @@ def test_image_input_channel_index(prediction_model):
     assert prediction_model.get_image_input_channel_index() == 17
 
 
-def test_output_directory(prediction_model):
+def test_output_directory(prediction_model: PredictionModel) -> None:
     # ACT
     prediction_model.set_output_directory("example directory")
 
@@ -39,7 +39,7 @@ def test_output_directory(prediction_model):
     assert prediction_model.get_output_directory() == "example directory"
 
 
-def test_model_path(prediction_model):
+def test_model_path(prediction_model: PredictionModel) -> None:
     # ARRANGE
     event_under_test: Event = Event.ACTION_PREDICTION_MODEL_FILE
     subscriber: FakeSubscriber = FakeSubscriber()
@@ -53,7 +53,7 @@ def test_model_path(prediction_model):
     assert subscriber.was_handled(event_under_test)
 
 
-def test_preprocessing_method(prediction_model):
+def test_preprocessing_method(prediction_model: PredictionModel) -> None:
     # ARRANGE
     event_under_test: Event = Event.ACTION_PREDICTION_PREPROCESSING_METHOD
     subscriber: FakeSubscriber = FakeSubscriber()
@@ -67,7 +67,7 @@ def test_preprocessing_method(prediction_model):
     assert subscriber.was_handled(event_under_test)
 
 
-def test_postprocessing_method(prediction_model):
+def test_postprocessing_method(prediction_model: PredictionModel) -> None:
     # ARRANGE
     event_under_test: Event = Event.ACTION_PREDICTION_POSTPROCESSING_METHOD
     subscriber: FakeSubscriber = FakeSubscriber()
@@ -81,7 +81,9 @@ def test_postprocessing_method(prediction_model):
     assert subscriber.was_handled(event_under_test)
 
 
-def test_postprocessing_simple_threshold(prediction_model):
+def test_postprocessing_simple_threshold(
+    prediction_model: PredictionModel,
+) -> None:
     # ARRANGE
     event_under_test: Event = (
         Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD
@@ -97,7 +99,9 @@ def test_postprocessing_simple_threshold(prediction_model):
     assert subscriber.was_handled(event_under_test)
 
 
-def test_postprocessing_auto_threshold(prediction_model):
+def test_postprocessing_auto_threshold(
+    prediction_model: PredictionModel,
+) -> None:
     # ARRANGE
     event_under_test: Event = (
         Event.ACTION_PREDICTION_POSTPROCESSING_AUTO_THRESHOLD

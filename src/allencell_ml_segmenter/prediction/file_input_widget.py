@@ -29,18 +29,18 @@ class PredictionFileInput(QWidget):
     def __init__(self, model: PredictionModel):
         super().__init__()
 
-        self._model = model
+        self._model: PredictionModel = model
 
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
 
-        frame = QFrame()
+        frame: QFrame = QFrame()
         frame.setLayout(QVBoxLayout())
 
         frame.setObjectName("frame")
 
-        title = QLabel("Input image(s)", self)
+        title: QLabel = QLabel("Input image(s)", self)
         title.setObjectName("title")
 
         self.layout().addWidget(title)
@@ -49,10 +49,10 @@ class PredictionFileInput(QWidget):
         frame.layout().addWidget(QLabel("Select input image(s):"))
 
         # radiobox for images from napari
-        horiz_layout = QHBoxLayout()
+        horiz_layout: QHBoxLayout = QHBoxLayout()
         horiz_layout.setSpacing(0)
 
-        self._radio_on_screen = QRadioButton()
+        self._radio_on_screen: QRadioButton = QRadioButton()
         self._radio_on_screen.toggled.connect(self._on_screen_slot)
         self._radio_on_screen.setObjectName("onScreen")
 
@@ -69,7 +69,7 @@ class PredictionFileInput(QWidget):
         frame.layout().addLayout(horiz_layout)
 
         # list of available images on napari
-        self._image_list = CheckBoxListWidget()
+        self._image_list: CheckBoxListWidget = CheckBoxListWidget()
         self._image_list.setEnabled(False)
         self._image_list.setObjectName("imageList")
         frame.layout().addWidget(self._image_list)
@@ -78,7 +78,7 @@ class PredictionFileInput(QWidget):
         horiz_layout = QHBoxLayout()
         horiz_layout.setSpacing(0)
 
-        self._radio_directory = QRadioButton()
+        self._radio_directory: QRadioButton = QRadioButton()
         self._radio_directory.toggled.connect(self._from_directory_slot)
         self._radio_directory.setObjectName("radioDirectory")
 
@@ -107,7 +107,7 @@ class PredictionFileInput(QWidget):
 
         horiz_layout.addStretch(5)
 
-        self._browse_dir_edit = InputButton(
+        self._browse_dir_edit: InputButton = InputButton(
             self._model,
             lambda dir: self._model.set_input_image_paths(
                 self.map_input_file_directory_to_path_list(dir)
@@ -118,12 +118,12 @@ class PredictionFileInput(QWidget):
         horiz_layout.addWidget(self._browse_dir_edit)
         frame.layout().addLayout(horiz_layout)
 
-        grid_layout = QGridLayout()
+        grid_layout: QGridLayout = QGridLayout()
 
-        image_input_label = LabelWithHint("Image input channel")
+        image_input_label: LabelWithHint = LabelWithHint("Image input channel")
         image_input_label.set_hint("0-indexed channel in image to segment.")
 
-        self._channel_select_dropdown = QComboBox()
+        self._channel_select_dropdown: QComboBox = QComboBox()
 
         # set up disappearing placeholder text
         self._channel_select_dropdown.setCurrentIndex(-1)
@@ -131,10 +131,10 @@ class PredictionFileInput(QWidget):
             "select a channel index"
         )
 
-        output_dir_label = LabelWithHint("Output directory")
+        output_dir_label: LabelWithHint = LabelWithHint("Output directory")
         output_dir_label.set_hint("Location to save segmentations.")
 
-        self._browse_output_edit = InputButton(
+        self._browse_output_edit: InputButton = InputButton(
             self._model,
             lambda dir: self._model.set_output_directory(dir),
             "Select directory...",

@@ -1,8 +1,5 @@
 from allencell_ml_segmenter.core.directories import Directories
 
-PAGE_WIDTH = 440
-PAGE_CONTENT_WIDTH = PAGE_WIDTH - 40
-
 
 class Style:
     cache = dict()
