@@ -21,11 +21,12 @@ def test_radio_new_slot(
     """
     Test the slot connected to the top radio button.
     """
+    # ARRANGE - explicitly enable model_selection_widget._combo_box_existing
+    model_selection_widget._combo_box_existing.setEnabled(True)
+
     # ACT (disable combo box)
-    model_selection_widget._combo_box_existing.setEnabled(
-        True
-    )  # explicitly enable the combobox to see if it gets disabled
-    model_selection_widget._radio_new_model_slot()
+    with qtbot.waitSignals([model_selection_widget._radio_new_model.toggled]):
+        model_selection_widget._radio_new_model.click()
 
     # ASSERT
     assert not model_selection_widget._combo_box_existing.isEnabled()
@@ -37,11 +38,14 @@ def test_radio_existing_slot(
     """
     Test the slot connected to the bottom radio button.
     """
+    # ARRANGE - explicitly disable model_selection_widget._combo_box_existing
+    model_selection_widget._combo_box_existing.setEnabled(False)
+
     # ACT (enable combo box)
-    model_selection_widget._combo_box_existing.setEnabled(
-        False
-    )  # explicitly disable the combobox to see if it gets enabled
-    model_selection_widget._radio_existing_model_slot()
+    with qtbot.waitSignals(
+        [model_selection_widget._radio_existing_model.toggled]
+    ):
+        model_selection_widget._radio_existing_model.click()
 
     # ASSERT
     assert model_selection_widget._combo_box_existing.isEnabled()
@@ -57,13 +61,19 @@ def test_checkbox_slot(
     assert not model_selection_widget._timeout_hour_input.isEnabled()
 
     # ACT (enable QLineEdit related to timeout limit)
-    model_selection_widget._timeout_checkbox_slot(Qt.Checked)
+    with qtbot.waitSignals(
+        [model_selection_widget._timeout_checkbox.stateChanged]
+    ):
+        model_selection_widget._timeout_checkbox.click()
 
     # ASSERT
     assert model_selection_widget._timeout_hour_input.isEnabled()
 
-    # ACT (disable QLineEdit related to timeout limit)
-    model_selection_widget._timeout_checkbox_slot(Qt.Unchecked)
+    # ACT (disabled QLineEdit related to timeout limit)
+    with qtbot.waitSignals(
+        [model_selection_widget._timeout_checkbox.stateChanged]
+    ):
+        model_selection_widget._timeout_checkbox.click()
 
     # ASSERT
     assert not model_selection_widget._timeout_hour_input.isEnabled()
