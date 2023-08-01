@@ -1,53 +1,39 @@
+from typing import Set
+
 import pytest
 import napari
-from qtpy.QtWidgets import QStackedWidget
+from pytestqt.qtbot import QtBot
+
 from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.main.main_model import MainModel
-from allencell_ml_segmenter.sample.sample_view import SampleView
-from allencell_ml_segmenter.main.main_widget import MainWidget
+from allencell_ml_segmenter.prediction.view import PredictionView
+from allencell_ml_segmenter.training.view import TrainingView
+from allencell_ml_segmenter.main.main_widget import MainTabWidget
 from unittest.mock import Mock
 
 
 @pytest.fixture
-def viewer():
+def viewer() -> napari.Viewer:
     return Mock(spec=napari.Viewer)
 
 
-def test_init(viewer, qtbot):
-    main_widget = MainWidget(viewer)
-    assert isinstance(main_widget, QStackedWidget)
-    assert isinstance(main_widget.model, MainModel)
-    assert len(main_widget.view_to_index) > 0  # need at least one views loaded
+@pytest.fixture
+def main_tab_widget(qtbot: QtBot) -> MainTabWidget:
+    return MainTabWidget(viewer)
 
 
-def test_handle_event(viewer, qtbot):
-    main_widget = MainWidget(viewer)
-    sample_view = SampleView(main_widget.model)
-    main_widget.initialize_view(sample_view)
-    assert main_widget.currentIndex() != main_widget.view_to_index[sample_view]
+def test_handle_action_change_view_event(
+    main_tab_widget: MainTabWidget,
+) -> None:
+    # ARRANGE
+    views: Set[View] = main_tab_widget._view_to_index.keys()
 
-    main_widget.model.set_current_view(sample_view)
+    for view in views:
+        # ACT: have the model dispatch the action change view event
+        main_tab_widget._model.set_current_view(view)
 
-    assert main_widget.currentIndex() == main_widget.view_to_index[sample_view]
-
-
-def test_main_widget_set_view(viewer, qtbot):
-    main_widget = MainWidget(viewer)
-    view = View()
-    main_widget.initialize_view(view)
-
-    main_widget.set_view(view)
-
-    assert main_widget.currentIndex() == main_widget.view_to_index[view]
-
-
-def test_main_widget_initialize_view(viewer, qtbot):
-    main_widget = MainWidget(viewer)
-    view = View()
-
-    main_widget.initialize_view(view)
-
-    # index value assigned before widget is added
-    widget_count = main_widget.count()
-    assert main_widget.view_to_index[view] == widget_count - 1
-    assert main_widget.widget(widget_count - 1) == view
+        # ASSERT: check that the main widget's current view (after setting) is same as the model's current view
+        assert (
+            main_tab_widget.currentIndex()
+            == main_tab_widget._view_to_index[view]
+        )

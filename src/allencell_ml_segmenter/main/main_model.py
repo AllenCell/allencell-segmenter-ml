@@ -13,7 +13,7 @@ class MainModel(Publisher):
         # Current page of the UI
         self._current_view: View = None
 
-    def get_current_view(self) -> bool:
+    def get_current_view(self) -> View:
         """
         getter/property for current page
         """
