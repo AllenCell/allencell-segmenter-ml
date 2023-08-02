@@ -103,16 +103,20 @@ class ModelSelectionWidget(QWidget):
         dimension_choice_layout: QHBoxLayout = QHBoxLayout()
         dimension_choice_layout.setSpacing(0)
 
-        radio_3d: QRadioButton = QRadioButton()
-        radio_3d.setObjectName("3DRadio")
+        self._radio_3d: QRadioButton = QRadioButton()
+        self._radio_3d.setObjectName("3DRadio")
+        self._radio_3d.toggled.connect(lambda: self._model.set_image_dims(3))
         label_3d: LabelWithHint = LabelWithHint("3D")
 
-        radio_2d: QRadioButton = QRadioButton()
+        self._radio_2d: QRadioButton = QRadioButton()
+        self._radio_2d.toggled.connect(lambda: self._model.set_image_dims(2))
         label_2d: LabelWithHint = LabelWithHint("2D")
 
-        dimension_choice_layout.addWidget(radio_3d)
+        dimension_choice_layout.addWidget(self._radio_3d)
         dimension_choice_layout.addWidget(label_3d)
-        dimension_choice_layout.addWidget(radio_2d, alignment=Qt.AlignLeft)
+        dimension_choice_layout.addWidget(
+            self._radio_2d, alignment=Qt.AlignLeft
+        )
         dimension_choice_layout.addWidget(label_2d, alignment=Qt.AlignLeft)
         dimension_choice_layout.addStretch(10)
         dimension_choice_layout.setContentsMargins(0, 0, 0, 0)

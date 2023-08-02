@@ -127,7 +127,6 @@ def test_set_model_path(
 
 
 def test_set_patch_size(
-    qtbot: QtBot,
     model_selection_widget: ModelSelectionWidget,
     training_model: TrainingModel,
 ):
@@ -149,3 +148,31 @@ def test_set_patch_size(
 
     # ASSERT
     assert training_model.get_patch_size() == PatchSize.LARGE
+
+
+# TODO: clicking not working!
+# def test_set_image_dimensions(
+#     qtbot: QtBot,
+#     model_selection_widget: ModelSelectionWidget,
+#     training_model: TrainingModel,
+# ):
+#     """
+#     Tests that checking the associated radio buttons properly sets the image dimensions.
+#     """
+#     # ACT
+#     while qtbot.waitSignals(
+#         [model_selection_widget._radio_2d.toggled], timeout=1000
+#     ):
+#         model_selection_widget._radio_2d.click()
+#
+#     # ASSERT
+#     assert training_model.get_image_dims() == 2
+#
+#     # ACT
+#     while qtbot.waitSignals(
+#         [model_selection_widget._radio_3d.toggled], timeout=1000
+#     ):
+#         model_selection_widget._radio_3d.click()
+#
+#     # ASSERT
+#     assert training_model.get_image_dims() == 3
