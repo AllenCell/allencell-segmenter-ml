@@ -44,10 +44,12 @@ class ImageSelectionWidget(QWidget):
 
         # grid contents
         directory_label: LabelWithHint = LabelWithHint("Image directory")
-        directory_input_button: InputButton = InputButton(
-            self._model, lambda dummy: None, "Select directory..."
-        )  # TODO: pass in actual setter
-        directory_input_button.elongate(248)
+        self._directory_input_button: InputButton = InputButton(
+            self._model,
+            lambda dir: self._model.set_images_directory(dir),
+            "Select directory...",
+        )
+        self._directory_input_button.elongate(248)
 
         frame.layout().addWidget(directory_label, 0, 0, Qt.AlignVCenter)
 
@@ -59,7 +61,9 @@ class ImageSelectionWidget(QWidget):
         guide_text.setTextFormat(Qt.RichText)
         guide_text.setOpenExternalLinks(True)
 
-        frame.layout().addWidget(directory_input_button, 0, 1, Qt.AlignVCenter)
+        frame.layout().addWidget(
+            self._directory_input_button, 0, 1, Qt.AlignVCenter
+        )
         frame.layout().addWidget(guide_text, 1, 1, Qt.AlignTop)
 
         channel_label: LabelWithHint = LabelWithHint("Image channel")
