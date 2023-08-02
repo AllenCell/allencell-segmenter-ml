@@ -48,6 +48,7 @@ class TrainingModel(Publisher):
         self._images_directory: Path = None
         self._channel_index: Union[int, None] = None
         self._max_time: int = None  # in seconds
+        self._config_dir:Path = None
 
     def get_experiment_type(self) -> TrainingType:
         """
@@ -165,3 +166,17 @@ class TrainingModel(Publisher):
         max_time (int): maximum runtime for training, in seconds
         """
         self._max_time = max_time
+
+    def get_config_dir(self) -> Path:
+        """
+        Gets config directory
+        """
+        return self._config_dir
+
+    def set_config_dir(self, config_dir: Path) -> None:
+        """
+        Sets config directory
+
+        config_dir (str): path to config directory
+        """
+        self._config_dir = config_dir
