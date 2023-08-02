@@ -1,6 +1,6 @@
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.event import Event
-from cyto_dl.train import main as train_model
+from cyto_dl.train import main as cyto_train
 import sys
 from allencell_ml_segmenter.training.training_model import (
     TrainingType,
@@ -9,18 +9,19 @@ from allencell_ml_segmenter.training.training_model import (
 )
 from allencell_ml_segmenter.training.training_model import TrainingModel
 from pathlib import Path
-from typing import List
+from typing import List, Any
 
 
 # static method
-def _list_of_int_to_string(list_to_convert: List[int]) -> str:
+def _list_to_string(list_to_convert: List[Any]) -> str:
     """
     Converts a list of ints to a string
 
     list (List[int]): list of ints to convert
     """
     # fastest python implementation of list to string
-    return "".join([str(i) for i in list_to_convert])
+    ints_to_strings = ", ".join([str(i) for i in list_to_convert])
+    return f"[{ints_to_strings}]"
 
 
 class TrainingService(Subscriber):
@@ -34,7 +35,7 @@ class TrainingService(Subscriber):
         self._training_model.subscribe(
             Event.PROCESS_TRAINING,
             self,
-            lambda e: self.train_model(),
+            self.train_model,
         )
 
     def train_model(self) -> None:
@@ -45,7 +46,7 @@ class TrainingService(Subscriber):
         self._set_hardware()
 
         # Call to cyto-dl's train.py
-        train_model()
+        cyto_train()
 
     def _set_experiment(self) -> None:
         """
@@ -68,7 +69,7 @@ class TrainingService(Subscriber):
         Sets the spatial_dims argument variable for hydra override using sys.argv
         """
         image_dims: int = self._training_model.get_image_dims()
-        sys.argv.append(f"++spatial_dims={image_dims}")
+        sys.argv.append(f"++spatial_dims=[{image_dims}]")
 
     def _set_max_epoch(self) -> None:
         """
@@ -90,7 +91,7 @@ class TrainingService(Subscriber):
         """
         patch_size: PatchSize = self._training_model.get_patch_size()
         sys.argv.append(
-            f"++data._aux.patch_shape={_list_of_int_to_string(patch_size.value)}"
+            f"++data._aux.patch_shape={_list_to_string(patch_size.value)}"
         )
 
     def _set_config_dir(self) -> None:

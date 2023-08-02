@@ -48,7 +48,9 @@ class TrainingModel(Publisher):
         self._images_directory: Path = None
         self._channel_index: Union[int, None] = None
         self._max_time: int = None  # in seconds
-        self._config_dir:Path = None
+        self._config_dir: Path = None
+        self._patch_size: PatchSize = None
+        self._max_epoch: int = None
 
     def get_experiment_type(self) -> TrainingType:
         """
@@ -75,7 +77,7 @@ class TrainingModel(Publisher):
         """
         Sets hardware type
 
-        hardware_type (str): what hardware to train on, "cpu" or "gpu"
+        hardware_type (Path): what hardware to train on, "cpu" or "gpu"
         """
         # convert string to enum
         self._hardware_type = Hardware(hardware_type.lower())
@@ -151,7 +153,22 @@ class TrainingModel(Publisher):
         patch_size (str): patch size for training
         """
         # convert string to enum
-        self._patch_size = PatchSize(patch_size)
+        patch_size = patch_size.lower()
+        if (
+            patch_size != "small"
+            and patch_size != "medium"
+            and patch_size != "large"
+        ):
+            raise ValueError(
+                "No support for non small, medium, and large patch sizes."
+            )
+        if "small":
+            size: PatchSize = PatchSize.SMALL
+        elif "medium":
+            size = PatchSize.MEDIUM
+        elif "large":
+            size = PatchSize.LARGE
+        self._patch_size = size
 
     def get_max_time(self) -> int:
         """

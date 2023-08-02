@@ -35,6 +35,9 @@ def test_pub_dispatch_explicit_handler(publisher: Publisher) -> None:
     assert subscriber.was_handled(event_under_test)
 
 
+# TODO from brian: add better methods for testing publisher event to subscriber handlers
+
+
 def test_pub_dispatch_multiple(publisher: Publisher) -> None:
     subscriber1: FakeSubscriber = FakeSubscriber()
 
