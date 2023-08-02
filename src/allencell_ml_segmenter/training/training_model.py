@@ -70,7 +70,7 @@ class TrainingModel(Publisher):
         training_type (str): name of cyto-dl experiment to run
         """
         # convert string to enum
-        self._experiment_type = TrainingType[training_type]
+        self._experiment_type = TrainingType(training_type)
 
     def get_hardware_type(self) -> Hardware:
         """
@@ -85,7 +85,7 @@ class TrainingModel(Publisher):
         hardware_type (Path): what hardware to train on, "cpu" or "gpu"
         """
         # convert string to enum
-        self._hardware_type = Hardware[hardware_type.lower()]
+        self._hardware_type = Hardware(hardware_type.lower())
 
     def get_image_dims(self) -> int:
         """
@@ -177,7 +177,14 @@ class TrainingModel(Publisher):
             raise ValueError(
                 "No support for non small, medium, and large patch sizes."
             )
-        self._patch_size = PatchSize[patch_size]
+        if patch_size == "small":
+            size: PatchSize = PatchSize.SMALL
+        elif patch_size == "medium":
+            size = PatchSize.MEDIUM
+        else:
+            size = PatchSize.LARGE
+
+        self._patch_size = PatchSize(size)
 
     def get_max_time(self) -> int:
         """
