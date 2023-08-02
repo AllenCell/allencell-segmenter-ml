@@ -67,7 +67,6 @@ def test_get_image_dims(training_model: TrainingModel) -> None:
     training_model.get_image_dims() == 2
 
     # Arrange
-    assert training_model.get_image_dims() == None
     training_model._image_dims = 3
 
     # Act/Assert
