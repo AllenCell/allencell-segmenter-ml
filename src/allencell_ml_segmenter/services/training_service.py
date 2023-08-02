@@ -1,6 +1,6 @@
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.event import Event
-from cyto_dl.train import main as cyto_train
+#TODO include when on artifactory from cyto_dl.train import main as cyto_train
 import sys
 from allencell_ml_segmenter.training.training_model import (
     TrainingType,
@@ -46,7 +46,7 @@ class TrainingService(Subscriber):
         self._set_hardware()
 
         # Call to cyto-dl's train.py
-        cyto_train()
+        #TODO include when on artifactory cyto_train()
 
     def _set_experiment(self) -> None:
         """
