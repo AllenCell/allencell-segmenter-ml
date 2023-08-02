@@ -7,7 +7,10 @@ from pytestqt.qtbot import QtBot
 from allencell_ml_segmenter.training.model_selection_widget import (
     ModelSelectionWidget,
 )
-from allencell_ml_segmenter.training.training_model import TrainingModel
+from allencell_ml_segmenter.training.training_model import (
+    TrainingModel,
+    PatchSize,
+)
 
 
 @pytest.fixture
@@ -131,3 +134,28 @@ def test_set_model_path(
     # ASSERT
     # TODO: uncomment after above is solved
     # assert training_model.get_model_path() is None
+
+
+def test_set_patch_size(
+    qtbot: QtBot,
+    model_selection_widget: ModelSelectionWidget,
+    training_model: TrainingModel,
+):
+    """
+    Tests that using the associated combo box properly sets the patch size field.
+    """
+    # ACT
+    model_selection_widget._structure_size_combo_box.setCurrentIndex(
+        0
+    )  # small
+
+    # ASSERT
+    assert training_model.get_patch_size() == PatchSize.SMALL
+
+    # ACT
+    model_selection_widget._structure_size_combo_box.setCurrentIndex(
+        2
+    )  # large
+
+    # ASSERT
+    assert training_model.get_patch_size() == PatchSize.LARGE

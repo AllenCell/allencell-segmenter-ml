@@ -85,12 +85,15 @@ class ModelSelectionWidget(QWidget):
         structure_size_label: LabelWithHint = LabelWithHint("Structure size")
         grid_layout.addWidget(structure_size_label, 0, 0)
 
-        structure_size_combo_box: QComboBox = QComboBox()
-        structure_size_combo_box.setObjectName("structureSizeComboBox")
-        structure_size_combo_box.setCurrentIndex(-1)
-        structure_size_combo_box.setPlaceholderText("Select an option")
-        structure_size_combo_box.addItems(["small", "med", "large"])
-        grid_layout.addWidget(structure_size_combo_box, 0, 1)
+        self._structure_size_combo_box: QComboBox = QComboBox()
+        self._structure_size_combo_box.setObjectName("structureSizeComboBox")
+        self._structure_size_combo_box.setCurrentIndex(-1)
+        self._structure_size_combo_box.setPlaceholderText("Select an option")
+        self._structure_size_combo_box.addItems(["small", "medium", "large"])
+        self._structure_size_combo_box.currentTextChanged.connect(
+            lambda size: self._model.set_patch_size(size.upper())
+        )
+        grid_layout.addWidget(self._structure_size_combo_box, 0, 1)
 
         image_dimensions_label: LabelWithHint = LabelWithHint(
             "Image dimension"
