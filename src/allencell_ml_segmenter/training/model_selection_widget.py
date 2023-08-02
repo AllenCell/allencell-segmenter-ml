@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
     QWidget,
@@ -70,6 +72,9 @@ class ModelSelectionWidget(QWidget):
         self._combo_box_existing.setPlaceholderText("Select an option")
         self._combo_box_existing.setEnabled(False)
         self._combo_box_existing.setMinimumWidth(306)
+        self._combo_box_existing.currentTextChanged.connect(
+            lambda path_text: self._model.set_model_path(Path(path_text))
+        )
         grid_layout.addWidget(self._combo_box_existing, 1, 2)
 
         frame.layout().addLayout(grid_layout)
@@ -159,7 +164,7 @@ class ModelSelectionWidget(QWidget):
         Triggered when the user selects the "start a new model" radio button.
         Disables interaction with the combo box below.
         """
-        # TODO: call corresponding setter once model is implemented
+        self._model.set_model_path(None)
         self._combo_box_existing.setEnabled(False)
 
     def _radio_existing_model_slot(self) -> None:
@@ -167,7 +172,6 @@ class ModelSelectionWidget(QWidget):
         Triggered when the user selects the "existing model" radio button.
         Enables interaction with the neighboring combo box.
         """
-        # TODO: call corresponding setter (likely same as above) once model is implemented
         self._combo_box_existing.setEnabled(True)
 
     def _timeout_checkbox_slot(self, checked: Qt.CheckState) -> None:
