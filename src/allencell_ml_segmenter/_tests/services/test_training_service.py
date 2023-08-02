@@ -46,7 +46,8 @@ def test_init(training_service: TrainingService) -> None:
         "training"
     ] == {training_service: training_service.train_model}
 
-#TODO include when on artifactory
+
+# TODO include when on artifactory
 # def test_train_model(training_service: TrainingService) -> None:
 #     # Act
 #     with patch(
