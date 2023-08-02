@@ -21,7 +21,7 @@ def _list_to_string(list_to_convert: List[Any]) -> str:
     list (List[int]): list of ints to convert
     """
     # fastest python implementation of list to string
-    ints_to_strings = ", ".join([str(i) for i in list_to_convert])
+    ints_to_strings: str = ", ".join([str(i) for i in list_to_convert])
     return f"[{ints_to_strings}]"
 
 
