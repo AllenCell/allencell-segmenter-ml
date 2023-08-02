@@ -128,12 +128,10 @@ class ModelSelectionWidget(QWidget):
 
         grid_layout.addWidget(dimension_choice_dummy, 1, 1)
 
-        training_step_label: LabelWithHint = LabelWithHint("Training step")
+        training_step_label: LabelWithHint = LabelWithHint("Training steps")
         grid_layout.addWidget(training_step_label, 2, 0)
 
-        self._training_step_input: QLineEdit = (
-            QLineEdit()
-        )  # TODO: placeholder text?
+        self._training_step_input: QLineEdit = QLineEdit()
         self._training_step_input.setPlaceholderText("1000")
         self._training_step_input.setObjectName("trainingStepInput")
         self._training_step_input.textChanged.connect(
@@ -159,6 +157,10 @@ class ModelSelectionWidget(QWidget):
         self._timeout_hour_input.setEnabled(False)
         self._timeout_hour_input.setMaximumWidth(30)
         self._timeout_hour_input.setPlaceholderText("0")
+        # TODO: decide between converting as int(text) or float(text) -> will users want to use decimals? is there a better way to convert from hours to seconds?
+        self._timeout_hour_input.textChanged.connect(
+            lambda text: self._model.set_max_time(round(float(text) * 3600))
+        )
         timeout_layout.addWidget(self._timeout_hour_input)
 
         timeout_right_text: LabelWithHint = LabelWithHint("hours")
