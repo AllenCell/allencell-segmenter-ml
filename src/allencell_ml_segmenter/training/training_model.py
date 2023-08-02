@@ -50,6 +50,7 @@ class TrainingModel(Publisher):
         self._model_path: Union[
             Path, None
         ] = None  # if None, start a new model
+        self._patch_size: PatchSize = None
         self._max_time: int = None  # in seconds
         self._config_dir: Path = None
         self._patch_size: PatchSize = None
@@ -68,7 +69,7 @@ class TrainingModel(Publisher):
         training_type (str): name of cyto-dl experiment to run
         """
         # convert string to enum
-        self._experiment_type = TrainingType(training_type)
+        self._experiment_type = TrainingType[training_type]
 
     def get_hardware_type(self) -> Hardware:
         """
@@ -83,7 +84,7 @@ class TrainingModel(Publisher):
         hardware_type (Path): what hardware to train on, "cpu" or "gpu"
         """
         # convert string to enum
-        self._hardware_type = Hardware(hardware_type.lower())
+        self._hardware_type = Hardware[hardware_type.lower()]
 
     def get_image_dims(self) -> int:
         """
