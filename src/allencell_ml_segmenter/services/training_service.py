@@ -92,3 +92,11 @@ class TrainingService(Subscriber):
         sys.argv.append(
             f"++data._aux.patch_shape={_list_of_int_to_string(patch_size.value)}"
         )
+
+    def _set_config_dir(self) -> None:
+        """
+        Sets the config_dir hydra runtime variable using sys.argv
+        """
+        # This hydra runtime variable needs to be set in separate calls to sys.argv
+        sys.argv.append("--config-dir")
+        sys.argv.append(str(self._training_model.get_config_dir()))
