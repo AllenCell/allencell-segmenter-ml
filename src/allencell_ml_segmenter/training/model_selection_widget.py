@@ -13,6 +13,7 @@ from PyQt5.QtWidgets import (
     QCheckBox,
 )
 
+from allencell_ml_segmenter.training.training_model import TrainingModel
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 
 
@@ -23,10 +24,10 @@ class ModelSelectionWidget(QWidget):
 
     TITLE_TEXT: str = "Segmentation model"
 
-    def __init__(self):  # TODO: take in training model as a parameter
+    def __init__(self, model: TrainingModel):
         super().__init__()
 
-        # self._model: TrainingModel = model
+        self._model: TrainingModel = model
 
         # widget skeleton
         self.setLayout(QVBoxLayout())
