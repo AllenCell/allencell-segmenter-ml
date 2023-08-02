@@ -158,6 +158,7 @@ class ModelSelectionWidget(QWidget):
         self._timeout_hour_input.setMaximumWidth(30)
         self._timeout_hour_input.setPlaceholderText("0")
         # TODO: decide between converting as int(text) or float(text) -> will users want to use decimals? is there a better way to convert from hours to seconds?
+        # TODO: how to handle invalid (not convertible to a number) input?
         self._timeout_hour_input.textChanged.connect(
             lambda text: self._model.set_max_time(round(float(text) * 3600))
         )
