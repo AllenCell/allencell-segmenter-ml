@@ -186,3 +186,19 @@ def test_set_max_epoch(
 
     # ASSERT
     assert training_model.get_max_epoch() == 100
+
+
+def test_set_max_time(
+    qtbot: QtBot,
+    model_selection_widget: ModelSelectionWidget,
+    training_model: TrainingModel,
+) -> None:
+    """
+    Tests that the max time field is properly set by the associated QLineEdit.
+    """
+    # ACT
+    model_selection_widget._timeout_checkbox.click()  # enables the QLineEdit
+    qtbot.keyClicks(model_selection_widget._timeout_hour_input, "1")
+
+    # ASSERT
+    assert training_model.get_max_time() == 3600
