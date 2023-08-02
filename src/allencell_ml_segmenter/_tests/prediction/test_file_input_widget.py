@@ -25,9 +25,15 @@ def test_top_radio_button_slot(
     """
     Test the _top_radio_button_slot method of PredictionFileInput.
     """
-    # Disable the bottom input button and enable the top checkbox list widget
-    file_input_widget._on_screen_slot()
+    # ARRANGE - explicitly disable file_input_widget._image_list and enable file_input_widget._browse_dir_edit
+    file_input_widget._image_list.setEnabled(False)
+    file_input_widget._browse_dir_edit.setEnabled(True)
 
+    # ACT
+    with qtbot.waitSignals([file_input_widget._radio_on_screen.toggled]):
+        file_input_widget._radio_on_screen.click()
+
+    # ASSERT - states should have flipped
     assert file_input_widget._image_list.isEnabled()
     assert not file_input_widget._browse_dir_edit.isEnabled()
 
@@ -38,9 +44,15 @@ def test_bottom_radio_button_slot(
     """
     Test the _bottom_radio_button_slot method of PredictionFileInput.
     """
-    # Enable the bottom input button and disable the top checkbox list widget
-    file_input_widget._from_directory_slot()
+    # ARRANGE - explicitly enable file_input_widget._image_list and disable file_input_widget._browse_dir_edit
+    file_input_widget._image_list.setEnabled(True)
+    file_input_widget._browse_dir_edit.setEnabled(False)
 
+    # ACT
+    with qtbot.waitSignals([file_input_widget._radio_directory.toggled]):
+        file_input_widget._radio_directory.click()
+
+    # ASSERT - states should have flipped
     assert not file_input_widget._image_list.isEnabled()
     assert file_input_widget._browse_dir_edit.isEnabled()
 
@@ -63,9 +75,14 @@ def test_preprocessing_method(
         qtbot.mouseClick(
             file_input_widget._browse_dir_edit._button, Qt.LeftButton
         )
+
+        # ASSERT
         assert file_input_widget._model.get_preprocessing_method() is None
 
+        # ACT
         qtbot.mouseClick(
             file_input_widget._browse_output_edit._button, Qt.LeftButton
         )
+
+        # ASSERT
         assert file_input_widget._model.get_preprocessing_method() is None
