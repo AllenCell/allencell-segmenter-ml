@@ -91,7 +91,7 @@ class ModelSelectionWidget(QWidget):
         self._structure_size_combo_box.setPlaceholderText("Select an option")
         self._structure_size_combo_box.addItems(["small", "medium", "large"])
         self._structure_size_combo_box.currentTextChanged.connect(
-            lambda size: self._model.set_patch_size(size.upper())
+            lambda size: self._model.set_patch_size(size)
         )
         grid_layout.addWidget(self._structure_size_combo_box, 0, 1)
 
