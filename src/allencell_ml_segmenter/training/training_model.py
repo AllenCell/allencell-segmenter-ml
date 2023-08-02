@@ -161,5 +161,7 @@ class TrainingModel(Publisher):
     def set_max_time(self, max_time: int) -> None:
         """
         Sets max runtime (in seconds)
+
+        max_time (int): maximum runtime for training, in seconds
         """
         self._max_time = max_time
