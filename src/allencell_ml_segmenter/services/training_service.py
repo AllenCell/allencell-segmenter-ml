@@ -2,10 +2,15 @@ from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.event import Event
 from cyto_dl.train import main as train_model
 import sys
-from allencell_ml_segmenter.training.training_model import TrainingType, Hardware, PatchSize
+from allencell_ml_segmenter.training.training_model import (
+    TrainingType,
+    Hardware,
+    PatchSize,
+)
 from allencell_ml_segmenter.training.training_model import TrainingModel
 from pathlib import Path
 from typing import List
+
 
 # static method
 def _list_of_int_to_string(list_to_convert: List[int]) -> str:
@@ -22,6 +27,7 @@ class TrainingService(Subscriber):
     """
     Interface for training a model. Uses cyto-dl to train model according to spec
     """
+
     def __init__(self, training_model: TrainingModel):
         super().__init__()
         self._training_model: TrainingModel = training_model
@@ -45,7 +51,9 @@ class TrainingService(Subscriber):
         """
         Sets the experiment argument variable for hydra using sys.argv
         """
-        experiment_type: TrainingType = self._training_model.get_experiment_type()
+        experiment_type: TrainingType = (
+            self._training_model.get_experiment_type()
+        )
         sys.argv.append(f"experiment=im2im/{experiment_type.value}.yaml")
 
     def _set_hardware(self) -> None:
@@ -81,5 +89,6 @@ class TrainingService(Subscriber):
         Sets the data._aux.patch_shape argument variable for hydra override using sys.argv
         """
         patch_size: PatchSize = self._training_model.get_patch_size()
-        sys.argv.append(f"++data._aux.patch_shape={_list_of_int_to_string(patch_size.value)}")
-
+        sys.argv.append(
+            f"++data._aux.patch_shape={_list_of_int_to_string(patch_size.value)}"
+        )
