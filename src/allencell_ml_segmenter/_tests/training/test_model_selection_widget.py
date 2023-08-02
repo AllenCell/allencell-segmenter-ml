@@ -5,14 +5,15 @@ from pytestqt.qtbot import QtBot
 from allencell_ml_segmenter.training.model_selection_widget import (
     ModelSelectionWidget,
 )
+from allencell_ml_segmenter.training.training_model import TrainingModel
 
 
 @pytest.fixture
-def model_selection_widget() -> ModelSelectionWidget:
+def model_selection_widget(qtbot: QtBot) -> ModelSelectionWidget:
     """
     Fixture that creates an instance of ModelSelectionWidget for testing.
     """
-    return ModelSelectionWidget()
+    return ModelSelectionWidget(TrainingModel())
 
 
 def test_radio_new_slot(

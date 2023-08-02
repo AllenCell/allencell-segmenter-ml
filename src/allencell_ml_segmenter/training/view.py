@@ -18,6 +18,7 @@ from allencell_ml_segmenter.training.image_selection_widget import (
 from allencell_ml_segmenter.training.model_selection_widget import (
     ModelSelectionWidget,
 )
+from allencell_ml_segmenter.training.training_model import TrainingModel
 
 
 class TrainingView(View, Subscriber):
@@ -29,7 +30,7 @@ class TrainingView(View, Subscriber):
         super().__init__()
 
         self._main_model: MainModel = main_model
-        # self._training_model: TrainingModel = TrainingModel()
+        self._training_model: TrainingModel = TrainingModel()
 
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
@@ -42,10 +43,14 @@ class TrainingView(View, Subscriber):
             self._title, alignment=Qt.AlignHCenter | Qt.AlignBottom
         )
 
-        image_selection_widget: ImageSelectionWidget = ImageSelectionWidget()
+        image_selection_widget: ImageSelectionWidget = ImageSelectionWidget(
+            self._training_model
+        )
         image_selection_widget.setObjectName("imageSelection")
 
-        model_selection_widget: ModelSelectionWidget = ModelSelectionWidget()
+        model_selection_widget: ModelSelectionWidget = ModelSelectionWidget(
+            self._training_model
+        )
         model_selection_widget.setObjectName("modelSelection")
 
         # Dummy divs allow for easy alignment
