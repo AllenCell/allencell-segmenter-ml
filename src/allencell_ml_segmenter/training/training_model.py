@@ -44,13 +44,13 @@ class TrainingModel(Publisher):
         super().__init__()
         self._experiment_type: TrainingType = None
         self._hardware_type: Hardware = None
-        self._image_dims: int = None
         self._images_directory: Path = None
         self._channel_index: Union[int, None] = None
         self._model_path: Union[
             Path, None
         ] = None  # if None, start a new model
         self._patch_size: PatchSize = None
+        self._image_dims: int = None
         self._max_time: int = None  # in seconds
         self._config_dir: Path = None
         self._patch_size: PatchSize = None
