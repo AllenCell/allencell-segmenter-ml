@@ -1,5 +1,3 @@
-from unittest.mock import patch
-
 import pytest
 import sys
 
@@ -9,7 +7,6 @@ from allencell_ml_segmenter.services.training_service import (
 )
 from allencell_ml_segmenter.training.training_model import (
     TrainingModel,
-    TrainingType,
 )
 
 
