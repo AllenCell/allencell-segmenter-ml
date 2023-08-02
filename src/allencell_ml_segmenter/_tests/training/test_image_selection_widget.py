@@ -54,7 +54,6 @@ def test_set_images_directory(
 
 
 def test_set_channel_index(
-    qtbot: QtBot,
     image_selection_widget: ImageSelectionWidget,
     training_model: TrainingModel,
 ) -> None:
