@@ -8,31 +8,38 @@ class TrainingType(Enum):
     """
     Different cyto-dl experiment types
     """
+
     SEGMENTATION = "segmentation"
     GAN = "gan"
     OMNIPOSE = "omnipose"
     SKOOTS = "skoots"
 
+
 class Hardware(Enum):
     """
     Hardware, "cpu" or "gpu"
     """
+
     CPU = "cpu"
     GPU = "gpu"
+
 
 class PatchSize(Enum):
     """
     Patch size for training, and their respective patch shapes.
     TODO: get from benji
     """
+
     SMALL = [1, 3, 3]
     MEDIUM = [16, 32, 32]
     LARGE = [16, 32, 32]
+
 
 class TrainingModel(Publisher):
     """
     Stores state relevant to training processes.
     """
+
     def __init__(self):
         super().__init__()
         self._experiment_type: TrainingType = None
@@ -40,7 +47,7 @@ class TrainingModel(Publisher):
         self._image_dims: int = None
         self._images_directory: Path = None
         self._channel_index: Union[int, None] = None
-        self._max_time: int = None # in seconds
+        self._max_time: int = None  # in seconds
 
     def get_experiment_type(self) -> TrainingType:
         """
@@ -156,5 +163,3 @@ class TrainingModel(Publisher):
         Sets max runtime (in seconds)
         """
         self._max_time = max_time
-
-
