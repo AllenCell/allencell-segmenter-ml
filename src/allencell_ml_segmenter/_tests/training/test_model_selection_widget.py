@@ -107,10 +107,9 @@ def test_set_model_path(
     model_selection_widget._combo_box_existing.addItems(
         [f"dummy path {i}" for i in range(10)]
     )
-    model_selection_widget._combo_box_existing.setEnabled(True)
-    # TODO: enable the combo box instead by clicking the "existing model" radio button
 
     # ACT
+    model_selection_widget._radio_existing_model.click()  # enables the combo box
     model_selection_widget._combo_box_existing.setCurrentIndex(8)
 
     # ASSERT
@@ -123,17 +122,10 @@ def test_set_model_path(
     assert training_model.get_model_path() == Path("dummy path 3")
 
     # ACT - press "start a new model" radio button, which should set model_path to None
-
-    # TODO: find out why calling .click() doesn't send a clicked or toggled signal, and why timeout does not work
-    # qtbot.mouseClick(model_selection_widget._radio_new_model, Qt.LeftButton)
-    # while qtbot.waitSignals(
-    #     [model_selection_widget._radio_new_model.toggled], timeout=1000
-    # ):
-    #     model_selection_widget._radio_new_model.click()
+    model_selection_widget._radio_new_model.click()
 
     # ASSERT
-    # TODO: uncomment after above is solved
-    # assert training_model.get_model_path() is None
+    assert training_model.get_model_path() is None
 
 
 def test_set_patch_size(
@@ -160,29 +152,22 @@ def test_set_patch_size(
     assert training_model.get_patch_size() == PatchSize.LARGE
 
 
-# TODO: clicking not working!
-# def test_set_image_dimensions(
-#     qtbot: QtBot,
-#     model_selection_widget: ModelSelectionWidget,
-#     training_model: TrainingModel,
-# ):
-#     """
-#     Tests that checking the associated radio buttons properly sets the image dimensions.
-#     """
-#     # ACT
-#     while qtbot.waitSignals(
-#         [model_selection_widget._radio_2d.toggled], timeout=1000
-#     ):
-#         model_selection_widget._radio_2d.click()
-#
-#     # ASSERT
-#     assert training_model.get_image_dims() == 2
-#
-#     # ACT
-#     while qtbot.waitSignals(
-#         [model_selection_widget._radio_3d.toggled], timeout=1000
-#     ):
-#         model_selection_widget._radio_3d.click()
-#
-#     # ASSERT
-#     assert training_model.get_image_dims() == 3
+def test_set_image_dimensions(
+    qtbot: QtBot,
+    model_selection_widget: ModelSelectionWidget,
+    training_model: TrainingModel,
+):
+    """
+    Tests that checking the associated radio buttons properly sets the image dimensions.
+    """
+    # ACT
+    model_selection_widget._radio_2d.click()
+
+    # ASSERT
+    assert training_model.get_image_dims() == 2
+
+    # ACT
+    model_selection_widget._radio_3d.click()
+
+    # ASSERT
+    assert training_model.get_image_dims() == 3
