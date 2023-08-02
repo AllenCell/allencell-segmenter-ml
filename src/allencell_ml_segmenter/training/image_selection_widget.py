@@ -10,6 +10,7 @@ from PyQt5.QtWidgets import (
 )
 
 from allencell_ml_segmenter.prediction.model import PredictionModel
+from allencell_ml_segmenter.training.training_model import TrainingModel
 from allencell_ml_segmenter.widgets.input_button_widget import InputButton
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 
@@ -21,10 +22,10 @@ class ImageSelectionWidget(QWidget):
 
     TITLE_TEXT: str = "Training images"
 
-    def __init__(self):  # TODO: take in training model as a parameter
+    def __init__(self, model: TrainingModel):
         super().__init__()
 
-        # self._model: TrainingModel = model
+        self._model: TrainingModel = model
 
         # widget skeleton
         self.setLayout(QVBoxLayout())
@@ -43,12 +44,9 @@ class ImageSelectionWidget(QWidget):
 
         # grid contents
         directory_label: LabelWithHint = LabelWithHint("Image directory")
-        temp_fake_model: PredictionModel = (
-            PredictionModel()
-        )  # TODO: get rid of this
         directory_input_button: InputButton = InputButton(
-            temp_fake_model, lambda dummy: None, "Select directory..."
-        )  # TODO: pass in actual training model and setter
+            self._model, lambda dummy: None, "Select directory..."
+        )  # TODO: pass in actual setter
         directory_input_button.elongate(248)
 
         frame.layout().addWidget(directory_label, 0, 0, Qt.AlignVCenter)
