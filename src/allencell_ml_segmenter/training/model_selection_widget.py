@@ -131,10 +131,15 @@ class ModelSelectionWidget(QWidget):
         training_step_label: LabelWithHint = LabelWithHint("Training step")
         grid_layout.addWidget(training_step_label, 2, 0)
 
-        training_step_input: QLineEdit = QLineEdit()  # TODO: placeholder text?
-        training_step_input.setPlaceholderText("1000")
-        training_step_input.setObjectName("trainingStepInput")
-        grid_layout.addWidget(training_step_input, 2, 1)
+        self._training_step_input: QLineEdit = (
+            QLineEdit()
+        )  # TODO: placeholder text?
+        self._training_step_input.setPlaceholderText("1000")
+        self._training_step_input.setObjectName("trainingStepInput")
+        self._training_step_input.textChanged.connect(
+            lambda text: self._model.set_max_epoch(int(text))
+        )
+        grid_layout.addWidget(self._training_step_input, 2, 1)
 
         timeout_layout: QHBoxLayout = QHBoxLayout()
         timeout_layout.setSpacing(0)

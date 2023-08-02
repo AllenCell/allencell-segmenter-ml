@@ -51,6 +51,7 @@ class TrainingModel(Publisher):
         ] = None  # if None, start a new model
         self._patch_size: PatchSize = None
         self._image_dims: int = None
+        self._max_epoch: int = None
         self._max_time: int = None  # in seconds
         self._config_dir: Path = None
         self._patch_size: PatchSize = None

@@ -131,7 +131,7 @@ def test_set_model_path(
 def test_set_patch_size(
     model_selection_widget: ModelSelectionWidget,
     training_model: TrainingModel,
-):
+) -> None:
     """
     Tests that using the associated combo box properly sets the patch size field.
     """
@@ -156,7 +156,7 @@ def test_set_image_dimensions(
     qtbot: QtBot,
     model_selection_widget: ModelSelectionWidget,
     training_model: TrainingModel,
-):
+) -> None:
     """
     Tests that checking the associated radio buttons properly sets the image dimensions.
     """
@@ -171,3 +171,18 @@ def test_set_image_dimensions(
 
     # ASSERT
     assert training_model.get_image_dims() == 3
+
+
+def test_set_max_epoch(
+    qtbot: QtBot,
+    model_selection_widget: ModelSelectionWidget,
+    training_model: TrainingModel,
+) -> None:
+    """
+    Tests that the max epoch field is properly set by the associated QLineEdit.
+    """
+    # ACT
+    qtbot.keyClicks(model_selection_widget._training_step_input, "100")
+
+    # ASSERT
+    assert training_model.get_max_epoch() == 100
