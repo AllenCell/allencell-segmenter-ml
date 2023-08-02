@@ -122,7 +122,7 @@ class TrainingModel(Publisher):
         """
         Sets images directory
 
-        images_path (str): path to images directory
+        images_path (Path): path to images directory
         """
         self._images_directory = images_path
 

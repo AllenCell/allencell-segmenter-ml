@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Callable
 
 from PyQt5.QtWidgets import QFileDialog
@@ -61,13 +62,17 @@ class InputButton(QWidget):
         # connect to stylesheet
         self.setStyleSheet(Style.get_stylesheet("input_button_widget.qss"))
 
-    def _update_path_text(self, path: str) -> None:
+    def _update_path_text(self, path_text: str) -> None:
         """
         Displays path on label portion of input button.
         """
         self._text_display.setReadOnly(False)
-        self._text_display.setText(path)
+        self._text_display.setText(path_text)
         self._text_display.setReadOnly(True)
+
+        # convert path_text to the appropriate path
+        path: Path = Path(path_text)
+
         self._set_path_function(path)
 
     def elongate(self, min_width: int) -> None:
