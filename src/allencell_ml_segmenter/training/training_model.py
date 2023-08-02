@@ -47,6 +47,9 @@ class TrainingModel(Publisher):
         self._image_dims: int = None
         self._images_directory: Path = None
         self._channel_index: Union[int, None] = None
+        self._model_path: Union[
+            Path, None
+        ] = None  # if None, start a new model
         self._max_time: int = None  # in seconds
         self._config_dir: Path = None
         self._patch_size: PatchSize = None
@@ -139,6 +142,20 @@ class TrainingModel(Publisher):
         channel_index (int | None): channel index for training, can be None for no channel index splicing
         """
         self._channel_index = index
+
+    def get_model_path(self) -> Union[Path, None]:
+        """
+        Gets model path
+        """
+        return self._model_path
+
+    def set_model_path(self, model_path: Union[Path, None]) -> None:
+        """
+        Sets model path
+
+        model_path (Optional[Path, None]): path to model to use, or None to start a new model
+        """
+        self._model_path = model_path
 
     def get_patch_size(self) -> PatchSize:
         """
