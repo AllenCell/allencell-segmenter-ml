@@ -69,7 +69,7 @@ def test_set_hardware(training_service: TrainingService) -> None:
     training_service._set_hardware()
 
     # Assert
-    assert f"trainer={training_service._training_model.get_hardware_type()}" in sys.argv
+    assert f"trainer={training_service._training_model.get_hardware_type().value}" in sys.argv
 
 
 def test_set_image_dims(training_service: TrainingService) -> None:
