@@ -35,6 +35,7 @@ class PredictionView(View):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
         self.setLayout(layout)
+        self.layout().setAlignment(Qt.AlignTop)
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
 
         self._title: QLabel = QLabel("SEGMENTATION PREDICTION", self)
