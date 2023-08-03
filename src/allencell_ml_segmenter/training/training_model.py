@@ -154,19 +154,16 @@ class TrainingModel(Publisher):
         """
         # convert string to enum
         patch_size = patch_size.lower()
-        if (
-            patch_size != "small"
-            and patch_size != "medium"
-            and patch_size != "large"
-        ):
+        if patch_size not in ["small", "medium", "large"]:
             raise ValueError(
                 "No support for non small, medium, and large patch sizes."
             )
-        if "small":
-            size: PatchSize = PatchSize.SMALL
-        elif "medium":
+        size: PatchSize = None
+        if patch_size == "small":
+            size = PatchSize.SMALL
+        elif patch_size == "medium":
             size = PatchSize.MEDIUM
-        elif "large":
+        elif patch_size == "large":
             size = PatchSize.LARGE
         self._patch_size = size
 
