@@ -36,7 +36,7 @@ def test_set_images_directory(
     training_model: TrainingModel,
 ) -> None:
     """
-    Tests that the slot connected to the InputButton properly sets the images directory field.
+    Tests that the slot connected to _directory_input_button properly sets the images directory field.
     """
     # TODO: replace QFileDialog details after Brian enables acceptance of either a directory or a file
     # ARRANGE
