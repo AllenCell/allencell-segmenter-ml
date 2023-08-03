@@ -12,7 +12,7 @@ from allencell_ml_segmenter.training.training_model import (
 
 @pytest.fixture
 def training_service() -> TrainingService:
-    model = TrainingModel()
+    model: TrainingModel = TrainingModel()
     model.set_experiment_type("segmentation")
     model.set_hardware_type("cpu")
     model.set_image_dims(2)
