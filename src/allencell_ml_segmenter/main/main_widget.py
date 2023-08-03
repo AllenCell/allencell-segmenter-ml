@@ -1,7 +1,8 @@
 from typing import Dict
 
 import napari
-from PyQt5.QtWidgets import QTabWidget
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QTabWidget, QWidget
 from qtpy.QtWidgets import (
     QVBoxLayout,
     QSizePolicy,
@@ -15,7 +16,7 @@ from allencell_ml_segmenter.training.view import TrainingView
 from allencell_ml_segmenter.core.subscriber import Subscriber
 
 
-class MainMeta(type(QTabWidget), type(Subscriber)):
+class MainMeta(type(QWidget), type(Subscriber)):
     """
     Metaclass for MainTabWidget
     """
@@ -23,7 +24,7 @@ class MainMeta(type(QTabWidget), type(Subscriber)):
     pass
 
 
-class MainTabWidget(QTabWidget, Subscriber, metaclass=MainMeta):
+class MainTabWidget(QWidget, Subscriber, metaclass=MainMeta):
     """
     Adopted and redesigned copy of MainWidget.
     """
@@ -44,6 +45,10 @@ class MainTabWidget(QTabWidget, Subscriber, metaclass=MainMeta):
         )
 
         # keep track of views
+        self._view_container: QTabWidget = QTabWidget()
+        self.layout().addWidget(self._view_container, Qt.AlignTop)
+        self.layout().addStretch(100)
+
         self._view_to_index: Dict[View, int] = dict()
 
         # initialize the tabs
@@ -52,6 +57,8 @@ class MainTabWidget(QTabWidget, Subscriber, metaclass=MainMeta):
 
         training_view: TrainingView = TrainingView(self._model)
         self._initialize_view(training_view, "Training")
+
+        self._view_container.currentChanged.connect(self._tab_changed)
 
     def handle_event(self, event: Event) -> None:
         """
@@ -66,9 +73,23 @@ class MainTabWidget(QTabWidget, Subscriber, metaclass=MainMeta):
         """
         Set the current views, must be initialized first
         """
-        self.setCurrentIndex(self._view_to_index[view])
+        self._view_container.setCurrentIndex(self._view_to_index[view])
 
     def _initialize_view(self, view: View, title: str) -> None:
         # QTabWidget count method keeps track of how many child widgets have been added
-        self._view_to_index[view] = self.count()
-        self.addTab(view, title)
+        self._view_to_index[view] = self._view_container.count()
+        self._view_container.addTab(view, title)
+
+    def _tab_changed(self, index: int) -> None:
+        """
+        Resize bottom edge of QTabWidget to fit the current view.
+        """
+        for i in range(self._view_container.count()):
+            if i == index:
+                self._view_container.widget(i).setSizePolicy(
+                    QSizePolicy.Preferred, QSizePolicy.Maximum
+                )
+            else:
+                self._view_container.widget(i).setSizePolicy(
+                    QSizePolicy.Ignored, QSizePolicy.Ignored
+                )

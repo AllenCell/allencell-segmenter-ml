@@ -31,6 +31,6 @@ def test_handle_action_change_view_event(
 
         # ASSERT: check that the main widget's current view (after setting) is same as the model's current view
         assert (
-            main_tab_widget.currentIndex()
+            main_tab_widget._view_container.currentIndex()
             == main_tab_widget._view_to_index[view]
         )
