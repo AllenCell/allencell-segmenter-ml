@@ -35,7 +35,7 @@ def test_radio_new_slot(
     qtbot: QtBot, model_selection_widget: ModelSelectionWidget
 ) -> None:
     """
-    Test the slot connected to the top radio button.
+    Test the slot connected to the "new model" radio button.
     """
     # ARRANGE - explicitly enable model_selection_widget._combo_box_existing
     model_selection_widget._combo_box_existing.setEnabled(True)
@@ -52,7 +52,7 @@ def test_radio_existing_slot(
     qtbot: QtBot, model_selection_widget: ModelSelectionWidget
 ) -> None:
     """
-    Test the slot connected to the bottom radio button.
+    Test the slot connected to the "existing model" radio button.
     """
     # ARRANGE - explicitly disable model_selection_widget._combo_box_existing
     model_selection_widget._combo_box_existing.setEnabled(False)
@@ -71,7 +71,7 @@ def test_checkbox_slot(
     qtbot: QtBot, model_selection_widget: ModelSelectionWidget
 ) -> None:
     """
-    Test the slot connected to the checkbox.
+    Test the slot connected to the timeout checkbox.
     """
     # ASSERT (QLineEdit related to timeout limit is disabled by default)
     assert not model_selection_widget._timeout_hour_input.isEnabled()
