@@ -177,14 +177,7 @@ class TrainingModel(Publisher):
             raise ValueError(
                 "No support for non small, medium, and large patch sizes."
             )
-        if patch_size == "small":
-            size: PatchSize = PatchSize.SMALL
-        elif patch_size == "medium":
-            size = PatchSize.MEDIUM
-        else:
-            size = PatchSize.LARGE
-
-        self._patch_size = PatchSize(size)
+        self._patch_size = PatchSize[patch_size]
 
     def get_max_time(self) -> int:
         """
