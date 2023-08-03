@@ -109,7 +109,9 @@ def test_set_model_path(
     )
 
     # ACT
-    model_selection_widget._radio_existing_model.click()  # enables the combo box
+    with qtbot.waitSignal(model_selection_widget._radio_existing_model.toggled):
+        model_selection_widget._radio_existing_model.click()  # enables the combo box
+
     model_selection_widget._combo_box_existing.setCurrentIndex(8)
 
     # ASSERT
@@ -122,7 +124,8 @@ def test_set_model_path(
     assert training_model.get_model_path() == Path("dummy path 3")
 
     # ACT - press "start a new model" radio button, which should set model_path to None
-    model_selection_widget._radio_new_model.click()
+    with qtbot.waitSignal(model_selection_widget._radio_new_model.toggled):
+        model_selection_widget._radio_new_model.click()
 
     # ASSERT
     assert training_model.get_model_path() is None
@@ -161,13 +164,15 @@ def test_set_image_dimensions(
     Tests that checking the associated radio buttons properly sets the image dimensions.
     """
     # ACT
-    model_selection_widget._radio_2d.click()
+    with qtbot.waitSignal(model_selection_widget._radio_2d.toggled):
+        model_selection_widget._radio_2d.click()
 
     # ASSERT
     assert training_model.get_image_dims() == 2
 
     # ACT
-    model_selection_widget._radio_3d.click()
+    with qtbot.waitSignal(model_selection_widget._radio_3d.toggled):
+        model_selection_widget._radio_3d.click()
 
     # ASSERT
     assert training_model.get_image_dims() == 3
@@ -197,7 +202,9 @@ def test_set_max_time(
     Tests that the max time field is properly set by the associated QLineEdit.
     """
     # ACT
-    model_selection_widget._timeout_checkbox.click()  # enables the QLineEdit
+    with qtbot.waitSignal(model_selection_widget._timeout_checkbox.toggled):
+        model_selection_widget._timeout_checkbox.click()  # enables the QLineEdit
+
     qtbot.keyClicks(model_selection_widget._timeout_hour_input, "1")
 
     # ASSERT
