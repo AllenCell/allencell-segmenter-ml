@@ -109,7 +109,9 @@ def test_set_model_path(
     )
 
     # ACT
-    with qtbot.waitSignal(model_selection_widget._radio_existing_model.toggled):
+    with qtbot.waitSignal(
+        model_selection_widget._radio_existing_model.toggled
+    ):
         model_selection_widget._radio_existing_model.click()  # enables the combo box
 
     model_selection_widget._combo_box_existing.setCurrentIndex(8)
