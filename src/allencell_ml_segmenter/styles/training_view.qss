@@ -9,7 +9,7 @@
 
 #trainBtn {
     background-color: #007ACC;
-    margin-top: 40px;
+    margin: 5px 13px;
 }
 
 #modelSelection QComboBox:disabled {
