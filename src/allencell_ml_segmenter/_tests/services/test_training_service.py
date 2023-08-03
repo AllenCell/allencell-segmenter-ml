@@ -61,7 +61,7 @@ def test_set_experiment(training_service: TrainingService) -> None:
     training_service._set_experiment()
 
     # Assert
-    assert f"experiment=im2im/segmentation.yaml" in sys.argv
+    assert f"experiment=im2im/{training_service._training_model.get_experiment_type().value}.yaml" in sys.argv
 
 
 def test_set_hardware(training_service: TrainingService) -> None:
@@ -69,7 +69,7 @@ def test_set_hardware(training_service: TrainingService) -> None:
     training_service._set_hardware()
 
     # Assert
-    assert f"trainer=cpu" in sys.argv
+    assert f"trainer={training_service._training_model.get_hardware_type()}" in sys.argv
 
 
 def test_set_image_dims(training_service: TrainingService) -> None:
@@ -77,7 +77,7 @@ def test_set_image_dims(training_service: TrainingService) -> None:
     training_service._set_image_dims()
 
     # Assert
-    assert f"++spatial_dims=[2]" in sys.argv
+    assert f"++spatial_dims=[{training_service._training_model.get_image_dims()}]" in sys.argv
 
 
 def test_set_max_epoch(training_service: TrainingService) -> None:
@@ -85,7 +85,7 @@ def test_set_max_epoch(training_service: TrainingService) -> None:
     training_service._set_max_epoch()
 
     # Assert
-    assert f"++trainer.max_epochs=100" in sys.argv
+    assert f"++trainer.max_epochs={training_service._training_model.get_max_epoch()}" in sys.argv
 
 
 def test_set_images_directory(training_service: TrainingService) -> None:
@@ -93,7 +93,7 @@ def test_set_images_directory(training_service: TrainingService) -> None:
     training_service._set_images_directory()
 
     # Assert
-    assert f"++data.path=/path/to/images" in sys.argv
+    assert f"++data.path={training_service._training_model.get_images_directory()}" in sys.argv
 
 
 def test_set_patch_shape_from_size(training_service: TrainingService) -> None:
@@ -101,7 +101,7 @@ def test_set_patch_shape_from_size(training_service: TrainingService) -> None:
     training_service._set_patch_shape_from_size()
 
     # Assert
-    assert f"++data._aux.patch_shape=[1, 3, 3]" in sys.argv
+    assert f"++data._aux.patch_shape={training_service._training_model.get_patch_size().value}" in sys.argv
 
 
 def test_set_config_dir(training_service: TrainingService) -> None:
@@ -109,4 +109,4 @@ def test_set_config_dir(training_service: TrainingService) -> None:
     training_service._set_config_dir()
 
     # Assert
-    assert ("--config-dir" in sys.argv) and ("/path/to/configs" in sys.argv)
+    assert ("--config-dir" in sys.argv) and (training_service._training_model.get_config_dir() in sys.argv)
