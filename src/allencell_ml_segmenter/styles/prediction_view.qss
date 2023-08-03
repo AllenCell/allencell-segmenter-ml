@@ -16,6 +16,7 @@ Examples: https://doc.qt.io/qt-5/stylesheet-examples.html#customizing-specific-w
 
 #run {
     background-color: #007ACC;
+    margin: 5px 13px;
 }
 
 #modelInput QComboBox:disabled {
