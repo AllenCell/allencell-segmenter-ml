@@ -35,12 +35,13 @@ class TrainingView(View, Subscriber):
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.layout().setSpacing(0)
+        self.layout().setAlignment(Qt.AlignTop)
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
 
         self._title: QLabel = QLabel("SEGMENTATION MODEL TRAINING", self)
         self._title.setObjectName("title")
         self.layout().addWidget(
-            self._title, alignment=Qt.AlignHCenter | Qt.AlignBottom
+            self._title, alignment=Qt.AlignHCenter | Qt.AlignTop
         )
 
         image_selection_widget: ImageSelectionWidget = ImageSelectionWidget(
@@ -61,15 +62,15 @@ class TrainingView(View, Subscriber):
 
         top_container.addWidget(image_selection_widget)
         top_dummy.setLayout(top_container)
-        self.layout().addWidget(top_dummy, alignment=Qt.AlignTop)
+        self.layout().addWidget(top_dummy)
 
         bottom_container.addWidget(model_selection_widget)
         bottom_dummy.setLayout(bottom_container)
-        self.layout().addWidget(bottom_dummy, alignment=Qt.AlignTop)
+        self.layout().addWidget(bottom_dummy)
 
         self._train_btn: QPushButton = QPushButton("Start training")
         self._train_btn.setObjectName("trainBtn")
-        self.layout().addWidget(self._train_btn, alignment=Qt.AlignTop)
+        self.layout().addWidget(self._train_btn)
 
         self._main_model.subscribe(
             Event.VIEW_SELECTION_TRAINING,
