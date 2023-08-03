@@ -29,10 +29,9 @@ class PatchSize(Enum):
     Patch size for training, and their respective patch shapes.
     TODO: get from benji
     """
-
     SMALL = [1, 3, 3]
     MEDIUM = [16, 32, 32]
-    LARGE = [16, 32, 32]
+    LARGE = [20, 40, 40]
 
 
 class TrainingModel(Publisher):
@@ -153,19 +152,12 @@ class TrainingModel(Publisher):
         patch_size (str): patch size for training
         """
         # convert string to enum
-        patch_size = patch_size.lower()
-        if patch_size not in ["small", "medium", "large"]:
+        patch_size = patch_size.upper()
+        if patch_size not in [x.name for x in PatchSize]:
             raise ValueError(
                 "No support for non small, medium, and large patch sizes."
             )
-        size: PatchSize = None
-        if patch_size == "small":
-            size = PatchSize.SMALL
-        elif patch_size == "medium":
-            size = PatchSize.MEDIUM
-        elif patch_size == "large":
-            size = PatchSize.LARGE
-        self._patch_size = size
+        self._patch_size = PatchSize[patch_size]
 
     def get_max_time(self) -> int:
         """
