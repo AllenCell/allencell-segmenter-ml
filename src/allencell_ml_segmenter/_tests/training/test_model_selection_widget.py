@@ -23,6 +23,7 @@ def training_model() -> TrainingModel:
 
 @pytest.fixture
 def model_selection_widget(
+    qtbot: QtBot,
     training_model: TrainingModel,
 ) -> ModelSelectionWidget:
     """
@@ -131,17 +132,13 @@ def test_set_patch_size(
     Tests that using the associated combo box properly sets the patch size field.
     """
     # ACT
-    model_selection_widget._structure_size_combo_box.setCurrentIndex(
-        0
-    )  # small
+    model_selection_widget._patch_size_combo_box.setCurrentIndex(0)  # small
 
     # ASSERT
     assert training_model.get_patch_size() == PatchSize.SMALL
 
     # ACT
-    model_selection_widget._structure_size_combo_box.setCurrentIndex(
-        2
-    )  # large
+    model_selection_widget._patch_size_combo_box.setCurrentIndex(2)  # large
 
     # ASSERT
     assert training_model.get_patch_size() == PatchSize.LARGE
@@ -194,8 +191,8 @@ def test_set_max_time(
     Tests that the max time field is properly set by the associated QLineEdit.
     """
     # ACT
-    with qtbot.waitSignal(model_selection_widget._timeout_checkbox.toggled):
-        model_selection_widget._timeout_checkbox.click()  # enables the QLineEdit
+    with qtbot.waitSignal(model_selection_widget._max_time_checkbox.toggled):
+        model_selection_widget._max_time_checkbox.click()  # enables the QLineEdit
 
     qtbot.keyClicks(model_selection_widget._max_time_in_hours_input, "1")
 
