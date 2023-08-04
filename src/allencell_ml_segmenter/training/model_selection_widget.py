@@ -16,6 +16,7 @@ from PyQt5.QtWidgets import (
 )
 
 from allencell_ml_segmenter.training.training_model import TrainingModel
+from allencell_ml_segmenter.training.training_model import PatchSize
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 
 
@@ -88,7 +89,7 @@ class ModelSelectionWidget(QWidget):
         self._patch_size_combo_box.setObjectName("structureSizeComboBox")
         self._patch_size_combo_box.setCurrentIndex(-1)
         self._patch_size_combo_box.setPlaceholderText("Select an option")
-        self._patch_size_combo_box.addItems(["small", "medium", "large"])
+        self._patch_size_combo_box.addItems([patch.name.lower() for patch in PatchSize])
         self._patch_size_combo_box.currentTextChanged.connect(
             lambda size: self._model.set_patch_size(size)
         )
