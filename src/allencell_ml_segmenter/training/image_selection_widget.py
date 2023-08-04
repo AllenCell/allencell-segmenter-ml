@@ -9,7 +9,6 @@ from PyQt5.QtWidgets import (
     QComboBox,
 )
 
-from allencell_ml_segmenter.prediction.model import PredictionModel
 from allencell_ml_segmenter.training.training_model import TrainingModel
 from allencell_ml_segmenter.widgets.input_button_widget import InputButton
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
@@ -44,12 +43,12 @@ class ImageSelectionWidget(QWidget):
 
         # grid contents
         directory_label: LabelWithHint = LabelWithHint("Image directory")
-        self._directory_input_button: InputButton = InputButton(
+        self._images_directory_input_button: InputButton = InputButton(
             self._model,
             lambda dir: self._model.set_images_directory(dir),
             "Select directory...",
         )
-        self._directory_input_button.elongate(248)
+        self._images_directory_input_button.elongate(248)
 
         frame.layout().addWidget(directory_label, 0, 0, Qt.AlignVCenter)
 
@@ -62,7 +61,7 @@ class ImageSelectionWidget(QWidget):
         guide_text.setOpenExternalLinks(True)
 
         frame.layout().addWidget(
-            self._directory_input_button, 0, 1, Qt.AlignVCenter
+            self._images_directory_input_button, 0, 1, Qt.AlignVCenter
         )
         frame.layout().addWidget(guide_text, 1, 1, Qt.AlignTop)
 
