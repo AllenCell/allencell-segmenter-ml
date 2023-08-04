@@ -23,7 +23,7 @@ def training_model() -> TrainingModel:
 
 @pytest.fixture
 def model_selection_widget(
-    qtbot: QtBot, training_model: TrainingModel
+    training_model: TrainingModel,
 ) -> ModelSelectionWidget:
     """
     Fixture that creates an instance of ModelSelectionWidget for testing.
@@ -37,15 +37,15 @@ def test_radio_new_slot(
     """
     Test the slot connected to the "new model" radio button.
     """
-    # ARRANGE - explicitly enable model_selection_widget._combo_box_existing
-    model_selection_widget._combo_box_existing.setEnabled(True)
+    # ARRANGE
+    model_selection_widget._combo_box_existing_models.setEnabled(True)
 
     # ACT (disable combo box)
-    with qtbot.waitSignals([model_selection_widget._radio_new_model.toggled]):
+    with qtbot.waitSignal(model_selection_widget._radio_new_model.toggled):
         model_selection_widget._radio_new_model.click()
 
     # ASSERT
-    assert not model_selection_widget._combo_box_existing.isEnabled()
+    assert not model_selection_widget._combo_box_existing_models.isEnabled()
 
 
 def test_radio_existing_slot(
@@ -54,17 +54,17 @@ def test_radio_existing_slot(
     """
     Test the slot connected to the "existing model" radio button.
     """
-    # ARRANGE - explicitly disable model_selection_widget._combo_box_existing
-    model_selection_widget._combo_box_existing.setEnabled(False)
+    # ARRANGE
+    model_selection_widget._combo_box_existing_models.setEnabled(False)
 
     # ACT (enable combo box)
-    with qtbot.waitSignals(
-        [model_selection_widget._radio_existing_model.toggled]
+    with qtbot.waitSignal(
+        model_selection_widget._radio_existing_model.toggled
     ):
         model_selection_widget._radio_existing_model.click()
 
     # ASSERT
-    assert model_selection_widget._combo_box_existing.isEnabled()
+    assert model_selection_widget._combo_box_existing_models.isEnabled()
 
 
 def test_checkbox_slot(
@@ -74,7 +74,7 @@ def test_checkbox_slot(
     Test the slot connected to the timeout checkbox.
     """
     # ASSERT (QLineEdit related to timeout limit is disabled by default)
-    assert not model_selection_widget._timeout_hour_input.isEnabled()
+    assert not model_selection_widget._max_time_in_hours_input.isEnabled()
 
     # ACT (enable QLineEdit related to timeout limit)
     with qtbot.waitSignals(
@@ -83,7 +83,7 @@ def test_checkbox_slot(
         model_selection_widget._timeout_checkbox.click()
 
     # ASSERT
-    assert model_selection_widget._timeout_hour_input.isEnabled()
+    assert model_selection_widget._max_time_in_hours_input.isEnabled()
 
     # ACT (disabled QLineEdit related to timeout limit)
     with qtbot.waitSignals(
@@ -92,7 +92,7 @@ def test_checkbox_slot(
         model_selection_widget._timeout_checkbox.click()
 
     # ASSERT
-    assert not model_selection_widget._timeout_hour_input.isEnabled()
+    assert not model_selection_widget._max_time_in_hours_input.isEnabled()
 
 
 def test_set_model_path(
@@ -104,7 +104,7 @@ def test_set_model_path(
     Tests that the slots connected to the "start a new model" radio button and the existing model QCombBox properly set the model path field.
     """
     # ARRANGE - add arbitrary model path options to the QComboBox, since it does not come with default choices
-    model_selection_widget._combo_box_existing.addItems(
+    model_selection_widget._combo_box_existing_models.addItems(
         [f"dummy path {i}" for i in range(10)]
     )
 
@@ -114,13 +114,13 @@ def test_set_model_path(
     ):
         model_selection_widget._radio_existing_model.click()  # enables the combo box
 
-    model_selection_widget._combo_box_existing.setCurrentIndex(8)
+    model_selection_widget._combo_box_existing_models.setCurrentIndex(8)
 
     # ASSERT
     assert training_model.get_model_path() == Path("dummy path 8")
 
     # ACT
-    model_selection_widget._combo_box_existing.setCurrentIndex(3)
+    model_selection_widget._combo_box_existing_models.setCurrentIndex(3)
 
     # ASSERT
     assert training_model.get_model_path() == Path("dummy path 3")
@@ -189,7 +189,7 @@ def test_set_max_epoch(
     Tests that the max epoch field is properly set by the associated QLineEdit.
     """
     # ACT
-    qtbot.keyClicks(model_selection_widget._training_step_input, "100")
+    qtbot.keyClicks(model_selection_widget._max_epoch_input, "100")
 
     # ASSERT
     assert training_model.get_max_epoch() == 100
@@ -207,7 +207,7 @@ def test_set_max_time(
     with qtbot.waitSignal(model_selection_widget._timeout_checkbox.toggled):
         model_selection_widget._timeout_checkbox.click()  # enables the QLineEdit
 
-    qtbot.keyClicks(model_selection_widget._timeout_hour_input, "1")
+    qtbot.keyClicks(model_selection_widget._max_time_in_hours_input, "1")
 
     # ASSERT
     assert training_model.get_max_time() == 3600

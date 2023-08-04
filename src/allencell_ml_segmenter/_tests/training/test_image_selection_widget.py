@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import List
 from unittest.mock import patch
 
 import pytest
@@ -40,17 +41,18 @@ def test_set_images_directory(
     """
     # TODO: replace QFileDialog details after Brian enables acceptance of either a directory or a file
     # ARRANGE
+    mock_path_string: str = "/path/to/file"
     with patch.object(
-        QFileDialog, "getOpenFileName", return_value=("/path/to/file", "")
+        QFileDialog, "getOpenFileName", return_value=(mock_path_string, "")
     ):
         # ACT
         qtbot.mouseClick(
-            image_selection_widget._directory_input_button._button,
+            image_selection_widget._images_directory_input_button._button,
             Qt.LeftButton,
         )
 
     # ASSERT
-    assert training_model.get_images_directory() == Path("/path/to/file")
+    assert training_model.get_images_directory() == Path(mock_path_string)
 
 
 def test_set_channel_index(
@@ -61,18 +63,12 @@ def test_set_channel_index(
     Tests that the slot connected to the image channel QComboBox properly sets the image channel index field.
     """
     # ARRANGE - add arbitrary channel index options to the QComboBox, since it does not come with default choices
-    image_selection_widget._channel_combo_box.addItems(
-        [str(i) for i in range(10)]
-    )
+    mock_choices: List[str] = [str(i) for i in range(10)]
+    image_selection_widget._channel_combo_box.addItems(mock_choices)
 
-    # ACT
-    image_selection_widget._channel_combo_box.setCurrentIndex(5)
+    for i in range(10):
+        # ACT
+        image_selection_widget._channel_combo_box.setCurrentIndex(i)
 
-    # ASSERT
-    assert training_model.get_channel_index() == 5
-
-    # ACT
-    image_selection_widget._channel_combo_box.setCurrentIndex(9)
-
-    # ASSERT
-    assert training_model.get_channel_index() == 9
+        # ASSERT
+        assert training_model.get_channel_index() == i
