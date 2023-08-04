@@ -141,17 +141,13 @@ def test_set_patch_size(
     """
     Tests that using the associated combo box properly sets the patch size field.
     """
-    # ACT
-    model_selection_widget._patch_size_combo_box.setCurrentIndex(0)  # small
 
-    # ASSERT
-    assert training_model.get_patch_size() == PatchSize.SMALL
+    for index, patch in enumerate(PatchSize):
+        # ACT
+        model_selection_widget._patch_size_combo_box.setCurrentIndex(index)  # small
 
-    # ACT
-    model_selection_widget._patch_size_combo_box.setCurrentIndex(2)  # large
-
-    # ASSERT
-    assert training_model.get_patch_size() == PatchSize.LARGE
+        # ASSERT
+        assert training_model.get_patch_size() == patch
 
 
 def test_set_image_dimensions(
