@@ -7,7 +7,7 @@ from allencell_ml_segmenter.napari.napari_writer import (
     write_single_image,
 )
 
-from allencell_ml_segmenter.main.main_widget import MainTabWidget
+from allencell_ml_segmenter.main.main_widget import MainWidget
 
 
 __all__ = (
@@ -15,5 +15,5 @@ __all__ = (
     "write_single_image",
     "write_multiple",
     "make_sample_data",
-    "MainTabWidget",
+    "MainWidget",
 )
