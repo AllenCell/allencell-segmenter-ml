@@ -5,7 +5,7 @@ import napari
 from pytestqt.qtbot import QtBot
 
 from allencell_ml_segmenter.core.view import View
-from allencell_ml_segmenter.main.main_widget import MainTabWidget
+from allencell_ml_segmenter.main.main_widget import MainWidget
 from unittest.mock import Mock
 
 
@@ -15,22 +15,22 @@ def viewer() -> napari.Viewer:
 
 
 @pytest.fixture
-def main_tab_widget(qtbot: QtBot) -> MainTabWidget:
-    return MainTabWidget(viewer)
+def main_widget(qtbot: QtBot) -> MainWidget:
+    return MainWidget(viewer)
 
 
 def test_handle_action_change_view_event(
-    main_tab_widget: MainTabWidget,
+    main_widget: MainWidget,
 ) -> None:
     # ARRANGE
-    views: Set[View] = main_tab_widget._view_to_index.keys()
+    views: Set[View] = main_widget._view_to_index.keys()
 
     for view in views:
         # ACT: have the model dispatch the action change view event
-        main_tab_widget._model.set_current_view(view)
+        main_widget._model.set_current_view(view)
 
         # ASSERT: check that the main widget's current view (after setting) is same as the model's current view
         assert (
-            main_tab_widget._view_container.currentIndex()
-            == main_tab_widget._view_to_index[view]
+            main_widget._view_container.currentIndex()
+            == main_widget._view_to_index[view]
         )

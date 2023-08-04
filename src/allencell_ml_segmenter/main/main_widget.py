@@ -18,13 +18,13 @@ from allencell_ml_segmenter.core.subscriber import Subscriber
 
 class MainMeta(type(QWidget), type(Subscriber)):
     """
-    Metaclass for MainTabWidget
+    Metaclass for MainWidget
     """
 
     pass
 
 
-class MainTabWidget(QWidget, Subscriber, metaclass=MainMeta):
+class MainWidget(QWidget, Subscriber, metaclass=MainMeta):
     """
     Adopted and redesigned copy of MainWidget.
     """
