@@ -23,7 +23,7 @@ def training_model() -> TrainingModel:
 
 @pytest.fixture
 def image_selection_widget(
-    qtbot: QtBot, training_model: TrainingModel
+    training_model: TrainingModel,
 ) -> ImageSelectionWidget:
     """
     Fixture that creates an instance of ImageSelectionWidget for testing.
