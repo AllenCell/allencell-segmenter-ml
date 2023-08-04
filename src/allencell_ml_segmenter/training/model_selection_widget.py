@@ -46,7 +46,6 @@ class ModelSelectionWidget(QWidget):
         self.layout().addWidget(frame)
 
         # model selection components
-        # TODO: convert certain variables to instance variables once model is implemented if their state will be tracked
         frame.layout().addWidget(LabelWithHint("Select a model:"))
 
         grid_layout: QGridLayout = QGridLayout()
@@ -82,18 +81,18 @@ class ModelSelectionWidget(QWidget):
         # bottom half
         grid_layout = QGridLayout()
 
-        structure_size_label: LabelWithHint = LabelWithHint("Structure size")
-        grid_layout.addWidget(structure_size_label, 0, 0)
+        patch_size_label: LabelWithHint = LabelWithHint("Structure size")
+        grid_layout.addWidget(patch_size_label, 0, 0)
 
-        self._structure_size_combo_box: QComboBox = QComboBox()
-        self._structure_size_combo_box.setObjectName("structureSizeComboBox")
-        self._structure_size_combo_box.setCurrentIndex(-1)
-        self._structure_size_combo_box.setPlaceholderText("Select an option")
-        self._structure_size_combo_box.addItems(["small", "medium", "large"])
-        self._structure_size_combo_box.currentTextChanged.connect(
+        self._patch_size_combo_box: QComboBox = QComboBox()
+        self._patch_size_combo_box.setObjectName("structureSizeComboBox")
+        self._patch_size_combo_box.setCurrentIndex(-1)
+        self._patch_size_combo_box.setPlaceholderText("Select an option")
+        self._patch_size_combo_box.addItems(["small", "medium", "large"])
+        self._patch_size_combo_box.currentTextChanged.connect(
             lambda size: self._model.set_patch_size(size)
         )
-        grid_layout.addWidget(self._structure_size_combo_box, 0, 1)
+        grid_layout.addWidget(self._patch_size_combo_box, 0, 1)
 
         image_dimensions_label: LabelWithHint = LabelWithHint(
             "Image dimension"
@@ -128,8 +127,8 @@ class ModelSelectionWidget(QWidget):
 
         grid_layout.addWidget(dimension_choice_dummy, 1, 1)
 
-        training_step_label: LabelWithHint = LabelWithHint("Training steps")
-        grid_layout.addWidget(training_step_label, 2, 0)
+        max_epoch_label: LabelWithHint = LabelWithHint("Training steps")
+        grid_layout.addWidget(max_epoch_label, 2, 0)
 
         self._max_epoch_input: QLineEdit = QLineEdit()
         self._max_epoch_input.setPlaceholderText("1000")
@@ -139,18 +138,18 @@ class ModelSelectionWidget(QWidget):
         )
         grid_layout.addWidget(self._max_epoch_input, 2, 1)
 
-        timeout_layout: QHBoxLayout = QHBoxLayout()
-        timeout_layout.setSpacing(0)
+        max_time_layout: QHBoxLayout = QHBoxLayout()
+        max_time_layout.setSpacing(0)
 
-        self._timeout_checkbox: QCheckBox = QCheckBox()
-        self._timeout_checkbox.setObjectName("timeoutCheckbox")
-        self._timeout_checkbox.stateChanged.connect(
+        self._max_time_checkbox: QCheckBox = QCheckBox()
+        self._max_time_checkbox.setObjectName("timeoutCheckbox")
+        self._max_time_checkbox.stateChanged.connect(
             self._timeout_checkbox_slot
         )
-        timeout_layout.addWidget(self._timeout_checkbox)
+        max_time_layout.addWidget(self._max_time_checkbox)
 
-        timeout_left_text: QLabel = QLabel("Time out after")
-        timeout_layout.addWidget(timeout_left_text)
+        max_time_left_text: QLabel = QLabel("Time out after")
+        max_time_layout.addWidget(max_time_left_text)
 
         self._max_time_in_hours_input: QLineEdit = QLineEdit()
         self._max_time_in_hours_input.setObjectName("timeoutHourInput")
@@ -162,13 +161,13 @@ class ModelSelectionWidget(QWidget):
         self._max_time_in_hours_input.textChanged.connect(
             lambda text: self._model.set_max_time(round(float(text) * 3600))
         )
-        timeout_layout.addWidget(self._max_time_in_hours_input)
+        max_time_layout.addWidget(self._max_time_in_hours_input)
 
-        timeout_right_text: LabelWithHint = LabelWithHint("hours")
-        timeout_layout.addWidget(timeout_right_text, alignment=Qt.AlignLeft)
-        timeout_layout.addStretch()
+        max_time_right_text: LabelWithHint = LabelWithHint("hours")
+        max_time_layout.addWidget(max_time_right_text, alignment=Qt.AlignLeft)
+        max_time_layout.addStretch()
 
-        grid_layout.addLayout(timeout_layout, 3, 1)
+        grid_layout.addLayout(max_time_layout, 3, 1)
         grid_layout.setColumnStretch(1, 8)
         grid_layout.setColumnStretch(0, 3)
 
