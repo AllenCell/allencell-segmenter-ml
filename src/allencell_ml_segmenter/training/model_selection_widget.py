@@ -67,15 +67,15 @@ class ModelSelectionWidget(QWidget):
         label_existing: LabelWithHint = LabelWithHint("Existing model")
         grid_layout.addWidget(label_existing, 1, 1)
 
-        self._combo_box_existing: QComboBox = QComboBox()
-        self._combo_box_existing.setCurrentIndex(-1)
-        self._combo_box_existing.setPlaceholderText("Select an option")
-        self._combo_box_existing.setEnabled(False)
-        self._combo_box_existing.setMinimumWidth(306)
-        self._combo_box_existing.currentTextChanged.connect(
+        self._combo_box_existing_models: QComboBox = QComboBox()
+        self._combo_box_existing_models.setCurrentIndex(-1)
+        self._combo_box_existing_models.setPlaceholderText("Select an option")
+        self._combo_box_existing_models.setEnabled(False)
+        self._combo_box_existing_models.setMinimumWidth(306)
+        self._combo_box_existing_models.currentTextChanged.connect(
             lambda path_text: self._model.set_model_path(Path(path_text))
         )
-        grid_layout.addWidget(self._combo_box_existing, 1, 2)
+        grid_layout.addWidget(self._combo_box_existing_models, 1, 2)
 
         frame.layout().addLayout(grid_layout)
 
@@ -131,13 +131,13 @@ class ModelSelectionWidget(QWidget):
         training_step_label: LabelWithHint = LabelWithHint("Training steps")
         grid_layout.addWidget(training_step_label, 2, 0)
 
-        self._training_step_input: QLineEdit = QLineEdit()
-        self._training_step_input.setPlaceholderText("1000")
-        self._training_step_input.setObjectName("trainingStepInput")
-        self._training_step_input.textChanged.connect(
+        self._max_epoch_input: QLineEdit = QLineEdit()
+        self._max_epoch_input.setPlaceholderText("1000")
+        self._max_epoch_input.setObjectName("trainingStepInput")
+        self._max_epoch_input.textChanged.connect(
             lambda text: self._model.set_max_epoch(int(text))
         )
-        grid_layout.addWidget(self._training_step_input, 2, 1)
+        grid_layout.addWidget(self._max_epoch_input, 2, 1)
 
         timeout_layout: QHBoxLayout = QHBoxLayout()
         timeout_layout.setSpacing(0)
@@ -152,17 +152,17 @@ class ModelSelectionWidget(QWidget):
         timeout_left_text: QLabel = QLabel("Time out after")
         timeout_layout.addWidget(timeout_left_text)
 
-        self._timeout_hour_input: QLineEdit = QLineEdit()
-        self._timeout_hour_input.setObjectName("timeoutHourInput")
-        self._timeout_hour_input.setEnabled(False)
-        self._timeout_hour_input.setMaximumWidth(30)
-        self._timeout_hour_input.setPlaceholderText("0")
+        self._max_time_in_hours_input: QLineEdit = QLineEdit()
+        self._max_time_in_hours_input.setObjectName("timeoutHourInput")
+        self._max_time_in_hours_input.setEnabled(False)
+        self._max_time_in_hours_input.setMaximumWidth(30)
+        self._max_time_in_hours_input.setPlaceholderText("0")
         # TODO: decide between converting as int(text) or float(text) -> will users want to use decimals? is there a better way to convert from hours to seconds?
         # TODO: how to handle invalid (not convertible to a number) input?
-        self._timeout_hour_input.textChanged.connect(
+        self._max_time_in_hours_input.textChanged.connect(
             lambda text: self._model.set_max_time(round(float(text) * 3600))
         )
-        timeout_layout.addWidget(self._timeout_hour_input)
+        timeout_layout.addWidget(self._max_time_in_hours_input)
 
         timeout_right_text: LabelWithHint = LabelWithHint("hours")
         timeout_layout.addWidget(timeout_right_text, alignment=Qt.AlignLeft)
@@ -180,14 +180,14 @@ class ModelSelectionWidget(QWidget):
         Disables interaction with the combo box below.
         """
         self._model.set_model_path(None)
-        self._combo_box_existing.setEnabled(False)
+        self._combo_box_existing_models.setEnabled(False)
 
     def _radio_existing_model_slot(self) -> None:
         """
         Triggered when the user selects the "existing model" radio button.
         Enables interaction with the neighboring combo box.
         """
-        self._combo_box_existing.setEnabled(True)
+        self._combo_box_existing_models.setEnabled(True)
 
     def _timeout_checkbox_slot(self, checked: Qt.CheckState) -> None:
         """
@@ -195,6 +195,6 @@ class ModelSelectionWidget(QWidget):
         Enables/disables interaction with the neighboring hour input based on checkstate.
         """
         if checked == Qt.Checked:
-            self._timeout_hour_input.setEnabled(True)
+            self._max_time_in_hours_input.setEnabled(True)
         else:
-            self._timeout_hour_input.setEnabled(False)
+            self._max_time_in_hours_input.setEnabled(False)
