@@ -1,4 +1,3 @@
-from PyQt5.QtGui import QPainter, QPalette, QPaintEvent
 from qtpy.QtWidgets import QWidget, QSizePolicy, QHBoxLayout, QLabel
 from qtpy.QtGui import QPixmap
 
