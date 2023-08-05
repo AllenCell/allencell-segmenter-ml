@@ -144,7 +144,9 @@ def test_set_patch_size(
 
     for index, patch in enumerate(PatchSize):
         # ACT
-        model_selection_widget._patch_size_combo_box.setCurrentIndex(index)  # small
+        model_selection_widget._patch_size_combo_box.setCurrentIndex(
+            index
+        )  # small
 
         # ASSERT
         assert training_model.get_patch_size() == patch

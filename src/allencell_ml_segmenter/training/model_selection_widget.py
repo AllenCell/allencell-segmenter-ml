@@ -89,7 +89,9 @@ class ModelSelectionWidget(QWidget):
         self._patch_size_combo_box.setObjectName("structureSizeComboBox")
         self._patch_size_combo_box.setCurrentIndex(-1)
         self._patch_size_combo_box.setPlaceholderText("Select an option")
-        self._patch_size_combo_box.addItems([patch.name.lower() for patch in PatchSize])
+        self._patch_size_combo_box.addItems(
+            [patch.name.lower() for patch in PatchSize]
+        )
         self._patch_size_combo_box.currentTextChanged.connect(
             lambda size: self._model.set_patch_size(size)
         )
