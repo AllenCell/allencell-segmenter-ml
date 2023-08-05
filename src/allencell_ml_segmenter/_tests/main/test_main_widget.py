@@ -5,9 +5,6 @@ import napari
 from pytestqt.qtbot import QtBot
 
 from allencell_ml_segmenter.core.view import View
-from allencell_ml_segmenter.main.main_model import MainModel
-from allencell_ml_segmenter.prediction.view import PredictionView
-from allencell_ml_segmenter.training.view import TrainingView
 from allencell_ml_segmenter.main.main_widget import MainTabWidget
 from unittest.mock import Mock
 
