@@ -80,18 +80,18 @@ def test_checkbox_slot(
 
     # ACT (enable QLineEdit related to timeout limit)
     with qtbot.waitSignals(
-        [model_selection_widget._timeout_checkbox.stateChanged]
+        [model_selection_widget._max_time_checkbox.stateChanged]
     ):
-        model_selection_widget._timeout_checkbox.click()
+        model_selection_widget._max_time_checkbox.click()
 
     # ASSERT
     assert model_selection_widget._max_time_in_hours_input.isEnabled()
 
     # ACT (disabled QLineEdit related to timeout limit)
     with qtbot.waitSignals(
-        [model_selection_widget._timeout_checkbox.stateChanged]
+        [model_selection_widget._max_time_checkbox.stateChanged]
     ):
-        model_selection_widget._timeout_checkbox.click()
+        model_selection_widget._max_time_checkbox.click()
 
     # ASSERT
     assert not model_selection_widget._max_time_in_hours_input.isEnabled()
