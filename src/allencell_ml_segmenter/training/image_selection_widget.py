@@ -10,7 +10,10 @@ from qtpy.QtWidgets import (
 )
 
 from allencell_ml_segmenter.training.training_model import TrainingModel
-from allencell_ml_segmenter.widgets.input_button_widget import InputButton
+from allencell_ml_segmenter.widgets.input_button_widget import (
+    InputButton,
+    FileInputMode,
+)
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 
 
@@ -48,6 +51,7 @@ class ImageSelectionWidget(QWidget):
             self._model,
             lambda dir: self._model.set_images_directory(dir),
             "Select directory...",
+            FileInputMode.DIRECTORY,
         )
         self._images_directory_input_button.elongate(248)
 

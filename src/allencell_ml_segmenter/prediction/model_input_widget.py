@@ -19,7 +19,10 @@ from allencell_ml_segmenter.prediction.model import PredictionModel
 from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.event import Event
-from allencell_ml_segmenter.widgets.input_button_widget import InputButton
+from allencell_ml_segmenter.widgets.input_button_widget import (
+    InputButton,
+    FileInputMode,
+)
 from allencell_ml_segmenter.widgets.label_with_hint_widget import (
     LabelWithHint,
 )

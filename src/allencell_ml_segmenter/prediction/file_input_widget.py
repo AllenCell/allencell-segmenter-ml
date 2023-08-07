@@ -14,7 +14,10 @@ from qtpy.QtWidgets import (
     QSizePolicy,
 )
 
-from allencell_ml_segmenter.widgets.input_button_widget import InputButton
+from allencell_ml_segmenter.widgets.input_button_widget import (
+    InputButton,
+    FileInputMode,
+)
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 from allencell_ml_segmenter.prediction.model import PredictionModel
 from allencell_ml_segmenter.widgets.check_box_list_widget import (
@@ -118,6 +121,7 @@ class PredictionFileInput(QWidget):
                 self.map_input_file_directory_to_path_list(dir)
             ),
             "Select directory...",
+            FileInputMode.DIRECTORY,
         )
         self._browse_dir_edit.setEnabled(False)
         horiz_layout.addWidget(self._browse_dir_edit)
@@ -143,6 +147,7 @@ class PredictionFileInput(QWidget):
             self._model,
             lambda dir: self._model.set_output_directory(dir),
             "Select directory...",
+            FileInputMode.DIRECTORY,
         )
 
         grid_layout.addWidget(image_input_label, 0, 0)
