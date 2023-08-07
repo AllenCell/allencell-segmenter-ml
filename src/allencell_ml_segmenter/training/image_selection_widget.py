@@ -32,6 +32,7 @@ class ImageSelectionWidget(QWidget):
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
 
         title: LabelWithHint = LabelWithHint(ImageSelectionWidget.TITLE_TEXT)
+        # TODO: hints for widget titles?
         title.setObjectName("title")
         self.layout().addWidget(title)
 
