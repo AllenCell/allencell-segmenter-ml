@@ -82,10 +82,13 @@ def test_preprocessing_method(
             # ASSERT
             assert file_input_widget._model.get_preprocessing_method() is None
 
-            # ACT
-            qtbot.mouseClick(
-                file_input_widget._browse_output_edit._button, Qt.LeftButton
-            )
+    with patch.object(
+        QFileDialog, "getExistingDirectory", return_value=mock_path_string
+    ):
+        # ACT
+        qtbot.mouseClick(
+            file_input_widget._browse_output_edit._button, Qt.LeftButton
+        )
 
-            # ASSERT
-            assert file_input_widget._model.get_preprocessing_method() is None
+        # ASSERT
+        assert file_input_widget._model.get_preprocessing_method() is None

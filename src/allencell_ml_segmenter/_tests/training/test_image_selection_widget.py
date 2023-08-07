@@ -11,7 +11,6 @@ from allencell_ml_segmenter.training.image_selection_widget import (
     ImageSelectionWidget,
 )
 from allencell_ml_segmenter.training.training_model import TrainingModel
-from allencell_ml_segmenter.widgets.custom_file_dialog import CustomFileDialog
 
 
 @pytest.fixture
