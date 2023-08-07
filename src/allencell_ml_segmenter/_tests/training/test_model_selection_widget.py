@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import List
 
 import pytest
 from PyQt5.QtCore import Qt
@@ -105,26 +106,21 @@ def test_set_model_path(
     Tests that the slots connected to the "start a new model" radio button and the existing model QCombBox properly set the model path field.
     """
     # ARRANGE - add arbitrary model path options to the QComboBox, since it does not come with default choices
+    mock_choices: List[str] = [f"dummy path {i}" for i in range(10)]
     model_selection_widget._combo_box_existing_models.addItems(
-        [f"dummy path {i}" for i in range(10)]
+        mock_choices
     )
-
-    # ACT
     with qtbot.waitSignal(
-        model_selection_widget._radio_existing_model.toggled
+            model_selection_widget._radio_existing_model.toggled
     ):
         model_selection_widget._radio_existing_model.click()  # enables the combo box
 
-    model_selection_widget._combo_box_existing_models.setCurrentIndex(8)
+    for i in range(10):
+        # ACT
+        model_selection_widget._combo_box_existing_models.setCurrentIndex(i)
 
-    # ASSERT
-    assert training_model.get_model_path() == Path("dummy path 8")
-
-    # ACT
-    model_selection_widget._combo_box_existing_models.setCurrentIndex(3)
-
-    # ASSERT
-    assert training_model.get_model_path() == Path("dummy path 3")
+        # ASSERT
+        assert training_model.get_model_path() == Path(f"dummy path {i}")
 
     # ACT - press "start a new model" radio button, which should set model_path to None
     with qtbot.waitSignal(model_selection_widget._radio_new_model.toggled):
@@ -146,7 +142,7 @@ def test_set_patch_size(
         # ACT
         model_selection_widget._patch_size_combo_box.setCurrentIndex(
             index
-        )  # small
+        )
 
         # ASSERT
         assert training_model.get_patch_size() == patch
