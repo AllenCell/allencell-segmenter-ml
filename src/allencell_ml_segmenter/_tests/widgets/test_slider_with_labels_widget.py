@@ -4,7 +4,7 @@
 # from allencell_ml_segmenter.widgets.slider_with_labels_widget import (
 #     SliderWithLabels,
 # )
-# from PyQt5.QtTest import QTest
+# from qtpy.QtTest import QTest
 
 
 # TODO redo tests once replaced with magicgui floatslider

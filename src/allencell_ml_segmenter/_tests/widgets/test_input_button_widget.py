@@ -1,7 +1,7 @@
 from unittest.mock import patch, Mock
 
 import pytest
-from PyQt5.QtWidgets import QFileDialog
+from qtpy.QtWidgets import QFileDialog
 from pytestqt.qtbot import QtBot
 from qtpy.QtCore import Qt
 

@@ -1,14 +1,17 @@
 from pathlib import Path
 from typing import List
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QGridLayout, QLabel, QFrame, QSizePolicy
+from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
     QWidget,
     QVBoxLayout,
     QHBoxLayout,
     QRadioButton,
     QComboBox,
+    QGridLayout,
+    QLabel,
+    QFrame,
+    QSizePolicy,
 )
 
 from allencell_ml_segmenter.widgets.input_button_widget import InputButton

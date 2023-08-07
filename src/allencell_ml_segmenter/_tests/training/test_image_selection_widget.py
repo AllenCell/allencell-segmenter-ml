@@ -3,8 +3,8 @@ from typing import List
 from unittest.mock import patch
 
 import pytest
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QFileDialog
+from qtpy.QtCore import Qt
+from qtpy.QtWidgets import QFileDialog
 from pytestqt.qtbot import QtBot
 
 from allencell_ml_segmenter.training.image_selection_widget import (

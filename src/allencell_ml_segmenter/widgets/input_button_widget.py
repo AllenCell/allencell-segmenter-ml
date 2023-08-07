@@ -1,13 +1,13 @@
 from pathlib import Path
 from typing import Callable
 
-from PyQt5.QtWidgets import QFileDialog
 from qtpy.QtWidgets import (
     QWidget,
     QSizePolicy,
     QHBoxLayout,
     QPushButton,
     QLineEdit,
+    QFileDialog
 )
 from qtpy.QtCore import Qt
 
