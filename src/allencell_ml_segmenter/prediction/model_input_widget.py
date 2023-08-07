@@ -1,6 +1,5 @@
 from typing import List, Any
 
-from PyQt5.QtWidgets import QFrame, QDoubleSpinBox, QSlider
 from qtpy.QtWidgets import (
     QLabel,
     QHBoxLayout,
@@ -9,6 +8,9 @@ from qtpy.QtWidgets import (
     QComboBox,
     QGridLayout,
     QRadioButton,
+    QFrame,
+    QDoubleSpinBox,
+    QSlider,
 )
 from qtpy.QtCore import Qt
 from magicgui.widgets import FloatSlider
