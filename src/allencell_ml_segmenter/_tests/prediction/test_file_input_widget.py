@@ -1,8 +1,8 @@
 from unittest.mock import patch
 
 import pytest
+from PyQt5.QtWidgets import QFileDialog
 from qtpy.QtCore import Qt
-from qtpy.QtWidgets import QFileDialog
 from pytestqt.qtbot import QtBot
 
 from allencell_ml_segmenter.prediction.file_input_widget import (
@@ -68,21 +68,24 @@ def test_preprocessing_method(
     used to manipulate the model_path state in the prediction model.
     """
     # ARRANGE
-    with patch.object(
-        QFileDialog, "getOpenFileName", return_value=("/path/to/file", "")
-    ):
-        # ACT
-        qtbot.mouseClick(
-            file_input_widget._browse_dir_edit._button, Qt.LeftButton
-        )
+    mock_path_string: str = "/path/to/file"
 
-        # ASSERT
-        assert file_input_widget._model.get_preprocessing_method() is None
+    with patch.object(QFileDialog, "exec_", return_value=QFileDialog.Accepted):
+        with patch.object(
+            QFileDialog, "selectedFiles", return_value=[mock_path_string]
+        ):
+            # ACT
+            qtbot.mouseClick(
+                file_input_widget._browse_dir_edit._button, Qt.LeftButton
+            )
 
-        # ACT
-        qtbot.mouseClick(
-            file_input_widget._browse_output_edit._button, Qt.LeftButton
-        )
+            # ASSERT
+            assert file_input_widget._model.get_preprocessing_method() is None
 
-        # ASSERT
-        assert file_input_widget._model.get_preprocessing_method() is None
+            # ACT
+            qtbot.mouseClick(
+                file_input_widget._browse_output_edit._button, Qt.LeftButton
+            )
+
+            # ASSERT
+            assert file_input_widget._model.get_preprocessing_method() is None

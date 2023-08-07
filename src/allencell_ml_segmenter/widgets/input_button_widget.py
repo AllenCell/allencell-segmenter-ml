@@ -88,12 +88,12 @@ class InputButton(QWidget):
 
     def _select_path(self):
         if self._mode == FileInputMode.FILE:
-            file_path, _ = QFileDialog.getOpenFileName(
+            file_path: str = QFileDialog.getOpenFileName(
                 self,
                 "Select a file",
                 options=QFileDialog.Option.DontUseNativeDialog
                 | QFileDialog.Option.DontUseCustomDirectoryIcons,
-            )
+            )[0]
         else:
             custom_dialog: CustomFileDialog = CustomFileDialog()
             if custom_dialog.exec_() == QFileDialog.Accepted:
