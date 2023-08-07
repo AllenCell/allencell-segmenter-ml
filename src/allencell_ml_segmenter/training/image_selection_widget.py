@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import (
     QComboBox,
 )
 
-from allencell_ml_segmenter.prediction.model import PredictionModel
+from allencell_ml_segmenter.training.training_model import TrainingModel
 from allencell_ml_segmenter.widgets.input_button_widget import InputButton
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 
@@ -21,10 +21,10 @@ class ImageSelectionWidget(QWidget):
 
     TITLE_TEXT: str = "Training images"
 
-    def __init__(self):  # TODO: take in training model as a parameter
+    def __init__(self, model: TrainingModel):
         super().__init__()
 
-        # self._model: TrainingModel = model
+        self._model: TrainingModel = model
 
         # widget skeleton
         self.setLayout(QVBoxLayout())
@@ -43,13 +43,12 @@ class ImageSelectionWidget(QWidget):
 
         # grid contents
         directory_label: LabelWithHint = LabelWithHint("Image directory")
-        temp_fake_model: PredictionModel = (
-            PredictionModel()
-        )  # TODO: get rid of this
-        directory_input_button: InputButton = InputButton(
-            temp_fake_model, lambda dummy: None, "Select directory..."
-        )  # TODO: pass in actual training model and setter
-        directory_input_button.elongate(248)
+        self._images_directory_input_button: InputButton = InputButton(
+            self._model,
+            lambda dir: self._model.set_images_directory(dir),
+            "Select directory...",
+        )
+        self._images_directory_input_button.elongate(248)
 
         frame.layout().addWidget(directory_label, 0, 0, Qt.AlignVCenter)
 
@@ -61,17 +60,23 @@ class ImageSelectionWidget(QWidget):
         guide_text.setTextFormat(Qt.RichText)
         guide_text.setOpenExternalLinks(True)
 
-        frame.layout().addWidget(directory_input_button, 0, 1, Qt.AlignVCenter)
+        frame.layout().addWidget(
+            self._images_directory_input_button, 0, 1, Qt.AlignVCenter
+        )
         frame.layout().addWidget(guide_text, 1, 1, Qt.AlignTop)
 
         channel_label: LabelWithHint = LabelWithHint("Image channel")
 
-        channel_combo_box: QComboBox = QComboBox()
-        channel_combo_box.setCurrentIndex(
+        self._channel_combo_box: QComboBox = QComboBox()
+        self._channel_combo_box.setCurrentIndex(
             -1
         )  # need to set this to see placeholdertext
-        channel_combo_box.setMinimumWidth(306)
-        channel_combo_box.setPlaceholderText("Select an option")
+        self._channel_combo_box.setMinimumWidth(306)
+        self._channel_combo_box.setPlaceholderText("Select an option")
+
+        self._channel_combo_box.currentTextChanged.connect(
+            lambda idx: self._model.set_channel_index(int(idx))
+        )
 
         frame.layout().addWidget(channel_label, 2, 0)
-        frame.layout().addWidget(channel_combo_box, 2, 1)
+        frame.layout().addWidget(self._channel_combo_box, 2, 1)
