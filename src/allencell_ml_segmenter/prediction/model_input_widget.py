@@ -45,7 +45,8 @@ class ModelInputWidget(View, Subscriber):
 
         # instantiate widgets
         self._frame: QFrame = QFrame()
-        self._title: QLabel = QLabel("Model", self)
+        self._title: LabelWithHint = LabelWithHint("Model")
+        # TODO: hints for widget titles?
 
         self._selection_label_with_hint: LabelWithHint = LabelWithHint()
 
