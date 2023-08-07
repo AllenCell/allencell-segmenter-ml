@@ -1,3 +1,6 @@
+from pathlib import Path
+from typing import List
+
 import pytest
 
 from allencell_ml_segmenter.core.event import Event
@@ -12,15 +15,16 @@ def prediction_model() -> PredictionModel:
 
 def test_input_image_paths(prediction_model: PredictionModel) -> None:
     # no event currently dispatched
+    # ARRANGE
+    dummy_paths: List[Path] = [
+        Path("example path " + str(i)) for i in range(10)
+    ]
+
     # ACT
-    prediction_model.set_input_image_paths(
-        ["example path " + str(i) for i in range(10)]
-    )
+    prediction_model.set_input_image_paths(dummy_paths)
 
     # ASSERT
-    assert prediction_model.get_input_image_paths() == [
-        "example path " + str(i) for i in range(10)
-    ]
+    assert prediction_model.get_input_image_paths() == dummy_paths
 
 
 def test_image_input_channel_index(prediction_model: PredictionModel) -> None:
@@ -32,11 +36,14 @@ def test_image_input_channel_index(prediction_model: PredictionModel) -> None:
 
 
 def test_output_directory(prediction_model: PredictionModel) -> None:
+    # ARRANGE
+    dummy_path: Path = Path("example path")
+
     # ACT
-    prediction_model.set_output_directory("example directory")
+    prediction_model.set_output_directory(dummy_path)
 
     # ASSERT
-    assert prediction_model.get_output_directory() == "example directory"
+    assert prediction_model.get_output_directory() == dummy_path
 
 
 def test_model_path(prediction_model: PredictionModel) -> None:
@@ -44,12 +51,13 @@ def test_model_path(prediction_model: PredictionModel) -> None:
     event_under_test: Event = Event.ACTION_PREDICTION_MODEL_FILE
     subscriber: FakeSubscriber = FakeSubscriber()
     prediction_model.subscribe(event_under_test, subscriber, subscriber.handle)
+    dummy_path: Path = Path("example path")
 
     # ACT
-    prediction_model.set_model_path("example path")
+    prediction_model.set_model_path(dummy_path)
 
     # ASSERT
-    assert prediction_model.get_model_path() == "example path"
+    assert prediction_model.get_model_path() == dummy_path
     assert subscriber.was_handled(event_under_test)
 
 
