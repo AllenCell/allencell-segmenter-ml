@@ -147,7 +147,7 @@ class ModelSelectionWidget(QWidget):
         self._max_time_checkbox: QCheckBox = QCheckBox()
         self._max_time_checkbox.setObjectName("timeoutCheckbox")
         self._max_time_checkbox.stateChanged.connect(
-            self._timeout_checkbox_slot
+            self._max_time_checkbox_slot
         )
         max_time_layout.addWidget(self._max_time_checkbox)
 
@@ -191,7 +191,7 @@ class ModelSelectionWidget(QWidget):
         """
         self._combo_box_existing_models.setEnabled(True)
 
-    def _timeout_checkbox_slot(self, checked: Qt.CheckState) -> None:
+    def _max_time_checkbox_slot(self, checked: Qt.CheckState) -> None:
         """
         Triggered when the user selects the "time out after" _timeout_checkbox.
         Enables/disables interaction with the neighboring hour input based on checkstate.
