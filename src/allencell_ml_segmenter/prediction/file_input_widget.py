@@ -122,6 +122,7 @@ class PredictionFileInput(QWidget):
             ),
             "Select directory...",
             FileInputMode.DIRECTORY,
+            accept_csv=True,
         )
         self._browse_dir_edit.setEnabled(False)
         horiz_layout.addWidget(self._browse_dir_edit)
