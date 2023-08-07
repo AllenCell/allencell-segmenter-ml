@@ -34,6 +34,7 @@ class InputButton(QWidget):
         model_set_file_path_function: Callable,
         placeholder: str = "Select file...",
         mode: FileInputMode = FileInputMode.FILE,
+        accept_csv: bool = False,
     ):
         super().__init__()
 
@@ -47,6 +48,7 @@ class InputButton(QWidget):
 
         self._set_path_function: Callable = model_set_file_path_function
         self._mode: FileInputMode = mode
+        self._accept_csv: bool = accept_csv
 
         # text box that will eventually display the chosen file path
         self._text_display: QLineEdit = QLineEdit()
@@ -94,13 +96,21 @@ class InputButton(QWidget):
                 options=QFileDialog.Option.DontUseNativeDialog
                 | QFileDialog.Option.DontUseCustomDirectoryIcons,
             )[0]
-        else:
+        elif self._accept_csv:
             custom_dialog: CustomFileDialog = CustomFileDialog()
             if custom_dialog.exec_() == QFileDialog.Accepted:
                 file_path = custom_dialog.selectedFiles()[0]
             else:
                 file_path = None
-        # TODO: boolean field for csv file (for some service to read it and extract info)?
+        else:
+            file_path: str = QFileDialog.getExistingDirectory(
+                self,
+                "Select a directory",
+                options=QFileDialog.Option.DontUseNativeDialog
+                | QFileDialog.Option.DontUseCustomDirectoryIcons
+                | QFileDialog.ShowDirsOnly,
+            )
+        # TODO: boolean field for csv_file_selected (for some service to read it and extract info)?
 
         if file_path:
             self._update_path_text(file_path)
