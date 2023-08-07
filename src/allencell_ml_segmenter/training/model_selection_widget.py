@@ -39,6 +39,7 @@ class ModelSelectionWidget(QWidget):
 
         title: LabelWithHint = LabelWithHint(ModelSelectionWidget.TITLE_TEXT)
         title.setObjectName("title")
+        # TODO: hints for widget titles?
         self.layout().addWidget(title)
 
         frame: QFrame = QFrame()

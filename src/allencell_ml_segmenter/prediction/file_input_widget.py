@@ -41,7 +41,8 @@ class PredictionFileInput(QWidget):
 
         frame.setObjectName("frame")
 
-        title: QLabel = QLabel("Input image(s)", self)
+        title: LabelWithHint = LabelWithHint("Input image(s)")
+        # TODO: hints for widget titles?
         title.setObjectName("title")
 
         self.layout().addWidget(title)
