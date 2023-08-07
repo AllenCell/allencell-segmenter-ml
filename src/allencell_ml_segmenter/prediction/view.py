@@ -12,7 +12,13 @@ from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.prediction.model_input_widget import (
     ModelInputWidget,
 )
-from qtpy.QtWidgets import QVBoxLayout, QSizePolicy, QPushButton, QFrame, QLabel
+from qtpy.QtWidgets import (
+    QVBoxLayout,
+    QSizePolicy,
+    QPushButton,
+    QFrame,
+    QLabel,
+)
 
 
 class PredictionView(View):
