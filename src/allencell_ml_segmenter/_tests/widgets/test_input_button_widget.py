@@ -12,26 +12,28 @@ from allencell_ml_segmenter.prediction.model import PredictionModel
 @pytest.fixture
 def input_button(qtbot: QtBot) -> InputButton:
     """
-    Fixture that creates an instance of InputButton for testing.
+    Fixture that creates an instance of InputButton for testing. This InputButton is meant to mock selecting files.
     """
     return InputButton(
         Mock(spec=PredictionModel), model_set_file_path_function=Mock()
     )
 
 
-def test_set_file_text(
-    qtbot: QtBot, input_button: InputButton, monkeypatch: pytest.MonkeyPatch
-) -> None:
+def test_set_text(qtbot: QtBot, input_button: InputButton) -> None:
     """
-    Test the _update_path_text method of InputButton for file use cases.
+    Tests InputButton for file use cases.
     """
-    # Arrange
+    # ARRANGE
+    mock_path: str = "/path/to/file"
+
     with patch.object(
-        QFileDialog, "getOpenFileName", return_value=("/path/to/file", "")
+        QFileDialog, "getOpenFileName", return_value=(mock_path, "")
     ):
-        # Act
+        # ACT
         qtbot.mouseClick(input_button._button, Qt.LeftButton)
-        assert input_button._text_display.text() == "/path/to/file"
+
+        # ASSERT
+        assert input_button._text_display.text() == mock_path
 
 
 def test_elongate(input_button: InputButton) -> None:
