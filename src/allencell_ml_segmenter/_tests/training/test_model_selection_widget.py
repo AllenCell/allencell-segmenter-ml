@@ -107,11 +107,9 @@ def test_set_model_path(
     """
     # ARRANGE - add arbitrary model path options to the QComboBox, since it does not come with default choices
     mock_choices: List[str] = [f"dummy path {i}" for i in range(10)]
-    model_selection_widget._combo_box_existing_models.addItems(
-        mock_choices
-    )
+    model_selection_widget._combo_box_existing_models.addItems(mock_choices)
     with qtbot.waitSignal(
-            model_selection_widget._radio_existing_model.toggled
+        model_selection_widget._radio_existing_model.toggled
     ):
         model_selection_widget._radio_existing_model.click()  # enables the combo box
 
@@ -140,9 +138,7 @@ def test_set_patch_size(
 
     for index, patch in enumerate(PatchSize):
         # ACT
-        model_selection_widget._patch_size_combo_box.setCurrentIndex(
-            index
-        )
+        model_selection_widget._patch_size_combo_box.setCurrentIndex(index)
 
         # ASSERT
         assert training_model.get_patch_size() == patch
