@@ -4,7 +4,7 @@ from qtpy.QtWidgets import (
     QPushButton,
     QFrame,
     QVBoxLayout,
-    QSizePolicy
+    QSizePolicy,
 )
 
 from allencell_ml_segmenter._style import Style
