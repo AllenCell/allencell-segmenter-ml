@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import List
 
 from PyQt5.QtCore import Qt
@@ -164,8 +165,9 @@ class PredictionFileInput(QWidget):
     # TODO: replace with correct implementation and move to a service
     def map_input_file_directory_to_path_list(
         self, input_file_directory: str
-    ) -> List[str]:
+    ) -> List[Path]:
         """
         Maps a directory of input files to a list of file paths.
         """
-        return ["foo"]
+        # dummy implementation
+        return list(Path(input_file_directory).glob("*"))

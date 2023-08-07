@@ -1,4 +1,4 @@
-from os import path
+from pathlib import Path
 from typing import List
 
 from allencell_ml_segmenter.core.event import Event
@@ -14,25 +14,24 @@ class PredictionModel(Publisher):
         super().__init__()
 
         # state related to PredictionFileInput
-        self._input_image_paths: List[str] = []
+        self._input_image_paths: List[Path] = []
         self._image_input_channel_index: int = None
-        self._output_directory: str = None
+        self._output_directory: Path = None
 
         # state related to ModelInputWidget
-        # TODO: change to path instead of str
-        self._model_path: str = None
+        self._model_path: Path = None
         self._preprocessing_method: str = None
         self._postprocessing_method: str = None
         self._postprocessing_simple_threshold: float = None
         self._postprocessing_auto_threshold: str = None
 
-    def get_input_image_paths(self) -> List[str]:
+    def get_input_image_paths(self) -> List[Path]:
         """
         Gets list of paths to input images.
         """
         return self._input_image_paths
 
-    def set_input_image_paths(self, paths: List[str]) -> None:
+    def set_input_image_paths(self, paths: List[Path]) -> None:
         """
         Sets list of paths to input images.
         """
@@ -51,25 +50,25 @@ class PredictionModel(Publisher):
         """
         self._image_input_channel_index = idx
 
-    def get_output_directory(self) -> str:
+    def get_output_directory(self) -> Path:
         """
         Gets path to output directory.
         """
         return self._output_directory
 
-    def set_output_directory(self, dir: str) -> None:
+    def set_output_directory(self, dir: Path) -> None:
         """
         Sets path to output directory.
         """
         self._output_directory = dir
 
-    def get_model_path(self) -> str:
+    def get_model_path(self) -> Path:
         """
         Gets path to model.
         """
         return self._model_path
 
-    def set_model_path(self, path: str) -> None:
+    def set_model_path(self, path: Path) -> None:
         """
         Sets path to model.
         """
