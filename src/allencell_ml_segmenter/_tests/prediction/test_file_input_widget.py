@@ -57,6 +57,7 @@ def test_bottom_radio_button_slot(
     assert file_input_widget._browse_dir_edit.isEnabled()
 
 
+@patch.object(QFileDialog, "exec_", return_value=QFileDialog.Accepted)
 def test_preprocessing_method(
     qtbot: QtBot,
     file_input_widget: PredictionFileInput,
@@ -70,17 +71,16 @@ def test_preprocessing_method(
     # ARRANGE
     mock_path_string: str = "/path/to/file"
 
-    with patch.object(QFileDialog, "exec_", return_value=QFileDialog.Accepted):
-        with patch.object(
-            QFileDialog, "selectedFiles", return_value=[mock_path_string]
-        ):
-            # ACT
-            qtbot.mouseClick(
-                file_input_widget._browse_dir_edit._button, Qt.LeftButton
-            )
+    with patch.object(
+        QFileDialog, "selectedFiles", return_value=[mock_path_string]
+    ):
+        # ACT
+        qtbot.mouseClick(
+            file_input_widget._browse_dir_edit._button, Qt.LeftButton
+        )
 
-            # ASSERT
-            assert file_input_widget._model.get_preprocessing_method() is None
+        # ASSERT
+        assert file_input_widget._model.get_preprocessing_method() is None
 
     with patch.object(
         QFileDialog, "getExistingDirectory", return_value=mock_path_string
