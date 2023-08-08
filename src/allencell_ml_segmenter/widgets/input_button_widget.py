@@ -14,7 +14,9 @@ from qtpy.QtCore import Qt
 
 from allencell_ml_segmenter._style import Style
 from allencell_ml_segmenter.core.publisher import Publisher
-from allencell_ml_segmenter.widgets.custom_file_dialog import CustomFileDialog
+from allencell_ml_segmenter.widgets.directory_or_csv_file_dialog import (
+    DirectoryOrCSVFileDialog,
+)
 
 
 class FileInputMode(Enum):
@@ -101,7 +103,9 @@ class InputButton(QWidget):
                 | QFileDialog.Option.DontUseCustomDirectoryIcons,
             )[0]
         elif self._accept_csv:
-            custom_dialog: CustomFileDialog = CustomFileDialog()
+            custom_dialog: DirectoryOrCSVFileDialog = (
+                DirectoryOrCSVFileDialog()
+            )
             if custom_dialog.exec_() == QFileDialog.Accepted:
                 file_path = custom_dialog.selectedFiles()[0]
             else:
