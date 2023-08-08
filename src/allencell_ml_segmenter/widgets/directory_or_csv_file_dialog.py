@@ -3,7 +3,7 @@ import os
 from qtpy.QtWidgets import QFileDialog
 
 
-class CustomFileDialog(QFileDialog):
+class DirectoryOrCSVFileDialog(QFileDialog):
     """
     A custom QFileDialog that allows the user to select either a directory or a CSV file.
     Used in relation to InputButton.
