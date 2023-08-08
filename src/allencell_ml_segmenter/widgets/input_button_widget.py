@@ -88,7 +88,11 @@ class InputButton(QWidget):
         """
         self._text_display.setMinimumWidth(min_width)
 
-    def _select_path(self):
+    def _select_path(self) -> None:
+        """
+        Called whenever an input button is clicked. Takes into account the type of files that can be selected,
+        as well as the custom setter that gets passed upon instantiation.
+        """
         if self._mode == FileInputMode.FILE:
             file_path: str = QFileDialog.getOpenFileName(
                 self,
