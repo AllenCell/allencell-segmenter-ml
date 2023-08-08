@@ -4,6 +4,11 @@ from qtpy.QtWidgets import QFileDialog
 
 
 class CustomFileDialog(QFileDialog):
+    """
+    A custom QFileDialog that allows the user to select either a directory or a CSV file.
+    Used in relation to InputButton.
+    """
+
     def __init__(self):
         super().__init__()
         self.setOption(QFileDialog.DontUseNativeDialog)
@@ -11,7 +16,10 @@ class CustomFileDialog(QFileDialog):
         self.currentChanged.connect(self._selected)
         self.setNameFilter("Directories and CSV files (*.csv)")
 
-    def _selected(self, name):
+    def _selected(self, name: str) -> None:
+        """
+        Called whenever the user selects a new option in the File Dialog menu.
+        """
         if os.path.isdir(name):
             self.setFileMode(QFileDialog.Directory)
             self.setNameFilter(
