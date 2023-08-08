@@ -1,3 +1,4 @@
+from typing import Callable
 from unittest.mock import patch, Mock
 
 import pytest
@@ -10,16 +11,28 @@ from allencell_ml_segmenter.prediction.model import PredictionModel
 
 
 @pytest.fixture
-def input_button(qtbot: QtBot) -> InputButton:
+def model_set_file_path_function() -> Mock:
+    """
+    Fixture that creates a mock function for setting a file path.
+    """
+    return Mock()
+
+
+@pytest.fixture
+def input_button(
+    qtbot: QtBot, model_set_file_path_function: Mock
+) -> InputButton:
     """
     Fixture that creates an instance of InputButton for testing. This InputButton is meant to mock selecting files.
     """
     return InputButton(
-        Mock(spec=PredictionModel), model_set_file_path_function=Mock()
+        Mock(spec=PredictionModel), model_set_file_path_function
     )
 
 
-def test_set_text(qtbot: QtBot, input_button: InputButton) -> None:
+def test_set_text(
+    qtbot: QtBot, input_button: InputButton, model_set_file_path_function: Mock
+) -> None:
     """
     Tests InputButton for file use cases.
     """
@@ -34,6 +47,7 @@ def test_set_text(qtbot: QtBot, input_button: InputButton) -> None:
 
         # ASSERT
         assert input_button._text_display.text() == mock_path
+        model_set_file_path_function.assert_called_once()
 
 
 def test_elongate(input_button: InputButton) -> None:
