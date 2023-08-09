@@ -3,7 +3,7 @@ import sys
 
 from allencell_ml_segmenter.services.training_service import (
     _list_to_string,
-    TrainingService,
+    CytoService,
 )
 from allencell_ml_segmenter.training.training_model import (
     TrainingModel,
@@ -11,7 +11,7 @@ from allencell_ml_segmenter.training.training_model import (
 
 
 @pytest.fixture
-def training_service() -> TrainingService:
+def training_service() -> CytoService:
     model: TrainingModel = TrainingModel()
     model.set_experiment_type("segmentation")
     model.set_hardware_type("cpu")
@@ -22,7 +22,7 @@ def training_service() -> TrainingService:
     model.set_config_dir("/path/to/configs")
     model.set_patch_size("small")
     model.set_max_epoch(100)
-    return TrainingService(model)
+    return CytoService(model)
 
 
 def test_list_to_string() -> None:
@@ -36,7 +36,7 @@ def test_list_to_string() -> None:
         _list_to_string(None)
 
 
-def test_init(training_service: TrainingService) -> None:
+def test_init(training_service: CytoService) -> None:
     # Assert
     # Check to see if training model set properly
     assert training_service._training_model._events_to_subscriber_handlers[
@@ -56,7 +56,7 @@ def test_init(training_service: TrainingService) -> None:
 #     mock_train.assert_called_once()
 
 
-def test_set_experiment(training_service: TrainingService) -> None:
+def test_set_experiment(training_service: CytoService) -> None:
     # Act
     training_service._set_experiment()
 
@@ -67,7 +67,7 @@ def test_set_experiment(training_service: TrainingService) -> None:
     )
 
 
-def test_set_hardware(training_service: TrainingService) -> None:
+def test_set_hardware(training_service: CytoService) -> None:
     # Act
     training_service._set_hardware()
 
@@ -78,7 +78,7 @@ def test_set_hardware(training_service: TrainingService) -> None:
     )
 
 
-def test_set_image_dims(training_service: TrainingService) -> None:
+def test_set_image_dims(training_service: CytoService) -> None:
     # Act
     training_service._set_image_dims()
 
@@ -89,7 +89,7 @@ def test_set_image_dims(training_service: TrainingService) -> None:
     )
 
 
-def test_set_max_epoch(training_service: TrainingService) -> None:
+def test_set_max_epoch(training_service: CytoService) -> None:
     # Act
     training_service._set_max_epoch()
 
@@ -100,7 +100,7 @@ def test_set_max_epoch(training_service: TrainingService) -> None:
     )
 
 
-def test_set_images_directory(training_service: TrainingService) -> None:
+def test_set_images_directory(training_service: CytoService) -> None:
     # Act
     training_service._set_images_directory()
 
@@ -111,7 +111,7 @@ def test_set_images_directory(training_service: TrainingService) -> None:
     )
 
 
-def test_set_patch_shape_from_size(training_service: TrainingService) -> None:
+def test_set_patch_shape_from_size(training_service: CytoService) -> None:
     # Act
     training_service._set_patch_shape_from_size()
 
@@ -122,7 +122,7 @@ def test_set_patch_shape_from_size(training_service: TrainingService) -> None:
     )
 
 
-def test_set_config_dir(training_service: TrainingService) -> None:
+def test_set_config_dir(training_service: CytoService) -> None:
     # Act
     training_service._set_config_dir()
 

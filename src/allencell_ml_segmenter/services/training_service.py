@@ -9,8 +9,17 @@ from allencell_ml_segmenter.training.training_model import (
     PatchSize,
 )
 from allencell_ml_segmenter.training.training_model import TrainingModel
+from allencell_ml_segmenter.core.publisher import Publisher
 from pathlib import Path
 from typing import List, Any
+from enum import Enum
+
+class CytodlMode(Enum):
+    """
+    Different cyto-dl modes
+    """
+    TRAIN = "train"
+    PREDICT = "predict"
 
 
 # static method
@@ -25,19 +34,30 @@ def _list_to_string(list_to_convert: List[Any]) -> str:
     return f"[{ints_to_strings}]"
 
 
-class TrainingService(Subscriber):
+class CytoService(Subscriber):
     """
-    Interface for training a model. Uses cyto-dl to train model according to spec
+    Interface for training a model or predicting using a model.
+    Uses cyto-dl for model training and inference.
     """
 
-    def __init__(self, training_model: TrainingModel):
+    def __init__(self, model: Publisher, mode: CytodlMode):
         super().__init__()
-        self._training_model: TrainingModel = training_model
-        self._training_model.subscribe(
-            Event.PROCESS_TRAINING,
-            self,
-            self.train_model,
-        )
+        self._model: Publisher = model
+
+        if mode == CytodlMode.TRAIN:
+            # Training Service
+            self._model.subscribe(
+                Event.PROCESS_TRAINING,
+                self,
+                self.train_model,
+            )
+        elif mode == CytodlMode.PREDICT:
+            # Prediction Service
+            self._model.subscribe(
+                Event.PROCESS_PREDICTION,
+                self,
+                self.predict_model,
+            )
 
     def train_model(self) -> None:
         """
@@ -56,6 +76,10 @@ class TrainingService(Subscriber):
         experiment_type: TrainingType = (
             self._training_model.get_experiment_type()
         )
+        if experiment_type is None:
+            raise ValueError(
+                "Experiment type not set. Please set experiment type before training."
+            )
         sys.argv.append(f"experiment=im2im/{experiment_type.value}.yaml")
 
     def _set_hardware(self) -> None:
@@ -63,6 +87,10 @@ class TrainingService(Subscriber):
         Sets the hardware argument variable for hydra using sys.argv
         """
         hardware_type: Hardware = self._training_model.get_hardware_type()
+        if hardware_type is None:
+            raise ValueError(
+                "Hardware type not set. Please set hardware type before training."
+            )
         sys.argv.append(f"trainer={hardware_type.value}")
 
     def _set_image_dims(self) -> None:
