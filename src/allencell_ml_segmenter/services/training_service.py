@@ -72,30 +72,33 @@ class CytoService(Subscriber):
     def _set_experiment(self) -> None:
         """
         Sets the experiment argument variable for hydra using sys.argv
+        Used mainly for Training
         """
         experiment_type: TrainingType = (
             self._training_model.get_experiment_type()
         )
         if experiment_type is None:
             raise ValueError(
-                "Experiment type not set. Please set experiment type before training."
+                "Experiment type not set. Please set experiment type."
             )
         sys.argv.append(f"experiment=im2im/{experiment_type.value}.yaml")
 
     def _set_hardware(self) -> None:
         """
         Sets the hardware argument variable for hydra using sys.argv
+        Used mainly for Training
         """
         hardware_type: Hardware = self._training_model.get_hardware_type()
         if hardware_type is None:
             raise ValueError(
-                "Hardware type not set. Please set hardware type before training."
+                "Hardware type not set. Please set hardware type."
             )
         sys.argv.append(f"trainer={hardware_type.value}")
 
     def _set_image_dims(self) -> None:
         """
         Sets the spatial_dims argument variable for hydra override using sys.argv
+        Used mainly for Training
         """
         image_dims: int = self._training_model.get_image_dims()
         sys.argv.append(f"++spatial_dims=[{image_dims}]")
@@ -103,6 +106,7 @@ class CytoService(Subscriber):
     def _set_max_epoch(self) -> None:
         """
         Sets the trainer.max_epochs argument variable for hydra override using sys.argv
+        Used mainly for Training
         """
         max_epoch: int = self._training_model.get_max_epoch()
         sys.argv.append(f"++trainer.max_epochs={max_epoch}")
@@ -117,6 +121,7 @@ class CytoService(Subscriber):
     def _set_patch_shape_from_size(self) -> None:
         """
         Sets the data._aux.patch_shape argument variable for hydra override using sys.argv
+        Used mainly for Training
         """
         patch_size: PatchSize = self._training_model.get_patch_size()
         sys.argv.append(
@@ -126,7 +131,18 @@ class CytoService(Subscriber):
     def _set_config_dir(self) -> None:
         """
         Sets the config_dir hydra runtime variable using sys.argv
+        Used for both
         """
         # This hydra runtime variable needs to be set in separate calls to sys.argv
         sys.argv.append("--config-dir")
         sys.argv.append(str(self._training_model.get_config_dir()))
+
+    def _set_config_name(self) -> None:
+        """
+        Sets the config_name hydra runtime variable using sys.argv
+        Used for both
+        """
+        # This hydra runtime variable needs to be set in separate calls to sys.argv
+        sys.argv.append("--config-name")
+        sys.argv.append(str(self._training_model.get_config_name()))
+
