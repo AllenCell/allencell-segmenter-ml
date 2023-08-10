@@ -1,4 +1,4 @@
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 
 import pytest
 from qtpy.QtWidgets import QFileDialog
@@ -9,6 +9,9 @@ from allencell_ml_segmenter.prediction.file_input_widget import (
     PredictionFileInput,
 )
 from allencell_ml_segmenter.prediction.model import PredictionModel
+
+
+MOCK_PATH: str = "/path/to/file"
 
 
 @pytest.fixture
@@ -57,38 +60,31 @@ def test_bottom_radio_button_slot(
     assert file_input_widget._browse_dir_edit.isEnabled()
 
 
-@patch.object(QFileDialog, "exec_", return_value=QFileDialog.Accepted)
+@patch.multiple(
+    QFileDialog,
+    exec_=Mock(return_value=QFileDialog.Accepted),
+    selectedFiles=Mock(return_value=[MOCK_PATH]),
+    getExistingDirectory=Mock(return_value=MOCK_PATH),
+)
 def test_preprocessing_method(
-    qtbot: QtBot,
-    file_input_widget: PredictionFileInput,
-    monkeypatch: pytest.MonkeyPatch,
+    qtbot: QtBot, file_input_widget: PredictionFileInput
 ) -> None:
     """
     Test that the input buttons in file_input_widget do not affect the state related
     to the model_input_widget. This test was introduced because any input button instance
     used to manipulate the model_path state in the prediction model.
     """
-    # ARRANGE
-    mock_path_string: str = "/path/to/file"
 
-    with patch.object(
-        QFileDialog, "selectedFiles", return_value=[mock_path_string]
-    ):
-        # ACT
-        qtbot.mouseClick(
-            file_input_widget._browse_dir_edit._button, Qt.LeftButton
-        )
+    # ACT 1
+    qtbot.mouseClick(file_input_widget._browse_dir_edit._button, Qt.LeftButton)
 
-        # ASSERT
-        assert file_input_widget._model.get_preprocessing_method() is None
+    # ASSERT 1
+    assert file_input_widget._model.get_preprocessing_method() is None
 
-    with patch.object(
-        QFileDialog, "getExistingDirectory", return_value=mock_path_string
-    ):
-        # ACT
-        qtbot.mouseClick(
-            file_input_widget._browse_output_edit._button, Qt.LeftButton
-        )
+    # ACT 2
+    qtbot.mouseClick(
+        file_input_widget._browse_output_edit._button, Qt.LeftButton
+    )
 
-        # ASSERT
-        assert file_input_widget._model.get_preprocessing_method() is None
+    # ASSERT 2
+    assert file_input_widget._model.get_preprocessing_method() is None
