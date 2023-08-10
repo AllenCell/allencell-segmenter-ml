@@ -27,7 +27,7 @@ class MainMeta(type(QWidget), type(Subscriber)):
 
 class MainWidget(QWidget, Subscriber, metaclass=MainMeta):
     """
-    Adopted and redesigned copy of MainWidget.
+    Holds the pertinent view at the moment to be displayed to the user.
     """
 
     def __init__(self, viewer: napari.Viewer):
