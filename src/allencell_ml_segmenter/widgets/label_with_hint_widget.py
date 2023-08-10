@@ -25,7 +25,7 @@ class LabelWithHint(QWidget):
         self._question_mark: QLabel = QLabel()
         self._question_mark.setPixmap(
             QPixmap(
-                f"{Directories.get_assets_dir()}/icons/question-circle.svg"
+                f"{str(Directories.get_assets_dir())}/icons/question-circle.svg"
             )
         )
         self._question_mark.setObjectName("questionMark")
