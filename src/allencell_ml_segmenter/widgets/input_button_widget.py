@@ -72,7 +72,7 @@ class InputButton(QWidget):
 
     def _update_path_text(self, path_text: str) -> None:
         """
-        Displays path on label portion of input button.
+        Displays chosen file or directory path on label portion of input button.
         """
         self._text_display.setReadOnly(False)
         self._text_display.setText(path_text)
