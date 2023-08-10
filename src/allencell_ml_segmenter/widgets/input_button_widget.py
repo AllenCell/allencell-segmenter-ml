@@ -92,8 +92,8 @@ class InputButton(QWidget):
 
     def _select_path(self) -> None:
         """
-        Called whenever an input button is clicked. Takes into account the type of files that can be selected,
-        as well as the custom setter that gets passed upon instantiation.
+        Called whenever an input button is clicked. Takes into account the type of files that can be selected
+        and makes a call to _update_path_text if the user selects a compatible file or directory.
         """
         if self._mode == FileInputMode.FILE:
             file_path: str = QFileDialog.getOpenFileName(
