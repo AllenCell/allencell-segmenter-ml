@@ -157,9 +157,7 @@ def test_postprocessing_method(
     )
 
     # ACT
-    with qtbot.waitSignal(
-        model_input_widget._bottom_postproc_button.toggled
-    ):
+    with qtbot.waitSignal(model_input_widget._bottom_postproc_button.toggled):
         model_input_widget._bottom_postproc_button.click()
 
     # ASSERT
