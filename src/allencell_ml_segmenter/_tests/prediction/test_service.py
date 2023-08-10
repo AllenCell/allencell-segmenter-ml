@@ -7,10 +7,17 @@ from allencell_ml_segmenter.prediction.service import ModelFileService
 
 @pytest.fixture
 def prediction_model() -> PredictionModel:
+    """
+    Returns a PredictionModel instance for testing.
+    """
     return PredictionModel()
 
 
 def test_service(prediction_model: PredictionModel) -> None:
+    """
+    Tests that the ModelFileService correctly sets the preprocessing
+    method (currently a dummy string) in response to model path being set.
+    """
     # ARRANGE
     ModelFileService(prediction_model)
 
