@@ -8,6 +8,7 @@ class Style:
     """
     Helper class that enables the retrieval of custom Qt stylesheets. Implementation adapted from Segmenter Classic.
     """
+
     cache: Dict[str, str] = dict()
 
     @classmethod
