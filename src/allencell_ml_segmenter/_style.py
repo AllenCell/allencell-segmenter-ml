@@ -1,8 +1,11 @@
+from pathlib import Path
+from typing import Dict
+
 from allencell_ml_segmenter.core.directories import Directories
 
 
 class Style:
-    cache = dict()
+    cache: Dict[str, str] = dict()
 
     @classmethod
     def get_stylesheet(cls, name: str) -> str:
@@ -18,6 +21,6 @@ class Style:
 
     @classmethod
     def _load_from_file(cls, name: str) -> str:
-        path = Directories.get_style_dir() / name
+        path: Path = Directories.get_style_dir() / name
         with open(path, "r") as handle:
             return handle.read()
