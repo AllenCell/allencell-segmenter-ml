@@ -60,6 +60,7 @@ def test_bottom_radio_button_slot(
     assert file_input_widget._browse_dir_edit.isEnabled()
 
 
+# decorator used to stub QFileDialog and avoid nested context managers
 @patch.multiple(
     QFileDialog,
     exec_=Mock(return_value=QFileDialog.Accepted),
