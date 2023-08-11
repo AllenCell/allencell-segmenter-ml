@@ -34,7 +34,7 @@ def test_set_text(
     qtbot: QtBot, input_button: InputButton, model_set_file_path_function: Mock
 ) -> None:
     """
-    Tests InputButton for file use cases.
+    Tests the _update_path_text method of InputButton for file use cases.
     """
     # ARRANGE
     mock_path: str = "/path/to/file"
@@ -52,7 +52,7 @@ def test_set_text(
 
 def test_elongate(input_button: InputButton) -> None:
     """
-    Test the elongate method of InputButton.
+    Tests the elongate method of InputButton.
     """
     # ARRANGE
     initial_width: int = input_button._text_display.width()
