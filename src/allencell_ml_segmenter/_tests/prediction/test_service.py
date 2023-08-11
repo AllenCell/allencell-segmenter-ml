@@ -25,4 +25,5 @@ def test_service(prediction_model: PredictionModel) -> None:
     prediction_model.set_model_path(Path("example path"))
 
     # ASSERT STATE
+    # TODO: replace assertion after implementing real functionality
     assert prediction_model.get_preprocessing_method() == "foo"

@@ -24,7 +24,7 @@ def fake_subscriber() -> FakeSubscriber:
 
 def test_get_current_view(main_model: MainModel) -> None:
     """
-    Tests that the current view is correctly retrievable
+    Tests that the current view is correctly retrievable.
     """
     # ASSERT
     assert main_model.get_current_view() is None

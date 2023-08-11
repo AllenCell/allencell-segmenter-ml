@@ -33,7 +33,7 @@ def test_top_radio_button_slot(
     file_input_widget._browse_dir_edit.setEnabled(True)
 
     # ACT
-    with qtbot.waitSignals([file_input_widget._radio_on_screen.toggled]):
+    with qtbot.waitSignal(file_input_widget._radio_on_screen.toggled):
         file_input_widget._radio_on_screen.click()
 
     # ASSERT - states should have flipped
@@ -52,7 +52,7 @@ def test_bottom_radio_button_slot(
     file_input_widget._browse_dir_edit.setEnabled(False)
 
     # ACT
-    with qtbot.waitSignals([file_input_widget._radio_directory.toggled]):
+    with qtbot.waitSignal(file_input_widget._radio_directory.toggled):
         file_input_widget._radio_directory.click()
 
     # ASSERT - states should have flipped
