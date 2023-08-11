@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 from unittest.mock import patch
 
-from PyQt5.QtWidgets import QFileDialog
+from qtpy.QtWidgets import QFileDialog
 from pytestqt.qtbot import QtBot
 
 from allencell_ml_segmenter.prediction.model_input_widget import (
