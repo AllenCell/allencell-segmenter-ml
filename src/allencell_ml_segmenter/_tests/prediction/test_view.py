@@ -8,17 +8,26 @@ from allencell_ml_segmenter.prediction.view import PredictionView
 
 @pytest.fixture
 def main_model() -> MainModel:
+    """
+    Returns a MainModel instance for testing.
+    """
     return MainModel()
 
 
 @pytest.fixture
 def prediction_view(main_model: MainModel, qtbot: QtBot) -> PredictionView:
+    """
+    Returns a PredictionView instance for testing.
+    """
     return PredictionView(main_model)
 
 
 def test_prediction_view(
     prediction_view: PredictionView, main_model: MainModel
 ) -> None:
+    """
+    Tests that the PredictionView correctly sets the current view to itself
+    """
     # ACT
     main_model.dispatch(Event.PROCESS_TRAINING_COMPLETE)
 

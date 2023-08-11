@@ -25,4 +25,5 @@ class ModelFileService(Subscriber):
         """
         Calls the prediction model's setter for the preprocessing method. Currently set up with a dummy value.
         """
+        # TODO: replace dummy implementation
         self._model.set_preprocessing_method("foo")
