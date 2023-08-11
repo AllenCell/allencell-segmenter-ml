@@ -1,7 +1,8 @@
+from typing import Callable
 from unittest.mock import patch, Mock
 
 import pytest
-from PyQt5.QtWidgets import QFileDialog
+from qtpy.QtWidgets import QFileDialog
 from pytestqt.qtbot import QtBot
 from qtpy.QtCore import Qt
 
@@ -10,28 +11,43 @@ from allencell_ml_segmenter.prediction.model import PredictionModel
 
 
 @pytest.fixture
-def input_button(qtbot: QtBot) -> InputButton:
+def model_set_file_path_function() -> Mock:
     """
-    Fixture that creates an instance of InputButton for testing.
+    Fixture that creates a mock function for setting a file path.
+    """
+    return Mock()
+
+
+@pytest.fixture
+def input_button(
+    qtbot: QtBot, model_set_file_path_function: Mock
+) -> InputButton:
+    """
+    Fixture that creates an instance of InputButton for testing. This InputButton is meant to mock selecting files.
     """
     return InputButton(
-        Mock(spec=PredictionModel), model_set_file_path_function=Mock()
+        Mock(spec=PredictionModel), model_set_file_path_function
     )
 
 
-def test_set_file_text(
-    qtbot: QtBot, input_button: InputButton, monkeypatch: pytest.MonkeyPatch
+def test_set_text(
+    qtbot: QtBot, input_button: InputButton, model_set_file_path_function: Mock
 ) -> None:
     """
-    Test the _update_path_text method of InputButton for file use cases.
+    Tests InputButton for file use cases.
     """
-    # Arrange
+    # ARRANGE
+    mock_path: str = "/path/to/file"
+
     with patch.object(
-        QFileDialog, "getOpenFileName", return_value=("/path/to/file", "")
+        QFileDialog, "getOpenFileName", return_value=(mock_path, "")
     ):
-        # Act
+        # ACT
         qtbot.mouseClick(input_button._button, Qt.LeftButton)
-        assert input_button._text_display.text() == "/path/to/file"
+
+        # ASSERT
+        assert input_button._text_display.text() == mock_path
+        model_set_file_path_function.assert_called_once()
 
 
 def test_elongate(input_button: InputButton) -> None:

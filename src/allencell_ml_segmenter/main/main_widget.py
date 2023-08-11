@@ -1,11 +1,12 @@
 from typing import Dict
 
 import napari
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QTabWidget, QWidget
+from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
     QVBoxLayout,
     QSizePolicy,
+    QTabWidget,
+    QWidget,
 )
 
 from allencell_ml_segmenter.core.event import Event
