@@ -31,7 +31,7 @@ def test_top_radio_button_slot(
     model_input_widget._auto_thresh_selection.setEnabled(True)
 
     # ACT
-    with qtbot.waitSignals([model_input_widget._top_postproc_button.toggled]):
+    with qtbot.waitSignal(model_input_widget._top_postproc_button.toggled):
         model_input_widget._top_postproc_button.click()
 
     # ASSERT - both input UI elements should be disabled, postprocessing method should be set to TOP_TEXT
@@ -54,7 +54,7 @@ def test_mid_radio_button_slot(
     model_input_widget._auto_thresh_selection.setEnabled(True)
 
     # ACT
-    with qtbot.waitSignals([model_input_widget._mid_postproc_button.toggled]):
+    with qtbot.waitSignal(model_input_widget._mid_postproc_button.toggled):
         model_input_widget._mid_postproc_button.click()
 
     # ASSERT - slider should be enabled, combo box should be disabled, postprocessing method should be set to MID_TEXT
@@ -77,9 +77,7 @@ def test_bottom_radio_button_slot(
     model_input_widget._auto_thresh_selection.setEnabled(False)
 
     # ACT
-    with qtbot.waitSignals(
-        [model_input_widget._bottom_postproc_button.toggled]
-    ):
+    with qtbot.waitSignal(model_input_widget._bottom_postproc_button.toggled):
         model_input_widget._bottom_postproc_button.click()
 
     # ASSERT - slider should be disabled, combo box should be enabled, postprocessing method should be set to BOTTOM_TEXT
