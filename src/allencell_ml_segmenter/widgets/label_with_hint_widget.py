@@ -25,10 +25,10 @@ class LabelWithHint(QWidget):
         self._question_mark: QLabel = QLabel()
         self._question_mark.setPixmap(
             QPixmap(
-                f"{Directories.get_assets_dir()}/icons/question-circle.svg"
+                f"{str(Directories.get_assets_dir())}/icons/question-circle.svg"
             )
         )
-        self._question_mark.setObjectName("qm")
+        self._question_mark.setObjectName("questionMark")
 
         self.layout().addWidget(self._question_mark)
         self.layout().addStretch(6)
@@ -50,5 +50,5 @@ class LabelWithHint(QWidget):
         Sets margin-right such that the question mark icon is not cramped.
         """
         self._question_mark.setStyleSheet(
-            "#qm {margin-right: " + str(marg) + "}"
+            "#questionMark {margin-right: " + str(marg) + "}"
         )

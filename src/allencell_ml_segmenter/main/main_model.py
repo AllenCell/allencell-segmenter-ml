@@ -5,7 +5,7 @@ from allencell_ml_segmenter.core.publisher import Publisher
 
 class MainModel(Publisher):
     """
-    Main models for this application
+    Main model for this application. Responsible for non-tab-related view switching.
     """
 
     def __init__(self):
