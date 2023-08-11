@@ -20,8 +20,9 @@ from allencell_ml_segmenter.widgets.directory_or_csv_file_dialog import (
 
 
 class FileInputMode(Enum):
-    DIRECTORY = "dir"  # allows CSV as well
+    DIRECTORY = "dir"
     FILE = "file"
+    DIRECTORY_OR_CSV = "dir_or_csv"
 
 
 class InputButton(QWidget):
@@ -36,7 +37,6 @@ class InputButton(QWidget):
         model_set_file_path_function: Callable,
         placeholder: str = "Select file...",
         mode: FileInputMode = FileInputMode.FILE,
-        accept_csv: bool = False,
     ):
         super().__init__()
 
@@ -50,7 +50,6 @@ class InputButton(QWidget):
 
         self._set_path_function: Callable = model_set_file_path_function
         self._mode: FileInputMode = mode
-        self._accept_csv: bool = accept_csv
 
         # text box that will eventually display the chosen file path
         self._text_display: QLineEdit = QLineEdit()
@@ -102,7 +101,7 @@ class InputButton(QWidget):
                 options=QFileDialog.Option.DontUseNativeDialog
                 | QFileDialog.Option.DontUseCustomDirectoryIcons,
             )[0]
-        elif self._accept_csv:
+        elif self._mode == FileInputMode.DIRECTORY_OR_CSV:
             custom_dialog: DirectoryOrCSVFileDialog = (
                 DirectoryOrCSVFileDialog()
             )
@@ -110,7 +109,7 @@ class InputButton(QWidget):
                 file_path = custom_dialog.selectedFiles()[0]
             else:
                 file_path = None
-        else:
+        else:  # FileInputMode.DIRECTORY
             file_path: str = QFileDialog.getExistingDirectory(
                 self,
                 "Select a directory",
