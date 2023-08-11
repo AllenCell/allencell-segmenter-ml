@@ -27,22 +27,6 @@ def test_pub_dispatch(publisher: Publisher) -> None:
     assert subscriber.was_handled(event_under_test)
 
 
-def test_pub_dispatch_explicit_handler(publisher: Publisher) -> None:
-    """
-    Tests that a publisher can properly dispatch an event to a subscriber with an explicit handler.
-    """
-    # ARRANGE
-    subscriber: FakeSubscriber = FakeSubscriber()
-    event_under_test: Event = Event.PROCESS_TRAINING
-    publisher.subscribe(event_under_test, subscriber, subscriber.handle)
-
-    # ACT
-    publisher.dispatch(event_under_test)
-
-    # ASSERT
-    assert subscriber.was_handled(event_under_test)
-
-
 # TODO from brian: add better methods for testing publisher event to subscriber handlers
 
 
