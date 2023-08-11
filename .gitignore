@@ -9,6 +9,10 @@ __pycache__/
 # build
 # Distribution / packaging
 .Python
+debug.py
+data/
+logs/
+train.log
 venv/
 env/
 build/

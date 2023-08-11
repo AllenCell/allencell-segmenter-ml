@@ -13,6 +13,7 @@ from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.main.main_model import MainModel
+from allencell_ml_segmenter.services.training_service import TrainingService
 from allencell_ml_segmenter.training.image_selection_widget import (
     ImageSelectionWidget,
 )
@@ -32,6 +33,7 @@ class TrainingView(View, Subscriber):
 
         self._main_model: MainModel = main_model
         self._training_model: TrainingModel = TrainingModel()
+        self._training_service: TrainingService = TrainingService(self._training_model)
 
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
@@ -73,6 +75,7 @@ class TrainingView(View, Subscriber):
         self._train_btn: QPushButton = QPushButton("Start training")
         self._train_btn.setObjectName("trainBtn")
         self.layout().addWidget(self._train_btn)
+        self._train_btn.clicked.connect(self.train_btn_handler)
 
         self._main_model.subscribe(
             Event.VIEW_SELECTION_TRAINING,
@@ -82,3 +85,9 @@ class TrainingView(View, Subscriber):
 
         # apply styling
         self.setStyleSheet(Style.get_stylesheet("training_view.qss"))
+
+    def train_btn_handler(self) -> None:
+        """
+        Starts training process
+        """
+        self._training_model.set_training_running(True)
