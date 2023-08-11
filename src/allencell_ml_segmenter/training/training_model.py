@@ -214,12 +214,12 @@ class TrainingModel(Publisher):
         Gets whether training is running
         """
         return self._is_training_running
-    
+
     def set_training_running(self, is_training_running: bool) -> None:
         """
         Sets whether training is running
 
         is_training_running (bool): whether training is running
-        """        
+        """
         self._is_training_running = is_training_running
         self.dispatch(Event.PROCESS_TRAINING)

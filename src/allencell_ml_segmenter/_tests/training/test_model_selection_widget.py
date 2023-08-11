@@ -2,7 +2,6 @@ from pathlib import Path
 from typing import List
 
 import pytest
-from PyQt5.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
 from allencell_ml_segmenter.training.model_selection_widget import (
