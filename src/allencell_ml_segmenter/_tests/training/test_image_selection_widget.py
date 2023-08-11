@@ -1,6 +1,6 @@
 from pathlib import Path
 from typing import List
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 
 import pytest
 from qtpy.QtWidgets import QFileDialog
@@ -11,6 +11,9 @@ from allencell_ml_segmenter.training.image_selection_widget import (
     ImageSelectionWidget,
 )
 from allencell_ml_segmenter.training.training_model import TrainingModel
+
+
+MOCK_PATH: str = "/path/to/file"
 
 
 @pytest.fixture
@@ -31,6 +34,11 @@ def image_selection_widget(
     return ImageSelectionWidget(training_model)
 
 
+@patch.multiple(
+    QFileDialog,
+    exec_=Mock(return_value=QFileDialog.Accepted),
+    selectedFiles=Mock(return_value=[MOCK_PATH]),
+)
 def test_set_images_directory(
     qtbot: QtBot,
     image_selection_widget: ImageSelectionWidget,
@@ -39,21 +47,14 @@ def test_set_images_directory(
     """
     Tests that the slot connected to _directory_input_button properly sets the images directory field.
     """
-    # ARRANGE
-    mock_path_string: str = "/path/to/file"
-
-    with patch.object(QFileDialog, "exec_", return_value=QFileDialog.Accepted):
-        with patch.object(
-            QFileDialog, "selectedFiles", return_value=[mock_path_string]
-        ):
-            # ACT
-            qtbot.mouseClick(
-                image_selection_widget._images_directory_input_button._button,
-                Qt.LeftButton,
-            )
+    # ACT
+    qtbot.mouseClick(
+        image_selection_widget._images_directory_input_button._button,
+        Qt.LeftButton,
+    )
 
     # ASSERT
-    assert training_model.get_images_directory() == Path(mock_path_string)
+    assert training_model.get_images_directory() == Path(MOCK_PATH)
 
 
 def test_set_channel_index(
