@@ -1,5 +1,4 @@
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QFrame, QLabel
+from qtpy.QtCore import Qt
 
 from allencell_ml_segmenter._style import Style
 from allencell_ml_segmenter.core.event import Event
@@ -13,7 +12,13 @@ from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.prediction.model_input_widget import (
     ModelInputWidget,
 )
-from qtpy.QtWidgets import QVBoxLayout, QSizePolicy, QPushButton
+from qtpy.QtWidgets import (
+    QVBoxLayout,
+    QSizePolicy,
+    QPushButton,
+    QFrame,
+    QLabel,
+)
 
 
 class PredictionView(View):
