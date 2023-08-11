@@ -34,6 +34,7 @@ def image_selection_widget(
     return ImageSelectionWidget(training_model)
 
 
+# decorator used to stub QFileDialog and avoid nested context managers
 @patch.multiple(
     QFileDialog,
     exec_=Mock(return_value=QFileDialog.Accepted),
