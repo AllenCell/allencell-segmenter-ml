@@ -33,7 +33,9 @@ class TrainingView(View, Subscriber):
 
         self._main_model: MainModel = main_model
         self._training_model: TrainingModel = TrainingModel()
-        self._training_service: TrainingService = TrainingService(self._training_model)
+        self._training_service: TrainingService = TrainingService(
+            self._training_model
+        )
 
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
