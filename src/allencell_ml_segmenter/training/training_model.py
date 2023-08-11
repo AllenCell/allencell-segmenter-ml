@@ -1,4 +1,5 @@
 from allencell_ml_segmenter.core.publisher import Publisher
+from allencell_ml_segmenter.core.event import Event
 from enum import Enum
 from typing import Union
 from pathlib import Path
@@ -56,6 +57,7 @@ class TrainingModel(Publisher):
         self._config_dir: Path = None
         self._patch_size: PatchSize = None
         self._max_epoch: int = None
+        self._is_training_running: bool = False
 
     def get_experiment_type(self) -> TrainingType:
         """
@@ -206,3 +208,18 @@ class TrainingModel(Publisher):
         config_dir (str): path to config directory
         """
         self._config_dir = config_dir
+
+    def is_training_running(self) -> bool:
+        """
+        Gets whether training is running
+        """
+        return self._is_training_running
+    
+    def set_training_running(self, is_training_running: bool) -> None:
+        """
+        Sets whether training is running
+
+        is_training_running (bool): whether training is running
+        """        
+        self._is_training_running = is_training_running
+        self.dispatch(Event.PROCESS_TRAINING)

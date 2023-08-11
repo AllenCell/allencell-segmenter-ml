@@ -41,7 +41,7 @@ def test_init(training_service: TrainingService) -> None:
     # Check to see if training model set properly
     assert training_service._training_model._events_to_subscriber_handlers[
         "training"
-    ] == {training_service: training_service.train_model}
+    ] == {training_service: training_service.train_model_handler}
 
 
 # TODO include when on artifactory
