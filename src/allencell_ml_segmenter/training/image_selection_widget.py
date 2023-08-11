@@ -51,8 +51,7 @@ class ImageSelectionWidget(QWidget):
             self._model,
             lambda dir: self._model.set_images_directory(dir),
             "Select directory...",
-            FileInputMode.DIRECTORY,
-            accept_csv=True,
+            FileInputMode.DIRECTORY_OR_CSV,
         )
         self._images_directory_input_button.elongate(248)
 
