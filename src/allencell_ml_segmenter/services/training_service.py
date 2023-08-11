@@ -1,7 +1,10 @@
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.event import Event
+from PyQt5.QtWidgets import QProgressDialog
+from PyQt5.QtCore import Qt
 
-# TODO include when on artifactory from cyto_dl.train import main as cyto_train
+from cyto_dl.train import main as cyto_train
+
 import sys
 from allencell_ml_segmenter.training.training_model import (
     TrainingType,
@@ -24,6 +27,32 @@ def _list_to_string(list_to_convert: List[Any]) -> str:
     ints_to_strings: str = ", ".join([str(i) for i in list_to_convert])
     return f"[{ints_to_strings}]"
 
+from lightning.pytorch.callbacks import Callback
+
+
+class MyPrintingCallback(Callback):
+
+    def __init__(self):
+        super().__init__()
+        self.progress_dialog = QProgressDialog("Working...", None, 0, 0)
+        self.progress_dialog.setWindowTitle("Indeterminate Progress")
+        self.progress_dialog.setWindowModality(Qt.ApplicationModal)
+        self.progress_dialog.setCancelButton(None)  # No cancel button
+        self.progress_dialog.setRange(0, 0)  # Indeterminate range
+        
+    def on_train_start(self, trainer, pl_module):
+        print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@Training is starting@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+        self.progress_dialog.show()
+
+    def on_train_epoch_start(self, trainer, pl_module):
+        print(f"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@Epoch {trainer.current_epoch} is starting@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+
+    def on_train_epoch_end(self, trainer, pl_module):
+        print(f"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@Training {trainer.current_epoch} is ending@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+
+    def on_train_end(self, trainer, pl_module):
+        print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@Training is ending@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+        self.progress_dialog.close()
 
 class TrainingService(Subscriber):
     """
@@ -36,18 +65,31 @@ class TrainingService(Subscriber):
         self._training_model.subscribe(
             Event.PROCESS_TRAINING,
             self,
-            self.train_model,
+            lambda e: self.train_model_handler(),
         )
 
-    def train_model(self) -> None:
+    def train_model_handler(self) -> None:
         """
         Trains the model according to the spec
         """
-        self._set_experiment()
-        self._set_hardware()
+        if self._training_model.is_training_running():
+            self._training_model.set_experiment_type("segmentation")
+            self._training_model.set_hardware_type("cpu")
+            self._training_model.set_image_dims(2)
+            self._training_model.set_images_directory("/Users/chrishu/dev/code/cyto-dl/data/example_experiment_data/segmentation")
+            self._training_model.set_channel_index(9)
+            self._training_model.set_max_time(9992)
+            self._training_model.set_config_dir("/Users/chrishu/dev/code/cyto-dl/configs")
+            self._training_model.set_patch_size("small")
+            self._training_model.set_max_epoch(100)
+            self._set_config_dir()
+            self._set_experiment()
+            self._set_hardware()
+            self._set_images_directory()
 
-        # Call to cyto-dl's train.py
-        # TODO include when on artifactory cyto_train()
+            sys.argv.append("+callbacks.print_progress._target_=allencell_ml_segmenter.services.training_service.MyPrintingCallback")
+
+            cyto_train()
 
     def _set_experiment(self) -> None:
         """
