@@ -105,6 +105,7 @@ class CytoService(Subscriber):
             raise ValueError(
                 "Experiment type not set. Please set experiment type."
             )
+        # TODO some sort of check for valid experiments
         sys.argv.append(f"experiment=im2im/{experiment_type.value}.yaml")
 
     def _set_hardware(self) -> None:

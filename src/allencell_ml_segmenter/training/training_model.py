@@ -54,6 +54,7 @@ class TrainingModel(Publisher):
         self._max_epoch: int = None
         self._max_time: int = None  # in seconds
         self._config_dir: Path = None
+        self._config_name: str = None
         self._patch_size: PatchSize = None
         self._max_epoch: int = None
 
@@ -206,3 +207,12 @@ class TrainingModel(Publisher):
         config_dir (str): path to config directory
         """
         self._config_dir = config_dir
+
+    def get_config_name(self) -> str:
+        """
+        Gets config name
+        """
+        return self._config_name
+
+    def set_config_name(self, config_name: str) -> None:
+        self._config_name = config_name
