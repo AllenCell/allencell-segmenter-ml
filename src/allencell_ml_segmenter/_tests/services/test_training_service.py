@@ -39,7 +39,7 @@ def test_list_to_string() -> None:
 def test_init(training_service: CytoService) -> None:
     # Assert
     # Check to see if training model set properly
-    assert training_service._training_model._events_to_subscriber_handlers[
+    assert training_service._model._events_to_subscriber_handlers[
         "training"
     ] == {training_service: training_service.train_model}
 
@@ -62,7 +62,7 @@ def test_set_experiment(training_service: CytoService) -> None:
 
     # Assert
     assert (
-        f"experiment=im2im/{training_service._training_model.get_experiment_type().value}.yaml"
+        f"experiment=im2im/{training_service._model.get_experiment_type().value}.yaml"
         in sys.argv
     )
 
@@ -73,7 +73,7 @@ def test_set_hardware(training_service: CytoService) -> None:
 
     # Assert
     assert (
-        f"trainer={training_service._training_model.get_hardware_type().value}"
+        f"trainer={training_service._model.get_hardware_type().value}"
         in sys.argv
     )
 
@@ -84,7 +84,7 @@ def test_set_image_dims(training_service: CytoService) -> None:
 
     # Assert
     assert (
-        f"++spatial_dims=[{training_service._training_model.get_image_dims()}]"
+        f"++spatial_dims=[{training_service._model.get_image_dims()}]"
         in sys.argv
     )
 
@@ -95,7 +95,7 @@ def test_set_max_epoch(training_service: CytoService) -> None:
 
     # Assert
     assert (
-        f"++trainer.max_epochs={training_service._training_model.get_max_epoch()}"
+        f"++trainer.max_epochs={training_service._model.get_max_epoch()}"
         in sys.argv
     )
 
@@ -106,7 +106,7 @@ def test_set_images_directory(training_service: CytoService) -> None:
 
     # Assert
     assert (
-        f"++data.path={training_service._training_model.get_images_directory()}"
+        f"++data.path={training_service._model.get_images_directory()}"
         in sys.argv
     )
 
@@ -117,7 +117,7 @@ def test_set_patch_shape_from_size(training_service: CytoService) -> None:
 
     # Assert
     assert (
-        f"++data._aux.patch_shape={training_service._training_model.get_patch_size().value}"
+        f"++data._aux.patch_shape={training_service._model.get_patch_size().value}"
         in sys.argv
     )
 
@@ -128,5 +128,5 @@ def test_set_config_dir(training_service: CytoService) -> None:
 
     # Assert
     assert ("--config-dir" in sys.argv) and (
-        training_service._training_model.get_config_dir() in sys.argv
+            training_service._model.get_config_dir() in sys.argv
     )
