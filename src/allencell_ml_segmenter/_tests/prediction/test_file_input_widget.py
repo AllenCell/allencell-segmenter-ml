@@ -1,14 +1,17 @@
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 
 import pytest
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QFileDialog
+from qtpy.QtWidgets import QFileDialog
+from qtpy.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
 from allencell_ml_segmenter.prediction.file_input_widget import (
     PredictionFileInput,
 )
 from allencell_ml_segmenter.prediction.model import PredictionModel
+
+
+MOCK_PATH: str = "/path/to/file"
 
 
 @pytest.fixture
@@ -30,7 +33,7 @@ def test_top_radio_button_slot(
     file_input_widget._browse_dir_edit.setEnabled(True)
 
     # ACT
-    with qtbot.waitSignals([file_input_widget._radio_on_screen.toggled]):
+    with qtbot.waitSignal(file_input_widget._radio_on_screen.toggled):
         file_input_widget._radio_on_screen.click()
 
     # ASSERT - states should have flipped
@@ -49,7 +52,7 @@ def test_bottom_radio_button_slot(
     file_input_widget._browse_dir_edit.setEnabled(False)
 
     # ACT
-    with qtbot.waitSignals([file_input_widget._radio_directory.toggled]):
+    with qtbot.waitSignal(file_input_widget._radio_directory.toggled):
         file_input_widget._radio_directory.click()
 
     # ASSERT - states should have flipped
@@ -57,32 +60,32 @@ def test_bottom_radio_button_slot(
     assert file_input_widget._browse_dir_edit.isEnabled()
 
 
+# decorator used to stub QFileDialog and avoid nested context managers
+@patch.multiple(
+    QFileDialog,
+    exec_=Mock(return_value=QFileDialog.Accepted),
+    selectedFiles=Mock(return_value=[MOCK_PATH]),
+    getExistingDirectory=Mock(return_value=MOCK_PATH),
+)
 def test_preprocessing_method(
-    qtbot: QtBot,
-    file_input_widget: PredictionFileInput,
-    monkeypatch: pytest.MonkeyPatch,
+    qtbot: QtBot, file_input_widget: PredictionFileInput
 ) -> None:
     """
     Test that the input buttons in file_input_widget do not affect the state related
     to the model_input_widget. This test was introduced because any input button instance
     used to manipulate the model_path state in the prediction model.
     """
-    # ARRANGE
-    with patch.object(
-        QFileDialog, "getOpenFileName", return_value=("/path/to/file", "")
-    ):
-        # ACT
-        qtbot.mouseClick(
-            file_input_widget._browse_dir_edit._button, Qt.LeftButton
-        )
 
-        # ASSERT
-        assert file_input_widget._model.get_preprocessing_method() is None
+    # ACT 1
+    qtbot.mouseClick(file_input_widget._browse_dir_edit._button, Qt.LeftButton)
 
-        # ACT
-        qtbot.mouseClick(
-            file_input_widget._browse_output_edit._button, Qt.LeftButton
-        )
+    # ASSERT 1
+    assert file_input_widget._model.get_preprocessing_method() is None
 
-        # ASSERT
-        assert file_input_widget._model.get_preprocessing_method() is None
+    # ACT 2
+    qtbot.mouseClick(
+        file_input_widget._browse_output_edit._button, Qt.LeftButton
+    )
+
+    # ASSERT 2
+    assert file_input_widget._model.get_preprocessing_method() is None

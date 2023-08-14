@@ -1,11 +1,12 @@
 from typing import Dict
 
 import napari
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QTabWidget, QWidget
+from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
     QVBoxLayout,
     QSizePolicy,
+    QTabWidget,
+    QWidget,
 )
 
 from allencell_ml_segmenter.core.event import Event
@@ -26,7 +27,7 @@ class MainMeta(type(QWidget), type(Subscriber)):
 
 class MainWidget(QWidget, Subscriber, metaclass=MainMeta):
     """
-    Adopted and redesigned copy of MainWidget.
+    Holds the pertinent view at the moment to be displayed to the user.
     """
 
     def __init__(self, viewer: napari.Viewer):

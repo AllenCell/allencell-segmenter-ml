@@ -55,8 +55,6 @@ class TrainingModel(Publisher):
         self._max_time: int = None  # in seconds
         self._config_dir: Path = None
         self._config_name: str = None
-        self._patch_size: PatchSize = None
-        self._max_epoch: int = None
 
     def get_experiment_type(self) -> TrainingType:
         """
@@ -98,10 +96,10 @@ class TrainingModel(Publisher):
         """
         Sets image dimensions
 
-        image_dims (int): number of dimensions to train model on. "2" for 2d, "3" for 3d
+        image_dims (int): number of dimensions to train model on. "2" for 2D, "3" for 3D
         """
         if image_dims != 2 and image_dims != 3:
-            raise ValueError("No support for non 2-d and 3-d images.")
+            raise ValueError("No support for non 2D and 3D images.")
         self._image_dims = image_dims
 
     def get_max_epoch(self) -> int:

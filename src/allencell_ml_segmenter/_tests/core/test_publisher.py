@@ -5,27 +5,19 @@ from allencell_ml_segmenter._tests.fakes.fake_subscriber import FakeSubscriber
 
 @pytest.fixture
 def publisher() -> Publisher:
+    """
+    Fixture for Publisher.
+    """
     return Publisher()
 
 
 def test_pub_dispatch(publisher: Publisher) -> None:
+    """
+    Tests that a publisher can properly dispatch an event to a subscriber.
+    """
+    # ARRANGE
     subscriber: FakeSubscriber = FakeSubscriber()
     event_under_test: Event = Event.PROCESS_TRAINING
-
-    # ARRANGE
-    publisher.subscribe(event_under_test, subscriber, subscriber.handle)
-
-    # ACT
-    publisher.dispatch(event_under_test)
-
-    assert subscriber.was_handled(event_under_test)
-
-
-def test_pub_dispatch_explicit_handler(publisher: Publisher) -> None:
-    subscriber: FakeSubscriber = FakeSubscriber()
-    event_under_test: Event = Event.PROCESS_TRAINING
-
-    # ARRANGE
     publisher.subscribe(event_under_test, subscriber, subscriber.handle)
 
     # ACT
@@ -39,11 +31,14 @@ def test_pub_dispatch_explicit_handler(publisher: Publisher) -> None:
 
 
 def test_pub_dispatch_multiple(publisher: Publisher) -> None:
-    subscriber1: FakeSubscriber = FakeSubscriber()
-
-    subscriber2: FakeSubscriber = FakeSubscriber()
+    """
+    Tests that a publisher can properly dispatch an event to multiple subscribers.
+    """
 
     # ARRANGE
+    subscriber1: FakeSubscriber = FakeSubscriber()
+    subscriber2: FakeSubscriber = FakeSubscriber()
+
     publisher.subscribe(
         Event.PROCESS_TRAINING, subscriber1, subscriber1.handle
     )
@@ -60,10 +55,14 @@ def test_pub_dispatch_multiple(publisher: Publisher) -> None:
 
 
 def test_pub_unsubscribe(publisher: Publisher) -> None:
+    """
+    Tests that a publisher can properly unsubscribe a subscriber.
+    """
+
+    # ARRANGE
     subscriber: FakeSubscriber = FakeSubscriber()
     event_under_test: Event = Event.PROCESS_TRAINING
 
-    # ARRANGE
     publisher.subscribe(event_under_test, subscriber, subscriber.handle)
     publisher.unsubscribe(event_under_test, subscriber)
 
@@ -75,9 +74,12 @@ def test_pub_unsubscribe(publisher: Publisher) -> None:
 
 
 def test_pub_unsubscribe_unknown(publisher: Publisher) -> None:
+    """
+    Tests that unsubscribing a nonexistent subscriber does not cause errors.
+    """
     subscriber: FakeSubscriber = FakeSubscriber()
 
     # ACT
     publisher.unsubscribe(Event.PROCESS_TRAINING, subscriber)
 
-    assert 1 == 1  # no error raised
+    # If no error is raised, the test will pass (no arbitrary assertion needed)

@@ -1,7 +1,7 @@
 ## Mission 
-impactA test suite has a big affect on the maintainability and velocity of a project.  The impact can range from being a safety 
+A test suite has a big effect on the maintainability and velocity of a project.
 
-In this project, we stride for our test to meet to following guidelines (based on https://abseil.io/resources/swe-book/html/ch12.html):
+In this project, we strive for our tests to meet to following guidelines (based on https://abseil.io/resources/swe-book/html/ch12.html):
 
 ### Strive for unchanging tests.
 
@@ -21,4 +21,4 @@ In this project, we stride for our test to meet to following guidelines (based o
 
 ### Write clear failure messages.
 
-### Follow DAMP over DRY when sharing  code for tests.
+### Follow DAMP over DRY when sharing code for tests.

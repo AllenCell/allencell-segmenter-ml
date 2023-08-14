@@ -10,11 +10,16 @@ from allencell_ml_segmenter._tests.fakes.fake_subscriber import FakeSubscriber
 
 @pytest.fixture
 def prediction_model() -> PredictionModel:
+    """
+    Fixture that creates an instance of PredictionModel for testing.
+    """
     return PredictionModel()
 
 
 def test_input_image_paths(prediction_model: PredictionModel) -> None:
-    # no event currently dispatched
+    """
+    Tests that the input image paths are set and retrieved properly.
+    """
     # ARRANGE
     dummy_paths: List[Path] = [
         Path("example path " + str(i)) for i in range(10)
@@ -28,14 +33,21 @@ def test_input_image_paths(prediction_model: PredictionModel) -> None:
 
 
 def test_image_input_channel_index(prediction_model: PredictionModel) -> None:
-    # ACT
-    prediction_model.set_image_input_channel_index(17)
+    """
+    Tests that the channel index is set and retrieved properly.
+    """
+    for i in range(10):
+        # ACT
+        prediction_model.set_image_input_channel_index(i)
 
-    # ASSERT
-    assert prediction_model.get_image_input_channel_index() == 17
+        # ASSERT
+        assert prediction_model.get_image_input_channel_index() == i
 
 
 def test_output_directory(prediction_model: PredictionModel) -> None:
+    """
+    Tests that the output directory is set and retrieved properly.
+    """
     # ARRANGE
     dummy_path: Path = Path("example path")
 
@@ -47,6 +59,9 @@ def test_output_directory(prediction_model: PredictionModel) -> None:
 
 
 def test_model_path(prediction_model: PredictionModel) -> None:
+    """
+    Tests that the model path is set and retrieved properly, and that the correct event is fired off.
+    """
     # ARRANGE
     event_under_test: Event = Event.ACTION_PREDICTION_MODEL_FILE
     subscriber: FakeSubscriber = FakeSubscriber()
@@ -62,6 +77,9 @@ def test_model_path(prediction_model: PredictionModel) -> None:
 
 
 def test_preprocessing_method(prediction_model: PredictionModel) -> None:
+    """
+    Tests that the preprocessing method is set and retrieved properly, and that the correct event is fired off.
+    """
     # ARRANGE
     event_under_test: Event = Event.ACTION_PREDICTION_PREPROCESSING_METHOD
     subscriber: FakeSubscriber = FakeSubscriber()
@@ -76,6 +94,9 @@ def test_preprocessing_method(prediction_model: PredictionModel) -> None:
 
 
 def test_postprocessing_method(prediction_model: PredictionModel) -> None:
+    """
+    Tests that the postprocessing method is set and retrieved properly, and that the correct event is fired off.
+    """
     # ARRANGE
     event_under_test: Event = Event.ACTION_PREDICTION_POSTPROCESSING_METHOD
     subscriber: FakeSubscriber = FakeSubscriber()
@@ -92,6 +113,9 @@ def test_postprocessing_method(prediction_model: PredictionModel) -> None:
 def test_postprocessing_simple_threshold(
     prediction_model: PredictionModel,
 ) -> None:
+    """
+    Tests that the postprocessing simple threshold is set and retrieved properly, and that the correct event is fired off.
+    """
     # ARRANGE
     event_under_test: Event = (
         Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD
@@ -110,6 +134,9 @@ def test_postprocessing_simple_threshold(
 def test_postprocessing_auto_threshold(
     prediction_model: PredictionModel,
 ) -> None:
+    """
+    Tests that the postprocessing auto threshold is set and retrieved properly, and that the correct event is fired off.
+    """
     # ARRANGE
     event_under_test: Event = (
         Event.ACTION_PREDICTION_POSTPROCESSING_AUTO_THRESHOLD

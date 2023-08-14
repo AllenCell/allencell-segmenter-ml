@@ -26,10 +26,15 @@ def prediction_service() -> CytoService:
 
 
 def test_list_to_string() -> None:
+    """
+    Tests the _list_to_string helper function.
+    """
+    # ACT/ASSERT
     assert _list_to_string([1, 2, 3]) == "[1, 2, 3]"
     assert _list_to_string([1]) == "[1]"
     assert _list_to_string([]) == "[]"
     assert _list_to_string("abc") == "[a, b, c]"
+
     with pytest.raises(TypeError):
         _list_to_string(24)
     with pytest.raises(TypeError):
@@ -63,11 +68,14 @@ def test_init_preidction(prediction_service: CytoService) -> None:
 
 
 def test_set_experiment(training_service: CytoService) -> None:
+    """
+    Tests the _set_experiment method.
+    """
     # Act
     training_service._model.set_experiment_type("segmentation")
     training_service._set_experiment()
 
-    # Assert
+    # ASSERT
     assert (
         f"experiment=im2im/{training_service._model.get_experiment_type().value}.yaml"
         in sys.argv
@@ -81,11 +89,14 @@ def test_set_experiment_not_set(training_service: CytoService) -> None:
 
 
 def test_set_hardware(training_service: CytoService) -> None:
+    """
+    Tests the _set_hardware method.
+    """
     # Act
     training_service._model.set_hardware_type("cpu")
     training_service._set_hardware()
 
-    # Assert
+    # ASSERT
     assert (
         f"trainer={training_service._model.get_hardware_type().value}"
         in sys.argv
@@ -99,16 +110,18 @@ def test_set_hardware_not_set(training_service: CytoService) -> None:
 
 
 def test_set_image_dims(training_service: CytoService) -> None:
+    """
+    Tests the _set_image_dims method.
+    """
     # Act
     training_service._model.set_image_dims(2)
     training_service._set_image_dims()
 
-    # Assert
+    # ASSERT
     assert (
         f"++spatial_dims=[{training_service._model.get_image_dims()}]"
         in sys.argv
     )
-
 
 def test_set_image_dims_not_set(training_service: CytoService) -> None:
     # Act
@@ -122,11 +135,14 @@ def test_set_image_dims_not_set(training_service: CytoService) -> None:
 
 
 def test_set_max_epoch(training_service: CytoService) -> None:
+    """
+    Tests the _set_max_epoch method.
+    """
     # Act
     training_service._model.set_max_epoch(100)
     training_service._set_max_epoch()
 
-    # Assert
+    # ASSERT
     assert (
         f"++trainer.max_epochs={training_service._model.get_max_epoch()}"
         in sys.argv
@@ -145,11 +161,14 @@ def test_set_max_epoch_not_set(training_service: CytoService) -> None:
 
 
 def test_set_images_directory(training_service: CytoService) -> None:
+    """
+    Tests the _set_images_directory method.
+    """
     # Act
     training_service._model.set_images_directory("/path/to/images")
     training_service._set_images_directory()
 
-    # Assert
+    # ASSERT
     assert (
         f"++data.path={training_service._model.get_images_directory()}"
         in sys.argv
@@ -168,16 +187,18 @@ def test_set_images_directory_not_set(training_service: CytoService) -> None:
 
 
 def test_set_patch_shape_from_size(training_service: CytoService) -> None:
+    """
+    Tests the _set_patch_shape_from_size method.
+    """
     # Act
     training_service._model.set_patch_size("small")
     training_service._set_patch_shape_from_size()
 
-    # Assert
+    # ASSERT
     assert (
         f"++data._aux.patch_shape={training_service._model.get_patch_size().value}"
         in sys.argv
     )
-
 
 def test_set_patch_shape_not_set(training_service: CytoService) -> None:
     # Act
@@ -191,11 +212,14 @@ def test_set_patch_shape_not_set(training_service: CytoService) -> None:
 
 
 def test_set_config_dir(training_service: CytoService) -> None:
+    """
+    Tests the _set_config_dir method.
+    """
     # Act
     training_service._model.set_config_dir("/path/to/configs")
     training_service._set_config_dir()
 
-    # Assert
+    # ASSERT
     assert ("--config-dir" in sys.argv) and (
         training_service._model.get_config_dir() in sys.argv
     )

@@ -11,17 +11,26 @@ from unittest.mock import Mock
 
 @pytest.fixture
 def viewer() -> napari.Viewer:
+    """
+    Returns a mock napari viewer.
+    """
     return Mock(spec=napari.Viewer)
 
 
 @pytest.fixture
 def main_widget(qtbot: QtBot) -> MainWidget:
+    """
+    Returns a MainWidget instance for testing.
+    """
     return MainWidget(viewer)
 
 
 def test_handle_action_change_view_event(
     main_widget: MainWidget,
 ) -> None:
+    """
+    Tests that the main widget handles the action change view event correctly.
+    """
     # ARRANGE
     views: Set[View] = main_widget._view_to_index.keys()
 
