@@ -13,6 +13,7 @@ from allencell_ml_segmenter.core.publisher import Publisher
 from pathlib import Path
 from typing import List, Any
 from enum import Enum
+from cyto_dl.train import main as cyto_train
 
 class CytodlMode(Enum):
     """
@@ -42,18 +43,18 @@ class CytoService(Subscriber):
 
     def __init__(self, model: Publisher, mode: CytodlMode):
         super().__init__()
-        self._model: Publisher = model
+        self._training_model: Publisher = model
 
         if mode == CytodlMode.TRAIN:
             # Training Service
-            self._model.subscribe(
+            self._training_model.subscribe(
                 Event.PROCESS_TRAINING,
                 self,
                 self.train_model,
             )
         elif mode == CytodlMode.PREDICT:
             # Prediction Service
-            self._model.subscribe(
+            self._training_model.subscribe(
                 Event.PROCESS_PREDICTION,
                 self,
                 self.predict_model,
@@ -63,11 +64,15 @@ class CytoService(Subscriber):
         """
         Trains the model according to the spec
         """
+        self._set_config_dir()
         self._set_experiment()
         self._set_hardware()
+        self._set_image_dims()
+        self._set_images_directory()
 
         # Call to cyto-dl's train.py
         # TODO include when on artifactory cyto_train()
+        cyto_train()
 
     def _set_experiment(self) -> None:
         """
@@ -101,7 +106,8 @@ class CytoService(Subscriber):
         Used mainly for Training
         """
         image_dims: int = self._training_model.get_image_dims()
-        sys.argv.append(f"++spatial_dims=[{image_dims}]")
+        if image_dims is not None:
+            sys.argv.append(f"++spatial_dims=[{image_dims}]")
 
     def _set_max_epoch(self) -> None:
         """
@@ -145,4 +151,5 @@ class CytoService(Subscriber):
         # This hydra runtime variable needs to be set in separate calls to sys.argv
         sys.argv.append("--config-name")
         sys.argv.append(str(self._training_model.get_config_name()))
+
 
