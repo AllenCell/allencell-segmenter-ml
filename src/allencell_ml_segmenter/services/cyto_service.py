@@ -15,10 +15,12 @@ from enum import Enum
 from cyto_dl.train import main as cyto_train
 from cyto_dl.eval import main as cyto_predict
 
+
 class CytodlMode(Enum):
     """
     Different cyto-dl modes
     """
+
     TRAIN = "train"
     PREDICT = "predict"
 
@@ -67,7 +69,7 @@ class CytoService(Subscriber):
         """
         # needs to be called first
         self._set_config_dir()
-        self._set_config_name() # cyto_dl.train as train.yaml hardcoded
+        self._set_config_name()  # cyto_dl.train as train.yaml hardcoded
 
         # cyto-dl args
         self._set_experiment()
@@ -98,9 +100,7 @@ class CytoService(Subscriber):
         Sets the experiment argument variable for hydra using sys.argv
         Used mainly for Training
         """
-        experiment_type: TrainingType = (
-            self._model.get_experiment_type()
-        )
+        experiment_type: TrainingType = self._model.get_experiment_type()
         if experiment_type is None:
             raise ValueError(
                 "Experiment type not set. Please set experiment type."
@@ -192,6 +192,3 @@ class CytoService(Subscriber):
         # This hydra runtime variable needs to be set in separate calls to sys.argv
         sys.argv.append("--config-name")
         sys.argv.append(str(self._model.get_config_name()))
-
-
-

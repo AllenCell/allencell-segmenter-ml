@@ -4,7 +4,7 @@ import sys
 from allencell_ml_segmenter.services.cyto_service import (
     _list_to_string,
     CytoService,
-    CytodlMode
+    CytodlMode,
 )
 from allencell_ml_segmenter.training.training_model import (
     TrainingModel,
@@ -17,6 +17,7 @@ def training_service() -> CytoService:
     model.set_channel_index(9)
     model.set_max_time(9992)
     return CytoService(model, mode=CytodlMode.TRAIN)
+
 
 @pytest.fixture
 def prediction_service() -> CytoService:
@@ -42,11 +43,11 @@ def test_init_training(training_service: CytoService) -> None:
         "training"
     ] == {training_service: training_service.train_model}
 
+
 def test_init_preidction(prediction_service: CytoService) -> None:
     assert prediction_service._model._events_to_subscriber_handlers[
         "prediction"
     ] == {prediction_service: prediction_service.predict_model}
-
 
 
 # TODO include when on artifactory
@@ -72,6 +73,7 @@ def test_set_experiment(training_service: CytoService) -> None:
         in sys.argv
     )
 
+
 def test_set_experiment_not_set(training_service: CytoService) -> None:
     # Assert
     with pytest.raises(ValueError):
@@ -88,6 +90,7 @@ def test_set_hardware(training_service: CytoService) -> None:
         f"trainer={training_service._model.get_hardware_type().value}"
         in sys.argv
     )
+
 
 def test_set_hardware_not_set(training_service: CytoService) -> None:
     # Assert
@@ -106,14 +109,16 @@ def test_set_image_dims(training_service: CytoService) -> None:
         in sys.argv
     )
 
+
 def test_set_image_dims_not_set(training_service: CytoService) -> None:
     # Act
     length_argv = len(sys.argv)
     training_service._set_image_dims()
 
     # Assert
-    assert length_argv == len(sys.argv) # no argument variables added since image_dims not set
-
+    assert length_argv == len(
+        sys.argv
+    )  # no argument variables added since image_dims not set
 
 
 def test_set_max_epoch(training_service: CytoService) -> None:
@@ -127,13 +132,16 @@ def test_set_max_epoch(training_service: CytoService) -> None:
         in sys.argv
     )
 
+
 def test_set_max_epoch_not_set(training_service: CytoService) -> None:
     # Act
     length_argv = len(sys.argv)
     training_service._set_max_epoch()
 
     # Assert
-    assert length_argv == len(sys.argv) # no argument variables added since max_epoch not set
+    assert length_argv == len(
+        sys.argv
+    )  # no argument variables added since max_epoch not set
 
 
 def test_set_images_directory(training_service: CytoService) -> None:
@@ -147,13 +155,16 @@ def test_set_images_directory(training_service: CytoService) -> None:
         in sys.argv
     )
 
+
 def test_set_images_directory_not_set(training_service: CytoService) -> None:
     # Act
     length_argv = len(sys.argv)
     training_service._set_images_directory()
 
     # Assert
-    assert length_argv == len(sys.argv) # no argument variables added since images_directory not set
+    assert length_argv == len(
+        sys.argv
+    )  # no argument variables added since images_directory not set
 
 
 def test_set_patch_shape_from_size(training_service: CytoService) -> None:
@@ -167,13 +178,16 @@ def test_set_patch_shape_from_size(training_service: CytoService) -> None:
         in sys.argv
     )
 
+
 def test_set_patch_shape_not_set(training_service: CytoService) -> None:
     # Act
     length_argv = len(sys.argv)
     training_service._set_patch_shape_from_size()
 
     # Assert
-    assert length_argv == len(sys.argv) # no argument variables added since patch_size not set
+    assert length_argv == len(
+        sys.argv
+    )  # no argument variables added since patch_size not set
 
 
 def test_set_config_dir(training_service: CytoService) -> None:
@@ -183,13 +197,15 @@ def test_set_config_dir(training_service: CytoService) -> None:
 
     # Assert
     assert ("--config-dir" in sys.argv) and (
-            training_service._model.get_config_dir() in sys.argv
+        training_service._model.get_config_dir() in sys.argv
     )
+
 
 def test_set_config_dir_not_set(training_service: CytoService) -> None:
     # Assert
     with pytest.raises(ValueError):
         training_service._set_config_dir()
+
 
 def test_training_set_config_name(training_service: CytoService) -> None:
     # Act
@@ -198,16 +214,22 @@ def test_training_set_config_name(training_service: CytoService) -> None:
 
     # Assert
     assert ("--config-name" in sys.argv) and (
-            training_service._model.get_config_name() in sys.argv
+        training_service._model.get_config_name() in sys.argv
     )
 
-def test_training_set_config_name_not_set(training_service: CytoService) -> None:
+
+def test_training_set_config_name_not_set(
+    training_service: CytoService,
+) -> None:
     # Act
     length_argv: int = len(sys.argv)
     training_service._set_config_name()
 
     # Assert
-    assert length_argv == length_argv # no argument variables added since config_name not set
+    assert (
+        length_argv == length_argv
+    )  # no argument variables added since config_name not set
+
 
 def test_prediction_set_config_name(prediction_service: CytoService) -> None:
     # Act
@@ -216,10 +238,13 @@ def test_prediction_set_config_name(prediction_service: CytoService) -> None:
 
     # Assert
     assert ("--config-name" in sys.argv) and (
-            str(prediction_service._model.get_config_name()) in sys.argv
+        str(prediction_service._model.get_config_name()) in sys.argv
     )
 
-def test_prediction_set_config_name_not_set(prediction_service: CytoService) -> None:
+
+def test_prediction_set_config_name_not_set(
+    prediction_service: CytoService,
+) -> None:
     # Act
     with pytest.raises(ValueError):
         prediction_service._set_config_name()
