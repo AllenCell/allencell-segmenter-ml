@@ -123,6 +123,7 @@ def test_set_image_dims(training_service: CytoService) -> None:
         in sys.argv
     )
 
+
 def test_set_image_dims_not_set(training_service: CytoService) -> None:
     # Act
     length_argv = len(sys.argv)
@@ -199,6 +200,7 @@ def test_set_patch_shape_from_size(training_service: CytoService) -> None:
         f"++data._aux.patch_shape={training_service._model.get_patch_size().value}"
         in sys.argv
     )
+
 
 def test_set_patch_shape_not_set(training_service: CytoService) -> None:
     # Act
