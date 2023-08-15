@@ -1,11 +1,11 @@
+import time
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.event import Event
-from PyQt5.QtWidgets import QProgressDialog
-from PyQt5.QtCore import Qt
 
 from lightning.pytorch.callbacks import Callback
 
 from cyto_dl.train import main as cyto_train
+from napari.qt.threading import thread_worker
 
 import sys
 from allencell_ml_segmenter.training.training_model import (
@@ -29,21 +29,20 @@ def _list_to_string(list_to_convert: List[Any]) -> str:
     ints_to_strings: str = ", ".join([str(i) for i in list_to_convert])
     return f"[{ints_to_strings}]"
 
+@thread_worker(start_thread=True, progress=True)
+def train():
+    print("~~~~~~~~~~Training~~~~~~~~~~~~")
+    # cyto_train()
+    time.sleep(5)
 
 class MyPrintingCallback(Callback):
     def __init__(self):
         super().__init__()
-        self.progress_dialog = QProgressDialog("Working...", None, 0, 0)
-        self.progress_dialog.setWindowTitle("Indeterminate Progress")
-        self.progress_dialog.setWindowModality(Qt.ApplicationModal)
-        self.progress_dialog.setCancelButton(None)  # No cancel button
-        self.progress_dialog.setRange(0, 0)  # Indeterminate range
 
     def on_train_start(self, trainer, pl_module):
         print(
             "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@Training is starting@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
         )
-        self.progress_dialog.show()
 
     def on_train_epoch_start(self, trainer, pl_module):
         print(
@@ -59,7 +58,6 @@ class MyPrintingCallback(Callback):
         print(
             "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@Training is ending@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
         )
-        self.progress_dialog.close()
 
 
 class TrainingService(Subscriber):
@@ -103,7 +101,7 @@ class TrainingService(Subscriber):
                 "+callbacks.print_progress._target_=allencell_ml_segmenter.services.training_service.MyPrintingCallback"
             )
 
-            cyto_train()
+            train()        
 
     def _set_experiment(self) -> None:
         """
