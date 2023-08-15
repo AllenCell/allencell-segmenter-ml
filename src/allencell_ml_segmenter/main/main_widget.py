@@ -40,9 +40,7 @@ class MainWidget(QWidget, Subscriber, metaclass=MainMeta):
 
         # main model
         self._model: MainModel = MainModel()
-        self._model.subscribe(
-            Event.ACTION_CHANGE_VIEW, self, self.handle_event
-        )
+        self._model.subscribe(Event.ACTION_CHANGE_VIEW, self, self.handle_change_view)
 
         # keep track of views
         self._view_container: QTabWidget = QTabWidget()
@@ -60,7 +58,7 @@ class MainWidget(QWidget, Subscriber, metaclass=MainMeta):
 
         self._view_container.currentChanged.connect(self._tab_changed)
 
-    def handle_event(self, event: Event) -> None:
+    def handle_change_view(self, event: Event) -> None:
         """
         Handle event function for the main widget, which handles MainEvents.
 
