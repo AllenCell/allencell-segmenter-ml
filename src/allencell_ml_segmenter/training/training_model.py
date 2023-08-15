@@ -53,10 +53,9 @@ class TrainingModel(Publisher):
         self._patch_size: PatchSize = None
         self._image_dims: int = None
         self._max_epoch: int = None
+        self._current_epoch: int = None
         self._max_time: int = None  # in seconds
         self._config_dir: Path = None
-        self._patch_size: PatchSize = None
-        self._max_epoch: int = None
         self._is_training_running: bool = False
 
     def get_experiment_type(self) -> TrainingType:
@@ -118,6 +117,21 @@ class TrainingModel(Publisher):
         max_epoch (int): max number of epochs to train for
         """
         self._max_epoch = max
+
+    def get_current_epoch(self) -> int:
+        """
+        Gets current epoch
+        """
+        return self._current_epoch
+    
+    def set_current_epoch(self, current: int) -> None:
+        """
+        Sets current epoch
+
+        current_epoch (int): current epoch number
+        """
+        self._current_epoch = current
+        self.dispatch(Event.PROCESS_TRAINING_PROGRESS)
 
     def get_images_directory(self) -> Path:
         """
