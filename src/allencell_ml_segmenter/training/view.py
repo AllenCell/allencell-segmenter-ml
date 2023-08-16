@@ -13,6 +13,7 @@ from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.main.main_model import MainModel
+from allencell_ml_segmenter.services.cyto_service import CytoService, CytodlMode
 from allencell_ml_segmenter.training.image_selection_widget import (
     ImageSelectionWidget,
 )
@@ -70,8 +71,12 @@ class TrainingView(View, Subscriber):
         bottom_dummy.setLayout(bottom_container)
         self.layout().addWidget(bottom_dummy)
 
+        self._service = CytoService(self._training_model, CytodlMode.TRAIN)
+        
         self._train_btn: QPushButton = QPushButton("Start training")
         self._train_btn.setObjectName("trainBtn")
+        self._train_btn.clicked.connect(self._service.test_run)
+        
         self.layout().addWidget(self._train_btn)
 
         self._main_model.subscribe(

@@ -8,6 +8,8 @@ from allencell_ml_segmenter.training.training_model import (
     Hardware,
     PatchSize,
 )
+from allencell_ml_segmenter.training.training_model import TrainingType
+
 from allencell_ml_segmenter.core.publisher import Publisher
 from pathlib import Path
 from typing import List, Any
@@ -192,3 +194,15 @@ class CytoService(Subscriber):
         # This hydra runtime variable needs to be set in separate calls to sys.argv
         sys.argv.append("--config-name")
         sys.argv.append(str(self._model.get_config_name()))
+
+    def test_run(self) -> None:
+        self._model.set_experiment_type("segmentation")
+        self._model.set_hardware_type("cpu")
+        self._model.set_images_directory(
+            "/Users/chrishu/dev/code/cyto-dl/data/example_experiment_data/segmentation"
+        )
+        self._model.set_config_dir(
+            "/Users/chrishu/dev/code/cyto-dl/configs"
+        )
+        sys.argv.append("+HYDRA_FULL_ERROR=1")
+        self.train_model()
