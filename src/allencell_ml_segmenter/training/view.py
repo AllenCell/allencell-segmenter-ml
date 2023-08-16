@@ -1,3 +1,4 @@
+import sys
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
     QLabel,
@@ -18,6 +19,7 @@ from allencell_ml_segmenter.training.model_selection_widget import (
     ModelSelectionWidget,
 )
 from allencell_ml_segmenter.training.training_model import TrainingModel
+from hydra.core.global_hydra import GlobalHydra
 
 
 class TrainingView(View):
@@ -89,6 +91,10 @@ class TrainingView(View):
         """
         Starts training process
         """
+        ######### dirty HACKS#####
+        sys.argv = [sys.argv[0]]
+        GlobalHydra.instance().clear()
+        # TODO -  find a better way to solve this
         self.startLongTask()
 
     # Abstract methods from View implementations #######################
