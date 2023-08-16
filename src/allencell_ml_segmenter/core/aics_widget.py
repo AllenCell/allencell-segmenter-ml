@@ -1,10 +1,11 @@
-from abc import ABC
 from qtpy.QtWidgets import QWidget
 
-class AicsWidgetMeta(type(QWidget), type(ABC)):
+from allencell_ml_segmenter.core.subscriber import Subscriber
+
+class AicsWidgetMeta(type(QWidget), type(Subscriber)):
     pass
 
-class AicsWidget(ABC, QWidget, metaclass=AicsWidgetMeta):
+class AicsWidget(QWidget, Subscriber, metaclass=AicsWidgetMeta):
     """
     Base class for custom widgets to inherit from
     """

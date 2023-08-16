@@ -1,4 +1,3 @@
-from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.sample.sample_model import SampleModel
 from allencell_ml_segmenter.core.aics_widget import AicsWidget
 from allencell_ml_segmenter.core.event import Event
@@ -10,7 +9,7 @@ from qtpy.QtWidgets import (
 )
 
 
-class SampleResultsListWidget(AicsWidget, Subscriber):
+class SampleResultsListWidget(AicsWidget):
     """ """
 
     def __init__(self, model: SampleModel) -> None:
