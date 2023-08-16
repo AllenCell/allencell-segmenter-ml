@@ -6,26 +6,16 @@ from qtpy.QtWidgets import (
     QVBoxLayout,
     QSizePolicy,
     QTabWidget,
-    QWidget,
 )
+from allencell_ml_segmenter.core.aics_widget import AicsWidget
 
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.prediction.view import PredictionView
 from allencell_ml_segmenter.training.view import TrainingView
-from allencell_ml_segmenter.core.subscriber import Subscriber
 
-
-class MainMeta(type(QWidget), type(Subscriber)):
-    """
-    Metaclass for MainWidget
-    """
-
-    pass
-
-
-class MainWidget(QWidget, Subscriber, metaclass=MainMeta):
+class MainWidget(AicsWidget):
     """
     Holds the pertinent view at the moment to be displayed to the user.
     """
