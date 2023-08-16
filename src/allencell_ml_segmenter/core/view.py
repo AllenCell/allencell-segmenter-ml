@@ -1,9 +1,11 @@
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from qtpy.QtWidgets import QWidget, QProgressDialog
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
 
+from allencell_ml_segmenter.core.subscriber import Subscriber
 
-class ViewMeta(type(QWidget), type(ABC)):
+
+class ViewMeta(type(QWidget), type(Subscriber)):
     pass
 
 
@@ -24,7 +26,7 @@ class LongTaskThread(QThread):
         # self.msleep(100)  # Simulating some work
 
 
-class View(ABC, QWidget, metaclass=ViewMeta):
+class View(QWidget, Subscriber, metaclass=ViewMeta):
     """
     Base class for all Views to inherit from
     """

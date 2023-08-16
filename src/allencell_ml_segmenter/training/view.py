@@ -8,7 +8,6 @@ from qtpy.QtWidgets import (
 )
 from allencell_ml_segmenter._style import Style
 from allencell_ml_segmenter.core.event import Event
-from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.services.training_service import TrainingService
@@ -21,7 +20,7 @@ from allencell_ml_segmenter.training.model_selection_widget import (
 from allencell_ml_segmenter.training.training_model import TrainingModel
 
 
-class TrainingView(View, Subscriber):
+class TrainingView(View):
     """
     Holds widgets pertinent to training processes - ImageSelectionWidget & ModelSelectionWidget.
     """
