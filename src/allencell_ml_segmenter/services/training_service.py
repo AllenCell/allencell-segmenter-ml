@@ -29,12 +29,6 @@ def _list_to_string(list_to_convert: List[Any]) -> str:
     ints_to_strings: str = ", ".join([str(i) for i in list_to_convert])
     return f"[{ints_to_strings}]"
 
-@thread_worker(start_thread=True, progress=True)
-def train():
-    print("~~~~~~~~~~Training~~~~~~~~~~~~")
-    # cyto_train()
-    time.sleep(5)
-
 class MyPrintingCallback(Callback):
     def __init__(self):
         super().__init__()
@@ -101,7 +95,7 @@ class TrainingService(Subscriber):
                 "+callbacks.print_progress._target_=allencell_ml_segmenter.services.training_service.MyPrintingCallback"
             )
 
-            train()        
+            cyto_train()
 
     def _set_experiment(self) -> None:
         """
