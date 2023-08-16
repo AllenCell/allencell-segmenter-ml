@@ -88,8 +88,13 @@ class PredictionView(View):
     def run_btn_handler(self):
         self.startLongTask()
 
+    # Abstract method implementations ##################################
+
     def doWork(self):
         print("doWork - prediction")
         time.sleep(5)
         print("doWork done - prediction")
+
+    def getTypeOfWork(self):
+        return "Prediction"
 

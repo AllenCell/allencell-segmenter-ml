@@ -90,9 +90,9 @@ class TrainingService(Subscriber):
             self._set_hardware()
             self._set_images_directory()
 
-            sys.argv.append(
-                "+callbacks.print_progress._target_=allencell_ml_segmenter.services.training_service.MyPrintingCallback"
-            )
+            # sys.argv.append(
+            #     "+callbacks.print_progress._target_=allencell_ml_segmenter.services.training_service.MyPrintingCallback"
+            # )
 
             cyto_train()
 

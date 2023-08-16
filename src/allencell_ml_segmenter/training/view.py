@@ -94,9 +94,16 @@ class TrainingView(View, Subscriber):
         """
         self.startLongTask()
 
+    # Abstract methods from View implementations #######################
+
     def doWork(self):
         """
         Starts training process
         """
         self._training_model.set_training_running(True)
 
+    def getTypeOfWork(self) -> str:
+        """
+        Returns string representation of training process
+        """
+        return "Training"
