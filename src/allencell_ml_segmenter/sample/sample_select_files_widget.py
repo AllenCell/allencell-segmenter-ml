@@ -5,11 +5,10 @@ from qtpy.QtWidgets import (
 
 from allencell_ml_segmenter.sample.sample_model import SampleModel
 from allencell_ml_segmenter.core.aics_widget import AicsWidget
-from allencell_ml_segmenter.core.subscriber import Subscriber
 from qtpy.QtWidgets import QPushButton
 
 
-class SampleSelectFilesWidget(AicsWidget, Subscriber):
+class SampleSelectFilesWidget(AicsWidget):
     """
     Sets training files in the model.
     """
