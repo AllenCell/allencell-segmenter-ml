@@ -97,4 +97,3 @@ class PredictionView(View):
 
     def getTypeOfWork(self):
         return "Prediction"
-

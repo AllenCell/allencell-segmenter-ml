@@ -41,7 +41,9 @@ class MainWidget(QWidget, Subscriber, metaclass=MainMeta):
 
         # main model
         self._model: MainModel = MainModel()
-        self._model.subscribe(Event.ACTION_CHANGE_VIEW, self, self.handle_change_view)
+        self._model.subscribe(
+            Event.ACTION_CHANGE_VIEW, self, self.handle_change_view
+        )
 
         # keep track of views
         self._view_container: QTabWidget = QTabWidget()

@@ -123,7 +123,7 @@ class TrainingModel(Publisher):
         Gets current epoch
         """
         return self._current_epoch
-    
+
     def set_current_epoch(self, current: int) -> None:
         """
         Sets current epoch
