@@ -1,11 +1,14 @@
-from qtpy.QtCore import Qt
+import time
+from qtpy.QtCore import Qt, QThread, pyqtSignal
 from qtpy.QtWidgets import (
     QLabel,
     QPushButton,
     QFrame,
+    QProgressDialog,
     QVBoxLayout,
-    QSizePolicy,
+    QSizePolicy
 )
+from allencell_ml_segmenter.core.view import View
 
 from allencell_ml_segmenter._style import Style
 
@@ -22,6 +25,23 @@ from allencell_ml_segmenter.training.model_selection_widget import (
 )
 from allencell_ml_segmenter.training.training_model import TrainingModel
 
+
+class LongTaskThread(QThread):
+
+    taskProgress = pyqtSignal(int)
+
+    def __init__(self, training_model: TrainingModel, parent=None):
+        super(LongTaskThread, self).__init__(parent)
+        self._training_model = training_model
+
+    def run(self):
+        print("running")
+        # time.sleep(5)
+        self._training_model.set_training_running(True)
+
+        # for i in range(1, 101):
+            # self.taskProgress.emit(i)
+            # self.msleep(100)  # Simulating some work
 
 class TrainingView(View, Subscriber):
     """
@@ -92,4 +112,21 @@ class TrainingView(View, Subscriber):
         """
         Starts training process
         """
-        self._training_model.set_training_running(True)
+        self.startLongTask()
+
+    def startLongTask(self):
+        self.longTaskThread = LongTaskThread(self._training_model)
+        self.progressDialog = QProgressDialog('Long Task in Progress', 'Cancel', 0, 0, self)
+        self.progressDialog.setWindowTitle('Progress')
+        self.progressDialog.setWindowModality(Qt.ApplicationModal)
+        self.progressDialog.canceled.connect(self.longTaskThread.terminate)
+        self.progressDialog.show()
+
+        # self.longTaskThread.taskProgress.connect(self.updateProgress)
+        self.longTaskThread.finished.connect(self.progressDialog.reset)
+        self.longTaskThread.finished.connect(self.longTaskThread.deleteLater)
+        self.longTaskThread.finished.connect(self.progressDialog.close)
+        self.longTaskThread.start()
+
+    def updateProgress(self, value):
+        self.progressDialog.setValue(value)
