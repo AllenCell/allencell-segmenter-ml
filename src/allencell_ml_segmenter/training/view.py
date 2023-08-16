@@ -4,7 +4,7 @@ from qtpy.QtWidgets import (
     QPushButton,
     QFrame,
     QVBoxLayout,
-    QSizePolicy
+    QSizePolicy,
 )
 from allencell_ml_segmenter.core.view import View
 
@@ -22,6 +22,7 @@ from allencell_ml_segmenter.training.model_selection_widget import (
     ModelSelectionWidget,
 )
 from allencell_ml_segmenter.training.training_model import TrainingModel
+
 
 class TrainingView(View, Subscriber):
     """

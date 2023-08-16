@@ -8,21 +8,21 @@ class ViewMeta(type(QWidget), type(ABC)):
 
 
 class LongTaskThread(QThread):
-
     taskProgress = pyqtSignal(int)
 
     def __init__(self, do_work: callable, parent=None):
         super(LongTaskThread, self).__init__(parent)
         self._do_work = do_work
-    
+
     def run(self):
         print("running")
         # time.sleep(5)
         self._do_work()
 
         # for i in range(1, 101):
-            # self.taskProgress.emit(i)
-            # self.msleep(100)  # Simulating some work
+        # self.taskProgress.emit(i)
+        # self.msleep(100)  # Simulating some work
+
 
 class View(ABC, QWidget, metaclass=ViewMeta):
     """
@@ -36,8 +36,10 @@ class View(ABC, QWidget, metaclass=ViewMeta):
 
     def startLongTask(self):
         self.longTaskThread = LongTaskThread(do_work=self.doWork)
-        self.progressDialog = QProgressDialog(f'{self.getTypeOfWork()} in Progress', 'Cancel', 0, 0, self)
-        self.progressDialog.setWindowTitle(f'{self.getTypeOfWork()} Progress')
+        self.progressDialog = QProgressDialog(
+            f"{self.getTypeOfWork()} in Progress", "Cancel", 0, 0, self
+        )
+        self.progressDialog.setWindowTitle(f"{self.getTypeOfWork()} Progress")
         self.progressDialog.setWindowModality(Qt.ApplicationModal)
         self.progressDialog.canceled.connect(self.longTaskThread.terminate)
         self.progressDialog.show()
