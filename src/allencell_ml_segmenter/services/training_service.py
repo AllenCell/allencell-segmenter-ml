@@ -28,6 +28,7 @@ def _list_to_string(list_to_convert: List[Any]) -> str:
     ints_to_strings: str = ", ".join([str(i) for i in list_to_convert])
     return f"[{ints_to_strings}]"
 
+
 # class MyPrintingCallback(Callback):
 #     def __init__(self):
 #         super().__init__()
