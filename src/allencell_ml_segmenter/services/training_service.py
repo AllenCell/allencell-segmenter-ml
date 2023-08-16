@@ -2,10 +2,9 @@ import time
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.event import Event
 
-from lightning.pytorch.callbacks import Callback
+# from lightning.pytorch.callbacks import Callback
 
 from cyto_dl.train import main as cyto_train
-from napari.qt.threading import thread_worker
 
 import sys
 from allencell_ml_segmenter.training.training_model import (
@@ -29,29 +28,29 @@ def _list_to_string(list_to_convert: List[Any]) -> str:
     ints_to_strings: str = ", ".join([str(i) for i in list_to_convert])
     return f"[{ints_to_strings}]"
 
-class MyPrintingCallback(Callback):
-    def __init__(self):
-        super().__init__()
+# class MyPrintingCallback(Callback):
+#     def __init__(self):
+#         super().__init__()
 
-    def on_train_start(self, trainer, pl_module):
-        print(
-            "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@Training is starting@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-        )
+#     def on_train_start(self, trainer, pl_module):
+#         print(
+#             "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@Training is starting@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+#         )
 
-    def on_train_epoch_start(self, trainer, pl_module):
-        print(
-            f"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@Epoch {trainer.current_epoch} is starting@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-        )
+#     def on_train_epoch_start(self, trainer, pl_module):
+#         print(
+#             f"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@Epoch {trainer.current_epoch} is starting@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+#         )
 
-    def on_train_epoch_end(self, trainer, pl_module):
-        print(
-            f"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@Training {trainer.current_epoch} is ending@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-        )
+#     def on_train_epoch_end(self, trainer, pl_module):
+#         print(
+#             f"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@Training {trainer.current_epoch} is ending@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+#         )
 
-    def on_train_end(self, trainer, pl_module):
-        print(
-            "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@Training is ending@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-        )
+#     def on_train_end(self, trainer, pl_module):
+#         print(
+#             "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@Training is ending@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+#         )
 
 
 class TrainingService(Subscriber):
