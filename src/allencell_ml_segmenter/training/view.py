@@ -6,10 +6,7 @@ from qtpy.QtWidgets import (
     QVBoxLayout,
     QSizePolicy,
 )
-from allencell_ml_segmenter.core.view import View
-
 from allencell_ml_segmenter._style import Style
-
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.view import View
