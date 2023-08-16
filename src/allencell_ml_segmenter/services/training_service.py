@@ -64,10 +64,10 @@ class TrainingService(Subscriber):
         self._training_model.subscribe(
             Event.PROCESS_TRAINING,
             self,
-            lambda e: self.train_model_handler(),
+            self.train_model_handler,
         )
 
-    def train_model_handler(self) -> None:
+    def train_model_handler(self, _: Event) -> None:
         """
         Trains the model according to the spec
         """
