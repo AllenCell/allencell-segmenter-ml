@@ -85,10 +85,10 @@ class TrainingService(Subscriber):
             )
             self._training_model.set_patch_size("small")
             self._training_model.set_max_epoch(100)
-            self._set_config_dir()
+            self._set_images_directory()
             self._set_experiment()
             self._set_hardware()
-            self._set_images_directory()
+            self._set_config_dir()
 
             # sys.argv.append(
             #     "+callbacks.print_progress._target_=allencell_ml_segmenter.services.training_service.MyPrintingCallback"
