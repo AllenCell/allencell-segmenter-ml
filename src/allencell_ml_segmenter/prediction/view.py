@@ -1,3 +1,4 @@
+import time
 from qtpy.QtCore import Qt
 
 from allencell_ml_segmenter._style import Style
@@ -74,6 +75,7 @@ class PredictionView(View):
         self._run_btn: QPushButton = QPushButton("Run")
         self._run_btn.setObjectName("run")
         self.layout().addWidget(self._run_btn)
+        self._run_btn.clicked.connect(self.run_btn_handler)
 
         self.setStyleSheet(Style.get_stylesheet("prediction_view.qss"))
 
@@ -82,3 +84,12 @@ class PredictionView(View):
             self,
             lambda e: self._main_model.set_current_view(self),
         )
+
+    def run_btn_handler(self):
+        self.startLongTask()
+
+    def doWork(self):
+        print("doWork - prediction")
+        time.sleep(5)
+        print("doWork done - prediction")
+

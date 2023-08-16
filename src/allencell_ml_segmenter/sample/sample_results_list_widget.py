@@ -1,6 +1,6 @@
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.sample.sample_model import SampleModel
-from allencell_ml_segmenter.core.view import View
+from allencell_ml_segmenter.core.aics_widget import AicsWidget
 from allencell_ml_segmenter.core.event import Event
 from qtpy.QtWidgets import (
     QVBoxLayout,
@@ -10,7 +10,7 @@ from qtpy.QtWidgets import (
 )
 
 
-class SampleResultsListWidget(View, Subscriber):
+class SampleResultsListWidget(AicsWidget, Subscriber):
     """ """
 
     def __init__(self, model: SampleModel) -> None:

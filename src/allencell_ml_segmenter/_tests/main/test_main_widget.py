@@ -4,7 +4,7 @@ import pytest
 import napari
 from pytestqt.qtbot import QtBot
 
-from allencell_ml_segmenter.core.view import View
+from allencell_ml_segmenter.core.aics_widget import AicsWidget
 from allencell_ml_segmenter.main.main_widget import MainWidget
 from unittest.mock import Mock
 
@@ -32,7 +32,7 @@ def test_handle_action_change_view_event(
     Tests that the main widget handles the action change view event correctly.
     """
     # ARRANGE
-    views: Set[View] = main_widget._view_to_index.keys()
+    views: Set[AicsWidget] = main_widget._view_to_index.keys()
 
     for view in views:
         # ACT: have the model dispatch the action change view event
