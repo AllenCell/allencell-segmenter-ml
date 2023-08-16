@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import Mock
-from allencell_ml_segmenter.core.view import View
+from allencell_ml_segmenter.core.aics_widget import AicsWidget
 from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.core.publisher import Event
 from allencell_ml_segmenter._tests.fakes.fake_subscriber import FakeSubscriber
@@ -30,7 +30,7 @@ def test_get_current_view(main_model: MainModel) -> None:
     assert main_model.get_current_view() is None
 
     # ARRANGE
-    mock_view: View = Mock(spec=View)
+    mock_view: AicsWidget = Mock(spec=AicsWidget)
     main_model._current_view = mock_view
 
     # ACT/ASSERT
@@ -44,7 +44,7 @@ def test_set_current_view(
     Tests that the current view is correctly settable.
     """
     # ARRANGE
-    mock_view: View = Mock(spec=View)
+    mock_view: AicsWidget = Mock(spec=AicsWidget)
 
     main_model.subscribe(
         Event.ACTION_CHANGE_VIEW, fake_subscriber, fake_subscriber.handle
