@@ -4,10 +4,10 @@ contributions:
   commands:
     - id: allencell-ml-segmenter.make_qwidget
       python_name: allencell_ml_segmenter.main.main_widget:MainWidget
-      title: Make example QWidget
+      title: Allen Cell ML Segmenter
   readers:
   writers:
   sample_data:
   widgets:
     - command: allencell-ml-segmenter.make_qwidget
-      display_name: Example QWidget
+      display_name: Allen Cell ML Segmenter
