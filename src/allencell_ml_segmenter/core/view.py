@@ -36,8 +36,8 @@ class View(ABC, QWidget, metaclass=ViewMeta):
 
     def startLongTask(self):
         self.longTaskThread = LongTaskThread(do_work=self.doWork)
-        self.progressDialog = QProgressDialog('Long Task in Progress', 'Cancel', 0, 0, self)
-        self.progressDialog.setWindowTitle('Progress')
+        self.progressDialog = QProgressDialog(f'{self.getTypeOfWork()} in Progress', 'Cancel', 0, 0, self)
+        self.progressDialog.setWindowTitle(f'{self.getTypeOfWork()} Progress')
         self.progressDialog.setWindowModality(Qt.ApplicationModal)
         self.progressDialog.canceled.connect(self.longTaskThread.terminate)
         self.progressDialog.show()
@@ -53,4 +53,8 @@ class View(ABC, QWidget, metaclass=ViewMeta):
 
     @abstractmethod
     def doWork(self):
+        pass
+
+    @abstractmethod
+    def getTypeOfWork(self):
         pass
