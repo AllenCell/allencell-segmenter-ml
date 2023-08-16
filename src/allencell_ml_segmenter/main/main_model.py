@@ -1,4 +1,4 @@
-from allencell_ml_segmenter.core.view import View
+from allencell_ml_segmenter.core.aics_widget import AicsWidget
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.publisher import Publisher
 
@@ -11,15 +11,15 @@ class MainModel(Publisher):
     def __init__(self):
         super().__init__()
         # Current page of the UI
-        self._current_view: View = None
+        self._current_view: AicsWidget = None
 
-    def get_current_view(self) -> View:
+    def get_current_view(self) -> AicsWidget:
         """
         getter/property for current page
         """
         return self._current_view
 
-    def set_current_view(self, view: View):
+    def set_current_view(self, view: AicsWidget):
         """
         Set the current page in the UI and dispatch a MainEvent
         """

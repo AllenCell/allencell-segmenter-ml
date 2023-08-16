@@ -14,9 +14,9 @@ from qtpy.QtWidgets import (
 )
 from qtpy.QtCore import Qt
 from magicgui.widgets import FloatSlider
+from allencell_ml_segmenter.core.aics_widget import AicsWidget
 
 from allencell_ml_segmenter.prediction.model import PredictionModel
-from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.widgets.input_button_widget import (
@@ -28,7 +28,7 @@ from allencell_ml_segmenter.widgets.label_with_hint_widget import (
 )
 
 
-class ModelInputWidget(View, Subscriber):
+class ModelInputWidget(AicsWidget, Subscriber):
     """
     Handles model input, preprocessing selection, and
     postprocessing selection for prediction.

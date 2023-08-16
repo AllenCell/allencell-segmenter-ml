@@ -1,7 +1,7 @@
 import asyncio
 
 from allencell_ml_segmenter.core.event import Event
-from allencell_ml_segmenter.core.view import View
+from allencell_ml_segmenter.core.aics_widget import AicsWidget
 from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.sample.sample_state_widget import SampleStateWidget
 from allencell_ml_segmenter.sample.sample_results_list_widget import (
@@ -21,7 +21,7 @@ from qtpy.QtWidgets import (
 from allencell_ml_segmenter.sample.process.service import SampleProcessService
 
 
-class SampleView(View):
+class SampleView(AicsWidget):
     """
     Sample that orchestrates widgets, managing complex behavior.
     """
