@@ -72,16 +72,28 @@ class TrainingService(Subscriber):
         Trains the model according to the spec
         """
         if self._training_model.is_training_running():
+
+            # Only supporting segmentation config for now
             self._training_model.set_experiment_type("segmentation")
+
+            # Only supporting MACOS and CPU use for now
             self._training_model.set_hardware_type("cpu")
-            self._training_model.set_image_dims(2)
+
+            # UI is not activated yet.  Is 9 special?
             self._training_model.set_channel_index(9)
+
+            # This field is not supported for now (maybe cancel button is sufficient?)
             self._training_model.set_max_time(9992)
+            
+            # Source of configs relative to user's home.  We need a dynamic solution in prod.
             self._training_model.set_config_dir(
                 "/Users/chrishu/dev/code/test/cyto-dl/configs"
             )
-            self._training_model.set_patch_size("small")
+            # self._training_model.set_image_dims(2)
+            # self._training_model.set_patch_size("small")
             #################################################
+            # self._set_image_dims()
+            # self._set_patch_shape_from_size()
             self._set_max_epoch()
             self._set_images_directory()
             self._set_experiment()
@@ -115,6 +127,7 @@ class TrainingService(Subscriber):
         Sets the spatial_dims argument variable for hydra override using sys.argv
         """
         image_dims: int = self._training_model.get_image_dims()
+        # sys.argv.append(f"++cyto_dl.image.transforms.resize.Resized=[{image_dims}D]")
         sys.argv.append(f"++spatial_dims=[{image_dims}]")
 
     def _set_max_epoch(self) -> None:
