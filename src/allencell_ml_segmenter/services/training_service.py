@@ -92,8 +92,8 @@ class TrainingService(Subscriber):
             # self._training_model.set_image_dims(2)
             # self._training_model.set_patch_size("small")
             #################################################
-            # self._set_image_dims()
-            # self._set_patch_shape_from_size()
+            self._set_image_dims()
+            self._set_patch_shape_from_size()
             self._set_max_epoch()
             self._set_images_directory()
             self._set_experiment()
