@@ -1,0 +1,14 @@
+[2023-08-17 13:19:09,004][cyto_dl.utils.template_utils][INFO] - Disabling python warnings! <cfg.extras.ignore_warnings=True>
+[2023-08-17 13:19:09,004][cyto_dl.utils.template_utils][INFO] - Enforcing tags! <cfg.extras.enforce_tags=True>
+[2023-08-17 13:19:09,017][cyto_dl.utils.template_utils][INFO] - Printing config tree with Rich! <cfg.extras.print_config=True>
+[2023-08-17 13:19:34,536][cyto_dl.utils.template_utils][ERROR] - 
+Traceback (most recent call last):
+  File "/Users/brian.kim/Desktop/work/cyto-dl/cyto_dl/utils/template_utils.py", line 54, in wrap
+    out = task_func(cfg=cfg)
+  File "/Users/brian.kim/Desktop/work/cyto-dl/cyto_dl/eval.py", line 52, in evaluate
+    raise ValueError(
+ValueError: `data` config for eval/prediction must be either:
+ - a LightningDataModule
+ - a DataLoader (or list thereof)
+ - a dict with key `dataloaders`, with the corresponding value being a DataLoader (or list thereof)
+[2023-08-17 13:19:34,537][cyto_dl.utils.template_utils][INFO] - Closing loggers...
