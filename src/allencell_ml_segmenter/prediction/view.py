@@ -1,4 +1,6 @@
 import time
+
+import napari
 from qtpy.QtCore import Qt
 
 from allencell_ml_segmenter._style import Style
@@ -20,6 +22,9 @@ from qtpy.QtWidgets import (
     QFrame,
     QLabel,
 )
+from pathlib import Path
+
+from allencell_ml_segmenter.services.result_display_service import ResultDisplayService
 
 
 class PredictionView(View):
@@ -27,9 +32,9 @@ class PredictionView(View):
     Holds the image and model input widgets for prediction.
     """
 
-    def __init__(self, main_model: MainModel):
+    def __init__(self, main_model: MainModel, viewer: napari.Viewer):
         super().__init__()
-
+        self._viewer = viewer
         self._main_model: MainModel = main_model
         self._prediction_model: PredictionModel = PredictionModel()
 
@@ -86,6 +91,9 @@ class PredictionView(View):
         )
 
     def run_btn_handler(self):
+        # TODO remove this is for testing
+        self.test_file_service()
+        self._prediction_model.dispatch(Event.PROCESS_PREDICTION_COMPLETE)
         self.startLongTask()
 
     # Abstract method implementations ##################################
@@ -97,3 +105,8 @@ class PredictionView(View):
 
     def getTypeOfWork(self):
         return "Prediction"
+
+    def test_file_service(self):
+        #TODO replace, testing file result service
+        self._prediction_model.set_output_directory(Path("/Users/brian.kim/Documents/test_data")) # path you want to show
+        ResultDisplayService(self._prediction_model, self._viewer)
