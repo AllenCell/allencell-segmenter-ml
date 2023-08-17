@@ -13,6 +13,7 @@ class Event(Enum):
     PROCESS_TRAINING_CLEAR_ERROR = "training_clear_error"
     PROCESS_TRAINING_COMPLETE = "training_complete"
     PROCESS_PREDICTION = "prediction"
+    PROCESS_PREDICTION_COMPLETE = "prediction_complete"
 
     # Action events. This signals a change in the UI. These are a direct result of a user action
     ACTION_CHANGE_VIEW = "change_view"
