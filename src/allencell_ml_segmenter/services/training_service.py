@@ -89,8 +89,7 @@ class TrainingService(Subscriber):
             self._training_model.set_config_dir(
                 "/Users/chrishu/dev/code/test/cyto-dl/configs"
             )
-            # self._training_model.set_image_dims(2)
-            # self._training_model.set_patch_size("small")
+            
             #################################################
             self._set_image_dims()
             self._set_patch_shape_from_size()
