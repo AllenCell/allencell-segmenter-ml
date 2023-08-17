@@ -75,16 +75,14 @@ class TrainingService(Subscriber):
             self._training_model.set_experiment_type("segmentation")
             self._training_model.set_hardware_type("cpu")
             self._training_model.set_image_dims(2)
-            self._training_model.set_images_directory(
-                "/Users/chrishu/dev/code/cyto-dl/data/example_experiment_data/segmentation"
-            )
             self._training_model.set_channel_index(9)
             self._training_model.set_max_time(9992)
             self._training_model.set_config_dir(
-                "/Users/chrishu/dev/code/cyto-dl/configs"
+                "/Users/chrishu/dev/code/test/cyto-dl/configs"
             )
             self._training_model.set_patch_size("small")
-            self._training_model.set_max_epoch(100)
+            #################################################
+            self._set_max_epoch()
             self._set_images_directory()
             self._set_experiment()
             self._set_hardware()
