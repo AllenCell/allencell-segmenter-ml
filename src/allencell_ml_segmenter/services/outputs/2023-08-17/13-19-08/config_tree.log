@@ -1,0 +1,372 @@
+CONFIG
+├── data
+│   └── _target_: aics_im2im.datamodules.dataframe.DataframeDatamodule          
+│       path: /Users/brian.kim/Desktop/work/allencell-ml-segmenter/data/example_
+│       cache_dir: /Users/brian.kim/Desktop/work/allencell-ml-segmenter/data/exa
+│       num_workers: 8                                                          
+│       batch_size: 1                                                           
+│       pin_memory: true                                                        
+│       persistent_workers: false                                               
+│       split_column: null                                                      
+│       columns:                                                                
+│       - raw                                                                   
+│       - seg                                                                   
+│       transforms:                                                             
+│         train:                                                                
+│           _target_: monai.transforms.Compose                                  
+│           transforms:                                                         
+│           - _target_: monai.transforms.LoadImaged                             
+│             keys: raw                                                         
+│             reader:                                                           
+│             - _target_: aics_im2im.image.io.MonaiBioReader                    
+│               dimension_order_out: ZYX                                        
+│               C: 4                                                            
+│           - _target_: monai.transforms.LoadImaged                             
+│             keys: seg                                                         
+│             reader:                                                           
+│             - _target_: aics_im2im.image.io.MonaiBioReader                    
+│               dimension_order_out: ZYX                                        
+│               C: 0                                                            
+│           - _target_: monai.transforms.AddChanneld                            
+│             keys:                                                             
+│             - raw                                                             
+│             - seg                                                             
+│           - _target_: aics_im2im.image.transforms.Resized                     
+│             keys:                                                             
+│             - raw                                                             
+│             - seg                                                             
+│             scale_factor: 0.25                                                
+│             spatial_dims: 3                                                   
+│           - _target_: monai.transforms.ToTensord                              
+│             keys:                                                             
+│             - raw                                                             
+│             - seg                                                             
+│           - _target_: monai.transforms.NormalizeIntensityd                    
+│             keys: raw                                                         
+│             channel_wise: true                                                
+│           - _target_: monai.transforms.ThresholdIntensityd                    
+│             keys: seg                                                         
+│             threshold: 0.1                                                    
+│             above: false                                                      
+│             cval: 1                                                           
+│           - _target_: aics_im2im.image.transforms.RandomMultiScaleCropd       
+│             keys:                                                             
+│             - raw                                                             
+│             - seg                                                             
+│             patch_shape:                                                      
+│             - 16                                                              
+│             - 32                                                              
+│             - 32                                                              
+│             patch_per_image: 1                                                
+│             scales_dict:                                                      
+│               seg:                                                            
+│               - 1                                                             
+│               raw:                                                            
+│               - 1                                                             
+│             x_key: raw                                                        
+│           - _target_: monai.transforms.RandHistogramShiftd                    
+│             prob: 0.1                                                         
+│             keys: raw                                                         
+│             num_control_points:                                               
+│             - 90                                                              
+│             - 500                                                             
+│           - _target_: monai.transforms.RandStdShiftIntensityd                 
+│             prob: 0.1                                                         
+│             keys: raw                                                         
+│             factors: 0.1                                                      
+│           - _target_: monai.transforms.RandAdjustContrastd                    
+│             prob: 0.1                                                         
+│             keys: raw                                                         
+│             gamma:                                                            
+│             - 0.9                                                             
+│             - 1.5                                                             
+│         test:                                                                 
+│           _target_: monai.transforms.Compose                                  
+│           transforms:                                                         
+│           - _target_: monai.transforms.LoadImaged                             
+│             keys: raw                                                         
+│             reader:                                                           
+│             - _target_: aics_im2im.image.io.MonaiBioReader                    
+│               dimension_order_out: ZYX                                        
+│               C: 5                                                            
+│           - _target_: monai.transforms.LoadImaged                             
+│             keys: seg                                                         
+│             reader:                                                           
+│             - _target_: aics_im2im.image.io.MonaiBioReader                    
+│               dimension_order_out: ZYX                                        
+│               C: 0                                                            
+│           - _target_: monai.transforms.AddChanneld                            
+│             keys:                                                             
+│             - raw                                                             
+│             - seg                                                             
+│           - _target_: aics_im2im.image.transforms.Resized                     
+│             keys:                                                             
+│             - raw                                                             
+│             - seg                                                             
+│             scale_factor: 0.25                                                
+│             spatial_dims: 3                                                   
+│           - _target_: monai.transforms.ToTensord                              
+│             keys:                                                             
+│             - raw                                                             
+│             - seg                                                             
+│           - _target_: monai.transforms.NormalizeIntensityd                    
+│             keys: raw                                                         
+│             channel_wise: true                                                
+│           - _target_: monai.transforms.ThresholdIntensityd                    
+│             keys: seg                                                         
+│             threshold: 0.1                                                    
+│             above: false                                                      
+│             cval: 1                                                           
+│         predict:                                                              
+│           _target_: monai.transforms.Compose                                  
+│           transforms:                                                         
+│           - _target_: monai.transforms.LoadImaged                             
+│             keys: raw                                                         
+│             reader:                                                           
+│             - _target_: aics_im2im.image.io.MonaiBioReader                    
+│               dimension_order_out: ZYX                                        
+│               C: 5                                                            
+│           - _target_: monai.transforms.AddChanneld                            
+│             keys: raw                                                         
+│           - _target_: monai.transforms.ToTensord                              
+│             keys: raw                                                         
+│           - _target_: monai.transforms.NormalizeIntensityd                    
+│             keys: raw                                                         
+│             channel_wise: true                                                
+│         valid:                                                                
+│           _target_: monai.transforms.Compose                                  
+│           transforms:                                                         
+│           - _target_: monai.transforms.LoadImaged                             
+│             keys: raw                                                         
+│             reader:                                                           
+│             - _target_: aics_im2im.image.io.MonaiBioReader                    
+│               dimension_order_out: ZYX                                        
+│               C: 5                                                            
+│             expand_user: false                                                
+│           - _target_: monai.transforms.LoadImaged                             
+│             keys: seg                                                         
+│             reader:                                                           
+│             - _target_: aics_im2im.image.io.MonaiBioReader                    
+│               dimension_order_out: ZYX                                        
+│               C: 0                                                            
+│           - _target_: monai.transforms.AddChanneld                            
+│             keys:                                                             
+│             - raw                                                             
+│             - seg                                                             
+│           - _target_: aics_im2im.image.transforms.Resized                     
+│             keys:                                                             
+│             - raw                                                             
+│             - seg                                                             
+│             scale_factor: 0.25                                                
+│             spatial_dims: 3                                                   
+│           - _target_: monai.transforms.ToTensord                              
+│             keys:                                                             
+│             - raw                                                             
+│             - seg                                                             
+│           - _target_: monai.transforms.NormalizeIntensityd                    
+│             keys: raw                                                         
+│             channel_wise: true                                                
+│           - _target_: monai.transforms.ThresholdIntensityd                    
+│             keys: seg                                                         
+│             threshold: 0.1                                                    
+│             above: false                                                      
+│             cval: 1                                                           
+│           - _target_: aics_im2im.image.transforms.RandomMultiScaleCropd       
+│             keys:                                                             
+│             - raw                                                             
+│             - seg                                                             
+│             patch_shape:                                                      
+│             - 16                                                              
+│             - 32                                                              
+│             - 32                                                              
+│             patch_per_image: 1                                                
+│             scales_dict:                                                      
+│               seg:                                                            
+│               - 1                                                             
+│               raw:                                                            
+│               - 1                                                             
+│             x_key: raw                                                        
+│       _aux:                                                                   
+│         _scales_dict:                                                         
+│         - - seg                                                               
+│           - - 1                                                               
+│         - - raw                                                               
+│           - - 1                                                               
+│         patch_shape:                                                          
+│         - 16                                                                  
+│         - 32                                                                  
+│         - 32                                                                  
+│       subsample: null                                                         
+│                                                                               
+├── model
+│   └── _target_: aics_im2im.models.im2im.MultiTaskIm2Im                        
+│       save_images_every_n_epochs: 1                                           
+│       save_dir: /Users/brian.kim/Desktop/work/allencell-ml-segmenter/src/allen
+│       x_key: raw                                                              
+│       backbone:                                                               
+│         _target_: monai.networks.nets.DynUNet                                 
+│         spatial_dims: 3                                                       
+│         in_channels: 1                                                        
+│         out_channels: 1                                                       
+│         strides:                                                              
+│         - 1                                                                   
+│         - 2                                                                   
+│         - 2                                                                   
+│         kernel_size:                                                          
+│         - 3                                                                   
+│         - 3                                                                   
+│         - 3                                                                   
+│         upsample_kernel_size:                                                 
+│         - 2                                                                   
+│         - 2                                                                   
+│         filters:                                                              
+│         - 1                                                                   
+│         - 1                                                                   
+│         - 1                                                                   
+│         dropout: 0.0                                                          
+│         res_block: true                                                       
+│       task_heads:                                                             
+│         seg:                                                                  
+│           _target_: aics_im2im.nn.BaseHead                                    
+│           loss:                                                               
+│             _target_: monai.losses.DiceCELoss                                 
+│             sigmoid: true                                                     
+│           postprocess:                                                        
+│             input:                                                            
+│               _target_: aics_im2im.models.im2im.utils.postprocessing.ActThresh
+│               rescale_dtype: numpy.uint8                                      
+│             prediction:                                                       
+│               _target_: aics_im2im.models.im2im.utils.postprocessing.ActThresh
+│               activation:                                                     
+│                 _target_: torch.nn.Sigmoid                                    
+│               rescale_dtype: numpy.uint8                                      
+│           save_raw: true                                                      
+│       optimizer:                                                              
+│         generator:                                                            
+│           _partial_: true                                                     
+│           _target_: torch.optim.Adam                                          
+│           lr: 0.0001                                                          
+│           weight_decay: 0.0001                                                
+│       lr_scheduler:                                                           
+│         generator:                                                            
+│           _partial_: true                                                     
+│           _target_: torch.optim.lr_scheduler.ExponentialLR                    
+│           gamma: 0.995                                                        
+│       inference_args:                                                         
+│         sw_batch_size: 1                                                      
+│         roi_size:                                                             
+│         - 16                                                                  
+│         - 32                                                                  
+│         - 32                                                                  
+│       _aux:                                                                   
+│         _tasks:                                                               
+│         - - seg                                                               
+│           - _target_: aics_im2im.nn.BaseHead                                  
+│             loss:                                                             
+│               _target_: monai.losses.DiceCELoss                               
+│               sigmoid: true                                                   
+│             postprocess:                                                      
+│               input:                                                          
+│                 _target_: aics_im2im.models.im2im.utils.postprocessing.ActThre
+│                 rescale_dtype: numpy.uint8                                    
+│               prediction:                                                     
+│                 _target_: aics_im2im.models.im2im.utils.postprocessing.ActThre
+│                 activation:                                                   
+│                   _target_: torch.nn.Sigmoid                                  
+│                 rescale_dtype: numpy.uint8                                    
+│             save_raw: true                                                    
+│                                                                               
+├── callbacks
+│   └── model_checkpoint:                                                       
+│         _target_: lightning.pytorch.callbacks.ModelCheckpoint                 
+│         dirpath: /Users/brian.kim/Desktop/work/allencell-ml-segmenter/src/alle
+│         filename: epoch_{epoch:03d}                                           
+│         monitor: val/loss                                                     
+│         verbose: false                                                        
+│         save_last: true                                                       
+│         save_top_k: 1                                                         
+│         mode: min                                                             
+│         auto_insert_metric_name: false                                        
+│         save_weights_only: false                                              
+│         every_n_train_steps: null                                             
+│         train_time_interval: null                                             
+│         every_n_epochs: 1                                                     
+│         save_on_train_epoch_end: true                                         
+│       early_stopping:                                                         
+│         _target_: lightning.pytorch.callbacks.EarlyStopping                   
+│         monitor: val/loss                                                     
+│         min_delta: 0.0                                                        
+│         patience: 100                                                         
+│         verbose: false                                                        
+│         mode: min                                                             
+│         strict: true                                                          
+│         check_finite: true                                                    
+│         stopping_threshold: null                                              
+│         divergence_threshold: null                                            
+│         check_on_train_epoch_end: null                                        
+│       model_summary:                                                          
+│         _target_: lightning.pytorch.callbacks.RichModelSummary                
+│         max_depth: -1                                                         
+│       rich_progress_bar:                                                      
+│         _target_: lightning.pytorch.callbacks.RichProgressBar                 
+│                                                                               
+├── logger
+│   └── mlflow:                                                                 
+│         _target_: aics_im2im.loggers.MLFlowLogger                             
+│         tracking_uri: https://mlflow.a100.int.allencell.org/                  
+│         experiment_name: YOUR_EXP_NAME                                        
+│         run_name: YOUR_RUN_NAME                                               
+│                                                                               
+├── trainer
+│   └── _target_: lightning.Trainer                                             
+│       default_root_dir: /Users/brian.kim/Desktop/work/allencell-ml-segmenter/s
+│       min_epochs: 1                                                           
+│       max_epochs: 100                                                         
+│       accelerator: gpu                                                        
+│       devices: 1                                                              
+│       check_val_every_n_epoch: 1                                              
+│       deterministic: false                                                    
+│       detect_anomaly: false                                                   
+│       precision: 16                                                           
+│                                                                               
+├── paths
+│   └── root_dir: .                                                             
+│       data_dir: ./data/                                                       
+│       log_dir: ./logs/                                                        
+│       output_dir: /Users/brian.kim/Desktop/work/allencell-ml-segmenter/src/all
+│       work_dir: /Users/brian.kim/Desktop/work/allencell-ml-segmenter/src/allen
+│                                                                               
+├── extras
+│   └── ignore_warnings: true                                                   
+│       enforce_tags: true                                                      
+│       print_config: true                                                      
+│       precision:                                                              
+│         _target_: torch.set_float32_matmul_precision                          
+│         precision: medium                                                     
+│                                                                               
+├── experiment_name
+│   └── YOUR_EXP_NAME                                                           
+├── run_name
+│   └── YOUR_RUN_NAME                                                           
+├── task_name
+│   └── predict                                                                 
+├── tags
+│   └── ['dev']                                                                 
+├── train
+│   └── True                                                                    
+├── test
+│   └── False                                                                   
+├── ckpt_path
+│   └── /Users/brian.kim/Desktop/data/model_updated.ckpt                        
+├── seed
+│   └── 12345                                                                   
+├── mode
+│   └── predict                                                                 
+├── source_col
+│   └── raw                                                                     
+├── target_col
+│   └── seg                                                                     
+├── spatial_dims
+│   └── 3                                                                       
+└── raw_im_channels
+    └── 1                                                                       
