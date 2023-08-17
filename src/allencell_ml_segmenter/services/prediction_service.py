@@ -19,7 +19,7 @@ def _list_to_string(list_to_convert: List[Any]) -> str:
     return f"[{ints_to_strings}]"
 
 
-class CytoService(Subscriber):
+class PredictionService(Subscriber):
     """
     Interface for training a model or predicting using a model.
     Uses cyto-dl for model training and inference.
@@ -29,7 +29,7 @@ class CytoService(Subscriber):
     def __init__(self, prediction_model: PredictionModel):
         super().__init__()
         self._prediction_model: PredictionModel = prediction_model
-        self._model.subscribe(
+        self._prediction_model.subscribe(
             Event.PROCESS_PREDICTION,
             self,
             self.predict_model,
@@ -39,9 +39,9 @@ class CytoService(Subscriber):
         """
         Predict segmentations using model according to spec
         """
-        self._prediction_model.set_config_name("test")
+        self._prediction_model.set_config_name("config.yaml")
         self._prediction_model.set_config_dir(
-            "/Users/brian.kim/desktop/work/cyto-dl/configs"
+            "/Users/brian.kim/Desktop/data"
         )
 
         # config needs to be called first
@@ -56,7 +56,7 @@ class CytoService(Subscriber):
         Used for both
         """
         # This hydra runtime variable needs to be set in separate calls to sys.argv
-        config_dir: Path = self._model.get_config_dir()
+        config_dir: Path = self._prediction_model.get_config_dir()
         if config_dir is None:
             raise ValueError(
                 "Config directory not set. Please set config directory."
@@ -69,8 +69,14 @@ class CytoService(Subscriber):
         Sets the config_name hydra runtime variable using sys.argv
         Used for both
         """
-        config_name: str = self._model.get_config_name()
+        config_name: str = self._prediction_model.get_config_name()
         # set config name for predictions, or set custom config for training
         # This hydra runtime variable needs to be set in separate calls to sys.argv
         sys.argv.append("--config-name")
         sys.argv.append(str(config_name))
+
+
+if __name__ == "__main__":
+    model = PredictionModel()
+    serv = PredictionService(model)
+    serv.predict_model()
