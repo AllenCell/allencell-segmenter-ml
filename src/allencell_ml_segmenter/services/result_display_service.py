@@ -13,6 +13,7 @@ class ResultDisplayService(Subscriber):
     def __init__(self, model: Publisher, viewer: napari.Viewer):
         super().__init__()
         self._viewer = viewer
+        self._model = model
 
         # Based on model grab correct image directory to display and register event handler
         if isinstance(model, PredictionModel):
