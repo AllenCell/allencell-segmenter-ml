@@ -14,6 +14,8 @@ class PredictionModel(Publisher):
         super().__init__()
 
         # state related to PredictionFileInput
+        self.config_name: str = None
+        self.config_dir: Path = None
         self._input_image_paths: List[Path] = []
         self._image_input_channel_index: int = None
         self._output_directory: Path = None
@@ -126,3 +128,15 @@ class PredictionModel(Publisher):
         """
         self._postprocessing_auto_threshold = threshold
         self.dispatch(Event.ACTION_PREDICTION_POSTPROCESSING_AUTO_THRESHOLD)
+
+    def set_config_dir(self, config_dir: Path) -> None:
+        self.config_dir = config_dir
+
+    def get_config_dir(self) -> Path:
+        return self.config_dir
+
+    def set_config_name(self, config_name: str) -> None:
+        self.config_name = config_name
+
+    def get_config_name(self) -> str:
+        return self.config_name
