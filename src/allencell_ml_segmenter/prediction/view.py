@@ -1,3 +1,4 @@
+from allencell_ml_segmenter.services.result_display_service import ResultDisplayService
 from qtpy.QtCore import Qt
 
 from allencell_ml_segmenter._style import Style
@@ -20,21 +21,25 @@ from qtpy.QtWidgets import (
     QLabel,
 )
 
+import napari
+from pathlib import Path
+
 
 class PredictionView(View):
     """
     Holds the image and model input widgets for prediction.
     """
 
-    def __init__(self, main_model: MainModel):
+    def __init__(self, main_model: MainModel, viewer: napari.Viewer):
         super().__init__()
 
         self._main_model: MainModel = main_model
         self._prediction_model: PredictionModel = PredictionModel()
 
-        self._service: ModelFileService = ModelFileService(
+        self._model_file_service: ModelFileService = ModelFileService(
             self._prediction_model
         )
+        self._result_display_service = ResultDisplayService(self._prediction_model, viewer)
 
         layout: QVBoxLayout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
@@ -74,6 +79,7 @@ class PredictionView(View):
         self._run_btn: QPushButton = QPushButton("Run")
         self._run_btn.setObjectName("run")
         self.layout().addWidget(self._run_btn)
+        self._run_btn.clicked.connect(lambda: self._prediction_model.dispatch(Event.PROCESS_PREDICTION_COMPLETE))
 
         self.setStyleSheet(Style.get_stylesheet("prediction_view.qss"))
 
