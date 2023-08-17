@@ -75,7 +75,6 @@ class PredictionService(Subscriber):
         sys.argv.append("--config-name")
         sys.argv.append(str(config_name))
 
-
 if __name__ == "__main__":
     model = PredictionModel()
     serv = PredictionService(model)
