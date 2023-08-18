@@ -94,7 +94,7 @@ class PredictionView(View):
         # TODO remove this is for testing
         self.test_file_service()
         self._prediction_model.dispatch(Event.PROCESS_PREDICTION_COMPLETE)
-        self.startLongTask()
+        # self.startLongTask()
 
     # Abstract method implementations ##################################
 
@@ -108,5 +108,8 @@ class PredictionView(View):
 
     def test_file_service(self):
         #TODO replace, testing file result service
-        self._prediction_model.set_output_directory(Path("/Users/brian.kim/Documents/test_data")) # path you want to show
+        self._prediction_model.set_output_directory(Path("/Users/chrishu/dev/code/test/allencell-ml-segmenter/data/example_experiment_data/s3_data")) # path you want to show
         ResultDisplayService(self._prediction_model, self._viewer)
+
+    def showResults(self):
+        print("showResults - prediction")

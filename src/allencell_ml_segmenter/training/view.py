@@ -1,4 +1,6 @@
+from pathlib import Path
 import sys
+import napari
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
     QLabel,
@@ -20,15 +22,18 @@ from allencell_ml_segmenter.training.model_selection_widget import (
 )
 from allencell_ml_segmenter.training.training_model import TrainingModel
 from hydra.core.global_hydra import GlobalHydra
-
+from aicsimageio import AICSImage
+from aicsimageio.readers import TiffReader
 
 class TrainingView(View):
     """
     Holds widgets pertinent to training processes - ImageSelectionWidget & ModelSelectionWidget.
     """
 
-    def __init__(self, main_model: MainModel):
+    def __init__(self, main_model: MainModel, viewer: napari.Viewer):
         super().__init__()
+
+        self._viewer = viewer
 
         self._main_model: MainModel = main_model
         self._training_model: TrainingModel = TrainingModel()
@@ -97,16 +102,49 @@ class TrainingView(View):
         # TODO -  find a better way to solve this
         self.startLongTask()
 
+    def read_result_images(self, dir_to_grab: Path):
+        output_dir: Path = dir_to_grab
+        images = []
+        if output_dir is None:
+            raise ValueError("No output directory to grab images from.")
+        else:
+            # unsanitized list of all files in output folder
+            files = self.grab_files_from_folder(output_dir)
+            for file in files:
+                try:
+                    images.append(AICSImage(str(file), reader=TiffReader))
+                except Exception as e:
+                    print(e)
+                    print(f"Could not load image {str(file)} into napari viewer. Image cannot be opened by AICSImage")
+        return images
+
+    def grab_files_from_folder(self, path: Path):
+        allfiles = path.glob('**/*')
+        return [x for x in allfiles if x.is_file()]
+    
+    def add_image_to_viewer(self, image: AICSImage, display_name: str):
+        self._viewer.add_image(image, name=display_name)
+    
     # Abstract methods from View implementations #######################
 
     def doWork(self):
         """
         Starts training process
         """
+        print("doWork - training")
         self._training_model.set_training_running(True)
+        print("doWork - reading result images")
+        result_images = self.read_result_images(Path("/Users/chrishu/dev/code/test/allencell-ml-segmenter/data/example_experiment_data/s3_data"))
+        print("doWork - setting result images")
+        self._training_model.set_result_images(result_images)
+        print("doWork - done")
 
     def getTypeOfWork(self) -> str:
         """
         Returns string representation of training process
         """
         return "Training"
+    
+    def showResults(self):
+        for idx, image in enumerate(self._training_model.get_result_images()):
+            self.add_image_to_viewer(image.data, f"Segmentation {str(idx)}")
