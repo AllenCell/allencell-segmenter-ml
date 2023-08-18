@@ -46,7 +46,7 @@ class MainWidget(AicsWidget):
         self._prediction_view: PredictionView = PredictionView(self._model, self.viewer)
         self._initialize_view(self._prediction_view, "Prediction")
 
-        training_view: TrainingView = TrainingView(self._model)
+        training_view: TrainingView = TrainingView(self._model, self.viewer)
         self._initialize_view(training_view, "Training")
 
         self._view_container.currentChanged.connect(self._tab_changed)
