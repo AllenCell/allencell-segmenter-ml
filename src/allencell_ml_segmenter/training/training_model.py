@@ -237,3 +237,19 @@ class TrainingModel(Publisher):
         """
         self._is_training_running = is_training_running
         self.dispatch(Event.PROCESS_TRAINING)
+
+    result_images: list = []
+
+    def get_result_images(self) -> list:
+        """
+        Gets result images
+        """
+        return self.result_images
+    
+    def set_result_images(self, images: list) -> None:
+        """
+        Sets result images
+
+        images (list): list of images to display
+        """
+        self.result_images = images

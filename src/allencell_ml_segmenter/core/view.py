@@ -50,7 +50,13 @@ class View(QWidget, Subscriber, metaclass=ViewMeta):
         self.longTaskThread.finished.connect(self.progressDialog.reset)
         self.longTaskThread.finished.connect(self.longTaskThread.deleteLater)
         self.longTaskThread.finished.connect(self.progressDialog.close)
+        self.longTaskThread.finished.connect(self.showResults)
+
         self.longTaskThread.start()
+
+    @abstractmethod
+    def showResults(self):
+        pass
 
     def updateProgress(self, value):
         self.progressDialog.setValue(value)
