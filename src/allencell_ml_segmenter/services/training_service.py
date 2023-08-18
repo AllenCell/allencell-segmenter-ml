@@ -89,10 +89,10 @@ class TrainingService(Subscriber):
             self._training_model.set_config_dir(
                 "/Users/chrishu/dev/code/test/cyto-dl/configs"
             )
-            
+
             #################################################
-            self._set_image_dims()
-            self._set_patch_shape_from_size()
+            # self._set_image_dims()
+            # self._set_patch_shape_from_size()
             self._set_max_epoch()
             self._set_images_directory()
             self._set_experiment()
@@ -126,8 +126,7 @@ class TrainingService(Subscriber):
         Sets the spatial_dims argument variable for hydra override using sys.argv
         """
         image_dims: int = self._training_model.get_image_dims()
-        # sys.argv.append(f"++cyto_dl.image.transforms.resize.Resized=[{image_dims}D]")
-        sys.argv.append(f"++spatial_dims=[{image_dims}]")
+        sys.argv.append(f"++spatial_dims={image_dims}")
 
     def _set_max_epoch(self) -> None:
         """
