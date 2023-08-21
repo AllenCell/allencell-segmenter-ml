@@ -43,6 +43,8 @@ class TrainingModel(Publisher):
 
     def __init__(self):
         super().__init__()
+        self._experiment_name: str = None
+        self._experiment_run: str = None
         self._experiment_type: TrainingType = None
         self._hardware_type: Hardware = None
         self._images_directory: Path = None
@@ -57,6 +59,34 @@ class TrainingModel(Publisher):
         self._max_time: int = None  # in seconds
         self._config_dir: Path = None
         self._is_training_running: bool = False
+
+    def get_experiment_name(self) -> str:
+        """
+        Gets experiment name
+        """
+        return self._experiment_name
+    
+    def set_experiment_name(self, name: str) -> None:
+        """
+        Sets experiment name
+
+        name (str): name of cyto-dl experiment
+        """
+        self._experiment_name = name
+
+    def get_experiment_run(self) -> str:
+        """
+        Gets experiment run
+        """
+        return self._experiment_run
+    
+    def set_experiment_run(self, run: str) -> None:
+        """
+        Sets experiment run
+
+        run (str): name of cyto-dl experiment run
+        """
+        self._experiment_run = run
 
     def get_experiment_type(self) -> TrainingType:
         """
