@@ -131,10 +131,9 @@ class TrainingView(View):
         """
         Starts training process
         """
-        print("doWork - training")
-        self._training_model.set_training_running(True)
+        # self._training_model.set_training_running(True)
         print("doWork - reading result images")
-        result_images = self.read_result_images(Path("/Users/chrishu/dev/code/test/allencell-ml-segmenter/data/example_experiment_data/s3_data"))
+        result_images = self.read_result_images(Path("logs/train/runs/YOUR_EXP_NAME/YOUR_RUN_NAME/2023-08-17_21-35-51/val_images"))
         print("doWork - setting result images")
         self._training_model.set_result_images(result_images)
         print("doWork - done")

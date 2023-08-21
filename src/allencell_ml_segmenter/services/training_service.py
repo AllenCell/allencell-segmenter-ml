@@ -93,6 +93,8 @@ class TrainingService(Subscriber):
             #################################################
             # self._set_image_dims()
             # self._set_patch_shape_from_size()
+            self._set_experiment_name()
+            self._set_experiment_run()
             self._set_max_epoch()
             self._set_images_directory()
             self._set_experiment()
@@ -127,6 +129,20 @@ class TrainingService(Subscriber):
         """
         image_dims: int = self._training_model.get_image_dims()
         sys.argv.append(f"++spatial_dims={image_dims}")
+
+    def _set_experiment_name(self) -> None:
+        """
+        Sets the experiment_name argument variable for hydra override using sys.argv
+        """
+        experiment_name: str = self._training_model.get_experiment_name()
+        sys.argv.append(f"++experiment_name={experiment_name}")
+
+    def _set_experiment_run(self) -> None:
+        """
+        Sets the run_name argument variable for hydra override using sys.argv
+        """
+        experiment_run: str = self._training_model.get_experiment_run()
+        sys.argv.append(f"++run_name={experiment_run}")
 
     def _set_max_epoch(self) -> None:
         """
