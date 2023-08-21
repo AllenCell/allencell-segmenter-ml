@@ -108,7 +108,7 @@ class PredictionView(View):
 
     def test_file_service(self):
         #TODO replace, testing file result service
-        self._prediction_model.set_output_directory(Path("/Users/chrishu/dev/code/test/allencell-ml-segmenter/data/example_experiment_data/s3_data")) # path you want to show
+        self._prediction_model.set_output_directory(Path("logs/train/runs/YOUR_EXP_NAME/YOUR_RUN_NAME/2023-08-17_21-35-51/val_images")) # path you want to show
         ResultDisplayService(self._prediction_model, self._viewer)
 
     def showResults(self):
