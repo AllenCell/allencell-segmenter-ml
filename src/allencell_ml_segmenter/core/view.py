@@ -50,6 +50,7 @@ class View(QWidget, Subscriber, metaclass=ViewMeta):
         self.longTaskThread.finished.connect(self.progressDialog.reset)
         self.longTaskThread.finished.connect(self.longTaskThread.deleteLater)
         self.longTaskThread.finished.connect(self.progressDialog.close)
+        self.longTaskThread.finished.connect(self.show_result)
         self.longTaskThread.start()
 
     def updateProgress(self, value):
@@ -61,4 +62,8 @@ class View(QWidget, Subscriber, metaclass=ViewMeta):
 
     @abstractmethod
     def getTypeOfWork(self):
+        pass
+
+    @abstractmethod
+    def show_result(self):
         pass

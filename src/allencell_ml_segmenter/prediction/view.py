@@ -24,7 +24,9 @@ from qtpy.QtWidgets import (
 )
 from pathlib import Path
 
+from allencell_ml_segmenter.services.prediction_service import PredictionService
 from allencell_ml_segmenter.services.result_display_service import ResultDisplayService
+from allencell_ml_segmenter.training.view import TrainingView
 
 
 class PredictionView(View):
@@ -34,6 +36,11 @@ class PredictionView(View):
 
     def __init__(self, main_model: MainModel, viewer: napari.Viewer):
         super().__init__()
+
+        #TODO Delete this
+        self.training_view_for_demo = TrainingView(main_model)
+
+
         self._viewer = viewer
         self._main_model: MainModel = main_model
         self._prediction_model: PredictionModel = PredictionModel()
@@ -91,22 +98,18 @@ class PredictionView(View):
         )
 
     def run_btn_handler(self):
-        # TODO remove this is for testing
-        self.test_file_service()
-        self._prediction_model.dispatch(Event.PROCESS_PREDICTION_COMPLETE)
         self.startLongTask()
 
     # Abstract method implementations ##################################
 
     def doWork(self):
-        print("doWork - prediction")
-        time.sleep(5)
-        print("doWork done - prediction")
+        serv = PredictionService(self._prediction_model)
+        serv.predict_model()
 
     def getTypeOfWork(self):
         return "Prediction"
 
-    def test_file_service(self):
+    def show_result(self):
         #TODO replace, testing file result service
-        self._prediction_model.set_output_directory(Path("/Users/brian.kim/Documents/test_data")) # path you want to show
         ResultDisplayService(self._prediction_model, self._viewer)
+        self._prediction_model.dispatch(Event.PROCESS_PREDICTION_COMPLETE)

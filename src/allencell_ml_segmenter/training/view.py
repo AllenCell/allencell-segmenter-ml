@@ -99,14 +99,18 @@ class TrainingView(View):
 
     # Abstract methods from View implementations #######################
 
-    def doWork(self):
+    def doWork(self, test_demo):
         """
         Starts training process
         """
-        self._training_model.set_training_running(True)
+        #self._training_model.set_training_running(True)
+        test_demo.set_prediction_running(True)
 
     def getTypeOfWork(self) -> str:
         """
         Returns string representation of training process
         """
         return "Training"
+
+    def show_result(self):
+        print("done")

@@ -133,6 +133,7 @@ class PredictionFileInput(QWidget):
         image_input_label.set_hint("0-indexed channel in image to segment.")
 
         self._channel_select_dropdown: QComboBox = QComboBox()
+        self._channel_select_dropdown.addItems(["0", "1", "2", "3", "4"])
 
         # set up disappearing placeholder text
         self._channel_select_dropdown.setCurrentIndex(-1)
