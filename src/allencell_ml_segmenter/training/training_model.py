@@ -4,6 +4,8 @@ from enum import Enum
 from typing import Union
 from pathlib import Path
 
+from allencell_ml_segmenter.main.main_model import MainModel
+
 
 class TrainingType(Enum):
     """
@@ -41,8 +43,9 @@ class TrainingModel(Publisher):
     Stores state relevant to training processes.
     """
 
-    def __init__(self):
+    def __init__(self, main_model: MainModel):
         super().__init__()
+        self._main_model = main_model
         self._experiment_name: str = None
         self._experiment_run: str = None
         self._experiment_type: TrainingType = None
@@ -283,3 +286,9 @@ class TrainingModel(Publisher):
         images (list): list of images to display
         """
         self.result_images = images
+
+    def get_cyto_dl_path(self) -> Path:
+        """
+        Gets cyto-dl path
+        """
+        return self._main_model.get_cyto_dl_path()
