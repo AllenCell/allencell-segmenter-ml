@@ -87,11 +87,11 @@ class TrainingService(Subscriber):
             
             # Source of configs relative to user's home.  We need a dynamic solution in prod.
             self._training_model.set_config_dir(
-                "/Users/chrishu/dev/code/test/cyto-dl/configs"
+                f"{self._training_model.get_cyto_dl_path()}/configs"
             )
 
             #################################################
-            # self._set_image_dims()
+            # self._set_image_dims() //TODO - talk to Benji about this
             # self._set_patch_shape_from_size()
             self._set_experiment_name()
             self._set_experiment_run()
