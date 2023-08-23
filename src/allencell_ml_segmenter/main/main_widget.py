@@ -7,6 +7,7 @@ from qtpy.QtWidgets import (
     QSizePolicy,
     QTabWidget,
 )
+from allencell_ml_segmenter.config.cyto_dl_config import CytoDlConfig
 from allencell_ml_segmenter.core.aics_widget import AicsWidget
 
 from allencell_ml_segmenter.core.event import Event
@@ -29,8 +30,8 @@ class MainWidget(AicsWidget):
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
 
-        # main model
-        self._model: MainModel = MainModel()
+        # main model and app config
+        self._model: MainModel = MainModel(CytoDlConfig("/Users/chrishu/dev/code/test/cyto-dl"))
         self._model.subscribe(
             Event.ACTION_CHANGE_VIEW, self, self.handle_change_view
         )

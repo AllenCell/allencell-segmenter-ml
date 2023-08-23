@@ -36,7 +36,7 @@ class TrainingView(View):
         self._viewer = viewer
 
         self._main_model: MainModel = main_model
-        self._training_model: TrainingModel = TrainingModel()
+        self._training_model: TrainingModel = TrainingModel(main_model)
         self._training_service: TrainingService = TrainingService(
             self._training_model
         )
@@ -131,7 +131,7 @@ class TrainingView(View):
         """
         Starts training process
         """
-        # self._training_model.set_training_running(True)
+        self._training_model.set_training_running(True)
         print("doWork - reading result images")
         result_images = self.read_result_images(Path("logs/train/runs/YOUR_EXP_NAME/YOUR_RUN_NAME/2023-08-17_21-35-51/val_images"))
         print("doWork - setting result images")
