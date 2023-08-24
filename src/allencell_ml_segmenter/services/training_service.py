@@ -94,13 +94,13 @@ class TrainingService(Subscriber):
             # self._set_image_dims() //TODO - talk to Benji about this
             # self._set_patch_shape_from_size()
             self._set_experiment_name()
-            self._set_experiment_run()
             self._set_max_epoch()
             self._set_images_directory()
             self._set_experiment()
             self._set_hardware()
             self._set_config_dir()
 
+            sys.argv.append("hydra.run.dir=${paths.log_dir}/${task_name}/runs/${experiment_name}")
             # sys.argv.append(
             #     "+callbacks.print_progress._target_=allencell_ml_segmenter.services.training_service.MyPrintingCallback"
             # )
@@ -136,13 +136,6 @@ class TrainingService(Subscriber):
         """
         experiment_name: str = self._training_model.get_experiment_name()
         sys.argv.append(f"++experiment_name={experiment_name}")
-
-    def _set_experiment_run(self) -> None:
-        """
-        Sets the run_name argument variable for hydra override using sys.argv
-        """
-        experiment_run: str = self._training_model.get_experiment_run()
-        sys.argv.append(f"++run_name={experiment_run}")
 
     def _set_max_epoch(self) -> None:
         """
