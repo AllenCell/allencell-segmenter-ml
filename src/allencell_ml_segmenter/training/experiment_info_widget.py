@@ -37,19 +37,12 @@ class ExperimentInfoWidget(QWidget):
 
         experiment_name_label: LabelWithHint = LabelWithHint("Experiment name")
         self._experiment_name_input: QLineEdit = QLineEdit()
-        experiment_run_label: LabelWithHint = LabelWithHint("Run name")
-        self._experiment_run_input: QLineEdit = QLineEdit()
 
         frame.layout().addWidget(experiment_name_label, 0, 0)
         frame.layout().addWidget(self._experiment_name_input, 0, 1)
-        frame.layout().addWidget(experiment_run_label, 1, 0)
-        frame.layout().addWidget(self._experiment_run_input, 1, 1)
 
         self._experiment_name_input.textChanged.connect(
             lambda text: self._model.set_experiment_name(text)
-        )
-        self._experiment_run_input.textChanged.connect(
-            lambda text: self._model.set_experiment_run(text)
         )
 
     def set_enabled(self, enabled: bool) -> None:
@@ -59,11 +52,9 @@ class ExperimentInfoWidget(QWidget):
         enabled (bool): whether or not the widget should be enabled
         """
         self._experiment_name_input.setEnabled(enabled)
-        self._experiment_run_input.setEnabled(enabled)
 
     def clear(self) -> None:
         """
         Clears the widget.
         """
         self._experiment_name_input.clear()
-        self._experiment_run_input.clear()
