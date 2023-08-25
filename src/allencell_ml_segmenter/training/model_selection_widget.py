@@ -89,7 +89,7 @@ class ModelSelectionWidget(QWidget):
         self._combo_box_existing_models_checkpoint.setEnabled(False)
         self._combo_box_existing_models_checkpoint.setMinimumWidth(306)
         self._combo_box_existing_models_checkpoint.currentTextChanged.connect(
-            lambda path_text: self._model.set_model_path(Path(path_text))
+            lambda path_text: self._model.set_checkpoint(path_text)
         )
         top_grid_layout.addWidget(self._combo_box_existing_models_checkpoint, 2, 2)
 
@@ -199,7 +199,7 @@ class ModelSelectionWidget(QWidget):
         Triggered when the user selects a model from the _combo_box_existing_models.
         Sets the model path in the model.
         """
-        self._model.set_model_path(model_path)
+        self._model.set_experiment_name(model_path)
         self._combo_box_existing_models_checkpoint.clear()
         self._combo_box_existing_models_checkpoint.addItems(
             self._model.get_experiments()[model_path]
@@ -212,7 +212,8 @@ class ModelSelectionWidget(QWidget):
         Triggered when the user selects the "start a new model" radio button.
         Enables and disables relevent controls.
         """
-        self._model.set_model_path(None)
+        self._model.set_experiment_name(None)
+        self._model.set_checkpoint(None)
         self._combo_box_existing_models.setEnabled(False)
         self._combo_box_existing_models_checkpoint.setEnabled(False)
         self.experiment_info_widget.set_enabled(True)
@@ -224,6 +225,7 @@ class ModelSelectionWidget(QWidget):
         Triggered when the user selects the "existing model" radio button.
         Enables and disables relevent controls.
         """
+        self._model.set_experiment_name(None)
         self._combo_box_existing_models.setEnabled(True)
         self.experiment_info_widget.set_enabled(False)
         self.experiment_info_widget.clear()
