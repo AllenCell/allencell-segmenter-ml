@@ -8,10 +8,12 @@ from qtpy.QtWidgets import (
     QTabWidget,
 )
 from allencell_ml_segmenter.config.cyto_dl_config import CytoDlConfig
+from allencell_ml_segmenter.constants import CYTO_DL_HOME_PATH, USER_EXPERIMENTS_PATH
 from allencell_ml_segmenter.core.aics_widget import AicsWidget
 
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.view import View
+from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.prediction.view import PredictionView
 from allencell_ml_segmenter.training.view import TrainingView
@@ -31,7 +33,9 @@ class MainWidget(AicsWidget):
         self.layout().setContentsMargins(0, 0, 0, 0)
 
         # main model and app config
-        self._model: MainModel = MainModel(CytoDlConfig("/Users/chrishu/dev/code/test/cyto-dl"))
+        config = CytoDlConfig(CYTO_DL_HOME_PATH, USER_EXPERIMENTS_PATH)
+        experiment_model = ExperimentsModel(config)
+        self._model: MainModel = MainModel(experiment_model)
         self._model.subscribe(
             Event.ACTION_CHANGE_VIEW, self, self.handle_change_view
         )

@@ -55,7 +55,7 @@ class ModelSelectionWidget(QWidget):
 
         self._radio_new_model: QRadioButton = QRadioButton()
         self._radio_new_model.setChecked(True)
-        self._radio_new_model.toggled.connect(self._new_model)
+        self._radio_new_model.toggled.connect(self._new_model_handler)
         top_grid_layout.addWidget(self._radio_new_model, 0, 0)
 
         self.experiment_info_widget = ExperimentInfoWidget(self._model)
@@ -65,22 +65,33 @@ class ModelSelectionWidget(QWidget):
 
         self._radio_existing_model: QRadioButton = QRadioButton()
         self._radio_existing_model.toggled.connect(
-            self._existing_model
+            self._existing_model_handler
         )
         top_grid_layout.addWidget(self._radio_existing_model, 1, 0)
 
-        label_existing: LabelWithHint = LabelWithHint("Existing model")
-        top_grid_layout.addWidget(label_existing, 1, 1)
+        label_existing_model: LabelWithHint = LabelWithHint("Existing model")
+        top_grid_layout.addWidget(label_existing_model, 1, 1)
+        label_existing_model_checkpoint: LabelWithHint = LabelWithHint("Checkpoint")
+        top_grid_layout.addWidget(label_existing_model_checkpoint, 2, 1)
 
         self._combo_box_existing_models: QComboBox = QComboBox()
         self._combo_box_existing_models.setCurrentIndex(-1)
         self._combo_box_existing_models.setPlaceholderText("Select an option")
         self._combo_box_existing_models.setEnabled(False)
         self._combo_box_existing_models.setMinimumWidth(306)
-        self._combo_box_existing_models.currentTextChanged.connect(
+        self._combo_box_existing_models.addItems(self._model.get_experiments().keys())
+        self._combo_box_existing_models.currentTextChanged.connect(self._model_selected_handler)
+        top_grid_layout.addWidget(self._combo_box_existing_models, 1, 2)
+
+        self._combo_box_existing_models_checkpoint: QComboBox = QComboBox()
+        self._combo_box_existing_models_checkpoint.setCurrentIndex(-1)
+        self._combo_box_existing_models_checkpoint.setPlaceholderText("Select an option")
+        self._combo_box_existing_models_checkpoint.setEnabled(False)
+        self._combo_box_existing_models_checkpoint.setMinimumWidth(306)
+        self._combo_box_existing_models_checkpoint.currentTextChanged.connect(
             lambda path_text: self._model.set_model_path(Path(path_text))
         )
-        top_grid_layout.addWidget(self._combo_box_existing_models, 1, 2)
+        top_grid_layout.addWidget(self._combo_box_existing_models_checkpoint, 2, 2)
 
         frame.layout().addLayout(top_grid_layout)
 
@@ -181,18 +192,34 @@ class ModelSelectionWidget(QWidget):
 
         frame.layout().addLayout(bottom_grid_layout)
 
-        self._new_model()
+        self._new_model_handler()
 
-    def _new_model(self) -> None:
+    def _model_selected_handler(self, model_path: Path) -> None:
+        """
+        Triggered when the user selects a model from the _combo_box_existing_models.
+        Sets the model path in the model.
+        """
+        self._model.set_model_path(model_path)
+        self._combo_box_existing_models_checkpoint.clear()
+        self._combo_box_existing_models_checkpoint.addItems(
+            self._model.get_experiments()[model_path]
+        )
+        self._combo_box_existing_models_checkpoint.setEnabled(True)
+        self._combo_box_existing_models_checkpoint.setCurrentIndex(-1)
+
+    def _new_model_handler(self) -> None:
         """
         Triggered when the user selects the "start a new model" radio button.
         Enables and disables relevent controls.
         """
         self._model.set_model_path(None)
         self._combo_box_existing_models.setEnabled(False)
+        self._combo_box_existing_models_checkpoint.setEnabled(False)
         self.experiment_info_widget.set_enabled(True)
+        self._combo_box_existing_models.setCurrentIndex(-1)
+        self._combo_box_existing_models_checkpoint.clear()
 
-    def _existing_model(self) -> None:
+    def _existing_model_handler(self) -> None:
         """
         Triggered when the user selects the "existing model" radio button.
         Enables and disables relevent controls.
