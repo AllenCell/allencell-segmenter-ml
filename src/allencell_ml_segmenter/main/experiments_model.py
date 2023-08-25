@@ -11,12 +11,12 @@ class ExperimentsModel():
 
     def refreshExperiments(self) -> dict:
         self.experiments = {}
-        for filename in os.listdir(self.config._user_experiments_path):
-            self.experiments[filename] = []
-            checkpoints_path = os.path.join(self.config._user_experiments_path, filename, "checkpoints")
+        for experiment in os.listdir(self.config._user_experiments_path):
+            self.experiments[experiment] = []
+            checkpoints_path = os.path.join(self.config._user_experiments_path, experiment, "checkpoints")
             if os.path.exists(checkpoints_path):
                 for checkpoint in os.listdir(checkpoints_path):
-                    self.experiments[filename].append(checkpoint)
+                    self.experiments[experiment].append(checkpoint)
 
     """
     Returns a defensive copy of Experiments dict.

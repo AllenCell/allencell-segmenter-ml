@@ -55,7 +55,7 @@ class ModelSelectionWidget(QWidget):
 
         self._radio_new_model: QRadioButton = QRadioButton()
         self._radio_new_model.setChecked(True)
-        self._radio_new_model.toggled.connect(self._new_model_handler)
+        self._radio_new_model.toggled.connect(self._new_model_radio_handler)
         top_grid_layout.addWidget(self._radio_new_model, 0, 0)
 
         self.experiment_info_widget = ExperimentInfoWidget(self._model)
@@ -65,7 +65,7 @@ class ModelSelectionWidget(QWidget):
 
         self._radio_existing_model: QRadioButton = QRadioButton()
         self._radio_existing_model.toggled.connect(
-            self._existing_model_handler
+            self._existing_model_radio_handler
         )
         top_grid_layout.addWidget(self._radio_existing_model, 1, 0)
 
@@ -80,7 +80,7 @@ class ModelSelectionWidget(QWidget):
         self._combo_box_existing_models.setEnabled(False)
         self._combo_box_existing_models.setMinimumWidth(306)
         self._combo_box_existing_models.addItems(self._model.get_experiments().keys())
-        self._combo_box_existing_models.currentTextChanged.connect(self._model_selected_handler)
+        self._combo_box_existing_models.currentTextChanged.connect(self._model_combo_handler)
         top_grid_layout.addWidget(self._combo_box_existing_models, 1, 2)
 
         self._combo_box_existing_models_checkpoint: QComboBox = QComboBox()
@@ -192,9 +192,9 @@ class ModelSelectionWidget(QWidget):
 
         frame.layout().addLayout(bottom_grid_layout)
 
-        self._new_model_handler()
+        self._new_model_radio_handler()
 
-    def _model_selected_handler(self, model_path: Path) -> None:
+    def _model_combo_handler(self, model_path: Path) -> None:
         """
         Triggered when the user selects a model from the _combo_box_existing_models.
         Sets the model path in the model.
@@ -207,7 +207,7 @@ class ModelSelectionWidget(QWidget):
         self._combo_box_existing_models_checkpoint.setEnabled(True)
         self._combo_box_existing_models_checkpoint.setCurrentIndex(-1)
 
-    def _new_model_handler(self) -> None:
+    def _new_model_radio_handler(self) -> None:
         """
         Triggered when the user selects the "start a new model" radio button.
         Enables and disables relevent controls.
@@ -219,7 +219,7 @@ class ModelSelectionWidget(QWidget):
         self._combo_box_existing_models.setCurrentIndex(-1)
         self._combo_box_existing_models_checkpoint.clear()
 
-    def _existing_model_handler(self) -> None:
+    def _existing_model_radio_handler(self) -> None:
         """
         Triggered when the user selects the "existing model" radio button.
         Enables and disables relevent controls.

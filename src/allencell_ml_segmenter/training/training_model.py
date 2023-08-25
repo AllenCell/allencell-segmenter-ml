@@ -1,3 +1,4 @@
+import os
 from allencell_ml_segmenter.core.publisher import Publisher
 from allencell_ml_segmenter.core.event import Event
 from enum import Enum
@@ -47,7 +48,7 @@ class TrainingModel(Publisher):
         super().__init__()
         self._main_model = main_model
         self._experiment_name: str = None
-        self._experiment_run: str = None
+        self._checkpoint: str = None
         self._experiment_type: TrainingType = None
         self._hardware_type: Hardware = None
         self._images_directory: Path = None
@@ -77,19 +78,19 @@ class TrainingModel(Publisher):
         """
         self._experiment_name = name
 
-    def get_experiment_run(self) -> str:
+    def get_checkpoint(self) -> str:
         """
-        Gets experiment run
+        Gets checkpoint
         """
-        return self._experiment_run
+        return self._checkpoint
     
-    def set_experiment_run(self, run: str) -> None:
+    def set_checkpoint(self, checkpoint: str) -> None:
         """
-        Sets experiment run
+        Sets checkpoint
 
-        run (str): name of cyto-dl experiment run
+        checkpoint (str): name of checkpoint to use
         """
-        self._experiment_run = run
+        self._checkpoint = checkpoint
 
     def get_experiment_type(self) -> TrainingType:
         """
@@ -198,15 +199,7 @@ class TrainingModel(Publisher):
         """
         Gets model path
         """
-        return self._model_path
-
-    def set_model_path(self, model_path: Union[Path, None]) -> None:
-        """
-        Sets model path
-
-        model_path (Optional[Path, None]): path to model to use, or None to start a new model
-        """
-        self._model_path = model_path
+        return os.path.join(self._main_model.get_experiment_model().get_cyto_dl_config().get_user_experiments_path(), self._experiment_name, "checkpoints", self._checkpoint)
 
     def get_patch_size(self) -> PatchSize:
         """
