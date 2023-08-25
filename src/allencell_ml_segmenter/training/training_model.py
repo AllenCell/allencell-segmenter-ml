@@ -291,4 +291,16 @@ class TrainingModel(Publisher):
         """
         Gets cyto-dl path
         """
-        return self._main_model.get_cyto_dl_path()
+        return self._main_model.get_experiment_model().get_cyto_dl_config().get_cyto_dl_home_path()
+    
+    def get_user_experiments_path(self) -> Path:
+        """
+        Gets user experiments path
+        """
+        return self._main_model.get_experiment_model().get_cyto_dl_config().get_user_experiments_path()
+    
+    def get_experiments(self) -> dict:
+        """
+        Gets experiments
+        """
+        return self._main_model.get_experiment_model().get_experiments()
