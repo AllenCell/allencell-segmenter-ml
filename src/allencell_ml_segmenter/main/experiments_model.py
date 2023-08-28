@@ -12,9 +12,9 @@ class ExperimentsModel():
     def refreshExperiments(self) -> dict:
         self.experiments = {}
         for experiment in os.listdir(self.config._user_experiments_path):
-            self.experiments[experiment] = []
             checkpoints_path = os.path.join(self.config._user_experiments_path, experiment, "checkpoints")
-            if os.path.exists(checkpoints_path):
+            if os.path.exists(checkpoints_path) and len(os.listdir(checkpoints_path)) > 0:
+                self.experiments[experiment] = []
                 for checkpoint in os.listdir(checkpoints_path):
                     self.experiments[experiment].append(checkpoint)
 

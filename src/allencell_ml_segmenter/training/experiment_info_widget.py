@@ -30,7 +30,7 @@ class ExperimentInfoWidget(QWidget):
         frame: QFrame = QFrame()
         frame.setLayout(QGridLayout())
         frame.layout().setSpacing(0)
-        frame.setObjectName("frame")
+        frame.setObjectName("frame-no-border")
         self.layout().addWidget(frame)
 
         # self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
