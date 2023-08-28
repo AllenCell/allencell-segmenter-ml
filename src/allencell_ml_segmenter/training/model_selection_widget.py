@@ -207,11 +207,12 @@ class ModelSelectionWidget(QWidget):
 
         # update and enable checkpoint combo box
         self._combo_box_existing_models_checkpoint.clear()
-        self._combo_box_existing_models_checkpoint.addItems(
-            self._model.get_experiments()[model_path]
-        )
-        self._combo_box_existing_models_checkpoint.setCurrentIndex(-1)
-        self._combo_box_existing_models_checkpoint.setEnabled(True)
+        if(model_path in self._model.get_experiments()):
+            self._combo_box_existing_models_checkpoint.addItems(
+                self._model.get_experiments()[model_path]
+            )
+            self._combo_box_existing_models_checkpoint.setCurrentIndex(-1)
+            self._combo_box_existing_models_checkpoint.setEnabled(True)
 
     def _new_model_radio_handler(self) -> None:
         """
