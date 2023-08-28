@@ -14,6 +14,7 @@ from qtpy.QtWidgets import (
     QLineEdit,
     QCheckBox,
 )
+from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.training.experiment_info_widget import ExperimentInfoWidget
 
 from allencell_ml_segmenter.training.training_model import TrainingModel
@@ -80,7 +81,10 @@ class ModelSelectionWidget(QWidget):
         self._combo_box_existing_models.setEnabled(False)
         self._combo_box_existing_models.setMinimumWidth(306)
         self._combo_box_existing_models.addItems(self._model.get_experiments().keys())
-        self._combo_box_existing_models.currentTextChanged.connect(self._model_combo_handler)
+
+        self._refresh_experiments()
+        self._model.subscribe(Event.PROCESS_TRAINING, self, self._refresh_experiments)
+        
         top_grid_layout.addWidget(self._combo_box_existing_models, 1, 2)
 
         self._combo_box_existing_models_checkpoint: QComboBox = QComboBox()
@@ -200,12 +204,14 @@ class ModelSelectionWidget(QWidget):
         Sets the model path in the model.
         """
         self._model.set_experiment_name(model_path)
+
+        # update and enable checkpoint combo box
         self._combo_box_existing_models_checkpoint.clear()
         self._combo_box_existing_models_checkpoint.addItems(
             self._model.get_experiments()[model_path]
         )
-        self._combo_box_existing_models_checkpoint.setEnabled(True)
         self._combo_box_existing_models_checkpoint.setCurrentIndex(-1)
+        self._combo_box_existing_models_checkpoint.setEnabled(True)
 
     def _new_model_radio_handler(self) -> None:
         """
@@ -239,3 +245,11 @@ class ModelSelectionWidget(QWidget):
             self._max_time_in_hours_input.setEnabled(True)
         else:
             self._max_time_in_hours_input.setEnabled(False)
+
+    def _refresh_experiments(self, _: Event = None) -> None:
+        """
+        Refreshes the experiments in the _combo_box_existing_models.
+        """
+        self._model.refresh_experiments()
+        self._combo_box_existing_models.currentTextChanged.connect(self._model_combo_handler)
+

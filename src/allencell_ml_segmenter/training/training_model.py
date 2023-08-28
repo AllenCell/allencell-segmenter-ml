@@ -297,3 +297,9 @@ class TrainingModel(Publisher):
         Gets experiments
         """
         return self._main_model.get_experiment_model().get_experiments()
+    
+    def refresh_experiments(self) -> None:
+        """
+        Refreshes experiments
+        """
+        self._main_model.get_experiment_model().refreshExperiments()
