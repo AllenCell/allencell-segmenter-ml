@@ -195,11 +195,23 @@ class TrainingModel(Publisher):
         """
         self._channel_index = index
 
+    def get_model_checkpoints_path(self) -> Union[Path, None]:
+        """
+        Gets checkpoints for model path
+        """
+        return os.path.join(self._main_model.get_experiment_model().get_cyto_dl_config().get_user_experiments_path(), self._experiment_name, "checkpoints", self._checkpoint)
+    
     def get_model_path(self) -> Union[Path, None]:
         """
         Gets model path
         """
-        return os.path.join(self._main_model.get_experiment_model().get_cyto_dl_config().get_user_experiments_path(), self._experiment_name, "checkpoints", self._checkpoint)
+        return os.path.join(self._main_model.get_experiment_model().get_cyto_dl_config().get_user_experiments_path(), self._experiment_name)
+
+    def get_model_test_images_path(self) -> Union[Path, None]:
+        """
+        Gets test images for model path
+        """
+        return os.path.join(self._main_model.get_experiment_model().get_cyto_dl_config().get_user_experiments_path(), self._experiment_name, "test_images")
 
     def get_patch_size(self) -> PatchSize:
         """
