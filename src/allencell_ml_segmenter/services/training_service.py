@@ -93,7 +93,7 @@ class TrainingService(Subscriber):
             #################################################
             sys.argv.append("hydra.run.dir=${paths.log_dir}/${task_name}/runs/${experiment_name}")
             if(self._training_model.get_checkpoint() is not None):
-                sys.argv.append(f"ckpt_path={self._training_model.get_model_path()}")
+                sys.argv.append(f"ckpt_path={self._training_model.get_model_checkpoints_path()}")
             # sys.argv.append(
             #     "+callbacks.print_progress._target_=allencell_ml_segmenter.services.training_service.MyPrintingCallback"
             # )
