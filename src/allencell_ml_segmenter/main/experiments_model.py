@@ -24,5 +24,5 @@ class ExperimentsModel():
     def get_experiments(self) -> dict:
         return copy.deepcopy(self.experiments)
     
-    def get_cyto_dl_config(self) -> str:
+    def get_cyto_dl_config(self) -> CytoDlConfig:
         return self.config
