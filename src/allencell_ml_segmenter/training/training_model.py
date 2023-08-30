@@ -314,4 +314,4 @@ class TrainingModel(Publisher):
         """
         Refreshes experiments
         """
-        self._main_model.get_experiment_model().refreshExperiments()
+        self._main_model.get_experiment_model().refresh_experiments()
