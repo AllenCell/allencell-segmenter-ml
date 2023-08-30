@@ -1,5 +1,5 @@
 from pathlib import Path
-import sys
+import sys, os
 import napari
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
@@ -101,6 +101,11 @@ class TrainingView(View):
         GlobalHydra.instance().clear()
         # TODO -  find a better way to solve this
         self.startLongTask()
+        # self._training_model.set_training_running(True)
+        
+        # self.doWork()
+        # self.showResults()
+
 
     def read_result_images(self, dir_to_grab: Path):
         output_dir: Path = dir_to_grab
@@ -108,19 +113,15 @@ class TrainingView(View):
         if output_dir is None:
             raise ValueError("No output directory to grab images from.")
         else:
-            # unsanitized list of all files in output folder
-            files = self.grab_files_from_folder(output_dir)
+            files = [os.path.join(output_dir, file) for file in os.listdir(dir_to_grab)]
             for file in files:
-                try:
-                    images.append(AICSImage(str(file), reader=TiffReader))
-                except Exception as e:
-                    print(e)
-                    print(f"Could not load image {str(file)} into napari viewer. Image cannot be opened by AICSImage")
+                if os.path.isfile(file) and file.lower().endswith('.tif'):
+                    try:
+                        images.append(AICSImage(str(file), reader=TiffReader))
+                    except Exception as e:
+                        print(e)
+                        print(f"Could not load image {str(file)} into napari viewer. Image cannot be opened by AICSImage")
         return images
-
-    def grab_files_from_folder(self, path: Path):
-        allfiles = path.glob('**/*')
-        return [x for x in allfiles if x.is_file()]
     
     def add_image_to_viewer(self, image: AICSImage, display_name: str):
         self._viewer.add_image(image, name=display_name)
@@ -132,8 +133,9 @@ class TrainingView(View):
         Starts training process
         """
         self._training_model.set_training_running(True)
+        result_images = self.read_result_images(self._training_model.get_model_test_images_path())
         print("doWork - reading result images")
-        result_images = self.read_result_images(Path("logs/train/runs/YOUR_EXP_NAME/YOUR_RUN_NAME/2023-08-17_21-35-51/val_images"))
+        # result_images2 = self.read_result_images(Path("logs/train/runs/YOUR_EXP_NAME/YOUR_RUN_NAME/2023-08-17_21-35-51/val_images"))
         print("doWork - setting result images")
         self._training_model.set_result_images(result_images)
         print("doWork - done")
