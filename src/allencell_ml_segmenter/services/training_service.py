@@ -97,8 +97,10 @@ class TrainingService(Subscriber):
             # sys.argv.append(
             #     "+callbacks.print_progress._target_=allencell_ml_segmenter.services.training_service.MyPrintingCallback"
             # )
-            # self._set_image_dims() //TODO - talk to Benji about this
-            # self._set_patch_shape_from_size()
+            #TODO - talk to Benji about these
+            self._set_image_dims() 
+            self._set_patch_shape_from_size()
+            #######################
             self._set_experiment_name()
             self._set_max_epoch()
             self._set_images_directory()
@@ -129,7 +131,7 @@ class TrainingService(Subscriber):
         Sets the spatial_dims argument variable for hydra override using sys.argv
         """
         image_dims: int = self._training_model.get_image_dims()
-        sys.argv.append(f"++spatial_dims={image_dims}")
+        sys.argv.append(f"++spatial_dims=[{image_dims}]")
 
     def _set_experiment_name(self) -> None:
         """
