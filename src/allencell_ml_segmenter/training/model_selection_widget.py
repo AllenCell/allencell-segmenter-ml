@@ -95,6 +95,7 @@ class ModelSelectionWidget(QWidget):
         self._combo_box_existing_models_checkpoint.currentTextChanged.connect(
             lambda path_text: self._model.set_checkpoint(path_text)
         )
+        self._combo_box_existing_models.setCurrentIndex(-1)
         top_grid_layout.addWidget(self._combo_box_existing_models_checkpoint, 2, 2)
 
         frame.layout().addLayout(top_grid_layout)
@@ -224,7 +225,7 @@ class ModelSelectionWidget(QWidget):
         self._combo_box_existing_models.setEnabled(False)
         self._combo_box_existing_models_checkpoint.setEnabled(False)
         self.experiment_info_widget.set_enabled(True)
-        self._combo_box_existing_models.setCurrentIndex(-1)
+        self._combo_box_existing_models.clear()
         self._combo_box_existing_models_checkpoint.clear()
 
     def _existing_model_radio_handler(self) -> None:
