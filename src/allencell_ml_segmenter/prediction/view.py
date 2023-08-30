@@ -32,9 +32,8 @@ class PredictionView(View):
     Holds the image and model input widgets for prediction.
     """
 
-    def __init__(self, main_model: MainModel, viewer: napari.Viewer):
+    def __init__(self, main_model: MainModel):
         super().__init__()
-        self._viewer = viewer
         self._main_model: MainModel = main_model
         self._prediction_model: PredictionModel = PredictionModel()
 
@@ -106,10 +105,6 @@ class PredictionView(View):
     def getTypeOfWork(self):
         return "Prediction"
 
-    def test_file_service(self):
-        #TODO replace, testing file result service
-        self._prediction_model.set_output_directory(Path("logs/train/runs/YOUR_EXP_NAME/YOUR_RUN_NAME/2023-08-17_21-35-51/val_images")) # path you want to show
-        ResultDisplayService(self._prediction_model, self._viewer)
 
     def showResults(self):
         print("showResults - prediction")
