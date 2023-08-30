@@ -3,6 +3,9 @@ from typing import List
 
 import pytest
 from pytestqt.qtbot import QtBot
+from allencell_ml_segmenter.config.cyto_dl_config import CytoDlConfig
+from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
+from allencell_ml_segmenter.main.main_model import MainModel
 
 from allencell_ml_segmenter.training.model_selection_widget import (
     ModelSelectionWidget,
@@ -18,7 +21,7 @@ def training_model() -> TrainingModel:
     """
     Fixture that creates an instance of TrainingModel for testing.
     """
-    return TrainingModel()
+    return TrainingModel(MainModel(ExperimentsModel(CytoDlConfig(Path(), Path()))))
 
 
 @pytest.fixture
