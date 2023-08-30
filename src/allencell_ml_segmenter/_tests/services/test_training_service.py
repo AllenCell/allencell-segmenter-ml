@@ -1,5 +1,9 @@
+from pathlib import Path
 import pytest
 import sys
+from allencell_ml_segmenter.config.cyto_dl_config import CytoDlConfig
+from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
+from allencell_ml_segmenter.main.main_model import MainModel
 
 from allencell_ml_segmenter.services.training_service import (
     _list_to_string,
@@ -15,7 +19,7 @@ def training_service() -> TrainingService:
     """
     Returns a TrainingService object with arbitrary-set fields in the model for testing.
     """
-    model: TrainingModel = TrainingModel()
+    model: TrainingModel = TrainingModel(MainModel(ExperimentsModel(CytoDlConfig(Path(), Path()))))
     model.set_experiment_type("segmentation")
     model.set_hardware_type("cpu")
     model.set_image_dims(2)
