@@ -7,9 +7,9 @@ class ExperimentsModel():
     def __init__(self, config: CytoDlConfig) -> None:
         self.config = config
         self.experiments = {}
-        self.refreshExperiments()
+        self.refresh_experiments()
 
-    def refreshExperiments(self) -> dict:
+    def refresh_experiments(self) -> dict:
         self.experiments = {}
         for experiment in os.listdir(self.config._user_experiments_path):
             checkpoints_path = os.path.join(self.config._user_experiments_path, experiment, "checkpoints")
