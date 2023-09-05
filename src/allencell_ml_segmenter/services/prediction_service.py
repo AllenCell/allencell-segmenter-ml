@@ -1,4 +1,3 @@
-
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.event import Event
 import sys
@@ -6,6 +5,7 @@ from allencell_ml_segmenter.prediction.model import PredictionModel
 from pathlib import Path
 from typing import List, Any
 from cyto_dl.eval import main as cyto_predict
+
 
 # static method
 def _list_to_string(list_to_convert: List[Any]) -> str:
@@ -40,15 +40,12 @@ class PredictionService(Subscriber):
         Predict segmentations using model according to spec
         """
         self._prediction_model.set_config_name("config.yaml")
-        self._prediction_model.set_config_dir(
-            "/Users/brian.kim/Desktop/data"
-        )
+        self._prediction_model.set_config_dir("/Users/brian.kim/Desktop/data")
 
         # config needs to be called first
         self._set_config_dir()
         self._set_config_name()
         cyto_predict()
-
 
     def _set_config_dir(self) -> None:
         """
@@ -74,6 +71,7 @@ class PredictionService(Subscriber):
         # This hydra runtime variable needs to be set in separate calls to sys.argv
         sys.argv.append("--config-name")
         sys.argv.append(str(config_name))
+
 
 if __name__ == "__main__":
     model = PredictionModel()
