@@ -17,7 +17,9 @@ def training_model() -> TrainingModel:
     """
     Returns a TrainingModel instance for testing.
     """
-    return TrainingModel(MainModel(ExperimentsModel(CytoDlConfig(Path(), Path()))))
+    return TrainingModel(
+        MainModel(ExperimentsModel(CytoDlConfig(Path(), Path())))
+    )
 
 
 def test_get_experiment_type(training_model: TrainingModel) -> None:

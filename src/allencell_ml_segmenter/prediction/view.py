@@ -1,6 +1,5 @@
 import time
 
-import napari
 from qtpy.QtCore import Qt
 
 from allencell_ml_segmenter._style import Style
