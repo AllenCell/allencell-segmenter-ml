@@ -24,7 +24,9 @@ def training_model() -> TrainingModel:
     """
     Fixture that creates an instance of TrainingModel for testing.
     """
-    return TrainingModel(MainModel(ExperimentsModel(CytoDlConfig(Path(), Path()))))
+    return TrainingModel(
+        MainModel(ExperimentsModel(CytoDlConfig(Path(), Path())))
+    )
 
 
 @pytest.fixture

@@ -69,7 +69,7 @@ class TrainingModel(Publisher):
         Gets experiment name
         """
         return self._experiment_name
-    
+
     def set_experiment_name(self, name: str) -> None:
         """
         Sets experiment name
@@ -83,7 +83,7 @@ class TrainingModel(Publisher):
         Gets checkpoint
         """
         return self._checkpoint
-    
+
     def set_checkpoint(self, checkpoint: str) -> None:
         """
         Sets checkpoint
@@ -199,19 +199,37 @@ class TrainingModel(Publisher):
         """
         Gets checkpoints for model path
         """
-        return os.path.join(self._main_model.get_experiment_model().get_cyto_dl_config().get_user_experiments_path(), self._experiment_name, "checkpoints", self._checkpoint)
-    
+        return os.path.join(
+            self._main_model.get_experiment_model()
+            .get_cyto_dl_config()
+            .get_user_experiments_path(),
+            self._experiment_name,
+            "checkpoints",
+            self._checkpoint,
+        )
+
     def get_model_path(self) -> Union[Path, None]:
         """
         Gets model path
         """
-        return os.path.join(self._main_model.get_experiment_model().get_cyto_dl_config().get_user_experiments_path(), self._experiment_name)
+        return os.path.join(
+            self._main_model.get_experiment_model()
+            .get_cyto_dl_config()
+            .get_user_experiments_path(),
+            self._experiment_name,
+        )
 
     def get_model_test_images_path(self) -> Union[Path, None]:
         """
         Gets test images for model path
         """
-        return os.path.join(self._main_model.get_experiment_model().get_cyto_dl_config().get_user_experiments_path(), self._experiment_name, "test_images")
+        return os.path.join(
+            self._main_model.get_experiment_model()
+            .get_cyto_dl_config()
+            .get_user_experiments_path(),
+            self._experiment_name,
+            "test_images",
+        )
 
     def get_patch_size(self) -> PatchSize:
         """
@@ -283,7 +301,7 @@ class TrainingModel(Publisher):
         Gets result images
         """
         return self.result_images
-    
+
     def set_result_images(self, images: list) -> None:
         """
         Sets result images
@@ -296,20 +314,28 @@ class TrainingModel(Publisher):
         """
         Gets cyto-dl path
         """
-        return self._main_model.get_experiment_model().get_cyto_dl_config().get_cyto_dl_home_path()
-    
+        return (
+            self._main_model.get_experiment_model()
+            .get_cyto_dl_config()
+            .get_cyto_dl_home_path()
+        )
+
     def get_user_experiments_path(self) -> Path:
         """
         Gets user experiments path
         """
-        return self._main_model.get_experiment_model().get_cyto_dl_config().get_user_experiments_path()
-    
+        return (
+            self._main_model.get_experiment_model()
+            .get_cyto_dl_config()
+            .get_user_experiments_path()
+        )
+
     def get_experiments(self) -> dict:
         """
         Gets experiments
         """
         return self._main_model.get_experiment_model().get_experiments()
-    
+
     def refresh_experiments(self) -> None:
         """
         Refreshes experiments
