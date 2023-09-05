@@ -10,6 +10,7 @@ from qtpy.QtWidgets import (
 
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 
+
 class ExperimentInfoWidget(QWidget):
     """
     A widget for experiment information.

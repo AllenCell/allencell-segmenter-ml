@@ -22,9 +22,6 @@ from qtpy.QtWidgets import (
     QFrame,
     QLabel,
 )
-from pathlib import Path
-
-from allencell_ml_segmenter.services.result_display_service import ResultDisplayService
 
 
 class PredictionView(View):
@@ -104,7 +101,6 @@ class PredictionView(View):
 
     def getTypeOfWork(self):
         return "Prediction"
-
 
     def showResults(self):
         print("showResults - prediction")
