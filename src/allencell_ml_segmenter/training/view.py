@@ -25,6 +25,7 @@ from hydra.core.global_hydra import GlobalHydra
 from aicsimageio import AICSImage
 from aicsimageio.readers import TiffReader
 
+
 class TrainingView(View):
     """
     Holds widgets pertinent to training processes - ImageSelectionWidget & ModelSelectionWidget.
@@ -102,10 +103,9 @@ class TrainingView(View):
         # TODO -  find a better way to solve this
         self.startLongTask()
         # self._training_model.set_training_running(True)
-        
+
         # self.doWork()
         # self.showResults()
-
 
     def read_result_images(self, dir_to_grab: Path):
         output_dir: Path = dir_to_grab
@@ -113,19 +113,24 @@ class TrainingView(View):
         if output_dir is None:
             raise ValueError("No output directory to grab images from.")
         else:
-            files = [os.path.join(output_dir, file) for file in os.listdir(dir_to_grab)]
+            files = [
+                os.path.join(output_dir, file)
+                for file in os.listdir(dir_to_grab)
+            ]
             for file in files:
-                if os.path.isfile(file) and file.lower().endswith('.tif'):
+                if os.path.isfile(file) and file.lower().endswith(".tif"):
                     try:
                         images.append(AICSImage(str(file), reader=TiffReader))
                     except Exception as e:
                         print(e)
-                        print(f"Could not load image {str(file)} into napari viewer. Image cannot be opened by AICSImage")
+                        print(
+                            f"Could not load image {str(file)} into napari viewer. Image cannot be opened by AICSImage"
+                        )
         return images
-    
+
     def add_image_to_viewer(self, image: AICSImage, display_name: str):
         self._viewer.add_image(image, name=display_name)
-    
+
     # Abstract methods from View implementations #######################
 
     def doWork(self):
@@ -133,7 +138,9 @@ class TrainingView(View):
         Starts training process
         """
         self._training_model.set_training_running(True)
-        result_images = self.read_result_images(self._training_model.get_model_test_images_path())
+        result_images = self.read_result_images(
+            self._training_model.get_model_test_images_path()
+        )
         print("doWork - reading result images")
         # result_images2 = self.read_result_images(Path("logs/train/runs/YOUR_EXP_NAME/YOUR_RUN_NAME/2023-08-17_21-35-51/val_images"))
         print("doWork - setting result images")
@@ -145,7 +152,7 @@ class TrainingView(View):
         Returns string representation of training process
         """
         return "Training"
-    
+
     def showResults(self):
         for idx, image in enumerate(self._training_model.get_result_images()):
             self.add_image_to_viewer(image.data, f"Segmentation {str(idx)}")

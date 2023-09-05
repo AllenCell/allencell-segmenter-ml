@@ -15,7 +15,9 @@ from qtpy.QtWidgets import (
     QCheckBox,
 )
 from allencell_ml_segmenter.core.event import Event
-from allencell_ml_segmenter.training.experiment_info_widget import ExperimentInfoWidget
+from allencell_ml_segmenter.training.experiment_info_widget import (
+    ExperimentInfoWidget,
+)
 
 from allencell_ml_segmenter.training.training_model import TrainingModel
 from allencell_ml_segmenter.training.training_model import PatchSize
@@ -72,7 +74,9 @@ class ModelSelectionWidget(QWidget):
 
         label_existing_model: LabelWithHint = LabelWithHint("Existing model")
         top_grid_layout.addWidget(label_existing_model, 1, 1)
-        label_existing_model_checkpoint: LabelWithHint = LabelWithHint("Checkpoint")
+        label_existing_model_checkpoint: LabelWithHint = LabelWithHint(
+            "Checkpoint"
+        )
         top_grid_layout.addWidget(label_existing_model_checkpoint, 2, 1)
 
         self._combo_box_existing_models: QComboBox = QComboBox()
@@ -80,16 +84,22 @@ class ModelSelectionWidget(QWidget):
         self._combo_box_existing_models.setPlaceholderText("Select an option")
         self._combo_box_existing_models.setEnabled(False)
         self._combo_box_existing_models.setMinimumWidth(306)
-        self._combo_box_existing_models.addItems(self._model.get_experiments().keys())
+        self._combo_box_existing_models.addItems(
+            self._model.get_experiments().keys()
+        )
 
         self._refresh_experiments()
-        self._model.subscribe(Event.PROCESS_TRAINING, self, self._refresh_experiments)
-        
+        self._model.subscribe(
+            Event.PROCESS_TRAINING, self, self._refresh_experiments
+        )
+
         top_grid_layout.addWidget(self._combo_box_existing_models, 1, 2)
 
         self._combo_box_existing_models_checkpoint: QComboBox = QComboBox()
         self._combo_box_existing_models_checkpoint.setCurrentIndex(-1)
-        self._combo_box_existing_models_checkpoint.setPlaceholderText("Select an option")
+        self._combo_box_existing_models_checkpoint.setPlaceholderText(
+            "Select an option"
+        )
         self._combo_box_existing_models_checkpoint.setEnabled(False)
         self._combo_box_existing_models_checkpoint.setMinimumWidth(306)
         self._combo_box_existing_models_checkpoint.currentTextChanged.connect(
@@ -99,7 +109,9 @@ class ModelSelectionWidget(QWidget):
         self._combo_box_existing_models_checkpoint.setEnabled(False)
         self.experiment_info_widget.set_enabled(True)
 
-        top_grid_layout.addWidget(self._combo_box_existing_models_checkpoint, 2, 2)
+        top_grid_layout.addWidget(
+            self._combo_box_existing_models_checkpoint, 2, 2
+        )
 
         frame.layout().addLayout(top_grid_layout)
 
@@ -200,7 +212,6 @@ class ModelSelectionWidget(QWidget):
 
         frame.layout().addLayout(bottom_grid_layout)
 
-
     def _model_combo_handler(self, model_path: Path) -> None:
         """
         Triggered when the user selects a model from the _combo_box_existing_models.
@@ -210,7 +221,7 @@ class ModelSelectionWidget(QWidget):
 
         # update and enable checkpoint combo box
         self._combo_box_existing_models_checkpoint.clear()
-        if(model_path in self._model.get_experiments()):
+        if model_path in self._model.get_experiments():
             self._combo_box_existing_models_checkpoint.addItems(
                 self._model.get_experiments()[model_path]
             )
@@ -232,7 +243,6 @@ class ModelSelectionWidget(QWidget):
 
         self._model.set_experiment_name(None)
         self._model.set_checkpoint(None)
-
 
     def _existing_model_radio_handler(self) -> None:
         """
@@ -259,5 +269,6 @@ class ModelSelectionWidget(QWidget):
         Refreshes the experiments in the _combo_box_existing_models.
         """
         self._model.refresh_experiments()
-        self._combo_box_existing_models.currentTextChanged.connect(self._model_combo_handler)
-
+        self._combo_box_existing_models.currentTextChanged.connect(
+            self._model_combo_handler
+        )
