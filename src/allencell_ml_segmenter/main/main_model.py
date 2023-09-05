@@ -1,4 +1,3 @@
-from allencell_ml_segmenter.config.cyto_dl_config import CytoDlConfig
 from allencell_ml_segmenter.core.aics_widget import AicsWidget
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.publisher import Publisher
