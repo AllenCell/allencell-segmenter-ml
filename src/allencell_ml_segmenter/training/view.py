@@ -1,5 +1,5 @@
 from pathlib import Path
-import sys, os
+import sys
 import napari
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
@@ -114,11 +114,11 @@ class TrainingView(View):
             raise ValueError("No output directory to grab images from.")
         else:
             files = [
-                os.path.join(output_dir, file)
-                for file in os.listdir(dir_to_grab)
+                Path.join(output_dir, file)
+                for file in Path.iterdir(dir_to_grab)
             ]
             for file in files:
-                if os.path.isfile(file) and file.lower().endswith(".tif"):
+                if Path.is_file(file) and file.lower().endswith(".tif"):
                     try:
                         images.append(AICSImage(str(file), reader=TiffReader))
                     except Exception as e:
