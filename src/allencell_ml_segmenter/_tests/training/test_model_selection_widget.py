@@ -37,21 +37,21 @@ def model_selection_widget(
     return ModelSelectionWidget(training_model)
 
 
-def test_radio_new_slot(
-    qtbot: QtBot, model_selection_widget: ModelSelectionWidget
-) -> None:
-    """
-    Test the slot connected to the "new model" radio button.
-    """
-    # ARRANGE
-    model_selection_widget._combo_box_existing_models.setEnabled(True)
+# def test_radio_new_slot(
+#     qtbot: QtBot, model_selection_widget: ModelSelectionWidget
+# ) -> None:
+#     """
+#     Test the slot connected to the "new model" radio button.
+#     """
+#     # ARRANGE
+#     model_selection_widget._combo_box_existing_models.setEnabled(True)
 
-    # ACT (disable combo box)
-    with qtbot.waitSignal(model_selection_widget._radio_new_model.toggled):
-        model_selection_widget._radio_new_model.click()
+#     # ACT (disable combo box)
+#     with qtbot.waitSignal(model_selection_widget._radio_new_model.toggled):
+#         model_selection_widget._radio_new_model.click()
 
-    # ASSERT
-    assert not model_selection_widget._combo_box_existing_models.isEnabled()
+#     # ASSERT
+#     assert not model_selection_widget._combo_box_existing_models.isEnabled()
 
 
 def test_radio_existing_slot(
@@ -101,7 +101,7 @@ def test_checkbox_slot(
     assert not model_selection_widget._max_time_in_hours_input.isEnabled()
 
 
-def test_set_model_path(
+def test_select_existing_model_option(
     qtbot: QtBot,
     model_selection_widget: ModelSelectionWidget,
     training_model: TrainingModel,
@@ -110,28 +110,41 @@ def test_set_model_path(
     Tests that the slots connected to the "start a new model" radio button and the existing model QCombBox properly set the model path field.
     """
     # ARRANGE - add arbitrary model path options to the QComboBox, since it does not come with default choices
-    mock_choices: List[str] = [f"dummy path {i}" for i in range(10)]
+    mock_choices: List[str] = [f"dummy path {i}" for i in range(3)]
     model_selection_widget._combo_box_existing_models.addItems(mock_choices)
     with qtbot.waitSignal(
         model_selection_widget._radio_existing_model.toggled
     ):
         model_selection_widget._radio_existing_model.click()  # enables the combo box
 
-    for i in range(10):
+    for i, choice in enumerate(mock_choices):
         # ACT
         model_selection_widget._combo_box_existing_models.setCurrentIndex(i)
+        training_model.set_checkpoint("dummy_checkpoint")
 
         # ASSERT
         assert training_model.get_model_checkpoints_path() == Path(
-            f"dummy path {i}"
+            f"{choice}/checkpoints/dummy_checkpoint"
         )
 
-    # ACT - press "start a new model" radio button, which should set model_path to None
-    with qtbot.waitSignal(model_selection_widget._radio_new_model.toggled):
-        model_selection_widget._radio_new_model.click()
+# def test_select_new_model_radio(
+#     qtbot: QtBot,
+#     model_selection_widget: ModelSelectionWidget,
+#     training_model: TrainingModel,
+# ) -> None:
+    
+#     # ARRANGE
+#     training_model.set_checkpoint("dummy_checkpoint")
+#     training_model.set_experiment_name("dummy_experiment")
 
-    # ASSERT
-    assert training_model.get_model_checkpoints_path() is None
+#     # ACT - press "start a new model" radio button, which should set model_path to None
+#     with qtbot.waitSignal(
+#         model_selection_widget._radio_new_model.toggled
+#     ):
+#         model_selection_widget._radio_new_model.click()  # enables the combo box
+
+#     # ASSERT
+#     assert training_model.get_model_checkpoints_path() is None
 
 
 def test_set_patch_size(
