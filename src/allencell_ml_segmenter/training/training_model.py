@@ -1,4 +1,3 @@
-import os
 from allencell_ml_segmenter.core.publisher import Publisher
 from allencell_ml_segmenter.core.event import Event
 from enum import Enum
@@ -187,7 +186,7 @@ class TrainingModel(Publisher):
         """
         return self._channel_index
 
-    def set_channel_index(self, index: Union[int]) -> None:
+    def set_channel_index(self, index: int) -> None:
         """
         Sets channel index
 
@@ -199,37 +198,28 @@ class TrainingModel(Publisher):
         """
         Gets checkpoints for model path
         """
-        return os.path.join(
+        return Path(
             self._main_model.get_experiment_model()
             .get_cyto_dl_config()
-            .get_user_experiments_path(),
-            self._experiment_name,
-            "checkpoints",
-            self._checkpoint,
-        )
+            .get_user_experiments_path()) / self._experiment_name / "checkpoints" / self._checkpoint
 
     def get_model_path(self) -> Union[Path, None]:
         """
         Gets model path
         """
-        return os.path.join(
-            self._main_model.get_experiment_model()
+        return Path(self._main_model.get_experiment_model()
             .get_cyto_dl_config()
-            .get_user_experiments_path(),
-            self._experiment_name,
-        )
+            .get_user_experiments_path()) / self._experiment_name
+        
 
     def get_model_test_images_path(self) -> Union[Path, None]:
         """
         Gets test images for model path
         """
-        return os.path.join(
+        return Path(
             self._main_model.get_experiment_model()
             .get_cyto_dl_config()
-            .get_user_experiments_path(),
-            self._experiment_name,
-            "test_images",
-        )
+            .get_user_experiments_path()) / self._experiment_name / "test_images"
 
     def get_patch_size(self) -> PatchSize:
         """
