@@ -19,7 +19,9 @@ def training_service() -> TrainingService:
     """
     Returns a TrainingService object with arbitrary-set fields in the model for testing.
     """
-    model: TrainingModel = TrainingModel(MainModel(ExperimentsModel(CytoDlConfig(Path(), Path()))))
+    model: TrainingModel = TrainingModel(
+        MainModel(ExperimentsModel(CytoDlConfig(Path(), Path())))
+    )
     model.set_experiment_type("segmentation")
     model.set_hardware_type("cpu")
     model.set_image_dims(2)
