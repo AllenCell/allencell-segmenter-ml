@@ -1,4 +1,4 @@
-from pathlib import Path
+from pathlib import Path, PurePath
 import sys
 import napari
 from qtpy.QtCore import Qt
@@ -114,7 +114,7 @@ class TrainingView(View):
             raise ValueError("No output directory to grab images from.")
         else:
             files = [
-                Path.join(output_dir, file)
+                Path(output_dir) / file
                 for file in Path.iterdir(dir_to_grab)
             ]
             for file in files:

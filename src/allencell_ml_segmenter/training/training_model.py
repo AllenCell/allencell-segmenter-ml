@@ -2,7 +2,7 @@ from allencell_ml_segmenter.core.publisher import Publisher
 from allencell_ml_segmenter.core.event import Event
 from enum import Enum
 from typing import Union
-from pathlib import Path
+from pathlib import Path, PurePath
 
 from allencell_ml_segmenter.main.main_model import MainModel
 
@@ -194,47 +194,33 @@ class TrainingModel(Publisher):
         """
         self._channel_index = index
 
-    def get_model_checkpoints_path(self) -> Union[Path, None]:
+    def get_model_checkpoints_path(self) -> Path:
         """
         Gets checkpoints for model path
         """
-        return (
-            Path(
+        return Path(
                 self._main_model.get_experiment_model()
                 .get_cyto_dl_config()
                 .get_user_experiments_path()
-            )
-            / self._experiment_name
-            / "checkpoints"
-            / self._checkpoint
-        )
+            ) / self._experiment_name / "checkpoints" / self._checkpoint if self._experiment_name and self._checkpoint else None
 
     def get_model_path(self) -> Union[Path, None]:
         """
         Gets model path
         """
-        return (
-            Path(
-                self._main_model.get_experiment_model()
-                .get_cyto_dl_config()
-                .get_user_experiments_path()
-            )
-            / self._experiment_name
-        )
+        return Path(self._main_model.get_experiment_model()
+            .get_cyto_dl_config()
+            .get_user_experiments_path()) / self._experiment_name if self._experiment_name else None
+        
 
     def get_model_test_images_path(self) -> Union[Path, None]:
         """
         Gets test images for model path
         """
-        return (
-            Path(
-                self._main_model.get_experiment_model()
-                .get_cyto_dl_config()
-                .get_user_experiments_path()
-            )
-            / self._experiment_name
-            / "test_images"
-        )
+        return Path(
+            self._main_model.get_experiment_model()
+            .get_cyto_dl_config()
+            .get_user_experiments_path()) / self._experiment_name / "test_images" if self._experiment_name and self._checkpoint else None
 
     def get_patch_size(self) -> PatchSize:
         """
