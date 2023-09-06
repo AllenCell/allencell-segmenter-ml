@@ -127,12 +127,13 @@ def test_select_existing_model_option(
             f"{choice}/checkpoints/dummy_checkpoint"
         )
 
+
 # def test_select_new_model_radio(
 #     qtbot: QtBot,
 #     model_selection_widget: ModelSelectionWidget,
 #     training_model: TrainingModel,
 # ) -> None:
-    
+
 #     # ARRANGE
 #     training_model.set_checkpoint("dummy_checkpoint")
 #     training_model.set_experiment_name("dummy_experiment")
