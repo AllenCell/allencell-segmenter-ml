@@ -21,7 +21,9 @@ def training_model() -> TrainingModel:
     """
     Fixture that creates an instance of TrainingModel for testing.
     """
-    return TrainingModel(MainModel(ExperimentsModel(CytoDlConfig(Path(), Path()))))
+    return TrainingModel(
+        MainModel(ExperimentsModel(CytoDlConfig(Path(), Path())))
+    )
 
 
 @pytest.fixture
@@ -120,7 +122,9 @@ def test_set_model_path(
         model_selection_widget._combo_box_existing_models.setCurrentIndex(i)
 
         # ASSERT
-        assert training_model.get_model_checkpoints_path() == Path(f"dummy path {i}")
+        assert training_model.get_model_checkpoints_path() == Path(
+            f"dummy path {i}"
+        )
 
     # ACT - press "start a new model" radio button, which should set model_path to None
     with qtbot.waitSignal(model_selection_widget._radio_new_model.toggled):
