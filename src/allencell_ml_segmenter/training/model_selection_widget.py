@@ -67,7 +67,9 @@ class ModelSelectionWidget(QWidget):
         top_grid_layout.addWidget(self.experiment_info_widget, 0, 2)
 
         self._radio_existing_model: QRadioButton = QRadioButton()
-        self._radio_existing_model.toggled.connect(self._existing_model_radio_handler)
+        self._radio_existing_model.toggled.connect(
+            self._existing_model_radio_handler
+        )
         top_grid_layout.addWidget(self._radio_existing_model, 1, 0)
 
         label_existing_model: LabelWithHint = LabelWithHint("Existing model")
