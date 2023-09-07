@@ -1,8 +1,10 @@
+from pathlib import Path
 from typing import Set
 
 import pytest
 import napari
 from pytestqt.qtbot import QtBot
+from allencell_ml_segmenter.config.cyto_dl_config import CytoDlConfig
 
 from allencell_ml_segmenter.core.aics_widget import AicsWidget
 from allencell_ml_segmenter.main.main_widget import MainWidget
@@ -22,7 +24,7 @@ def main_widget(qtbot: QtBot) -> MainWidget:
     """
     Returns a MainWidget instance for testing.
     """
-    return MainWidget(viewer)
+    return MainWidget(viewer, CytoDlConfig(Path(), Path()))
 
 
 def test_handle_action_change_view_event(
