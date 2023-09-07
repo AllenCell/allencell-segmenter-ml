@@ -238,7 +238,7 @@ class TrainingModel(Publisher):
             )
             / self._experiment_name
             / "test_images"
-            if self._experiment_name and self._checkpoint
+            if self._experiment_name
             else None
         )
 
