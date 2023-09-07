@@ -85,12 +85,12 @@ class ModelSelectionWidget(QWidget):
         self._combo_box_existing_models.setEnabled(False)
         self._combo_box_existing_models.setMinimumWidth(306)
 
-        self._refresh_experiments()
+        self._refresh_options()
         self._combo_box_existing_models.currentTextChanged.connect(
             self._model_combo_handler
         )
         self._model.subscribe(
-            Event.PROCESS_TRAINING, self, self._refresh_experiments
+            Event.PROCESS_TRAINING, self, self._refresh_options
         )
 
         top_grid_layout.addWidget(self._combo_box_existing_models, 1, 2)
@@ -218,15 +218,8 @@ class ModelSelectionWidget(QWidget):
         Sets the model path in the model.
         """
         self._model.set_experiment_name(model_path)
+        self._refresh_checkpoint_options()
 
-        # update and enable checkpoint combo box
-        self._combo_box_existing_models_checkpoint.clear()
-        if model_path in self._model.get_experiments():
-            self._combo_box_existing_models_checkpoint.addItems(
-                self._model.get_experiments()[model_path]
-            )
-            self._combo_box_existing_models_checkpoint.setCurrentIndex(-1)
-            self._combo_box_existing_models_checkpoint.setEnabled(True)
 
     def _new_model_radio_handler(self) -> None:
         """
@@ -264,12 +257,28 @@ class ModelSelectionWidget(QWidget):
         else:
             self._max_time_in_hours_input.setEnabled(False)
 
-    def _refresh_experiments(self, _: Event = None) -> None:
+    def _refresh_options(self, _: Event = None) -> None:
         """
         Refreshes the experiments in the _combo_box_existing_models.
         """
+        if self._radio_new_model.isChecked():
+            self._refresh_experiment_options()
+        if self._radio_existing_model.isChecked():
+            self._refresh_checkpoint_options()
+
+    def _refresh_experiment_options(self):
         self._model.refresh_experiments()
         self._combo_box_existing_models.clear()
         self._combo_box_existing_models.addItems(
             self._model.get_experiments().keys()
         )
+
+    def _refresh_checkpoint_options(self):
+        # update and enable checkpoint combo box
+        self._model.refresh_checkpoints()
+        self._combo_box_existing_models_checkpoint.clear()
+        self._combo_box_existing_models_checkpoint.addItems(
+            self._model.get_experiments()[self._model.get_experiment_name()]
+        )
+        self._combo_box_existing_models_checkpoint.setCurrentIndex(-1)
+        self._combo_box_existing_models_checkpoint.setEnabled(True)

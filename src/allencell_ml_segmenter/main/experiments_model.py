@@ -10,24 +10,26 @@ class ExperimentsModel:
         self.experiments = {}
         self.refresh_experiments()
 
-    def refresh_experiments(self) -> dict:
-        self.experiments = {}
+    def refresh_experiments(self) -> None:
         for experiment in os.listdir(self.config._user_experiments_path):
-            checkpoints_path = os.path.join(
-                self.config._user_experiments_path, experiment, "checkpoints"
-            )
-            if (
-                os.path.exists(checkpoints_path)
-                and len(os.listdir(checkpoints_path)) > 0
-            ):
+            if experiment not in self.experiments:
                 self.experiments[experiment] = []
-                for checkpoint in os.listdir(checkpoints_path):
-                    self.experiments[experiment].append(checkpoint)
+                self.refresh_checkpoints(experiment)
+
+    def refresh_checkpoints(self, experiment: str) -> None:
+        checkpoints_path = os.path.join(
+            self.config._user_experiments_path, experiment, "checkpoints"
+        )
+        if (
+            os.path.exists(checkpoints_path)
+            and len(os.listdir(checkpoints_path)) > 0
+        ):
+            for checkpoint in os.listdir(checkpoints_path):
+                self.experiments[experiment].append(checkpoint)
 
     """
     Returns a defensive copy of Experiments dict.
     """
-
     def get_experiments(self) -> dict:
         return copy.deepcopy(self.experiments)
 
