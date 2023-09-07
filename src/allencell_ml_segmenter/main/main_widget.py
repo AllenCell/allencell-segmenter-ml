@@ -27,7 +27,7 @@ class MainWidget(AicsWidget):
     Holds the pertinent view at the moment to be displayed to the user.
     """
 
-    def __init__(self, viewer: napari.Viewer):
+    def __init__(self, viewer: napari.Viewer, config: CytoDlConfig = None):
         super().__init__()
         self.viewer: napari.Viewer = viewer
 
@@ -37,7 +37,8 @@ class MainWidget(AicsWidget):
         self.layout().setContentsMargins(0, 0, 0, 0)
 
         # main model and app config
-        config = CytoDlConfig(CYTO_DL_HOME_PATH, USER_EXPERIMENTS_PATH)
+        if(config is None):
+            config = CytoDlConfig(CYTO_DL_HOME_PATH, USER_EXPERIMENTS_PATH)
         experiment_model = ExperimentsModel(config)
         self._model: MainModel = MainModel(experiment_model)
         self._model.subscribe(
