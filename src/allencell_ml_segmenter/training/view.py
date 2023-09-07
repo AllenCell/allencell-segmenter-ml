@@ -117,7 +117,7 @@ class TrainingView(View):
                 Path(output_dir) / file for file in Path.iterdir(dir_to_grab)
             ]
             for file in files:
-                if Path.is_file(file) and file.lower().endswith(".tif"):
+                if Path.is_file(file) and file.name.lower().endswith(".tif"):
                     try:
                         images.append(AICSImage(str(file), reader=TiffReader))
                     except Exception as e:
