@@ -357,4 +357,6 @@ class TrainingModel(Publisher):
         """
         Refreshed checkpoints for experiment
         """
-        self._main_model.get_experiment_model().refresh_checkpoints(self.get_experiment_name())
+        self._main_model.get_experiment_model().refresh_checkpoints(
+            self.get_experiment_name()
+        )
