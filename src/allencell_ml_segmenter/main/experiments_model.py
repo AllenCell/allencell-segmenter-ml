@@ -30,6 +30,7 @@ class ExperimentsModel:
     """
     Returns a defensive copy of Experiments dict.
     """
+
     def get_experiments(self) -> dict:
         return copy.deepcopy(self.experiments)
 
