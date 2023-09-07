@@ -13,7 +13,7 @@ class ExperimentsModel:
     def refresh_experiments(self) -> None:
         for experiment in os.listdir(self.config._user_experiments_path):
             if experiment not in self.experiments:
-                self.experiments[experiment] = []
+                self.experiments[experiment] = set()
                 self.refresh_checkpoints(experiment)
 
     def refresh_checkpoints(self, experiment: str) -> None:
@@ -25,7 +25,7 @@ class ExperimentsModel:
             and len(os.listdir(checkpoints_path)) > 0
         ):
             for checkpoint in os.listdir(checkpoints_path):
-                self.experiments[experiment].append(checkpoint)
+                self.experiments[experiment].add(checkpoint)
 
     """
     Returns a defensive copy of Experiments dict.
