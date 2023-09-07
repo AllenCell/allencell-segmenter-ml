@@ -84,11 +84,11 @@ class ModelSelectionWidget(QWidget):
         self._combo_box_existing_models.setPlaceholderText("Select an option")
         self._combo_box_existing_models.setEnabled(False)
         self._combo_box_existing_models.setMinimumWidth(306)
-        self._combo_box_existing_models.addItems(
-            self._model.get_experiments().keys()
-        )
 
         self._refresh_experiments()
+        self._combo_box_existing_models.currentTextChanged.connect(
+            self._model_combo_handler
+        )
         self._model.subscribe(
             Event.PROCESS_TRAINING, self, self._refresh_experiments
         )
@@ -269,6 +269,7 @@ class ModelSelectionWidget(QWidget):
         Refreshes the experiments in the _combo_box_existing_models.
         """
         self._model.refresh_experiments()
-        self._combo_box_existing_models.currentTextChanged.connect(
-            self._model_combo_handler
+        self._combo_box_existing_models.clear()
+        self._combo_box_existing_models.addItems(
+            self._model.get_experiments().keys()
         )
