@@ -352,3 +352,9 @@ class TrainingModel(Publisher):
         Refreshes experiments
         """
         self._main_model.get_experiment_model().refresh_experiments()
+
+    def refresh_checkpoints(self) -> None:
+        """
+        Refreshed checkpoints for experiment
+        """
+        self._main_model.get_experiment_model().refresh_checkpoints(self.get_experiment_name())
