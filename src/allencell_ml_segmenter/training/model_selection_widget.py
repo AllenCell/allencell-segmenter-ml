@@ -220,7 +220,6 @@ class ModelSelectionWidget(QWidget):
         self._model.set_experiment_name(model_path)
         self._refresh_checkpoint_options()
 
-
     def _new_model_radio_handler(self) -> None:
         """
         Triggered when the user selects the "start a new model" radio button.
