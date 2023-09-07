@@ -37,7 +37,7 @@ class MainWidget(AicsWidget):
         self.layout().setContentsMargins(0, 0, 0, 0)
 
         # main model and app config
-        if(config is None):
+        if config is None:
             config = CytoDlConfig(CYTO_DL_HOME_PATH, USER_EXPERIMENTS_PATH)
         experiment_model = ExperimentsModel(config)
         self._model: MainModel = MainModel(experiment_model)
