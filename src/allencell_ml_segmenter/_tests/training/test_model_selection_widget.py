@@ -20,8 +20,17 @@ def training_model() -> TrainingModel:
     """
     Fixture that creates an instance of TrainingModel for testing.
     """
-    return TrainingModel(                                                                     # instead of this, how about i mock os.listdir ?
-        MainModel(ExperimentsModel(CytoDlConfig(cyto_dl_home_path=PurePath(__file__).parent / 'cyto_dl_home', user_experiments_path=PurePath(__file__).parent / 'experiments_home')))
+    return TrainingModel(  # instead of this, how about i mock os.listdir ?
+        MainModel(
+            ExperimentsModel(
+                CytoDlConfig(
+                    cyto_dl_home_path=PurePath(__file__).parent
+                    / "cyto_dl_home",
+                    user_experiments_path=PurePath(__file__).parent
+                    / "experiments_home",
+                )
+            )
+        )
     )
 
 
@@ -115,14 +124,19 @@ def test_select_existing_model_option(
     ):
         model_selection_widget._radio_existing_model.click()  # enables the combo box
 
-    for i, experiment_path in enumerate(Path(training_model.get_user_experiments_path()).iterdir()):
+    for i, experiment_path in enumerate(
+        Path(training_model.get_user_experiments_path()).iterdir()
+    ):
         # ACT
         # Invariant: options in existing_models combo were added in the order the appear in the model.
         model_selection_widget._combo_box_existing_models.setCurrentIndex(i)
         training_model.set_checkpoint(dummy_checkpoint)
 
         # ASSERT
-        assert experiment_path / f"checkpoints/{dummy_checkpoint}" == training_model.get_model_checkpoints_path() 
+        assert (
+            experiment_path / f"checkpoints/{dummy_checkpoint}"
+            == training_model.get_model_checkpoints_path()
+        )
 
 
 # def test_select_new_model_radio(
