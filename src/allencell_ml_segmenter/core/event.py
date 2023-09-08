@@ -27,6 +27,9 @@ class Event(Enum):
     ACTION_PREDICTION_POSTPROCESSING_AUTO_THRESHOLD = (
         "postprocessing_auto_threshold"
     )
+    ACTION_PREDICTION_GRAB_NAPARI_LAYERS = (
+        "action_prediction_grab_napari_layers"
+    )
 
     # View selection events. These can stem from a user action, or from a process (i.e. prediction process ends, and a new view is shown automatically).
     VIEW_SELECTION_TRAINING = "training_selected"

@@ -15,6 +15,7 @@ from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.prediction.model_input_widget import (
     ModelInputWidget,
 )
+from allencell_ml_segmenter.services.napari_service import NapariService
 from qtpy.QtWidgets import (
     QVBoxLayout,
     QSizePolicy,
@@ -48,6 +49,7 @@ class PredictionView(View):
         self._service: ModelFileService = ModelFileService(
             self._prediction_model
         )
+        self.napari_service = NapariService(self._viewer, self._prediction_model)
 
         layout: QVBoxLayout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)

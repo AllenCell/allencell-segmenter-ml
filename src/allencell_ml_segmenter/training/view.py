@@ -21,6 +21,8 @@ from allencell_ml_segmenter.training.model_selection_widget import (
 from allencell_ml_segmenter.training.training_model import TrainingModel
 from hydra.core.global_hydra import GlobalHydra
 
+import napari
+
 
 class TrainingView(View):
     """
@@ -112,5 +114,9 @@ class TrainingView(View):
         """
         return "Training"
 
+    def startLongTask(self):
+        self.doWork()
+
     def show_result(self):
-        print("done")
+        viewer = napari.Viewer()
+        viewer.show(self._training_model.get_result())
