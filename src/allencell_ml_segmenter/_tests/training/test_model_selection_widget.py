@@ -1,5 +1,4 @@
-from pathlib import Path
-from typing import List
+from pathlib import Path, PurePath
 
 import pytest
 from pytestqt.qtbot import QtBot
@@ -21,8 +20,8 @@ def training_model() -> TrainingModel:
     """
     Fixture that creates an instance of TrainingModel for testing.
     """
-    return TrainingModel(
-        MainModel(ExperimentsModel(CytoDlConfig(Path(), Path())))
+    return TrainingModel(                                                                     # instead of this, how about i mock os.listdir ?
+        MainModel(ExperimentsModel(CytoDlConfig(cyto_dl_home_path=PurePath(__file__).parent / 'cyto_dl_home', user_experiments_path=PurePath(__file__).parent / 'experiments_home')))
     )
 
 
@@ -110,22 +109,20 @@ def test_select_existing_model_option(
     Tests that the slots connected to the "start a new model" radio button and the existing model QCombBox properly set the model path field.
     """
     # ARRANGE - add arbitrary model path options to the QComboBox, since it does not come with default choices
-    mock_choices: List[str] = [f"dummy path {i}" for i in range(3)]
-    model_selection_widget._combo_box_existing_models.addItems(mock_choices)
+    dummy_checkpoint = "dummy_checkpoint"
     with qtbot.waitSignal(
         model_selection_widget._radio_existing_model.toggled
     ):
         model_selection_widget._radio_existing_model.click()  # enables the combo box
 
-    for i, choice in enumerate(mock_choices):
+    for i, experiment_path in enumerate(Path(training_model.get_user_experiments_path()).iterdir()):
         # ACT
+        # Invariant: options in existing_models combo were added in the order the appear in the model.
         model_selection_widget._combo_box_existing_models.setCurrentIndex(i)
-        training_model.set_checkpoint("dummy_checkpoint")
+        training_model.set_checkpoint(dummy_checkpoint)
 
         # ASSERT
-        assert training_model.get_model_checkpoints_path() == Path(
-            f"{choice}/checkpoints/dummy_checkpoint"
-        )
+        assert experiment_path / f"checkpoints/{dummy_checkpoint}" == training_model.get_model_checkpoints_path() 
 
 
 # def test_select_new_model_radio(
