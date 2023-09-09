@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 
 from allencell_ml_segmenter.config.cyto_dl_config import CytoDlConfig
 import copy
@@ -11,21 +11,19 @@ class ExperimentsModel:
         self.refresh_experiments()
 
     def refresh_experiments(self) -> None:
-        for experiment in os.listdir(self.config._user_experiments_path):
+        for experiment in Path(self.config._user_experiments_path).iterdir():
             if experiment not in self.experiments:
-                self.experiments[experiment] = set()
-                self.refresh_checkpoints(experiment)
+                self.experiments[experiment.name] = set()
+                self.refresh_checkpoints(experiment.name)
 
     def refresh_checkpoints(self, experiment: str) -> None:
-        checkpoints_path = os.path.join(
-            self.config._user_experiments_path, experiment, "checkpoints"
-        )
+        checkpoints_path = Path(self.config._user_experiments_path) / experiment / "checkpoints"
         if (
-            os.path.exists(checkpoints_path)
-            and len(os.listdir(checkpoints_path)) > 0
+            checkpoints_path.exists()
+            and len([checkpoints_path.iterdir()]) > 0
         ):
-            for checkpoint in os.listdir(checkpoints_path):
-                self.experiments[experiment].add(checkpoint)
+            for checkpoint in checkpoints_path.iterdir():
+                self.experiments[experiment].add(checkpoint.name)
 
     """
     Returns a defensive copy of Experiments dict.
