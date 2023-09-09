@@ -17,11 +17,12 @@ class ExperimentsModel:
                 self.refresh_checkpoints(experiment.name)
 
     def refresh_checkpoints(self, experiment: str) -> None:
-        checkpoints_path = Path(self.config._user_experiments_path) / experiment / "checkpoints"
-        if (
-            checkpoints_path.exists()
-            and len([checkpoints_path.iterdir()]) > 0
-        ):
+        checkpoints_path = (
+            Path(self.config._user_experiments_path)
+            / experiment
+            / "checkpoints"
+        )
+        if checkpoints_path.exists() and len([checkpoints_path.iterdir()]) > 0:
             for checkpoint in checkpoints_path.iterdir():
                 self.experiments[experiment].add(checkpoint.name)
 
