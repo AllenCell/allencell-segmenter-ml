@@ -57,7 +57,6 @@ class ModelSelectionWidget(QWidget):
         top_grid_layout: QGridLayout = QGridLayout()
 
         self._radio_new_model: QRadioButton = QRadioButton()
-        self._radio_new_model.setChecked(True)
         self._radio_new_model.toggled.connect(self._new_model_radio_handler)
         top_grid_layout.addWidget(self._radio_new_model, 0, 0)
 
@@ -85,7 +84,7 @@ class ModelSelectionWidget(QWidget):
         self._combo_box_existing_models.setEnabled(False)
         self._combo_box_existing_models.setMinimumWidth(306)
 
-        self._refresh_options()
+        self._refresh_experiment_options()
         self._combo_box_existing_models.currentTextChanged.connect(
             self._model_combo_handler
         )
@@ -107,7 +106,7 @@ class ModelSelectionWidget(QWidget):
         )
         self._combo_box_existing_models.setEnabled(False)
         self._combo_box_existing_models_checkpoint.setEnabled(False)
-        self.experiment_info_widget.set_enabled(True)
+        self.experiment_info_widget.set_enabled(False)
 
         top_grid_layout.addWidget(
             self._combo_box_existing_models_checkpoint, 2, 2
@@ -262,7 +261,7 @@ class ModelSelectionWidget(QWidget):
         """
         if self._radio_new_model.isChecked():
             self._refresh_experiment_options()
-        if self._radio_existing_model.isChecked():
+        if self._radio_existing_model.isChecked() and self._model.get_experiment_name() is not None:
             self._refresh_checkpoint_options()
 
     def _refresh_experiment_options(self):
