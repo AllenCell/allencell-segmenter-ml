@@ -261,7 +261,10 @@ class ModelSelectionWidget(QWidget):
         """
         if self._radio_new_model.isChecked():
             self._refresh_experiment_options()
-        if self._radio_existing_model.isChecked() and self._model.get_experiment_name() is not None:
+        if (
+            self._radio_existing_model.isChecked()
+            and self._model.get_experiment_name() is not None
+        ):
             self._refresh_checkpoint_options()
 
     def _refresh_experiment_options(self):
