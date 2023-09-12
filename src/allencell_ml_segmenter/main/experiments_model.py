@@ -3,8 +3,10 @@ from pathlib import Path
 from allencell_ml_segmenter.config.cyto_dl_config import CytoDlConfig
 import copy
 
+from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
 
-class ExperimentsModel:
+
+class ExperimentsModel(IExperimentsModel):
     def __init__(self, config: CytoDlConfig) -> None:
         self.config = config
         self.experiments = {}

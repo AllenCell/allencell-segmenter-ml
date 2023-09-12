@@ -1,9 +1,8 @@
-from pathlib import Path, PurePath
+from pathlib import Path
 
 import pytest
 from pytestqt.qtbot import QtBot
-from allencell_ml_segmenter.config.cyto_dl_config import CytoDlConfig
-from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
+from allencell_ml_segmenter._tests.fakes.fake_experiments_model import FakeExperimentModel
 from allencell_ml_segmenter.main.main_model import MainModel
 
 from allencell_ml_segmenter.training.model_selection_widget import (
@@ -22,14 +21,7 @@ def training_model() -> TrainingModel:
     """
     return TrainingModel(  # instead of this, how about i mock os.listdir ?
         MainModel(
-            ExperimentsModel(
-                CytoDlConfig(
-                    cyto_dl_home_path=PurePath(__file__).parent
-                    / "cyto_dl_home",
-                    user_experiments_path=PurePath(__file__).parent
-                    / "experiments_home",
-                )
-            )
+            FakeExperimentModel()
         )
     )
 
