@@ -2,6 +2,7 @@ from allencell_ml_segmenter.core.aics_widget import AicsWidget
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.publisher import Publisher
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
+from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
 
 
 class MainModel(Publisher):
@@ -9,7 +10,7 @@ class MainModel(Publisher):
     Main model for this application. Responsible for non-tab-related view switching.
     """
 
-    def __init__(self, experiments_model: ExperimentsModel):
+    def __init__(self, experiments_model: IExperimentsModel):
         super().__init__()
         # Current page of the UI
         self._current_view: AicsWidget = None
