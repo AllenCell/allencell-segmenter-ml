@@ -1,7 +1,6 @@
 from allencell_ml_segmenter.core.aics_widget import AicsWidget
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.publisher import Publisher
-from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
 
 
@@ -29,5 +28,5 @@ class MainModel(Publisher):
         self._current_view = view
         self.dispatch(Event.ACTION_CHANGE_VIEW)
 
-    def get_experiment_model(self) -> ExperimentsModel:
+    def get_experiment_model(self) -> IExperimentsModel:
         return self._experiments_model

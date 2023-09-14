@@ -18,3 +18,7 @@ class IExperimentsModel(ABC):
     @abstractmethod
     def refresh_checkpoints(self, experiment: str):
         pass
+
+    @abstractmethod
+    def get_user_experiments_path(self):
+        pass

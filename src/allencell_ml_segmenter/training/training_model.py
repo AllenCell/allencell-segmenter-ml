@@ -200,9 +200,7 @@ class TrainingModel(Publisher):
         """
         return (
             Path(
-                self._main_model.get_experiment_model()
-                .get_cyto_dl_config()
-                .get_user_experiments_path()
+                self._main_model.get_experiment_model().get_user_experiments_path()
             )
             / self._experiment_name
             / "checkpoints"
