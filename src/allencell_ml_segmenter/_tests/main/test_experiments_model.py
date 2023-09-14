@@ -21,5 +21,5 @@ def test_refresh_experiments() -> None:
                     user_experiments_path=PurePath(__file__).parent
                     / "experiments_home",
                 ))
-    experimentsModel = model.refresh_experiments()
-    assert experimentsModel is not None
+    expected = {'0_exp': set(), '1_exp': set(), '2_exp': {'0.ckpt', '1.ckpt'}}
+    assert model.get_experiments() == expected
