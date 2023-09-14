@@ -1,5 +1,6 @@
 
 
+from pathlib import Path
 from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
 
 
@@ -13,3 +14,6 @@ class FakeExperimentModel(IExperimentsModel):
 
     def refresh_checkpoints(self, experiment: str):
         pass
+
+    def get_user_experiments_path(self) -> Path:
+        return Path()
