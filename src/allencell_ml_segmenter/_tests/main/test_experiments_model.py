@@ -15,11 +15,12 @@ def config() -> CytoDlConfig:
 
 
 def test_refresh_experiments() -> None:
-    model = ExperimentsModel(CytoDlConfig(
-                    cyto_dl_home_path=PurePath(__file__).parent
-                    / "cyto_dl_home",
-                    user_experiments_path=PurePath(__file__).parent
-                    / "experiments_home",
-                ))
-    expected = {'0_exp': set(), '1_exp': set(), '2_exp': {'0.ckpt', '1.ckpt'}}
+    model = ExperimentsModel(
+        CytoDlConfig(
+            cyto_dl_home_path=PurePath(__file__).parent / "cyto_dl_home",
+            user_experiments_path=PurePath(__file__).parent
+            / "experiments_home",
+        )
+    )
+    expected = {"0_exp": set(), "1_exp": set(), "2_exp": {"0.ckpt", "1.ckpt"}}
     assert model.get_experiments() == expected
