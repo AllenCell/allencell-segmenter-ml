@@ -1,6 +1,8 @@
 import pytest
 from pytestqt.qtbot import QtBot
-from allencell_ml_segmenter._tests.fakes.fake_experiments_model import FakeExperimentModel
+from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
+    FakeExperimentModel,
+)
 from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
 
@@ -12,21 +14,19 @@ from allencell_ml_segmenter.training.training_model import (
     PatchSize,
 )
 
+
 @pytest.fixture
 def experiment_model() -> IExperimentsModel:
     return FakeExperimentModel()
 
+
 @pytest.fixture
-def training_model(
-    experiment_model: IExperimentsModel
-) -> TrainingModel:
+def training_model(experiment_model: IExperimentsModel) -> TrainingModel:
     """
     Fixture that creates an instance of TrainingModel for testing.
     """
     return TrainingModel(  # instead of this, how about i mock os.listdir ?
-        MainModel(
-            experiment_model
-        )
+        MainModel(experiment_model)
     )
 
 
@@ -121,18 +121,15 @@ def test_select_existing_model_option(
     ):
         model_selection_widget._radio_existing_model.click()  # enables the combo box
 
-    for i, experiment in enumerate(
-        experiment_model.get_experiments().keys()
-    ):
+    for i, experiment in enumerate(experiment_model.get_experiments().keys()):
         # ACT
         # Invariant: options in existing_models combo were added in the order the appear in the model.
         model_selection_widget._combo_box_existing_models.setCurrentIndex(i)
         training_model.set_checkpoint(dummy_checkpoint)
 
         # ASSERT
-        assert (
-            f"{experiment}/checkpoints/{dummy_checkpoint}"
-            == str(training_model.get_model_checkpoints_path())
+        assert f"{experiment}/checkpoints/{dummy_checkpoint}" == str(
+            training_model.get_model_checkpoints_path()
         )
 
 
