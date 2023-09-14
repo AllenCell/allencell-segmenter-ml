@@ -37,3 +37,6 @@ class ExperimentsModel(IExperimentsModel):
 
     def get_cyto_dl_config(self) -> CytoDlConfig:
         return self.config
+    
+    def get_user_experiments_path(self) -> Path:
+        return self.get_cyto_dl_config().get_user_experiments_path()
