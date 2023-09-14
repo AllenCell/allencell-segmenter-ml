@@ -1,8 +1,7 @@
-from pathlib import Path
-
 import pytest
 from pytestqt.qtbot import QtBot
 from allencell_ml_segmenter._tests.fakes.fake_experiments_model import FakeExperimentModel
+from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
 
 from allencell_ml_segmenter.training.model_selection_widget import (
@@ -13,15 +12,20 @@ from allencell_ml_segmenter.training.training_model import (
     PatchSize,
 )
 
+@pytest.fixture
+def experiment_model() -> IExperimentsModel:
+    return FakeExperimentModel()
 
 @pytest.fixture
-def training_model() -> TrainingModel:
+def training_model(
+    experiment_model: IExperimentsModel
+) -> TrainingModel:
     """
     Fixture that creates an instance of TrainingModel for testing.
     """
     return TrainingModel(  # instead of this, how about i mock os.listdir ?
         MainModel(
-            FakeExperimentModel()
+            experiment_model
         )
     )
 
@@ -103,6 +107,7 @@ def test_checkbox_slot(
 
 def test_select_existing_model_option(
     qtbot: QtBot,
+    experiment_model: IExperimentsModel,
     model_selection_widget: ModelSelectionWidget,
     training_model: TrainingModel,
 ) -> None:
@@ -116,8 +121,8 @@ def test_select_existing_model_option(
     ):
         model_selection_widget._radio_existing_model.click()  # enables the combo box
 
-    for i, experiment_path in enumerate(
-        Path(training_model.get_user_experiments_path()).iterdir()
+    for i, experiment in enumerate(
+        experiment_model.get_experiments().keys()
     ):
         # ACT
         # Invariant: options in existing_models combo were added in the order the appear in the model.
@@ -126,8 +131,8 @@ def test_select_existing_model_option(
 
         # ASSERT
         assert (
-            experiment_path / f"checkpoints/{dummy_checkpoint}"
-            == training_model.get_model_checkpoints_path()
+            f"{experiment}/checkpoints/{dummy_checkpoint}"
+            == str(training_model.get_model_checkpoints_path())
         )
 
 
