@@ -3,7 +3,8 @@ from allencell_ml_segmenter.core.event import Event
 
 # from lightning.pytorch.callbacks import Callback
 
-from cyto_dl.train import main as cyto_train
+# disabled for tests (cant import in ci yet)
+# from cyto_dl.train import main as cyto_train
 
 import sys
 from allencell_ml_segmenter.training.training_model import (
@@ -72,7 +73,6 @@ class TrainingService(Subscriber):
         Trains the model according to the spec
         """
         if self._training_model.is_training_running():
-
             # Only supporting segmentation config for now
             self._training_model.set_experiment_type("segmentation")
 
@@ -84,26 +84,36 @@ class TrainingService(Subscriber):
 
             # This field is not supported for now (maybe cancel button is sufficient?)
             self._training_model.set_max_time(9992)
-            
+
             # Source of configs relative to user's home.  We need a dynamic solution in prod.
             self._training_model.set_config_dir(
-                "/Users/chrishu/dev/code/test/cyto-dl/configs"
+                f"{self._training_model.get_cyto_dl_path()}/configs"
             )
-            
+
             #################################################
-            self._set_image_dims()
-            self._set_patch_shape_from_size()
+            sys.argv.append(
+                "hydra.run.dir=${paths.log_dir}/${task_name}/runs/${experiment_name}"
+            )
+            if self._training_model.get_checkpoint() is not None:
+                sys.argv.append(
+                    f"ckpt_path={self._training_model.get_model_checkpoints_path()}"
+                )
+            # sys.argv.append(
+            #     "+callbacks.print_progress._target_=allencell_ml_segmenter.services.training_service.MyPrintingCallback"
+            # )
+            # TODO - talk to Benji about these
+            # self._set_image_d–ims()
+            # self._set_patch_shape_from_size()
+            #######################
+            self._set_experiment_name()
             self._set_max_epoch()
             self._set_images_directory()
             self._set_experiment()
             self._set_hardware()
             self._set_config_dir()
 
-            # sys.argv.append(
-            #     "+callbacks.print_progress._target_=allencell_ml_segmenter.services.training_service.MyPrintingCallback"
-            # )
-
-            cyto_train()
+            # disabled for tests (cant import in ci yet)
+            # cyto_train()
 
     def _set_experiment(self) -> None:
         """
@@ -126,8 +136,14 @@ class TrainingService(Subscriber):
         Sets the spatial_dims argument variable for hydra override using sys.argv
         """
         image_dims: int = self._training_model.get_image_dims()
-        # sys.argv.append(f"++cyto_dl.image.transforms.resize.Resized=[{image_dims}D]")
         sys.argv.append(f"++spatial_dims=[{image_dims}]")
+
+    def _set_experiment_name(self) -> None:
+        """
+        Sets the experiment_name argument variable for hydra override using sys.argv
+        """
+        experiment_name: str = self._training_model.get_experiment_name()
+        sys.argv.append(f"++experiment_name={experiment_name}")
 
     def _set_max_epoch(self) -> None:
         """

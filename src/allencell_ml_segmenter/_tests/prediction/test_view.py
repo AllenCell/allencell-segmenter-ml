@@ -1,7 +1,10 @@
+from pathlib import Path
 import pytest
 from pytestqt.qtbot import QtBot
+from allencell_ml_segmenter.config.cyto_dl_config import CytoDlConfig
 
 from allencell_ml_segmenter.core.event import Event
+from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.prediction.view import PredictionView
 
@@ -11,7 +14,7 @@ def main_model() -> MainModel:
     """
     Returns a MainModel instance for testing.
     """
-    return MainModel()
+    return MainModel(ExperimentsModel(CytoDlConfig(Path(), Path())))
 
 
 @pytest.fixture

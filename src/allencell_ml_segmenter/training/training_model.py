@@ -4,6 +4,8 @@ from enum import Enum
 from typing import Union
 from pathlib import Path
 
+from allencell_ml_segmenter.main.main_model import MainModel
+
 
 class TrainingType(Enum):
     """
@@ -41,8 +43,11 @@ class TrainingModel(Publisher):
     Stores state relevant to training processes.
     """
 
-    def __init__(self):
+    def __init__(self, main_model: MainModel):
         super().__init__()
+        self._main_model = main_model
+        self._experiment_name: str = None
+        self._checkpoint: str = None
         self._experiment_type: TrainingType = None
         self._hardware_type: Hardware = None
         self._images_directory: Path = None
@@ -57,6 +62,34 @@ class TrainingModel(Publisher):
         self._max_time: int = None  # in seconds
         self._config_dir: Path = None
         self._is_training_running: bool = False
+
+    def get_experiment_name(self) -> str:
+        """
+        Gets experiment name
+        """
+        return self._experiment_name
+
+    def set_experiment_name(self, name: str) -> None:
+        """
+        Sets experiment name
+
+        name (str): name of cyto-dl experiment
+        """
+        self._experiment_name = name
+
+    def get_checkpoint(self) -> str:
+        """
+        Gets checkpoint
+        """
+        return self._checkpoint
+
+    def set_checkpoint(self, checkpoint: str) -> None:
+        """
+        Sets checkpoint
+
+        checkpoint (str): name of checkpoint to use
+        """
+        self._checkpoint = checkpoint
 
     def get_experiment_type(self) -> TrainingType:
         """
@@ -153,7 +186,7 @@ class TrainingModel(Publisher):
         """
         return self._channel_index
 
-    def set_channel_index(self, index: Union[int]) -> None:
+    def set_channel_index(self, index: int) -> None:
         """
         Sets channel index
 
@@ -161,19 +194,53 @@ class TrainingModel(Publisher):
         """
         self._channel_index = index
 
+    def get_model_checkpoints_path(self) -> Path:
+        """
+        Gets checkpoints for model path
+        """
+        return (
+            Path(
+                self._main_model.get_experiment_model()
+                .get_cyto_dl_config()
+                .get_user_experiments_path()
+            )
+            / self._experiment_name
+            / "checkpoints"
+            / self._checkpoint
+            if self._experiment_name and self._checkpoint
+            else None
+        )
+
     def get_model_path(self) -> Union[Path, None]:
         """
         Gets model path
         """
-        return self._model_path
+        return (
+            Path(
+                self._main_model.get_experiment_model()
+                .get_cyto_dl_config()
+                .get_user_experiments_path()
+            )
+            / self._experiment_name
+            if self._experiment_name
+            else None
+        )
 
-    def set_model_path(self, model_path: Union[Path, None]) -> None:
+    def get_model_test_images_path(self) -> Union[Path, None]:
         """
-        Sets model path
-
-        model_path (Optional[Path, None]): path to model to use, or None to start a new model
+        Gets test images for model path
         """
-        self._model_path = model_path
+        return (
+            Path(
+                self._main_model.get_experiment_model()
+                .get_cyto_dl_config()
+                .get_user_experiments_path()
+            )
+            / self._experiment_name
+            / "test_images"
+            if self._experiment_name
+            else None
+        )
 
     def get_patch_size(self) -> PatchSize:
         """
@@ -237,3 +304,59 @@ class TrainingModel(Publisher):
         """
         self._is_training_running = is_training_running
         self.dispatch(Event.PROCESS_TRAINING)
+
+    result_images: list = []
+
+    def get_result_images(self) -> list:
+        """
+        Gets result images
+        """
+        return self.result_images
+
+    def set_result_images(self, images: list) -> None:
+        """
+        Sets result images
+
+        images (list): list of images to display
+        """
+        self.result_images = images
+
+    def get_cyto_dl_path(self) -> Path:
+        """
+        Gets cyto-dl path
+        """
+        return (
+            self._main_model.get_experiment_model()
+            .get_cyto_dl_config()
+            .get_cyto_dl_home_path()
+        )
+
+    def get_user_experiments_path(self) -> Path:
+        """
+        Gets user experiments path
+        """
+        return (
+            self._main_model.get_experiment_model()
+            .get_cyto_dl_config()
+            .get_user_experiments_path()
+        )
+
+    def get_experiments(self) -> dict:
+        """
+        Gets experiments
+        """
+        return self._main_model.get_experiment_model().get_experiments()
+
+    def refresh_experiments(self) -> None:
+        """
+        Refreshes experiments
+        """
+        self._main_model.get_experiment_model().refresh_experiments()
+
+    def refresh_checkpoints(self) -> None:
+        """
+        Refreshed checkpoints for experiment
+        """
+        self._main_model.get_experiment_model().refresh_checkpoints(
+            self.get_experiment_name()
+        )

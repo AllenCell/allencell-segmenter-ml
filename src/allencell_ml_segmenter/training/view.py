@@ -1,4 +1,6 @@
+from pathlib import Path
 import sys
+import napari
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
     QLabel,
@@ -20,6 +22,8 @@ from allencell_ml_segmenter.training.model_selection_widget import (
 )
 from allencell_ml_segmenter.training.training_model import TrainingModel
 from hydra.core.global_hydra import GlobalHydra
+from aicsimageio import AICSImage
+from aicsimageio.readers import TiffReader
 
 import napari
 
@@ -29,11 +33,13 @@ class TrainingView(View):
     Holds widgets pertinent to training processes - ImageSelectionWidget & ModelSelectionWidget.
     """
 
-    def __init__(self, main_model: MainModel):
+    def __init__(self, main_model: MainModel, viewer: napari.Viewer):
         super().__init__()
 
+        self._viewer = viewer
+
         self._main_model: MainModel = main_model
-        self._training_model: TrainingModel = TrainingModel()
+        self._training_model: TrainingModel = TrainingModel(main_model)
         self._training_service: TrainingService = TrainingService(
             self._training_model
         )
@@ -98,6 +104,33 @@ class TrainingView(View):
         GlobalHydra.instance().clear()
         # TODO -  find a better way to solve this
         self.startLongTask()
+        # self._training_model.set_training_running(True)
+
+        # self.doWork()
+        # self.showResults()
+
+    def read_result_images(self, dir_to_grab: Path):
+        output_dir: Path = dir_to_grab
+        images = []
+        if output_dir is None:
+            raise ValueError("No output directory to grab images from.")
+        else:
+            files = [
+                Path(output_dir) / file for file in Path.iterdir(dir_to_grab)
+            ]
+            for file in files:
+                if Path.is_file(file) and file.name.lower().endswith(".tif"):
+                    try:
+                        images.append(AICSImage(str(file), reader=TiffReader))
+                    except Exception as e:
+                        print(e)
+                        print(
+                            f"Could not load image {str(file)} into napari viewer. Image cannot be opened by AICSImage"
+                        )
+        return images
+
+    def add_image_to_viewer(self, image: AICSImage, display_name: str):
+        self._viewer.add_image(image, name=display_name)
 
     # Abstract methods from View implementations #######################
 
@@ -117,6 +150,6 @@ class TrainingView(View):
     def startLongTask(self):
         self.doWork()
 
-    def show_result(self):
+    def showResults(self):
         viewer = napari.Viewer()
         viewer.show(self._training_model.get_result())

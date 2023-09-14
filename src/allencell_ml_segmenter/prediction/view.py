@@ -30,6 +30,7 @@ from allencell_ml_segmenter.services.result_display_service import ResultDisplay
 from allencell_ml_segmenter.training.view import TrainingView
 
 
+
 class PredictionView(View):
     """
     Holds the image and model input widgets for prediction.
@@ -37,12 +38,11 @@ class PredictionView(View):
 
     def __init__(self, main_model: MainModel, viewer: napari.Viewer):
         super().__init__()
-
         #TODO Delete this
         self.training_view_for_demo = TrainingView(main_model)
 
-
         self._viewer = viewer
+
         self._main_model: MainModel = main_model
         self._prediction_model: PredictionModel = PredictionModel()
 
@@ -100,7 +100,10 @@ class PredictionView(View):
         )
 
     def run_btn_handler(self):
-        self.startLongTask()
+        # TODO remove this is for testing
+        self.test_file_service()
+        self._prediction_model.dispatch(Event.PROCESS_PREDICTION_COMPLETE)
+        # self.startLongTask()
 
     # Abstract method implementations ##################################
 
@@ -111,7 +114,8 @@ class PredictionView(View):
     def getTypeOfWork(self):
         return "Prediction"
 
-    def show_result(self):
+    def showResults(self):
         #TODO replace, testing file result service
         ResultDisplayService(self._prediction_model, self._viewer)
         self._prediction_model.dispatch(Event.PROCESS_PREDICTION_COMPLETE)
+

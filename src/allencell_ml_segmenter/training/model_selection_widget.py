@@ -14,6 +14,10 @@ from qtpy.QtWidgets import (
     QLineEdit,
     QCheckBox,
 )
+from allencell_ml_segmenter.core.event import Event
+from allencell_ml_segmenter.training.experiment_info_widget import (
+    ExperimentInfoWidget,
+)
 
 from allencell_ml_segmenter.training.training_model import TrainingModel
 from allencell_ml_segmenter.training.training_model import PatchSize
@@ -50,41 +54,71 @@ class ModelSelectionWidget(QWidget):
         # model selection components
         frame.layout().addWidget(LabelWithHint("Select a model:"))
 
-        grid_layout: QGridLayout = QGridLayout()
+        top_grid_layout: QGridLayout = QGridLayout()
 
         self._radio_new_model: QRadioButton = QRadioButton()
-        self._radio_new_model.toggled.connect(self._radio_new_model_slot)
-        grid_layout.addWidget(self._radio_new_model, 0, 0)
+        self._radio_new_model.toggled.connect(self._new_model_radio_handler)
+        top_grid_layout.addWidget(self._radio_new_model, 0, 0)
 
-        label_new: LabelWithHint = LabelWithHint("Start a new model")
-        grid_layout.addWidget(label_new, 0, 1)
+        self.experiment_info_widget = ExperimentInfoWidget(self._model)
+        label_new_model: LabelWithHint = LabelWithHint("Start a new model")
+        top_grid_layout.addWidget(label_new_model, 0, 1)
+        top_grid_layout.addWidget(self.experiment_info_widget, 0, 2)
 
         self._radio_existing_model: QRadioButton = QRadioButton()
         self._radio_existing_model.toggled.connect(
-            self._radio_existing_model_slot
+            self._existing_model_radio_handler
         )
-        grid_layout.addWidget(self._radio_existing_model, 1, 0)
+        top_grid_layout.addWidget(self._radio_existing_model, 1, 0)
 
-        label_existing: LabelWithHint = LabelWithHint("Existing model")
-        grid_layout.addWidget(label_existing, 1, 1)
+        label_existing_model: LabelWithHint = LabelWithHint("Existing model")
+        top_grid_layout.addWidget(label_existing_model, 1, 1)
+        label_existing_model_checkpoint: LabelWithHint = LabelWithHint(
+            "Checkpoint"
+        )
+        top_grid_layout.addWidget(label_existing_model_checkpoint, 2, 1)
 
         self._combo_box_existing_models: QComboBox = QComboBox()
         self._combo_box_existing_models.setCurrentIndex(-1)
         self._combo_box_existing_models.setPlaceholderText("Select an option")
         self._combo_box_existing_models.setEnabled(False)
         self._combo_box_existing_models.setMinimumWidth(306)
-        self._combo_box_existing_models.currentTextChanged.connect(
-            lambda path_text: self._model.set_model_path(Path(path_text))
-        )
-        grid_layout.addWidget(self._combo_box_existing_models, 1, 2)
 
-        frame.layout().addLayout(grid_layout)
+        self._refresh_experiment_options()
+        self._combo_box_existing_models.currentTextChanged.connect(
+            self._model_combo_handler
+        )
+        self._model.subscribe(
+            Event.PROCESS_TRAINING, self, self._refresh_options
+        )
+
+        top_grid_layout.addWidget(self._combo_box_existing_models, 1, 2)
+
+        self._combo_box_existing_models_checkpoint: QComboBox = QComboBox()
+        self._combo_box_existing_models_checkpoint.setCurrentIndex(-1)
+        self._combo_box_existing_models_checkpoint.setPlaceholderText(
+            "Select an option"
+        )
+        self._combo_box_existing_models_checkpoint.setEnabled(False)
+        self._combo_box_existing_models_checkpoint.setMinimumWidth(306)
+        self._combo_box_existing_models_checkpoint.currentTextChanged.connect(
+            lambda path_text: self._model.set_checkpoint(path_text)
+        )
+        self._combo_box_existing_models.setEnabled(False)
+        self._combo_box_existing_models_checkpoint.setEnabled(False)
+        self.experiment_info_widget.set_enabled(False)
+
+        top_grid_layout.addWidget(
+            self._combo_box_existing_models_checkpoint, 2, 2
+        )
+
+        frame.layout().addLayout(top_grid_layout)
 
         # bottom half
-        grid_layout = QGridLayout()
+        bottom_grid_layout = QGridLayout()
 
         patch_size_label: LabelWithHint = LabelWithHint("Structure size")
-        grid_layout.addWidget(patch_size_label, 0, 0)
+        bottom_grid_layout.addWidget(patch_size_label, 0, 0)
 
         self._patch_size_combo_box: QComboBox = QComboBox()
         self._patch_size_combo_box.setObjectName("structureSizeComboBox")
@@ -96,12 +130,12 @@ class ModelSelectionWidget(QWidget):
         self._patch_size_combo_box.currentTextChanged.connect(
             lambda size: self._model.set_patch_size(size)
         )
-        grid_layout.addWidget(self._patch_size_combo_box, 0, 1)
+        bottom_grid_layout.addWidget(self._patch_size_combo_box, 0, 1)
 
         image_dimensions_label: LabelWithHint = LabelWithHint(
             "Image dimension"
         )
-        grid_layout.addWidget(image_dimensions_label, 1, 0)
+        bottom_grid_layout.addWidget(image_dimensions_label, 1, 0)
 
         dimension_choice_layout: QHBoxLayout = QHBoxLayout()
         dimension_choice_layout.setSpacing(0)
@@ -129,10 +163,10 @@ class ModelSelectionWidget(QWidget):
         )  # stops interference with other radio buttons
         dimension_choice_dummy.setLayout(dimension_choice_layout)
 
-        grid_layout.addWidget(dimension_choice_dummy, 1, 1)
+        bottom_grid_layout.addWidget(dimension_choice_dummy, 1, 1)
 
         max_epoch_label: LabelWithHint = LabelWithHint("Training steps")
-        grid_layout.addWidget(max_epoch_label, 2, 0)
+        bottom_grid_layout.addWidget(max_epoch_label, 2, 0)
 
         self._max_epoch_input: QLineEdit = QLineEdit()
         self._max_epoch_input.setPlaceholderText("1000")
@@ -140,7 +174,7 @@ class ModelSelectionWidget(QWidget):
         self._max_epoch_input.textChanged.connect(
             lambda text: self._model.set_max_epoch(int(text))
         )
-        grid_layout.addWidget(self._max_epoch_input, 2, 1)
+        bottom_grid_layout.addWidget(self._max_epoch_input, 2, 1)
 
         max_time_layout: QHBoxLayout = QHBoxLayout()
         max_time_layout.setSpacing(0)
@@ -171,26 +205,45 @@ class ModelSelectionWidget(QWidget):
         max_time_layout.addWidget(max_time_right_text, alignment=Qt.AlignLeft)
         max_time_layout.addStretch()
 
-        grid_layout.addLayout(max_time_layout, 3, 1)
-        grid_layout.setColumnStretch(1, 8)
-        grid_layout.setColumnStretch(0, 3)
+        bottom_grid_layout.addLayout(max_time_layout, 3, 1)
+        bottom_grid_layout.setColumnStretch(1, 8)
+        bottom_grid_layout.setColumnStretch(0, 3)
 
-        frame.layout().addLayout(grid_layout)
+        frame.layout().addLayout(bottom_grid_layout)
 
-    def _radio_new_model_slot(self) -> None:
+    def _model_combo_handler(self, model_path: Path) -> None:
+        """
+        Triggered when the user selects a model from the _combo_box_existing_models.
+        Sets the model path in the model.
+        """
+        self._model.set_experiment_name(model_path)
+        self._refresh_checkpoint_options()
+
+    def _new_model_radio_handler(self) -> None:
         """
         Triggered when the user selects the "start a new model" radio button.
-        Disables interaction with the combo box below.
+        Enables and disables relevent controls.
         """
-        self._model.set_model_path(None)
-        self._combo_box_existing_models.setEnabled(False)
 
-    def _radio_existing_model_slot(self) -> None:
+        self._combo_box_existing_models.setEnabled(False)
+        self._combo_box_existing_models_checkpoint.setEnabled(False)
+        self.experiment_info_widget.set_enabled(True)
+
+        self._combo_box_existing_models.setCurrentIndex(-1)
+        self._combo_box_existing_models_checkpoint.clear()
+
+        self._model.set_experiment_name(None)
+        self._model.set_checkpoint(None)
+
+    def _existing_model_radio_handler(self) -> None:
         """
         Triggered when the user selects the "existing model" radio button.
-        Enables interaction with the neighboring combo box.
+        Enables and disables relevent controls.
         """
+        self._model.set_experiment_name(None)
         self._combo_box_existing_models.setEnabled(True)
+        self.experiment_info_widget.set_enabled(False)
+        self.experiment_info_widget.clear()
 
     def _max_time_checkbox_slot(self, checked: Qt.CheckState) -> None:
         """
@@ -201,3 +254,32 @@ class ModelSelectionWidget(QWidget):
             self._max_time_in_hours_input.setEnabled(True)
         else:
             self._max_time_in_hours_input.setEnabled(False)
+
+    def _refresh_options(self, _: Event = None) -> None:
+        """
+        Refreshes the experiments in the _combo_box_existing_models.
+        """
+        if self._radio_new_model.isChecked():
+            self._refresh_experiment_options()
+        if (
+            self._radio_existing_model.isChecked()
+            and self._model.get_experiment_name() is not None
+        ):
+            self._refresh_checkpoint_options()
+
+    def _refresh_experiment_options(self):
+        self._model.refresh_experiments()
+        self._combo_box_existing_models.clear()
+        self._combo_box_existing_models.addItems(
+            self._model.get_experiments().keys()
+        )
+
+    def _refresh_checkpoint_options(self):
+        # update and enable checkpoint combo box
+        self._model.refresh_checkpoints()
+        self._combo_box_existing_models_checkpoint.clear()
+        self._combo_box_existing_models_checkpoint.addItems(
+            self._model.get_experiments()[self._model.get_experiment_name()]
+        )
+        self._combo_box_existing_models_checkpoint.setCurrentIndex(-1)
+        self._combo_box_existing_models_checkpoint.setEnabled(True)
