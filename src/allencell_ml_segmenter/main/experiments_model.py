@@ -26,7 +26,7 @@ class ExperimentsModel(IExperimentsModel):
         )
         if checkpoints_path.exists() and len([checkpoints_path.iterdir()]) > 0:
             for checkpoint in checkpoints_path.iterdir():
-                if(checkpoint.suffix == '.ckpt'):
+                if checkpoint.suffix == ".ckpt":
                     self.experiments[experiment].add(checkpoint.name)
 
     """
