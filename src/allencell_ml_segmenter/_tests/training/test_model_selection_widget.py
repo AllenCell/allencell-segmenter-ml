@@ -1,3 +1,4 @@
+from pathlib import Path
 import pytest
 from pytestqt.qtbot import QtBot
 from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
@@ -128,9 +129,7 @@ def test_select_existing_model_option(
         training_model.set_checkpoint(dummy_checkpoint)
 
         # ASSERT
-        assert f"{experiment}/checkpoints/{dummy_checkpoint}" == str(
-            training_model.get_model_checkpoints_path()
-        )
+        assert Path(experiment) / "checkpoints" / "dummy_checkpoint" == training_model.get_model_checkpoints_path()
 
 
 def test_select_new_model_radio(
