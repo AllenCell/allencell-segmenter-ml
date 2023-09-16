@@ -22,9 +22,7 @@ def training_model() -> TrainingModel:
     """
     Fixture that creates an instance of TrainingModel for testing.
     """
-    return TrainingModel(
-        MainModel()
-    )
+    return TrainingModel(MainModel())
 
 
 @pytest.fixture
