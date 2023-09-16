@@ -1,7 +1,6 @@
 from allencell_ml_segmenter.core.aics_widget import AicsWidget
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.publisher import Publisher
-from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
 
 
 class MainModel(Publisher):
