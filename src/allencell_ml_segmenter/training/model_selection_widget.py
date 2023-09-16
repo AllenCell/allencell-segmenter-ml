@@ -15,6 +15,7 @@ from qtpy.QtWidgets import (
     QCheckBox,
 )
 from allencell_ml_segmenter.core.event import Event
+from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
 from allencell_ml_segmenter.training.experiment_info_widget import (
     ExperimentInfoWidget,
 )
@@ -31,10 +32,15 @@ class ModelSelectionWidget(QWidget):
 
     TITLE_TEXT: str = "Segmentation model"
 
-    def __init__(self, model: TrainingModel):
+    def __init__(
+        self,
+        training_model: TrainingModel,
+        experiments_model: IExperimentsModel,
+    ):
         super().__init__()
 
-        self._model: TrainingModel = model
+        self._training_model: TrainingModel = training_model
+        self._experiments_model: IExperimentsModel = experiments_model
 
         # widget skeleton
         self.setLayout(QVBoxLayout())
@@ -60,7 +66,9 @@ class ModelSelectionWidget(QWidget):
         self._radio_new_model.toggled.connect(self._new_model_radio_handler)
         top_grid_layout.addWidget(self._radio_new_model, 0, 0)
 
-        self.experiment_info_widget = ExperimentInfoWidget(self._model)
+        self.experiment_info_widget = ExperimentInfoWidget(
+            self._training_model
+        )
         label_new_model: LabelWithHint = LabelWithHint("Start a new model")
         top_grid_layout.addWidget(label_new_model, 0, 1)
         top_grid_layout.addWidget(self.experiment_info_widget, 0, 2)
@@ -88,7 +96,7 @@ class ModelSelectionWidget(QWidget):
         self._combo_box_existing_models.currentTextChanged.connect(
             self._model_combo_handler
         )
-        self._model.subscribe(
+        self._training_model.subscribe(
             Event.PROCESS_TRAINING, self, self._refresh_options
         )
 
@@ -102,7 +110,7 @@ class ModelSelectionWidget(QWidget):
         self._combo_box_existing_models_checkpoint.setEnabled(False)
         self._combo_box_existing_models_checkpoint.setMinimumWidth(306)
         self._combo_box_existing_models_checkpoint.currentTextChanged.connect(
-            lambda path_text: self._model.set_checkpoint(path_text)
+            lambda path_text: self._training_model.set_checkpoint(path_text)
         )
         self._combo_box_existing_models.setEnabled(False)
         self._combo_box_existing_models_checkpoint.setEnabled(False)
@@ -128,7 +136,7 @@ class ModelSelectionWidget(QWidget):
             [patch.name.lower() for patch in PatchSize]
         )
         self._patch_size_combo_box.currentTextChanged.connect(
-            lambda size: self._model.set_patch_size(size)
+            lambda size: self._training_model.set_patch_size(size)
         )
         bottom_grid_layout.addWidget(self._patch_size_combo_box, 0, 1)
 
@@ -142,11 +150,15 @@ class ModelSelectionWidget(QWidget):
 
         self._radio_3d: QRadioButton = QRadioButton()
         self._radio_3d.setObjectName("3DRadio")
-        self._radio_3d.toggled.connect(lambda: self._model.set_image_dims(3))
+        self._radio_3d.toggled.connect(
+            lambda: self._training_model.set_image_dims(3)
+        )
         label_3d: LabelWithHint = LabelWithHint("3D")
 
         self._radio_2d: QRadioButton = QRadioButton()
-        self._radio_2d.toggled.connect(lambda: self._model.set_image_dims(2))
+        self._radio_2d.toggled.connect(
+            lambda: self._training_model.set_image_dims(2)
+        )
         label_2d: LabelWithHint = LabelWithHint("2D")
 
         dimension_choice_layout.addWidget(self._radio_3d)
@@ -172,7 +184,7 @@ class ModelSelectionWidget(QWidget):
         self._max_epoch_input.setPlaceholderText("1000")
         self._max_epoch_input.setObjectName("trainingStepInput")
         self._max_epoch_input.textChanged.connect(
-            lambda text: self._model.set_max_epoch(int(text))
+            lambda text: self._training_model.set_max_epoch(int(text))
         )
         bottom_grid_layout.addWidget(self._max_epoch_input, 2, 1)
 
@@ -197,7 +209,9 @@ class ModelSelectionWidget(QWidget):
         # TODO: decide between converting as int(text) or float(text) -> will users want to use decimals? is there a better way to convert from hours to seconds?
         # TODO: how to handle invalid (not convertible to a number) input?
         self._max_time_in_hours_input.textChanged.connect(
-            lambda text: self._model.set_max_time(round(float(text) * 3600))
+            lambda text: self._training_model.set_max_time(
+                round(float(text) * 3600)
+            )
         )
         max_time_layout.addWidget(self._max_time_in_hours_input)
 
@@ -216,7 +230,7 @@ class ModelSelectionWidget(QWidget):
         Triggered when the user selects a model from the _combo_box_existing_models.
         Sets the model path in the model.
         """
-        self._model.set_experiment_name(model_path)
+        self._training_model.set_experiment_name(model_path)
         self._refresh_checkpoint_options()
 
     def _new_model_radio_handler(self) -> None:
@@ -232,15 +246,15 @@ class ModelSelectionWidget(QWidget):
         self._combo_box_existing_models.setCurrentIndex(-1)
         self._combo_box_existing_models_checkpoint.clear()
 
-        self._model.set_experiment_name(None)
-        self._model.set_checkpoint(None)
+        self._training_model.set_experiment_name(None)
+        self._training_model.set_checkpoint(None)
 
     def _existing_model_radio_handler(self) -> None:
         """
         Triggered when the user selects the "existing model" radio button.
         Enables and disables relevent controls.
         """
-        self._model.set_experiment_name(None)
+        self._training_model.set_experiment_name(None)
         self._combo_box_existing_models.setEnabled(True)
         self.experiment_info_widget.set_enabled(False)
         self.experiment_info_widget.clear()
@@ -263,23 +277,27 @@ class ModelSelectionWidget(QWidget):
             self._refresh_experiment_options()
         if (
             self._radio_existing_model.isChecked()
-            and self._model.get_experiment_name() is not None
+            and self._training_model.get_experiment_name() is not None
         ):
             self._refresh_checkpoint_options()
 
     def _refresh_experiment_options(self):
-        self._model.refresh_experiments()
+        self._experiments_model.refresh_experiments()
         self._combo_box_existing_models.clear()
         self._combo_box_existing_models.addItems(
-            self._model.get_experiments().keys()
+            self._experiments_model.get_experiments().keys()
         )
 
     def _refresh_checkpoint_options(self):
         # update and enable checkpoint combo box
-        self._model.refresh_checkpoints()
+        self._experiments_model.refresh_checkpoints(
+            self._training_model.get_experiment_name()
+        )
         self._combo_box_existing_models_checkpoint.clear()
         self._combo_box_existing_models_checkpoint.addItems(
-            self._model.get_experiments()[self._model.get_experiment_name()]
+            self._experiments_model.get_experiments()[
+                self._training_model.get_experiment_name()
+            ]
         )
         self._combo_box_existing_models_checkpoint.setCurrentIndex(-1)
         self._combo_box_existing_models_checkpoint.setEnabled(True)

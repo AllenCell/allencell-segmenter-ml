@@ -36,12 +36,21 @@ def test_get_cyto_dl_config() -> None:
 
 
 def test_get_user_experiments_path() -> None:
-    expected_user_experiments_path = (
-        PurePath(__file__).parent / "experiments_home"
-    )
+    user_experiments_path = PurePath(__file__).parent / "experiments_home"
     config = CytoDlConfig(
         cyto_dl_home_path=PurePath(__file__).parent / "cyto_dl_home",
-        user_experiments_path=expected_user_experiments_path,
+        user_experiments_path=user_experiments_path,
     )
     model = ExperimentsModel(config)
-    assert model.get_user_experiments_path() == expected_user_experiments_path
+    assert model.get_user_experiments_path() == user_experiments_path
+
+
+def test_get_model_checkpoints() -> None:
+    user_experiments_path = PurePath(__file__).parent / "experiments_home"
+    config = CytoDlConfig(
+        cyto_dl_home_path=PurePath(__file__).parent / "cyto_dl_home",
+        user_experiments_path=user_experiments_path,
+    )
+    expected = user_experiments_path / "foo" / "checkpoints" / "bar"
+    model = ExperimentsModel(config)
+    assert model.get_model_checkpoints_path("foo", "bar") == expected

@@ -41,3 +41,27 @@ class ExperimentsModel(IExperimentsModel):
 
     def get_user_experiments_path(self) -> Path:
         return self.get_cyto_dl_config().get_user_experiments_path()
+
+    def get_model_test_images_path(self, experiment_name: str) -> Path:
+        return (
+            Path(self.get_cyto_dl_config().get_user_experiments_path())
+            / experiment_name
+            / "test_images"
+            if self._experiment_name
+            else None
+        )
+
+    def get_model_checkpoints_path(
+        self, experiment_name: str, checkpoint: str
+    ) -> Path:
+        """
+        Gets checkpoints for model path
+        """
+        return (
+            self.get_user_experiments_path()
+            / experiment_name
+            / "checkpoints"
+            / checkpoint
+            if experiment_name and checkpoint
+            else None
+        )

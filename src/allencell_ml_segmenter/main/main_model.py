@@ -9,11 +9,10 @@ class MainModel(Publisher):
     Main model for this application. Responsible for non-tab-related view switching.
     """
 
-    def __init__(self, experiments_model: IExperimentsModel):
+    def __init__(self):
         super().__init__()
         # Current page of the UI
         self._current_view: AicsWidget = None
-        self._experiments_model = experiments_model
 
     def get_current_view(self) -> AicsWidget:
         """
@@ -27,6 +26,3 @@ class MainModel(Publisher):
         """
         self._current_view = view
         self.dispatch(Event.ACTION_CHANGE_VIEW)
-
-    def get_experiment_model(self) -> IExperimentsModel:
-        return self._experiments_model
