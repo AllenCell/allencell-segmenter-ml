@@ -15,9 +15,7 @@ def training_model() -> TrainingModel:
     """
     Returns a TrainingModel instance for testing.
     """
-    return TrainingModel(
-        MainModel()
-    )
+    return TrainingModel(MainModel())
 
 
 def test_get_experiment_type(training_model: TrainingModel) -> None:
