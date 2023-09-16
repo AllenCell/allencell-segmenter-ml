@@ -1,4 +1,3 @@
-from pathlib import Path
 import pytest
 from pytestqt.qtbot import QtBot
 from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
