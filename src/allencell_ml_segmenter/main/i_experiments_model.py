@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from pathlib import Path
 
 
 class IExperimentsModel(ABC):
@@ -21,4 +22,10 @@ class IExperimentsModel(ABC):
 
     @abstractmethod
     def get_user_experiments_path(self):
+        pass
+
+    @abstractmethod
+    def get_model_checkpoints_path(
+        self, experiment_name: str, checkpoint: str
+    ) -> Path:
         pass
