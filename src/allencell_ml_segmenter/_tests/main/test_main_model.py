@@ -1,4 +1,3 @@
-from pathlib import Path
 import pytest
 from unittest.mock import Mock
 from allencell_ml_segmenter.core.aics_widget import AicsWidget
