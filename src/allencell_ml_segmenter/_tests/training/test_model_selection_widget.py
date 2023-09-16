@@ -21,12 +21,12 @@ def experiment_model() -> IExperimentsModel:
 
 
 @pytest.fixture
-def training_model(experiment_model: IExperimentsModel) -> TrainingModel:
+def training_model() -> TrainingModel:
     """
     Fixture that creates an instance of TrainingModel for testing.
     """
     return TrainingModel(  # instead of this, how about i mock os.listdir ?
-        MainModel(experiment_model)
+        MainModel()
     )
 
 
