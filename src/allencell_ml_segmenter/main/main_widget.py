@@ -36,11 +36,7 @@ class MainWidget(AicsWidget):
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
 
-        # main model and app config
-        if config is None:
-            config = CytoDlConfig(CYTO_DL_HOME_PATH, USER_EXPERIMENTS_PATH)
-        experiment_model = ExperimentsModel(config)
-        self._model: MainModel = MainModel(experiment_model)
+        self._model: MainModel = MainModel()
         self._model.subscribe(
             Event.ACTION_CHANGE_VIEW, self, self.handle_change_view
         )
@@ -55,6 +51,10 @@ class MainWidget(AicsWidget):
         # initialize the tabs
         self._prediction_view: PredictionView = PredictionView(self._model)
         self._initialize_view(self._prediction_view, "Prediction")
+
+        if config is None:
+            config = CytoDlConfig(CYTO_DL_HOME_PATH, USER_EXPERIMENTS_PATH)
+        experiment_model = ExperimentsModel(config)
 
         training_view: TrainingView = TrainingView(
             main_model=self._model,
