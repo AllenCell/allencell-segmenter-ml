@@ -19,19 +19,20 @@ def training_service() -> TrainingService:
     """
     Returns a TrainingService object with arbitrary-set fields in the model for testing.
     """
-    model: TrainingModel = TrainingModel(
-        MainModel(ExperimentsModel(CytoDlConfig(Path(), Path())))
+    experiments_model = ExperimentsModel(CytoDlConfig(Path(), Path()))
+    training_model: TrainingModel = TrainingModel(MainModel())
+    training_model.set_experiment_type("segmentation")
+    training_model.set_hardware_type("cpu")
+    training_model.set_image_dims(2)
+    training_model.set_images_directory("/path/to/images")
+    training_model.set_channel_index(9)
+    training_model.set_max_time(9992)
+    training_model.set_config_dir("/path/to/configs")
+    training_model.set_patch_size("small")
+    training_model.set_max_epoch(100)
+    return TrainingService(
+        training_model=training_model, experiments_model=experiments_model
     )
-    model.set_experiment_type("segmentation")
-    model.set_hardware_type("cpu")
-    model.set_image_dims(2)
-    model.set_images_directory("/path/to/images")
-    model.set_channel_index(9)
-    model.set_max_time(9992)
-    model.set_config_dir("/path/to/configs")
-    model.set_patch_size("small")
-    model.set_max_epoch(100)
-    return TrainingService(model)
 
 
 def test_list_to_string() -> None:
