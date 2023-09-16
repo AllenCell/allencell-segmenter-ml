@@ -14,3 +14,6 @@ class FakeExperimentModel(IExperimentsModel):
 
     def get_user_experiments_path(self) -> Path:
         return Path()
+
+    def get_model_checkpoints_path(self) -> Path:
+        return Path()

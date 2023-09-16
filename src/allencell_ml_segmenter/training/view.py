@@ -12,6 +12,7 @@ from qtpy.QtWidgets import (
 from allencell_ml_segmenter._style import Style
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.view import View
+from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.services.training_service import TrainingService
 from allencell_ml_segmenter.training.image_selection_widget import (
@@ -31,15 +32,22 @@ class TrainingView(View):
     Holds widgets pertinent to training processes - ImageSelectionWidget & ModelSelectionWidget.
     """
 
-    def __init__(self, main_model: MainModel, viewer: napari.Viewer):
+    def __init__(
+        self,
+        main_model: MainModel,
+        experiments_model: ExperimentsModel,
+        viewer: napari.Viewer,
+    ):
         super().__init__()
 
         self._viewer = viewer
 
         self._main_model: MainModel = main_model
+        self._experiments_model: ExperimentsModel = experiments_model
         self._training_model: TrainingModel = TrainingModel(main_model)
         self._training_service: TrainingService = TrainingService(
-            self._training_model
+            training_model=self._training_model,
+            experiments_model=self._experiments_model,
         )
 
         self.setLayout(QVBoxLayout())
@@ -61,7 +69,7 @@ class TrainingView(View):
         image_selection_widget.setObjectName("imageSelection")
 
         model_selection_widget: ModelSelectionWidget = ModelSelectionWidget(
-            self._training_model
+            self._training_model, self._experiments_model
         )
         model_selection_widget.setObjectName("modelSelection")
 
@@ -138,7 +146,9 @@ class TrainingView(View):
         """
         self._training_model.set_training_running(True)
         result_images = self.read_result_images(
-            self._training_model.get_model_test_images_path()
+            self._experiments_model.get_model_test_images_path(
+                self._training_model.get_experiment_name()
+            )
         )
         print("doWork - reading result images")
         # result_images2 = self.read_result_images(Path("logs/train/runs/YOUR_EXP_NAME/YOUR_RUN_NAME/2023-08-17_21-35-51/val_images"))

@@ -33,13 +33,15 @@ def training_model(experiment_model: IExperimentsModel) -> TrainingModel:
 
 @pytest.fixture
 def model_selection_widget(
-    qtbot: QtBot,
+    experiment_model: IExperimentsModel,
     training_model: TrainingModel,
 ) -> ModelSelectionWidget:
     """
     Fixture that creates an instance of ModelSelectionWidget for testing.
     """
-    return ModelSelectionWidget(training_model)
+    return ModelSelectionWidget(
+        training_model=training_model, experiments_model=experiment_model
+    )
 
 
 def test_radio_new_slot(
@@ -129,7 +131,7 @@ def test_select_existing_model_option(
         training_model.set_checkpoint(dummy_checkpoint)
 
         # ASSERT
-        assert Path(experiment) / "checkpoints" / "dummy_checkpoint" == training_model.get_model_checkpoints_path()
+        assert experiment == training_model.get_experiment_name()
 
 
 def test_select_new_model_radio(
@@ -146,7 +148,7 @@ def test_select_new_model_radio(
         model_selection_widget._radio_new_model.click()  # enables the combo box
 
     # ASSERT
-    assert training_model.get_model_checkpoints_path() is None
+    assert training_model.get_checkpoint() is None
 
 
 def test_set_patch_size(

@@ -7,6 +7,7 @@ from allencell_ml_segmenter.core.event import Event
 # from cyto_dl.train import main as cyto_train
 
 import sys
+from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.training.training_model import (
     TrainingType,
     Hardware,
@@ -59,9 +60,14 @@ class TrainingService(Subscriber):
     Interface for training a model. Uses cyto-dl to train model according to spec
     """
 
-    def __init__(self, training_model: TrainingModel):
+    def __init__(
+        self,
+        training_model: TrainingModel,
+        experiments_model: ExperimentsModel,
+    ):
         super().__init__()
         self._training_model: TrainingModel = training_model
+        self._experiments_model: ExperimentsModel = experiments_model
         self._training_model.subscribe(
             Event.PROCESS_TRAINING,
             self,
@@ -87,7 +93,7 @@ class TrainingService(Subscriber):
 
             # Source of configs relative to user's home.  We need a dynamic solution in prod.
             self._training_model.set_config_dir(
-                f"{self._training_model.get_cyto_dl_path()}/configs"
+                f"{self._experiments_model.get_cyto_dl_config().get_cyto_dl_home_path()}/configs"
             )
 
             #################################################
@@ -96,7 +102,7 @@ class TrainingService(Subscriber):
             )
             if self._training_model.get_checkpoint() is not None:
                 sys.argv.append(
-                    f"ckpt_path={self._training_model.get_model_checkpoints_path()}"
+                    f"ckpt_path={self._experiments_model.get_model_checkpoints_path(self._training_model.get_experiment_name, self._training_model.get_checkpoint())}"
                 )
             # sys.argv.append(
             #     "+callbacks.print_progress._target_=allencell_ml_segmenter.services.training_service.MyPrintingCallback"
