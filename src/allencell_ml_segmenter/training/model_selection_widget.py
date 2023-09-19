@@ -183,9 +183,7 @@ class ModelSelectionWidget(QWidget):
         self._max_epoch_input: QLineEdit = QLineEdit()
         self._max_epoch_input.setPlaceholderText("1000")
         self._max_epoch_input.setObjectName("trainingStepInput")
-        self._max_epoch_input.textChanged.connect(
-            lambda text: self._training_model.set_max_epoch(int(text))
-        )
+        self._max_epoch_input.textChanged.connect(self._max_epochtext_field_handler)
         bottom_grid_layout.addWidget(self._max_epoch_input, 2, 1)
 
         max_time_layout: QHBoxLayout = QHBoxLayout()
@@ -225,12 +223,19 @@ class ModelSelectionWidget(QWidget):
 
         frame.layout().addLayout(bottom_grid_layout)
 
-    def _model_combo_handler(self, model_path: Path) -> None:
+    def _max_epochtext_field_handler(self, max_epochs: str) -> None:
+        if max_epochs != '':
+            self._training_model.set_max_epoch(int(max_epochs))
+
+    def _model_combo_handler(self, experiment_name: str) -> None:
         """
         Triggered when the user selects a model from the _combo_box_existing_models.
         Sets the model path in the model.
         """
-        self._training_model.set_experiment_name(model_path)
+        if experiment_name == '':
+            self._training_model.set_experiment_name(None)
+        else:
+            self._training_model.set_experiment_name(experiment_name)
         self._refresh_checkpoint_options()
 
     def _model_radio_handler(self) -> None:
