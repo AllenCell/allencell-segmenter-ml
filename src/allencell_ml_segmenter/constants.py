@@ -1,4 +1,4 @@
-CYTO_DL_HOME_PATH = "/Users/chrishu/dev/code/test/cyto-dl"
+CYTO_DL_HOME_PATH = "/Users/brian.kim/Desktop/work/cyto-dl"
 USER_EXPERIMENTS_PATH = (
-    "/Users/chrishu/dev/code/test/allencell-ml-segmenter/logs/train/runs"
+    "/Users/brian.kim/Desktop/work/cyto-dl/cyto_dl/logs/train/runs"
 )
