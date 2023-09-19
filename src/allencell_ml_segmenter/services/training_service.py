@@ -98,11 +98,12 @@ class TrainingService(Subscriber):
 
             #################################################
             sys.argv.append(
+                # This is meant to be a string as is - not a string template.  In cyto-dl, it will be treated as a string template
                 "hydra.run.dir=${paths.log_dir}/${task_name}/runs/${experiment_name}"
             )
             if self._training_model.get_checkpoint() is not None:
                 sys.argv.append(
-                    f"ckpt_path={self._experiments_model.get_model_checkpoints_path(self._training_model.get_experiment_name, self._training_model.get_checkpoint())}"
+                    f"ckpt_path={self._experiments_model.get_model_checkpoints_path(self._training_model.get_experiment_name(), self._training_model.get_checkpoint())}"
                 )
             # sys.argv.append(
             #     "+callbacks.print_progress._target_=allencell_ml_segmenter.services.training_service.MyPrintingCallback"
