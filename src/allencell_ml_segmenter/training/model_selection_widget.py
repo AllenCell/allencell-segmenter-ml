@@ -63,7 +63,7 @@ class ModelSelectionWidget(QWidget):
         top_grid_layout: QGridLayout = QGridLayout()
 
         self._radio_new_model: QRadioButton = QRadioButton()
-        self._radio_new_model.toggled.connect(self._new_model_radio_handler)
+        self._radio_new_model.toggled.connect(self._model_radio_handler)
         top_grid_layout.addWidget(self._radio_new_model, 0, 0)
 
         self.experiment_info_widget = ExperimentInfoWidget(
@@ -75,7 +75,7 @@ class ModelSelectionWidget(QWidget):
 
         self._radio_existing_model: QRadioButton = QRadioButton()
         self._radio_existing_model.toggled.connect(
-            self._existing_model_radio_handler
+            self._model_radio_handler
         )
         top_grid_layout.addWidget(self._radio_existing_model, 1, 0)
 
@@ -233,31 +233,32 @@ class ModelSelectionWidget(QWidget):
         self._training_model.set_experiment_name(model_path)
         self._refresh_checkpoint_options()
 
-    def _new_model_radio_handler(self) -> None:
-        """
-        Triggered when the user selects the "start a new model" radio button.
-        Enables and disables relevent controls.
-        """
+    def _model_radio_handler(self) -> None:
 
-        self._combo_box_existing_models.setEnabled(False)
-        self._combo_box_existing_models_checkpoint.setEnabled(False)
-        self.experiment_info_widget.set_enabled(True)
+        if self._radio_new_model.isChecked():
+            """
+            Triggered when the user selects the "start a new model" radio button.
+            Enables and disables relevent controls.
+            """
+            self._combo_box_existing_models.setCurrentIndex(-1)
+            self._combo_box_existing_models.setEnabled(False)
+            self.experiment_info_widget.set_enabled(True)
 
-        self._combo_box_existing_models.setCurrentIndex(-1)
-        self._combo_box_existing_models_checkpoint.clear()
+            self._combo_box_existing_models_checkpoint.setEnabled(False)
+            self._combo_box_existing_models_checkpoint.clear()
 
-        self._training_model.set_experiment_name(None)
-        self._training_model.set_checkpoint(None)
+            self._training_model.set_experiment_name(None)
+            self._training_model.set_checkpoint(None)
 
-    def _existing_model_radio_handler(self) -> None:
-        """
-        Triggered when the user selects the "existing model" radio button.
-        Enables and disables relevent controls.
-        """
-        self._training_model.set_experiment_name(None)
-        self._combo_box_existing_models.setEnabled(True)
-        self.experiment_info_widget.set_enabled(False)
-        self.experiment_info_widget.clear()
+        if self._radio_existing_model.isChecked():
+            """
+            Triggered when the user selects the "existing model" radio button.
+            Enables and disables relevent controls.
+            """
+            self._training_model.set_experiment_name(None)
+            self._combo_box_existing_models.setEnabled(True)
+            self.experiment_info_widget.set_enabled(False)
+            self.experiment_info_widget.clear()
 
     def _max_time_checkbox_slot(self, checked: Qt.CheckState) -> None:
         """
