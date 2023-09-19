@@ -47,7 +47,7 @@ class ExperimentsModel(IExperimentsModel):
             Path(self.get_cyto_dl_config().get_user_experiments_path())
             / experiment_name
             / "test_images"
-            if self._experiment_name
+            if experiment_name
             else None
         )
 
