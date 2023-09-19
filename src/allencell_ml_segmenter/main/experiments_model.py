@@ -14,7 +14,7 @@ class ExperimentsModel(IExperimentsModel):
 
     def refresh_experiments(self) -> None:
         for experiment in Path(self.config._user_experiments_path).iterdir():
-            if experiment not in self.experiments:
+            if experiment not in self.experiments and not experiment.name.startswith('.'):
                 self.experiments[experiment.name] = set()
                 self.refresh_checkpoints(experiment.name)
 
