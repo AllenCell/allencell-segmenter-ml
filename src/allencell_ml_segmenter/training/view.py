@@ -150,11 +150,10 @@ class TrainingView(View):
                 self._training_model.get_experiment_name()
             )
         )
-        print("doWork - reading result images")
-        # result_images2 = self.read_result_images(Path("logs/train/runs/YOUR_EXP_NAME/YOUR_RUN_NAME/2023-08-17_21-35-51/val_images"))
         print("doWork - setting result images")
         self._training_model.set_result_images(result_images)
         print("doWork - done")
+        self._training_model.set_training_running(False)
 
     def getTypeOfWork(self) -> str:
         """
