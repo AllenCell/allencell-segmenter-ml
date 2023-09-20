@@ -21,7 +21,7 @@ from allencell_ml_segmenter.training.experiment_info_widget import (
 from allencell_ml_segmenter.training.training_model import TrainingModel
 from allencell_ml_segmenter.training.training_model import PatchSize
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
-
+from PyQt5.QtGui import QIntValidator
 
 class ModelSelectionWidget(QWidget):
     """
@@ -177,6 +177,8 @@ class ModelSelectionWidget(QWidget):
         bottom_grid_layout.addWidget(max_epoch_label, 2, 0)
 
         self._max_epoch_input: QLineEdit = QLineEdit()
+        # allow only integers TODO [needs test coverage]
+        self._max_epoch_input.setValidator(QIntValidator())
         self._max_epoch_input.setPlaceholderText("1000")
         self._max_epoch_input.setObjectName("trainingStepInput")
         self._max_epoch_input.textChanged.connect(
@@ -222,7 +224,7 @@ class ModelSelectionWidget(QWidget):
         frame.layout().addLayout(bottom_grid_layout)
 
     def _max_epochtext_field_handler(self, max_epochs: str) -> None:
-        if max_epochs != "":
+        if max_epochs != "": # must cast to int
             self._training_model.set_max_epoch(int(max_epochs))
 
     def _model_combo_handler(self, experiment_name: str) -> None:
