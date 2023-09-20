@@ -13,14 +13,19 @@ class ExperimentsModel(IExperimentsModel):
         self.refresh_experiments()
 
     def refresh_experiments(self) -> None:
-        for experiment in Path(self.config._user_experiments_path).iterdir():
-            if experiment not in self.experiments and not experiment.name.startswith('.'):
+        for experiment in Path(
+            self.config.get_user_experiments_path()
+        ).iterdir():
+            if (
+                experiment not in self.experiments
+                and not experiment.name.startswith(".")
+            ):
                 self.experiments[experiment.name] = set()
                 self.refresh_checkpoints(experiment.name)
 
     def refresh_checkpoints(self, experiment: str) -> None:
         checkpoints_path = (
-            Path(self.config._user_experiments_path)
+            Path(self.config.get_user_experiments_path())
             / experiment
             / "checkpoints"
         )
