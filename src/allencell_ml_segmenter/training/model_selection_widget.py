@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
     QWidget,
@@ -74,9 +72,7 @@ class ModelSelectionWidget(QWidget):
         top_grid_layout.addWidget(self.experiment_info_widget, 0, 2)
 
         self._radio_existing_model: QRadioButton = QRadioButton()
-        self._radio_existing_model.toggled.connect(
-            self._model_radio_handler
-        )
+        self._radio_existing_model.toggled.connect(self._model_radio_handler)
         top_grid_layout.addWidget(self._radio_existing_model, 1, 0)
 
         label_existing_model: LabelWithHint = LabelWithHint("Existing model")
@@ -97,7 +93,7 @@ class ModelSelectionWidget(QWidget):
             self._model_combo_handler
         )
         self._training_model.subscribe(
-            Event.PROCESS_TRAINING, self, self._refresh_options
+            Event.PROCESS_TRAINING, self, self._process_event_handler
         )
 
         top_grid_layout.addWidget(self._combo_box_existing_models, 1, 2)
@@ -183,7 +179,9 @@ class ModelSelectionWidget(QWidget):
         self._max_epoch_input: QLineEdit = QLineEdit()
         self._max_epoch_input.setPlaceholderText("1000")
         self._max_epoch_input.setObjectName("trainingStepInput")
-        self._max_epoch_input.textChanged.connect(self._max_epochtext_field_handler)
+        self._max_epoch_input.textChanged.connect(
+            self._max_epochtext_field_handler
+        )
         bottom_grid_layout.addWidget(self._max_epoch_input, 2, 1)
 
         max_time_layout: QHBoxLayout = QHBoxLayout()
@@ -224,7 +222,7 @@ class ModelSelectionWidget(QWidget):
         frame.layout().addLayout(bottom_grid_layout)
 
     def _max_epochtext_field_handler(self, max_epochs: str) -> None:
-        if max_epochs != '':
+        if max_epochs != "":
             self._training_model.set_max_epoch(int(max_epochs))
 
     def _model_combo_handler(self, experiment_name: str) -> None:
@@ -232,14 +230,13 @@ class ModelSelectionWidget(QWidget):
         Triggered when the user selects a model from the _combo_box_existing_models.
         Sets the model path in the model.
         """
-        if experiment_name == '':
+        if experiment_name == "":
             self._training_model.set_experiment_name(None)
         else:
             self._training_model.set_experiment_name(experiment_name)
-        self._refresh_checkpoint_options()
+            self._refresh_checkpoint_options()
 
     def _model_radio_handler(self) -> None:
-
         if self._radio_new_model.isChecked():
             """
             Triggered when the user selects the "start a new model" radio button.
@@ -275,7 +272,7 @@ class ModelSelectionWidget(QWidget):
         else:
             self._max_time_in_hours_input.setEnabled(False)
 
-    def _refresh_options(self, _: Event = None) -> None:
+    def _process_event_handler(self, _: Event = None) -> None:
         """
         Refreshes the experiments in the _combo_box_existing_models.
         """
@@ -284,6 +281,7 @@ class ModelSelectionWidget(QWidget):
         if (
             self._radio_existing_model.isChecked()
             and self._training_model.get_experiment_name() is not None
+            and not self._training_model.is_training_running()
         ):
             self._refresh_checkpoint_options()
 
