@@ -23,6 +23,7 @@ from allencell_ml_segmenter.training.training_model import PatchSize
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 from PyQt5.QtGui import QIntValidator
 
+
 class ModelSelectionWidget(QWidget):
     """
     A widget for segmentation model selection.
@@ -224,8 +225,7 @@ class ModelSelectionWidget(QWidget):
         frame.layout().addLayout(bottom_grid_layout)
 
     def _max_epochtext_field_handler(self, max_epochs: str) -> None:
-        if max_epochs != "": # must cast to int
-            self._training_model.set_max_epoch(int(max_epochs))
+        self._training_model.set_max_epoch(int(max_epochs))
 
     def _model_combo_handler(self, experiment_name: str) -> None:
         """
