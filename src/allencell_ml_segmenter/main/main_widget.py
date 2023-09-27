@@ -1,7 +1,7 @@
 from typing import Dict
 
 import napari
-from allencell_ml_segmenter.curation.view import CurationView
+from allencell_ml_segmenter.curation.input_view import CurationInputView
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
     QVBoxLayout,
@@ -17,6 +17,7 @@ from allencell_ml_segmenter.core.aics_widget import AicsWidget
 
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.view import View
+from allencell_ml_segmenter.curation.main_view import CurationMainView
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.prediction.view import PredictionView
@@ -60,7 +61,7 @@ class MainWidget(AicsWidget):
         training_view: TrainingView = TrainingView(self._model, self.viewer)
         self._initialize_view(training_view, "Training")
 
-        self._curation_view: CurationView = CurationView(self._model)
+        self._curation_view: CurationMainView = CurationMainView()
         self._initialize_view(self._curation_view, "Curation")
 
         self._view_container.currentChanged.connect(self._tab_changed)
