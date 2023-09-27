@@ -15,7 +15,7 @@ from qtpy.QtWidgets import (
 
 )
 
-class CurationView(View):
+class CurationInputView(View):
     """
     View for Curation UI
     """
