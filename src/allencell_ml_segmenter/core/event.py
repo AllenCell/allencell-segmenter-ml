@@ -14,6 +14,7 @@ class Event(Enum):
     PROCESS_TRAINING_COMPLETE = "training_complete"
     PROCESS_PREDICTION = "prediction"
     PROCESS_PREDICTION_COMPLETE = "prediction_complete"
+    PROCESS_CURATION_INPUT_STARTED = "curation_input_started"
 
     # Action events. This signals a change in the UI. These are a direct result of a user action
     ACTION_CHANGE_VIEW = "change_view"
@@ -27,6 +28,9 @@ class Event(Enum):
     ACTION_PREDICTION_POSTPROCESSING_AUTO_THRESHOLD = (
         "postprocessing_auto_threshold"
     )
+    ACTION_CURATION_RAW_SELECTED = "curation_raw_selected"
+    ACTION_CURATION_SEG1_SELECTED = "curation_seg1_selected"
+    ACTION_CURATION_SEG2_SELECTED = "curation_seg2_selected"
 
     # View selection events. These can stem from a user action, or from a process (i.e. prediction process ends, and a new view is shown automatically).
     VIEW_SELECTION_TRAINING = "training_selected"
