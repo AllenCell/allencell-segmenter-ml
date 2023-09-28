@@ -1,9 +1,9 @@
-from pathlib import Path, PurePath
-
 import pytest
 from pytestqt.qtbot import QtBot
-from allencell_ml_segmenter.config.cyto_dl_config import CytoDlConfig
-from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
+from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
+    FakeExperimentModel,
+)
+from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
 
 from allencell_ml_segmenter.training.model_selection_widget import (
@@ -16,33 +16,31 @@ from allencell_ml_segmenter.training.training_model import (
 
 
 @pytest.fixture
+def experiment_model() -> IExperimentsModel:
+    return FakeExperimentModel()
+
+
+@pytest.fixture
 def training_model() -> TrainingModel:
     """
     Fixture that creates an instance of TrainingModel for testing.
     """
     return TrainingModel(  # instead of this, how about i mock os.listdir ?
-        MainModel(
-            ExperimentsModel(
-                CytoDlConfig(
-                    cyto_dl_home_path=PurePath(__file__).parent
-                    / "cyto_dl_home",
-                    user_experiments_path=PurePath(__file__).parent
-                    / "experiments_home",
-                )
-            )
-        )
+        MainModel()
     )
 
 
 @pytest.fixture
 def model_selection_widget(
-    qtbot: QtBot,
+    experiment_model: IExperimentsModel,
     training_model: TrainingModel,
 ) -> ModelSelectionWidget:
     """
     Fixture that creates an instance of ModelSelectionWidget for testing.
     """
-    return ModelSelectionWidget(training_model)
+    return ModelSelectionWidget(
+        training_model=training_model, experiments_model=experiment_model
+    )
 
 
 def test_radio_new_slot(
@@ -111,6 +109,7 @@ def test_checkbox_slot(
 
 def test_select_existing_model_option(
     qtbot: QtBot,
+    experiment_model: IExperimentsModel,
     model_selection_widget: ModelSelectionWidget,
     training_model: TrainingModel,
 ) -> None:
@@ -124,19 +123,14 @@ def test_select_existing_model_option(
     ):
         model_selection_widget._radio_existing_model.click()  # enables the combo box
 
-    for i, experiment_path in enumerate(
-        Path(training_model.get_user_experiments_path()).iterdir()
-    ):
+    for i, experiment in enumerate(experiment_model.get_experiments().keys()):
         # ACT
         # Invariant: options in existing_models combo were added in the order the appear in the model.
         model_selection_widget._combo_box_existing_models.setCurrentIndex(i)
         training_model.set_checkpoint(dummy_checkpoint)
 
         # ASSERT
-        assert (
-            experiment_path / f"checkpoints/{dummy_checkpoint}"
-            == training_model.get_model_checkpoints_path()
-        )
+        assert experiment == training_model.get_experiment_name()
 
 
 def test_select_new_model_radio(
@@ -153,7 +147,7 @@ def test_select_new_model_radio(
         model_selection_widget._radio_new_model.click()  # enables the combo box
 
     # ASSERT
-    assert training_model.get_model_checkpoints_path() is None
+    assert training_model.get_checkpoint() is None
 
 
 def test_set_patch_size(
