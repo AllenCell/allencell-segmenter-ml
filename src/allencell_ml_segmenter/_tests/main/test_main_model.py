@@ -1,9 +1,6 @@
-from pathlib import Path
 import pytest
 from unittest.mock import Mock
-from allencell_ml_segmenter.config.cyto_dl_config import CytoDlConfig
 from allencell_ml_segmenter.core.aics_widget import AicsWidget
-from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.core.publisher import Event
 from allencell_ml_segmenter._tests.fakes.fake_subscriber import FakeSubscriber
@@ -14,7 +11,7 @@ def main_model() -> MainModel:
     """
     Fixture for MainModel testing.
     """
-    return MainModel(ExperimentsModel(CytoDlConfig(Path(), Path())))
+    return MainModel()
 
 
 @pytest.fixture

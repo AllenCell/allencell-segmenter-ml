@@ -6,8 +6,6 @@ import pytest
 from qtpy.QtWidgets import QFileDialog
 from qtpy.QtCore import Qt
 from pytestqt.qtbot import QtBot
-from allencell_ml_segmenter.config.cyto_dl_config import CytoDlConfig
-from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
 
 from allencell_ml_segmenter.training.image_selection_widget import (
@@ -24,9 +22,7 @@ def training_model() -> TrainingModel:
     """
     Fixture that creates an instance of TrainingModel for testing.
     """
-    return TrainingModel(
-        MainModel(ExperimentsModel(CytoDlConfig(Path(), Path())))
-    )
+    return TrainingModel(MainModel())
 
 
 @pytest.fixture
