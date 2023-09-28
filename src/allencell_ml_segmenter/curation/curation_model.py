@@ -18,7 +18,9 @@ class CurationModel(Publisher):
 
         self._raw_directory: Path = None
         self._seg1_directory: Path = None
-        self._seg2_directory: Path = None # optional, if None was never selected
+        self._seg2_directory: Path = (
+            None  # optional, if None was never selected
+        )
         # These are what the user has selected in the input view
         self._raw_image_channel: int = None
         self._seg1_image_channel: int = None
@@ -30,7 +32,9 @@ class CurationModel(Publisher):
 
     def set_raw_directory(self, dir: Path):
         self._raw_directory = dir
-        self._raw_image_channel_count = self.get_total_num_channels(self._raw_directory)
+        self._raw_image_channel_count = self.get_total_num_channels(
+            self._raw_directory
+        )
         self.dispatch(Event.ACTION_CURATION_RAW_SELECTED)
 
     def get_raw_directory(self) -> Path:
@@ -38,7 +42,9 @@ class CurationModel(Publisher):
 
     def set_seg1_directory(self, dir: Path):
         self._seg1_directory = dir
-        self._seg1_image_channel_count = self.get_total_num_channels(self._seg1_directory)
+        self._seg1_image_channel_count = self.get_total_num_channels(
+            self._seg1_directory
+        )
         self.dispatch(Event.ACTION_CURATION_SEG1_SELECTED)
 
     def get_seg1_directory(self) -> Path:
@@ -46,7 +52,9 @@ class CurationModel(Publisher):
 
     def set_seg2_directory(self, dir: Path):
         self._seg2_directory = dir
-        self._seg2_image_channel_count = self.get_total_num_channels(self._seg2_directory)
+        self._seg2_image_channel_count = self.get_total_num_channels(
+            self._seg2_directory
+        )
         self.dispatch(Event.ACTION_CURATION_SEG2_SELECTED)
 
     def get_seg2_directory(self) -> Path:
@@ -88,13 +96,9 @@ class CurationModel(Publisher):
     def get_total_num_channels(self, path) -> int:
         # we expect user to have the same number of channels for all images in their folders
         # and that only images are stored in those folders
-        first_image = [x for x in path.iterdir() if x.is_file()][0] # first file in this folder as path object
+        first_image = [x for x in path.iterdir() if x.is_file()][
+            0
+        ]  # first file in this folder as path object
         img = AICSImage(str(first_image.resolve()))
         # return num channel
         return img.dims.C
-
-
-
-
-
-

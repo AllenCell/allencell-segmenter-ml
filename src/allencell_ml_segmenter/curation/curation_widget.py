@@ -45,7 +45,11 @@ class CurationWidget(QStackedWidget, Subscriber, metaclass=CurationUiMeta):
         self.initialize_view(self.curation_main_view)
 
         self.set_view(self.curation_input_view)
-        self.curation_model.subscribe(Event.PROCESS_CURATION_INPUT_STARTED, self, lambda x: self.set_view(self.curation_main_view))
+        self.curation_model.subscribe(
+            Event.PROCESS_CURATION_INPUT_STARTED,
+            self,
+            lambda x: self.set_view(self.curation_main_view),
+        )
 
     def set_view(self, view: View) -> None:
         """
