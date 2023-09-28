@@ -1,7 +1,5 @@
 import pytest
 from pathlib import Path
-from allencell_ml_segmenter.config.cyto_dl_config import CytoDlConfig
-from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
 
 from allencell_ml_segmenter.training.training_model import (
@@ -17,9 +15,7 @@ def training_model() -> TrainingModel:
     """
     Returns a TrainingModel instance for testing.
     """
-    return TrainingModel(
-        MainModel(ExperimentsModel(CytoDlConfig(Path(), Path())))
-    )
+    return TrainingModel(MainModel())
 
 
 def test_get_experiment_type(training_model: TrainingModel) -> None:
