@@ -4,7 +4,7 @@ from allencell_ml_segmenter.core.event import Event
 # from lightning.pytorch.callbacks import Callback
 
 # disabled for tests (cant import in ci yet)
-# from cyto_dl.train import main as cyto_train
+from cyto_dl.train import main as cyto_train
 
 import sys
 from allencell_ml_segmenter.training.training_model import (
@@ -113,7 +113,7 @@ class TrainingService(Subscriber):
             self._set_config_dir()
 
             # disabled for tests (cant import in ci yet)
-            # cyto_train()
+            cyto_train()
 
     def _set_experiment(self) -> None:
         """
