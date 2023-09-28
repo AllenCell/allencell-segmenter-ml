@@ -1,7 +1,7 @@
 from typing import Dict
 
 import napari
-from allencell_ml_segmenter.curation.input_view import CurationInputView
+from allencell_ml_segmenter.curation.curation_widget import CurationWidget
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
     QVBoxLayout,
@@ -61,7 +61,7 @@ class MainWidget(AicsWidget):
         training_view: TrainingView = TrainingView(self._model, self.viewer)
         self._initialize_view(training_view, "Training")
 
-        self._curation_view: CurationMainView = CurationInputView(self._model)
+        self._curation_view: CurationWidget = CurationWidget(self.viewer, self._model)
         self._initialize_view(self._curation_view, "Curation")
 
         self._view_container.currentChanged.connect(self._tab_changed)
