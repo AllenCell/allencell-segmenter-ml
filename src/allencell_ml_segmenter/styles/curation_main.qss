@@ -1,0 +1,18 @@
+#frame {
+    border: 1px solid #AAAAAA;
+    border-radius: 5px;
+}
+
+QPushButton {
+    margin-left: 2px;
+    margin-right: 2px;
+}
+
+#small_blue_btn {
+    background: #007ACC;
+}
+
+#big_blue_btn {
+    background: #007ACC;
+    height: 40%
+}
