@@ -1,6 +1,14 @@
 from PyQt5.QtWidgets import QRadioButton, QGridLayout
 from qtpy.QtCore import Qt
-from qtpy.QtWidgets import QVBoxLayout, QSizePolicy, QLabel, QFrame, QHBoxLayout, QPushButton, QProgressBar
+from qtpy.QtWidgets import (
+    QVBoxLayout,
+    QSizePolicy,
+    QLabel,
+    QFrame,
+    QHBoxLayout,
+    QPushButton,
+    QProgressBar,
+)
 
 from allencell_ml_segmenter._style import Style
 from allencell_ml_segmenter.core.view import View
@@ -46,15 +54,21 @@ class CurationMainView(View):
         inner_progress_frame.setLayout(QHBoxLayout())
         inner_progress_frame.setObjectName("frame")
         progress_bar_label: QLabel = QLabel("Image")
-        inner_progress_frame.layout().addWidget(progress_bar_label, alignment=Qt.AlignLeft)
+        inner_progress_frame.layout().addWidget(
+            progress_bar_label, alignment=Qt.AlignLeft
+        )
         self.progress_bar: QProgressBar = QProgressBar()
         inner_progress_frame.layout().addWidget(self.progress_bar)
         self.progress_bar_image_count: QLabel = QLabel("0/0")
-        inner_progress_frame.layout().addWidget(self.progress_bar_image_count, alignment=Qt.AlignRight)
+        inner_progress_frame.layout().addWidget(
+            self.progress_bar_image_count, alignment=Qt.AlignRight
+        )
         progress_bar_layout.addWidget(inner_progress_frame)
         self.next_button: QPushButton = QPushButton("Next ►")
         self.next_button.setObjectName("big_blue_btn")
-        progress_bar_layout.addWidget(self.next_button, alignment=Qt.AlignRight)
+        progress_bar_layout.addWidget(
+            self.next_button, alignment=Qt.AlignRight
+        )
         self.layout().addLayout(progress_bar_layout)
 
         self.file_name: QLabel = QLabel("Example_file_1")
@@ -63,7 +77,9 @@ class CurationMainView(View):
         use_image_frame: QFrame = QFrame()
         use_image_frame.setObjectName("frame")
         use_image_frame.setLayout(QHBoxLayout())
-        use_image_frame.layout().addWidget(QLabel("Use this image for training"))
+        use_image_frame.layout().addWidget(
+            QLabel("Use this image for training")
+        )
         self.yes_radio: QRadioButton = QRadioButton("Yes")
         use_image_frame.layout().addWidget(self.yes_radio)
         self.no_radio: QRadioButton = QRadioButton("No")
@@ -74,7 +90,9 @@ class CurationMainView(View):
         excluding_mask_labels = QHBoxLayout()
         excluding_mask_label = LabelWithHint("Excluding mask")
         excluding_mask_labels.addWidget(excluding_mask_label)
-        excluding_mask_labels.addWidget(QLabel("File name..."), alignment=Qt.AlignLeft)
+        excluding_mask_labels.addWidget(
+            QLabel("File name..."), alignment=Qt.AlignLeft
+        )
         self.layout().addLayout(excluding_mask_labels)
         # buttons for excluding mask
         excluding_mask_buttons = QHBoxLayout()
@@ -107,10 +125,6 @@ class CurationMainView(View):
         merging_mask_buttons.addWidget(merging_save_button)
 
         self.layout().addLayout(merging_mask_buttons)
-
-
-
-
 
     def doWork(self):
         print("work")
