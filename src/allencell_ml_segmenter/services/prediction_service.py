@@ -4,7 +4,8 @@ import sys
 from allencell_ml_segmenter.prediction.model import PredictionModel
 from pathlib import Path
 from typing import List, Any
-#from cyto_dl.eval import main as cyto_predict
+
+# from cyto_dl.eval import main as cyto_predict
 
 
 # static method
