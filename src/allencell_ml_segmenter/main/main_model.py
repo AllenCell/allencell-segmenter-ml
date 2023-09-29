@@ -13,13 +13,13 @@ class MainModel(Publisher):
         # Current page of the UI
         self._current_view: AicsWidget = None
 
-    def get_current_view(self) -> AicsWidget:
+    def get_current_view(self):
         """
         getter/property for current page
         """
         return self._current_view
 
-    def set_current_view(self, view: AicsWidget):
+    def set_current_view(self, view):
         """
         Set the current page in the UI and dispatch a MainEvent
         """
