@@ -46,8 +46,6 @@ class TrainingModel(Publisher):
     def __init__(self, main_model: MainModel):
         super().__init__()
         self._main_model = main_model
-        self._experiment_name: str = None
-        self._checkpoint: str = None
         self._experiment_type: TrainingType = None
         self._hardware_type: Hardware = None
         self._images_directory: Path = None
@@ -62,34 +60,6 @@ class TrainingModel(Publisher):
         self._max_time: int = None  # in seconds
         self._config_dir: Path = None
         self._is_training_running: bool = False
-
-    def get_experiment_name(self) -> str:
-        """
-        Gets experiment name
-        """
-        return self._experiment_name
-
-    def set_experiment_name(self, name: str) -> None:
-        """
-        Sets experiment name
-
-        name (str): name of cyto-dl experiment
-        """
-        self._experiment_name = name
-
-    def get_checkpoint(self) -> str:
-        """
-        Gets checkpoint
-        """
-        return self._checkpoint
-
-    def set_checkpoint(self, checkpoint: str) -> None:
-        """
-        Sets checkpoint
-
-        checkpoint (str): name of checkpoint to use
-        """
-        self._checkpoint = checkpoint
 
     def get_experiment_type(self) -> TrainingType:
         """
