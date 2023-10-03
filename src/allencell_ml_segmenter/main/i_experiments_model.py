@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from pathlib import Path
 
 from allencell_ml_segmenter.core.publisher import Publisher

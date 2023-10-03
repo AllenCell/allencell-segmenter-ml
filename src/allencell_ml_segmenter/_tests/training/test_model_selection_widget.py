@@ -11,7 +11,6 @@ from allencell_ml_segmenter.training.model_selection_widget import (
 )
 from allencell_ml_segmenter.training.training_model import (
     TrainingModel,
-    PatchSize,
 )
 
 
@@ -75,6 +74,7 @@ def test_radio_existing_slot(
     # ASSERT
     assert model_selection_widget._combo_box_existing_models.isEnabled()
 
+
 def test_select_new_model_radio(
     qtbot: QtBot,
     model_selection_widget: ModelSelectionWidget,
@@ -90,6 +90,7 @@ def test_select_new_model_radio(
 
     # ASSERT
     assert experiment_model.get_checkpoint() is None
+
 
 def test_select_existing_model_option(
     qtbot: QtBot,
