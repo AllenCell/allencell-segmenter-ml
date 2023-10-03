@@ -8,6 +8,13 @@ from qtpy.QtWidgets import (
     QFrame,
     QVBoxLayout,
     QSizePolicy,
+    QWidget,
+    QGridLayout,
+    QComboBox,
+    QHBoxLayout,
+    QRadioButton,
+    QLineEdit,
+    QCheckBox,
 )
 from allencell_ml_segmenter._style import Style
 from allencell_ml_segmenter.core.event import Event
@@ -25,6 +32,10 @@ from allencell_ml_segmenter.training.training_model import TrainingModel
 from hydra.core.global_hydra import GlobalHydra
 from aicsimageio import AICSImage
 from aicsimageio.readers import TiffReader
+
+from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
+from PyQt5.QtGui import QIntValidator
+from allencell_ml_segmenter.training.training_model import PatchSize
 
 
 class TrainingView(View):
@@ -68,23 +79,120 @@ class TrainingView(View):
         )
         image_selection_widget.setObjectName("imageSelection")
 
-        model_selection_widget: ModelSelectionWidget = ModelSelectionWidget(
-            self._training_model, self._experiments_model
-        )
-        model_selection_widget.setObjectName("modelSelection")
-
         # Dummy divs allow for easy alignment
         top_container: QVBoxLayout = QVBoxLayout()
         top_dummy: QFrame = QFrame()
-        bottom_container: QVBoxLayout = QVBoxLayout()
         bottom_dummy: QFrame = QFrame()
 
         top_container.addWidget(image_selection_widget)
         top_dummy.setLayout(top_container)
         self.layout().addWidget(top_dummy)
 
-        bottom_container.addWidget(model_selection_widget)
-        bottom_dummy.setLayout(bottom_container)
+
+        # bottom half
+        bottom_grid_layout = QGridLayout()
+
+        patch_size_label: LabelWithHint = LabelWithHint("Structure size")
+        bottom_grid_layout.addWidget(patch_size_label, 0, 0)
+
+        self._patch_size_combo_box: QComboBox = QComboBox()
+        self._patch_size_combo_box.setObjectName("structureSizeComboBox")
+        self._patch_size_combo_box.setCurrentIndex(-1)
+        self._patch_size_combo_box.setPlaceholderText("Select an option")
+        self._patch_size_combo_box.addItems(
+            [patch.name.lower() for patch in PatchSize]
+        )
+        self._patch_size_combo_box.currentTextChanged.connect(
+            lambda size: self._training_model.set_patch_size(size)
+        )
+        bottom_grid_layout.addWidget(self._patch_size_combo_box, 0, 1)
+
+        image_dimensions_label: LabelWithHint = LabelWithHint(
+            "Image dimension"
+        )
+        bottom_grid_layout.addWidget(image_dimensions_label, 1, 0)
+
+        dimension_choice_layout: QHBoxLayout = QHBoxLayout()
+        dimension_choice_layout.setSpacing(0)
+
+        self._radio_3d: QRadioButton = QRadioButton()
+        self._radio_3d.setObjectName("3DRadio")
+        self._radio_3d.toggled.connect(
+            lambda: self._training_model.set_image_dims(3)
+        )
+        label_3d: LabelWithHint = LabelWithHint("3D")
+
+        self._radio_2d: QRadioButton = QRadioButton()
+        self._radio_2d.toggled.connect(
+            lambda: self._training_model.set_image_dims(2)
+        )
+        label_2d: LabelWithHint = LabelWithHint("2D")
+
+        dimension_choice_layout.addWidget(self._radio_3d)
+        dimension_choice_layout.addWidget(label_3d)
+        dimension_choice_layout.addWidget(
+            self._radio_2d, alignment=Qt.AlignLeft
+        )
+        dimension_choice_layout.addWidget(label_2d, alignment=Qt.AlignLeft)
+        dimension_choice_layout.addStretch(10)
+        dimension_choice_layout.setContentsMargins(0, 0, 0, 0)
+
+        dimension_choice_dummy: QWidget = (
+            QWidget()
+        )  # stops interference with other radio buttons
+        dimension_choice_dummy.setLayout(dimension_choice_layout)
+
+        bottom_grid_layout.addWidget(dimension_choice_dummy, 1, 1)
+
+        max_epoch_label: LabelWithHint = LabelWithHint("Training steps")
+        bottom_grid_layout.addWidget(max_epoch_label, 2, 0)
+
+        self._max_epoch_input: QLineEdit = QLineEdit()
+        # allow only integers TODO [needs test coverage]
+        self._max_epoch_input.setValidator(QIntValidator())
+        self._max_epoch_input.setPlaceholderText("1000")
+        self._max_epoch_input.setObjectName("trainingStepInput")
+        self._max_epoch_input.textChanged.connect(
+            self._max_epochtext_field_handler
+        )
+        bottom_grid_layout.addWidget(self._max_epoch_input, 2, 1)
+
+        max_time_layout: QHBoxLayout = QHBoxLayout()
+        max_time_layout.setSpacing(0)
+
+        self._max_time_checkbox: QCheckBox = QCheckBox()
+        self._max_time_checkbox.setObjectName("timeoutCheckbox")
+        self._max_time_checkbox.stateChanged.connect(
+            self._max_time_checkbox_slot
+        )
+        max_time_layout.addWidget(self._max_time_checkbox)
+
+        max_time_left_text: QLabel = QLabel("Time out after")
+        max_time_layout.addWidget(max_time_left_text)
+
+        self._max_time_in_hours_input: QLineEdit = QLineEdit()
+        self._max_time_in_hours_input.setObjectName("timeoutHourInput")
+        self._max_time_in_hours_input.setEnabled(False)
+        self._max_time_in_hours_input.setMaximumWidth(30)
+        self._max_time_in_hours_input.setPlaceholderText("0")
+        # TODO: decide between converting as int(text) or float(text) -> will users want to use decimals? is there a better way to convert from hours to seconds?
+        # TODO: how to handle invalid (not convertible to a number) input?
+        self._max_time_in_hours_input.textChanged.connect(
+            lambda text: self._training_model.set_max_time(
+                round(float(text) * 3600)
+            )
+        )
+        max_time_layout.addWidget(self._max_time_in_hours_input)
+
+        max_time_right_text: LabelWithHint = LabelWithHint("hours")
+        max_time_layout.addWidget(max_time_right_text, alignment=Qt.AlignLeft)
+        max_time_layout.addStretch()
+
+        bottom_grid_layout.addLayout(max_time_layout, 3, 1)
+        bottom_grid_layout.setColumnStretch(1, 8)
+        bottom_grid_layout.setColumnStretch(0, 3)
+
+        bottom_dummy.setLayout(bottom_grid_layout)
         self.layout().addWidget(bottom_dummy)
 
         self._train_btn: QPushButton = QPushButton("Start training")
@@ -147,7 +255,7 @@ class TrainingView(View):
         self._training_model.set_training_running(True)
         result_images = self.read_result_images(
             self._experiments_model.get_model_test_images_path(
-                self._training_model.get_experiment_name()
+                self._experiments_model.get_experiment_name()
             )
         )
         print("doWork - setting result images")
@@ -164,3 +272,16 @@ class TrainingView(View):
     def showResults(self):
         for idx, image in enumerate(self._training_model.get_result_images()):
             self.add_image_to_viewer(image.data, f"Segmentation {str(idx)}")
+
+    def _max_epochtext_field_handler(self, max_epochs: str) -> None:
+        self._training_model.set_max_epoch(int(max_epochs))
+
+    def _max_time_checkbox_slot(self, checked: Qt.CheckState) -> None:
+        """
+        Triggered when the user selects the "time out after" _timeout_checkbox.
+        Enables/disables interaction with the neighboring hour input based on checkstate.
+        """
+        if checked == Qt.Checked:
+            self._max_time_in_hours_input.setEnabled(True)
+        else:
+            self._max_time_in_hours_input.setEnabled(False)
