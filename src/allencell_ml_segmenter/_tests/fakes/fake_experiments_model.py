@@ -7,8 +7,8 @@ from allencell_ml_segmenter.core.event import Event
 
 class FakeExperimentModel(IExperimentsModel):
     def __init__(self):
-        self._experiment_name = None;
-        self._checkpoint = None;
+        self._experiment_name = None
+        self._checkpoint = None
         self._events_to_subscriber_handlers: Dict[
             Dict[Subscriber, Callable]
         ] = {event: dict() for event in [e.value for e in Event]}

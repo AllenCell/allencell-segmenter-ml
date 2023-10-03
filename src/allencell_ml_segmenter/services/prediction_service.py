@@ -46,7 +46,7 @@ class PredictionService(Subscriber):
         # config needs to be called first
         self._set_config_dir()
         self._set_config_name()
-        cyto_predict()
+        # cyto_predict()
 
     def _set_config_dir(self) -> None:
         """
