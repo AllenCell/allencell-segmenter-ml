@@ -10,7 +10,7 @@ class ExperimentsModel(IExperimentsModel):
     def __init__(self, config: CytoDlConfig) -> None:
         super().__init__()
         self.config = config
-        
+
         # options
         self.experiments = {}
         self.refresh_experiments()
