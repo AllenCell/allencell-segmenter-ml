@@ -17,11 +17,12 @@ from allencell_ml_segmenter.core.aics_widget import AicsWidget
 
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.view import View
-from allencell_ml_segmenter.curation.main_view import CurationMainView
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.prediction.view import PredictionView
-from allencell_ml_segmenter.training.model_selection_widget import ModelSelectionWidget
+from allencell_ml_segmenter.training.model_selection_widget import (
+    ModelSelectionWidget,
+)
 from allencell_ml_segmenter.training.view import TrainingView
 
 
@@ -57,7 +58,7 @@ class MainWidget(AicsWidget):
 
         # keep track of views
         self._view_container: QTabWidget = QTabWidget()
-        self.layout().addWidget(self._view_container, Qt.AlignCenter )
+        self.layout().addWidget(self._view_container, Qt.AlignCenter)
         self.layout().addStretch(100)
 
         self._view_to_index: Dict[View, int] = dict()
