@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QRadioButton, QGridLayout
+from PyQt5.QtWidgets import QRadioButton
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
     QVBoxLayout,
@@ -12,7 +12,6 @@ from qtpy.QtWidgets import (
 
 from allencell_ml_segmenter._style import Style
 from allencell_ml_segmenter.core.view import View
-from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 
 

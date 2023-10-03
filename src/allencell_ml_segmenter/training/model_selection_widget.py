@@ -1,4 +1,3 @@
-from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
     QWidget,
     QVBoxLayout,
@@ -14,7 +13,6 @@ from allencell_ml_segmenter.training.experiment_info_widget import (
     ExperimentInfoWidget,
 )
 
-from allencell_ml_segmenter.training.training_model import TrainingModel
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 
 

@@ -25,9 +25,6 @@ from allencell_ml_segmenter.services.training_service import TrainingService
 from allencell_ml_segmenter.training.image_selection_widget import (
     ImageSelectionWidget,
 )
-from allencell_ml_segmenter.training.model_selection_widget import (
-    ModelSelectionWidget,
-)
 from allencell_ml_segmenter.training.training_model import TrainingModel
 from hydra.core.global_hydra import GlobalHydra
 from aicsimageio import AICSImage
@@ -87,7 +84,6 @@ class TrainingView(View):
         top_container.addWidget(image_selection_widget)
         top_dummy.setLayout(top_container)
         self.layout().addWidget(top_dummy)
-
 
         # bottom half
         bottom_grid_layout = QGridLayout()
