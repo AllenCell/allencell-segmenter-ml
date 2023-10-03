@@ -8,9 +8,44 @@ from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
 
 class ExperimentsModel(IExperimentsModel):
     def __init__(self, config: CytoDlConfig) -> None:
+        super().__init__()
         self.config = config
+        
+        # options
         self.experiments = {}
         self.refresh_experiments()
+
+        # state
+        self._experiment_name: str = None
+        self._checkpoint: str = None
+
+    def get_experiment_name(self) -> str:
+        """
+        Gets experiment name
+        """
+        return self._experiment_name
+
+    def set_experiment_name(self, name: str) -> None:
+        """
+        Sets experiment name
+
+        name (str): name of cyto-dl experiment
+        """
+        self._experiment_name = name
+
+    def get_checkpoint(self) -> str:
+        """
+        Gets checkpoint
+        """
+        return self._checkpoint
+
+    def set_checkpoint(self, checkpoint: str) -> None:
+        """
+        Sets checkpoint
+
+        checkpoint (str): name of checkpoint to use
+        """
+        self._checkpoint = checkpoint
 
     def refresh_experiments(self) -> None:
         for experiment in Path(
