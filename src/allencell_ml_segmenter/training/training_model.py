@@ -44,7 +44,9 @@ class TrainingModel(Publisher):
     Stores state relevant to training processes.
     """
 
-    def __init__(self, main_model: MainModel, experiments_model: ExperimentsModel):
+    def __init__(
+        self, main_model: MainModel, experiments_model: ExperimentsModel
+    ):
         super().__init__()
         self._main_model = main_model
         self.experiments_model = experiments_model
