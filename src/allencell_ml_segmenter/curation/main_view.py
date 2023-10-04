@@ -109,7 +109,6 @@ class CurationMainView(View):
         )
         self.layout().addLayout(excluding_mask_labels)
 
-
         # buttons for excluding mask
         excluding_mask_buttons = QHBoxLayout()
         excluding_create_button = QPushButton("+ Create")
@@ -157,20 +156,30 @@ class CurationMainView(View):
 
     def curation_setup(self):
         _ = show_info("Loading curation images")
-        self.raw_images = [f for f in self._curation_model.get_raw_directory().iterdir()]
-        self.seg1_images = [f for f in self._curation_model.get_seg1_directory().iterdir()]
+        self.raw_images = [
+            f for f in self._curation_model.get_raw_directory().iterdir()
+        ]
+        self.seg1_images = [
+            f for f in self._curation_model.get_seg1_directory().iterdir()
+        ]
 
         # set progress bar
         self.progress_bar.setMaximum(len(self.raw_images))
         self.progress_bar.setValue(1)
         # set progress bar hint
-        self.progress_bar_image_count.setText(f"{self.curation_index + 1}/{len(self.raw_images)}")
+        self.progress_bar_image_count.setText(
+            f"{self.curation_index + 1}/{len(self.raw_images)}"
+        )
         self.remove_all_images()
 
         first_raw = self.raw_images[0]
-        self.viewer.add_image(AICSImage(str(first_raw)).data, name=f"[raw] {first_raw.name}")
+        self.viewer.add_image(
+            AICSImage(str(first_raw)).data, name=f"[raw] {first_raw.name}"
+        )
         first_seg1 = self.seg1_images[0]
-        self.viewer.add_image(AICSImage(str(first_seg1)).data, name=f"[seg] {first_seg1.name}")
+        self.viewer.add_image(
+            AICSImage(str(first_seg1)).data, name=f"[seg] {first_seg1.name}"
+        )
 
     def next_image(self):
         _ = show_info("Loading the next image...")
@@ -179,9 +188,15 @@ class CurationMainView(View):
             self.remove_all_images()
 
             raw_to_view = self.raw_images[self.curation_index]
-            self.viewer.add_image(AICSImage(str(raw_to_view)).data, name=f"[raw] {raw_to_view.name}")
+            self.viewer.add_image(
+                AICSImage(str(raw_to_view)).data,
+                name=f"[raw] {raw_to_view.name}",
+            )
             seg1_to_view = self.seg1_images[self.curation_index]
-            self.viewer.add_image(AICSImage(str(seg1_to_view)).data, name=f"[seg] {seg1_to_view.name}")
+            self.viewer.add_image(
+                AICSImage(str(seg1_to_view)).data,
+                name=f"[seg] {seg1_to_view.name}",
+            )
             self._update_progress_bar()
         else:
             _ = show_info("No more image to load")
@@ -190,7 +205,9 @@ class CurationMainView(View):
         # update progress bar
         self.progress_bar.setValue(self.progress_bar.value() + 1)
         # set progress bar hint
-        self.progress_bar_image_count.setText(f"{self.curation_index + 1}/{len(self.raw_images)}")
+        self.progress_bar_image_count.setText(
+            f"{self.curation_index + 1}/{len(self.raw_images)}"
+        )
 
     def _update_curation_record(self):
         use_this_image = True
@@ -201,14 +218,11 @@ class CurationMainView(View):
                 CurationRecord(
                     self.raw_images[self.curation_index],
                     self.seg1_images[self.curation_index],
-                    use_this_image
+                    use_this_image,
                 )
             )
 
     def add_points_in_viewer(self):
-        _ = show_info('Draw excluding area')
+        _ = show_info("Draw excluding area")
         points_layer = self.viewer.add_shapes(None)
-        points_layer.mode = 'add_polygon'
-
-
-
+        points_layer.mode = "add_polygon"
