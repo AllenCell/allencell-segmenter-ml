@@ -1,7 +1,6 @@
 from typing import List
 
 import napari
-from PyQt5.QtWidgets import QRadioButton, QGridLayout
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
     QVBoxLayout,
@@ -11,6 +10,8 @@ from qtpy.QtWidgets import (
     QHBoxLayout,
     QPushButton,
     QProgressBar,
+    QRadioButton,
+    QGridLayout,
 )
 from aicsimageio import AICSImage
 
