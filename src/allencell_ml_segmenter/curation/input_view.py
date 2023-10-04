@@ -71,7 +71,9 @@ class CurationInputView(View):
             QLabel("Image channel"), 1, 1, alignment=Qt.AlignRight
         )
         self._raw_image_channel_combo: QComboBox = QComboBox()
-        self._raw_image_channel_combo.activated.connect(self.raw_channel_selected)
+        self._raw_image_channel_combo.activated.connect(
+            self.raw_channel_selected
+        )
         raw_grid_layout.addWidget(
             self._raw_image_channel_combo, 1, 2, alignment=Qt.AlignLeft
         )
@@ -103,7 +105,9 @@ class CurationInputView(View):
             QLabel("Image channel"), 1, 1, alignment=Qt.AlignRight
         )
         self._seg1_image_channel_combo: QComboBox = QComboBox()
-        self._seg1_image_channel_combo.activated.connect(self.seg1_channel_selected)
+        self._seg1_image_channel_combo.activated.connect(
+            self.seg1_channel_selected
+        )
         seg1_grid_layout.addWidget(
             self._seg1_image_channel_combo, 1, 2, alignment=Qt.AlignLeft
         )
@@ -135,7 +139,9 @@ class CurationInputView(View):
             QLabel("Image channel"), 1, 1, alignment=Qt.AlignRight
         )
         self._seg2_image_channel_combo: QComboBox = QComboBox()
-        self._seg2_image_channel_combo.activated.connect(self.seg2_channel_selected)
+        self._seg2_image_channel_combo.activated.connect(
+            self.seg2_channel_selected
+        )
         seg2_grid_layout.addWidget(
             self._seg2_image_channel_combo, 1, 2, alignment=Qt.AlignLeft
         )
@@ -219,5 +225,3 @@ class CurationInputView(View):
 
     def seg2_channel_selected(self, index):
         self._curation_model.set_seg2_channel(index)
-
-

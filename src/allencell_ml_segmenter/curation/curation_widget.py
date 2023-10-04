@@ -42,7 +42,9 @@ class CurationWidget(QStackedWidget, Subscriber, metaclass=CurationUiMeta):
         self.curation_input_view = CurationInputView(self.curation_model)
         self.initialize_view(self.curation_input_view)
 
-        self.curation_main_view = CurationMainView(self.viewer, self.curation_model)
+        self.curation_main_view = CurationMainView(
+            self.viewer, self.curation_model
+        )
         self.initialize_view(self.curation_main_view)
 
         self.set_view(self.curation_input_view)
@@ -74,4 +76,3 @@ class CurationWidget(QStackedWidget, Subscriber, metaclass=CurationUiMeta):
         # QStackedWidget count method keeps track of how many child widgets have been added
         self.view_to_index[view] = self.count()
         self.addWidget(view)
-
