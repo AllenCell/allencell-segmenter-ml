@@ -17,6 +17,7 @@ class Event(Enum):
     PROCESS_CURATION_INPUT_STARTED = "curation_input_started"
 
     # Action events. This signals a change in the UI. These are a direct result of a user action
+    ACTIOIN_REFRESH = "refresh"
     ACTION_CHANGE_VIEW = "change_view"
     ACTION_START_TRAINING = "start_training"
     ACTION_PREDICTION_MODEL_FILE = "model_file"
