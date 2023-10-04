@@ -1,5 +1,4 @@
 from allencell_ml_segmenter.core.view import View
-from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.widgets.input_button_widget import (
     InputButton,
     FileInputMode,
