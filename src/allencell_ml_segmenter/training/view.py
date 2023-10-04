@@ -52,7 +52,7 @@ class TrainingView(View):
 
         self._main_model: MainModel = main_model
         self._experiments_model: ExperimentsModel = experiments_model
-        self._training_model: TrainingModel = TrainingModel(main_model)
+        self._training_model: TrainingModel = TrainingModel(main_model, experiments_model)
         self._training_service: TrainingService = TrainingService(
             training_model=self._training_model,
             experiments_model=self._experiments_model,

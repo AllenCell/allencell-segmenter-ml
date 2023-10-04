@@ -3,6 +3,7 @@ from allencell_ml_segmenter.core.event import Event
 from enum import Enum
 from typing import Union
 from pathlib import Path
+from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 
 from allencell_ml_segmenter.main.main_model import MainModel
 
@@ -43,9 +44,10 @@ class TrainingModel(Publisher):
     Stores state relevant to training processes.
     """
 
-    def __init__(self, main_model: MainModel):
+    def __init__(self, main_model: MainModel, experiments_model: ExperimentsModel):
         super().__init__()
         self._main_model = main_model
+        self.experiments_model = experiments_model
         self._experiment_type: TrainingType = None
         self._hardware_type: Hardware = None
         self._images_directory: Path = None
@@ -226,6 +228,8 @@ class TrainingModel(Publisher):
         """
         self._is_training_running = is_training_running
         self.dispatch(Event.PROCESS_TRAINING)
+        if not self.is_training_running():
+            self.experiments_model.dispatch(Event.ACTIOIN_REFRESH)
 
     result_images: list = []
 
