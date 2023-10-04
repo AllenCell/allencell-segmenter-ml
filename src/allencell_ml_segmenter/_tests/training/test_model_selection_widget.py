@@ -1,7 +1,7 @@
 import pytest
 from pytestqt.qtbot import QtBot
 from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
-    FakeExperimentModel,
+    FakeExperimentsModel,
 )
 from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
@@ -12,11 +12,12 @@ from allencell_ml_segmenter.training.model_selection_widget import (
 from allencell_ml_segmenter.training.training_model import (
     TrainingModel,
 )
+from allencell_ml_segmenter._tests.fakes.fake_experiments_model import FakeExperimentsModel
 
 
 @pytest.fixture
 def experiment_model() -> IExperimentsModel:
-    return FakeExperimentModel()
+    return FakeExperimentsModel()
 
 
 @pytest.fixture
@@ -25,7 +26,7 @@ def training_model() -> TrainingModel:
     Fixture that creates an instance of TrainingModel for testing.
     """
     return TrainingModel(  # instead of this, how about i mock os.listdir ?
-        MainModel()
+        MainModel(), FakeExperimentsModel()
     )
 
 
