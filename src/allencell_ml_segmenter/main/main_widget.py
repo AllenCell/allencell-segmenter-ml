@@ -17,10 +17,12 @@ from allencell_ml_segmenter.core.aics_widget import AicsWidget
 
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.view import View
-from allencell_ml_segmenter.curation.main_view import CurationMainView
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.prediction.view import PredictionView
+from allencell_ml_segmenter.training.model_selection_widget import (
+    ModelSelectionWidget,
+)
 from allencell_ml_segmenter.training.view import TrainingView
 
 
@@ -43,9 +45,20 @@ class MainWidget(AicsWidget):
             Event.ACTION_CHANGE_VIEW, self, self.handle_change_view
         )
 
+        if config is None:
+            config = CytoDlConfig(CYTO_DL_HOME_PATH, USER_EXPERIMENTS_PATH)
+        experiment_model = ExperimentsModel(config)
+
+        # Model selection which applies to all views
+        model_selection_widget: ModelSelectionWidget = ModelSelectionWidget(
+            experiment_model
+        )
+        model_selection_widget.setObjectName("modelSelection")
+        self.layout().addWidget(model_selection_widget, Qt.AlignTop)
+
         # keep track of views
         self._view_container: QTabWidget = QTabWidget()
-        self.layout().addWidget(self._view_container, Qt.AlignTop)
+        self.layout().addWidget(self._view_container, Qt.AlignCenter)
         self.layout().addStretch(100)
 
         self._view_to_index: Dict[View, int] = dict()
@@ -53,10 +66,6 @@ class MainWidget(AicsWidget):
         # initialize the tabs
         self._prediction_view: PredictionView = PredictionView(self._model)
         self._initialize_view(self._prediction_view, "Prediction")
-
-        if config is None:
-            config = CytoDlConfig(CYTO_DL_HOME_PATH, USER_EXPERIMENTS_PATH)
-        experiment_model = ExperimentsModel(config)
 
         training_view: TrainingView = TrainingView(
             main_model=self._model,
