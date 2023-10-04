@@ -1,6 +1,8 @@
 import pytest
 from pathlib import Path
-from allencell_ml_segmenter._tests.fakes.fake_experiments_model import FakeExperimentsModel
+from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
+    FakeExperimentsModel,
+)
 from allencell_ml_segmenter.main.main_model import MainModel
 
 from allencell_ml_segmenter.training.training_model import (
