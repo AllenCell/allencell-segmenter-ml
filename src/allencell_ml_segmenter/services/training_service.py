@@ -30,31 +30,6 @@ def _list_to_string(list_to_convert: List[Any]) -> str:
     return f"[{ints_to_strings}]"
 
 
-# class MyPrintingCallback(Callback):
-#     def __init__(self):
-#         super().__init__()
-
-#     def on_train_start(self, trainer, pl_module):
-#         print(
-#             "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@Training is starting@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-#         )
-
-#     def on_train_epoch_start(self, trainer, pl_module):
-#         print(
-#             f"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@Epoch {trainer.current_epoch} is starting@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-#         )
-
-#     def on_train_epoch_end(self, trainer, pl_module):
-#         print(
-#             f"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@Training {trainer.current_epoch} is ending@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-#         )
-
-#     def on_train_end(self, trainer, pl_module):
-#         print(
-#             "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@Training is ending@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-#         )
-
-
 class TrainingService(Subscriber):
     """
     Interface for training a model. Uses cyto-dl to train model according to spec
@@ -101,9 +76,9 @@ class TrainingService(Subscriber):
                 # This is meant to be a string as is - not a string template.  In cyto-dl, it will be treated as a string template
                 "hydra.run.dir=${paths.log_dir}/${task_name}/runs/${experiment_name}"
             )
-            if self._training_model.get_checkpoint() is not None:
+            if self._experiments_model.get_checkpoint() is not None:
                 sys.argv.append(
-                    f"ckpt_path={self._experiments_model.get_model_checkpoints_path(self._training_model.get_experiment_name(), self._training_model.get_checkpoint())}"
+                    f"ckpt_path={self._experiments_model.get_model_checkpoints_path(self._experiments_model.get_experiment_name(), self._experiments_model.get_checkpoint())}"
                 )
             # sys.argv.append(
             #     "+callbacks.print_progress._target_=allencell_ml_segmenter.services.training_service.MyPrintingCallback"
@@ -149,7 +124,7 @@ class TrainingService(Subscriber):
         """
         Sets the experiment_name argument variable for hydra override using sys.argv
         """
-        experiment_name: str = self._training_model.get_experiment_name()
+        experiment_name: str = self._experiments_model.get_experiment_name()
         sys.argv.append(f"++experiment_name={experiment_name}")
 
     def _set_max_epoch(self) -> None:

@@ -1,5 +1,4 @@
 from typing import List
-
 import napari
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (

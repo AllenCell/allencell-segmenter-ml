@@ -3,6 +3,7 @@ from allencell_ml_segmenter.core.event import Event
 from enum import Enum
 from typing import Union
 from pathlib import Path
+from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 
 from allencell_ml_segmenter.main.main_model import MainModel
 
@@ -43,11 +44,12 @@ class TrainingModel(Publisher):
     Stores state relevant to training processes.
     """
 
-    def __init__(self, main_model: MainModel):
+    def __init__(
+        self, main_model: MainModel, experiments_model: ExperimentsModel
+    ):
         super().__init__()
         self._main_model = main_model
-        self._experiment_name: str = None
-        self._checkpoint: str = None
+        self.experiments_model = experiments_model
         self._experiment_type: TrainingType = None
         self._hardware_type: Hardware = None
         self._images_directory: Path = None
@@ -62,34 +64,6 @@ class TrainingModel(Publisher):
         self._max_time: int = None  # in seconds
         self._config_dir: Path = None
         self._is_training_running: bool = False
-
-    def get_experiment_name(self) -> str:
-        """
-        Gets experiment name
-        """
-        return self._experiment_name
-
-    def set_experiment_name(self, name: str) -> None:
-        """
-        Sets experiment name
-
-        name (str): name of cyto-dl experiment
-        """
-        self._experiment_name = name
-
-    def get_checkpoint(self) -> str:
-        """
-        Gets checkpoint
-        """
-        return self._checkpoint
-
-    def set_checkpoint(self, checkpoint: str) -> None:
-        """
-        Sets checkpoint
-
-        checkpoint (str): name of checkpoint to use
-        """
-        self._checkpoint = checkpoint
 
     def get_experiment_type(self) -> TrainingType:
         """
@@ -256,6 +230,8 @@ class TrainingModel(Publisher):
         """
         self._is_training_running = is_training_running
         self.dispatch(Event.PROCESS_TRAINING)
+        if not self.is_training_running():
+            self.experiments_model.dispatch(Event.ACTIOIN_REFRESH)
 
     result_images: list = []
 

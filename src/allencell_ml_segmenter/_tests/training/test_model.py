@@ -1,5 +1,8 @@
 import pytest
 from pathlib import Path
+from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
+    FakeExperimentsModel,
+)
 from allencell_ml_segmenter.main.main_model import MainModel
 
 from allencell_ml_segmenter.training.training_model import (
@@ -15,7 +18,7 @@ def training_model() -> TrainingModel:
     """
     Returns a TrainingModel instance for testing.
     """
-    return TrainingModel(MainModel())
+    return TrainingModel(MainModel(), FakeExperimentsModel())
 
 
 def test_get_experiment_type(training_model: TrainingModel) -> None:

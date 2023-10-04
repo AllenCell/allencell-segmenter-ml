@@ -12,6 +12,9 @@ from allencell_ml_segmenter.services.training_service import (
 from allencell_ml_segmenter.training.training_model import (
     TrainingModel,
 )
+from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
+    FakeExperimentsModel,
+)
 
 
 @pytest.fixture
@@ -20,7 +23,9 @@ def training_service() -> TrainingService:
     Returns a TrainingService object with arbitrary-set fields in the model for testing.
     """
     experiments_model = ExperimentsModel(CytoDlConfig(Path(), Path()))
-    training_model: TrainingModel = TrainingModel(MainModel())
+    training_model: TrainingModel = TrainingModel(
+        MainModel(), FakeExperimentsModel()
+    )
     training_model.set_experiment_type("segmentation")
     training_model.set_hardware_type("cpu")
     training_model.set_image_dims(2)
