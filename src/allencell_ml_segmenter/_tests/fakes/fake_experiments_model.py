@@ -5,7 +5,7 @@ from typing import Dict, Callable
 from allencell_ml_segmenter.core.event import Event
 
 
-class FakeExperimentModel(IExperimentsModel):
+class FakeExperimentsModel(IExperimentsModel):
     def __init__(self):
         self._experiment_name = None
         self._checkpoint = None
