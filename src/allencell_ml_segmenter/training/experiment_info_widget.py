@@ -1,4 +1,4 @@
-from allencell_ml_segmenter.training.training_model import TrainingModel
+from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
 from qtpy.QtWidgets import (
     QWidget,
     QFrame,
@@ -18,10 +18,10 @@ class ExperimentInfoWidget(QWidget):
 
     TITLE_TEXT: str = "Experiment information"
 
-    def __init__(self, model: TrainingModel):
+    def __init__(self, model: IExperimentsModel):
         super().__init__()
 
-        self._model: TrainingModel = model
+        self._model: IExperimentsModel = model
 
         # widget skeleton
         self.setLayout(QVBoxLayout())
