@@ -84,7 +84,7 @@ class ModelSelectionWidget(QWidget):
             self._model_combo_handler
         )
         self._experiments_model.subscribe(
-            Event.PROCESS_TRAINING, self, self._process_event_handler
+            Event.ACTIOIN_REFRESH, self, self._process_event_handler
         )
 
         top_grid_layout.addWidget(self._combo_box_existing_models, 1, 2)
@@ -150,12 +150,11 @@ class ModelSelectionWidget(QWidget):
         """
         Refreshes the experiments in the _combo_box_existing_models.
         """
-        if self._radio_new_model.isChecked():
+        if self._radio_new_model.isChecked():#TODO is firing twice on complete, only needs to run once
             self._refresh_experiment_options()
         if (
             self._radio_existing_model.isChecked()
             and self._experiments_model.get_experiment_name() is not None
-            and not self._experiments_model.is_training_running()
         ):
             self._refresh_checkpoint_options()
 
