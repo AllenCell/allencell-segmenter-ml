@@ -1,4 +1,3 @@
-from PyQt5.QtWidgets import QRadioButton
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
     QVBoxLayout,
@@ -8,6 +7,7 @@ from qtpy.QtWidgets import (
     QHBoxLayout,
     QPushButton,
     QProgressBar,
+    QRadioButton,
 )
 
 from allencell_ml_segmenter._style import Style
