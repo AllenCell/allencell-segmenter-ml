@@ -150,7 +150,7 @@ class ModelSelectionWidget(QWidget):
         """
         Refreshes the experiments in the _combo_box_existing_models.
         """
-        if self._radio_new_model.isChecked():#TODO is firing twice on complete, only needs to run once
+        if self._radio_new_model.isChecked():
             self._refresh_experiment_options()
         if (
             self._radio_existing_model.isChecked()
