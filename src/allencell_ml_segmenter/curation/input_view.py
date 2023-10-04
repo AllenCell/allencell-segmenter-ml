@@ -72,6 +72,7 @@ class CurationInputView(View):
             QLabel("Image channel"), 1, 1, alignment=Qt.AlignRight
         )
         self._raw_image_channel_combo: QComboBox = QComboBox()
+        self._raw_image_channel_combo.activated.connect(self.raw_channel_selected)
         raw_grid_layout.addWidget(
             self._raw_image_channel_combo, 1, 2, alignment=Qt.AlignLeft
         )
@@ -92,7 +93,7 @@ class CurationInputView(View):
         # TODO update model accordingly
         self._seg1_directory_select: InputButton = InputButton(
             self._curation_model,
-            lambda dir: self._curation_model.set_raw_directory(dir),
+            lambda dir: self._curation_model.set_seg1_directory(dir),
             "Select directory...",
             FileInputMode.DIRECTORY,
         )
@@ -103,6 +104,7 @@ class CurationInputView(View):
             QLabel("Image channel"), 1, 1, alignment=Qt.AlignRight
         )
         self._seg1_image_channel_combo: QComboBox = QComboBox()
+        self._seg1_image_channel_combo.activated.connect(self.seg1_channel_selected)
         seg1_grid_layout.addWidget(
             self._seg1_image_channel_combo, 1, 2, alignment=Qt.AlignLeft
         )
@@ -123,7 +125,7 @@ class CurationInputView(View):
         # TODO update model accordingly
         self._seg2_directory_select: InputButton = InputButton(
             self._curation_model,
-            lambda dir: self._curation_model.set_raw_directory(dir),
+            lambda dir: self._curation_model.set_seg2_directory(dir),
             "Select directory...",
             FileInputMode.DIRECTORY,
         )
@@ -134,6 +136,7 @@ class CurationInputView(View):
             QLabel("Image channel"), 1, 1, alignment=Qt.AlignRight
         )
         self._seg2_image_channel_combo: QComboBox = QComboBox()
+        self._seg2_image_channel_combo.activated.connect(self.seg2_channel_selected)
         seg2_grid_layout.addWidget(
             self._seg2_image_channel_combo, 1, 2, alignment=Qt.AlignLeft
         )
@@ -179,7 +182,9 @@ class CurationInputView(View):
                 )
             ]
         )
+        # default first index
         self._raw_image_channel_combo.setCurrentIndex(0)
+        self._curation_model.set_raw_channel(0)
 
     def update_seg1_channels(self, event):
         self._seg1_image_channel_combo.clear()
@@ -192,6 +197,7 @@ class CurationInputView(View):
             ]
         )
         self._seg1_image_channel_combo.setCurrentIndex(0)
+        self._curation_model.set_seg1_channel(0)
 
     def update_seg2_channels(self, event):
         self._seg2_image_channel_combo.clear()
@@ -204,3 +210,15 @@ class CurationInputView(View):
             ]
         )
         self._seg2_image_channel_combo.setCurrentIndex(0)
+        self._curation_model.set_seg2_channel(0)
+
+    def raw_channel_selected(self, index):
+        self._curation_model.set_raw_channel(index)
+
+    def seg1_channel_selected(self, index):
+        self._curation_model.set_seg1_channel(index)
+
+    def seg2_channel_selected(self, index):
+        self._curation_model.set_seg2_channel(index)
+
+
