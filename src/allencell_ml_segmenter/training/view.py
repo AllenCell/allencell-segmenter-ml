@@ -31,7 +31,7 @@ from aicsimageio import AICSImage
 from aicsimageio.readers import TiffReader
 
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
-from PyQt5.QtGui import QIntValidator
+from qtpy.QtGui import QIntValidator
 from allencell_ml_segmenter.training.training_model import PatchSize
 
 
