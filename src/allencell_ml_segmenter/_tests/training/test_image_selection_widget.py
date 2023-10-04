@@ -7,7 +7,9 @@ from qtpy.QtWidgets import QFileDialog
 from qtpy.QtCore import Qt
 from pytestqt.qtbot import QtBot
 from allencell_ml_segmenter.main.main_model import MainModel
-from allencell_ml_segmenter._tests.fakes.fake_experiments_model import FakeExperimentsModel
+from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
+    FakeExperimentsModel,
+)
 
 from allencell_ml_segmenter.training.image_selection_widget import (
     ImageSelectionWidget,
