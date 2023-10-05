@@ -1,4 +1,5 @@
 from typing import Dict
+from allencell_ml_segmenter.main.viewer import Viewer
 
 import napari
 from allencell_ml_segmenter.curation.curation_widget import CurationWidget
@@ -33,7 +34,7 @@ class MainWidget(AicsWidget):
 
     def __init__(self, viewer: napari.Viewer, config: CytoDlConfig = None):
         super().__init__()
-        self.viewer: napari.Viewer = viewer
+        self.viewer: Viewer = Viewer(viewer)
 
         # basic styling
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
