@@ -226,3 +226,4 @@ class CurationMainView(View):
         _ = show_info("Draw excluding area")
         points_layer = self.viewer.add_shapes(None)
         points_layer.mode = "add_polygon"
+
