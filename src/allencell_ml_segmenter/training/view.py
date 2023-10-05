@@ -1,6 +1,6 @@
 from pathlib import Path
 import sys
-import napari
+from allencell_ml_segmenter.main.i_viewer import IViewer
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
     QLabel,
@@ -44,11 +44,11 @@ class TrainingView(View):
         self,
         main_model: MainModel,
         experiments_model: ExperimentsModel,
-        viewer: napari.Viewer,
+        viewer: IViewer,
     ):
         super().__init__()
 
-        self._viewer = viewer
+        self._viewer: IViewer = viewer
 
         self._main_model: MainModel = main_model
         self._experiments_model: ExperimentsModel = experiments_model
