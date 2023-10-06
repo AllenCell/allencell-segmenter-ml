@@ -14,6 +14,7 @@ from allencell_ml_segmenter.curation.main_view import CurationMainView
 import napari
 from napari.utils.notifications import show_info
 
+from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
 
 
@@ -27,10 +28,11 @@ class CurationUiMeta(type(QStackedWidget), type(Subscriber)):
 
 
 class CurationWidget(QStackedWidget, Subscriber, metaclass=CurationUiMeta):
-    def __init__(self, viewer: napari.Viewer, main_model: MainModel):
+    def __init__(self, viewer: napari.Viewer, main_model: MainModel, experiments_model: ExperimentsModel):
         super().__init__()
         self.main_model = main_model
         self.viewer: napari.Viewer = viewer
+        self.experiments_model = experiments_model
         self.view_to_index = dict()
         self.curation_model = CurationModel()
 
@@ -43,7 +45,7 @@ class CurationWidget(QStackedWidget, Subscriber, metaclass=CurationUiMeta):
         self.initialize_view(self.curation_input_view)
 
         self.curation_main_view = CurationMainView(
-            self.viewer, self.curation_model
+            self.viewer, self.curation_model, self.experiments_model
         )
         self.initialize_view(self.curation_main_view)
 
