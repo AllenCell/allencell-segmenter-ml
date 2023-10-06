@@ -1,3 +1,5 @@
+import csv
+from pathlib import Path
 from typing import List
 import napari
 from qtpy.QtCore import Qt
@@ -18,10 +20,12 @@ from allencell_ml_segmenter._style import Style
 from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
 from allencell_ml_segmenter.curation.curation_model import CurationModel
+from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 
 from napari.utils.notifications import show_info
+import shutil
 
 
 class CurationMainView(View):
@@ -29,10 +33,11 @@ class CurationMainView(View):
     View for Curation UI
     """
 
-    def __init__(self, viewer: napari.Viewer, curation_model: CurationModel):
+    def __init__(self, viewer: napari.Viewer, curation_model: CurationModel, experiments_model: ExperimentsModel):
         super().__init__()
         self.viewer = viewer
         self._curation_model = curation_model
+        self._experiments_model = experiments_model
         self.curation_index = 0
         self.curation_record: List[CurationRecord] = list()
 
@@ -183,6 +188,7 @@ class CurationMainView(View):
 
     def next_image(self):
         _ = show_info("Loading the next image...")
+        self._update_curation_record()
         self.curation_index = self.curation_index + 1
         if self.curation_index < len(self.raw_images):
             self.remove_all_images()
@@ -200,6 +206,8 @@ class CurationMainView(View):
             self._update_progress_bar()
         else:
             _ = show_info("No more image to load")
+            self.save_curation_record(self._experiments_model.get_user_experiments_path() / self._experiments_model.get_experiment_name() /
+                                      "data" / "train.csv")
 
     def _update_progress_bar(self):
         # update progress bar
@@ -213,17 +221,45 @@ class CurationMainView(View):
         use_this_image = True
         if self.no_radio.isChecked():
             use_this_image = False
-        if self._curation_model.get_seg2_directory() is not None:
-            self.curation_record.append(
-                CurationRecord(
-                    self.raw_images[self.curation_index],
-                    self.seg1_images[self.curation_index],
-                    use_this_image,
-                )
+        self.curation_record.append(
+            CurationRecord(
+                self.raw_images[self.curation_index],
+                self.seg1_images[self.curation_index],
+                use_this_image,
             )
+        )
 
     def add_points_in_viewer(self):
         _ = show_info("Draw excluding area")
         points_layer = self.viewer.add_shapes(None)
         points_layer.mode = "add_polygon"
+
+    def save_curation_record(self, path: Path):
+        parent_path = path.parents[0]
+        if not parent_path.is_dir():
+            parent_path.mkdir(parents=True)
+
+        with open(path, "w") as f:
+            # need file header
+            writer = csv.writer(f, delimiter=",")
+            writer.writerow(["", "raw", "seg"])
+            for idx, record in enumerate(self.curation_record):
+                if record.to_use:
+                    writer.writerow([
+                        str(idx),
+                        str(record.raw_file),
+                        str(record.seg1)
+                    ])
+                f.flush()
+
+        shutil.copy(path, parent_path / "valid.csv")
+        shutil.copy(path, parent_path / "test.csv")
+
+
+
+
+
+
+
+
 
