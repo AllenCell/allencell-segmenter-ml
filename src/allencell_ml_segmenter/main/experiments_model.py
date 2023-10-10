@@ -37,7 +37,6 @@ class ExperimentsModel(IExperimentsModel):
             # if a experiment name is set
             self.dispatch(Event.ACTION_EXPERIMENT_SELECTED)
 
-
     def get_checkpoint(self) -> str:
         """
         Gets checkpoint
@@ -112,5 +111,8 @@ class ExperimentsModel(IExperimentsModel):
         )
 
     def get_csv_path(self) -> Path:
-        return self.get_user_experiments_path() / self.get_experiment_name() / "data"
-
+        return (
+            self.get_user_experiments_path()
+            / self.get_experiment_name()
+            / "data"
+        )
