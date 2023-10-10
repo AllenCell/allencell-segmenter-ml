@@ -28,7 +28,12 @@ class CurationUiMeta(type(QStackedWidget), type(Subscriber)):
 
 
 class CurationWidget(QStackedWidget, Subscriber, metaclass=CurationUiMeta):
-    def __init__(self, viewer: napari.Viewer, main_model: MainModel, experiments_model: ExperimentsModel):
+    def __init__(
+        self,
+        viewer: napari.Viewer,
+        main_model: MainModel,
+        experiments_model: ExperimentsModel,
+    ):
         super().__init__()
         self.main_model = main_model
         self.viewer: napari.Viewer = viewer

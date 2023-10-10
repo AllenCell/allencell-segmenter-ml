@@ -41,4 +41,3 @@ class Event(Enum):
     # View selection events. These can stem from a user action, or from a process (i.e. prediction process ends, and a new view is shown automatically).
     VIEW_SELECTION_TRAINING = "training_selected"
     VIEW_SELECTION_PREDICTION = "prediction_selected"
-
