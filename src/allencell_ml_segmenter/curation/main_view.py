@@ -33,7 +33,12 @@ class CurationMainView(View):
     View for Curation UI
     """
 
-    def __init__(self, viewer: napari.Viewer, curation_model: CurationModel, experiments_model: ExperimentsModel):
+    def __init__(
+        self,
+        viewer: napari.Viewer,
+        curation_model: CurationModel,
+        experiments_model: ExperimentsModel,
+    ):
         super().__init__()
         self.viewer = viewer
         self._curation_model = curation_model
@@ -206,8 +211,12 @@ class CurationMainView(View):
             self._update_progress_bar()
         else:
             _ = show_info("No more image to load")
-            self.save_curation_record(self._experiments_model.get_user_experiments_path() / self._experiments_model.get_experiment_name() /
-                                      "data" / "train.csv")
+            self.save_curation_record(
+                self._experiments_model.get_user_experiments_path()
+                / self._experiments_model.get_experiment_name()
+                / "data"
+                / "train.csv"
+            )
 
     def _update_progress_bar(self):
         # update progress bar
@@ -245,21 +254,10 @@ class CurationMainView(View):
             writer.writerow(["", "raw", "seg"])
             for idx, record in enumerate(self.curation_record):
                 if record.to_use:
-                    writer.writerow([
-                        str(idx),
-                        str(record.raw_file),
-                        str(record.seg1)
-                    ])
+                    writer.writerow(
+                        [str(idx), str(record.raw_file), str(record.seg1)]
+                    )
                 f.flush()
 
         shutil.copy(path, parent_path / "valid.csv")
         shutil.copy(path, parent_path / "test.csv")
-
-
-
-
-
-
-
-
-

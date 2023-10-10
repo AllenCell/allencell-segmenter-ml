@@ -26,7 +26,9 @@ class ImageSelectionWidget(QWidget):
 
     TITLE_TEXT: str = "Training images"
 
-    def __init__(self, model: TrainingModel, experiments_model: ExperimentsModel):
+    def __init__(
+        self, model: TrainingModel, experiments_model: ExperimentsModel
+    ):
         super().__init__()
 
         self._model: TrainingModel = model
@@ -90,18 +92,19 @@ class ImageSelectionWidget(QWidget):
         frame.layout().addWidget(self._channel_combo_box, 2, 1)
 
         self._experiments_model.subscribe(
-            Event.ACTION_EXPERIMENT_SELECTED,
-            self,
-            self.set_inputs_csv
+            Event.ACTION_EXPERIMENT_SELECTED, self, self.set_inputs_csv
         )
 
     def set_inputs_csv(self, event: Event):
         csv_path = self._experiments_model.get_csv_path() / "train.csv"
         if csv_path.is_file():
             # if the csv exists
-            self._images_directory_input_button._text_display.setText(str(self._experiments_model.get_csv_path()))
-            self._model.set_images_directory(self._experiments_model.get_csv_path())
+            self._images_directory_input_button._text_display.setText(
+                str(self._experiments_model.get_csv_path())
+            )
+            self._model.set_images_directory(
+                self._experiments_model.get_csv_path()
+            )
         else:
             self._images_directory_input_button._text_display.setText("")
             self._model.set_images_directory(None)
-
