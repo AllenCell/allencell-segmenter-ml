@@ -12,6 +12,7 @@ from allencell_ml_segmenter.curation.input_view import CurationInputView
 from allencell_ml_segmenter.curation.main_view import CurationMainView
 
 import napari
+from napari.utils.notifications import show_info
 
 from allencell_ml_segmenter.main.main_model import MainModel
 
@@ -41,15 +42,29 @@ class CurationWidget(QStackedWidget, Subscriber, metaclass=CurationUiMeta):
         self.curation_input_view = CurationInputView(self.curation_model)
         self.initialize_view(self.curation_input_view)
 
-        self.curation_main_view = CurationMainView()
+        self.curation_main_view = CurationMainView(
+            self.viewer, self.curation_model
+        )
         self.initialize_view(self.curation_main_view)
 
         self.set_view(self.curation_input_view)
         self.curation_model.subscribe(
             Event.PROCESS_CURATION_INPUT_STARTED,
             self,
-            lambda x: self.set_view(self.curation_main_view),
+            lambda x: self.go_to_main_view(self.curation_main_view),
         )
+
+    def go_to_main_view(self, view: View) -> None:
+        if (
+            self.curation_model.get_raw_directory() is not None
+            and self.curation_model.get_raw_channel() is not None
+            and self.curation_model.get_seg1_directory() is not None
+            and self.curation_model.get_seg1_channel() is not None
+        ):
+            self.set_view(view)
+            self.curation_main_view.curation_setup()
+        else:
+            _ = show_info("Please select all required fields")
 
     def set_view(self, view: View) -> None:
         """
