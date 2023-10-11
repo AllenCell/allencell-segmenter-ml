@@ -259,5 +259,6 @@ class CurationMainView(View):
                     )
                 f.flush()
 
+        # TODO: WRITE ACTUAL VALIDATION AND TEST SETS
         shutil.copy(path, parent_path / "valid.csv")
         shutil.copy(path, parent_path / "test.csv")
