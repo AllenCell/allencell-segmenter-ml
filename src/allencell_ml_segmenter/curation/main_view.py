@@ -162,9 +162,15 @@ class CurationMainView(View):
         print("show result")
 
     def remove_all_images(self) -> None:
+        """
+        Remove all images from napari.
+        """
         self.viewer.layers.clear()
 
     def curation_setup(self) -> None:
+        """
+        Curation setup. Builds a list of images to view during curation, sets progress bar, and loads the first image
+        """
         _ = show_info("Loading curation images")
 
         # build list of raw images, ignore .DS_Store files
@@ -175,14 +181,8 @@ class CurationMainView(View):
         self.seg1_images: List[Path] = [
             f for f in self._curation_model.get_seg1_directory().iterdir() if not f.name.endswith(".DS_Store")
         ]
+        self.init_progress_bar()
 
-        # set progress bar
-        self.progress_bar.setMaximum(len(self.raw_images))
-        self.progress_bar.setValue(1)
-        # set progress bar hint
-        self.progress_bar_image_count.setText(
-            f"{self.curation_index + 1}/{len(self.raw_images)}"
-        )
         self.remove_all_images()
 
         first_raw: Path = self.raw_images[0]
@@ -194,11 +194,30 @@ class CurationMainView(View):
             AICSImage(str(first_seg1)).data, name=f"[seg] {first_seg1.name}"
         )
 
+    def init_progress_bar(self) -> None:
+        """
+        Initialize progress bar based on number of images to curate, and set progress bar label
+        """
+        # set progress bar
+        self.progress_bar.setMaximum(len(self.raw_images))
+        self.progress_bar.setValue(1)
+        # set progress bar hint
+        self.progress_bar_image_count.setText(
+            f"{self.curation_index + 1}/{len(self.raw_images)}"
+        )
+
     def next_image(self) -> None:
+        """
+        Load the next image in the curation image stack. Updates curation record and progress bar accordingly.
+        """
         _ = show_info("Loading the next image...")
+        # update curation record (must be called before curation index is incremented)
         self._update_curation_record()
+        # increment curation index
         self.curation_index = self.curation_index + 1
+        # load next image
         if self.curation_index < len(self.raw_images):
+            # if there are additional images to view
             self.remove_all_images()
 
             raw_to_view: Path = self.raw_images[self.curation_index]
@@ -211,8 +230,9 @@ class CurationMainView(View):
                 AICSImage(str(seg1_to_view)).data,
                 name=f"[seg] {seg1_to_view.name}",
             )
-            self._update_progress_bar()
+            self._increment_progress_bar()
         else:
+            # No more images to load - curation is complete
             _ = show_info("No more image to load")
             self.save_curation_record(
                 self._experiments_model.get_user_experiments_path()
@@ -221,7 +241,10 @@ class CurationMainView(View):
                 / "train.csv"
             )
 
-    def _update_progress_bar(self) -> None:
+    def _increment_progress_bar(self) -> None:
+        """
+        increment the progress bar by 1
+        """
         # update progress bar
         self.progress_bar.setValue(self.progress_bar.value() + 1)
         # set progress bar hint
@@ -230,6 +253,9 @@ class CurationMainView(View):
         )
 
     def _update_curation_record(self) -> None:
+        """
+        Update the curation record with the users selection for the current image
+        """
         use_this_image: bool = True
         if self.no_radio.isChecked():
             use_this_image = False
@@ -243,11 +269,17 @@ class CurationMainView(View):
         )
 
     def add_points_in_viewer(self) -> None:
+        """
+        Add points within napari
+        """
         _ = show_info("Draw excluding area")
         points_layer: Shapes = self.viewer.add_shapes(None)
         points_layer.mode = "add_polygon"
 
     def save_curation_record(self, path: Path) -> None:
+        """
+        Save the curation record as a csv
+        """
         parent_path: Path = path.parents[0]
         if not parent_path.is_dir():
             parent_path.mkdir(parents=True)

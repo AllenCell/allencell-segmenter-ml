@@ -64,6 +64,9 @@ class CurationWidget(QStackedWidget, Subscriber, metaclass=CurationUiMeta):
         )
 
     def go_to_main_view(self, view: View) -> None:
+        """
+        Switch to main curation view
+        """
         if (
             self.curation_model.get_raw_directory() is not None
             and self.curation_model.get_raw_channel() is not None
@@ -82,6 +85,9 @@ class CurationWidget(QStackedWidget, Subscriber, metaclass=CurationUiMeta):
         self.setCurrentIndex(self.view_to_index[view])
 
     def initialize_view(self, view: View) -> None:
+        """
+        Initialize views. This is necessary because QStackedWidget requires all child widgets to be added
+        """
         # QStackedWidget count method keeps track of how many child widgets have been added
         self.view_to_index[view] = self.count()
         self.addWidget(view)
