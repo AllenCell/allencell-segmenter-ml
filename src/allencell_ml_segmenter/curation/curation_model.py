@@ -11,7 +11,7 @@ class CurationModel(Publisher):
     Stores state relevant to prediction processes.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.current_view = None
 
@@ -29,7 +29,7 @@ class CurationModel(Publisher):
         self._seg1_image_channel_count: int = None
         self._seg2_image_channel_count: int = None
 
-    def set_raw_directory(self, dir: Path):
+    def set_raw_directory(self, dir: Path) -> None:
         self._raw_directory = dir
         self._raw_image_channel_count = self.get_total_num_channels(
             self._raw_directory
@@ -39,7 +39,7 @@ class CurationModel(Publisher):
     def get_raw_directory(self) -> Path:
         return self._raw_directory
 
-    def set_seg1_directory(self, dir: Path):
+    def set_seg1_directory(self, dir: Path) -> None:
         self._seg1_directory = dir
         self._seg1_image_channel_count = self.get_total_num_channels(
             self._seg1_directory
@@ -49,7 +49,7 @@ class CurationModel(Publisher):
     def get_seg1_directory(self) -> Path:
         return self._seg1_directory
 
-    def set_seg2_directory(self, dir: Path):
+    def set_seg2_directory(self, dir: Path) -> None:
         self._seg2_directory = dir
         self._seg2_image_channel_count = self.get_total_num_channels(
             self._seg2_directory
@@ -59,37 +59,37 @@ class CurationModel(Publisher):
     def get_seg2_directory(self) -> Path:
         return self._seg2_directory
 
-    def set_raw_channel(self, channel: int):
+    def set_raw_channel(self, channel: int) -> None:
         self._raw_image_channel = channel
 
     def get_raw_channel(self) -> int:
         return self._raw_image_channel
 
-    def set_seg1_channel(self, channel: int):
+    def set_seg1_channel(self, channel: int) -> None:
         self._seg1_image_channel = channel
 
     def get_seg1_channel(self) -> int:
         return self._seg1_image_channel
 
-    def set_seg2_channel(self, channel: int):
+    def set_seg2_channel(self, channel: int) -> None:
         self._seg2_image_channel = channel
 
     def get_seg2_channel(self) -> int:
         return self._seg2_image_channel
 
-    def set_view(self):
+    def set_view(self) -> None:
         self.dispatch(Event.PROCESS_CURATION_INPUT_STARTED)
 
-    def get_view(self):
+    def get_view(self) -> str:
         return self.current_view
 
-    def get_total_num_channels_raw(self):
+    def get_total_num_channels_raw(self) -> int:
         return self._raw_image_channel_count
 
-    def get_total_num_channels_seg1(self):
+    def get_total_num_channels_seg1(self) -> int:
         return self._seg1_image_channel_count
 
-    def get_total_num_channels_seg2(self):
+    def get_total_num_channels_seg2(self) -> int:
         return self._seg2_image_channel_count
 
     def get_total_num_channels(self, path) -> int:

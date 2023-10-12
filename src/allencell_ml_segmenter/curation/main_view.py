@@ -21,7 +21,6 @@ from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
 from allencell_ml_segmenter.curation.curation_model import CurationModel
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
-from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 
 from napari.utils.notifications import show_info
@@ -40,7 +39,7 @@ class CurationMainView(View):
         experiments_model: ExperimentsModel,
     ):
         super().__init__()
-        self.viewer = viewer
+        self.viewer: napari.Viewer = viewer
         self._curation_model = curation_model
         self._experiments_model = experiments_model
         self.curation_index = 0
@@ -152,19 +151,19 @@ class CurationMainView(View):
 
         self.layout().addLayout(merging_mask_buttons)
 
-    def doWork(self):
+    def doWork(self) -> None:
         print("work")
 
-    def getTypeOfWork(self):
+    def getTypeOfWork(self) -> None:
         print("getwork")
 
-    def showResults(self):
+    def showResults(self) -> None:
         print("show result")
 
-    def remove_all_images(self):
+    def remove_all_images(self) -> None:
         self.viewer.layers.clear()
 
-    def curation_setup(self):
+    def curation_setup(self) -> None:
         _ = show_info("Loading curation images")
         self.raw_images = [
             f for f in self._curation_model.get_raw_directory().iterdir()
@@ -182,16 +181,16 @@ class CurationMainView(View):
         )
         self.remove_all_images()
 
-        first_raw = self.raw_images[0]
+        first_raw: np.ndarray = self.raw_images[0]
         self.viewer.add_image(
             AICSImage(str(first_raw)).data, name=f"[raw] {first_raw.name}"
         )
-        first_seg1 = self.seg1_images[0]
+        first_seg1: np.ndarray = self.seg1_images[0]
         self.viewer.add_image(
             AICSImage(str(first_seg1)).data, name=f"[seg] {first_seg1.name}"
         )
 
-    def next_image(self):
+    def next_image(self) -> None:
         _ = show_info("Loading the next image...")
         self._update_curation_record()
         self.curation_index = self.curation_index + 1
@@ -218,7 +217,7 @@ class CurationMainView(View):
                 / "train.csv"
             )
 
-    def _update_progress_bar(self):
+    def _update_progress_bar(self) -> None:
         # update progress bar
         self.progress_bar.setValue(self.progress_bar.value() + 1)
         # set progress bar hint
@@ -226,7 +225,7 @@ class CurationMainView(View):
             f"{self.curation_index + 1}/{len(self.raw_images)}"
         )
 
-    def _update_curation_record(self):
+    def _update_curation_record(self) -> None:
         use_this_image = True
         if self.no_radio.isChecked():
             use_this_image = False
@@ -238,19 +237,19 @@ class CurationMainView(View):
             )
         )
 
-    def add_points_in_viewer(self):
+    def add_points_in_viewer(self) -> None:
         _ = show_info("Draw excluding area")
         points_layer = self.viewer.add_shapes(None)
         points_layer.mode = "add_polygon"
 
-    def save_curation_record(self, path: Path):
+    def save_curation_record(self, path: Path) -> None:
         parent_path = path.parents[0]
         if not parent_path.is_dir():
             parent_path.mkdir(parents=True)
 
         with open(path, "w") as f:
             # need file header
-            writer = csv.writer(f, delimiter=",")
+            writer: csv.writer = csv.writer(f, delimiter=",")
             writer.writerow(["", "raw", "seg"])
             for idx, record in enumerate(self.curation_record):
                 if record.to_use:
