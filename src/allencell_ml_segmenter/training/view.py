@@ -74,7 +74,7 @@ class TrainingView(View):
 
         # initialize constituent widgets
         image_selection_widget: ImageSelectionWidget = ImageSelectionWidget(
-            self._training_model
+            self._training_model, self._experiments_model
         )
         image_selection_widget.setObjectName("imageSelection")
 

@@ -1,3 +1,5 @@
+from typing import Dict
+
 from qtpy.QtWidgets import (
     QVBoxLayout,
     QSizePolicy,
@@ -14,6 +16,7 @@ from allencell_ml_segmenter.curation.main_view import CurationMainView
 import napari
 from napari.utils.notifications import show_info
 
+from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
 
 
@@ -27,23 +30,31 @@ class CurationUiMeta(type(QStackedWidget), type(Subscriber)):
 
 
 class CurationWidget(QStackedWidget, Subscriber, metaclass=CurationUiMeta):
-    def __init__(self, viewer: napari.Viewer, main_model: MainModel):
+    def __init__(
+        self,
+        viewer: napari.Viewer,
+        main_model: MainModel,
+        experiments_model: ExperimentsModel,
+    ) -> None:
         super().__init__()
-        self.main_model = main_model
+        self.main_model: MainModel = main_model
         self.viewer: napari.Viewer = viewer
-        self.view_to_index = dict()
-        self.curation_model = CurationModel()
+        self.experiments_model: ExperimentsModel = experiments_model
+        self.view_to_index: Dict[View, int] = dict()
+        self.curation_model: CurationModel = CurationModel()
 
         # basic styling
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
 
-        self.curation_input_view = CurationInputView(self.curation_model)
+        self.curation_input_view: CurationInputView = CurationInputView(
+            self.curation_model
+        )
         self.initialize_view(self.curation_input_view)
 
-        self.curation_main_view = CurationMainView(
-            self.viewer, self.curation_model
+        self.curation_main_view: CurationMainView = CurationMainView(
+            self.viewer, self.curation_model, self.experiments_model
         )
         self.initialize_view(self.curation_main_view)
 
@@ -55,6 +66,9 @@ class CurationWidget(QStackedWidget, Subscriber, metaclass=CurationUiMeta):
         )
 
     def go_to_main_view(self, view: View) -> None:
+        """
+        Switch to main curation view
+        """
         if (
             self.curation_model.get_raw_directory() is not None
             and self.curation_model.get_raw_channel() is not None
@@ -73,6 +87,9 @@ class CurationWidget(QStackedWidget, Subscriber, metaclass=CurationUiMeta):
         self.setCurrentIndex(self.view_to_index[view])
 
     def initialize_view(self, view: View) -> None:
+        """
+        Initialize views. This is necessary because QStackedWidget requires all child widgets to be added
+        """
         # QStackedWidget count method keeps track of how many child widgets have been added
         self.view_to_index[view] = self.count()
         self.addWidget(view)
