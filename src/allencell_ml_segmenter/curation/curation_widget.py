@@ -48,7 +48,9 @@ class CurationWidget(QStackedWidget, Subscriber, metaclass=CurationUiMeta):
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
 
-        self.curation_input_view: CurationInputView = CurationInputView(self.curation_model)
+        self.curation_input_view: CurationInputView = CurationInputView(
+            self.curation_model
+        )
         self.initialize_view(self.curation_input_view)
 
         self.curation_main_view: CurationMainView = CurationMainView(
