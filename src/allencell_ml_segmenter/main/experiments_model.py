@@ -3,6 +3,7 @@ from pathlib import Path
 from allencell_ml_segmenter.config.cyto_dl_config import CytoDlConfig
 import copy
 
+from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
 
 
@@ -32,6 +33,9 @@ class ExperimentsModel(IExperimentsModel):
         name (str): name of cyto-dl experiment
         """
         self._experiment_name = name
+        if self._experiment_name:
+            # if a experiment name is set
+            self.dispatch(Event.ACTION_EXPERIMENT_SELECTED)
 
     def get_checkpoint(self) -> str:
         """
@@ -104,4 +108,11 @@ class ExperimentsModel(IExperimentsModel):
             / checkpoint
             if experiment_name and checkpoint
             else None
+        )
+
+    def get_csv_path(self) -> Path:
+        return (
+            self.get_user_experiments_path()
+            / self.get_experiment_name()
+            / "data"
         )
