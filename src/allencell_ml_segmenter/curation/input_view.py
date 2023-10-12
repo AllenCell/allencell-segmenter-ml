@@ -178,6 +178,10 @@ class CurationInputView(View):
         print("show result")
 
     def update_raw_channels(self, event) -> None:
+        """
+        Event handler when raw image directory is selected. Updates combobox to the correct number of channels in the
+        images from the raw directory.
+        """
         if event == Event.ACTION_CURATION_RAW_SELECTED:
             self._raw_image_channel_combo.clear()
             self._raw_image_channel_combo.addItems(
@@ -193,6 +197,10 @@ class CurationInputView(View):
             self._curation_model.set_raw_channel(0)
 
     def update_seg1_channels(self, event) -> None:
+        """
+        Event handler when seg1 image directory is selected. Updates combobox to the correct number of channels in the
+        images from the seg1 directory.
+        """
         if event == Event.ACTION_CURATION_SEG1_SELECTED:
             self._seg1_image_channel_combo.clear()
             self._seg1_image_channel_combo.addItems(
@@ -207,6 +215,10 @@ class CurationInputView(View):
             self._curation_model.set_seg1_channel(0)
 
     def update_seg2_channels(self, event) -> None:
+        """
+        Event handler when seg2 image directory is selected. Updates combobox to the correct number of channels in the
+        images from the seg2 directory.
+        """
         if event == Event.ACTION_CURATION_SEG2_SELECTED:
             self._seg2_image_channel_combo.clear()
             self._seg2_image_channel_combo.addItems(
@@ -221,10 +233,19 @@ class CurationInputView(View):
             self._curation_model.set_seg2_channel(0)
 
     def raw_channel_selected(self, index) -> None:
+        """
+        Event handler when combobox channel selection is made. Sets the raw channel index in the model.
+        """
         self._curation_model.set_raw_channel(index)
 
     def seg1_channel_selected(self, index) -> None:
+        """
+        Event handler when combobox channel selection is made. Sets the seg1 channel index in the model.
+        """
         self._curation_model.set_seg1_channel(index)
 
     def seg2_channel_selected(self, index) -> None:
+        """
+        Event handler when combobox channel selection is made. Sets the seg2 channel index in the model.
+        """
         self._curation_model.set_seg2_channel(index)
