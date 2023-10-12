@@ -27,7 +27,6 @@ from napari.layers.shapes.shapes import Shapes
 import shutil
 
 
-
 class CurationMainView(View):
     """
     View for Curation UI
@@ -124,7 +123,9 @@ class CurationMainView(View):
         excluding_create_button: QPushButton = QPushButton("+ Create")
         excluding_create_button.setObjectName("small_blue_btn")
         excluding_create_button.clicked.connect(self.add_points_in_viewer)
-        excluding_propagate_button: QPushButton = QPushButton("Propagate in 3D")
+        excluding_propagate_button: QPushButton = QPushButton(
+            "Propagate in 3D"
+        )
         excluding_delete_button: QPushButton = QPushButton("Delete")
         excluding_save_button: QPushButton = QPushButton("Save")
         excluding_save_button.setObjectName("small_blue_btn")
@@ -175,11 +176,15 @@ class CurationMainView(View):
 
         # build list of raw images, ignore .DS_Store files
         self.raw_images: List[Path] = [
-            f for f in self._curation_model.get_raw_directory().iterdir() if not f.name.endswith(".DS_Store")
+            f
+            for f in self._curation_model.get_raw_directory().iterdir()
+            if not f.name.endswith(".DS_Store")
         ]
         # build list of seg1 images, ignore .DS_Store files
         self.seg1_images: List[Path] = [
-            f for f in self._curation_model.get_seg1_directory().iterdir() if not f.name.endswith(".DS_Store")
+            f
+            for f in self._curation_model.get_seg1_directory().iterdir()
+            if not f.name.endswith(".DS_Store")
         ]
         self.init_progress_bar()
 
