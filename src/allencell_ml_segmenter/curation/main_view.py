@@ -12,7 +12,6 @@ from qtpy.QtWidgets import (
     QPushButton,
     QProgressBar,
     QRadioButton,
-    QGridLayout,
 )
 from aicsimageio import AICSImage
 
@@ -24,7 +23,9 @@ from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 
 from napari.utils.notifications import show_info
+from napari.layers.shapes.shapes import Shapes
 import shutil
+
 
 
 class CurationMainView(View):
@@ -37,12 +38,12 @@ class CurationMainView(View):
         viewer: napari.Viewer,
         curation_model: CurationModel,
         experiments_model: ExperimentsModel,
-    ):
+    ) -> None:
         super().__init__()
         self.viewer: napari.Viewer = viewer
-        self._curation_model = curation_model
-        self._experiments_model = experiments_model
-        self.curation_index = 0
+        self._curation_model: CurationModel = curation_model
+        self._experiments_model: ExperimentsModel = experiments_model
+        self.curation_index: int = 0
         self.curation_record: List[CurationRecord] = list()
 
         self.setLayout(QVBoxLayout())
@@ -62,7 +63,7 @@ class CurationMainView(View):
         frame.setLayout(QVBoxLayout())
         self.layout().addWidget(frame)
 
-        input_images_label = QLabel("Progress")
+        input_images_label: QLabel = QLabel("Progress")
         frame.layout().addWidget(input_images_label, alignment=Qt.AlignHCenter)
 
         progress_bar_layout: QHBoxLayout = QHBoxLayout()
@@ -110,8 +111,8 @@ class CurationMainView(View):
         self.layout().addWidget(use_image_frame, alignment=Qt.AlignHCenter)
 
         # Labels for excluding mask
-        excluding_mask_labels = QHBoxLayout()
-        excluding_mask_label = LabelWithHint("Excluding mask")
+        excluding_mask_labels: QHBoxLayout = QHBoxLayout()
+        excluding_mask_label: LabelWithHint = LabelWithHint("Excluding mask")
         excluding_mask_labels.addWidget(excluding_mask_label)
         excluding_mask_labels.addWidget(
             QLabel("File name..."), alignment=Qt.AlignLeft
@@ -119,13 +120,13 @@ class CurationMainView(View):
         self.layout().addLayout(excluding_mask_labels)
 
         # buttons for excluding mask
-        excluding_mask_buttons = QHBoxLayout()
-        excluding_create_button = QPushButton("+ Create")
+        excluding_mask_buttons: QHBoxLayout = QHBoxLayout()
+        excluding_create_button: QPushButton = QPushButton("+ Create")
         excluding_create_button.setObjectName("small_blue_btn")
         excluding_create_button.clicked.connect(self.add_points_in_viewer)
-        excluding_propagate_button = QPushButton("Propagate in 3D")
-        excluding_delete_button = QPushButton("Delete")
-        excluding_save_button = QPushButton("Save")
+        excluding_propagate_button: QPushButton = QPushButton("Propagate in 3D")
+        excluding_delete_button: QPushButton = QPushButton("Delete")
+        excluding_save_button: QPushButton = QPushButton("Save")
         excluding_save_button.setObjectName("small_blue_btn")
         excluding_mask_buttons.addWidget(excluding_create_button)
         excluding_mask_buttons.addWidget(excluding_propagate_button)
@@ -134,15 +135,15 @@ class CurationMainView(View):
         self.layout().addLayout(excluding_mask_buttons)
 
         # Label for Merging mask
-        merging_mask_label = LabelWithHint("Merging mask")
+        merging_mask_label: LabelWithHint = LabelWithHint("Merging mask")
         self.layout().addWidget(merging_mask_label)
         # buttons for merging mask
-        merging_mask_buttons = QHBoxLayout()
-        merging_create_button = QPushButton("+ Create")
+        merging_mask_buttons: QHBoxLayout = QHBoxLayout()
+        merging_create_button: QPushButton = QPushButton("+ Create")
         merging_create_button.setObjectName("small_blue_btn")
-        merging_propagate_button = QPushButton("Propagate in 3D")
-        merging_delete_button = QPushButton("Delete")
-        merging_save_button = QPushButton("Save")
+        merging_propagate_button: QPushButton = QPushButton("Propagate in 3D")
+        merging_delete_button: QPushButton = QPushButton("Delete")
+        merging_save_button: QPushButton = QPushButton("Save")
         merging_save_button.setObjectName("small_blue_btn")
         merging_mask_buttons.addWidget(merging_create_button)
         merging_mask_buttons.addWidget(merging_propagate_button)
@@ -165,11 +166,14 @@ class CurationMainView(View):
 
     def curation_setup(self) -> None:
         _ = show_info("Loading curation images")
-        self.raw_images = [
-            f for f in self._curation_model.get_raw_directory().iterdir()
+
+        # build list of raw images, ignore .DS_Store files
+        self.raw_images: List[Path] = [
+            f for f in self._curation_model.get_raw_directory().iterdir() if not f.name.endswith(".DS_Store")
         ]
-        self.seg1_images = [
-            f for f in self._curation_model.get_seg1_directory().iterdir()
+        # build list of seg1 images, ignore .DS_Store files
+        self.seg1_images: List[Path] = [
+            f for f in self._curation_model.get_seg1_directory().iterdir() if not f.name.endswith(".DS_Store")
         ]
 
         # set progress bar
@@ -181,11 +185,11 @@ class CurationMainView(View):
         )
         self.remove_all_images()
 
-        first_raw: np.ndarray = self.raw_images[0]
+        first_raw: Path = self.raw_images[0]
         self.viewer.add_image(
             AICSImage(str(first_raw)).data, name=f"[raw] {first_raw.name}"
         )
-        first_seg1: np.ndarray = self.seg1_images[0]
+        first_seg1: Path = self.seg1_images[0]
         self.viewer.add_image(
             AICSImage(str(first_seg1)).data, name=f"[seg] {first_seg1.name}"
         )
@@ -197,12 +201,12 @@ class CurationMainView(View):
         if self.curation_index < len(self.raw_images):
             self.remove_all_images()
 
-            raw_to_view = self.raw_images[self.curation_index]
+            raw_to_view: Path = self.raw_images[self.curation_index]
             self.viewer.add_image(
                 AICSImage(str(raw_to_view)).data,
                 name=f"[raw] {raw_to_view.name}",
             )
-            seg1_to_view = self.seg1_images[self.curation_index]
+            seg1_to_view: Path = self.seg1_images[self.curation_index]
             self.viewer.add_image(
                 AICSImage(str(seg1_to_view)).data,
                 name=f"[seg] {seg1_to_view.name}",
@@ -226,9 +230,10 @@ class CurationMainView(View):
         )
 
     def _update_curation_record(self) -> None:
-        use_this_image = True
+        use_this_image: bool = True
         if self.no_radio.isChecked():
             use_this_image = False
+        # append this curation record to the curation record list
         self.curation_record.append(
             CurationRecord(
                 self.raw_images[self.curation_index],
@@ -239,11 +244,11 @@ class CurationMainView(View):
 
     def add_points_in_viewer(self) -> None:
         _ = show_info("Draw excluding area")
-        points_layer = self.viewer.add_shapes(None)
+        points_layer: Shapes = self.viewer.add_shapes(None)
         points_layer.mode = "add_polygon"
 
     def save_curation_record(self, path: Path) -> None:
-        parent_path = path.parents[0]
+        parent_path: Path = path.parents[0]
         if not parent_path.is_dir():
             parent_path.mkdir(parents=True)
 
