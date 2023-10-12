@@ -1,3 +1,5 @@
+from typing import Dict
+
 from qtpy.QtWidgets import (
     QVBoxLayout,
     QSizePolicy,
@@ -33,23 +35,23 @@ class CurationWidget(QStackedWidget, Subscriber, metaclass=CurationUiMeta):
         viewer: napari.Viewer,
         main_model: MainModel,
         experiments_model: ExperimentsModel,
-    ):
+    ) -> None:
         super().__init__()
-        self.main_model = main_model
+        self.main_model: MainModel = main_model
         self.viewer: napari.Viewer = viewer
-        self.experiments_model = experiments_model
-        self.view_to_index = dict()
-        self.curation_model = CurationModel()
+        self.experiments_model: ExperimentsModel = experiments_model
+        self.view_to_index: Dict[View, int] = dict()
+        self.curation_model: CurationModel = CurationModel()
 
         # basic styling
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
 
-        self.curation_input_view = CurationInputView(self.curation_model)
+        self.curation_input_view: CurationInputView = CurationInputView(self.curation_model)
         self.initialize_view(self.curation_input_view)
 
-        self.curation_main_view = CurationMainView(
+        self.curation_main_view: CurationMainView = CurationMainView(
             self.viewer, self.curation_model, self.experiments_model
         )
         self.initialize_view(self.curation_main_view)
