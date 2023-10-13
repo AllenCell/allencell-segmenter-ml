@@ -44,6 +44,9 @@ class CurationMainView(View):
         self._experiments_model: ExperimentsModel = experiments_model
         self.curation_index: int = 0
         self.curation_record: List[CurationRecord] = list()
+        self.raw_images: List[Path] = list()
+        self.seg1_images: List[Path] = list()
+        self.seg2_images: List[Path] = list()
 
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 10, 0, 10)
