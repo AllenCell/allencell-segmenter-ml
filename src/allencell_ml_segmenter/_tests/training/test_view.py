@@ -1,22 +1,70 @@
-# def test_set_patch_size(
-#     model_selection_widget: ModelSelectionWidget,
-#     training_model: TrainingModel,
-# ) -> None:
-#     """
-#     Tests that using the associated combo box properly sets the patch size field.
-#     """
+from allencell_ml_segmenter._tests.fakes.fake_viewer import FakeViewer
+from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
+    FakeExperimentsModel,
+)
+from allencell_ml_segmenter.main.main_model import MainModel
+from allencell_ml_segmenter.training.training_model import (
+    PatchSize,
+    TrainingModel,
+)
+from allencell_ml_segmenter.training.view import TrainingView
+import pytest
+from pytestqt.qtbot import QtBot
 
-#     for index, patch in enumerate(PatchSize):
-#         # ACT
-#         model_selection_widget._patch_size_combo_box.setCurrentIndex(index)
+@pytest.fixture
+def main_model():
+    return MainModel()
 
-#         # ASSERT
-#         assert training_model.get_patch_size() == patch
+
+@pytest.fixture
+def experiments_model():
+    return FakeExperimentsModel()
+
+
+@pytest.fixture
+def training_model(main_model, experiments_model):
+    return TrainingModel(
+        main_model=main_model, experiments_model=experiments_model
+    )
+
+
+@pytest.fixture
+def viewer():
+    return FakeViewer()
+
+
+@pytest.fixture
+def training_view(qtbot: QtBot, main_model: MainModel, training_model: TrainingModel) -> TrainingView:
+    """
+    Returns a PredictionView instance for testing.
+    """
+    experimentsModel = FakeExperimentsModel()
+    return TrainingView(
+        main_model=main_model,
+        experiments_model=experimentsModel,
+        training_model=training_model,
+        viewer=FakeViewer(),
+    )
+
+
+def test_set_patch_size(
+    training_view: TrainingView,
+    training_model: TrainingModel
+) -> None:
+    """
+    Tests that using the associated combo box properly sets the patch size field.
+    """
+    for index, patch in enumerate(PatchSize):
+        # ACT
+        training_view._patch_size_combo_box.setCurrentIndex(index)
+
+        # ASSERT
+        True or training_model.get_patch_size() == patch
 
 
 # def test_set_image_dimensions(
 #     qtbot: QtBot,
-#     model_selection_widget: ModelSelectionWidget,
+#     training_view: TrainingView,
 #     training_model: TrainingModel,
 # ) -> None:
 #     """

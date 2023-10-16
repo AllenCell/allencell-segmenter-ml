@@ -21,9 +21,11 @@ from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.prediction.view import PredictionView
+from allencell_ml_segmenter.services.training_service import TrainingService
 from allencell_ml_segmenter.training.model_selection_widget import (
     ModelSelectionWidget,
 )
+from allencell_ml_segmenter.training.training_model import TrainingModel
 from allencell_ml_segmenter.training.view import TrainingView
 
 
@@ -48,11 +50,11 @@ class MainWidget(AicsWidget):
 
         if config is None:
             config = CytoDlConfig(CYTO_DL_HOME_PATH, USER_EXPERIMENTS_PATH)
-        experiment_model = ExperimentsModel(config)
+        self._experiments_model = ExperimentsModel(config)
 
         # Model selection which applies to all views
         model_selection_widget: ModelSelectionWidget = ModelSelectionWidget(
-            experiment_model
+            self._experiments_model
         )
         model_selection_widget.setObjectName("modelSelection")
         self.layout().addWidget(model_selection_widget, Qt.AlignTop)
@@ -68,12 +70,20 @@ class MainWidget(AicsWidget):
         self._prediction_view: PredictionView = PredictionView(self._model)
         self._initialize_view(self._prediction_view, "Prediction")
 
-        training_view: TrainingView = TrainingView(
+        self._training_model: TrainingModel = TrainingModel(
+            main_model=self._model, experiments_model=self._experiments_model
+        )
+        self._training_service: TrainingService = TrainingService(
+            training_model=self._training_model,
+            experiments_model=self._experiments_model,
+        )
+        self._training_view: TrainingView = TrainingView(
             main_model=self._model,
             viewer=self.viewer,
-            experiments_model=experiment_model,
+            experiments_model=self._experiments_model,
+            training_model=self._training_model,
         )
-        self._initialize_view(training_view, "Training")
+        self._initialize_view(self._training_view, "Training")
 
         self._curation_view: CurationWidget = CurationWidget(
             self.viewer, self._model, experiment_model
