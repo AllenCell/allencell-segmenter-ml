@@ -86,7 +86,7 @@ class MainWidget(AicsWidget):
         self._initialize_view(self._training_view, "Training")
 
         self._curation_view: CurationWidget = CurationWidget(
-            self.viewer, self._model, experiment_model
+            self.viewer, self._model, self._experiments_model
         )
         self._initialize_view(self._curation_view, "Curation")
 
