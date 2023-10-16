@@ -11,6 +11,7 @@ from allencell_ml_segmenter.training.view import TrainingView
 import pytest
 from pytestqt.qtbot import QtBot
 
+
 @pytest.fixture
 def main_model():
     return MainModel()
@@ -34,7 +35,9 @@ def viewer():
 
 
 @pytest.fixture
-def training_view(qtbot: QtBot, main_model: MainModel, training_model: TrainingModel) -> TrainingView:
+def training_view(
+    qtbot: QtBot, main_model: MainModel, training_model: TrainingModel
+) -> TrainingView:
     """
     Returns a PredictionView instance for testing.
     """
@@ -48,8 +51,7 @@ def training_view(qtbot: QtBot, main_model: MainModel, training_model: TrainingM
 
 
 def test_set_patch_size(
-    training_view: TrainingView,
-    training_model: TrainingModel
+    training_view: TrainingView, training_model: TrainingModel
 ) -> None:
     """
     Tests that using the associated combo box properly sets the patch size field.
