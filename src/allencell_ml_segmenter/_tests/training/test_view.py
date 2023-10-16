@@ -51,8 +51,7 @@ def training_view(
 
 
 def test_set_patch_size(
-    training_view: TrainingView, 
-    training_model: TrainingModel
+    training_view: TrainingView, training_model: TrainingModel
 ) -> None:
     """
     Tests that using the associated combo box properly sets the patch size field.
@@ -89,9 +88,7 @@ def test_set_image_dimensions(
 
 
 def test_set_max_epoch(
-    qtbot: QtBot,
-    training_view: TrainingView, 
-    training_model: TrainingModel
+    qtbot: QtBot, training_view: TrainingView, training_model: TrainingModel
 ) -> None:
     """
     Tests that the max epoch field is properly set by the associated QLineEdit.
@@ -104,9 +101,7 @@ def test_set_max_epoch(
 
 
 def test_set_max_time(
-    qtbot: QtBot,
-    training_view: TrainingView, 
-    training_model: TrainingModel
+    qtbot: QtBot, training_view: TrainingView, training_model: TrainingModel
 ) -> None:
     """
     Tests that the max time field is properly set by the associated QLineEdit.
@@ -122,9 +117,7 @@ def test_set_max_time(
 
 
 def test_checkbox_slot(
-    qtbot: QtBot, 
-    training_view: TrainingView, 
-    training_model: TrainingModel
+    qtbot: QtBot, training_view: TrainingView, training_model: TrainingModel
 ) -> None:
     """
     Test the slot connected to the timeout checkbox.
@@ -133,18 +126,14 @@ def test_checkbox_slot(
     assert not training_view._max_time_in_hours_input.isEnabled()
 
     # ACT (enable QLineEdit related to timeout limit)
-    with qtbot.waitSignal(
-        training_view._max_time_checkbox.stateChanged
-    ):
+    with qtbot.waitSignal(training_view._max_time_checkbox.stateChanged):
         training_view._max_time_checkbox.click()
 
     # ASSERT
     assert training_view._max_time_in_hours_input.isEnabled()
 
     # ACT (disabled QLineEdit related to timeout limit)
-    with qtbot.waitSignal(
-        training_view._max_time_checkbox.stateChanged
-    ):
+    with qtbot.waitSignal(training_view._max_time_checkbox.stateChanged):
         training_view._max_time_checkbox.click()
 
     # ASSERT
