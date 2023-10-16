@@ -12,9 +12,6 @@ from allencell_ml_segmenter.training.model_selection_widget import (
 from allencell_ml_segmenter.training.training_model import (
     TrainingModel,
 )
-from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
-    FakeExperimentsModel,
-)
 
 
 @pytest.fixture
