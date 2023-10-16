@@ -44,6 +44,7 @@ class TrainingView(View):
         self,
         main_model: MainModel,
         experiments_model: ExperimentsModel,
+        training_model: TrainingModel,
         viewer: IViewer,
     ):
         super().__init__()
@@ -52,13 +53,7 @@ class TrainingView(View):
 
         self._main_model: MainModel = main_model
         self._experiments_model: ExperimentsModel = experiments_model
-        self._training_model: TrainingModel = TrainingModel(
-            main_model, experiments_model
-        )
-        self._training_service: TrainingService = TrainingService(
-            training_model=self._training_model,
-            experiments_model=self._experiments_model,
-        )
+        self._training_model: TrainingModel = training_model
 
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
