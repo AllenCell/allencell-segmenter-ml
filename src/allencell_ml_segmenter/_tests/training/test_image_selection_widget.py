@@ -43,7 +43,9 @@ def image_selection_widget(
     """
     Fixture that creates an instance of ImageSelectionWidget for testing.
     """
-    return ImageSelectionWidget(model=training_model, experiments_model=experiments_model)
+    return ImageSelectionWidget(
+        model=training_model, experiments_model=experiments_model
+    )
 
 
 # decorator used to stub QFileDialog and avoid nested context managers
