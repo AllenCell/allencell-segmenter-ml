@@ -48,9 +48,13 @@ def curation_widget(
 def test_initialize_views(
     curation_model: CurationModel, curation_widget: CurationWidget
 ):
+    # Arrange
     input_view: CurationInputView = CurationInputView(curation_model)
+
+    # Act
     curation_widget.initialize_view(input_view)
 
+    # Assert
     assert curation_widget.count() == 3  # 2 views from init + 1 for testing
     assert (
         curation_widget.view_to_index[input_view] == 2
@@ -60,8 +64,12 @@ def test_initialize_views(
 def test_set_view(
     curation_model: CurationModel, curation_widget: CurationWidget
 ):
+    # Arrange
     input_view: CurationInputView = CurationInputView(curation_model)
     curation_widget.initialize_view(input_view)
+
+    # Act
     curation_widget.set_view(input_view)
 
+    # Assert
     assert curation_widget.currentWidget() == input_view

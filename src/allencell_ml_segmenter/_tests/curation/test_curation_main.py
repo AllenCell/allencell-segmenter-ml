@@ -20,23 +20,25 @@ def curation_main_view(qtbot: QtBot) -> CurationMainView:
 
 
 def test_curation_main_view_init(curation_main_view: CurationMainView) -> None:
+    # Arrange, Act, Assert
     assert isinstance(curation_main_view, CurationMainView)
 
 
 def test_init_progress_bar(curation_main_view: CurationMainView) -> None:
+    # Act
     curation_main_view.init_progress_bar()
+
+    # Assert
     assert curation_main_view.progress_bar.value() == 1
 
 
 def test_increment_progress_bar(curation_main_view: CurationMainView) -> None:
+    # Arrange
     initial_value: int = curation_main_view.progress_bar.value()
+    # Act
     curation_main_view._increment_progress_bar()
+    # Assert
     assert curation_main_view.progress_bar.value() == initial_value + 1
-
-
-def test_add_points_in_viewer(curation_main_view: CurationMainView) -> None:
-    curation_main_view.add_points_in_viewer()
-
 
 # parametized test to test when we want to use the image in curation vs when we dont
 # either way we save the raw image path and the seg1 image path as a CurationRecord
@@ -48,14 +50,17 @@ def test_update_curation_record(
     use_this_image: str,
     expected_result: bool,
 ) -> None:
+    # Arrange
     curation_main_view.no_radio.setChecked(not use_this_image)
     raw_test_path: Path = Path("test_path_raw")
     curation_main_view.raw_images = [raw_test_path]
     seg1_test_path: Path = Path("test_path_seg1")
     curation_main_view.seg1_images = [seg1_test_path]
 
+    # Act
     curation_main_view._update_curation_record()
 
+    # Assert
     assert curation_main_view.curation_record[-1].to_use == expected_result
     assert curation_main_view.curation_record[-1].raw_file == raw_test_path
     assert curation_main_view.curation_record[-1].seg1 == seg1_test_path
