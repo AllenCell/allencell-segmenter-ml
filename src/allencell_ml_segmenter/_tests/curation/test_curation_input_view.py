@@ -81,6 +81,7 @@ def test_update_raw_channels(
     ]
 
     # Assert
+    # See if combo box contains the correct selections for channels
     assert combo_box.count() == len(expected_items)
     for i in range(combo_box.count()):
         assert combo_box.itemText(i) == expected_items[i]
@@ -98,6 +99,7 @@ def test_update_seg1_channels(
     curation_input_view.update_seg1_channels(event)
 
     # Assert
+    # See if combo box contains the correct selections for channels
     combo_box: QComboBox = curation_input_view._seg1_image_channel_combo
     expected_items: List[int] = [
         str(x) for x in range(curation_model.get_total_num_channels_seg1())
@@ -119,6 +121,7 @@ def test_update_seg2_channels(
     curation_input_view.update_seg2_channels(event)
 
     # Assert
+    # See if combo box contains the correct selections for channels
     combo_box: QComboBox = curation_input_view._seg2_image_channel_combo
     expected_items = [
         str(x) for x in range(curation_model.get_total_num_channels_seg2())
