@@ -3,6 +3,8 @@ import shutil
 
 import numpy as np
 
+from allencell_ml_segmenter.core.event import Event
+from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.curation.curation_model import CurationModel
 from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
 from pathlib import Path
@@ -14,12 +16,13 @@ from napari.utils.notifications import show_info
 from napari.layers.shapes.shapes import Shapes
 
 
-class CurationService:
+class CurationService(Subscriber):
     """ """
 
     def __init__(
         self, curation_model: CurationModel, viewer: napari.Viewer
     ) -> None:
+        super().__init__()
         self._curation_model = curation_model
         self._viewer = viewer
 
@@ -104,3 +107,40 @@ class CurationService:
             for file in path.iterdir()
             if not file.name.endswith(".DS_Store")
         ]
+
+    def get_total_num_channels_of_images_in_path(self, path: Path) -> int:
+        """
+        Determine total number of channels for image in a set folder
+        """
+        # we expect user to have the same number of channels for all images in their folders
+        # and that only images are stored in those folders
+        first_image: Path = path.iterdir().__next__()
+        img: AICSImage = AICSImage(str(first_image.resolve()))
+        # return num channel
+        return img.dims.C
+
+    def select_directory_raw(self, path: Path):
+        self._curation_model.set_raw_directory(path)
+        self._curation_model.set_total_num_channels_raw(
+            self.get_total_num_channels_of_images_in_path(path)
+        )
+        self._curation_model.dispatch(Event.ACTION_CURATION_RAW_SELECTED)
+
+    def select_directory_seg1(self, path: Path):
+        self._curation_model.set_seg1_directory(path)
+        self._curation_model.set_total_num_channels_seg1(
+            self.get_total_num_channels_of_images_in_path(path)
+        )
+        self._curation_model.dispatch(Event.ACTION_CURATION_SEG1_SELECTED)
+
+    def select_directory_seg2(self, path: Path):
+        self._curation_model.set_seg2_directory(path)
+        self._curation_model.set_total_num_channels_seg2(
+            self.get_total_num_channels_of_images_in_path(path)
+        )
+        self._curation_model.dispatch(Event.ACTION_CURATION_SEG2_SELECTED)
+
+    def _on_raw_directory_selected_ui(self):
+        channels: int = self.get_total_num_channels_of_images_in_path(self._curation_model.get_raw_directory())
+
+

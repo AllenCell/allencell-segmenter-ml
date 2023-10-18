@@ -39,10 +39,6 @@ class CurationModel(Publisher):
         Set the raw image directory path
         """
         self._raw_directory = dir
-        self._raw_image_channel_count = self.get_total_num_channels(
-            self._raw_directory
-        )
-        self.dispatch(Event.ACTION_CURATION_RAW_SELECTED)
 
     def get_raw_directory(self) -> Path:
         """
@@ -55,10 +51,6 @@ class CurationModel(Publisher):
         Set the seg1 image directory path
         """
         self._seg1_directory = dir
-        self._seg1_image_channel_count = self.get_total_num_channels(
-            self._seg1_directory
-        )
-        self.dispatch(Event.ACTION_CURATION_SEG1_SELECTED)
 
     def get_seg1_directory(self) -> Path:
         """
@@ -71,10 +63,6 @@ class CurationModel(Publisher):
         Set the seg2 image directory path
         """
         self._seg2_directory = dir
-        self._seg2_image_channel_count = self.get_total_num_channels(
-            self._seg2_directory
-        )
-        self.dispatch(Event.ACTION_CURATION_SEG2_SELECTED)
 
     def get_seg2_directory(self) -> Path:
         """
@@ -147,6 +135,15 @@ class CurationModel(Publisher):
         Get total number of seg2 channels
         """
         return self._seg2_image_channel_count
+
+    def set_total_num_channels_raw(self, channels: int) -> int:
+        self._raw_image_channel_count = channels
+
+    def set_total_num_channels_seg1(self, channels: int) -> int:
+        self._seg1_image_channel_count = channels
+
+    def set_total_num_channels_seg2(self, channels: int) -> int:
+        self._seg2_image_channel_count = channels
 
     def get_total_num_channels(self, path: Path) -> int:
         """
