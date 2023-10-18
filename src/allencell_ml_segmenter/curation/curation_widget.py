@@ -43,7 +43,9 @@ class CurationWidget(QStackedWidget, Subscriber, metaclass=CurationUiMeta):
         self.experiments_model: ExperimentsModel = experiments_model
         self.view_to_index: Dict[View, int] = dict()
         self.curation_model: CurationModel = CurationModel()
-        self.curation_service: CurationService = CurationService(curation_model=self.curation_model, viewer=self.viewer)
+        self.curation_service: CurationService = CurationService(
+            curation_model=self.curation_model, viewer=self.viewer
+        )
 
         # basic styling
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
