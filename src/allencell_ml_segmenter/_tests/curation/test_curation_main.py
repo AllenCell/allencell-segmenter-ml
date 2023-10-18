@@ -40,6 +40,13 @@ def test_increment_progress_bar(curation_main_view: CurationMainView) -> None:
     # Assert
     assert curation_main_view.progress_bar.value() == initial_value + 1
 
+def test_add_points_in_viewer(curation_main_view: CurationMainView) -> None:
+    # Arrange/ Act
+    curation_main_view.add_points_in_viewer()
+
+    # Assert
+    curation_main_view.viewer.add_shapes.assert_called_once()
+
 # parametized test to test when we want to use the image in curation vs when we dont
 # either way we save the raw image path and the seg1 image path as a CurationRecord
 @pytest.mark.parametrize(
