@@ -144,14 +144,3 @@ class CurationModel(Publisher):
 
     def set_total_num_channels_seg2(self, channels: int) -> int:
         self._seg2_image_channel_count = channels
-
-    def get_total_num_channels(self, path: Path) -> int:
-        """
-        Determine total number of channels for image in a set folder
-        """
-        # we expect user to have the same number of channels for all images in their folders
-        # and that only images are stored in those folders
-        first_image: Path = path.iterdir().__next__()
-        img: AICSImage = AICSImage(str(first_image.resolve()))
-        # return num channel
-        return img.dims.C

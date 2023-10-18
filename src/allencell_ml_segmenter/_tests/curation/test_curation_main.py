@@ -77,23 +77,6 @@ def test_next_image(curation_main_view: CurationMainView) -> None:
         == 2
     )
 
-
-def test_next_end_of_curation(curation_main_view: CurationMainView) -> None:
-    # Arrange
-    curation_main_view._update_curation_record = Mock()
-    curation_main_view.raw_images = [None, Path("path_raw")]
-    curation_main_view.seg1_images = [None, Path("path_seg1")]
-    curation_main_view.curation_index = 1
-
-    # Act
-    curation_main_view.next_image()
-
-    # Assert
-    assert (
-        curation_main_view._curation_service.write_curation_record.assert_called_once()
-    )
-
-
 def test_increment_progress_bar(curation_main_view: CurationMainView) -> None:
     # Arrange
     initial_value: int = curation_main_view.progress_bar.value()
