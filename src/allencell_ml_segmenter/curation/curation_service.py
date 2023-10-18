@@ -139,4 +139,3 @@ class CurationService(Subscriber):
             self.get_total_num_channels_of_images_in_path(path)
         )
         self._curation_model.dispatch(Event.ACTION_CURATION_SEG2_SELECTED)
-

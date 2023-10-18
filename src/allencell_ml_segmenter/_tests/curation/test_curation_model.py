@@ -9,7 +9,7 @@ from unittest.mock import patch
 
 
 @pytest.fixture
-def curation_model():
+def curation_model() -> CurationModel:
     return CurationModel()
 
 
@@ -24,7 +24,7 @@ def test_set_raw_directory(curation_model: CurationModel) -> None:
     assert curation_model.get_raw_directory() == directory
 
 
-def test_get_raw_directory(curation_model: CurationModel):
+def test_get_raw_directory() -> None:
     # Arrange
     test_path: Path = Path("test_raw_path")
     model = CurationModel(raw_path=test_path)
@@ -43,7 +43,7 @@ def test_set_seg1_directory(curation_model: CurationModel) -> None:
     assert curation_model.get_seg1_directory() == directory
 
 
-def test_get_seg1_directory():
+def test_get_seg1_directory() -> None:
     # Arrange
     test_path: Path = Path("test_seg1_path")
     model = CurationModel(seg1_path=test_path)
@@ -52,7 +52,7 @@ def test_get_seg1_directory():
     assert model.get_seg1_directory() == test_path
 
 
-def test_set_seg2_directory(curation_model: CurationModel):
+def test_set_seg2_directory(curation_model: CurationModel) -> None:
     # Arrange
     directory: Path = Path("fake_path")
 
@@ -63,7 +63,7 @@ def test_set_seg2_directory(curation_model: CurationModel):
     assert curation_model.get_seg2_directory() == directory
 
 
-def test_get_seg2_directory(curation_model: CurationModel):
+def test_get_seg2_directory() -> None:
     # Arrange
     test_path: Path = Path("test_seg2_path")
     model = CurationModel(seg2_path=test_path)
@@ -72,7 +72,7 @@ def test_get_seg2_directory(curation_model: CurationModel):
     assert model.get_seg2_directory() == test_path
 
 
-def test_set_raw_channel(curation_model: CurationModel):
+def test_set_raw_channel(curation_model: CurationModel) -> None:
     # Arrange
     channel: int = 0
 
@@ -83,7 +83,7 @@ def test_set_raw_channel(curation_model: CurationModel):
     assert curation_model.get_raw_channel() == channel
 
 
-def test_set_seg1_channel(curation_model: CurationModel):
+def test_set_seg1_channel(curation_model: CurationModel) -> None:
     # Arrange
     channel: int = 1
 
@@ -94,7 +94,7 @@ def test_set_seg1_channel(curation_model: CurationModel):
     assert curation_model.get_seg1_channel() == channel
 
 
-def test_set_seg2_channel(curation_model: CurationModel):
+def test_set_seg2_channel(curation_model: CurationModel) -> None:
     # Arrange
     channel: int = 2
 
@@ -105,7 +105,7 @@ def test_set_seg2_channel(curation_model: CurationModel):
     assert curation_model.get_seg2_channel() == channel
 
 
-def test_set_view(curation_model: CurationModel):
+def test_set_view(curation_model: CurationModel) -> None:
     # Arrange
     with patch.object(CurationModel, "dispatch") as dispatch_mock:
         # Act
