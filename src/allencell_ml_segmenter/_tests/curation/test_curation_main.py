@@ -4,6 +4,7 @@ from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
     FakeExperimentsModel,
 )
 from allencell_ml_segmenter.curation.curation_model import CurationModel
+from allencell_ml_segmenter.curation.curation_service import CurationService
 
 import napari
 from unittest.mock import Mock
@@ -13,10 +14,10 @@ from pathlib import Path
 
 @pytest.fixture
 def curation_main_view(qtbot: QtBot) -> CurationMainView:
-    viewer: Mock = Mock(spec=napari.Viewer)
     curation_model: CurationModel = CurationModel()
     experiments_model: FakeExperimentsModel = FakeExperimentsModel()
-    return CurationMainView(viewer, curation_model, experiments_model)
+    curation_service: Mock = Mock(spec=CurationService)
+    return CurationMainView(curation_model, experiments_model, curation_service)
 
 
 def test_curation_main_view_init(curation_main_view: CurationMainView) -> None:

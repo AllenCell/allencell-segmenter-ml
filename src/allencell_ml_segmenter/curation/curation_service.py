@@ -4,7 +4,7 @@ import shutil
 import numpy as np
 
 from allencell_ml_segmenter.curation.curation_model import CurationModel
-from allencell_ml_segmenter.curation.curation_data_class import CurationDataClass
+from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
 from pathlib import Path
 from typing import List
 
@@ -51,7 +51,7 @@ class CurationService():
     def get_image_data_from_path(self, path: Path) -> np.ndarray:
         return AICSImage(str(path)).data
 
-    def write_curation_record(self, curation_record: List[CurationDataClass], path: Path) -> None:
+    def write_curation_record(self, curation_record: List[CurationRecord], path: Path) -> None:
         """
         Save the curation record as a csv at the specified path
         """
