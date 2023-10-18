@@ -53,7 +53,7 @@ class CurationWidget(QStackedWidget, Subscriber, metaclass=CurationUiMeta):
         self.layout().setContentsMargins(0, 0, 0, 0)
 
         self.curation_input_view: CurationInputView = CurationInputView(
-            self.curation_model
+            self.curation_model, self.curation_service
         )
         self.initialize_view(self.curation_input_view)
 
