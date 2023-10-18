@@ -18,7 +18,6 @@ def test_set_raw_directory(curation_model: CurationModel) -> None:
     directory: Path = Path("fake_path")
     with patch.object(CurationModel, "get_total_num_channels", return_value=3):
         with patch.object(CurationModel, "dispatch") as dispatch_mock:
-
             # Act
             curation_model.set_raw_directory(directory)
 
@@ -42,7 +41,6 @@ def test_set_seg1_directory(curation_model: CurationModel) -> None:
     directory: Path = Path("fake_path")
     with patch.object(CurationModel, "get_total_num_channels", return_value=4):
         with patch.object(CurationModel, "dispatch") as dispatch_mock:
-
             # Act
             curation_model.set_seg1_directory(directory)
 
@@ -66,7 +64,6 @@ def test_set_seg2_directory(curation_model: CurationModel):
     directory: Path = Path("fake_path")
     with patch.object(CurationModel, "get_total_num_channels", return_value=5):
         with patch.object(CurationModel, "dispatch") as dispatch_mock:
-
             # Act
             curation_model.set_seg2_directory(directory)
 
@@ -121,7 +118,6 @@ def test_set_seg2_channel(curation_model: CurationModel):
 def test_set_view(curation_model: CurationModel):
     # Arrange
     with patch.object(CurationModel, "dispatch") as dispatch_mock:
-
         # Act
         curation_model.set_view()
 
@@ -174,7 +170,6 @@ def test_get_total_num_channels(curation_model: CurationModel):
     # Arrange
     directory = Path("/path/to/raw_directory")
     with patch.object(CurationModel, "get_total_num_channels", return_value=6):
-
         # Act
         num_channels = curation_model.get_total_num_channels(directory)
 
