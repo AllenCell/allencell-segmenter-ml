@@ -30,12 +30,11 @@ def test_set_raw_directory(curation_model: CurationModel) -> None:
 
 def test_get_raw_directory(curation_model: CurationModel):
     # Arrange
-    assert curation_model.get_raw_directory() is None
     test_path: Path = Path("test_raw_path")
-    curation_model._raw_directory = test_path
+    model = CurationModel(raw_path=test_path)
 
     # Act / Assert
-    assert curation_model.get_raw_directory() == test_path
+    assert model.get_raw_directory() == test_path
 
 
 def test_set_seg1_directory(curation_model: CurationModel) -> None:
@@ -53,14 +52,13 @@ def test_set_seg1_directory(curation_model: CurationModel) -> None:
             assert dispatch_mock.called_with("ACTION_CURATION_SEG1_SELECTED")
 
 
-def test_get_seg1_directory(curation_model: CurationModel):
+def test_get_seg1_directory():
     # Arrange
-    assert curation_model.get_seg1_directory() is None
     test_path: Path = Path("test_seg1_path")
-    curation_model._seg1_directory = test_path
+    model = CurationModel(seg1_path=test_path)
 
     # Act / Assert
-    assert curation_model.get_seg1_directory() == test_path
+    assert model.get_seg1_directory() == test_path
 
 
 def test_set_seg2_directory(curation_model: CurationModel):
@@ -80,12 +78,11 @@ def test_set_seg2_directory(curation_model: CurationModel):
 
 def test_get_seg2_directory(curation_model: CurationModel):
     # Arrange
-    assert curation_model.get_seg2_directory() is None
     test_path: Path = Path("test_seg2_path")
-    curation_model._seg2_directory = test_path
+    model = CurationModel(seg2_path=test_path)
 
     # Act / Assert
-    assert curation_model.get_seg2_directory() == test_path
+    assert model.get_seg2_directory() == test_path
 
 
 def test_set_raw_channel(curation_model: CurationModel):
