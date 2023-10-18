@@ -50,7 +50,9 @@ def test_initialize_views(
     curation_model: CurationModel, curation_widget: CurationWidget
 ):
     # Arrange
-    input_view: CurationInputView = CurationInputView(curation_model, Mock(spec=CurationService))
+    input_view: CurationInputView = CurationInputView(
+        curation_model, Mock(spec=CurationService)
+    )
 
     # Act
     curation_widget.initialize_view(input_view)
@@ -66,7 +68,9 @@ def test_set_view(
     curation_model: CurationModel, curation_widget: CurationWidget
 ):
     # Arrange
-    input_view: CurationInputView = CurationInputView(curation_model, Mock(spec=CurationService))
+    input_view: CurationInputView = CurationInputView(
+        curation_model, Mock(spec=CurationService)
+    )
     curation_widget.initialize_view(input_view)
 
     # Act

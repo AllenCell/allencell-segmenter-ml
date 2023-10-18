@@ -77,6 +77,7 @@ def test_next_image(curation_main_view: CurationMainView) -> None:
         == 2
     )
 
+
 def test_increment_progress_bar(curation_main_view: CurationMainView) -> None:
     # Arrange
     initial_value: int = curation_main_view.progress_bar.value()
