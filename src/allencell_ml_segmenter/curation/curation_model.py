@@ -11,7 +11,12 @@ class CurationModel(Publisher):
     Stores state relevant to prediction processes.
     """
 
-    def __init__(self, raw_path: Path = None, seg1_path: Path = None, seg2_path: Path = None) -> None:
+    def __init__(
+        self,
+        raw_path: Path = None,
+        seg1_path: Path = None,
+        seg2_path: Path = None,
+    ) -> None:
         super().__init__()
         self.current_view = None
 
