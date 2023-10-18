@@ -13,11 +13,13 @@ import napari
 from napari.utils.notifications import show_info
 from napari.layers.shapes.shapes import Shapes
 
-class CurationService():
-    """
-    """
 
-    def __init__(self, curation_model: CurationModel, viewer: napari.Viewer) -> None:
+class CurationService:
+    """ """
+
+    def __init__(
+        self, curation_model: CurationModel, viewer: napari.Viewer
+    ) -> None:
         self._curation_model = curation_model
         self._viewer = viewer
 
@@ -27,7 +29,9 @@ class CurationService():
         """
         raw_path: Path = self._curation_model.get_raw_directory()
         if raw_path is None:
-            raise ValueError("Raw directory not set. Please set raw directory.")
+            raise ValueError(
+                "Raw directory not set. Please set raw directory."
+            )
         return self._get_files_list_from_path(raw_path)
 
     def get_seg1_images_list(self):
@@ -36,7 +40,9 @@ class CurationService():
         """
         seg1_path: Path = self._curation_model.get_seg1_directory()
         if seg1_path is None:
-            raise ValueError("Raw directory not set. Please set raw directory.")
+            raise ValueError(
+                "Raw directory not set. Please set raw directory."
+            )
         return self._get_files_list_from_path(seg1_path)
 
     def get_seg2_images_list(self):
@@ -45,13 +51,17 @@ class CurationService():
         """
         seg2_path: Path = self._curation_model.get_seg1_directory()
         if seg2_path is None:
-            raise ValueError("Raw directory not set. Please set raw directory.")
+            raise ValueError(
+                "Raw directory not set. Please set raw directory."
+            )
         return self._get_files_list_from_path(seg2_path)
 
     def get_image_data_from_path(self, path: Path) -> np.ndarray:
         return AICSImage(str(path)).data
 
-    def write_curation_record(self, curation_record: List[CurationRecord], path: Path) -> None:
+    def write_curation_record(
+        self, curation_record: List[CurationRecord], path: Path
+    ) -> None:
         """
         Save the curation record as a csv at the specified path
         """
@@ -85,11 +95,12 @@ class CurationService():
         points_layer: Shapes = self._viewer.add_shapes(None)
         points_layer.mode = "add_polygon"
 
-
     def _get_files_list_from_path(self, path: Path) -> List[Path]:
         """
         Return all files in the path as a list of Paths
         """
-        return [file for file in path.iterdir() if not file.name.endswith(".DS_Store")]
-
-
+        return [
+            file
+            for file in path.iterdir()
+            if not file.name.endswith(".DS_Store")
+        ]

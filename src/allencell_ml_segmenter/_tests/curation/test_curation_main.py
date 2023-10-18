@@ -16,12 +16,19 @@ def curation_main_view(qtbot: QtBot) -> CurationMainView:
     curation_model: CurationModel = CurationModel()
     experiments_model: FakeExperimentsModel = FakeExperimentsModel()
     curation_service: Mock = Mock(spec=CurationService)
-    return CurationMainView(curation_model, experiments_model, curation_service)
+    return CurationMainView(
+        curation_model, experiments_model, curation_service
+    )
+
 
 def test_curation_setup(curation_main_view):
     # Arrange
-    curation_main_view._curation_service.get_raw_images_list = Mock(return_value=[Path("path_raw")])
-    curation_main_view._curation_service.get_seg1_images_list = Mock(return_value=[Path("path_seg1")])
+    curation_main_view._curation_service.get_raw_images_list = Mock(
+        return_value=[Path("path_raw")]
+    )
+    curation_main_view._curation_service.get_seg1_images_list = Mock(
+        return_value=[Path("path_seg1")]
+    )
     curation_main_view.init_progress_bar = Mock()
 
     # Act
@@ -30,8 +37,12 @@ def test_curation_setup(curation_main_view):
     # Assert
     curation_main_view.init_progress_bar.assert_called_once()
     curation_main_view._curation_service.remove_all_images_from_viewer_layers.assert_called_once()
-    curation_main_view._curation_service.add_image_to_viewer.called_once_with(["path_raw"], f"[raw] path_raw")
-    curation_main_view._curation_service.add_image_to_viewer.called_once_with(["path_seg1"], f"[raw] path_seg1")
+    curation_main_view._curation_service.add_image_to_viewer.called_once_with(
+        ["path_raw"], f"[raw] path_raw"
+    )
+    curation_main_view._curation_service.add_image_to_viewer.called_once_with(
+        ["path_seg1"], f"[raw] path_seg1"
+    )
 
 
 def test_curation_main_view_init(curation_main_view: CurationMainView) -> None:
@@ -45,6 +56,7 @@ def test_init_progress_bar(curation_main_view: CurationMainView) -> None:
 
     # Assert
     assert curation_main_view.progress_bar.value() == 1
+
 
 def test_next_image(curation_main_view: CurationMainView) -> None:
     # Arrange
@@ -60,7 +72,11 @@ def test_next_image(curation_main_view: CurationMainView) -> None:
     curation_main_view._update_curation_record.assert_called_once()
     assert curation_main_view.curation_index == 1
     curation_main_view._curation_service.remove_all_images_from_viewer_layers.assert_called_once()
-    assert curation_main_view._curation_service.add_image_to_viewer.call_count == 2
+    assert (
+        curation_main_view._curation_service.add_image_to_viewer.call_count
+        == 2
+    )
+
 
 def test_next_end_of_curation(curation_main_view: CurationMainView) -> None:
     # Arrange
@@ -73,7 +89,10 @@ def test_next_end_of_curation(curation_main_view: CurationMainView) -> None:
     curation_main_view.next_image()
 
     # Assert
-    assert curation_main_view._curation_service.write_curation_record.assert_called_once()
+    assert (
+        curation_main_view._curation_service.write_curation_record.assert_called_once()
+    )
+
 
 def test_increment_progress_bar(curation_main_view: CurationMainView) -> None:
     # Arrange
@@ -82,6 +101,7 @@ def test_increment_progress_bar(curation_main_view: CurationMainView) -> None:
     curation_main_view._increment_progress_bar()
     # Assert
     assert curation_main_view.progress_bar.value() == initial_value + 1
+
 
 # parametized test to test when we want to use the image in curation vs when we dont
 # either way we save the raw image path and the seg1 image path as a CurationRecord
