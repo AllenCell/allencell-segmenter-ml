@@ -31,7 +31,7 @@ class CurationMainView(View):
         self,
         curation_model: CurationModel,
         experiments_model: ExperimentsModel,
-        curation_service: CurationService
+        curation_service: CurationService,
     ) -> None:
         super().__init__()
         self._curation_model: CurationModel = curation_model
@@ -120,7 +120,9 @@ class CurationMainView(View):
         excluding_mask_buttons: QHBoxLayout = QHBoxLayout()
         excluding_create_button: QPushButton = QPushButton("+ Create")
         excluding_create_button.setObjectName("small_blue_btn")
-        excluding_create_button.clicked.connect(self._curation_service.enable_shape_selection_viewer)
+        excluding_create_button.clicked.connect(
+            self._curation_service.enable_shape_selection_viewer
+        )
         excluding_propagate_button: QPushButton = QPushButton(
             "Propagate in 3D"
         )
@@ -167,9 +169,13 @@ class CurationMainView(View):
         _ = show_info("Loading curation images")
 
         # build list of raw images, ignore .DS_Store files
-        self.raw_images: List[Path] = self._curation_service.get_raw_images_list()
+        self.raw_images: List[
+            Path
+        ] = self._curation_service.get_raw_images_list()
         # build list of seg1 images, ignore .DS_Store files
-        self.seg1_images: List[Path] = self._curation_service.get_seg1_images_list()
+        self.seg1_images: List[
+            Path
+        ] = self._curation_service.get_seg1_images_list()
 
         # reset
         self.init_progress_bar()
@@ -177,13 +183,15 @@ class CurationMainView(View):
 
         first_raw: Path = self.raw_images[0]
         self._curation_service.add_image_to_viewer(
-            image_data=self._curation_service.get_image_data_from_path(first_raw),
-            title=f"[raw] {first_raw.name}"
+            image_data=self._curation_service.get_image_data_from_path(
+                first_raw
+            ),
+            title=f"[raw] {first_raw.name}",
         )
         first_seg1: Path = self.seg1_images[0]
         self._curation_service.add_image_to_viewer(
             self._curation_service.get_image_data_from_path(first_seg1),
-            title=f"[seg] {first_seg1.name}"
+            title=f"[seg] {first_seg1.name}",
         )
 
     def init_progress_bar(self) -> None:
@@ -215,27 +223,32 @@ class CurationMainView(View):
             raw_to_view: Path = self.raw_images[self.curation_index]
             # Add image with [raw] prepended to layer name
             self._curation_service.add_image_to_viewer(
-                image_data=self._curation_service.get_image_data_from_path(raw_to_view),
-                title=f"[raw] {raw_to_view.name}"
+                image_data=self._curation_service.get_image_data_from_path(
+                    raw_to_view
+                ),
+                title=f"[raw] {raw_to_view.name}",
             )
 
             seg1_to_view: Path = self.seg1_images[self.curation_index]
             # Add image with [seg] prepended to layer name
             self._curation_service.add_image_to_viewer(
-                image_data=self._curation_service.get_image_data_from_path(seg1_to_view),
-                title=f"[seg] {seg1_to_view.name}"
+                image_data=self._curation_service.get_image_data_from_path(
+                    seg1_to_view
+                ),
+                title=f"[seg] {seg1_to_view.name}",
             )
             self._increment_progress_bar()
         else:
             # No more images to load - curation is complete
             _ = show_info("No more image to load")
 
-            self._curation_service.write_curation_record(self.curation_record,
-                path = self._experiments_model.get_user_experiments_path()
+            self._curation_service.write_curation_record(
+                self.curation_record,
+                path=self._experiments_model.get_user_experiments_path()
                 / self._experiments_model.get_experiment_name()
                 / "data"
-                / "train.csv")
-
+                / "train.csv",
+            )
 
     def _increment_progress_bar(self) -> None:
         """
@@ -263,4 +276,3 @@ class CurationMainView(View):
                 use_this_image,
             )
         )
-
