@@ -1,7 +1,5 @@
-import csv
 from pathlib import Path
 from typing import List
-import napari
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
     QVBoxLayout,
@@ -13,8 +11,6 @@ from qtpy.QtWidgets import (
     QProgressBar,
     QRadioButton,
 )
-from aicsimageio import AICSImage
-
 from allencell_ml_segmenter._style import Style
 from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
@@ -24,8 +20,6 @@ from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 
 from napari.utils.notifications import show_info
-from napari.layers.shapes.shapes import Shapes
-import shutil
 
 
 class CurationMainView(View):
