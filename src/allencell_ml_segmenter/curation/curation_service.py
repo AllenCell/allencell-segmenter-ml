@@ -140,7 +140,3 @@ class CurationService(Subscriber):
         )
         self._curation_model.dispatch(Event.ACTION_CURATION_SEG2_SELECTED)
 
-    def _on_raw_directory_selected_ui(self):
-        channels: int = self.get_total_num_channels_of_images_in_path(self._curation_model.get_raw_directory())
-
-

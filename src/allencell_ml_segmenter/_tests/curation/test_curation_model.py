@@ -115,6 +115,3 @@ def test_set_view(curation_model: CurationModel):
         dispatch_mock.assert_called_once_with(
             Event.PROCESS_CURATION_INPUT_STARTED
         )
-
-
-

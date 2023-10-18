@@ -24,7 +24,9 @@ class CurationInputView(View):
     View for Curation UI
     """
 
-    def __init__(self, curation_model: CurationModel, curation_service: CurationService) -> None:
+    def __init__(
+        self, curation_model: CurationModel, curation_service: CurationService
+    ) -> None:
         super().__init__()
         self._curation_model: CurationModel = curation_model
         self._curation_service: CurationService = curation_service
