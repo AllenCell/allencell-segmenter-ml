@@ -45,11 +45,6 @@ def test_curation_setup(curation_main_view: CurationMainView) -> None:
     )
 
 
-def test_curation_main_view_init(curation_main_view: CurationMainView) -> None:
-    # Arrange, Act, Assert
-    assert isinstance(curation_main_view, CurationMainView)
-
-
 def test_init_progress_bar(curation_main_view: CurationMainView) -> None:
     # Act
     curation_main_view.init_progress_bar()
