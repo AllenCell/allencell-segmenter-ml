@@ -11,14 +11,19 @@ class CurationModel(Publisher):
     Stores state relevant to prediction processes.
     """
 
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        raw_path: Path = None,
+        seg1_path: Path = None,
+        seg2_path: Path = None,
+    ) -> None:
         super().__init__()
         self.current_view = None
 
-        self._raw_directory: Path = None
-        self._seg1_directory: Path = None
+        self._raw_directory: Path = raw_path
+        self._seg1_directory: Path = seg1_path
         self._seg2_directory: Path = (
-            None  # optional, if None was never selected
+            seg2_path  # optional, if None was never selected
         )
         # These are what the user has selected in the input view
         self._raw_image_channel: int = None
