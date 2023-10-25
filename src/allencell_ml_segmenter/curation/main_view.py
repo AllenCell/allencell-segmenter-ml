@@ -169,7 +169,7 @@ class CurationMainView(View):
         """
         Remove all images from napari.
         """
-        self.viewer.layers.clear()
+        self.viewer.viewer.layers.clear()
 
     def curation_setup(self) -> None:
         """
