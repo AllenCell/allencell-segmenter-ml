@@ -52,7 +52,7 @@ class CurationService(Subscriber):
         """
         Return all raw images in the raw images path as a list of Paths
         """
-        seg2_path: Path = self._curation_model.get_seg1_directory()
+        seg2_path: Path = self._curation_model.get_seg2_directory()
         if seg2_path is None:
             raise ValueError(
                 "Raw directory not set. Please set raw directory."
@@ -84,8 +84,8 @@ class CurationService(Subscriber):
                 f.flush()
 
         # TODO: WRITE ACTUAL VALIDATION AND TEST SETS
-        shutil.copy(path, parent_path / "valid.csv")
-        shutil.copy(path, parent_path / "test.csv")
+        # shutil.copy(path, parent_path / "valid.csv")
+        # shutil.copy(path, parent_path / "test.csv")
 
     def remove_all_images_from_viewer_layers(self):
         self._viewer.layers.clear()
