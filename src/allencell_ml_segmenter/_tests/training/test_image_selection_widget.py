@@ -21,16 +21,24 @@ MOCK_PATH: str = "/path/to/file"
 
 
 @pytest.fixture
-def training_model() -> TrainingModel:
+def experiments_model() -> FakeExperimentsModel:
+    """
+    Fixture that creates an instance of FakeExperimentsModel for testing.
+    """
+    return FakeExperimentsModel()
+
+
+@pytest.fixture
+def training_model(experiments_model) -> TrainingModel:
     """
     Fixture that creates an instance of TrainingModel for testing.
     """
-    return TrainingModel(MainModel(), FakeExperimentsModel())
+    return TrainingModel(MainModel(), experiments_model=experiments_model)
 
 
 @pytest.fixture
 def image_selection_widget(
-    training_model: TrainingModel,
+    training_model: TrainingModel, experiments_model: FakeExperimentsModel
 ) -> ImageSelectionWidget:
     """
     Fixture that creates an instance of ImageSelectionWidget for testing.
