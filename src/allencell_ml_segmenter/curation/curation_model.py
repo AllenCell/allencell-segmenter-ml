@@ -139,7 +139,6 @@ class CurationModel(Publisher):
     def set_total_num_channels_raw(self, channels: int) -> int:
         self._raw_image_channel_count = channels
 
-
     def set_total_num_channels_seg1(self, channels: int) -> int:
         self._seg1_image_channel_count = channels
 

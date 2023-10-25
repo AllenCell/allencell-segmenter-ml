@@ -44,6 +44,7 @@ def test_curation_setup(curation_main_view: CurationMainView) -> None:
         ["path_seg1"], f"[raw] path_seg1"
     )
 
+
 def test_init_progress_bar(curation_main_view: CurationMainView) -> None:
     # Act
     curation_main_view.init_progress_bar()
