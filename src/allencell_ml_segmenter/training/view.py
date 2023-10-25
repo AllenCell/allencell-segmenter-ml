@@ -1,6 +1,6 @@
 from pathlib import Path
 import sys
-import napari
+from allencell_ml_segmenter.main.i_viewer import IViewer
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
     QLabel,
@@ -21,7 +21,6 @@ from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
-from allencell_ml_segmenter.services.training_service import TrainingService
 from allencell_ml_segmenter.training.image_selection_widget import (
     ImageSelectionWidget,
 )
@@ -44,21 +43,16 @@ class TrainingView(View):
         self,
         main_model: MainModel,
         experiments_model: ExperimentsModel,
-        viewer: napari.Viewer,
+        training_model: TrainingModel,
+        viewer: IViewer,
     ):
         super().__init__()
 
-        self._viewer = viewer
+        self._viewer: IViewer = viewer
 
         self._main_model: MainModel = main_model
         self._experiments_model: ExperimentsModel = experiments_model
-        self._training_model: TrainingModel = TrainingModel(
-            main_model, experiments_model
-        )
-        self._training_service: TrainingService = TrainingService(
-            training_model=self._training_model,
-            experiments_model=self._experiments_model,
-        )
+        self._training_model: TrainingModel = training_model
 
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
