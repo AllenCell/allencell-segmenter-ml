@@ -104,7 +104,7 @@ class CurationService(Subscriber):
         """
         return [
             file
-            for file in path.iterdir()
+            for file in sorted(path.iterdir())
             if not file.name.endswith(".DS_Store")
         ]
 
