@@ -105,7 +105,7 @@ def test_get_files_list_from_path(curation_service: CurationService) -> None:
     assert len(paths) == 2
     assert (
         paths[0]
-        == Path(__file__).parent / "curation_tests" / "file_test.ome.tiff"
+        == Path(__file__).parent / "curation_tests" / "file1.ome.tiff"
     )
 
 
