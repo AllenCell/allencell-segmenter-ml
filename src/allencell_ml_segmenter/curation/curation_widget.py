@@ -12,6 +12,7 @@ from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.curation.curation_model import CurationModel
 from allencell_ml_segmenter.curation.input_view import CurationInputView
 from allencell_ml_segmenter.curation.main_view import CurationMainView
+from allencell_ml_segmenter.curation.curation_service import CurationService
 
 import napari
 from napari.utils.notifications import show_info
@@ -42,6 +43,9 @@ class CurationWidget(QStackedWidget, Subscriber, metaclass=CurationUiMeta):
         self.experiments_model: ExperimentsModel = experiments_model
         self.view_to_index: Dict[View, int] = dict()
         self.curation_model: CurationModel = CurationModel()
+        self.curation_service: CurationService = CurationService(
+            curation_model=self.curation_model, viewer=self.viewer
+        )
 
         # basic styling
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
@@ -49,12 +53,12 @@ class CurationWidget(QStackedWidget, Subscriber, metaclass=CurationUiMeta):
         self.layout().setContentsMargins(0, 0, 0, 0)
 
         self.curation_input_view: CurationInputView = CurationInputView(
-            self.curation_model
+            self.curation_model, self.curation_service
         )
         self.initialize_view(self.curation_input_view)
 
         self.curation_main_view: CurationMainView = CurationMainView(
-            self.viewer, self.curation_model, self.experiments_model
+            self.curation_model, self.experiments_model, self.curation_service
         )
         self.initialize_view(self.curation_main_view)
 
