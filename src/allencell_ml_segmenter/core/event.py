@@ -37,6 +37,7 @@ class Event(Enum):
     ACTION_CURATION_SEG2_SELECTED = "curation_seg2_selected"
     # Experiment related
     ACTION_EXPERIMENT_SELECTED = "experiment_selected"
+    ACTION_CURATION_DRAW_MASK = "curation_draw_mask"
 
     # View selection events. These can stem from a user action, or from a process (i.e. prediction process ends, and a new view is shown automatically).
     VIEW_SELECTION_TRAINING = "training_selected"

@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Dict
 
 from aicsimageio import AICSImage
 
@@ -33,6 +34,8 @@ class CurationModel(Publisher):
         self._raw_image_channel_count: int = None
         self._seg1_image_channel_count: int = None
         self._seg2_image_channel_count: int = None
+        self.excluding_mask_shape_layers = []
+        self.masking_mask_shape_layers = []
 
     def set_raw_directory(self, dir: Path) -> None:
         """

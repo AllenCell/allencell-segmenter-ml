@@ -14,6 +14,11 @@ from aicsimageio import AICSImage
 import napari
 from napari.utils.notifications import show_info
 from napari.layers.shapes.shapes import Shapes
+from enum import Enum
+
+class SelectionMode(Enum):
+    EXCLUDING = "excluding"
+    MERGING = "merging"
 
 
 class CurationService(Subscriber):
@@ -93,10 +98,18 @@ class CurationService(Subscriber):
     def add_image_to_viewer(self, image_data: np.ndarray, title: str = ""):
         self._viewer.add_image(image_data, name=title)
 
-    def enable_shape_selection_viewer(self):
+    def enable_shape_selection_viewer(self, mode: SelectionMode):
         _ = show_info("Draw excluding area")
-        points_layer: Shapes = self._viewer.add_shapes(None)
-        points_layer.mode = "add_polygon"
+        if mode == SelectionMode.EXCLUDING:
+            # append points layer to excluding mask shapes list
+            points_layer: Shapes = self._viewer.add_shapes(None)
+            points_layer.mode = "add_polygon"
+            self._curation_model.excluding_mask_shape_layers.append(points_layer)
+        elif mode == SelectionMode.MERGING:
+            points_layer: Shapes = self._viewer.add_shapes(None)
+            points_layer.mode = "add_polygon"
+            self._curation_model.merging_mask_shape_layers.append(points_layer)
+        self._curation_model.dispatch(Event.ACTION_CURATION_DRAW_MASK)
 
     def _get_files_list_from_path(self, path: Path) -> List[Path]:
         """
