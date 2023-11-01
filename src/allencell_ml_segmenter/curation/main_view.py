@@ -15,7 +15,7 @@ from allencell_ml_segmenter._style import Style
 from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
 from allencell_ml_segmenter.curation.curation_model import CurationModel
-from allencell_ml_segmenter.curation.curation_service import CurationService
+from allencell_ml_segmenter.curation.curation_service import CurationService, SelectionMode
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 
@@ -121,7 +121,7 @@ class CurationMainView(View):
         excluding_create_button: QPushButton = QPushButton("+ Create")
         excluding_create_button.setObjectName("small_blue_btn")
         excluding_create_button.clicked.connect(
-            self._curation_service.enable_shape_selection_viewer
+            lambda x: self._curation_service.enable_shape_selection_viewer(mode=SelectionMode.EXCLUDING)
         )
         excluding_propagate_button: QPushButton = QPushButton(
             "Propagate in 3D"
@@ -141,6 +141,9 @@ class CurationMainView(View):
         # buttons for merging mask
         merging_mask_buttons: QHBoxLayout = QHBoxLayout()
         merging_create_button: QPushButton = QPushButton("+ Create")
+        merging_create_button.clicked.connect(
+            lambda x: self._curation_service.enable_shape_selection_viewer(mode=SelectionMode.MERGING)
+        )
         merging_create_button.setObjectName("small_blue_btn")
         merging_propagate_button: QPushButton = QPushButton("Propagate in 3D")
         merging_delete_button: QPushButton = QPushButton("Delete")
