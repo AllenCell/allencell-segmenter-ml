@@ -1,4 +1,5 @@
 from typing import List
+from unittest.mock import Mock
 
 import pytest
 from qtpy.QtWidgets import QLabel, QComboBox, QPushButton
@@ -8,6 +9,7 @@ from pytestqt.qtbot import QtBot
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.curation.input_view import CurationInputView
 from allencell_ml_segmenter.curation.curation_model import CurationModel
+from allencell_ml_segmenter.curation.curation_service import CurationService
 
 
 @pytest.fixture
@@ -17,7 +19,7 @@ def curation_model() -> CurationModel:
 
 @pytest.fixture
 def curation_input_view(curation_model: CurationModel, qtbot: QtBot) -> None:
-    return CurationInputView(curation_model)
+    return CurationInputView(curation_model, Mock(spec=CurationService))
 
 
 def test_raw_channel_selected(

@@ -1,4 +1,5 @@
 from allencell_ml_segmenter.core.view import View
+from allencell_ml_segmenter.curation.curation_service import CurationService
 from allencell_ml_segmenter.widgets.input_button_widget import (
     InputButton,
     FileInputMode,
@@ -23,9 +24,12 @@ class CurationInputView(View):
     View for Curation UI
     """
 
-    def __init__(self, curation_model: CurationModel) -> None:
+    def __init__(
+        self, curation_model: CurationModel, curation_service: CurationService
+    ) -> None:
         super().__init__()
         self._curation_model: CurationModel = curation_model
+        self._curation_service: CurationService = curation_service
 
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
@@ -60,7 +64,7 @@ class CurationInputView(View):
         )
         self._raw_directory_select: InputButton = InputButton(
             self._curation_model,
-            lambda dir: self._curation_model.set_raw_directory(dir),
+            lambda dir: self._curation_service.select_directory_raw(dir),
             "Select directory...",
             FileInputMode.DIRECTORY,
         )
@@ -94,7 +98,7 @@ class CurationInputView(View):
         # TODO update model accordingly
         self._seg1_directory_select: InputButton = InputButton(
             self._curation_model,
-            lambda dir: self._curation_model.set_seg1_directory(dir),
+            lambda dir: self._curation_service.select_directory_seg1(dir),
             "Select directory...",
             FileInputMode.DIRECTORY,
         )
@@ -128,7 +132,7 @@ class CurationInputView(View):
         # TODO update model accordingly
         self._seg2_directory_select: InputButton = InputButton(
             self._curation_model,
-            lambda dir: self._curation_model.set_seg2_directory(dir),
+            lambda dir: self._curation_service.select_directory_seg2(dir),
             "Select directory...",
             FileInputMode.DIRECTORY,
         )
