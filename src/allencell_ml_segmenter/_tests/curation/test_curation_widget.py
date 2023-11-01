@@ -6,6 +6,7 @@ import napari
 from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
     FakeExperimentsModel,
 )
+from allencell_ml_segmenter.curation.curation_service import CurationService
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.curation.curation_model import CurationModel
@@ -49,7 +50,9 @@ def test_initialize_views(
     curation_model: CurationModel, curation_widget: CurationWidget
 ):
     # Arrange
-    input_view: CurationInputView = CurationInputView(curation_model)
+    input_view: CurationInputView = CurationInputView(
+        curation_model, Mock(spec=CurationService)
+    )
 
     # Act
     curation_widget.initialize_view(input_view)
@@ -65,7 +68,9 @@ def test_set_view(
     curation_model: CurationModel, curation_widget: CurationWidget
 ):
     # Arrange
-    input_view: CurationInputView = CurationInputView(curation_model)
+    input_view: CurationInputView = CurationInputView(
+        curation_model, Mock(spec=CurationService)
+    )
     curation_widget.initialize_view(input_view)
 
     # Act
