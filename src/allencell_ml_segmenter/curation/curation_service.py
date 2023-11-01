@@ -16,6 +16,9 @@ from napari.utils.notifications import show_info
 from napari.layers.shapes.shapes import Shapes
 from enum import Enum
 
+from allencell_ml_segmenter.main.viewer import Viewer
+
+
 class SelectionMode(Enum):
     EXCLUDING = "excluding"
     MERGING = "merging"
@@ -25,7 +28,7 @@ class CurationService(Subscriber):
     """ """
 
     def __init__(
-        self, curation_model: CurationModel, viewer: napari.Viewer
+        self, curation_model: CurationModel, viewer: Viewer
     ) -> None:
         super().__init__()
         self._curation_model = curation_model
@@ -93,7 +96,7 @@ class CurationService(Subscriber):
         # shutil.copy(path, parent_path / "test.csv")
 
     def remove_all_images_from_viewer_layers(self):
-        self._viewer.layers.clear()
+        self._viewer.clear_layers()
 
     def add_image_to_viewer(self, image_data: np.ndarray, title: str = ""):
         self._viewer.add_image(image_data, name=title)
@@ -102,11 +105,11 @@ class CurationService(Subscriber):
         _ = show_info("Draw excluding area")
         if mode == SelectionMode.EXCLUDING:
             # append points layer to excluding mask shapes list
-            points_layer: Shapes = self._viewer.add_shapes(None)
+            points_layer: Shapes = self._viewer.add_shapes(name="Excluding Mask")
             points_layer.mode = "add_polygon"
             self._curation_model.excluding_mask_shape_layers.append(points_layer)
         elif mode == SelectionMode.MERGING:
-            points_layer: Shapes = self._viewer.add_shapes(None)
+            points_layer: Shapes = self._viewer.add_shapes(name="Merging Mask")
             points_layer.mode = "add_polygon"
             self._curation_model.merging_mask_shape_layers.append(points_layer)
         self._curation_model.dispatch(Event.ACTION_CURATION_DRAW_MASK)
