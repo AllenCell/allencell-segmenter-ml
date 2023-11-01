@@ -1,7 +1,5 @@
-import csv
 from pathlib import Path
 from typing import List
-import napari
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
     QVBoxLayout,
@@ -13,18 +11,15 @@ from qtpy.QtWidgets import (
     QProgressBar,
     QRadioButton,
 )
-from aicsimageio import AICSImage
-
 from allencell_ml_segmenter._style import Style
 from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
 from allencell_ml_segmenter.curation.curation_model import CurationModel
+from allencell_ml_segmenter.curation.curation_service import CurationService
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 
 from napari.utils.notifications import show_info
-from napari.layers.shapes.shapes import Shapes
-import shutil
 
 
 class CurationMainView(View):
@@ -34,14 +29,14 @@ class CurationMainView(View):
 
     def __init__(
         self,
-        viewer: napari.Viewer,
         curation_model: CurationModel,
         experiments_model: ExperimentsModel,
+        curation_service: CurationService,
     ) -> None:
         super().__init__()
-        self.viewer: napari.Viewer = viewer
         self._curation_model: CurationModel = curation_model
         self._experiments_model: ExperimentsModel = experiments_model
+        self._curation_service: CurationService = curation_service
         self.curation_index: int = 0
         self.curation_record: List[CurationRecord] = list()
         self.raw_images: List[Path] = list()
@@ -125,7 +120,9 @@ class CurationMainView(View):
         excluding_mask_buttons: QHBoxLayout = QHBoxLayout()
         excluding_create_button: QPushButton = QPushButton("+ Create")
         excluding_create_button.setObjectName("small_blue_btn")
-        excluding_create_button.clicked.connect(self.add_points_in_viewer)
+        excluding_create_button.clicked.connect(
+            self._curation_service.enable_shape_selection_viewer
+        )
         excluding_propagate_button: QPushButton = QPushButton(
             "Propagate in 3D"
         )
@@ -165,12 +162,6 @@ class CurationMainView(View):
     def showResults(self) -> None:
         print("show result")
 
-    def remove_all_images(self) -> None:
-        """
-        Remove all images from napari.
-        """
-        self.viewer.viewer.layers.clear()
-
     def curation_setup(self) -> None:
         """
         Curation setup. Builds a list of images to view during curation, sets progress bar, and loads the first image
@@ -178,28 +169,29 @@ class CurationMainView(View):
         _ = show_info("Loading curation images")
 
         # build list of raw images, ignore .DS_Store files
-        self.raw_images: List[Path] = [
-            f
-            for f in self._curation_model.get_raw_directory().iterdir()
-            if not f.name.endswith(".DS_Store")
-        ]
+        self.raw_images: List[
+            Path
+        ] = self._curation_service.get_raw_images_list()
         # build list of seg1 images, ignore .DS_Store files
-        self.seg1_images: List[Path] = [
-            f
-            for f in self._curation_model.get_seg1_directory().iterdir()
-            if not f.name.endswith(".DS_Store")
-        ]
-        self.init_progress_bar()
+        self.seg1_images: List[
+            Path
+        ] = self._curation_service.get_seg1_images_list()
 
-        self.remove_all_images()
+        # reset
+        self.init_progress_bar()
+        self._curation_service.remove_all_images_from_viewer_layers()
 
         first_raw: Path = self.raw_images[0]
-        self.viewer.add_image(
-            AICSImage(str(first_raw)).data, name=f"[raw] {first_raw.name}"
+        self._curation_service.add_image_to_viewer(
+            image_data=self._curation_service.get_image_data_from_path(
+                first_raw
+            ),
+            title=f"[raw] {first_raw.name}",
         )
         first_seg1: Path = self.seg1_images[0]
-        self.viewer.add_image(
-            AICSImage(str(first_seg1)).data, name=f"[seg] {first_seg1.name}"
+        self._curation_service.add_image_to_viewer(
+            self._curation_service.get_image_data_from_path(first_seg1),
+            title=f"[seg] {first_seg1.name}",
         )
 
     def init_progress_bar(self) -> None:
@@ -226,27 +218,36 @@ class CurationMainView(View):
         # load next image
         if self.curation_index < len(self.raw_images):
             # if there are additional images to view
-            self.remove_all_images()
+            self._curation_service.remove_all_images_from_viewer_layers()
 
             raw_to_view: Path = self.raw_images[self.curation_index]
-            self.viewer.add_image(
-                AICSImage(str(raw_to_view)).data,
-                name=f"[raw] {raw_to_view.name}",
+            # Add image with [raw] prepended to layer name
+            self._curation_service.add_image_to_viewer(
+                image_data=self._curation_service.get_image_data_from_path(
+                    raw_to_view
+                ),
+                title=f"[raw] {raw_to_view.name}",
             )
+
             seg1_to_view: Path = self.seg1_images[self.curation_index]
-            self.viewer.add_image(
-                AICSImage(str(seg1_to_view)).data,
-                name=f"[seg] {seg1_to_view.name}",
+            # Add image with [seg] prepended to layer name
+            self._curation_service.add_image_to_viewer(
+                image_data=self._curation_service.get_image_data_from_path(
+                    seg1_to_view
+                ),
+                title=f"[seg] {seg1_to_view.name}",
             )
             self._increment_progress_bar()
         else:
             # No more images to load - curation is complete
             _ = show_info("No more image to load")
-            self.save_curation_record(
-                self._experiments_model.get_user_experiments_path()
+
+            self._curation_service.write_curation_record(
+                self.curation_record,
+                path=self._experiments_model.get_user_experiments_path()
                 / self._experiments_model.get_experiment_name()
                 / "data"
-                / "train.csv"
+                / "train.csv",
             )
 
     def _increment_progress_bar(self) -> None:
@@ -275,34 +276,3 @@ class CurationMainView(View):
                 use_this_image,
             )
         )
-
-    def add_points_in_viewer(self) -> None:
-        """
-        Add points within napari
-        """
-        _ = show_info("Draw excluding area")
-        points_layer: Shapes = self.viewer.add_shapes(None)
-        points_layer.mode = "add_polygon"
-
-    def save_curation_record(self, path: Path) -> None:
-        """
-        Save the curation record as a csv
-        """
-        parent_path: Path = path.parents[0]
-        if not parent_path.is_dir():
-            parent_path.mkdir(parents=True)
-
-        with open(path, "w") as f:
-            # need file header
-            writer: csv.writer = csv.writer(f, delimiter=",")
-            writer.writerow(["", "raw", "seg"])
-            for idx, record in enumerate(self.curation_record):
-                if record.to_use:
-                    writer.writerow(
-                        [str(idx), str(record.raw_file), str(record.seg1)]
-                    )
-                f.flush()
-
-        # TODO: WRITE ACTUAL VALIDATION AND TEST SETS
-        shutil.copy(path, parent_path / "valid.csv")
-        shutil.copy(path, parent_path / "test.csv")
