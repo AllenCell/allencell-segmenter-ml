@@ -74,8 +74,8 @@ class CurationService(Subscriber):
             )
         return self._get_files_list_from_path(seg2_path)
 
-    def get_image_data_from_path(self, path: Path) -> np.ndarray:
-        return AICSImage(str(path)).data
+    def get_image_data_from_path(self, path: Path) -> AICSImage:
+        return AICSImage(str(path))
 
     def write_curation_record(
         self, curation_record: List[CurationRecord], path: Path
@@ -109,7 +109,9 @@ class CurationService(Subscriber):
         self._viewer.add_image(image_data, name=title)
 
     def add_image_to_viewer_from_path(self, path: Path, title: str = ""):
-        self.add_image_to_viewer(self.get_image_data_from_path(path), title)
+        image = self.get_image_data_from_path(path)
+        self._curation_model.curation_image_dims = (image.dims.X, image.dims.Y, image.dims.Z)
+        self.add_image_to_viewer(image.data, title)
 
     def enable_shape_selection_viewer(self, mode: SelectionMode):
         _ = show_info("Draw excluding area")
@@ -179,8 +181,11 @@ class CurationService(Subscriber):
 
     def save_excluding_mask(self, event: Event = None) -> None:
         current_excluding_mask_layer = self._curation_model.excluding_mask_shape_layers[-1]
-        mask: np.ndarray = self.convert_shape_layer_to_mask(self._viewer.get_image_dims(),
+        # first two dims are x, y
+        mask: np.ndarray = self.convert_shape_layer_to_mask(self._curation_model.curation_image_dims[:2],
                                                             current_excluding_mask_layer)
+
+        mask = self.extend_mask_in_z(self._curation_model.curation_image_dims, mask)
         folder_path = self._curation_model.get_save_masks_path() / "excluding_masks"
         # create excluding mask folder if one doesnt exist
         folder_path.mkdir(parents=True, exist_ok=True)
@@ -190,6 +195,12 @@ class CurationService(Subscriber):
         np.save(save_path_mask_file, mask)
         # if current mask path is set, we know that we've saved an excluding mask for the curationrecord.
         self._curation_model.set_current_mask_path(save_path_mask_file)
+
+    def extend_mask_in_z(self, shape: Tuple, mask_to_extend: np.ndarray) -> np.ndarray:
+        three_dim_mask = np.ndarray(shape, dtype=np.bool)
+        for z in range(shape[2]):
+            three_dim_mask[:, :, z] = mask_to_extend
+        return three_dim_mask
 
 
 

@@ -20,6 +20,6 @@ class Viewer(IViewer):
     def clear_layers(self):
         self.viewer.layers.clear()
 
-    def get_image_dims(self) -> Tuple[int, int]:
+    def get_image_dims(self) -> Tuple:
         # just return x_y dims
-        return self.viewer.layers[0].data.shape[:2]
+        return self.viewer.layers[0].data.shape
