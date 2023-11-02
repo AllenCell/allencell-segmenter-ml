@@ -41,6 +41,7 @@ class CurationModel(Publisher):
         self.excluding_mask_shape_layers = []
         self.masking_mask_shape_layers = []
         self.curation_record: List[CurationRecord] = []
+        self.curation_image_dims: Tuple[int, int, int] = None
 
         self._current_mask_path: Path = None
         self._current_loaded_images: Tuple[Path, Path] = (None, None)
