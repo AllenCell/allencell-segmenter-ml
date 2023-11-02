@@ -1,5 +1,6 @@
 from allencell_ml_segmenter.main.i_viewer import IViewer
 import napari
+from typing import Tuple
 
 
 class Viewer(IViewer):
@@ -18,3 +19,7 @@ class Viewer(IViewer):
 
     def clear_layers(self):
         self.viewer.layers.clear()
+
+    def get_image_dims(self) -> Tuple[int, int]:
+        # just return x_y dims
+        return self.viewer.layers[0].data.shape[:2]
