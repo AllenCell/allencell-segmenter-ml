@@ -90,11 +90,11 @@ class CurationService(Subscriber):
         with open(path, "w") as f:
             # need file header
             writer: csv.writer = csv.writer(f, delimiter=",")
-            writer.writerow(["", "raw", "seg"])
+            writer.writerow(["", "raw", "seg", "mask"])
             for idx, record in enumerate(curation_record):
                 if record.to_use:
                     writer.writerow(
-                        [str(idx), str(record.raw_file), str(record.seg1)]
+                        [str(idx), str(record.raw_file), str(record.seg1), str(record.excluding_mask)]
                     )
                 f.flush()
 
@@ -178,7 +178,7 @@ class CurationService(Subscriber):
     def convert_shape_layer_to_mask(self, image_shape: Tuple[int, int], shape_layer) -> np.ndarray:
         return draw.polygon2mask(image_shape, shape_layer.data[0])
 
-    def save_excluding_mask(self) -> None:
+    def _save_excluding_mask(self, event) -> None:
         current_excluding_mask_layer = self._curation_model.excluding_mask_shape_layers[-1]
         mask: np.ndarray = self.convert_shape_layer_to_mask(self._viewer.get_image_dims(),
                                                             current_excluding_mask_layer)
@@ -187,9 +187,9 @@ class CurationService(Subscriber):
         folder_path.mkdir(parents=True, exist_ok=True)
         # save mask and keep record of path
         save_path_mask_file: Path = folder_path / \
-                                    f"excluding_mask_{self._curation_model.get_current_loaded_images()[0]}.npy"
+                                    f"excluding_mask_{self._curation_model.get_current_loaded_images()[0].stem}.npy"
         np.save(save_path_mask_file, mask)
-        self._curation_model.set_current_mask_file(save_path_mask_file)
+        self._curation_model.set_current_mask_path(save_path_mask_file)
 
 
 
