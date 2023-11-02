@@ -104,6 +104,15 @@ def test_update_curation_record(
 
     # Assert
     # Ensure last record in curation_record is the one we just added
-    assert curation_main_view._curation_model.curation_record[-1].to_use == expected_result
-    assert curation_main_view._curation_model.curation_record[-1].raw_file == raw_test_path
-    assert curation_main_view._curation_model.curation_record[-1].seg1 == seg1_test_path
+    assert (
+        curation_main_view._curation_model.curation_record[-1].to_use
+        == expected_result
+    )
+    assert (
+        curation_main_view._curation_model.curation_record[-1].raw_file
+        == raw_test_path
+    )
+    assert (
+        curation_main_view._curation_model.curation_record[-1].seg1
+        == seg1_test_path
+    )

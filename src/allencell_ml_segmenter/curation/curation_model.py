@@ -158,8 +158,10 @@ class CurationModel(Publisher):
         self._seg2_image_channel_count = channels
 
     def get_save_masks_path(self) -> Path:
-        return self._experiments_model.get_user_experiments_path() / \
-               self._experiments_model.get_experiment_name()
+        return (
+            self._experiments_model.get_user_experiments_path()
+            / self._experiments_model.get_experiment_name()
+        )
 
     def set_current_loaded_images(self, images: Tuple[Path, Path]):
         self._current_loaded_images = images
