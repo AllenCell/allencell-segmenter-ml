@@ -42,7 +42,9 @@ class CurationWidget(QStackedWidget, Subscriber, metaclass=CurationUiMeta):
         self.viewer: napari.Viewer = viewer
         self.experiments_model: ExperimentsModel = experiments_model
         self.view_to_index: Dict[View, int] = dict()
-        self.curation_model: CurationModel = CurationModel()
+        self.curation_model: CurationModel = CurationModel(save_masks_path=
+                                                           self.experiments_model.get_user_experiments_path() /
+                                                           self.experiments_model.get_experiment_name())
         self.curation_service: CurationService = CurationService(
             curation_model=self.curation_model, viewer=self.viewer
         )
