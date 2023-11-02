@@ -6,6 +6,7 @@ from aicsimageio import AICSImage
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.publisher import Publisher
 from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
+from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 
 
 class CurationModel(Publisher):
@@ -18,7 +19,7 @@ class CurationModel(Publisher):
         raw_path: Path = None,
         seg1_path: Path = None,
         seg2_path: Path = None,
-        save_masks_path: Path = None,
+        experiments_model: ExperimentsModel = None,
     ) -> None:
         super().__init__()
         self.current_view = None
@@ -28,7 +29,7 @@ class CurationModel(Publisher):
         self._seg2_directory: Path = (
             seg2_path  # optional, if None was never selected
         )
-        self._save_masks_path: Path = save_masks_path
+        self._experiments_model = experiments_model
         # These are what the user has selected in the input view
         self._raw_image_channel: int = None
         self._seg1_image_channel: int = None
@@ -41,6 +42,7 @@ class CurationModel(Publisher):
         self.masking_mask_shape_layers = []
         self.curation_record: List[CurationRecord] = []
 
+        self._current_mask_path: Path = None
         self._current_loaded_images: Tuple[Path, Path] = (None, None)
 
     def set_raw_directory(self, dir: Path) -> None:
@@ -155,7 +157,8 @@ class CurationModel(Publisher):
         self._seg2_image_channel_count = channels
 
     def get_save_masks_path(self) -> Path:
-        return self._save_masks_path
+        return self._experiments_model.get_user_experiments_path() / \
+               self._experiments_model.get_experiment_name()
 
     def set_current_loaded_images(self, images: Tuple[Path, Path]):
         self._current_loaded_images = images
