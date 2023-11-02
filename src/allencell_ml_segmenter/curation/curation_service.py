@@ -8,13 +8,14 @@ from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.curation.curation_model import CurationModel
 from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
 from pathlib import Path
-from typing import List
+from typing import List, Tuple
 
 from aicsimageio import AICSImage
 import napari
 from napari.utils.notifications import show_info
 from napari.layers.shapes.shapes import Shapes
 from enum import Enum
+from skimage import draw
 
 from allencell_ml_segmenter.main.viewer import Viewer
 
@@ -33,6 +34,12 @@ class CurationService(Subscriber):
         super().__init__()
         self._curation_model = curation_model
         self._viewer = viewer
+
+        self._curation_model.subscribe(
+            Event.ACTION_CURATION_FINISHED_DRAW_EXCLUDING,
+            self,
+            self._save_excluding_mask,
+        )
 
     def get_raw_images_list(self):
         """
@@ -101,18 +108,23 @@ class CurationService(Subscriber):
     def add_image_to_viewer(self, image_data: np.ndarray, title: str = ""):
         self._viewer.add_image(image_data, name=title)
 
+    def add_image_to_viewer_from_path(self, path: Path, title: str = ""):
+        self.add_image_to_viewer(self.get_image_data_from_path(path), title)
+
     def enable_shape_selection_viewer(self, mode: SelectionMode):
         _ = show_info("Draw excluding area")
         if mode == SelectionMode.EXCLUDING:
             # append points layer to excluding mask shapes list
             points_layer: Shapes = self._viewer.add_shapes(name="Excluding Mask")
             points_layer.mode = "add_polygon"
+            # todo combine maybe
             self._curation_model.excluding_mask_shape_layers.append(points_layer)
+            self._curation_model.dispatch(Event.ACTION_CURATION_DRAW_EXCLUDING)
         elif mode == SelectionMode.MERGING:
             points_layer: Shapes = self._viewer.add_shapes(name="Merging Mask")
             points_layer.mode = "add_polygon"
             self._curation_model.merging_mask_shape_layers.append(points_layer)
-        self._curation_model.dispatch(Event.ACTION_CURATION_DRAW_MASK)
+
 
     def _get_files_list_from_path(self, path: Path) -> List[Path]:
         """
@@ -155,3 +167,31 @@ class CurationService(Subscriber):
             self.get_total_num_channels_of_images_in_path(path)
         )
         self._curation_model.dispatch(Event.ACTION_CURATION_SEG2_SELECTED)
+
+    def finished_shape_selection(self, mode: SelectionMode) -> None:
+        if mode == SelectionMode.EXCLUDING:
+            # last added shape layer is currently bering drawn, so we remove it
+            current_points_layer = self._curation_model.excluding_mask_shape_layers[-1]
+            current_points_layer.mode = "PAN_ZOOM" # default mode which allows for normal interactivity with napari canvas
+            self._curation_model.dispatch(Event.ACTION_CURATION_FINISHED_DRAW_EXCLUDING)
+
+    def convert_shape_layer_to_mask(self, image_shape: Tuple[int, int], shape_layer) -> np.ndarray:
+        return draw.polygon2mask(image_shape, shape_layer.data[0])
+
+    def save_excluding_mask(self) -> None:
+        current_excluding_mask_layer = self._curation_model.excluding_mask_shape_layers[-1]
+        mask: np.ndarray = self.convert_shape_layer_to_mask(self._viewer.get_image_dims(),
+                                                            current_excluding_mask_layer)
+        folder_path = self._curation_model.get_save_masks_path() / "excluding_masks"
+        # create excluding mask folder if one doesnt exist
+        folder_path.mkdir(parents=True, exist_ok=True)
+        # save mask and keep record of path
+        save_path_mask_file: Path = folder_path / \
+                                    f"excluding_mask_{self._curation_model.get_current_loaded_images()[0]}.npy"
+        np.save(save_path_mask_file, mask)
+        self._curation_model.set_current_mask_file(save_path_mask_file)
+
+
+
+
+

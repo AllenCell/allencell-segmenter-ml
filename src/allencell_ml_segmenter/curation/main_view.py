@@ -12,6 +12,7 @@ from qtpy.QtWidgets import (
     QRadioButton,
 )
 from allencell_ml_segmenter._style import Style
+from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
 from allencell_ml_segmenter.curation.curation_model import CurationModel
@@ -118,9 +119,9 @@ class CurationMainView(View):
 
         # buttons for excluding mask
         excluding_mask_buttons: QHBoxLayout = QHBoxLayout()
-        excluding_create_button: QPushButton = QPushButton("+ Create")
-        excluding_create_button.setObjectName("small_blue_btn")
-        excluding_create_button.clicked.connect(
+        self.excluding_create_button: QPushButton = QPushButton("+ Create")
+        self.excluding_create_button.setObjectName("small_blue_btn")
+        self.excluding_create_button.clicked.connect(
             lambda x: self._curation_service.enable_shape_selection_viewer(mode=SelectionMode.EXCLUDING)
         )
         excluding_propagate_button: QPushButton = QPushButton(
@@ -129,7 +130,7 @@ class CurationMainView(View):
         excluding_delete_button: QPushButton = QPushButton("Delete")
         excluding_save_button: QPushButton = QPushButton("Save")
         excluding_save_button.setObjectName("small_blue_btn")
-        excluding_mask_buttons.addWidget(excluding_create_button)
+        excluding_mask_buttons.addWidget(self.excluding_create_button)
         excluding_mask_buttons.addWidget(excluding_propagate_button)
         excluding_mask_buttons.addWidget(excluding_delete_button)
         excluding_mask_buttons.addWidget(excluding_save_button)
@@ -155,6 +156,10 @@ class CurationMainView(View):
         merging_mask_buttons.addWidget(merging_save_button)
 
         self.layout().addLayout(merging_mask_buttons)
+
+        self._curation_model.subscribe(Event.ACTION_CURATION_DRAW_EXCLUDING,
+                                   self,
+                                   lambda e: self.excluding_selection_inprogress())
 
     def doWork(self) -> None:
         print("work")
@@ -185,17 +190,11 @@ class CurationMainView(View):
         self._curation_service.remove_all_images_from_viewer_layers()
 
         first_raw: Path = self.raw_images[0]
-        self._curation_service.add_image_to_viewer(
-            image_data=self._curation_service.get_image_data_from_path(
-                first_raw
-            ),
-            title=f"[raw] {first_raw.name}",
-        )
+        self._curation_service.add_image_to_viewer_from_path(first_raw, title=f"[raw] {first_raw.name}")
+
         first_seg1: Path = self.seg1_images[0]
-        self._curation_service.add_image_to_viewer(
-            self._curation_service.get_image_data_from_path(first_seg1),
-            title=f"[seg] {first_seg1.name}",
-        )
+        self._curation_service.add_image_to_viewer_from_path(first_seg1, title=f"[seg] {first_seg1.name}")
+        self._curation_model.set_current_loaded_images((first_raw, first_seg1))
 
     def init_progress_bar(self) -> None:
         """
@@ -225,28 +224,20 @@ class CurationMainView(View):
 
             raw_to_view: Path = self.raw_images[self.curation_index]
             # Add image with [raw] prepended to layer name
-            self._curation_service.add_image_to_viewer(
-                image_data=self._curation_service.get_image_data_from_path(
-                    raw_to_view
-                ),
-                title=f"[raw] {raw_to_view.name}",
-            )
+            self._curation_service.add_image_to_viewer_from_path(raw_to_view, title=f"[raw] {raw_to_view.name}")
 
             seg1_to_view: Path = self.seg1_images[self.curation_index]
             # Add image with [seg] prepended to layer name
-            self._curation_service.add_image_to_viewer(
-                image_data=self._curation_service.get_image_data_from_path(
-                    seg1_to_view
-                ),
-                title=f"[seg] {seg1_to_view.name}",
-            )
+            self._curation_service.add_image_to_viewer_from_path(seg1_to_view, title=f"[seg] {seg1_to_view.name}")
+
+            self._curation_model.set_current_loaded_images((raw_to_view, seg1_to_view))
             self._increment_progress_bar()
         else:
             # No more images to load - curation is complete
             _ = show_info("No more image to load")
 
             self._curation_service.write_curation_record(
-                self.curation_record,
+                self._curation_model.get_curation_record,
                 path=self._experiments_model.get_user_experiments_path()
                 / self._experiments_model.get_experiment_name()
                 / "data"
@@ -272,10 +263,32 @@ class CurationMainView(View):
         if self.no_radio.isChecked():
             use_this_image = False
         # append this curation record to the curation record list
-        self.curation_record.append(
+        self._curation_model.curation_record.append(
             CurationRecord(
                 self.raw_images[self.curation_index],
                 self.seg1_images[self.curation_index],
+                self._curation_model.get_current_mask_path(),
                 use_this_image,
             )
         )
+
+    def excluding_selection_inprogress(self) -> None:
+        # flip buttons so that another click finishes the selection process
+        self.excluding_create_button.setText("Finish")
+        self.excluding_create_button.disconnect()
+        self.excluding_create_button.clicked.connect(
+            self.excluding_selection_finished
+        )
+
+    def excluding_selection_finished(self):
+        self._curation_service.finished_shape_selection(mode=SelectionMode.EXCLUDING) # implement this
+        # flip buttons to original state
+        self.excluding_create_button.setText("+ Create")
+        self.excluding_create_button.disconnect()
+        self.excluding_create_button.clicked.connect(
+            lambda x: self._curation_service.enable_shape_selection_viewer(mode=SelectionMode.EXCLUDING)
+        )
+
+    # def shape_selection_in_progress(self, mode: SelectionMode) -> None:
+    #     if mode == SelectionMode.EXCLUDING:
+    #         self.excluding_in_progress_change_btn()
