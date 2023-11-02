@@ -38,7 +38,9 @@ class Event(Enum):
     # Experiment related
     ACTION_EXPERIMENT_SELECTED = "experiment_selected"
     ACTION_CURATION_DRAW_EXCLUDING = "curation_draw_excluding"
-    ACTION_CURATION_FINISHED_DRAW_EXCLUDING = "curation_finished_draw_excluding"
+    ACTION_CURATION_FINISHED_DRAW_EXCLUDING = (
+        "curation_finished_draw_excluding"
+    )
     ACTION_CURATION_SAVE_EXCLUDING_MASK = "curation_save_excluding_mask"
 
     # View selection events. These can stem from a user action, or from a process (i.e. prediction process ends, and a new view is shown automatically).
