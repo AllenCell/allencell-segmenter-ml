@@ -16,7 +16,10 @@ from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
 from allencell_ml_segmenter.curation.curation_model import CurationModel
-from allencell_ml_segmenter.curation.curation_service import CurationService, SelectionMode
+from allencell_ml_segmenter.curation.curation_service import (
+    CurationService,
+    SelectionMode,
+)
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 
@@ -124,7 +127,9 @@ class CurationMainView(View):
         self.excluding_create_button: QPushButton = QPushButton("+ Create")
         self.excluding_create_button.setObjectName("small_blue_btn")
         self.excluding_create_button.clicked.connect(
-            lambda x: self._curation_service.enable_shape_selection_viewer(mode=SelectionMode.EXCLUDING)
+            lambda x: self._curation_service.enable_shape_selection_viewer(
+                mode=SelectionMode.EXCLUDING
+            )
         )
         excluding_propagate_button: QPushButton = QPushButton(
             "Propagate in 3D"
@@ -133,7 +138,9 @@ class CurationMainView(View):
         excluding_save_button: QPushButton = QPushButton("Save")
         excluding_save_button.setObjectName("small_blue_btn")
         excluding_save_button.clicked.connect(
-            lambda x: self._curation_model.dispatch(Event.ACTION_CURATION_SAVE_EXCLUDING_MASK)
+            lambda x: self._curation_model.dispatch(
+                Event.ACTION_CURATION_SAVE_EXCLUDING_MASK
+            )
         )
 
         excluding_mask_buttons.addWidget(self.excluding_create_button)
@@ -149,7 +156,9 @@ class CurationMainView(View):
         merging_mask_buttons: QHBoxLayout = QHBoxLayout()
         merging_create_button: QPushButton = QPushButton("+ Create")
         merging_create_button.clicked.connect(
-            lambda x: self._curation_service.enable_shape_selection_viewer(mode=SelectionMode.MERGING)
+            lambda x: self._curation_service.enable_shape_selection_viewer(
+                mode=SelectionMode.MERGING
+            )
         )
         merging_create_button.setObjectName("small_blue_btn")
         merging_propagate_button: QPushButton = QPushButton("Propagate in 3D")
@@ -163,9 +172,11 @@ class CurationMainView(View):
 
         self.layout().addLayout(merging_mask_buttons)
 
-        self._curation_model.subscribe(Event.ACTION_CURATION_DRAW_EXCLUDING,
-                                   self,
-                                   lambda e: self.excluding_selection_inprogress())
+        self._curation_model.subscribe(
+            Event.ACTION_CURATION_DRAW_EXCLUDING,
+            self,
+            lambda e: self.excluding_selection_inprogress(),
+        )
 
     def doWork(self) -> None:
         print("work")
@@ -196,10 +207,14 @@ class CurationMainView(View):
         self._curation_service.remove_all_images_from_viewer_layers()
 
         first_raw: Path = self.raw_images[0]
-        self._curation_service.add_image_to_viewer_from_path(first_raw, title=f"[raw] {first_raw.name}")
+        self._curation_service.add_image_to_viewer_from_path(
+            first_raw, title=f"[raw] {first_raw.name}"
+        )
 
         first_seg1: Path = self.seg1_images[0]
-        self._curation_service.add_image_to_viewer_from_path(first_seg1, title=f"[seg] {first_seg1.name}")
+        self._curation_service.add_image_to_viewer_from_path(
+            first_seg1, title=f"[seg] {first_seg1.name}"
+        )
         self._curation_model.set_current_loaded_images((first_raw, first_seg1))
 
     def init_progress_bar(self) -> None:
@@ -220,7 +235,9 @@ class CurationMainView(View):
         """
         # Ensure user is not in the middle of drawing masks
         if self.excluding_in_progress:
-            _ = show_info("Please finish drawing the excluding mask before moving on to the next image")
+            _ = show_info(
+                "Please finish drawing the excluding mask before moving on to the next image"
+            )
             return
         _ = show_info("Loading the next image...")
         # update curation record (must be called before curation index is incremented)
@@ -234,13 +251,19 @@ class CurationMainView(View):
 
             raw_to_view: Path = self.raw_images[self.curation_index]
             # Add image with [raw] prepended to layer name
-            self._curation_service.add_image_to_viewer_from_path(raw_to_view, title=f"[raw] {raw_to_view.name}")
+            self._curation_service.add_image_to_viewer_from_path(
+                raw_to_view, title=f"[raw] {raw_to_view.name}"
+            )
 
             seg1_to_view: Path = self.seg1_images[self.curation_index]
             # Add image with [seg] prepended to layer name
-            self._curation_service.add_image_to_viewer_from_path(seg1_to_view, title=f"[seg] {seg1_to_view.name}")
+            self._curation_service.add_image_to_viewer_from_path(
+                seg1_to_view, title=f"[seg] {seg1_to_view.name}"
+            )
 
-            self._curation_model.set_current_loaded_images((raw_to_view, seg1_to_view))
+            self._curation_model.set_current_loaded_images(
+                (raw_to_view, seg1_to_view)
+            )
             self._increment_progress_bar()
         else:
             # No more images to load - curation is complete
@@ -306,12 +329,16 @@ class CurationMainView(View):
         self.excluding_in_progress = True
 
     def excluding_selection_finished(self):
-        self._curation_service.finished_shape_selection(mode=SelectionMode.EXCLUDING) # implement this
+        self._curation_service.finished_shape_selection(
+            mode=SelectionMode.EXCLUDING
+        )  # implement this
         # flip buttons to original state
         self.excluding_create_button.setText("+ Create")
         self.excluding_create_button.disconnect()
         self.excluding_create_button.clicked.connect(
-            lambda x: self._curation_service.enable_shape_selection_viewer(mode=SelectionMode.EXCLUDING)
+            lambda x: self._curation_service.enable_shape_selection_viewer(
+                mode=SelectionMode.EXCLUDING
+            )
         )
         self.excluding_in_progress = False
 
