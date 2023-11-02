@@ -11,7 +11,10 @@ import napari
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
 from allencell_ml_segmenter.curation.curation_model import CurationModel
-from allencell_ml_segmenter.curation.curation_service import CurationService, SelectionMode
+from allencell_ml_segmenter.curation.curation_service import (
+    CurationService,
+    SelectionMode,
+)
 from allencell_ml_segmenter.main.viewer import Viewer
 
 
@@ -125,11 +128,14 @@ def test_enable_shape_selection_viewer(
     # Arrange
     curation_service._curation_model.excluding_mask_shape_layers = list()
 
-    curation_service.enable_shape_selection_viewer(mode=SelectionMode.EXCLUDING)
+    curation_service.enable_shape_selection_viewer(
+        mode=SelectionMode.EXCLUDING
+    )
 
     curation_service._viewer.add_shapes.assert_called_once()
-    assert len(curation_service._curation_model.excluding_mask_shape_layers) == 1
-
+    assert (
+        len(curation_service._curation_model.excluding_mask_shape_layers) == 1
+    )
 
 
 def test_select_directory_raw(curation_service: CurationService) -> None:
@@ -198,8 +204,15 @@ def test_select_directory_seg2(curation_service: CurationService) -> None:
 def test_write_curation_record(curation_service: CurationService) -> None:
     # Arrange
     curation_record: List[CurationRecord] = [
-        CurationRecord(to_use=True, raw_file="raw1", seg1="seg1", excluding_mask=""),
-        CurationRecord(to_use=True, raw_file="raw2", seg1="seg2", excluding_mask="excluding_mask_file"),
+        CurationRecord(
+            to_use=True, raw_file="raw1", seg1="seg1", excluding_mask=""
+        ),
+        CurationRecord(
+            to_use=True,
+            raw_file="raw2",
+            seg1="seg2",
+            excluding_mask="excluding_mask_file",
+        ),
     ]
     # Mock open, Path, and csv.writer
     with patch(
@@ -220,6 +233,15 @@ def test_write_curation_record(curation_service: CurationService) -> None:
         mock_file.assert_called_with(
             Path(__file__).parent / "curation_tests", "w"
         )
-        assert call().writerow(["", "raw", "seg", "mask"]) in mock_writer.mock_calls
-        assert call().writerow(["0", "raw1", "seg1", ""]) in mock_writer.mock_calls
-        assert call().writerow(["1", "raw2", "seg2", "excluding_mask_file"]) in mock_writer.mock_calls
+        assert (
+            call().writerow(["", "raw", "seg", "mask"])
+            in mock_writer.mock_calls
+        )
+        assert (
+            call().writerow(["0", "raw1", "seg1", ""])
+            in mock_writer.mock_calls
+        )
+        assert (
+            call().writerow(["1", "raw2", "seg2", "excluding_mask_file"])
+            in mock_writer.mock_calls
+        )
