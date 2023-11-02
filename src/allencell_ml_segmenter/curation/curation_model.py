@@ -176,3 +176,6 @@ class CurationModel(Publisher):
         current_mask_path: Path = self._current_mask_path
         self._current_mask_path = None
         return current_mask_path
+
+    def get_excluding_mask_shape_layers(self) -> List:
+        return self.excluding_mask_shape_layers

@@ -36,9 +36,9 @@ class CurationService(Subscriber):
         self._viewer = viewer
 
         self._curation_model.subscribe(
-            Event.ACTION_CURATION_FINISHED_DRAW_EXCLUDING,
+            Event.ACTION_CURATION_SAVE_EXCLUDING_MASK,
             self,
-            self._save_excluding_mask,
+            self.save_excluding_mask,
         )
 
     def get_raw_images_list(self):
@@ -173,12 +173,11 @@ class CurationService(Subscriber):
             # last added shape layer is currently bering drawn, so we remove it
             current_points_layer = self._curation_model.excluding_mask_shape_layers[-1]
             current_points_layer.mode = "PAN_ZOOM" # default mode which allows for normal interactivity with napari canvas
-            self._curation_model.dispatch(Event.ACTION_CURATION_FINISHED_DRAW_EXCLUDING)
 
     def convert_shape_layer_to_mask(self, image_shape: Tuple[int, int], shape_layer) -> np.ndarray:
         return draw.polygon2mask(image_shape, shape_layer.data[0])
 
-    def _save_excluding_mask(self, event) -> None:
+    def save_excluding_mask(self, event: Event = None) -> None:
         current_excluding_mask_layer = self._curation_model.excluding_mask_shape_layers[-1]
         mask: np.ndarray = self.convert_shape_layer_to_mask(self._viewer.get_image_dims(),
                                                             current_excluding_mask_layer)
@@ -189,6 +188,7 @@ class CurationService(Subscriber):
         save_path_mask_file: Path = folder_path / \
                                     f"excluding_mask_{self._curation_model.get_current_loaded_images()[0].stem}.npy"
         np.save(save_path_mask_file, mask)
+        # if current mask path is set, we know that we've saved an excluding mask for the curationrecord.
         self._curation_model.set_current_mask_path(save_path_mask_file)
 
 

@@ -57,6 +57,8 @@ class CurationMainView(View):
             self._title, alignment=Qt.AlignHCenter | Qt.AlignTop
         )
 
+        self.excluding_in_progress: bool = False
+
         frame: QFrame = QFrame()
         frame.setLayout(QVBoxLayout())
         self.layout().addWidget(frame)
@@ -130,6 +132,10 @@ class CurationMainView(View):
         excluding_delete_button: QPushButton = QPushButton("Delete")
         excluding_save_button: QPushButton = QPushButton("Save")
         excluding_save_button.setObjectName("small_blue_btn")
+        excluding_save_button.clicked.connect(
+            lambda x: self._curation_model.dispatch(Event.ACTION_CURATION_SAVE_EXCLUDING_MASK)
+        )
+
         excluding_mask_buttons.addWidget(self.excluding_create_button)
         excluding_mask_buttons.addWidget(excluding_propagate_button)
         excluding_mask_buttons.addWidget(excluding_delete_button)
@@ -212,6 +218,10 @@ class CurationMainView(View):
         """
         Load the next image in the curation image stack. Updates curation record and progress bar accordingly.
         """
+        # Ensure user is not in the middle of drawing masks
+        if self.excluding_in_progress:
+            _ = show_info("Please finish drawing the excluding mask before moving on to the next image")
+            return
         _ = show_info("Loading the next image...")
         # update curation record (must be called before curation index is incremented)
         self._update_curation_record()
@@ -266,9 +276,17 @@ class CurationMainView(View):
         curation_mask_path = self._curation_model.get_current_mask_path()
         # append this curation record to the curation record list
         if curation_mask_path is None:
-            curation_mask_path = ""
+            # User has drawn an excluding mask, but hasn't saved it yet
+            # For now we will auto save these masks to the curation record
+            if len(self._curation_model.get_excluding_mask_shape_layers()) > 0:
+                self._curation_service.save_excluding_mask()
+            else:
+                # there is no excluding mask for these images so don't write anything to the CurationRecord.
+                curation_mask_path = ""
         else:
+            # The user has a saved excluding mask and we want to use it in the curationrecord.
             curation_mask_path = str(curation_mask_path)
+        # Save this curation record.
         self._curation_model.curation_record.append(
             CurationRecord(
                 self.raw_images[self.curation_index],
@@ -285,6 +303,7 @@ class CurationMainView(View):
         self.excluding_create_button.clicked.connect(
             self.excluding_selection_finished
         )
+        self.excluding_in_progress = True
 
     def excluding_selection_finished(self):
         self._curation_service.finished_shape_selection(mode=SelectionMode.EXCLUDING) # implement this
@@ -294,6 +313,7 @@ class CurationMainView(View):
         self.excluding_create_button.clicked.connect(
             lambda x: self._curation_service.enable_shape_selection_viewer(mode=SelectionMode.EXCLUDING)
         )
+        self.excluding_in_progress = False
 
     # def shape_selection_in_progress(self, mode: SelectionMode) -> None:
     #     if mode == SelectionMode.EXCLUDING:
