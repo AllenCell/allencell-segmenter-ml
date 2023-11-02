@@ -237,7 +237,7 @@ class CurationMainView(View):
             _ = show_info("No more image to load")
 
             self._curation_service.write_curation_record(
-                self._curation_model.get_curation_record,
+                self._curation_model.get_curation_record(),
                 path=self._experiments_model.get_user_experiments_path()
                 / self._experiments_model.get_experiment_name()
                 / "data"
@@ -262,12 +262,18 @@ class CurationMainView(View):
         use_this_image: bool = True
         if self.no_radio.isChecked():
             use_this_image = False
+
+        curation_mask_path = self._curation_model.get_current_mask_path()
         # append this curation record to the curation record list
+        if curation_mask_path is None:
+            curation_mask_path = ""
+        else:
+            curation_mask_path = str(curation_mask_path)
         self._curation_model.curation_record.append(
             CurationRecord(
                 self.raw_images[self.curation_index],
                 self.seg1_images[self.curation_index],
-                self._curation_model.get_current_mask_path(),
+                curation_mask_path,
                 use_this_image,
             )
         )
