@@ -152,23 +152,26 @@ class CurationMainView(View):
         # Label for Merging mask
         merging_mask_label: LabelWithHint = LabelWithHint("Merging mask")
         self.layout().addWidget(merging_mask_label)
+
         # buttons for merging mask
         merging_mask_buttons: QHBoxLayout = QHBoxLayout()
-        merging_create_button: QPushButton = QPushButton("+ Create")
-        merging_create_button.clicked.connect(
+        self.merging_create_button: QPushButton = QPushButton("+ Create")
+        self.merging_create_button.clicked.connect(
             lambda x: self._curation_service.enable_shape_selection_viewer(
                 mode=SelectionMode.MERGING
             )
         )
-        merging_create_button.setObjectName("small_blue_btn")
-        merging_propagate_button: QPushButton = QPushButton("Propagate in 3D")
-        merging_delete_button: QPushButton = QPushButton("Delete")
-        merging_save_button: QPushButton = QPushButton("Save")
-        merging_save_button.setObjectName("small_blue_btn")
-        merging_mask_buttons.addWidget(merging_create_button)
-        merging_mask_buttons.addWidget(merging_propagate_button)
-        merging_mask_buttons.addWidget(merging_delete_button)
-        merging_mask_buttons.addWidget(merging_save_button)
+        self.merging_create_button.setObjectName("small_blue_btn")
+        self.merging_base_combo: QComboBox = QComboBox()
+        self.merging_base_combo.addItem("Seg 1")
+        self.merging_base_combo.addItem("Seg 2")
+        self.merging_delete_button: QPushButton = QPushButton("Delete")
+        self.merging_save_button: QPushButton = QPushButton("Save")
+        self.merging_save_button.setObjectName("small_blue_btn")
+        merging_mask_buttons.addWidget(self.merging_create_button)
+        merging_mask_buttons.addWidget(self.merging_delete_button)
+        merging_mask_buttons.addWidget(self.merging_save_button)
+        merging_mask_buttons.addWidget(self.merging_base_combo)
 
         self.layout().addLayout(merging_mask_buttons)
 
@@ -216,6 +219,12 @@ class CurationMainView(View):
             first_seg1, title=f"[seg] {first_seg1.name}"
         )
         self._curation_model.set_current_loaded_images((first_raw, first_seg1))
+
+    def disable_merging_mask(self):
+        self.merging_save_button.setEnabled(False)
+        self.merging_create_button.setEnabled(False)
+        self.merging_delete_button.setEnabled(False)
+
 
     def init_progress_bar(self) -> None:
         """
