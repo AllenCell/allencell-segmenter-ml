@@ -361,6 +361,7 @@ class CurationMainView(View):
         if self.no_radio.isChecked():
             use_this_image = False
 
+        # DEAL WITH CURATION MASKS
         curation_mask_path = self._curation_model.get_current_excluding_mask_path()
         # append this curation record to the curation record list
         if curation_mask_path is None:
@@ -374,12 +375,30 @@ class CurationMainView(View):
         else:
             # The user has a saved excluding mask and we want to use it in the curationrecord.
             curation_mask_path = str(curation_mask_path)
+
+        # DEAL WITH MERGING MASKS
+        merging_mask_path = self._curation_model.get_current_merging_mask_path()
+        if merging_mask_path is not None:
+            # user has drawn and saved merging masks.
+            merging_mask_path = str(merging_mask_path)
+            if self.merging_base_combo.currentText() == "Seg 1":
+                base_image_index = 0
+            elif self.merging_base_combo.currentText() == "Seg 2":
+                base_image_index = 1
+            else:
+                raise ValueError("base image selection must be between Seg1 and Seg2")
+        else:
+            # there is no merging mask so dont write anything to the CurationRecord\
+            merging_mask_path = ""
+            base_image_index = ""
         # Save this curation record.
         self._curation_model.curation_record.append(
             CurationRecord(
                 self.raw_images[self.curation_index],
                 self.seg1_images[self.curation_index],
                 curation_mask_path,
+                merging_mask_path,
+                base_image_index,
                 use_this_image,
             )
         )
@@ -431,6 +450,8 @@ class CurationMainView(View):
                 show_info("Please select a base image to merge with")
             else:
                 self._curation_service.save_merging_mask(self.merging_base_combo.currentText())
+            self.merging_in_progress = False
+            self.enable
 
     # def shape_selection_in_progress(self, mode: SelectionMode) -> None:
     #     if mode == SelectionMode.EXCLUDING:

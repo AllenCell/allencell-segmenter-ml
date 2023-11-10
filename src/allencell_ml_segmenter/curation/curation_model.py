@@ -160,8 +160,6 @@ class CurationModel(Publisher):
         self._seg2_image_channel_count = channels
 
     def get_save_masks_path(self) -> Path:
-        if self._experiments_model.get_experiment_name() is None:
-            show_info("Please select an experiment to save masks to.")
         return (
             self._experiments_model.get_user_experiments_path()
             / self._experiments_model.get_experiment_name()
@@ -187,5 +185,14 @@ class CurationModel(Publisher):
     def set_current_merging_mask_path(self, path: Path):
         self._current_merging_mask_path = path
 
+    def get_current_merging_mask_path(self, path: Path):
+        return self._current_merging_mask_path
+
     def get_excluding_mask_shape_layers(self) -> List:
         return self.excluding_mask_shape_layers
+
+    def get_user_experiment_selected(self) -> bool:
+        if self._experiments_model.get_experiment_name() is None:
+            return False
+        else:
+            return True
