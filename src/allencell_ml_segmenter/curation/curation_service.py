@@ -18,6 +18,7 @@ from enum import Enum
 from skimage import draw
 
 from allencell_ml_segmenter.main.viewer import Viewer
+from napari.utils.notifications import show_info
 
 
 class SelectionMode(Enum):
@@ -180,13 +181,18 @@ class CurationService(Subscriber):
         )
         self._curation_model.dispatch(Event.ACTION_CURATION_SEG2_SELECTED)
 
-    def finished_shape_selection(self, mode: SelectionMode) -> None:
-        if mode == SelectionMode.EXCLUDING:
-            # last added shape layer is currently bering drawn, so we remove it
+    def finished_shape_selection(self, selection_mode: SelectionMode) -> None:
+        if selection_mode == selection_mode.EXCLUDING:
+
             current_points_layer = (
                 self._curation_model.excluding_mask_shape_layers[-1]
             )
             current_points_layer.mode = "PAN_ZOOM"  # default mode which allows for normal interactivity with napari canvas
+        elif selection_mode == selection_mode.MERGING:
+            current_points_layer = (
+                self._curation_model.merging_mask_shape_layers[-1]
+            )
+            current_points_layer.mode = "PAN_ZOOM"
 
     def convert_shape_layer_to_mask(
         self, image_shape: Tuple[int, int], shape_layer
@@ -218,7 +224,7 @@ class CurationService(Subscriber):
         )
         np.save(save_path_mask_file, mask)
         # if current mask path is set, we know that we've saved an excluding mask for the curationrecord.
-        self._curation_model.set_current_mask_path(save_path_mask_file)
+        self._curation_model.set_current_excluding_mask_path(save_path_mask_file)
 
     def extend_mask_in_z(
         self, shape: Tuple, mask_to_extend: np.ndarray
@@ -227,3 +233,24 @@ class CurationService(Subscriber):
         for z in range(shape[2]):
             three_dim_mask[:, :, z] = mask_to_extend
         return three_dim_mask
+
+    def save_merging_mask(self, base_image: str):
+        # get all merging masks, can be in the same layer or in different layers
+        merging_masks = []
+        for layer in self._curation_model.merging_mask_shape_layers:
+            for shape in layer.data:
+                merging_masks.append(shape)
+
+        folder_path = (
+                self._curation_model.get_save_masks_path() / "merging_masks"
+        )
+        # create excluding mask folder if one doesnt exist
+        folder_path.mkdir(parents=True, exist_ok=True)
+        # save mask and keep record of path
+        save_path_mask_file: Path = (
+                folder_path
+                / f"merging_mask_{self._curation_model.get_current_loaded_images()[0].stem}.npy"
+        )
+        np.save(save_path_mask_file, np.asarray(merging_masks))
+        # if current mask path is set, we know that we've saved an excluding mask for the curationrecord.
+        self._curation_model.set_current_merging_mask_path(save_path_mask_file)
