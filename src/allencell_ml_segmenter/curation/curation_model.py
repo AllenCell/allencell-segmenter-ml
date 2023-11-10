@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict, Tuple, List
+from typing import Dict, Tuple, List, Optional
 
 from aicsimageio import AICSImage
 
@@ -7,6 +7,7 @@ from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.publisher import Publisher
 from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
+from napari.utils.notifications import show_info
 
 
 class CurationModel(Publisher):
@@ -39,11 +40,12 @@ class CurationModel(Publisher):
         self._seg1_image_channel_count: int = None
         self._seg2_image_channel_count: int = None
         self.excluding_mask_shape_layers = []
-        self.masking_mask_shape_layers = []
+        self.merging_mask_shape_layers = []
         self.curation_record: List[CurationRecord] = []
         self.curation_image_dims: Tuple[int, int, int] = None
 
-        self._current_mask_path: Path = None
+        self._current_excluding_mask_path: Path = None
+        self._current_merging_mask_path: Path = None
         self._current_loaded_images: Tuple[Path, Path] = (None, None)
 
     def set_raw_directory(self, dir: Path) -> None:
@@ -158,12 +160,14 @@ class CurationModel(Publisher):
         self._seg2_image_channel_count = channels
 
     def get_save_masks_path(self) -> Path:
+        if self._experiments_model.get_experiment_name() is None:
+            show_info("Please select an experiment to save masks to.")
         return (
             self._experiments_model.get_user_experiments_path()
             / self._experiments_model.get_experiment_name()
         )
 
-    def set_current_loaded_images(self, images: Tuple[Path, Path]):
+    def set_current_loaded_images(self, images: Tuple[Path, Path, Optional[Path]]):
         self._current_loaded_images = images
 
     def get_current_loaded_images(self):
@@ -172,13 +176,16 @@ class CurationModel(Publisher):
     def get_curation_record(self) -> List[CurationRecord]:
         return self.curation_record
 
-    def set_current_mask_path(self, path: Path):
-        self._current_mask_path = path
+    def set_current_excluding_mask_path(self, path: Path):
+        self._current_excluding_mask_path = path
 
-    def get_current_mask_path(self) -> Path:
-        current_mask_path: Path = self._current_mask_path
-        self._current_mask_path = None
+    def get_current_excluding_mask_path(self) -> Path:
+        current_mask_path: Path = self._current_excluding_mask_path
+        self._current_excluding_mask_path = None
         return current_mask_path
+
+    def set_current_merging_mask_path(self, path: Path):
+        self._current_merging_mask_path = path
 
     def get_excluding_mask_shape_layers(self) -> List:
         return self.excluding_mask_shape_layers
