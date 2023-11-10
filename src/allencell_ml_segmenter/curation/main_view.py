@@ -1,5 +1,7 @@
 from pathlib import Path
 from typing import List
+
+from PyQt5.QtWidgets import QComboBox
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
     QVBoxLayout,
@@ -61,6 +63,7 @@ class CurationMainView(View):
         )
 
         self.excluding_in_progress: bool = False
+        self.merging_in_progress: bool = False
 
         frame: QFrame = QFrame()
         frame.setLayout(QVBoxLayout())
@@ -131,22 +134,27 @@ class CurationMainView(View):
                 mode=SelectionMode.EXCLUDING
             )
         )
+        # propogate button disabled for v1
+        # TODO: enable this in v2
         excluding_propagate_button: QPushButton = QPushButton(
             "Propagate in 3D"
         )
-        excluding_delete_button: QPushButton = QPushButton("Delete")
-        excluding_save_button: QPushButton = QPushButton("Save")
-        excluding_save_button.setObjectName("small_blue_btn")
-        excluding_save_button.clicked.connect(
+        excluding_propagate_button.setEnabled(False)
+
+        self.excluding_delete_button: QPushButton = QPushButton("Delete")
+        self.excluding_save_button: QPushButton = QPushButton("Save")
+        self.excluding_save_button.setObjectName("small_blue_btn")
+        self.excluding_save_button.clicked.connect(
             lambda x: self._curation_model.dispatch(
                 Event.ACTION_CURATION_SAVE_EXCLUDING_MASK
             )
         )
+        self.excluding_save_button.setEnabled(False)
 
         excluding_mask_buttons.addWidget(self.excluding_create_button)
         excluding_mask_buttons.addWidget(excluding_propagate_button)
-        excluding_mask_buttons.addWidget(excluding_delete_button)
-        excluding_mask_buttons.addWidget(excluding_save_button)
+        excluding_mask_buttons.addWidget(self.excluding_delete_button)
+        excluding_mask_buttons.addWidget(self.excluding_save_button)
         self.layout().addLayout(excluding_mask_buttons)
 
         # Label for Merging mask
@@ -157,21 +165,23 @@ class CurationMainView(View):
         merging_mask_buttons: QHBoxLayout = QHBoxLayout()
         self.merging_create_button: QPushButton = QPushButton("+ Create")
         self.merging_create_button.clicked.connect(
-            lambda x: self._curation_service.enable_shape_selection_viewer(
-                mode=SelectionMode.MERGING
-            )
+            self.merging_selection_inprogress
         )
         self.merging_create_button.setObjectName("small_blue_btn")
         self.merging_base_combo: QComboBox = QComboBox()
+        self.merging_base_combo.addItem("Base Image:")
         self.merging_base_combo.addItem("Seg 1")
         self.merging_base_combo.addItem("Seg 2")
         self.merging_delete_button: QPushButton = QPushButton("Delete")
         self.merging_save_button: QPushButton = QPushButton("Save")
+        self.merging_save_button.setEnabled(False)
         self.merging_save_button.setObjectName("small_blue_btn")
+        self.merging_save_button.clicked.connect(lambda x: self.merging_selection_finished(save=True))
         merging_mask_buttons.addWidget(self.merging_create_button)
+        merging_mask_buttons.addWidget(self.merging_base_combo)
         merging_mask_buttons.addWidget(self.merging_delete_button)
         merging_mask_buttons.addWidget(self.merging_save_button)
-        merging_mask_buttons.addWidget(self.merging_base_combo)
+
 
         self.layout().addLayout(merging_mask_buttons)
 
@@ -196,6 +206,13 @@ class CurationMainView(View):
         """
         _ = show_info("Loading curation images")
 
+        # If there is only one segmentation image set for curation disable merging masks.
+        if self._curation_model.get_seg2_directory() is None:
+            self.disable_merging_mask()
+        # If there are two segmentation image sets for curation enable merging masks.
+        else:
+            self.disable_excluding_mask()
+
         # build list of raw images, ignore .DS_Store files
         self.raw_images: List[
             Path
@@ -204,6 +221,14 @@ class CurationMainView(View):
         self.seg1_images: List[
             Path
         ] = self._curation_service.get_seg1_images_list()
+
+        # If seg 2 is selected, build list of seg2 images
+        if self._curation_model.get_seg2_directory() is not None:
+            self.seg2_images: List[
+                Path
+            ] = self._curation_service.get_seg2_images_list()
+        else:
+            self.seg2_images = None
 
         # reset
         self.init_progress_bar()
@@ -216,14 +241,36 @@ class CurationMainView(View):
 
         first_seg1: Path = self.seg1_images[0]
         self._curation_service.add_image_to_viewer_from_path(
-            first_seg1, title=f"[seg] {first_seg1.name}"
+            first_seg1, title=f"[seg 1] {first_seg1.name}"
         )
-        self._curation_model.set_current_loaded_images((first_raw, first_seg1))
+        if self._curation_model.get_seg2_directory() is not None:
+            first_seg2: Path = self.seg2_images[0]
+            self._curation_service.add_image_to_viewer_from_path(
+                first_seg2, title=f"[seg 2] {first_seg2.name}"
+            )
+        else:
+            first_seg2 = None
+        self._curation_model.set_current_loaded_images((first_raw, first_seg1, first_seg2))
 
     def disable_merging_mask(self):
         self.merging_save_button.setEnabled(False)
         self.merging_create_button.setEnabled(False)
         self.merging_delete_button.setEnabled(False)
+        self.merging_base_combo.setEnabled(False)
+
+    def enable_merging_mask(self):
+        # save button is off to start with
+        self.merging_save_button.setEnabled(False)
+        self.merging_create_button.setEnabled(True)
+        self.merging_delete_button.setEnabled(True)
+        self.merging_base_combo.setEnabled(True)
+
+    def disable_excluding_mask(self):
+        self.excluding_save_button.setEnabled(False)
+        self.excluding_create_button.setEnabled(False)
+        self.excluding_delete_button.setEnabled(False)
+
+
 
 
     def init_progress_bar(self) -> None:
@@ -267,11 +314,20 @@ class CurationMainView(View):
             seg1_to_view: Path = self.seg1_images[self.curation_index]
             # Add image with [seg] prepended to layer name
             self._curation_service.add_image_to_viewer_from_path(
-                seg1_to_view, title=f"[seg] {seg1_to_view.name}"
+                seg1_to_view, title=f"[seg 1] {seg1_to_view.name}"
             )
+            if self.seg2_images is not None:
+                seg2_to_view: Path = self.seg2_images[self.curation_index]
+                # Add image with [seg] prepended to layer name
+                self._curation_service.add_image_to_viewer_from_path(
+                    seg2_to_view, title=f"[seg 2] {seg2_to_view.name}"
+                )
+            else:
+                seg2_to_view = None
+
 
             self._curation_model.set_current_loaded_images(
-                (raw_to_view, seg1_to_view)
+                (raw_to_view, seg1_to_view, seg2_to_view)
             )
             self._increment_progress_bar()
         else:
@@ -305,7 +361,7 @@ class CurationMainView(View):
         if self.no_radio.isChecked():
             use_this_image = False
 
-        curation_mask_path = self._curation_model.get_current_mask_path()
+        curation_mask_path = self._curation_model.get_current_excluding_mask_path()
         # append this curation record to the curation record list
         if curation_mask_path is None:
             # User has drawn an excluding mask, but hasn't saved it yet
@@ -335,12 +391,11 @@ class CurationMainView(View):
         self.excluding_create_button.clicked.connect(
             self.excluding_selection_finished
         )
+        self.excluding_save_button.setEnabled(True)
         self.excluding_in_progress = True
 
     def excluding_selection_finished(self):
-        self._curation_service.finished_shape_selection(
-            mode=SelectionMode.EXCLUDING
-        )  # implement this
+        self._curation_service.finished_shape_selection(selection_mode=SelectionMode.EXCLUDING)
         # flip buttons to original state
         self.excluding_create_button.setText("+ Create")
         self.excluding_create_button.disconnect()
@@ -350,6 +405,32 @@ class CurationMainView(View):
             )
         )
         self.excluding_in_progress = False
+
+    def merging_selection_inprogress(self) -> None:
+        self.merging_create_button.setText("Finish")
+        self.merging_create_button.disconnect()
+        self.merging_create_button.clicked.connect(
+            self.merging_selection_finished
+        )
+        # we now have a merging mask that is the user can save
+        self.merging_save_button.setEnabled(True)
+        self.merging_in_progress = True
+        self._curation_service.enable_shape_selection_viewer(
+            mode=SelectionMode.MERGING
+        )
+
+    def merging_selection_finished(self, save: bool = False) -> None:
+        self._curation_service.finished_shape_selection(selection_mode=SelectionMode.MERGING)
+        self.merging_create_button.setText("+ Create")
+        self.merging_create_button.disconnect()
+        self.merging_create_button.clicked.connect(
+            self.merging_selection_inprogress
+        )
+        if save:
+            if self.merging_base_combo.currentText() == "Base Image:":
+                show_info("Please select a base image to merge with")
+            else:
+                self._curation_service.save_merging_mask(self.merging_base_combo.currentText())
 
     # def shape_selection_in_progress(self, mode: SelectionMode) -> None:
     #     if mode == SelectionMode.EXCLUDING:
