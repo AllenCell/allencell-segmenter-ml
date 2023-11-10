@@ -235,22 +235,26 @@ class CurationService(Subscriber):
         return three_dim_mask
 
     def save_merging_mask(self, base_image: str):
-        # get all merging masks, can be in the same layer or in different layers
-        merging_masks = []
-        for layer in self._curation_model.merging_mask_shape_layers:
-            for shape in layer.data:
-                merging_masks.append(shape)
+        if self._curation_model.get_user_experiment_selected():
+            # get all merging masks, can be in the same layer or in different layers
+            merging_masks = []
+            for layer in self._curation_model.merging_mask_shape_layers:
+                for shape in layer.data:
+                    merging_masks.append(shape)
 
-        folder_path = (
-                self._curation_model.get_save_masks_path() / "merging_masks"
-        )
-        # create excluding mask folder if one doesnt exist
-        folder_path.mkdir(parents=True, exist_ok=True)
-        # save mask and keep record of path
-        save_path_mask_file: Path = (
-                folder_path
-                / f"merging_mask_{self._curation_model.get_current_loaded_images()[0].stem}.npy"
-        )
-        np.save(save_path_mask_file, np.asarray(merging_masks))
-        # if current mask path is set, we know that we've saved an excluding mask for the curationrecord.
-        self._curation_model.set_current_merging_mask_path(save_path_mask_file)
+            folder_path = (
+                    self._curation_model.get_save_masks_path() / "merging_masks"
+            )
+            # create excluding mask folder if one doesnt exist
+            folder_path.mkdir(parents=True, exist_ok=True)
+            # save mask and keep record of path
+            save_path_mask_file: Path = (
+                    folder_path
+                    / f"merging_mask_{self._curation_model.get_current_loaded_images()[0].stem}.npy"
+            )
+            np.save(save_path_mask_file, np.asarray(merging_masks))
+            # if current mask path is set, we know that we've saved an excluding mask for the curationrecord.
+            self._curation_model.set_current_merging_mask_path(save_path_mask_file)
+            show_info("Merging mask saved.")
+        else:
+            show_info("Please select an experiment to save masks.")
