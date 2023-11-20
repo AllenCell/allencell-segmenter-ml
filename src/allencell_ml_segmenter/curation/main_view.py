@@ -14,6 +14,7 @@ from qtpy.QtWidgets import (
     QRadioButton,
 )
 from allencell_ml_segmenter._style import Style
+from allencell_ml_segmenter.core.dialog_box import DialogBox
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
@@ -269,6 +270,11 @@ class CurationMainView(View):
         self.excluding_save_button.setEnabled(False)
         self.excluding_create_button.setEnabled(False)
         self.excluding_delete_button.setEnabled(False)
+    
+    def enable_excluding_mask(self):
+        self.excluding_save_button.setEnabled(True)
+        self.excluding_create_button.setEnabled(True)
+        self.excluding_delete_button.setEnabled(True)
 
 
 
@@ -361,44 +367,39 @@ class CurationMainView(View):
         if self.no_radio.isChecked():
             use_this_image = False
 
-        # DEAL WITH CURATION MASKS
-        curation_mask_path = self._curation_model.get_current_excluding_mask_path()
+        # DEAL WITH EXCLUDING MASKS
+        excluding_mask_path = self._curation_model.get_current_excluding_mask_path()
         # append this curation record to the curation record list
-        if curation_mask_path is None:
+        if excluding_mask_path is None:
             # User has drawn an excluding mask, but hasn't saved it yet
             # For now we will auto save these masks to the curation record
             if len(self._curation_model.get_excluding_mask_shape_layers()) > 0:
                 self._curation_service.save_excluding_mask()
             else:
                 # there is no excluding mask for these images so don't write anything to the CurationRecord.
-                curation_mask_path = ""
+                excluding_mask_path = ""
         else:
             # The user has a saved excluding mask and we want to use it in the curationrecord.
-            curation_mask_path = str(curation_mask_path)
+            excluding_mask_path = str(excluding_mask_path)
 
         # DEAL WITH MERGING MASKS
         merging_mask_path = self._curation_model.get_current_merging_mask_path()
         if merging_mask_path is not None:
             # user has drawn and saved merging masks.
             merging_mask_path = str(merging_mask_path)
-            if self.merging_base_combo.currentText() == "Seg 1":
-                base_image_index = 0
-            elif self.merging_base_combo.currentText() == "Seg 2":
-                base_image_index = 1
-            else:
-                raise ValueError("base image selection must be between Seg1 and Seg2")
+            base_image_name = self.merging_base_combo.currentText()
         else:
             # there is no merging mask so dont write anything to the CurationRecord\
             merging_mask_path = ""
-            base_image_index = ""
+            base_image_name = ""
         # Save this curation record.
         self._curation_model.curation_record.append(
             CurationRecord(
                 self.raw_images[self.curation_index],
                 self.seg1_images[self.curation_index],
-                curation_mask_path,
+                excluding_mask_path,
                 merging_mask_path,
-                base_image_index,
+                base_image_name,
                 use_this_image,
             )
         )
@@ -446,12 +447,22 @@ class CurationMainView(View):
             self.merging_selection_inprogress
         )
         if save:
-            if self.merging_base_combo.currentText() == "Base Image:":
-                show_info("Please select a base image to merge with")
+            if self._curation_model.get_current_merging_mask_path() is not None:
+                save_mask_dialog = DialogBox("There is already a merging mask saved. Overwrite?")
+                save_mask_dialog.exec()
+                if save_mask_dialog.selection:
+                    self.save_merging_mask()
             else:
-                self._curation_service.save_merging_mask(self.merging_base_combo.currentText())
-            self.merging_in_progress = False
-            self.enable
+                self.save_merging_mask()
+        
+            
+    def save_merging_mask(self):
+        if self.merging_base_combo.currentText() == "Base Image:":
+            show_info("Please select a base image to merge with")
+        else:
+            self._curation_service.save_merging_mask(self.merging_base_combo.currentText())
+        self.merging_in_progress = False
+        self.enable_excluding_mask()
 
     # def shape_selection_in_progress(self, mode: SelectionMode) -> None:
     #     if mode == SelectionMode.EXCLUDING:
