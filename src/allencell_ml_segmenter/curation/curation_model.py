@@ -185,7 +185,7 @@ class CurationModel(Publisher):
     def set_current_merging_mask_path(self, path: Path):
         self._current_merging_mask_path = path
 
-    def get_current_merging_mask_path(self, path: Path):
+    def get_current_merging_mask_path(self):
         return self._current_merging_mask_path
 
     def get_excluding_mask_shape_layers(self) -> List:
