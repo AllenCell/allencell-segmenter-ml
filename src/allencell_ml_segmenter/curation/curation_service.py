@@ -156,6 +156,8 @@ class CurationService(Subscriber):
         # we expect user to have the same number of channels for all images in their folders
         # and that only images are stored in those folders
         first_image: Path = path.iterdir().__next__()
+        print(first_image.resolve())
+        print(str(first_image.resolve()))
         img: AICSImage = AICSImage(str(first_image.resolve()))
         # return num channel
         return img.dims.C
