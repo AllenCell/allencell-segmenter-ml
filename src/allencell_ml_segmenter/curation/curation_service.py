@@ -90,7 +90,7 @@ class CurationService(Subscriber):
         with open(path, "w") as f:
             # need file header
             writer: csv.writer = csv.writer(f, delimiter=",")
-            writer.writerow(["", "raw", "seg", "mask"])
+            writer.writerow(["", "raw", "seg", "excluding_mask", "merging_mask", "merging_col"])
             for idx, record in enumerate(curation_record):
                 if record.to_use:
                     writer.writerow(
@@ -98,7 +98,10 @@ class CurationService(Subscriber):
                             str(idx),
                             str(record.raw_file),
                             str(record.seg1),
+                            str(record.seg2),
                             str(record.excluding_mask),
+                            str(record.merging_mask),
+                            str(record.base_image_index)
                         ]
                     )
                 f.flush()
@@ -232,7 +235,7 @@ class CurationService(Subscriber):
     def extend_mask_in_z(
         self, shape: Tuple, mask_to_extend: np.ndarray
     ) -> np.ndarray:
-        three_dim_mask = np.ndarray(shape, dtype=np.bool)
+        three_dim_mask = np.ndarray(shape, dtype=bool)
         for z in range(shape[2]):
             three_dim_mask[:, :, z] = mask_to_extend
         return three_dim_mask
