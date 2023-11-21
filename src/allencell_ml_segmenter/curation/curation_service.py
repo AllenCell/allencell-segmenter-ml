@@ -3,6 +3,7 @@ import shutil
 
 import numpy as np
 
+from allencell_ml_segmenter.core.dialog_box import DialogBox
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.curation.curation_model import CurationModel
@@ -236,8 +237,23 @@ class CurationService(Subscriber):
             three_dim_mask[:, :, z] = mask_to_extend
         return three_dim_mask
 
-    def save_merging_mask(self, base_image: str):
-        if self._curation_model.get_user_experiment_selected():
+    def save_merging_mask(self, base_image: str) -> bool:
+        continue_save = True
+        # Checking to see if user has experiment selected
+        if not self._curation_model.get_user_experiment_selected():
+            # User does not have experiment selected
+            continue_save = False
+            # show information to user that experiment not selected
+            show_info("Please select an experiment to save masks.")
+
+        # Checking to see if there is already a merging mask saved.
+        if self._curation_model.get_current_merging_mask_path():
+            # There is already a merging mask saved. Ask if user wants to overwrite
+            overwrite_merging_mask_dialog = DialogBox("There is already a merging mask saved. Would you like to overwrite?")
+            overwrite_merging_mask_dialog.exec()
+            continue_save = overwrite_merging_mask_dialog.selection # True if overwrite selected, false if not.
+
+        if continue_save:
             # get all merging masks, can be in the same layer or in different layers
             merging_masks = []
             for layer in self._curation_model.merging_mask_shape_layers:
@@ -259,8 +275,8 @@ class CurationService(Subscriber):
             self._curation_model.set_current_merging_mask_path(save_path_mask_file)
             self.clear_merging_mask_layers()
             show_info("Merging mask saved.")
-        else:
-            show_info("Please select an experiment to save masks.")
+        return continue_save
+
 
 
     def clear_merging_mask_layers(self):
