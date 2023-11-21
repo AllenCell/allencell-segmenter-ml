@@ -227,3 +227,15 @@ class CurationService(Subscriber):
         for z in range(shape[2]):
             three_dim_mask[:, :, z] = mask_to_extend
         return three_dim_mask
+
+    def delete_current_exclusion_mask(self):
+        # remove current mask from napari viewer
+        for layer in self._curation_model.excluding_mask_shape_layers:
+            self._viewer.viewer.layers.remove(layer)
+
+        # Remove from curation model
+        self._curation_model.set_current_mask_path(None)
+
+
+
+

@@ -158,6 +158,7 @@ class CurationMainView(View):
             "Propagate in 3D"
         )
         excluding_delete_button: QPushButton = QPushButton("Delete")
+        excluding_delete_button.clicked.connect(self._curation_service.delete_current_exclusion_mask)
         excluding_save_button: QPushButton = QPushButton("Save")
         excluding_save_button.setObjectName("small_blue_btn")
         excluding_save_button.clicked.connect(
