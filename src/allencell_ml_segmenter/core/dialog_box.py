@@ -22,6 +22,7 @@ class DialogBox(QDialog):
         self.yes_btn = QPushButton("Yes")
         self.no_btn = QPushButton("No")
         self.yes_btn.clicked.connect(self.yes_selected)
+        self.no_btn.clicked.connect(self.no_selected)
         btns.addWidget(self.yes_btn)
         btns.addWidget(self.no_btn)
         self.layout().addLayout(btns)

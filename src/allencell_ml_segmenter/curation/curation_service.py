@@ -257,6 +257,15 @@ class CurationService(Subscriber):
             np.save(save_path_mask_file, np.asarray(merging_masks))
             # if current mask path is set, we know that we've saved an excluding mask for the curationrecord.
             self._curation_model.set_current_merging_mask_path(save_path_mask_file)
+            self.clear_merging_mask_layers()
             show_info("Merging mask saved.")
         else:
             show_info("Please select an experiment to save masks.")
+
+
+    def clear_merging_mask_layers(self):
+        all_shapes_layers = [x for x in self._viewer.viewer.layers if isinstance(x, napari.layers.shapes.Shapes)]
+        all_merging_layers = [x for x in all_shapes_layers if "Merging Mask" in x.name]
+        for merging_layer in all_merging_layers:
+            self._viewer.viewer.layers.remove(merging_layer)
+

@@ -242,12 +242,12 @@ class CurationMainView(View):
 
         first_seg1: Path = self.seg1_images[0]
         self._curation_service.add_image_to_viewer_from_path(
-            first_seg1, title=f"[seg 1] {first_seg1.name}"
+            first_seg1, title=f"[Seg 1] {first_seg1.name}"
         )
         if self._curation_model.get_seg2_directory() is not None:
             first_seg2: Path = self.seg2_images[0]
             self._curation_service.add_image_to_viewer_from_path(
-                first_seg2, title=f"[seg 2] {first_seg2.name}"
+                first_seg2, title=f"[Seg 2] {first_seg2.name}"
             )
         else:
             first_seg2 = None
@@ -448,6 +448,7 @@ class CurationMainView(View):
         )
         if save:
             if self._curation_model.get_current_merging_mask_path() is not None:
+                # there is a previously saved merging mask.
                 save_mask_dialog = DialogBox("There is already a merging mask saved. Overwrite?")
                 save_mask_dialog.exec()
                 if save_mask_dialog.selection:
@@ -463,7 +464,3 @@ class CurationMainView(View):
             self._curation_service.save_merging_mask(self.merging_base_combo.currentText())
         self.merging_in_progress = False
         self.enable_excluding_mask()
-
-    # def shape_selection_in_progress(self, mode: SelectionMode) -> None:
-    #     if mode == SelectionMode.EXCLUDING:
-    #         self.excluding_in_progress_change_btn()
