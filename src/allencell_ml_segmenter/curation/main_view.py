@@ -48,7 +48,7 @@ class CurationMainView(View):
         self.curation_record: List[CurationRecord] = list()
         self.raw_images: List[Path] = list()
         self.seg1_images: List[Path] = list()
-        self.seg2_images: List[Path] = list()
+ x
 
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 10, 0, 10)
@@ -397,6 +397,7 @@ class CurationMainView(View):
             CurationRecord(
                 self.raw_images[self.curation_index],
                 self.seg1_images[self.curation_index],
+                self.seg2_images[self.curation_index],
                 excluding_mask_path,
                 merging_mask_path,
                 base_image_name,
@@ -459,6 +460,7 @@ class CurationMainView(View):
         
             
     def save_merging_mask(self):
+        image_saved = False
         if self.merging_base_combo.currentText() == "Base Image:":
             show_info("Please select a base image to merge with")
         else:
