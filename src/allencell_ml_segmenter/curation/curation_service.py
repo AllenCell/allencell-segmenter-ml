@@ -18,6 +18,7 @@ from enum import Enum
 from skimage import draw
 
 from allencell_ml_segmenter.main.viewer import Viewer
+import os
 
 
 class SelectionMode(Enum):
@@ -232,6 +233,9 @@ class CurationService(Subscriber):
         # remove current mask from napari viewer
         for layer in self._curation_model.excluding_mask_shape_layers:
             self._viewer.viewer.layers.remove(layer)
+
+        # Delete saved out exclusion mask
+        os.remove(self._curation_model.get_current_mask_path())
 
         # Remove from curation model
         self._curation_model.set_current_mask_path(None)
