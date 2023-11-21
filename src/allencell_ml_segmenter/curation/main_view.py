@@ -447,20 +447,22 @@ class CurationMainView(View):
             self.merging_selection_inprogress
         )
         if save:
-            if self._curation_model.get_current_merging_mask_path() is not None:
-                # there is a previously saved merging mask.
-                save_mask_dialog = DialogBox("There is already a merging mask saved. Overwrite?")
-                save_mask_dialog.exec()
-                if save_mask_dialog.selection:
-                    self.save_merging_mask()
-            else:
-                self.save_merging_mask()
+            self.save_merging_mask()
+            # if self._curation_model.get_current_merging_mask_path() is not None:
+            #     # there is a previously saved merging mask.
+            #     save_mask_dialog = DialogBox("There is already a merging mask saved. Overwrite?")
+            #     save_mask_dialog.exec()
+            #     if save_mask_dialog.selection:
+            #         self.save_merging_mask()
+            # else:
+            #     self.save_merging_mask()
         
             
     def save_merging_mask(self):
         if self.merging_base_combo.currentText() == "Base Image:":
             show_info("Please select a base image to merge with")
         else:
-            self._curation_service.save_merging_mask(self.merging_base_combo.currentText())
-        self.merging_in_progress = False
-        self.enable_excluding_mask()
+            image_saved = self._curation_service.save_merging_mask(self.merging_base_combo.currentText())
+        if image_saved:
+            self.merging_in_progress = False
+            self.enable_excluding_mask()
