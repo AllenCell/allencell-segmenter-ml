@@ -122,6 +122,29 @@ class CurationMainView(View):
         )
         self.layout().addLayout(excluding_mask_labels)
 
+        # Label for Merging mask
+        merging_mask_label: LabelWithHint = LabelWithHint("Merging mask")
+        self.layout().addWidget(merging_mask_label)
+        # buttons for merging mask
+        merging_mask_buttons: QHBoxLayout = QHBoxLayout()
+        merging_create_button: QPushButton = QPushButton("+ Create")
+        merging_create_button.clicked.connect(
+            lambda x: self._curation_service.enable_shape_selection_viewer(
+                mode=SelectionMode.MERGING
+            )
+        )
+        merging_create_button.setObjectName("small_blue_btn")
+        merging_propagate_button: QPushButton = QPushButton("Propagate in 3D")
+        merging_delete_button: QPushButton = QPushButton("Delete")
+        merging_save_button: QPushButton = QPushButton("Save")
+        merging_save_button.setObjectName("small_blue_btn")
+        merging_mask_buttons.addWidget(merging_create_button)
+        merging_mask_buttons.addWidget(merging_propagate_button)
+        merging_mask_buttons.addWidget(merging_delete_button)
+        merging_mask_buttons.addWidget(merging_save_button)
+
+        self.layout().addLayout(merging_mask_buttons)
+
         # buttons for excluding mask
         excluding_mask_buttons: QHBoxLayout = QHBoxLayout()
         self.excluding_create_button: QPushButton = QPushButton("+ Create")
@@ -148,29 +171,6 @@ class CurationMainView(View):
         excluding_mask_buttons.addWidget(excluding_delete_button)
         excluding_mask_buttons.addWidget(excluding_save_button)
         self.layout().addLayout(excluding_mask_buttons)
-
-        # Label for Merging mask
-        merging_mask_label: LabelWithHint = LabelWithHint("Merging mask")
-        self.layout().addWidget(merging_mask_label)
-        # buttons for merging mask
-        merging_mask_buttons: QHBoxLayout = QHBoxLayout()
-        merging_create_button: QPushButton = QPushButton("+ Create")
-        merging_create_button.clicked.connect(
-            lambda x: self._curation_service.enable_shape_selection_viewer(
-                mode=SelectionMode.MERGING
-            )
-        )
-        merging_create_button.setObjectName("small_blue_btn")
-        merging_propagate_button: QPushButton = QPushButton("Propagate in 3D")
-        merging_delete_button: QPushButton = QPushButton("Delete")
-        merging_save_button: QPushButton = QPushButton("Save")
-        merging_save_button.setObjectName("small_blue_btn")
-        merging_mask_buttons.addWidget(merging_create_button)
-        merging_mask_buttons.addWidget(merging_propagate_button)
-        merging_mask_buttons.addWidget(merging_delete_button)
-        merging_mask_buttons.addWidget(merging_save_button)
-
-        self.layout().addLayout(merging_mask_buttons)
 
         self._curation_model.subscribe(
             Event.ACTION_CURATION_DRAW_EXCLUDING,
