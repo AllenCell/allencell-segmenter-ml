@@ -239,7 +239,3 @@ class CurationService(Subscriber):
 
         # Remove from curation model
         self._curation_model.set_current_mask_path(None)
-
-
-
-
