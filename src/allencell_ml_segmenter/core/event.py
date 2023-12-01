@@ -41,7 +41,9 @@ class Event(Enum):
     ACTION_CURATION_FINISHED_DRAW_EXCLUDING = (
         "curation_finished_draw_excluding"
     )
+    ACTION_CURATION_DRAW_MERGING = "curation_draw_merging"
     ACTION_CURATION_SAVE_EXCLUDING_MASK = "curation_save_excluding_mask"
+    ACTION_CURATION_SAVED_MERGING_MASK = "curation_saved_merging_mask"
 
     # View selection events. These can stem from a user action, or from a process (i.e. prediction process ends, and a new view is shown automatically).
     VIEW_SELECTION_TRAINING = "training_selected"
