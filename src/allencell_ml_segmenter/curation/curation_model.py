@@ -230,3 +230,9 @@ class CurationModel(Publisher):
 
     def image_available(self) -> bool:
         return self.curation_index < len(self.raw_images)
+
+    def get_curation_index(self) -> int:
+        return self.curation_index
+
+    def set_curation_index(self, i: int) -> None:
+        self.curation_index = i

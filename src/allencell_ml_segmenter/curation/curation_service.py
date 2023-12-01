@@ -1,25 +1,18 @@
-import csv
-import shutil
-
-import numpy as np
-
 from allencell_ml_segmenter.core.dialog_box import DialogBox
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.curation.curation_model import CurationModel
 from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
-from pathlib import Path
-from typing import List, Tuple
+from allencell_ml_segmenter.main.viewer import Viewer
 
+from pathlib import Path
+from typing import List, Union
+import csv
+import numpy as np
 from aicsimageio import AICSImage
-import napari
+from enum import Enum
 from napari.utils.notifications import show_info
 from napari.layers.shapes.shapes import Shapes
-from enum import Enum
-from skimage import draw
-
-from allencell_ml_segmenter.main.viewer import Viewer
-from napari.utils.notifications import show_info
 
 
 class SelectionMode(Enum):
@@ -32,10 +25,10 @@ class CurationService(Subscriber):
 
     def __init__(self, curation_model: CurationModel, viewer: Viewer) -> None:
         super().__init__()
-        self._curation_model = curation_model
-        self._viewer = viewer
+        self._curation_model: CurationModel = curation_model
+        self._viewer: Viewer = viewer
 
-    def get_raw_images_list(self):
+    def build_raw_images_list(self) -> List[Path]:
         """
         Return all raw images in the raw images path as a list of Paths
         """
@@ -46,7 +39,7 @@ class CurationService(Subscriber):
             )
         return self._get_files_list_from_path(raw_path)
 
-    def get_seg1_images_list(self):
+    def build_seg1_images_list(self) -> List[Path]:
         """
         Return all raw images in the raw images path as a list of Paths
         """
@@ -57,7 +50,7 @@ class CurationService(Subscriber):
             )
         return self._get_files_list_from_path(seg1_path)
 
-    def get_seg2_images_list(self):
+    def build_seg2_images_list(self) -> List[Path]:
         """
         Return all raw images in the raw images path as a list of Paths
         """
@@ -68,14 +61,20 @@ class CurationService(Subscriber):
             )
         return self._get_files_list_from_path(seg2_path)
 
-    def get_image_data_from_path(self, path: Path) -> AICSImage:
+    def open_image_from_path(self, path: Path) -> AICSImage:
+        """
+        Open an image from a path
+        """
         return AICSImage(str(path))
 
     def write_curation_record(
         self, curation_record: List[CurationRecord], path: Path
     ) -> None:
         """
-        Save the curation record as a csv at the specified path
+        Save the curation record as a csv at the specified path. will create parent directories to path as needed.
+
+        curation_record (List[CurationRecord]): record to save to csv
+        path (Path): path to save csv
         """
         parent_path: Path = path.parents[0]
         if not parent_path.is_dir():
@@ -101,20 +100,34 @@ class CurationService(Subscriber):
                 f.flush()
 
         # TODO: WRITE ACTUAL VALIDATION AND TEST SETS
-        # shutil.copy(path, parent_path / "valid.csv")
-        # shutil.copy(path, parent_path / "test.csv")
 
-    def remove_all_images_from_viewer_layers(self):
+    def remove_all_images_from_viewer_layers(self) -> None:
+        """
+        Remove all images from the napari viewer
+        """
         self._viewer.clear_layers()
+        # if all images are removed, need to reset excluding mask and merging mask state as well
         self._curation_model.excluding_mask_shape_layers = []
         self._curation_model.merging_mask_shape_layers = []
 
 
-    def add_image_to_viewer(self, image_data: np.ndarray, title: str = ""):
+    def add_image_to_viewer(self, image_data: np.ndarray, title: str = "") -> None:
+        """
+        Add an image to the napari viewer as its own layer
+
+        image_data(np.ndarray): image to display in napari
+        title(str): title of layer that will be displayed in napari
+        """
         self._viewer.add_image(image_data, name=title)
 
-    def add_image_to_viewer_from_path(self, path: Path, title: str = ""):
-        image = self.get_image_data_from_path(path)
+    def add_image_to_viewer_from_path(self, path: Path, title: str = "") -> None:
+        """
+        Add an image to the napari viewer from a path
+
+        path(Path): path to image to display in napari
+        title(str): title of layer that will be displayed in napari
+        """
+        image: AICSImage = self.open_image_from_path(path)
         self._curation_model.curation_image_dims = (
             image.dims.X,
             image.dims.Y,
@@ -122,7 +135,12 @@ class CurationService(Subscriber):
         )
         self.add_image_to_viewer(image.data, title)
 
-    def enable_shape_selection_viewer(self, mode: SelectionMode):
+    def enable_shape_selection_viewer(self, mode: SelectionMode) -> None:
+        """
+        Enable shape selection in napari
+
+        mode(SelectionMode): EXCLUDING or MERGING
+        """
         _ = show_info("Draw excluding area")
         if mode == SelectionMode.EXCLUDING:
             # append points layer to excluding mask shapes list
@@ -166,6 +184,11 @@ class CurationService(Subscriber):
         return img.dims.C
 
     def select_directory_raw(self, path: Path):
+        """
+        Select a raw directory
+
+        path(Path): path to raw directory
+        """
         self._curation_model.set_raw_directory(path)
         self._curation_model.set_total_num_channels_raw(
             self.get_total_num_channels_of_images_in_path(path)
@@ -173,6 +196,11 @@ class CurationService(Subscriber):
         self._curation_model.dispatch(Event.ACTION_CURATION_RAW_SELECTED)
 
     def select_directory_seg1(self, path: Path):
+        """
+        Select a seg1 directory
+
+        path(Path): path to seg1 directory
+        """
         self._curation_model.set_seg1_directory(path)
         self._curation_model.set_total_num_channels_seg1(
             self.get_total_num_channels_of_images_in_path(path)
@@ -180,6 +208,11 @@ class CurationService(Subscriber):
         self._curation_model.dispatch(Event.ACTION_CURATION_SEG1_SELECTED)
 
     def select_directory_seg2(self, path: Path):
+        """
+        Select a seg2 directory
+
+        path(Path): path to seg2 directory
+        """
         self._curation_model.set_seg2_directory(path)
         self._curation_model.set_total_num_channels_seg2(
             self.get_total_num_channels_of_images_in_path(path)
@@ -187,9 +220,14 @@ class CurationService(Subscriber):
         self._curation_model.dispatch(Event.ACTION_CURATION_SEG2_SELECTED)
 
     def finished_shape_selection(self, selection_mode: SelectionMode) -> None:
+        """
+        Called when done drawing to enable default PAN_ZOOM mode for normal interactivity in napari
+
+        selection_mode(SelectionMode): MERGING or EXCLUDING for mode that we are finishing
+        """
         if selection_mode == selection_mode.EXCLUDING:
 
-            current_points_layer = (
+            current_points_layer: Shapes = (
                 self._curation_model.excluding_mask_shape_layers[-1]
             )
             current_points_layer.mode = "PAN_ZOOM"  # default mode which allows for normal interactivity with napari canvas
@@ -199,13 +237,11 @@ class CurationService(Subscriber):
             )
             current_points_layer.mode = "PAN_ZOOM"
 
-    def convert_shape_layer_to_mask(
-        self, image_shape: Tuple[int, int], shape_layer
-    ) -> np.ndarray:
-        return draw.polygon2mask(image_shape, shape_layer.data[0])
-
     def save_excluding_mask(self) -> None:
-        continue_save = True
+        """
+        Save the current excluding mask to disk and update napari
+        """
+        continue_save: bool = True
         # Checking to see if user has experiment selected
         if not self._curation_model.get_user_experiment_selected():
             # User does not have experiment selected
@@ -223,7 +259,7 @@ class CurationService(Subscriber):
         if continue_save:
             mask_to_save = self._curation_model.excluding_mask_shape_layers[-1].data
 
-            folder_path = (
+            folder_path: Path = (
                 self._curation_model.get_save_masks_path() / "excluding_masks"
             )
             # create excluding mask folder if one doesnt exist
@@ -237,21 +273,16 @@ class CurationService(Subscriber):
             # if current mask path is set, we know that we've saved an excluding mask for the curationrecord.
             self._curation_model.set_current_excluding_mask_path(save_path_mask_file)
             self.clear_excluding_mask_layers_all()
-            new_merging_shapes_layer = self._viewer.viewer.add_shapes(mask_to_save, shape_type='polygon',
+            new_merging_shapes_layer: Shapes = self._viewer.viewer.add_shapes(mask_to_save, shape_type='polygon',
                                                                       face_color='coral', name="Saved Excluding Mask")
             self._curation_model.excluding_mask_shape_layers.append(new_merging_shapes_layer)
             self._curation_model.dispatch(Event.ACTION_CURATION_SAVE_EXCLUDING_MASK)
 
-    def extend_mask_in_z(
-        self, shape: Tuple, mask_to_extend: np.ndarray
-    ) -> np.ndarray:
-        three_dim_mask = np.ndarray(shape, dtype=bool)
-        for z in range(shape[2]):
-            three_dim_mask[:, :, z] = mask_to_extend
-        return three_dim_mask
-
     def save_merging_mask(self, base_image: str) -> bool:
-        continue_save = True
+        """
+        Save the current merging mask to disk and update napari
+        """
+        continue_save: bool = True
         # Checking to see if user has experiment selected
         if not self._curation_model.get_user_experiment_selected():
             # User does not have experiment selected
@@ -271,7 +302,7 @@ class CurationService(Subscriber):
             mask_to_save = self._curation_model.merging_mask_shape_layers[-1].data
 
 
-            folder_path = (
+            folder_path: Path = (
                     self._curation_model.get_save_masks_path() / "merging_masks"
             )
             # create excluding mask folder if one doesnt exist
@@ -287,23 +318,23 @@ class CurationService(Subscriber):
             self._curation_model.merging_mask_base_layer = base_image
             self._curation_model.dispatch(Event.ACTION_CURATION_SAVED_MERGING_MASK)
             self.clear_merging_mask_layers_all()
-            new_merging_shapes_layer = self._viewer.viewer.add_shapes(mask_to_save, shape_type='polygon',
+            new_merging_shapes_layer: Shapes = self._viewer.viewer.add_shapes(mask_to_save, shape_type='polygon',
                                                                face_color='royalblue', name="Saved Merging Mask")
             self._curation_model.merging_mask_shape_layers.append(new_merging_shapes_layer)
         return continue_save
 
-    def clear_merging_mask_layers_except_last(self):
-        for merging_layer in self._curation_model.merging_mask_shape_layers[:-1]:
-            self._viewer.viewer.layers.remove(merging_layer)
-            # empty merging mask shape layers list
-        self._curation_model.merging_mask_shape_layers = [self._curation_model.merging_mask_shape_layers[-1]]
-
-    def clear_merging_mask_layers_all(self):
+    def clear_merging_mask_layers_all(self) -> None:
+        """
+        Clear all merging mask layers in napari for one image
+        """
         for merging_layer in self._curation_model.merging_mask_shape_layers:
             self._viewer.viewer.layers.remove(merging_layer)
         self._curation_model.merging_mask_shape_layers = []
 
-    def clear_excluding_mask_layers_all(self):
+    def clear_excluding_mask_layers_all(self) -> None:
+        """
+        Clear all excluding mask layers in napari for one image
+        """
         for excluding_layer in self._curation_model.excluding_mask_shape_layers:
             self._viewer.viewer.layers.remove(excluding_layer)
         self._curation_model.excluding_mask_shape_layers = []
@@ -313,18 +344,18 @@ class CurationService(Subscriber):
         Update the curation record with the users selection for the current image
         """
         # DEAL WITH EXCLUDING MASKS
-        excluding_mask_path = self._curation_model.get_current_excluding_mask_path()
+        excluding_mask_path: Union[Path, str] = self._curation_model.get_current_excluding_mask_path()
         if excluding_mask_path is not None:
             excluding_mask_path = str(excluding_mask_path)
         else:
             excluding_mask_path = ""
 
         # DEAL WITH MERGING MASKS
-        merging_mask_path = self._curation_model.get_current_merging_mask_path()
+        merging_mask_path: Union[Path, str] = self._curation_model.get_current_merging_mask_path()
         if merging_mask_path is not None:
             # user has drawn and saved merging masks.
             merging_mask_path = str(merging_mask_path)
-            base_image_name = self._curation_model.merging_mask_base_layer
+            base_image_name: str = self._curation_model.merging_mask_base_layer
         else:
             # there is no merging mask so dont write anything to the CurationRecord\
             merging_mask_path = ""
@@ -395,14 +426,17 @@ class CurationService(Subscriber):
             )
 
     def curation_setup(self) -> None:
+        """
+        Set up curation workflow, called once
+        """
         # build list of raw images, ignore .DS_Store files
-        self._curation_model.set_raw_images(self.get_seg2_images_list())
+        self._curation_model.set_raw_images(self.build_seg2_images_list())
         # build list of seg1 images, ignore .DS_Store files
-        self._curation_model.set_seg1_images(self.get_seg1_images_list())
+        self._curation_model.set_seg1_images(self.build_seg1_images_list())
 
         # If seg 2 is selected, build list of seg2 images
         if self._curation_model.get_seg2_directory() is not None:
-            self._curation_model.set_seg2_images(self.get_seg2_images_list())
+            self._curation_model.set_seg2_images(self.build_seg2_images_list())
         else:
             self._curation_model.set_seg2_images(None)
 
