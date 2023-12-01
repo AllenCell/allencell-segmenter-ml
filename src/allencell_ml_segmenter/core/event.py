@@ -15,9 +15,10 @@ class Event(Enum):
     PROCESS_PREDICTION = "prediction"
     PROCESS_PREDICTION_COMPLETE = "prediction_complete"
     PROCESS_CURATION_INPUT_STARTED = "curation_input_started"
+    PROCESS_CURATION_NEXT_IMAGE = "curation_next_image"
 
     # Action events. This signals a change in the UI. These are a direct result of a user action
-    ACTIOIN_REFRESH = "refresh"
+    ACTION_REFRESH = "refresh"
     ACTION_CHANGE_VIEW = "change_view"
     # Training
     ACTION_START_TRAINING = "start_training"

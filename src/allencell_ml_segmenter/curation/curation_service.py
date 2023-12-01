@@ -106,6 +106,9 @@ class CurationService(Subscriber):
 
     def remove_all_images_from_viewer_layers(self):
         self._viewer.clear_layers()
+        self._curation_model.excluding_mask_shape_layers = []
+        self._curation_model.merging_mask_shape_layers = []
+
 
     def add_image_to_viewer(self, image_data: np.ndarray, title: str = ""):
         self._viewer.add_image(image_data, name=title)
@@ -155,7 +158,7 @@ class CurationService(Subscriber):
         """
         # we expect user to have the same number of channels for all images in their folders
         # and that only images are stored in those folders
-        first_image: Path = path.iterdir().__next__()
+        first_image: Path = self._get_files_list_from_path(path)[0]
         print(first_image.resolve())
         print(str(first_image.resolve()))
         img: AICSImage = AICSImage(str(first_image.resolve()))
@@ -237,6 +240,7 @@ class CurationService(Subscriber):
             new_merging_shapes_layer = self._viewer.viewer.add_shapes(mask_to_save, shape_type='polygon',
                                                                       face_color='coral', name="Saved Excluding Mask")
             self._curation_model.excluding_mask_shape_layers.append(new_merging_shapes_layer)
+            self._curation_model.dispatch(Event.ACTION_CURATION_SAVE_EXCLUDING_MASK)
 
     def extend_mask_in_z(
         self, shape: Tuple, mask_to_extend: np.ndarray
@@ -280,6 +284,7 @@ class CurationService(Subscriber):
             np.save(save_path_mask_file, np.asarray(mask_to_save, dtype=object))
             # if current mask path is set, we know that we've saved an excluding mask for the curationrecord.
             self._curation_model.set_current_merging_mask_path(save_path_mask_file)
+            self._curation_model.merging_mask_base_layer = base_image
             self._curation_model.dispatch(Event.ACTION_CURATION_SAVED_MERGING_MASK)
             self.clear_merging_mask_layers_all()
             new_merging_shapes_layer = self._viewer.viewer.add_shapes(mask_to_save, shape_type='polygon',
@@ -302,4 +307,123 @@ class CurationService(Subscriber):
         for excluding_layer in self._curation_model.excluding_mask_shape_layers:
             self._viewer.viewer.layers.remove(excluding_layer)
         self._curation_model.excluding_mask_shape_layers = []
+
+    def update_curation_record(self, use_image: bool) -> None:
+        """
+        Update the curation record with the users selection for the current image
+        """
+        # DEAL WITH EXCLUDING MASKS
+        excluding_mask_path = self._curation_model.get_current_excluding_mask_path()
+        if excluding_mask_path is not None:
+            excluding_mask_path = str(excluding_mask_path)
+        else:
+            excluding_mask_path = ""
+
+        # DEAL WITH MERGING MASKS
+        merging_mask_path = self._curation_model.get_current_merging_mask_path()
+        if merging_mask_path is not None:
+            # user has drawn and saved merging masks.
+            merging_mask_path = str(merging_mask_path)
+            base_image_name = self._curation_model.merging_mask_base_layer
+        else:
+            # there is no merging mask so dont write anything to the CurationRecord\
+            merging_mask_path = ""
+            base_image_name = ""
+        # Save this curation record.
+        self._curation_model.curation_record.append(
+            CurationRecord(
+                self._curation_model.get_current_raw_image(),
+                self._curation_model.get_current_seg1_image(),
+                self._curation_model.get_current_seg2_image(),
+                excluding_mask_path,
+                merging_mask_path,
+                base_image_name,
+                use_image,
+            )
+        )
+
+        # increment curation index
+        self._curation_model.curation_index = self._curation_model.curation_index + 1
+
+    def next_image(self, use_image: bool) -> None:
+        """
+        Load the next image in the curation image stack. Updates curation record and progress bar accordingly.
+        """
+        _ = show_info("Loading the next image...")
+        self.update_curation_record(use_image)
+
+        # load next image
+        if self._curation_model.image_available():
+            self.remove_all_images_from_viewer_layers()
+            self._curation_model.set_current_merging_mask_path(None)
+            self._curation_model.set_current_excluding_mask_path(None)
+
+            raw_to_view: Path = self._curation_model.get_current_raw_image()
+            # Add image with [raw] prepended to layer name
+            self.add_image_to_viewer_from_path(
+                raw_to_view, title=f"[raw] {raw_to_view.name}"
+            )
+
+            seg1_to_view: Path = self._curation_model.get_current_seg1_image()
+            # Add image with [seg] prepended to layer name
+            self.add_image_to_viewer_from_path(
+                seg1_to_view, title=f"[seg 1] {seg1_to_view.name}"
+            )
+            if self._curation_model.get_seg2_images() is not None:
+                seg2_to_view: Path = self._curation_model.get_current_seg2_image()
+                # Add image with [seg] prepended to layer name
+                self.add_image_to_viewer_from_path(
+                    seg2_to_view, title=f"[seg 2] {seg2_to_view.name}"
+                )
+            else:
+                seg2_to_view = None
+
+            self._curation_model.set_current_loaded_images(
+                (raw_to_view, seg1_to_view, seg2_to_view)
+            )
+            self._curation_model.dispatch(Event.PROCESS_CURATION_NEXT_IMAGE)
+        else:
+            # No more images to load - curation is complete
+            _ = show_info("No more image to load")
+
+            self.write_curation_record(
+                self._curation_model.get_curation_record(),
+                path=self._curation_model.experiments_model.get_user_experiments_path()
+                     / self._curation_model.experiments_model.get_experiment_name()
+                     / "data"
+                     / "train.csv",
+            )
+
+    def curation_setup(self) -> None:
+        # build list of raw images, ignore .DS_Store files
+        self._curation_model.set_raw_images(self.get_seg2_images_list())
+        # build list of seg1 images, ignore .DS_Store files
+        self._curation_model.set_seg1_images(self.get_seg1_images_list())
+
+        # If seg 2 is selected, build list of seg2 images
+        if self._curation_model.get_seg2_directory() is not None:
+            self._curation_model.set_seg2_images(self.get_seg2_images_list())
+        else:
+            self._curation_model.set_seg2_images(None)
+
+        # reset
+        self.remove_all_images_from_viewer_layers()
+
+        first_raw: Path = self._curation_model.get_raw_images()[0]
+        self.add_image_to_viewer_from_path(
+            first_raw, title=f"[raw] {first_raw.name}"
+        )
+
+        first_seg1: Path = self._curation_model.get_seg1_images()[0]
+        self.add_image_to_viewer_from_path(
+            first_seg1, title=f"[Seg 1] {first_seg1.name}"
+        )
+        if self._curation_model.get_seg2_directory() is not None:
+            first_seg2: Path = self._curation_model.get_seg2_images()[0]
+            self.add_image_to_viewer_from_path(
+                first_seg2, title=f"[Seg 2] {first_seg2.name}"
+            )
+        else:
+            first_seg2 = None
+        self._curation_model.set_current_loaded_images((first_raw, first_seg1, first_seg2))
 
