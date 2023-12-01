@@ -23,7 +23,6 @@ from allencell_ml_segmenter.curation.curation_service import (
     CurationService,
     SelectionMode,
 )
-from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 
 from napari.utils.notifications import show_info
@@ -37,17 +36,12 @@ class CurationMainView(View):
     def __init__(
         self,
         curation_model: CurationModel,
-        experiments_model: ExperimentsModel,
         curation_service: CurationService,
     ) -> None:
         super().__init__()
         self._curation_model: CurationModel = curation_model
-        self._experiments_model: ExperimentsModel = experiments_model
         self._curation_service: CurationService = curation_service
-        self.curation_index: int = 0
         self.curation_record: List[CurationRecord] = list()
-        self.raw_images: List[Path] = list()
-        self.seg1_images: List[Path] = list()
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 10, 0, 10)
         self.layout().setSpacing(0)
@@ -90,7 +84,7 @@ class CurationMainView(View):
         progress_bar_layout.addWidget(inner_progress_frame)
         self.next_button: QPushButton = QPushButton("Next ►")
         self.next_button.setObjectName("big_blue_btn")
-        self.next_button.clicked.connect(self.next_image)
+        self.next_button.clicked.connect(self._next_image)
         progress_bar_layout.addWidget(
             self.next_button, alignment=Qt.AlignRight
         )
@@ -149,8 +143,9 @@ class CurationMainView(View):
         excluding_mask_labels: QHBoxLayout = QHBoxLayout()
         excluding_mask_label: LabelWithHint = LabelWithHint("Excluding mask")
         excluding_mask_labels.addWidget(excluding_mask_label)
+        self.excluding_mask_label = QLabel("File name...")
         excluding_mask_labels.addWidget(
-            QLabel("File name..."), alignment=Qt.AlignLeft
+            self.excluding_mask_label, alignment=Qt.AlignLeft
         )
         self.layout().addLayout(excluding_mask_labels)
 
@@ -202,6 +197,12 @@ class CurationMainView(View):
             lambda e: self.update_merging_mask_status_label(),
         )
 
+        self._curation_model.subscribe(
+            Event.ACTION_CURATION_SAVE_EXCLUDING_MASK,
+            self,
+            lambda e: self.update_excluding_mask_status_label(),
+        )
+
     def doWork(self) -> None:
         print("work")
 
@@ -211,146 +212,73 @@ class CurationMainView(View):
     def showResults(self) -> None:
         print("show result")
 
-    def curation_setup(self) -> None:
+    def curation_setup(self, first_setup: bool = False) -> None:
         """
-        Curation setup. Builds a list of images to view during curation, sets progress bar, and loads the first image
+        Curation setup. Resets the UI to the default state by enabling corresponding buttons and updating the progress bar.
+
+        first_setup (bool): True if first call to curation_setup, false if used to set up subsequent image sets
         """
         _ = show_info("Loading curation images")
 
         # If there is only one segmentation image set for curation disable merging masks.
         if self._curation_model.get_seg2_directory() is None:
-            self.disable_merging_mask()
-        # If there are two segmentation image sets for curation enable merging masks.
+            self.disable_merging_mask_buttons()
+        # If there are two segmentation image sets for curation keep merging masks enabled
+        # but disable excluding masks until user has merging mask selection ready
         else:
-            self.disable_excluding_mask()
+            self.disable_excluding_mask_buttons()
 
-        # build list of raw images, ignore .DS_Store files
-        self.raw_images: List[
-            Path
-        ] = self._curation_service.get_raw_images_list()
-        # build list of seg1 images, ignore .DS_Store files
-        self.seg1_images: List[
-            Path
-        ] = self._curation_service.get_seg1_images_list()
 
-        # If seg 2 is selected, build list of seg2 images
-        if self._curation_model.get_seg2_directory() is not None:
-            self.seg2_images: List[
-                Path
-            ] = self._curation_service.get_seg2_images_list()
-        else:
-            self.seg2_images = None
+        if first_setup:
+            self._curation_service.curation_setup()
+            self.init_progress_bar()
 
-        # reset
-        self.init_progress_bar()
-        self._curation_service.remove_all_images_from_viewer_layers()
-
-        first_raw: Path = self.raw_images[0]
-        self._curation_service.add_image_to_viewer_from_path(
-            first_raw, title=f"[raw] {first_raw.name}"
-        )
-
-        first_seg1: Path = self.seg1_images[0]
-        self._curation_service.add_image_to_viewer_from_path(
-            first_seg1, title=f"[Seg 1] {first_seg1.name}"
-        )
-        if self._curation_model.get_seg2_directory() is not None:
-            first_seg2: Path = self.seg2_images[0]
-            self._curation_service.add_image_to_viewer_from_path(
-                first_seg2, title=f"[Seg 2] {first_seg2.name}"
-            )
-        else:
-            first_seg2 = None
-        self._curation_model.set_current_loaded_images((first_raw, first_seg1, first_seg2))
-
-    def disable_merging_mask(self):
+    def disable_merging_mask_buttons(self):
+        """
+        Disable the buttons for merging mask in the UI
+        """
         self.merging_save_button.setEnabled(False)
         self.merging_create_button.setEnabled(False)
         self.merging_delete_button.setEnabled(False)
         self.merging_base_combo.setEnabled(False)
 
-    def enable_merging_mask(self):
+    def enable_merging_mask_buttons(self):
+        """
+        Enable the buttons for merging mask in the UI
+        """
         # save button is off to start with
         self.merging_save_button.setEnabled(False)
         self.merging_create_button.setEnabled(True)
         self.merging_delete_button.setEnabled(True)
         self.merging_base_combo.setEnabled(True)
 
-    def disable_excluding_mask(self):
+    def disable_excluding_mask_buttons(self):
+        """
+        disable the buttons for excluding mask in the UI
+        """
         self.excluding_save_button.setEnabled(False)
         self.excluding_create_button.setEnabled(False)
         self.excluding_delete_button.setEnabled(False)
     
-    def enable_excluding_mask(self):
+    def enable_excluding_mask_buttons(self):
+        """
+        Enable the buttons for excluding mask in the UI
+        """
         self.excluding_save_button.setEnabled(True)
         self.excluding_create_button.setEnabled(True)
         self.excluding_delete_button.setEnabled(True)
-
-
-
 
     def init_progress_bar(self) -> None:
         """
         Initialize progress bar based on number of images to curate, and set progress bar label
         """
         # set progress bar
-        self.progress_bar.setMaximum(len(self.raw_images))
-        self.progress_bar.setValue(1)
+        self.progress_bar.setMaximum(len(self._curation_model.raw_images))
+        self.progress_bar.setValue(0)
         # set progress bar hint
         self.progress_bar_image_count.setText(
-            f"{self.curation_index + 1}/{len(self.raw_images)}"
+            f"{self._curation_model.curation_index + 1}/{len(self._curation_model.raw_images)}"
         )
-
-    def next_image(self) -> None:
-        """
-        Load the next image in the curation image stack. Updates curation record and progress bar accordingly.
-        """
-        _ = show_info("Loading the next image...")
-        # update curation record (must be called before curation index is incremented)
-        self._update_curation_record()
-        # increment curation index
-        self.curation_index = self.curation_index + 1
-        # load next image
-        if self.curation_index < len(self.raw_images):
-            # if there are additional images to view
-            self._curation_service.remove_all_images_from_viewer_layers()
-
-            raw_to_view: Path = self.raw_images[self.curation_index]
-            # Add image with [raw] prepended to layer name
-            self._curation_service.add_image_to_viewer_from_path(
-                raw_to_view, title=f"[raw] {raw_to_view.name}"
-            )
-
-            seg1_to_view: Path = self.seg1_images[self.curation_index]
-            # Add image with [seg] prepended to layer name
-            self._curation_service.add_image_to_viewer_from_path(
-                seg1_to_view, title=f"[seg 1] {seg1_to_view.name}"
-            )
-            if self.seg2_images is not None:
-                seg2_to_view: Path = self.seg2_images[self.curation_index]
-                # Add image with [seg] prepended to layer name
-                self._curation_service.add_image_to_viewer_from_path(
-                    seg2_to_view, title=f"[seg 2] {seg2_to_view.name}"
-                )
-            else:
-                seg2_to_view = None
-
-
-            self._curation_model.set_current_loaded_images(
-                (raw_to_view, seg1_to_view, seg2_to_view)
-            )
-            self._increment_progress_bar()
-        else:
-            # No more images to load - curation is complete
-            _ = show_info("No more image to load")
-
-            self._curation_service.write_curation_record(
-                self._curation_model.get_curation_record(),
-                path=self._experiments_model.get_user_experiments_path()
-                / self._experiments_model.get_experiment_name()
-                / "data"
-                / "train.csv",
-            )
 
     def _increment_progress_bar(self) -> None:
         """
@@ -360,10 +288,10 @@ class CurationMainView(View):
         self.progress_bar.setValue(self.progress_bar.value() + 1)
         # set progress bar hint
         self.progress_bar_image_count.setText(
-            f"{self.curation_index + 1}/{len(self.raw_images)}"
+            f"{self._curation_model.curation_index + 1}/{len(self._curation_model.raw_images)}"
         )
 
-    def _update_curation_record(self) -> None:
+    def _next_image(self) -> None:
         """
         Update the curation record with the users selection for the current image
         """
@@ -371,92 +299,124 @@ class CurationMainView(View):
         if self.no_radio.isChecked():
             use_this_image = False
 
-        # DEAL WITH EXCLUDING MASKS
-        excluding_mask_path = self._curation_model.get_current_excluding_mask_path()
-        if excluding_mask_path is not None:
-            excluding_mask_path = str(excluding_mask_path)
-        else:
-            excluding_mask_path = ""
-
-        # DEAL WITH MERGING MASKS
-        merging_mask_path = self._curation_model.get_current_merging_mask_path()
-        if merging_mask_path is not None:
-            # user has drawn and saved merging masks.
-            merging_mask_path = str(merging_mask_path)
-            base_image_name = self.merging_base_combo.currentText()
-        else:
-            # there is no merging mask so dont write anything to the CurationRecord\
-            merging_mask_path = ""
-            base_image_name = ""
-        # Save this curation record.
-        self._curation_model.curation_record.append(
-            CurationRecord(
-                self.raw_images[self.curation_index],
-                self.seg1_images[self.curation_index],
-                self.seg2_images[self.curation_index],
-                excluding_mask_path,
-                merging_mask_path,
-                base_image_name,
-                use_this_image,
-            )
-        )
+        self._curation_service.next_image(use_this_image)
+        self.curation_setup()
+        self._increment_progress_bar()
+        self.reset_excluding_mask_status_label()
+        self.reset_merging_mask_status_label()
 
     def excluding_selection_inprogress(self) -> None:
-        # flip buttons so that another click finishes the selection process
-        self.excluding_create_button.setText("Finish")
-        self.excluding_create_button.disconnect()
-        self.excluding_create_button.clicked.connect(
-            self.excluding_selection_finished
-        )
+        """
+        Change the UI to state where excluding selection is in progress
+        """
+        # flip buttons to inprogress state
+        self.flip_button_inprogress_state(self.excluding_create_button, self.excluding_selection_finished)
+        # we now have an excluding mask that is the user can save, so enable save button
         self.excluding_save_button.setEnabled(True)
 
     def excluding_selection_finished(self, save: bool = False):
+        """
+        Called when excluding selection is finished
+
+        save (bool): True if user wants to save the current excluding mask, false if they dont want to save it quite yet.
+        """
         self._curation_service.finished_shape_selection(selection_mode=SelectionMode.EXCLUDING)
         # flip buttons to original state
-        self.excluding_create_button.setText("+ Create")
-        self.excluding_create_button.disconnect()
-        self.excluding_create_button.clicked.connect(
-            lambda x: self._curation_service.enable_shape_selection_viewer(
-                mode=SelectionMode.EXCLUDING
-            )
-        )
+        self.flip_button_normal_state(self.excluding_create_button, lambda x: self._curation_service.enable_shape_selection_viewer(
+                mode=SelectionMode.EXCLUDING))
         if save:
             self.save_excluding_mask()
 
     def merging_selection_inprogress(self) -> None:
-        # flip buttons
-        self.merging_create_button.setText("Finish")
-        self.merging_create_button.disconnect()
-        self.merging_create_button.clicked.connect(
-            self.merging_selection_finished
-        )
-        # we now have a merging mask that is the user can save
+        """
+        Change the UI to state where merging selection is in progress
+        """
+        # flip buttons to in progres sstate
+        self.flip_button_inprogress_state(self.merging_create_button, self.merging_selection_finished)
+        # we now have a merging mask that is the user can save, so enable save button
         self.merging_save_button.setEnabled(True)
 
     def merging_selection_finished(self, save: bool = False) -> None:
+        """
+        Called when merging selection is finished
+
+        save (bool): True if user wants to save the current merging mask, false if they dont want to save it quite yet.
+        """
         self._curation_service.finished_shape_selection(selection_mode=SelectionMode.MERGING)
-        self.merging_create_button.setText("+ Create")
-        self.merging_create_button.disconnect()
-        self.merging_create_button.clicked.connect(
-            lambda x: self._curation_service.enable_shape_selection_viewer(
-                mode=SelectionMode.MERGING
-            )
-        )
+        # Flip buttons to normal state
+        self.flip_button_normal_state(self.merging_create_button, lambda x: self._curation_service.enable_shape_selection_viewer(
+                mode=SelectionMode.MERGING))
+
+        # user has indicated save
         if save:
             self.save_merging_mask()
         
             
-    def save_merging_mask(self):
+    def save_merging_mask(self) -> None:
+        """
+        Wrapper for curation_service.save_merging_mask() for ui interactivity
+        """
         if self.merging_base_combo.currentText() == "Base Image:":
             show_info("Please select a base image to merge with")
         else:
             # image saved
-            _ = self._curation_service.save_merging_mask(self.merging_base_combo.currentText())
-            self.enable_excluding_mask()
+            saved: bool = self._curation_service.save_merging_mask(self.merging_base_combo.currentText())
+            if saved:
+                self.enable_excluding_mask_buttons()
 
-    def save_excluding_mask(self):
+    def save_excluding_mask(self) -> None:
+        """
+        Wrapper for curation_service.save_excluding_mask() for ui interactivity
+        """
         self._curation_service.save_excluding_mask()
 
     def update_merging_mask_status_label(self) -> None:
+        """
+        Update the merging mask status label when a mask is saved
+        """
         self.merging_mask_status.setText("Merging mask saved to experiment.")
+
+    def reset_merging_mask_status_label(self) -> None:
+        """
+        Reset the merging mask status label to its default state
+        """
+        self.merging_mask_status.setText("Please select merging mask.")
+
+    def update_excluding_mask_status_label(self) -> None:
+        """
+        Update the excluding mask status label when a mask is saved
+        """
+        self.excluding_mask_label.setText("Excluding mask saved to experiment.")
+
+    def reset_excluding_mask_status_label(self) -> None:
+        """
+        Reset the excluding mask status label to its default state
+        """
+        self.excluding_mask_label.setText("Please select excluding mask.")
+
+    def flip_button_inprogress_state(self, button: QPushButton, on_click: callable) -> None:
+        """
+        flip a button to its mask drawing in-progress state
+
+        button (QPushButton): button to flip
+        on_click (callable): function to assign as onclick handler for this button
+        """
+        button.setText("Finish")
+        button.disconnect()
+        button.clicked.connect(
+            on_click
+        )
+
+    def flip_button_normal_state(self, button: QPushButton, on_click: callable) -> None:
+        """
+        flip a button to its default state
+
+        button (QPushButton): button to flip
+        on_click (callable): function to assign as onclick handler for this button
+        """
+        button.setText("+ Create")
+        button.disconnect()
+        button.clicked.connect(on_click)
+
+
 

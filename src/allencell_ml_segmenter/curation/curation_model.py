@@ -1,13 +1,11 @@
 from pathlib import Path
 from typing import Dict, Tuple, List, Optional
 
-from aicsimageio import AICSImage
 
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.publisher import Publisher
 from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
-from napari.utils.notifications import show_info
 
 
 class CurationModel(Publisher):
@@ -30,7 +28,7 @@ class CurationModel(Publisher):
         self._seg2_directory: Path = (
             seg2_path  # optional, if None was never selected
         )
-        self._experiments_model = experiments_model
+        self.experiments_model = experiments_model
         # These are what the user has selected in the input view
         self._raw_image_channel: int = None
         self._seg1_image_channel: int = None
@@ -47,6 +45,39 @@ class CurationModel(Publisher):
         self._current_excluding_mask_path: Path = None
         self._current_merging_mask_path: Path = None
         self._current_loaded_images: Tuple[Path, Path] = (None, None)
+        self.merging_mask_base_layer: str = None
+
+        self.curation_index: int = 0
+        self.raw_images: List[Path] = list()
+        self.seg1_images: List[Path] = list()
+        self.seg2_images: List[Path] = list()
+
+    def get_raw_images(self) -> List[Path]:
+        return self.raw_images
+
+    def get_current_raw_image(self) -> Path:
+        return self.get_raw_images()[self.curation_index]
+
+    def set_raw_images(self, images: List[Path]) -> None:
+        self.raw_images = images
+
+    def get_seg1_images(self) -> List[Path]:
+        return self.seg1_images
+
+    def set_seg1_images(self, images: List[Path]) -> None:
+        self.seg1_images = images
+
+    def get_current_seg1_image(self) -> Path:
+        return self.get_seg1_images()[self.curation_index]
+
+    def get_seg2_images(self) -> List[Path]:
+        return self.seg2_images
+
+    def set_seg2_images(self, images: List[Path]) -> None:
+        self.seg2_images = images
+
+    def get_current_seg2_image(self) -> Path:
+        return self.get_seg2_images()[self.curation_index]
 
     def set_raw_directory(self, dir: Path) -> None:
         """
@@ -161,8 +192,8 @@ class CurationModel(Publisher):
 
     def get_save_masks_path(self) -> Path:
         return (
-            self._experiments_model.get_user_experiments_path()
-            / self._experiments_model.get_experiment_name()
+            self.experiments_model.get_user_experiments_path()
+            / self.experiments_model.get_experiment_name()
         )
 
     def set_current_loaded_images(self, images: Tuple[Path, Path, Optional[Path]]):
@@ -192,7 +223,10 @@ class CurationModel(Publisher):
         return self.excluding_mask_shape_layers
 
     def get_user_experiment_selected(self) -> bool:
-        if self._experiments_model.get_experiment_name() is None:
+        if self.experiments_model.get_experiment_name() is None:
             return False
         else:
             return True
+
+    def image_available(self) -> bool:
+        return self.curation_index < len(self.raw_images)
