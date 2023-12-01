@@ -61,9 +61,6 @@ class CurationMainView(View):
             self._title, alignment=Qt.AlignHCenter | Qt.AlignTop
         )
 
-        self.excluding_in_progress: bool = False
-        self.merging_in_progress: bool = False
-
         frame: QFrame = QFrame()
         frame.setLayout(QVBoxLayout())
         self.layout().addWidget(frame)
@@ -412,7 +409,6 @@ class CurationMainView(View):
             self.excluding_selection_finished
         )
         self.excluding_save_button.setEnabled(True)
-        self.excluding_in_progress = True
 
     def excluding_selection_finished(self, save: bool = False):
         self._curation_service.finished_shape_selection(selection_mode=SelectionMode.EXCLUDING)
@@ -424,7 +420,6 @@ class CurationMainView(View):
                 mode=SelectionMode.EXCLUDING
             )
         )
-        self.excluding_in_progress = False
         if save:
             self.save_excluding_mask()
 
@@ -437,7 +432,6 @@ class CurationMainView(View):
         )
         # we now have a merging mask that is the user can save
         self.merging_save_button.setEnabled(True)
-        self.merging_in_progress = True
 
     def merging_selection_finished(self, save: bool = False) -> None:
         self._curation_service.finished_shape_selection(selection_mode=SelectionMode.MERGING)
@@ -458,13 +452,10 @@ class CurationMainView(View):
         else:
             # image saved
             _ = self._curation_service.save_merging_mask(self.merging_base_combo.currentText())
-            self.merging_in_progress = False
             self.enable_excluding_mask()
 
     def save_excluding_mask(self):
         self._curation_service.save_excluding_mask()
-        self.excluding_in_progress = False
-
 
     def update_merging_mask_status_label(self) -> None:
         self.merging_mask_status.setText("Merging mask saved to experiment.")
