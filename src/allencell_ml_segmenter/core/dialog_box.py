@@ -1,5 +1,11 @@
-from qtpy.QtWidgets import QDialog, QWidget, QHBoxLayout, QLabel, QVBoxLayout, QPushButton
-
+from qtpy.QtWidgets import (
+    QDialog,
+    QWidget,
+    QHBoxLayout,
+    QLabel,
+    QVBoxLayout,
+    QPushButton,
+)
 
 
 class DialogBox(QDialog):

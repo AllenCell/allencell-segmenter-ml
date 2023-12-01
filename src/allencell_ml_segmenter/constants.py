@@ -4,6 +4,4 @@
 # )
 
 CYTO_DL_HOME_PATH = "/Users/brian.kim/work/cyto-dl"
-USER_EXPERIMENTS_PATH = (
-    "/Users/brian.kim/work/cyto-dl/logs/train/runs"
-)
+USER_EXPERIMENTS_PATH = "/Users/brian.kim/work/cyto-dl/logs/train/runs"
