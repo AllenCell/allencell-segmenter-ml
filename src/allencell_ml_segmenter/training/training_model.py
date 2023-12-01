@@ -231,7 +231,7 @@ class TrainingModel(Publisher):
         self._is_training_running = is_training_running
         self.dispatch(Event.PROCESS_TRAINING)
         if not self.is_training_running():
-            self.experiments_model.dispatch(Event.ACTIOIN_REFRESH)
+            self.experiments_model.dispatch(Event.ACTION_REFRESH)
 
     result_images: list = []
 
