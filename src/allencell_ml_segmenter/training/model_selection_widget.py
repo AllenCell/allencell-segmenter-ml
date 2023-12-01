@@ -84,7 +84,7 @@ class ModelSelectionWidget(QWidget):
             self._model_combo_handler
         )
         self._experiments_model.subscribe(
-            Event.ACTIOIN_REFRESH, self, self._process_event_handler
+            Event.ACTION_REFRESH, self, self._process_event_handler
         )
 
         top_grid_layout.addWidget(self._combo_box_existing_models, 1, 2)
