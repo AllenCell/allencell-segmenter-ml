@@ -287,7 +287,9 @@ class CurationMainView(View):
         """
         increment the progress bar by 1
         """
-        if (self._curation_model.get_curation_index() + 1) <= len(self._curation_model.get_raw_images()):
+        if (self._curation_model.get_curation_index() + 1) <= len(
+            self._curation_model.get_raw_images()
+        ):
             # update progress bar
             self.progress_bar.setValue(self.progress_bar.value() + 1)
             # set progress bar hint
