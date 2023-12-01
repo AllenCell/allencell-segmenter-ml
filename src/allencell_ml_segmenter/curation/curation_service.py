@@ -35,12 +35,6 @@ class CurationService(Subscriber):
         self._curation_model = curation_model
         self._viewer = viewer
 
-        self._curation_model.subscribe(
-            Event.ACTION_CURATION_SAVE_EXCLUDING_MASK,
-            self,
-            self.save_excluding_mask,
-        )
-
     def get_raw_images_list(self):
         """
         Return all raw images in the raw images path as a list of Paths
@@ -90,7 +84,7 @@ class CurationService(Subscriber):
         with open(path, "w") as f:
             # need file header
             writer: csv.writer = csv.writer(f, delimiter=",")
-            writer.writerow(["", "raw", "seg", "excluding_mask", "merging_mask", "merging_col"])
+            writer.writerow(["", "raw", "seg1", "seg2", "excluding_mask", "merging_mask", "merging_col"])
             for idx, record in enumerate(curation_record):
                 if record.to_use:
                     writer.writerow(
@@ -140,8 +134,10 @@ class CurationService(Subscriber):
             self._curation_model.dispatch(Event.ACTION_CURATION_DRAW_EXCLUDING)
         elif mode == SelectionMode.MERGING:
             points_layer: Shapes = self._viewer.add_shapes(name="Merging Mask")
+            points_layer.face_color = "royal_blue"
             points_layer.mode = "add_polygon"
             self._curation_model.merging_mask_shape_layers.append(points_layer)
+            self._curation_model.dispatch(Event.ACTION_CURATION_DRAW_MERGING)
 
     def _get_files_list_from_path(self, path: Path) -> List[Path]:
         """
@@ -205,32 +201,42 @@ class CurationService(Subscriber):
     ) -> np.ndarray:
         return draw.polygon2mask(image_shape, shape_layer.data[0])
 
-    def save_excluding_mask(self, event: Event = None) -> None:
-        current_excluding_mask_layer = (
-            self._curation_model.excluding_mask_shape_layers[-1]
-        )
-        # first two dims are x, y
-        mask: np.ndarray = self.convert_shape_layer_to_mask(
-            self._curation_model.curation_image_dims[:2],
-            current_excluding_mask_layer,
-        )
+    def save_excluding_mask(self) -> None:
+        continue_save = True
+        # Checking to see if user has experiment selected
+        if not self._curation_model.get_user_experiment_selected():
+            # User does not have experiment selected
+            continue_save = False
+            # show information to user that experiment not selected
+            show_info("Please select an experiment to save masks.")
 
-        mask = self.extend_mask_in_z(
-            self._curation_model.curation_image_dims, mask
-        )
-        folder_path = (
-            self._curation_model.get_save_masks_path() / "excluding_masks"
-        )
-        # create excluding mask folder if one doesnt exist
-        folder_path.mkdir(parents=True, exist_ok=True)
-        # save mask and keep record of path
-        save_path_mask_file: Path = (
-            folder_path
-            / f"excluding_mask_{self._curation_model.get_current_loaded_images()[0].stem}.npy"
-        )
-        np.save(save_path_mask_file, mask)
-        # if current mask path is set, we know that we've saved an excluding mask for the curationrecord.
-        self._curation_model.set_current_excluding_mask_path(save_path_mask_file)
+        # Checking to see if there is already a merging mask saved.
+        if self._curation_model.get_current_excluding_mask_path():
+            # There is already a merging mask saved. Ask if user wants to overwrite
+            overwrite_excluding_mask_dialog = DialogBox(
+                "There is already a excluding mask saved. Would you like to overwrite?")
+            overwrite_excluding_mask_dialog.exec()
+            continue_save = overwrite_excluding_mask_dialog.selection  # True if overwrite selected, false if not.
+        if continue_save:
+            mask_to_save = self._curation_model.excluding_mask_shape_layers[-1].data
+
+            folder_path = (
+                self._curation_model.get_save_masks_path() / "excluding_masks"
+            )
+            # create excluding mask folder if one doesnt exist
+            folder_path.mkdir(parents=True, exist_ok=True)
+            # save mask and keep record of path
+            save_path_mask_file: Path = (
+                folder_path
+                / f"excluding_mask_{self._curation_model.get_current_loaded_images()[0].stem}.npy"
+            )
+            np.save(save_path_mask_file, np.asarray(mask_to_save))
+            # if current mask path is set, we know that we've saved an excluding mask for the curationrecord.
+            self._curation_model.set_current_excluding_mask_path(save_path_mask_file)
+            self.clear_excluding_mask_layers_all()
+            new_merging_shapes_layer = self._viewer.viewer.add_shapes(mask_to_save, shape_type='polygon',
+                                                                      face_color='coral', name="Saved Excluding Mask")
+            self._curation_model.excluding_mask_shape_layers.append(new_merging_shapes_layer)
 
     def extend_mask_in_z(
         self, shape: Tuple, mask_to_extend: np.ndarray
@@ -258,10 +264,8 @@ class CurationService(Subscriber):
 
         if continue_save:
             # get all merging masks, can be in the same layer or in different layers
-            merging_masks = []
-            for layer in self._curation_model.merging_mask_shape_layers:
-                for shape in layer.data:
-                    merging_masks.append(shape)
+            mask_to_save = self._curation_model.merging_mask_shape_layers[-1].data
+
 
             folder_path = (
                     self._curation_model.get_save_masks_path() / "merging_masks"
@@ -273,18 +277,29 @@ class CurationService(Subscriber):
                     folder_path
                     / f"merging_mask_{self._curation_model.get_current_loaded_images()[0].stem}.npy"
             )
-            np.save(save_path_mask_file, np.asarray(merging_masks))
+            np.save(save_path_mask_file, np.asarray(mask_to_save, dtype=object))
             # if current mask path is set, we know that we've saved an excluding mask for the curationrecord.
             self._curation_model.set_current_merging_mask_path(save_path_mask_file)
-            self.clear_merging_mask_layers()
-            show_info("Merging mask saved.")
+            self._curation_model.dispatch(Event.ACTION_CURATION_SAVED_MERGING_MASK)
+            self.clear_merging_mask_layers_all()
+            new_merging_shapes_layer = self._viewer.viewer.add_shapes(mask_to_save, shape_type='polygon',
+                                                               face_color='royalblue', name="Saved Merging Mask")
+            self._curation_model.merging_mask_shape_layers.append(new_merging_shapes_layer)
         return continue_save
 
-
-
-    def clear_merging_mask_layers(self):
-        all_shapes_layers = [x for x in self._viewer.viewer.layers if isinstance(x, napari.layers.shapes.Shapes)]
-        all_merging_layers = [x for x in all_shapes_layers if "Merging Mask" in x.name]
-        for merging_layer in all_merging_layers:
+    def clear_merging_mask_layers_except_last(self):
+        for merging_layer in self._curation_model.merging_mask_shape_layers[:-1]:
             self._viewer.viewer.layers.remove(merging_layer)
+            # empty merging mask shape layers list
+        self._curation_model.merging_mask_shape_layers = [self._curation_model.merging_mask_shape_layers[-1]]
+
+    def clear_merging_mask_layers_all(self):
+        for merging_layer in self._curation_model.merging_mask_shape_layers:
+            self._viewer.viewer.layers.remove(merging_layer)
+        self._curation_model.merging_mask_shape_layers = []
+
+    def clear_excluding_mask_layers_all(self):
+        for excluding_layer in self._curation_model.excluding_mask_shape_layers:
+            self._viewer.viewer.layers.remove(excluding_layer)
+        self._curation_model.excluding_mask_shape_layers = []
 

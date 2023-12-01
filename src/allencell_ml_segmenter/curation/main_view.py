@@ -48,8 +48,6 @@ class CurationMainView(View):
         self.curation_record: List[CurationRecord] = list()
         self.raw_images: List[Path] = list()
         self.seg1_images: List[Path] = list()
- x
-
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 10, 0, 10)
         self.layout().setSpacing(0)
@@ -117,6 +115,39 @@ class CurationMainView(View):
         use_image_frame.layout().addWidget(self.no_radio)
         self.layout().addWidget(use_image_frame, alignment=Qt.AlignHCenter)
 
+        # Label for Merging mask
+        merging_mask_label_and_status: QHBoxLayout = QHBoxLayout()
+        merging_mask_label: LabelWithHint = LabelWithHint("Merging mask")
+        self.merging_mask_status: QLabel = QLabel()
+        merging_mask_label_and_status.addWidget(merging_mask_label)
+        merging_mask_label_and_status.addWidget(self.merging_mask_status)
+        self.layout().addLayout(merging_mask_label_and_status)
+
+        # buttons for merging mask
+        merging_mask_buttons: QHBoxLayout = QHBoxLayout()
+        self.merging_create_button: QPushButton = QPushButton("+ Create")
+        self.merging_create_button.clicked.connect(
+            lambda x: self._curation_service.enable_shape_selection_viewer(
+                mode=SelectionMode.MERGING
+            )
+        )
+        self.merging_create_button.setObjectName("small_blue_btn")
+        self.merging_base_combo: QComboBox = QComboBox()
+        self.merging_base_combo.addItem("Base Image:")
+        self.merging_base_combo.addItem("Seg 1")
+        self.merging_base_combo.addItem("Seg 2")
+        self.merging_delete_button: QPushButton = QPushButton("Delete")
+        self.merging_save_button: QPushButton = QPushButton("Save")
+        self.merging_save_button.setEnabled(False)
+        self.merging_save_button.setObjectName("small_blue_btn")
+        self.merging_save_button.clicked.connect(lambda x: self.merging_selection_finished(save=True))
+        merging_mask_buttons.addWidget(self.merging_create_button)
+        merging_mask_buttons.addWidget(self.merging_base_combo)
+        merging_mask_buttons.addWidget(self.merging_delete_button)
+        merging_mask_buttons.addWidget(self.merging_save_button)
+
+        self.layout().addLayout(merging_mask_buttons)
+
         # Labels for excluding mask
         excluding_mask_labels: QHBoxLayout = QHBoxLayout()
         excluding_mask_label: LabelWithHint = LabelWithHint("Excluding mask")
@@ -146,9 +177,7 @@ class CurationMainView(View):
         self.excluding_save_button: QPushButton = QPushButton("Save")
         self.excluding_save_button.setObjectName("small_blue_btn")
         self.excluding_save_button.clicked.connect(
-            lambda x: self._curation_model.dispatch(
-                Event.ACTION_CURATION_SAVE_EXCLUDING_MASK
-            )
+            lambda x: self.excluding_selection_finished(save=True)
         )
         self.excluding_save_button.setEnabled(False)
 
@@ -158,38 +187,22 @@ class CurationMainView(View):
         excluding_mask_buttons.addWidget(self.excluding_save_button)
         self.layout().addLayout(excluding_mask_buttons)
 
-        # Label for Merging mask
-        merging_mask_label: LabelWithHint = LabelWithHint("Merging mask")
-        self.layout().addWidget(merging_mask_label)
-
-        # buttons for merging mask
-        merging_mask_buttons: QHBoxLayout = QHBoxLayout()
-        self.merging_create_button: QPushButton = QPushButton("+ Create")
-        self.merging_create_button.clicked.connect(
-            self.merging_selection_inprogress
-        )
-        self.merging_create_button.setObjectName("small_blue_btn")
-        self.merging_base_combo: QComboBox = QComboBox()
-        self.merging_base_combo.addItem("Base Image:")
-        self.merging_base_combo.addItem("Seg 1")
-        self.merging_base_combo.addItem("Seg 2")
-        self.merging_delete_button: QPushButton = QPushButton("Delete")
-        self.merging_save_button: QPushButton = QPushButton("Save")
-        self.merging_save_button.setEnabled(False)
-        self.merging_save_button.setObjectName("small_blue_btn")
-        self.merging_save_button.clicked.connect(lambda x: self.merging_selection_finished(save=True))
-        merging_mask_buttons.addWidget(self.merging_create_button)
-        merging_mask_buttons.addWidget(self.merging_base_combo)
-        merging_mask_buttons.addWidget(self.merging_delete_button)
-        merging_mask_buttons.addWidget(self.merging_save_button)
-
-
-        self.layout().addLayout(merging_mask_buttons)
-
         self._curation_model.subscribe(
             Event.ACTION_CURATION_DRAW_EXCLUDING,
             self,
             lambda e: self.excluding_selection_inprogress(),
+        )
+
+        self._curation_model.subscribe(
+            Event.ACTION_CURATION_DRAW_MERGING,
+            self,
+            lambda e: self.merging_selection_inprogress(),
+        )
+
+        self._curation_model.subscribe(
+            Event.ACTION_CURATION_SAVED_MERGING_MASK,
+            self,
+            lambda e: self.update_merging_mask_status_label(),
         )
 
     def doWork(self) -> None:
@@ -295,12 +308,6 @@ class CurationMainView(View):
         """
         Load the next image in the curation image stack. Updates curation record and progress bar accordingly.
         """
-        # Ensure user is not in the middle of drawing masks
-        if self.excluding_in_progress:
-            _ = show_info(
-                "Please finish drawing the excluding mask before moving on to the next image"
-            )
-            return
         _ = show_info("Loading the next image...")
         # update curation record (must be called before curation index is incremented)
         self._update_curation_record()
@@ -369,18 +376,10 @@ class CurationMainView(View):
 
         # DEAL WITH EXCLUDING MASKS
         excluding_mask_path = self._curation_model.get_current_excluding_mask_path()
-        # append this curation record to the curation record list
-        if excluding_mask_path is None:
-            # User has drawn an excluding mask, but hasn't saved it yet
-            # For now we will auto save these masks to the curation record
-            if len(self._curation_model.get_excluding_mask_shape_layers()) > 0:
-                self._curation_service.save_excluding_mask()
-            else:
-                # there is no excluding mask for these images so don't write anything to the CurationRecord.
-                excluding_mask_path = ""
-        else:
-            # The user has a saved excluding mask and we want to use it in the curationrecord.
+        if excluding_mask_path is not None:
             excluding_mask_path = str(excluding_mask_path)
+        else:
+            excluding_mask_path = ""
 
         # DEAL WITH MERGING MASKS
         merging_mask_path = self._curation_model.get_current_merging_mask_path()
@@ -415,7 +414,7 @@ class CurationMainView(View):
         self.excluding_save_button.setEnabled(True)
         self.excluding_in_progress = True
 
-    def excluding_selection_finished(self):
+    def excluding_selection_finished(self, save: bool = False):
         self._curation_service.finished_shape_selection(selection_mode=SelectionMode.EXCLUDING)
         # flip buttons to original state
         self.excluding_create_button.setText("+ Create")
@@ -426,8 +425,11 @@ class CurationMainView(View):
             )
         )
         self.excluding_in_progress = False
+        if save:
+            self.save_excluding_mask()
 
     def merging_selection_inprogress(self) -> None:
+        # flip buttons
         self.merging_create_button.setText("Finish")
         self.merging_create_button.disconnect()
         self.merging_create_button.clicked.connect(
@@ -436,35 +438,34 @@ class CurationMainView(View):
         # we now have a merging mask that is the user can save
         self.merging_save_button.setEnabled(True)
         self.merging_in_progress = True
-        self._curation_service.enable_shape_selection_viewer(
-            mode=SelectionMode.MERGING
-        )
 
     def merging_selection_finished(self, save: bool = False) -> None:
         self._curation_service.finished_shape_selection(selection_mode=SelectionMode.MERGING)
         self.merging_create_button.setText("+ Create")
         self.merging_create_button.disconnect()
         self.merging_create_button.clicked.connect(
-            self.merging_selection_inprogress
+            lambda x: self._curation_service.enable_shape_selection_viewer(
+                mode=SelectionMode.MERGING
+            )
         )
         if save:
             self.save_merging_mask()
-            # if self._curation_model.get_current_merging_mask_path() is not None:
-            #     # there is a previously saved merging mask.
-            #     save_mask_dialog = DialogBox("There is already a merging mask saved. Overwrite?")
-            #     save_mask_dialog.exec()
-            #     if save_mask_dialog.selection:
-            #         self.save_merging_mask()
-            # else:
-            #     self.save_merging_mask()
         
             
     def save_merging_mask(self):
-        image_saved = False
         if self.merging_base_combo.currentText() == "Base Image:":
             show_info("Please select a base image to merge with")
         else:
-            image_saved = self._curation_service.save_merging_mask(self.merging_base_combo.currentText())
-        if image_saved:
+            # image saved
+            _ = self._curation_service.save_merging_mask(self.merging_base_combo.currentText())
             self.merging_in_progress = False
             self.enable_excluding_mask()
+
+    def save_excluding_mask(self):
+        self._curation_service.save_excluding_mask()
+        self.excluding_in_progress = False
+
+
+    def update_merging_mask_status_label(self) -> None:
+        self.merging_mask_status.setText("Merging mask saved to experiment.")
+
