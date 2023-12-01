@@ -131,7 +131,9 @@ class CurationMainView(View):
         self.merging_save_button: QPushButton = QPushButton("Save")
         self.merging_save_button.setEnabled(False)
         self.merging_save_button.setObjectName("small_blue_btn")
-        self.merging_save_button.clicked.connect(lambda x: self.merging_selection_finished(save=True))
+        self.merging_save_button.clicked.connect(
+            lambda x: self.merging_selection_finished(save=True)
+        )
         merging_mask_buttons.addWidget(self.merging_create_button)
         merging_mask_buttons.addWidget(self.merging_base_combo)
         merging_mask_buttons.addWidget(self.merging_delete_button)
@@ -228,7 +230,6 @@ class CurationMainView(View):
         else:
             self.disable_excluding_mask_buttons()
 
-
         if first_setup:
             self._curation_service.curation_setup()
             self.init_progress_bar()
@@ -259,7 +260,7 @@ class CurationMainView(View):
         self.excluding_save_button.setEnabled(False)
         self.excluding_create_button.setEnabled(False)
         self.excluding_delete_button.setEnabled(False)
-    
+
     def enable_excluding_mask_buttons(self):
         """
         Enable the buttons for excluding mask in the UI
@@ -273,7 +274,9 @@ class CurationMainView(View):
         Initialize progress bar based on number of images to curate, and set progress bar label
         """
         # set progress bar
-        self.progress_bar.setMaximum(len(self._curation_model.get_raw_images()))
+        self.progress_bar.setMaximum(
+            len(self._curation_model.get_raw_images())
+        )
         self.progress_bar.setValue(0)
         # set progress bar hint
         self.progress_bar_image_count.setText(
@@ -310,7 +313,9 @@ class CurationMainView(View):
         Change the UI to state where excluding selection is in progress
         """
         # flip buttons to inprogress state
-        self.flip_button_inprogress_state(self.excluding_create_button, self.excluding_selection_finished)
+        self.flip_button_inprogress_state(
+            self.excluding_create_button, self.excluding_selection_finished
+        )
         # we now have an excluding mask that is the user can save, so enable save button
         self.excluding_save_button.setEnabled(True)
 
@@ -320,10 +325,16 @@ class CurationMainView(View):
 
         save (bool): True if user wants to save the current excluding mask, false if they dont want to save it quite yet.
         """
-        self._curation_service.finished_shape_selection(selection_mode=SelectionMode.EXCLUDING)
+        self._curation_service.finished_shape_selection(
+            selection_mode=SelectionMode.EXCLUDING
+        )
         # flip buttons to original state
-        self.flip_button_normal_state(self.excluding_create_button, lambda x: self._curation_service.enable_shape_selection_viewer(
-                mode=SelectionMode.EXCLUDING))
+        self.flip_button_normal_state(
+            self.excluding_create_button,
+            lambda x: self._curation_service.enable_shape_selection_viewer(
+                mode=SelectionMode.EXCLUDING
+            ),
+        )
         if save:
             self.save_excluding_mask()
 
@@ -332,7 +343,9 @@ class CurationMainView(View):
         Change the UI to state where merging selection is in progress
         """
         # flip buttons to in progres sstate
-        self.flip_button_inprogress_state(self.merging_create_button, self.merging_selection_finished)
+        self.flip_button_inprogress_state(
+            self.merging_create_button, self.merging_selection_finished
+        )
         # we now have a merging mask that is the user can save, so enable save button
         self.merging_save_button.setEnabled(True)
 
@@ -342,16 +355,21 @@ class CurationMainView(View):
 
         save (bool): True if user wants to save the current merging mask, false if they dont want to save it quite yet.
         """
-        self._curation_service.finished_shape_selection(selection_mode=SelectionMode.MERGING)
+        self._curation_service.finished_shape_selection(
+            selection_mode=SelectionMode.MERGING
+        )
         # Flip buttons to normal state
-        self.flip_button_normal_state(self.merging_create_button, lambda x: self._curation_service.enable_shape_selection_viewer(
-                mode=SelectionMode.MERGING))
+        self.flip_button_normal_state(
+            self.merging_create_button,
+            lambda x: self._curation_service.enable_shape_selection_viewer(
+                mode=SelectionMode.MERGING
+            ),
+        )
 
         # user has indicated save
         if save:
             self.save_merging_mask()
-        
-            
+
     def save_merging_mask(self) -> None:
         """
         Wrapper for curation_service.save_merging_mask() for ui interactivity
@@ -360,7 +378,9 @@ class CurationMainView(View):
             show_info("Please select a base image to merge with")
         else:
             # image saved
-            saved: bool = self._curation_service.save_merging_mask(self.merging_base_combo.currentText())
+            saved: bool = self._curation_service.save_merging_mask(
+                self.merging_base_combo.currentText()
+            )
             if saved:
                 self.enable_excluding_mask_buttons()
 
@@ -386,7 +406,9 @@ class CurationMainView(View):
         """
         Update the excluding mask status label when a mask is saved
         """
-        self.excluding_mask_label.setText("Excluding mask saved to experiment.")
+        self.excluding_mask_label.setText(
+            "Excluding mask saved to experiment."
+        )
 
     def reset_excluding_mask_status_label(self) -> None:
         """
@@ -394,7 +416,9 @@ class CurationMainView(View):
         """
         self.excluding_mask_label.setText("Please select excluding mask.")
 
-    def flip_button_inprogress_state(self, button: QPushButton, on_click: callable) -> None:
+    def flip_button_inprogress_state(
+        self, button: QPushButton, on_click: callable
+    ) -> None:
         """
         flip a button to its mask drawing in-progress state
 
@@ -403,11 +427,11 @@ class CurationMainView(View):
         """
         button.setText("Finish")
         button.disconnect()
-        button.clicked.connect(
-            on_click
-        )
+        button.clicked.connect(on_click)
 
-    def flip_button_normal_state(self, button: QPushButton, on_click: callable) -> None:
+    def flip_button_normal_state(
+        self, button: QPushButton, on_click: callable
+    ) -> None:
         """
         flip a button to its default state
 
@@ -417,6 +441,3 @@ class CurationMainView(View):
         button.setText("+ Create")
         button.disconnect()
         button.clicked.connect(on_click)
-
-
-

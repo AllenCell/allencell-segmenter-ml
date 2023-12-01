@@ -62,7 +62,9 @@ class CurationModel(Publisher):
     def get_curation_image_dims(self) -> Tuple[int, int, int]:
         return self.curation_image_dims
 
-    def set_curation_image_dims(self, image_dims: Tuple[int, int, int]) -> None:
+    def set_curation_image_dims(
+        self, image_dims: Tuple[int, int, int]
+    ) -> None:
         self.curation_image_dims = image_dims
 
     def get_raw_images(self) -> List[Path]:
@@ -209,7 +211,9 @@ class CurationModel(Publisher):
             / self.experiments_model.get_experiment_name()
         )
 
-    def set_current_loaded_images(self, images: Tuple[Path, Path, Optional[Path]]):
+    def set_current_loaded_images(
+        self, images: Tuple[Path, Path, Optional[Path]]
+    ):
         self._current_loaded_images = images
 
     def get_current_loaded_images(self):
@@ -238,7 +242,9 @@ class CurationModel(Publisher):
     def set_excluding_mask_shape_layers(self, layers: List[Shapes]) -> None:
         self.excluding_mask_shape_layers = layers
 
-    def append_excluding_mask_shape_layer(self, layer_to_append: Shapes) -> None:
+    def append_excluding_mask_shape_layer(
+        self, layer_to_append: Shapes
+    ) -> None:
         self.excluding_mask_shape_layers.append(layer_to_append)
 
     def get_merging_mask_shape_layers(self) -> List[Shapes]:
