@@ -23,10 +23,10 @@ def curation_main_view(qtbot: QtBot) -> CurationMainView:
 
 def test_curation_setup(curation_main_view: CurationMainView) -> None:
     # Arrange
-    curation_main_view._curation_service.get_raw_images_list = Mock(
+    curation_main_view._curation_service.build_raw_images_list = Mock(
         return_value=[Path("path_raw")]
     )
-    curation_main_view._curation_service.get_seg1_images_list = Mock(
+    curation_main_view._curation_service.build_seg1_images_list = Mock(
         return_value=[Path("path_seg1")]
     )
     curation_main_view.init_progress_bar = Mock()
