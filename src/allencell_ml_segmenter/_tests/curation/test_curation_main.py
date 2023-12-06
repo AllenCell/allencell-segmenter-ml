@@ -23,10 +23,10 @@ def curation_main_view(qtbot: QtBot) -> CurationMainView:
 
 def test_curation_setup(curation_main_view: CurationMainView) -> None:
     # Arrange
-    curation_main_view._curation_service.get_raw_images_list = Mock(
+    curation_main_view._curation_service.build_raw_images_list = Mock(
         return_value=[Path("path_raw")]
     )
-    curation_main_view._curation_service.get_seg1_images_list = Mock(
+    curation_main_view._curation_service.build_seg1_images_list = Mock(
         return_value=[Path("path_seg1")]
     )
     curation_main_view.init_progress_bar = Mock()
@@ -68,7 +68,7 @@ def test_next_image(curation_main_view: CurationMainView) -> None:
     assert curation_main_view.curation_index == 1
     curation_main_view._curation_service.remove_all_images_from_viewer_layers.assert_called_once()
     assert (
-        curation_main_view._curation_service.add_image_to_viewer.call_count
+        curation_main_view._curation_service.add_image_to_viewer_from_path.call_count
         == 2
     )
 
@@ -104,6 +104,15 @@ def test_update_curation_record(
 
     # Assert
     # Ensure last record in curation_record is the one we just added
-    assert curation_main_view.curation_record[-1].to_use == expected_result
-    assert curation_main_view.curation_record[-1].raw_file == raw_test_path
-    assert curation_main_view.curation_record[-1].seg1 == seg1_test_path
+    assert (
+        curation_main_view._curation_model.curation_record[-1].to_use
+        == expected_result
+    )
+    assert (
+        curation_main_view._curation_model.curation_record[-1].raw_file
+        == raw_test_path
+    )
+    assert (
+        curation_main_view._curation_model.curation_record[-1].seg1
+        == seg1_test_path
+    )
