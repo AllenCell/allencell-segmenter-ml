@@ -33,7 +33,7 @@ def test_get_raw_images_list(curation_service: CurationService):
     )
     curation_service._get_files_list_from_path = Mock()
     # Act
-    curation_service.get_raw_images_list()
+    curation_service.build_raw_images_list()
     # Assert
     curation_service._get_files_list_from_path.assert_called_once_with(
         Path(__file__).parent / "curation_tests"
@@ -48,7 +48,7 @@ def test_get_raw_images_list_invalid_path(curation_service: CurationService):
     )
     # Act/ assert
     with pytest.raises(ValueError):
-        curation_service.get_raw_images_list()
+        curation_service.build_raw_images_list()
 
 
 def test_get_seg1_images_list(curation_service: CurationService):
@@ -57,7 +57,7 @@ def test_get_seg1_images_list(curation_service: CurationService):
         return_value=Path(__file__).parent / "curation_tests"
     )
     curation_service._get_files_list_from_path = Mock()
-    curation_service.get_seg1_images_list()
+    curation_service.build_seg1_images_list()
 
     # Act/Assert
     curation_service._get_files_list_from_path.assert_called_once_with(
@@ -73,7 +73,7 @@ def test_get_seg1_images_list_invalid_path(curation_service: CurationService):
     )
     # Act/ assert
     with pytest.raises(ValueError):
-        curation_service.get_seg1_images_list()
+        curation_service.build_seg1_images_list()
 
 
 def test_get_seg2_images_list(curation_service: CurationService):
@@ -83,7 +83,7 @@ def test_get_seg2_images_list(curation_service: CurationService):
     )
     curation_service._get_files_list_from_path = Mock()
     # Act
-    curation_service.get_seg2_images_list()
+    curation_service.build_seg2_images_list()
     # Assert
     curation_service._get_files_list_from_path.assert_called_once_with(
         Path(__file__).parent / "curation_tests"
@@ -98,7 +98,7 @@ def test_get_seg2_images_list_invalid_path(curation_service: CurationService):
     )
     # Act/ assert
     with pytest.raises(ValueError):
-        curation_service.get_seg2_images_list()
+        curation_service.build_seg2_images_list()
 
 
 def test_get_files_list_from_path(curation_service: CurationService) -> None:
