@@ -8,7 +8,7 @@ from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
 
 
 class ExperimentsModel(IExperimentsModel):
-    def __init__(self, config: CytoDlConfig) -> None:
+    def __init__(self, config: CytoDlConfig = None) -> None:
         super().__init__()
         self.config = config
 

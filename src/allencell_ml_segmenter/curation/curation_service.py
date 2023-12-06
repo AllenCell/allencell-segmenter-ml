@@ -431,7 +431,7 @@ class CurationService(Subscriber):
 
         # increment curation index
         self._curation_model.set_curation_index(
-            self._curation_model.curation_index + 1
+            self._curation_model.get_curation_index() + 1
         )
 
     def next_image(self, use_image: bool) -> None:
