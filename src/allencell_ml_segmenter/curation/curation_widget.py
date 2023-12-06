@@ -42,7 +42,9 @@ class CurationWidget(QStackedWidget, Subscriber, metaclass=CurationUiMeta):
         self.viewer: napari.Viewer = viewer
         self.experiments_model: ExperimentsModel = experiments_model
         self.view_to_index: Dict[View, int] = dict()
-        self.curation_model: CurationModel = CurationModel()
+        self.curation_model: CurationModel = CurationModel(
+            experiments_model=experiments_model
+        )
         self.curation_service: CurationService = CurationService(
             curation_model=self.curation_model, viewer=self.viewer
         )
@@ -58,7 +60,7 @@ class CurationWidget(QStackedWidget, Subscriber, metaclass=CurationUiMeta):
         self.initialize_view(self.curation_input_view)
 
         self.curation_main_view: CurationMainView = CurationMainView(
-            self.curation_model, self.experiments_model, self.curation_service
+            self.curation_model, self.curation_service
         )
         self.initialize_view(self.curation_main_view)
 
@@ -80,7 +82,7 @@ class CurationWidget(QStackedWidget, Subscriber, metaclass=CurationUiMeta):
             and self.curation_model.get_seg1_channel() is not None
         ):
             self.set_view(view)
-            self.curation_main_view.curation_setup()
+            self.curation_main_view.curation_setup(first_setup=True)
         else:
             _ = show_info("Please select all required fields")
 

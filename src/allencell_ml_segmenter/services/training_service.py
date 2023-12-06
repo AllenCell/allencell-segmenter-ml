@@ -4,7 +4,7 @@ from allencell_ml_segmenter.core.event import Event
 # from lightning.pytorch.callbacks import Callback
 
 # disabled for tests (cant import in ci yet)
-# from cyto_dl.train import main as cyto_train
+from cyto_dl.train import main as cyto_train
 
 import sys
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
@@ -70,8 +70,7 @@ class TrainingService(Subscriber):
             self._training_model.set_config_dir(
                 f"{self._experiments_model.get_cyto_dl_config().get_cyto_dl_home_path()}/configs"
             )
-
-            #################################################
+            #############################################
             sys.argv.append(
                 # This is meant to be a string as is - not a string template.  In cyto-dl, it will be treated as a string template
                 "hydra.run.dir=${paths.log_dir}/${task_name}/runs/${experiment_name}"
@@ -95,7 +94,7 @@ class TrainingService(Subscriber):
             self._set_config_dir()
 
             # disabled for tests (cant import in ci yet)
-            # cyto_train()
+            cyto_train()
 
     def _set_experiment(self) -> None:
         """
