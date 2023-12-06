@@ -122,9 +122,11 @@ def test_set_view(curation_model: CurationModel) -> None:
             Event.PROCESS_CURATION_INPUT_STARTED
         )
 
+
 def test_get_merging_mask_base_layer(curation_model):
     # Assert
     assert curation_model.get_merging_mask_base_layer() is None
+
 
 def test_set_merging_mask_base_layer(curation_model):
     # arrange
@@ -133,9 +135,11 @@ def test_set_merging_mask_base_layer(curation_model):
     # Act/Assert
     assert curation_model.merging_mask_base_layer == "layer_name"
 
+
 def test_get_curation_image_dims(curation_model):
     # Assert
     assert curation_model.get_curation_image_dims() is None
+
 
 def test_set_curation_image_dims(curation_model):
     # Arrange
@@ -143,6 +147,7 @@ def test_set_curation_image_dims(curation_model):
 
     # Act/Assert
     assert curation_model.curation_image_dims == (100, 200, 3)
+
 
 def test_get_raw_images(curation_model):
     # Arrange
@@ -152,6 +157,7 @@ def test_get_raw_images(curation_model):
     # Act/assert
     assert curation_model.get_raw_images() == sample_paths
 
+
 def test_set_raw_images(curation_model):
     # Act
     curation_model.set_raw_images([Path("image1"), Path("image2")])
@@ -159,12 +165,14 @@ def test_set_raw_images(curation_model):
     # Assert
     assert curation_model.get_raw_images() == [Path("image1"), Path("image2")]
 
+
 def test_get_current_raw_image(curation_model):
     # Arrange
     curation_model.set_raw_images([Path("image1"), Path("image2")])
 
     # Act/Assert
     assert curation_model.get_current_raw_image() == Path("image1")
+
 
 def test_get_seg1_images(curation_model):
     # Arrange
@@ -174,6 +182,7 @@ def test_get_seg1_images(curation_model):
     # Act/Assert
     assert curation_model.get_seg1_images() == sample_seg1
 
+
 def test_set_seg1_images(curation_model):
     # Act
     curation_model.set_seg1_images([Path("image1"), Path("image2")])
@@ -181,12 +190,14 @@ def test_set_seg1_images(curation_model):
     # Assert
     assert curation_model.get_seg1_images() == [Path("image1"), Path("image2")]
 
+
 def test_get_current_seg1_image(curation_model):
     # Act
     curation_model.set_seg1_images([Path("image1"), Path("image2")])
 
     # Assert
     assert curation_model.get_current_seg1_image() == Path("image1")
+
 
 def test_get_seg2_images(curation_model):
     # Arrange
@@ -196,12 +207,14 @@ def test_get_seg2_images(curation_model):
     # Act/Assert
     assert curation_model.get_seg2_images() == sample_seg2
 
+
 def test_set_seg2_images(curation_model):
     # Act
     curation_model.set_seg2_images([Path("image1"), Path("image2")])
 
     # Assert
     assert curation_model.get_seg2_images() == [Path("image1"), Path("image2")]
+
 
 def test_get_current_seg2_image(curation_model):
     # Arrange
@@ -210,6 +223,7 @@ def test_get_current_seg2_image(curation_model):
     # Act/Assert
     assert curation_model.get_current_seg2_image() == Path("image1")
 
+
 def test_set_current_merging_mask_path(curation_model):
     # Act
     curation_model.set_current_merging_mask_path(Path("mask_path"))
@@ -217,13 +231,22 @@ def test_set_current_merging_mask_path(curation_model):
     # Assert
     assert curation_model.get_current_merging_mask_path() == Path("mask_path")
 
+
 def test_get_excluding_mask_shape_layers(curation_model):
     # Arrange
-    sample_shape_layers = [Mock(spec=Shapes), Mock(spec=Shapes), Mock(spec=Shapes), Mock(spec=Shapes)]
+    sample_shape_layers = [
+        Mock(spec=Shapes),
+        Mock(spec=Shapes),
+        Mock(spec=Shapes),
+        Mock(spec=Shapes),
+    ]
     curation_model.set_excluding_mask_shape_layers(sample_shape_layers)
 
     # Act/Assert
-    assert curation_model.get_excluding_mask_shape_layers() == sample_shape_layers
+    assert (
+        curation_model.get_excluding_mask_shape_layers() == sample_shape_layers
+    )
+
 
 def test_set_excluding_mask_shape_layers(curation_model):
     # Arrange
@@ -235,6 +258,7 @@ def test_set_excluding_mask_shape_layers(curation_model):
     # Assert
     assert curation_model.get_excluding_mask_shape_layers() == layers
 
+
 def test_append_excluding_mask_shape_layer(curation_model):
     # Arrange
     layer = Shapes()
@@ -245,13 +269,22 @@ def test_append_excluding_mask_shape_layer(curation_model):
     # Assert
     assert curation_model.get_excluding_mask_shape_layers() == [layer]
 
+
 def test_get_merging_mask_shape_layers(curation_model):
     # Arrange
-    sample_shape_layers = [Mock(spec=Shapes), Mock(spec=Shapes), Mock(spec=Shapes), Mock(spec=Shapes)]
+    sample_shape_layers = [
+        Mock(spec=Shapes),
+        Mock(spec=Shapes),
+        Mock(spec=Shapes),
+        Mock(spec=Shapes),
+    ]
     curation_model.set_merging_mask_shape_layers(sample_shape_layers)
 
     # Act/Assert
-    assert curation_model.get_merging_mask_shape_layers() == sample_shape_layers
+    assert (
+        curation_model.get_merging_mask_shape_layers() == sample_shape_layers
+    )
+
 
 def test_set_merging_mask_shape_layers(curation_model):
     # Arrange
@@ -263,6 +296,7 @@ def test_set_merging_mask_shape_layers(curation_model):
     # Assert
     assert curation_model.get_merging_mask_shape_layers() == layers
 
+
 def test_append_merging_mask_shape_layer(curation_model):
     # Arrange
     layer = Shapes()
@@ -273,6 +307,7 @@ def test_append_merging_mask_shape_layer(curation_model):
     # Assert
     assert curation_model.get_merging_mask_shape_layers() == [layer]
 
+
 def test_image_available(curation_model):
     # Arrange
     assert not curation_model.image_available()
@@ -282,6 +317,7 @@ def test_image_available(curation_model):
     # Act/Assert
     assert curation_model.image_available()
 
+
 def test_get_curation_index(curation_model):
     # Arrange
     assert curation_model.get_curation_index() == 0
@@ -290,12 +326,14 @@ def test_get_curation_index(curation_model):
     # Act/assert
     assert curation_model.get_curation_index() == 4
 
+
 def test_set_curation_index(curation_model):
     # Arrange
     curation_model.set_curation_index(2)
 
     # Act/Assert
     assert curation_model.get_curation_index() == 2
+
 
 def test_append_curation_record(curation_model):
     # Arrange
@@ -306,7 +344,7 @@ def test_append_curation_record(curation_model):
         excluding_mask="exclude",
         merging_mask="merge",
         base_image_index="seg1",
-        to_use=True
+        to_use=True,
     )
 
     # Act
