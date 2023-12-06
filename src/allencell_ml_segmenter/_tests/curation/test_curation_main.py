@@ -16,9 +16,7 @@ def curation_main_view(qtbot: QtBot) -> CurationMainView:
     curation_model: CurationModel = CurationModel()
     experiments_model: FakeExperimentsModel = FakeExperimentsModel()
     curation_service: Mock = Mock(spec=CurationService)
-    return CurationMainView(
-        curation_model, curation_service
-    )
+    return CurationMainView(curation_model, curation_service)
 
 
 def test_curation_setup(curation_main_view: CurationMainView) -> None:
@@ -51,6 +49,7 @@ def test_init_progress_bar(curation_main_view: CurationMainView) -> None:
     # Assert
     assert curation_main_view.progress_bar.value() == 0
 
+
 def test_next_image(curation_main_view: CurationMainView) -> None:
     # Arrange
     curation_main_view._update_curation_record = Mock()
@@ -64,6 +63,7 @@ def test_next_image(curation_main_view: CurationMainView) -> None:
     # Assert
     curation_main_view._curation_service.next_image.assert_called_once()
 
+
 def test_increment_progress_bar(curation_main_view: CurationMainView) -> None:
     # Arrange
     curation_main_view.init_progress_bar()
@@ -74,7 +74,10 @@ def test_increment_progress_bar(curation_main_view: CurationMainView) -> None:
     # Assert
     assert curation_main_view.progress_bar.value() == initial_value + 1
 
-def test_stop_increment_progress_bar_when_curation_finished(curation_main_view: CurationMainView) -> None:
+
+def test_stop_increment_progress_bar_when_curation_finished(
+    curation_main_view: CurationMainView,
+) -> None:
     # Arrange
     curation_main_view.init_progress_bar()
     curation_main_view._curation_model.raw_images = [Path(), Path(), Path()]
