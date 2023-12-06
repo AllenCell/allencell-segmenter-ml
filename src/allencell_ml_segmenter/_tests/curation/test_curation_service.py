@@ -29,9 +29,9 @@ def curation_service() -> CurationService:
     )
 
 
-def test_build_raw_images_list(curation_service: CurationService):
+def test_build_raw_images_list(curation_service: CurationService) -> None:
     # Arrange
-    curation_service._curation_model.get_raw_directory: Mock = Mock(
+    curation_service._curation_model.get_raw_directory = Mock(
         return_value=Path(__file__).parent / "curation_tests"
     )
     curation_service._get_files_list_from_path = Mock()
@@ -43,10 +43,12 @@ def test_build_raw_images_list(curation_service: CurationService):
     )
 
 
-def test_build_raw_images_list_invalid_path(curation_service: CurationService):
+def test_build_raw_images_list_invalid_path(
+    curation_service: CurationService,
+) -> None:
     # Arrange
     # There is no raw direcotry set in the model- getter returns None
-    curation_service._curation_model.get_raw_directory: Mock = Mock(
+    curation_service._curation_model.get_raw_directory = Mock(
         return_value=None
     )
     # Act/ assert
@@ -54,9 +56,9 @@ def test_build_raw_images_list_invalid_path(curation_service: CurationService):
         curation_service.build_raw_images_list()
 
 
-def test_build_seg1_images_list(curation_service: CurationService):
+def test_build_seg1_images_list(curation_service: CurationService) -> None:
     # Arrange
-    curation_service._curation_model.get_seg1_directory: Mock = Mock(
+    curation_service._curation_model.get_seg1_directory = Mock(
         return_value=Path(__file__).parent / "curation_tests"
     )
     curation_service._get_files_list_from_path = Mock()
@@ -70,10 +72,10 @@ def test_build_seg1_images_list(curation_service: CurationService):
 
 def test_build_seg1_images_list_invalid_path(
     curation_service: CurationService,
-):
+) -> None:
     # Arrange
     # There is no raw direcotry set in the model- getter returns None
-    curation_service._curation_model.get_seg1_directory: Mock = Mock(
+    curation_service._curation_model.get_seg1_directory = Mock(
         return_value=None
     )
     # Act/ assert
@@ -81,9 +83,9 @@ def test_build_seg1_images_list_invalid_path(
         curation_service.build_seg1_images_list()
 
 
-def test_build_seg2_images_list(curation_service: CurationService):
+def test_build_seg2_images_list(curation_service: CurationService) -> None:
     # Arrange
-    curation_service._curation_model.get_seg2_directory: Mock = Mock(
+    curation_service._curation_model.get_seg2_directory = Mock(
         return_value=Path(__file__).parent / "curation_tests"
     )
     curation_service._get_files_list_from_path = Mock()
@@ -97,7 +99,7 @@ def test_build_seg2_images_list(curation_service: CurationService):
 
 def test_build_seg2_images_list_invalid_path(
     curation_service: CurationService,
-):
+) -> None:
     # Arrange
     # There is no raw direcotry set in the model- getter returns None
     curation_service._curation_model.get_seg2_directory: Mock = Mock(
@@ -109,7 +111,7 @@ def test_build_seg2_images_list_invalid_path(
 
 
 def test_get_files_list_from_path(curation_service: CurationService) -> None:
-    paths = curation_service._get_files_list_from_path(
+    paths: List[Path] = curation_service._get_files_list_from_path(
         Path(__file__).parent / "curation_tests"
     )
 
@@ -356,7 +358,7 @@ def test_update_curation_record(
 def test_finished_shape_selection_excluding(curation_service) -> None:
     # Arrange
     curation_service._curation_model.get_excluding_mask_shape_layers = Mock()
-    shapes = Shapes()
+    shapes: Shapes = Shapes()
     curation_service._curation_model.get_excluding_mask_shape_layers.return_value = [
         shapes
     ]
@@ -371,7 +373,7 @@ def test_finished_shape_selection_excluding(curation_service) -> None:
 def test_finished_shape_selection_merging(curation_service) -> None:
     # Arrange
     curation_service._curation_model.get_merging_mask_shape_layers = Mock()
-    shapes = Shapes()
+    shapes: Shapes = Shapes()
     curation_service._curation_model.get_merging_mask_shape_layers.return_value = [
         shapes
     ]
@@ -383,9 +385,11 @@ def test_finished_shape_selection_merging(curation_service) -> None:
     assert shapes.mode == "pan_zoom"
 
 
-def test_clear_merging_mask_layers_all(curation_service) -> None:
+def test_clear_merging_mask_layers_all(
+    curation_service: CurationService,
+) -> None:
     # Arrange
-    shapes_layers = [
+    shapes_layers: List[Shapes] = [
         Shapes(name="merging_layer"),
         Shapes(name="merging_layer2"),
         Shapes(name="merging_layer3"),
@@ -405,7 +409,7 @@ def test_clear_merging_mask_layers_all(curation_service) -> None:
 
 def test_clear_excluding_mask_layers_all(curation_service) -> None:
     # Arrange
-    shapes_layers = [
+    shapes_layers: List[Shapes] = [
         Shapes(name="merging_layer"),
         Shapes(name="merging_layer2"),
         Shapes(name="merging_layer3"),
