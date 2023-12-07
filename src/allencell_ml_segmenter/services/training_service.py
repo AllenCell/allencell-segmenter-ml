@@ -85,17 +85,20 @@ class TrainingService(Subscriber):
                 )
             model = CytoDLModel()
             model.download_example_data()
-            model.load_default_experiment('segmentation', output_dir=f"{self._experiments_model.get_user_experiments_path()}/{self._experiments_model.get_experiment_name()}", overrides=[f"trainer=cpu", f"experiment=im2im/{self._training_model.get_experiment_type().value}.yaml", f"spatial_dims=3", "experiment_name=experiment_name_test", "trainer.max_epochs=1", "data.path=test_path"])
+            model.load_default_experiment('segmentation',
+                                          output_dir=f"{self._experiments_model.get_user_experiments_path()}/{self._experiments_model.get_experiment_name()}",
+                                          overrides=[self._get_hardware_override(),
+                                                     f"experiment=im2im/{self._training_model.get_experiment_type().value}.yaml",
+                                                     f"spatial_dims=3", "experiment_name=experiment_name_test", "trainer.max_epochs=1", "data.path=test_path"])
             #model.print_config()
             asyncio.run(model.train())
 
-    def _set_hardware(self) -> None:
+    def _get_hardware_override(self) -> str:
         """
-        Sets the hardware argument variable for hydra using sys.argv
+        Get the hardware override for the CytoDLModel
         """
-        # override works
         hardware_type: Hardware = self._training_model.get_hardware_type()
-        sys.argv.append(f"trainer={hardware_type.value}")
+        return f"trainer={hardware_type.value}"
 
     def _set_image_dims(self) -> None:
         """
