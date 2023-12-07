@@ -88,8 +88,7 @@ class TrainingService(Subscriber):
             model.load_default_experiment('segmentation',
                                           output_dir=f"{self._experiments_model.get_user_experiments_path()}/{self._experiments_model.get_experiment_name()}",
                                           overrides=[self._get_hardware_override(),
-                                                     f"experiment=im2im/{self._training_model.get_experiment_type().value}.yaml",
-                                                     f"spatial_dims=3", "experiment_name=experiment_name_test", "trainer.max_epochs=1", "data.path=test_path"])
+                                                     self._get_image_dims_override(), "experiment_name=experiment_name_test", "trainer.max_epochs=1", "data.path=test_path"])
             #model.print_config()
             asyncio.run(model.train())
 
@@ -100,13 +99,11 @@ class TrainingService(Subscriber):
         hardware_type: Hardware = self._training_model.get_hardware_type()
         return f"trainer={hardware_type.value}"
 
-    def _set_image_dims(self) -> None:
+    def _get_image_dims_override(self) -> None:
         """
         Sets the spatial_dims argument variable for hydra override using sys.argv
         """
-        # old way of overriding spatial dims, new way is just spatial_dims=3 without ++
-        image_dims: int = self._training_model.get_image_dims()
-        sys.argv.append(f"++spatial_dims=[{image_dims}]")
+        return(f"spatial_dims={self._training_model.get_image_dims()}")
 
     def _set_experiment_name(self) -> None:
         """
