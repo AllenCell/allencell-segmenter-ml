@@ -245,6 +245,8 @@ class TrainingView(View):
         Starts training process
         """
         self._training_model.set_training_running(True)
+        # TODO uncomment- testing default segmentation.yaml through API
+        # This is broken and needs to be fixed- images now saved to experiment folder
         result_images = self.read_result_images(
             self._experiments_model.get_model_test_images_path(
                 self._experiments_model.get_experiment_name()
