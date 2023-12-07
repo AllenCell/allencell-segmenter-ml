@@ -256,7 +256,7 @@ class CurationModel(Publisher):
     def append_merging_mask_shape_layer(self, layer_to_append: Shapes) -> None:
         self.merging_mask_shape_layers.append(layer_to_append)
 
-    def get_user_experiment_selected(self) -> bool:
+    def is_user_experiment_selected(self) -> bool:
         if self.experiments_model.get_experiment_name() is None:
             return False
         else:
