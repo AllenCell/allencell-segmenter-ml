@@ -1,3 +1,5 @@
+import asyncio
+
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.event import Event
 
@@ -5,6 +7,8 @@ from allencell_ml_segmenter.core.event import Event
 
 # disabled for tests (cant import in ci yet)
 # from cyto_dl.train import main as cyto_train
+from cyto_dl.api.model import CytoDLModel
+
 
 import sys
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
@@ -79,36 +83,29 @@ class TrainingService(Subscriber):
                 sys.argv.append(
                     f"ckpt_path={self._experiments_model.get_model_checkpoints_path(self._experiments_model.get_experiment_name(), self._experiments_model.get_checkpoint())}"
                 )
-            # sys.argv.append(
-            #     "+callbacks.print_progress._target_=allencell_ml_segmenter.services.training_service.MyPrintingCallback"
-            # )
-            # TODO - talk to Benji about these
-            # self._set_image_d–ims()
-            # self._set_patch_shape_from_size()
-            #######################
-            self._set_experiment_name()
-            self._set_max_epoch()
-            self._set_images_directory()
-            self._set_experiment()
-            self._set_hardware()
-            self._set_config_dir()
+            model = CytoDLModel()
+            model.download_example_data()
+            model.load_default_experiment('segmentation', output_dir=f"{self._experiments_model.get_user_experiments_path()}/{self._experiments_model.get_experiment_name()}", overrides=[f"trainer=cpu", f"experiment=im2im/{self._training_model.get_experiment_type().value}.yaml", f"spatial_dims=3", "experiment_name=experiment_name_test", "trainer.max_epochs=1", "data.path=test_path"])
+            #model.print_config()
+            asyncio.run(model.train())
 
-            # disabled for tests (cant import in ci yet)
-            # cyto_train()
-
-    def _set_experiment(self) -> None:
+    def _get_experiment_override(self) -> str:
         """
         Sets the experiment argument variable for hydra using sys.argv
         """
+        # override works
         experiment_type: TrainingType = (
             self._training_model.get_experiment_type()
         )
+        return f"experiment"
         sys.argv.append(f"experiment=im2im/{experiment_type.value}.yaml")
+
 
     def _set_hardware(self) -> None:
         """
         Sets the hardware argument variable for hydra using sys.argv
         """
+        # override works
         hardware_type: Hardware = self._training_model.get_hardware_type()
         sys.argv.append(f"trainer={hardware_type.value}")
 
@@ -116,6 +113,7 @@ class TrainingService(Subscriber):
         """
         Sets the spatial_dims argument variable for hydra override using sys.argv
         """
+        # old way of overriding spatial dims, new way is just spatial_dims=3 without ++
         image_dims: int = self._training_model.get_image_dims()
         sys.argv.append(f"++spatial_dims=[{image_dims}]")
 
@@ -123,6 +121,7 @@ class TrainingService(Subscriber):
         """
         Sets the experiment_name argument variable for hydra override using sys.argv
         """
+        # works without ++
         experiment_name: str = self._experiments_model.get_experiment_name()
         sys.argv.append(f"++experiment_name={experiment_name}")
 
@@ -130,6 +129,8 @@ class TrainingService(Subscriber):
         """
         Sets the trainer.max_epochs argument variable for hydra override using sys.argv
         """
+        # works without ++
+        # trainer.max_epochs=3
         max_epoch: int = self._training_model.get_max_epoch()
         sys.argv.append(f"++trainer.max_epochs={max_epoch}")
 
@@ -137,6 +138,7 @@ class TrainingService(Subscriber):
         """
         Sets the data.path argument variable for hydra override using sys.argv
         """
+        # works without ++
         images_directory: Path = self._training_model.get_images_directory()
         sys.argv.append(f"++data.path={str(images_directory)}")
 
