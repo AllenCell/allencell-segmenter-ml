@@ -257,7 +257,7 @@ class CurationService(Subscriber):
         """
         continue_save: bool = True
         # Checking to see if user has experiment selected
-        if not self._curation_model.get_user_experiment_selected():
+        if not self._curation_model.is_user_experiment_selected():
             # User does not have experiment selected
             continue_save = False
             # show information to user that experiment not selected
@@ -313,7 +313,7 @@ class CurationService(Subscriber):
         """
         continue_save: bool = True
         # Checking to see if user has experiment selected
-        if not self._curation_model.get_user_experiment_selected():
+        if not self._curation_model.is_user_experiment_selected():
             # User does not have experiment selected
             continue_save = False
             # show information to user that experiment not selected
