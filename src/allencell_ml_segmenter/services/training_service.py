@@ -89,18 +89,6 @@ class TrainingService(Subscriber):
             #model.print_config()
             asyncio.run(model.train())
 
-    def _get_experiment_override(self) -> str:
-        """
-        Sets the experiment argument variable for hydra using sys.argv
-        """
-        # override works
-        experiment_type: TrainingType = (
-            self._training_model.get_experiment_type()
-        )
-        return f"experiment"
-        sys.argv.append(f"experiment=im2im/{experiment_type.value}.yaml")
-
-
     def _set_hardware(self) -> None:
         """
         Sets the hardware argument variable for hydra using sys.argv
