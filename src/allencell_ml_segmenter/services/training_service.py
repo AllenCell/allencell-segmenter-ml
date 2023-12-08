@@ -2,23 +2,13 @@ import asyncio
 
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.event import Event
-
-# from lightning.pytorch.callbacks import Callback
-
-# disabled for tests (cant import in ci yet)
-# from cyto_dl.train import main as cyto_train
 from cyto_dl.api.model import CytoDLModel
-
-
-import sys
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.training.training_model import (
-    TrainingType,
     Hardware,
     PatchSize,
 )
 from allencell_ml_segmenter.training.training_model import TrainingModel
-from pathlib import Path
 from typing import List, Any
 
 
@@ -60,7 +50,11 @@ class TrainingService(Subscriber):
         if self._training_model.is_training_running():
             # Only supporting segmentation config for now
             self._training_model.set_experiment_type("segmentation")
-            self._training_model.set_images_directory(Path("/Users/brian.kim/work/cyto-dl/data/example_experiment_data"))
+            # TODO make set_images_directory and get_images_directory less brittle.
+            #  https://github.com/AllenCell/allencell-ml-segmenter/issues/156
+            # this is just to test for now.
+            # self._training_model.set_images_directory(Path("/Users/brian.kim/work/cyto-dl/data/example_experiment_data/segmentation"))
+
             # Following lines does nothing currently, need to implement
             # self._training_model.set_channel_index(9)
             # self._training_model.set_max_time(9992)
