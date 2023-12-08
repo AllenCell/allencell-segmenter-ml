@@ -92,6 +92,7 @@ class TrainingService(Subscriber):
                                                      self._get_experiment_name_override(),
                                                      self._get_max_epoch_override(),
                                                      self._get_images_directory_override(),
+                                                     self._get_patch_shape_override()
                                                      ])
             #model.print_config()
             asyncio.run(model.train())
