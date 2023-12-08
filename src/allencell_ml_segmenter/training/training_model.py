@@ -58,7 +58,7 @@ class TrainingModel(Publisher):
             Path, None
         ] = None  # if None, start a new model
         self._patch_size: PatchSize = None
-        self._image_dims: int = None
+        self._spatial_dims: int = None
         self._max_epoch: int = None
         self._current_epoch: int = None
         self._max_time: int = None  # in seconds
@@ -95,21 +95,21 @@ class TrainingModel(Publisher):
         # convert string to enum
         self._hardware_type = Hardware(hardware_type.lower())
 
-    def get_image_dims(self) -> int:
+    def get_spatial_dims(self) -> int:
         """
         Gets image dimensions
         """
-        return self._image_dims
+        return self._spatial_dims
 
-    def set_image_dims(self, image_dims: int) -> None:
+    def set_spatial_dims(self, spatial_dims: int) -> None:
         """
         Sets image dimensions
 
         image_dims (int): number of dimensions to train model on. "2" for 2D, "3" for 3D
         """
-        if image_dims != 2 and image_dims != 3:
+        if spatial_dims != 2 and spatial_dims != 3:
             raise ValueError("No support for non 2D and 3D images.")
-        self._image_dims = image_dims
+        self._spatial_dims = spatial_dims
 
     def get_max_epoch(self) -> int:
         """
