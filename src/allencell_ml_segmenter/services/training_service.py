@@ -105,7 +105,7 @@ class TrainingService(Subscriber):
         """
         Get the spatial_dims override for the CytoDlModel
         """
-        return(f"spatial_dims={self._training_model.get_image_dims()}")
+        return(f"spatial_dims={self._training_model.get_spatial_dims()}")
 
     def _get_experiment_name_override(self) -> str:
         """

@@ -28,7 +28,7 @@ def training_service() -> TrainingService:
     )
     training_model.set_experiment_type("segmentation")
     training_model.set_hardware_type("cpu")
-    training_model.set_image_dims(2)
+    training_model.set_spatial_dims(2)
     training_model.set_images_directory("/path/to/images")
     training_model.set_channel_index(9)
     training_model.set_max_time(9992)
@@ -115,7 +115,7 @@ def test_set_image_dims(training_service: TrainingService) -> None:
 
     # ASSERT
     assert (
-        f"++spatial_dims=[{training_service._training_model.get_image_dims()}]"
+        f"++spatial_dims=[{training_service._training_model.get_spatial_dims()}]"
         in sys.argv
     )
 

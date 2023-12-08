@@ -77,14 +77,14 @@ def test_set_image_dimensions(
         training_view._radio_2d.click()
 
     # ASSERT
-    assert training_model.get_image_dims() == 2
+    assert training_model.get_spatial_dims() == 2
 
     # ACT
     with qtbot.waitSignal(training_view._radio_3d.toggled):
         training_view._radio_3d.click()
 
     # ASSERT
-    assert training_model.get_image_dims() == 3
+    assert training_model.get_spatial_dims() == 3
 
 
 def test_set_max_epoch(
