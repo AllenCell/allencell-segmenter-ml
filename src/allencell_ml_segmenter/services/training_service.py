@@ -2,7 +2,7 @@ import asyncio
 
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.event import Event
-from cyto_dl.api.model import CytoDLModel
+# from cyto_dl.api.model import CytoDLModel
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.training.training_model import (
     Hardware,
