@@ -90,7 +90,9 @@ class TrainingService(Subscriber):
                                           overrides=[self._get_hardware_override(),
                                                      self._get_image_dims_override(),
                                                      self._get_experiment_name_override(),
-                                                     self._get_max_epoch_override(), "data.path=test_path"])
+                                                     self._get_max_epoch_override(),
+                                                     self._get_images_directory_override(),
+                                                     ])
             #model.print_config()
             asyncio.run(model.train())
 
@@ -119,13 +121,12 @@ class TrainingService(Subscriber):
         """
         return f"trainer.max_epochs={self._training_model.get_max_epoch()}"
 
-    def _set_images_directory(self) -> None:
+    def _get_images_directory_override(self) -> str:
         """
-        Sets the data.path argument variable for hydra override using sys.argv
+        Get the data path override for the CytoDlModel
+        Cyto dl expects a train.csv, valid.csv, and a test.csv in this folder for training.
         """
-        # works without ++
-        images_directory: Path = self._training_model.get_images_directory()
-        sys.argv.append(f"++data.path={str(images_directory)}")
+        return f"data.path={str(self._training_model.get_images_directory())}
 
     def _set_patch_shape_from_size(self) -> None:
         """
@@ -135,11 +136,3 @@ class TrainingService(Subscriber):
         sys.argv.append(
             f"++data._aux.patch_shape={_list_to_string(patch_size.value)}"
         )
-
-    def _set_config_dir(self) -> None:
-        """
-        Sets the config_dir hydra runtime variable using sys.argv
-        """
-        # This hydra runtime variable needs to be set in separate calls to sys.argv
-        sys.argv.append("--config-dir")
-        sys.argv.append(str(self._training_model.get_config_dir()))
