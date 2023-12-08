@@ -90,7 +90,7 @@ class TrainingService(Subscriber):
                                           overrides=[self._get_hardware_override(),
                                                      self._get_image_dims_override(),
                                                      self._get_experiment_name_override(),
-                                                     "trainer.max_epochs=1", "data.path=test_path"])
+                                                     self._get_max_epoch_override(), "data.path=test_path"])
             #model.print_config()
             asyncio.run(model.train())
 
@@ -113,14 +113,11 @@ class TrainingService(Subscriber):
         """
         return f"experiment_name={self._experiments_model.get_experiment_name()}"
 
-    def _set_max_epoch(self) -> None:
+    def _get_max_epoch_override(self) -> str:
         """
-        Sets the trainer.max_epochs argument variable for hydra override using sys.argv
+        Get the max epoch override for the CytoDlModel
         """
-        # works without ++
-        # trainer.max_epochs=3
-        max_epoch: int = self._training_model.get_max_epoch()
-        sys.argv.append(f"++trainer.max_epochs={max_epoch}")
+        return f"trainer.max_epochs={self._training_model.get_max_epoch()}"
 
     def _set_images_directory(self) -> None:
         """
