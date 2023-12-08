@@ -89,19 +89,19 @@ def test_get_image_dims(training_model: TrainingModel) -> None:
     Tests that get_image_dims returns the correct image dimensions.
     """
     # ASSERT
-    assert training_model.get_image_dims() is None
+    assert training_model.get_spatial_dims() is None
 
     # ARRANGE
-    training_model._image_dims = 2
+    training_model._spatial_dims = 2
 
     # ACT/ASSERT
-    assert training_model.get_image_dims() == 2
+    assert training_model.get_spatial_dims() == 2
 
     # ARRANGE
-    training_model._image_dims = 3
+    training_model._spatial_dims = 3
 
     # ACT/ASSERT
-    assert training_model.get_image_dims() == 3
+    assert training_model.get_spatial_dims() == 3
 
 
 def test_set_invalid_image_dims(training_model: TrainingModel) -> None:
@@ -110,11 +110,11 @@ def test_set_invalid_image_dims(training_model: TrainingModel) -> None:
     """
     # ACT
     with pytest.raises(ValueError):
-        training_model.set_image_dims(1)
+        training_model.set_spatial_dims(1)
 
     # ACT
     with pytest.raises(ValueError):
-        training_model.set_image_dims(4)
+        training_model.set_spatial_dims(4)
 
 
 def test_get_max_epoch(training_model: TrainingModel) -> None:
