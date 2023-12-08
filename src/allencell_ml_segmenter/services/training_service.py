@@ -128,11 +128,9 @@ class TrainingService(Subscriber):
         """
         return f"data.path={str(self._training_model.get_images_directory())}
 
-    def _set_patch_shape_from_size(self) -> None:
+    def _get_patch_shape_override(self) -> str:
         """
         Sets the data._aux.patch_shape argument variable for hydra override using sys.argv
         """
         patch_size: PatchSize = self._training_model.get_patch_size()
-        sys.argv.append(
-            f"++data._aux.patch_shape={_list_to_string(patch_size.value)}"
-        )
+        return f"data._aux.patch_shape={_list_to_string(patch_size.value)}"
