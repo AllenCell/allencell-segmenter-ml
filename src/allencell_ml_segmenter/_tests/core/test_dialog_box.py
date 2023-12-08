@@ -10,14 +10,14 @@ from qtpy.QtWidgets import (
     QPushButton,
 )
 from allencell_ml_segmenter.core.dialog_box import DialogBox
+from pytestqt.qtbot import QtBot
+from qtpy.QtCore import Qt
 
 
 @pytest.fixture
-def dialog():
-    app = QApplication([])
+def dialog(qtbot: QtBot):
     dialog = DialogBox("Test Message")
     yield dialog
-    app.quit()
 
 
 def test_init(dialog):
@@ -39,10 +39,16 @@ def test_no_selected(dialog):
     assert dialog.selection is False
 
 
-def test_button_connections(dialog):
+def test_button_connections(dialog, qtbot: QtBot):
     # Manually triggering the click event for testing
-    dialog.yes_btn.click()
+    qtbot.mouseClick(
+        dialog.yes_btn,
+        Qt.LeftButton,
+    )
     assert dialog.selection is True
 
-    dialog.no_btn.click()
+    qtbot.mouseClick(
+        dialog.no_btn,
+        Qt.LeftButton,
+    )
     assert dialog.selection is False
