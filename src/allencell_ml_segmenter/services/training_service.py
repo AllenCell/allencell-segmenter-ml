@@ -88,7 +88,9 @@ class TrainingService(Subscriber):
             model.load_default_experiment('segmentation',
                                           output_dir=f"{self._experiments_model.get_user_experiments_path()}/{self._experiments_model.get_experiment_name()}",
                                           overrides=[self._get_hardware_override(),
-                                                     self._get_image_dims_override(), "experiment_name=experiment_name_test", "trainer.max_epochs=1", "data.path=test_path"])
+                                                     self._get_image_dims_override(),
+                                                     self._get_experiment_name_override(),
+                                                     "trainer.max_epochs=1", "data.path=test_path"])
             #model.print_config()
             asyncio.run(model.train())
 
@@ -99,19 +101,17 @@ class TrainingService(Subscriber):
         hardware_type: Hardware = self._training_model.get_hardware_type()
         return f"trainer={hardware_type.value}"
 
-    def _get_image_dims_override(self) -> None:
+    def _get_spatial_dims_override(self) -> str:
         """
-        Sets the spatial_dims argument variable for hydra override using sys.argv
+        Get the spatial_dims override for the CytoDlModel
         """
         return(f"spatial_dims={self._training_model.get_image_dims()}")
 
-    def _set_experiment_name(self) -> None:
+    def _get_experiment_name_override(self) -> str:
         """
-        Sets the experiment_name argument variable for hydra override using sys.argv
+        Get the experiment name override for the CytoDlModel
         """
-        # works without ++
-        experiment_name: str = self._experiments_model.get_experiment_name()
-        sys.argv.append(f"++experiment_name={experiment_name}")
+        return f"experiment_name={self._experiments_model.get_experiment_name()}"
 
     def _set_max_epoch(self) -> None:
         """
