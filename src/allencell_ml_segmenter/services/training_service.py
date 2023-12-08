@@ -60,41 +60,20 @@ class TrainingService(Subscriber):
         if self._training_model.is_training_running():
             # Only supporting segmentation config for now
             self._training_model.set_experiment_type("segmentation")
-
-            # Only supporting MACOS and CPU use for now
-            self._training_model.set_hardware_type("cpu")
-
-            # UI is not activated yet.  Is 9 special?
-            self._training_model.set_channel_index(9)
-
-            # This field is not supported for now (maybe cancel button is sufficient?)
-            self._training_model.set_max_time(9992)
-
-            # Source of configs relative to user's home.  We need a dynamic solution in prod.
-            self._training_model.set_config_dir(
-                f"{self._experiments_model.get_cyto_dl_config().get_cyto_dl_home_path()}/configs"
-            )
+            self._training_model.set_images_directory(Path("/Users/brian.kim/work/cyto-dl/data/example_experiment_data"))
+            # Following lines does nothing currently, need to implement
+            # self._training_model.set_channel_index(9)
+            # self._training_model.set_max_time(9992)
             #############################################
-            sys.argv.append(
-                # This is meant to be a string as is - not a string template.  In cyto-dl, it will be treated as a string template
-                "hydra.run.dir=${paths.log_dir}/${task_name}/runs/${experiment_name}"
-            )
-            if self._experiments_model.get_checkpoint() is not None:
-                sys.argv.append(
-                    f"ckpt_path={self._experiments_model.get_model_checkpoints_path(self._experiments_model.get_experiment_name(), self._experiments_model.get_checkpoint())}"
-                )
+            # sys.argv.append(
+            #     # This is meant to be a string as is - not a string template.  In cyto-dl, it will be treated as a string template
+            #     "hydra.run.dir=${paths.log_dir}/${task_name}/runs/${experiment_name}"
+            # )
             model = CytoDLModel()
             model.download_example_data()
-            model.load_default_experiment('segmentation',
+            model.load_default_experiment(self._training_model.get_experiment_type().value,
                                           output_dir=f"{self._experiments_model.get_user_experiments_path()}/{self._experiments_model.get_experiment_name()}",
-                                          overrides=[self._get_hardware_override(),
-                                                     self._get_image_dims_override(),
-                                                     self._get_experiment_name_override(),
-                                                     self._get_max_epoch_override(),
-                                                     self._get_images_directory_override(),
-                                                     self._get_patch_shape_override()
-                                                     ])
-            #model.print_config()
+                                          overrides=self._build_overrides())
             asyncio.run(model.train())
 
     def _get_hardware_override(self) -> str:
@@ -127,11 +106,66 @@ class TrainingService(Subscriber):
         Get the data path override for the CytoDlModel
         Cyto dl expects a train.csv, valid.csv, and a test.csv in this folder for training.
         """
-        return f"data.path={str(self._training_model.get_images_directory())}
+        return f"data.path={str(self._training_model.get_images_directory())}"
 
     def _get_patch_shape_override(self) -> str:
         """
-        Sets the data._aux.patch_shape argument variable for hydra override using sys.argv
+        get the patch shape override for the CytoDLModel
         """
         patch_size: PatchSize = self._training_model.get_patch_size()
         return f"data._aux.patch_shape={_list_to_string(patch_size.value)}"
+
+    def _get_checkpoint_override(self) -> str:
+        """
+        Get the checkpoint path override for the CytoDLModel
+        """
+        return f"ckpt_path={self._experiments_model.get_model_checkpoints_path(self._experiments_model.get_experiment_name(), self._experiments_model.get_checkpoint())}"
+
+    def _build_overrides(self) -> List[str]:
+        """
+        Build a list of overrides for the CytoDLModel from plugin state.
+        """
+        # TODO: Add channel index selection from UI
+        # TODO: Add max time from UI
+        overrides: List = []
+
+        # REQUIRED OVERRIDES for cyto-dl run
+        if self._training_model.get_hardware_type() is None:
+            # v1 defaults to cpu
+            self._training_model.set_hardware_type("cpu")
+        overrides.append(self._get_hardware_override())
+
+        if self._training_model.get_spatial_dims() is None:
+            raise ValueError("Must define spatial dims 2-d or 3-d to run training.")
+        overrides.append(self._get_spatial_dims_override())
+
+        if self._experiments_model.get_experiment_name() is None:
+            raise ValueError("User has not selected experiment to save model into")
+        overrides.append(self._get_experiment_name_override())
+
+        if self._training_model.get_images_directory() is None:
+            raise ValueError("User has not selected input images for training")
+        overrides.append(self._get_images_directory_override())
+
+        # OPTIONAL OVERRIDES for cyto-dl run
+        if self._training_model.get_max_epoch() is not None:
+            # TODO: ask benji- what happens if a user does not define max_epoch?
+            # For now use the default coded values in cyto-dl's experiment config files
+            overrides.append(self._get_max_epoch_override())
+
+        if self._training_model.get_patch_size() is not None:
+            # If for some reason patch size is not selected, default to the patch size defined in cyto-dl's experiment
+            # config files.
+            overrides.append(self._get_patch_shape_override())
+
+        if self._experiments_model.get_checkpoint() is not None:
+            # If checkpoint path is selected, use
+            overrides.append(self._get_checkpoint_override())
+
+        return overrides
+
+
+
+
+
+
