@@ -65,9 +65,11 @@ class TrainingService(Subscriber):
             # )
             model = CytoDLModel()
             model.download_example_data()
-            model.load_default_experiment(self._training_model.get_experiment_type().value,
-                                          output_dir=f"{self._experiments_model.get_user_experiments_path()}/{self._experiments_model.get_experiment_name()}",
-                                          overrides=self._build_overrides())
+            model.load_default_experiment(
+                self._training_model.get_experiment_type().value,
+                output_dir=f"{self._experiments_model.get_user_experiments_path()}/{self._experiments_model.get_experiment_name()}",
+                overrides=self._build_overrides(),
+            )
             asyncio.run(model.train())
 
     def _get_hardware_override(self) -> str:
@@ -81,13 +83,15 @@ class TrainingService(Subscriber):
         """
         Get the spatial_dims override for the CytoDlModel
         """
-        return(f"spatial_dims={self._training_model.get_spatial_dims()}")
+        return f"spatial_dims={self._training_model.get_spatial_dims()}"
 
     def _get_experiment_name_override(self) -> str:
         """
         Get the experiment name override for the CytoDlModel
         """
-        return f"experiment_name={self._experiments_model.get_experiment_name()}"
+        return (
+            f"experiment_name={self._experiments_model.get_experiment_name()}"
+        )
 
     def _get_max_epoch_override(self) -> str:
         """
@@ -130,11 +134,15 @@ class TrainingService(Subscriber):
         overrides.append(self._get_hardware_override())
 
         if self._training_model.get_spatial_dims() is None:
-            raise ValueError("Must define spatial dims 2-d or 3-d to run training.")
+            raise ValueError(
+                "Must define spatial dims 2-d or 3-d to run training."
+            )
         overrides.append(self._get_spatial_dims_override())
 
         if self._experiments_model.get_experiment_name() is None:
-            raise ValueError("User has not selected experiment to save model into")
+            raise ValueError(
+                "User has not selected experiment to save model into"
+            )
         overrides.append(self._get_experiment_name_override())
 
         if self._training_model.get_images_directory() is None:
@@ -157,9 +165,3 @@ class TrainingService(Subscriber):
             overrides.append(self._get_checkpoint_override())
 
         return overrides
-
-
-
-
-
-
