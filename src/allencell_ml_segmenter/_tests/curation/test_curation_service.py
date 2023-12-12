@@ -18,18 +18,25 @@ from allencell_ml_segmenter.curation.curation_service import (
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.main.viewer import Viewer
 
+@pytest.fixture
+def curation_model() -> CurationModel:
+    return Mock(spec=CurationModel)
 
 @pytest.fixture
-def curation_service() -> CurationService:
+def viewer() -> Viewer:
+    return Mock(spec=Viewer)
+
+@pytest.fixture
+def curation_service(curation_model: CurationModel, viewer: Viewer) -> CurationService:
     return CurationService(
-        curation_model=Mock(spec=CurationModel),
-        viewer=Mock(spec=Viewer),
+        curation_model=curation_model,
+        viewer=viewer,
     )
 
 
-def test_build_raw_images_list(curation_service: CurationService) -> None:
+def test_build_raw_images_list(curation_service: CurationService, curation_model: CurationModel) -> None:
     # Arrange
-    curation_service._curation_model.get_raw_directory = Mock(
+    curation_model.get_raw_directory = Mock(
         return_value=Path(__file__).parent / "curation_tests"
     )
     curation_service._get_files_list_from_path = Mock()
@@ -43,10 +50,11 @@ def test_build_raw_images_list(curation_service: CurationService) -> None:
 
 def test_build_raw_images_list_invalid_path(
     curation_service: CurationService,
+    curation_model: CurationModel
 ) -> None:
     # Arrange
     # There is no raw direcotry set in the model- getter returns None
-    curation_service._curation_model.get_raw_directory = Mock(
+    curation_model.get_raw_directory = Mock(
         return_value=None
     )
     # Act/ assert
@@ -54,9 +62,9 @@ def test_build_raw_images_list_invalid_path(
         curation_service.build_raw_images_list()
 
 
-def test_build_seg1_images_list(curation_service: CurationService) -> None:
+def test_build_seg1_images_list(curation_service: CurationService, curation_model: CurationModel) -> None:
     # Arrange
-    curation_service._curation_model.get_seg1_directory = Mock(
+    curation_model.get_seg1_directory = Mock(
         return_value=Path(__file__).parent / "curation_tests"
     )
     curation_service._get_files_list_from_path = Mock()
@@ -70,10 +78,11 @@ def test_build_seg1_images_list(curation_service: CurationService) -> None:
 
 def test_build_seg1_images_list_invalid_path(
     curation_service: CurationService,
+    curation_model: CurationModel
 ) -> None:
     # Arrange
     # There is no raw direcotry set in the model- getter returns None
-    curation_service._curation_model.get_seg1_directory = Mock(
+    curation_model.get_seg1_directory = Mock(
         return_value=None
     )
     # Act/ assert
@@ -81,9 +90,9 @@ def test_build_seg1_images_list_invalid_path(
         curation_service.build_seg1_images_list()
 
 
-def test_build_seg2_images_list(curation_service: CurationService) -> None:
+def test_build_seg2_images_list(curation_service: CurationService, curation_model: CurationModel) -> None:
     # Arrange
-    curation_service._curation_model.get_seg2_directory = Mock(
+    curation_model.get_seg2_directory = Mock(
         return_value=Path(__file__).parent / "curation_tests"
     )
     curation_service._get_files_list_from_path = Mock()
@@ -97,10 +106,11 @@ def test_build_seg2_images_list(curation_service: CurationService) -> None:
 
 def test_build_seg2_images_list_invalid_path(
     curation_service: CurationService,
+    curation_model: CurationModel
 ) -> None:
     # Arrange
     # There is no raw direcotry set in the model- getter returns None
-    curation_service._curation_model.get_seg2_directory: Mock = Mock(
+    curation_model.get_seg2_directory = Mock(
         return_value=None
     )
     # Act/ assert
@@ -121,62 +131,66 @@ def test_get_files_list_from_path(curation_service: CurationService) -> None:
 
 def test_remove_all_images_from_viewer_layers(
     curation_service: CurationService,
+    viewer: Viewer
 ) -> None:
     # Act
     curation_service.remove_all_images_from_viewer_layers()
 
     # Assert
-    curation_service._viewer.clear_layers.assert_called_once()
+    viewer.clear_layers.assert_called_once()
 
 
-def test_add_image_to_viewer(curation_service: CurationService) -> None:
+def test_add_image_to_viewer(curation_service: CurationService, viewer: Viewer) -> None:
     # Act
-    mock_array = np.ndarray([1, 1, 2])
+    mock_array: np.ndarray = np.ndarray([1, 1, 2])
     curation_service.add_image_to_viewer(mock_array, title="hello")
 
-    curation_service._viewer.add_image.assert_called_once_with(
+    viewer.add_image.assert_called_once_with(
         mock_array, name="hello"
     )
 
 
 def test_enable_shape_selection_viewer_merging(
     curation_service: CurationService,
+    curation_model: CurationModel,
+    viewer: Viewer
 ) -> None:
     # Arrange
     curation_service.enable_shape_selection_viewer(
         mode=SelectionMode.EXCLUDING
     )
 
-    curation_service._viewer.add_shapes.assert_called_once_with(
+    viewer.add_shapes.assert_called_once_with(
         "Excluding Mask"
     )
-    curation_service._curation_model.append_excluding_mask_shape_layer.assert_called_once()
+    curation_model.append_excluding_mask_shape_layer.assert_called_once()
 
 
 def test_enable_shape_selection_viewer_merging(
     curation_service: CurationService,
+    curation_model: CurationModel,
+    viewer: Viewer
 ) -> None:
     # Arrange
     curation_service.enable_shape_selection_viewer(mode=SelectionMode.MERGING)
 
-    curation_service._viewer.add_shapes.assert_called_once_with(
+    viewer.add_shapes.assert_called_once_with(
         name="Merging Mask"
     )
-    curation_service._curation_model.append_merging_mask_shape_layer.assert_called_once()
+    curation_model.append_merging_mask_shape_layer.assert_called_once()
 
 
-def test_select_directory_raw(curation_service: CurationService) -> None:
+def test_select_directory_raw() -> None:
     # Arrange
+    model: CurationModel = CurationModel()
+    curation_service: CurationService = CurationService(model, viewer=Mock(spec=Viewer))
     curation_service.get_total_num_channels_of_images_in_path: Mock = Mock(
         return_value=3
     )
-    curation_service._curation_model = (
-        CurationModel()
-    )  # Real model to test dispatch
-    curation_service._curation_model.set_raw_directory = Mock()
-    curation_service._curation_model.set_total_num_channels_raw = Mock()
+    model.set_raw_directory = Mock()
+    model.set_total_num_channels_raw = Mock()
     fake_subscriber: FakeSubscriber = FakeSubscriber()
-    curation_service._curation_model.subscribe(
+    model.subscribe(
         Event.ACTION_CURATION_RAW_SELECTED,
         fake_subscriber,
         lambda e: fake_subscriber.handle(e),
@@ -186,53 +200,57 @@ def test_select_directory_raw(curation_service: CurationService) -> None:
     curation_service.select_directory_raw(Path("test_path"))
 
     # Assert
-    curation_service._curation_model.set_raw_directory.assert_called_once_with(
+    model.set_raw_directory.assert_called_once_with(
         Path("test_path")
     )
-    curation_service._curation_model.set_total_num_channels_raw.assert_called_once_with(
+    model.set_total_num_channels_raw.assert_called_once_with(
         3
     )
     assert fake_subscriber.was_handled(Event.ACTION_CURATION_RAW_SELECTED)
 
 
-def test_select_directory_seg1(curation_service: CurationService) -> None:
+def test_select_directory_seg1() -> None:
     # Arrange
-    curation_service.get_total_num_channels_of_images_in_path: Mock = Mock(
+    model: CurationModel = CurationModel()
+    model.set_seg1_directory = Mock()
+    model.set_total_num_channels_seg1 = Mock()
+    test_service_with_model: CurationService = CurationService(model, viewer=Mock(spec=Viewer))
+    test_service_with_model.get_total_num_channels_of_images_in_path: Mock = Mock(
         return_value=4
     )
-    curation_service._curation_model = CurationModel()
-    curation_service._curation_model.set_seg1_directory = Mock()
-    curation_service._curation_model.set_total_num_channels_seg1 = Mock()
     fake_subscriber: FakeSubscriber = FakeSubscriber()
-    curation_service._curation_model.subscribe(
+    model.subscribe(
         Event.ACTION_CURATION_SEG1_SELECTED,
         fake_subscriber,
         lambda e: fake_subscriber.handle(e),
     )
 
     # Act
-    curation_service.select_directory_seg1(Path("test_path"))
+    test_service_with_model.select_directory_seg1(Path("test_path"))
 
     # Assert
-    curation_service._curation_model.set_seg1_directory.assert_called_once_with(
+    model.set_seg1_directory.assert_called_once_with(
         Path("test_path")
     )
-    curation_service._curation_model.set_total_num_channels_seg1.assert_called_once_with(
+    model.set_total_num_channels_seg1.assert_called_once_with(
         4
     )
     assert fake_subscriber.was_handled(Event.ACTION_CURATION_SEG1_SELECTED)
 
 
-def test_select_directory_seg2(curation_service: CurationService) -> None:
+def test_select_directory_seg2() -> None:
     # Arrange
+
+    curation_model = CurationModel()
+    curation_model.set_seg2_directory = Mock()
+    curation_model.set_total_num_channels_seg2 = Mock()
+
+    curation_service = CurationService(curation_model=curation_model, viewer=Mock(spec=Viewer))
     curation_service.get_total_num_channels_of_images_in_path: Mock = Mock(
         return_value=2
     )
-    curation_service._curation_model = CurationModel()
-    curation_service._curation_model.set_seg2_directory = Mock()
-    curation_service._curation_model.set_total_num_channels_seg2 = Mock()
     fake_subscriber: FakeSubscriber = FakeSubscriber()
-    curation_service._curation_model.subscribe(
+    curation_model.subscribe(
         Event.ACTION_CURATION_SEG2_SELECTED,
         fake_subscriber,
         lambda e: fake_subscriber.handle(e),
@@ -242,10 +260,10 @@ def test_select_directory_seg2(curation_service: CurationService) -> None:
     curation_service.select_directory_seg2(Path("test_path"))
 
     # Assert
-    curation_service._curation_model.set_seg2_directory.assert_called_once_with(
+    curation_model.set_seg2_directory.assert_called_once_with(
         Path("test_path")
     )
-    curation_service._curation_model.set_total_num_channels_seg2.assert_called_once_with(
+    curation_model.set_total_num_channels_seg2.assert_called_once_with(
         2
     )
     assert fake_subscriber.was_handled(Event.ACTION_CURATION_SEG2_SELECTED)
@@ -331,36 +349,37 @@ def test_write_curation_record(curation_service: CurationService) -> None:
 )
 def test_update_curation_record(
     curation_service: CurationService,
+    curation_model: CurationModel,
     use_this_image: str,
     expected_result: bool,
 ) -> None:
     # Arrange
-    curation_service._curation_model.get_current_excluding_mask_path.return_value = (
+    curation_model.get_current_excluding_mask_path.return_value = (
         "excluding_mask_path"
     )
-    curation_service._curation_model.get_current_merging_mask_path.return_value = (
+    curation_model.get_current_merging_mask_path.return_value = (
         "merging_mask_path"
     )
-    curation_service._curation_model.get_current_raw_image.return_value = (
+    curation_model.get_current_raw_image.return_value = (
         "raw_image_path"
     )
-    curation_service._curation_model.get_current_seg1_image.return_value = (
+    curation_model.get_current_seg1_image.return_value = (
         "seg1_image_path"
     )
-    curation_service._curation_model.get_current_seg2_image.return_value = (
+    curation_model.get_current_seg2_image.return_value = (
         "seg2_image_path"
     )
-    curation_service._curation_model.get_merging_mask_base_layer.return_value = (
+    curation_model.get_merging_mask_base_layer.return_value = (
         "seg2"
     )
-    curation_service._curation_model.get_curation_index.return_value = 1
+    curation_model.get_curation_index.return_value = 1
 
     # Act
     curation_service.update_curation_record(use_image=True)
 
     # Assert
     # Ensure last record in curation_record is the one we just added
-    assert curation_service._curation_model.append_curation_record.called_once_with(
+    assert curation_model.append_curation_record.called_once_with(
         CurationRecord(
             "raw_image_path",
             "seg1_image_path",
@@ -372,15 +391,15 @@ def test_update_curation_record(
         )
     )
     assert (
-        curation_service._curation_model.set_curation_index.called_once_with(2)
+        curation_model.set_curation_index.called_once_with(2)
     )
 
 
-def test_finished_shape_selection_excluding(curation_service) -> None:
+def test_finished_shape_selection_excluding(curation_service: CurationService, curation_model: CurationModel) -> None:
     # Arrange
-    curation_service._curation_model.get_excluding_mask_shape_layers = Mock()
+    curation_model.get_excluding_mask_shape_layers = Mock()
     shapes: Shapes = Shapes()
-    curation_service._curation_model.get_excluding_mask_shape_layers.return_value = [
+    curation_model.get_excluding_mask_shape_layers.return_value = [
         shapes
     ]
 
@@ -391,11 +410,11 @@ def test_finished_shape_selection_excluding(curation_service) -> None:
     assert shapes.mode == "pan_zoom"
 
 
-def test_finished_shape_selection_merging(curation_service) -> None:
+def test_finished_shape_selection_merging(curation_service: CurationService, curation_model: CurationModel) -> None:
     # Arrange
-    curation_service._curation_model.get_merging_mask_shape_layers = Mock()
+    curation_model.get_merging_mask_shape_layers = Mock()
     shapes: Shapes = Shapes()
-    curation_service._curation_model.get_merging_mask_shape_layers.return_value = [
+    curation_model.get_merging_mask_shape_layers.return_value = [
         shapes
     ]
 
@@ -406,9 +425,9 @@ def test_finished_shape_selection_merging(curation_service) -> None:
     assert shapes.mode == "pan_zoom"
 
 
-def test_clear_merging_mask_layers_all(
-    curation_service: CurationService,
-) -> None:
+def test_clear_merging_mask_layers_all(curation_model: CurationModel) -> None:
+    fake_viewer: FakeViewer = FakeViewer()
+    test_service_with_viewer: CurationService = CurationService(curation_model, viewer=fake_viewer)
     # Arrange
     shapes_layers: List[Shapes] = [
         Shapes(name="merging_layer"),
@@ -416,22 +435,22 @@ def test_clear_merging_mask_layers_all(
         Shapes(name="merging_layer3"),
     ]
 
-    curation_service._curation_model.get_merging_mask_shape_layers.return_value = (
+    curation_model.get_merging_mask_shape_layers.return_value = (
         shapes_layers
     )
-    curation_service._viewer.viewer = FakeViewer()
+    test_service_with_viewer._viewer.viewer = fake_viewer
 
     # act
-    curation_service.clear_merging_mask_layers_all()
+    test_service_with_viewer.clear_merging_mask_layers_all()
 
     # Assert
-    curation_service._curation_model.merging_mask_shape_layers = []
-    curation_service._viewer.viewer.layers.is_removed(shapes_layers[0])
-    curation_service._viewer.viewer.layers.is_removed(shapes_layers[1])
-    curation_service._viewer.viewer.layers.is_removed(shapes_layers[2])
+    curation_model.merging_mask_shape_layers = []
+    fake_viewer.layers.is_removed(shapes_layers[0])
+    fake_viewer.layers.is_removed(shapes_layers[1])
+    fake_viewer.layers.is_removed(shapes_layers[2])
 
 
-def test_clear_excluding_mask_layers_all(curation_service) -> None:
+def test_clear_excluding_mask_layers_all(curation_service: CurationService, curation_model: CurationModel, viewer: Viewer) -> None:
     # Arrange
     shapes_layers: List[Shapes] = [
         Shapes(name="merging_layer"),
@@ -439,111 +458,114 @@ def test_clear_excluding_mask_layers_all(curation_service) -> None:
         Shapes(name="merging_layer3"),
     ]
 
-    curation_service._curation_model.get_excluding_mask_shape_layers.return_value = (
+    curation_model.get_excluding_mask_shape_layers.return_value = (
         shapes_layers
     )
-    curation_service._viewer.viewer = Mock()
+    viewer.viewer = Mock()
 
     # act
     curation_service.clear_excluding_mask_layers_all()
 
     # Assert
-    curation_service._curation_model.excluding_mask_shape_layers = []
+    curation_model.excluding_mask_shape_layers = []
 
 
-def test_next_image_no_seg2(curation_service: CurationService) -> None:
+def test_next_image_no_seg2() -> None:
     # Arrange
-    curation_service.update_curation_record = Mock()
-    curation_service.remove_all_images_from_viewer_layers = Mock()
-    curation_service.add_image_to_viewer_from_path = Mock()
-    curation_service._curation_model = CurationModel()
-    curation_service._curation_model.image_available = Mock(return_value=True)
-    raw_path = Path("raw_test")
-    curation_service._curation_model.get_current_raw_image = Mock(
+    model: CurationModel = CurationModel()
+    test_service_with_model: CurationService = CurationService(curation_model=model, viewer=Mock(spec=Viewer))
+    model.image_available = Mock(return_value=True)
+    raw_path: Mock = Mock(spec=Path)
+    model.get_current_raw_image = Mock(
         return_value=raw_path
     )
-    curation_service._curation_model.get_current_seg1_image = Mock(
+    model.get_current_seg1_image = Mock(
         return_value=raw_path
     )
-    curation_service._curation_model.get_seg2_images = Mock(return_value=None)
-    curation_service._curation_model.set_current_merging_mask_path = Mock()
-    curation_service._curation_model.set_current_loaded_images = Mock()
+    model.get_seg2_images = Mock(return_value=None)
+    model.set_current_merging_mask_path = Mock()
+    model.set_current_loaded_images = Mock()
+    test_service_with_model.add_image_to_viewer_from_path = Mock()
+    test_service_with_model.update_curation_record = Mock()
+    test_service_with_model.remove_all_images_from_viewer_layers = Mock()
+    test_service_with_model.add_image_to_viewer_from_path = Mock()
     fake_subscriber: FakeSubscriber = FakeSubscriber()
-    curation_service._curation_model.subscribe(
+    model.subscribe(
         Event.PROCESS_CURATION_NEXT_IMAGE,
         fake_subscriber,
         lambda e: fake_subscriber.handle(e),
     )
 
     # Act
-    curation_service.next_image(use_image=True)
+    test_service_with_model.next_image(use_image=True)
 
     # Assert
-    curation_service.update_curation_record.assert_called_once_with(True)
-    curation_service.remove_all_images_from_viewer_layers.assert_called_once()
-    curation_service._curation_model.set_current_merging_mask_path.assert_called_once()
-    curation_service._curation_model.set_current_merging_mask_path.assert_called_once()
-    curation_service._curation_model.set_current_loaded_images.assert_called_with(
+    test_service_with_model.update_curation_record.assert_called_once_with(True)
+    test_service_with_model.remove_all_images_from_viewer_layers.assert_called_once()
+    model.set_current_merging_mask_path.assert_called_once()
+    model.set_current_loaded_images.assert_called_with(
         (raw_path, raw_path, None)
     )
     assert fake_subscriber.was_handled(Event.PROCESS_CURATION_NEXT_IMAGE)
 
 
-def test_next_image_with_seg2(curation_service: CurationService) -> None:
+def test_next_image_with_seg2() -> None:
     # Arrange
-    curation_service.update_curation_record = Mock()
-    curation_service.remove_all_images_from_viewer_layers = Mock()
-    curation_service.add_image_to_viewer_from_path = Mock()
-    curation_service._curation_model = CurationModel()
-    curation_service._curation_model.image_available = Mock(return_value=True)
+    model: CurationModel = CurationModel()
+    test_service_with_model: CurationService = CurationService(curation_model=model, viewer=Mock(spec=Viewer))
+    model.image_available = Mock(return_value=True)
     raw_path: Path = Path("raw_test")
     seg1_path: Path = Path("seg1_test")
     seg2_path: Path = Path("seg2_test")
-    curation_service._curation_model.get_current_raw_image = Mock(
+    model.get_current_raw_image = Mock(
         return_value=raw_path
     )
-    curation_service._curation_model.get_current_seg1_image = Mock(
+    model.get_current_seg1_image = Mock(
         return_value=seg1_path
     )
-    curation_service._curation_model.get_current_seg2_image = Mock(
+    model.get_current_seg2_image = Mock(
         return_value=seg2_path
     )
-    curation_service._curation_model.set_current_merging_mask_path = Mock()
-    curation_service._curation_model.set_current_loaded_images = Mock()
-    curation_service._curation_model.set_seg2_images([seg2_path])
+    model.get_seg2_images = Mock(return_value=[seg2_path])
+    model.set_current_merging_mask_path = Mock()
+    model.set_current_loaded_images = Mock()
+    test_service_with_model.add_image_to_viewer_from_path = Mock()
+    test_service_with_model.update_curation_record = Mock()
+    test_service_with_model.remove_all_images_from_viewer_layers = Mock()
+    test_service_with_model.add_image_to_viewer_from_path = Mock()
     fake_subscriber: FakeSubscriber = FakeSubscriber()
-    curation_service._curation_model.subscribe(
+    model.subscribe(
         Event.PROCESS_CURATION_NEXT_IMAGE,
         fake_subscriber,
         lambda e: fake_subscriber.handle(e),
     )
 
     # Act
-    curation_service.next_image(use_image=True)
+    test_service_with_model.next_image(use_image=True)
 
     # Assert
-    curation_service.update_curation_record.assert_called_once_with(True)
-    curation_service.remove_all_images_from_viewer_layers.assert_called_once()
-    curation_service._curation_model.set_current_merging_mask_path.assert_called_once()
-    curation_service._curation_model.set_current_merging_mask_path.assert_called_once()
-    curation_service._curation_model.set_current_loaded_images.assert_called_once_with(
+    test_service_with_model.update_curation_record.assert_called_once_with(True)
+    test_service_with_model.remove_all_images_from_viewer_layers.assert_called_once()
+    model.set_current_merging_mask_path.assert_called_once()
+    model.set_current_merging_mask_path.assert_called_once()
+    model.set_current_loaded_images.assert_called_once_with(
         (raw_path, seg1_path, seg2_path)
     )
     assert fake_subscriber.was_handled(Event.PROCESS_CURATION_NEXT_IMAGE)
 
 
-def test_next_image_finished(curation_service: CurationService) -> None:
+def test_next_image_finished(curation_service: CurationService, curation_model: CurationModel) -> None:
     # Arrange
     curation_service.update_curation_record = Mock()
-    curation_service._curation_model.image_available.return_value = False
+    curation_model.image_available.return_value = False
     curation_service.write_curation_record = Mock()
-    curation_service._curation_model.experiments_model = Mock(
+    curation_model.experiments_model = Mock(
         spec=ExperimentsModel
     )
-    curation_service._curation_model.experiments_model.get_user_experiments_path.return_value = Path(
+    curation_model.experiments_model.get_user_experiments_path.return_value = Path(
         "path"
     )
-    curation_service._curation_model.experiments_model.get_experiment_name.return_value = Path(
+    curation_model.experiments_model.get_experiment_name.return_value = Path(
         "test_exp"
     )
 
