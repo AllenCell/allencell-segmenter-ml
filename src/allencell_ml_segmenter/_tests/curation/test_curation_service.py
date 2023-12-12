@@ -428,7 +428,7 @@ def test_clear_excluding_mask_layers_all(curation_service) -> None:
 
 
 def test_next_image_no_seg2(curation_service: CurationService) -> None:
-    # Act
+    # Arrange
     curation_service.update_curation_record = Mock()
     curation_service.remove_all_images_from_viewer_layers = Mock()
     curation_service.add_image_to_viewer_from_path = Mock()
@@ -442,6 +442,7 @@ def test_next_image_no_seg2(curation_service: CurationService) -> None:
     )
     curation_service._curation_model.get_seg2_images.return_value = None
 
+    # Act
     curation_service.next_image(use_image=True)
 
     # Assert
@@ -477,6 +478,7 @@ def test_next_image_with_seg2(curation_service: CurationService) -> None:
     )
     curation_service._curation_model.set_seg2_images([seg2_path])
 
+    # Act
     curation_service.next_image(use_image=True)
 
     # Assert
