@@ -131,50 +131,71 @@ def test_get_files_list_from_path(curation_service: CurationService) -> None:
     )
 
 
-def test_remove_all_images_from_viewer_layers(
-    curation_service: CurationService, viewer: Viewer
-) -> None:
+def test_remove_all_images_from_viewer_layers() -> None:
+    # Arrange
+    fake_viewer: FakeViewer = FakeViewer()
+    curation_service_fake_viewer: CurationService = CurationService(Mock(spec=CurationModel), fake_viewer)
+
     # Act
-    curation_service.remove_all_images_from_viewer_layers()
+    curation_service_fake_viewer.remove_all_images_from_viewer_layers()
 
     # Assert
-    viewer.clear_layers.assert_called_once()
+    assert fake_viewer.layers_cleared_count == 1
 
 
-def test_add_image_to_viewer(
-    curation_service: CurationService, viewer: Viewer
-) -> None:
+def test_add_image_to_viewer() -> None:
+    # Arrange
+    fake_viewer: FakeViewer = FakeViewer()
+    curation_service_fake_viewer: CurationService = CurationService(Mock(spec=CurationModel), fake_viewer)
+
     # Act
     mock_array: np.ndarray = np.ndarray([1, 1, 2])
-    curation_service.add_image_to_viewer(mock_array, title="hello")
+    curation_service_fake_viewer.add_image_to_viewer(mock_array, title="hello")
 
-    viewer.add_image.assert_called_once_with(mock_array, name="hello")
+    assert np.array_equal(fake_viewer.images_added["hello"], mock_array)
 
 
-def test_enable_shape_selection_viewer_merging(
-    curation_service: CurationService,
-    curation_model: CurationModel,
-    viewer: Viewer,
-) -> None:
+
+def test_enable_shape_selection_viewer_merging() -> None:
     # Arrange
-    curation_service.enable_shape_selection_viewer(
+    fake_viewer: FakeViewer = FakeViewer()
+    curation_model = CurationModel()
+    fake_subscriber: FakeSubscriber = FakeSubscriber()
+    curation_model.subscribe(
+        Event.ACTION_CURATION_DRAW_EXCLUDING,
+        fake_subscriber,
+        lambda e: fake_subscriber.handle(e)
+    )
+    curation_service_fake_viewer: CurationService = CurationService(curation_model, fake_viewer)
+
+    # Arrange
+    curation_service_fake_viewer.enable_shape_selection_viewer(
         mode=SelectionMode.EXCLUDING
     )
 
-    viewer.add_shapes.assert_called_once_with("Excluding Mask")
-    curation_model.append_excluding_mask_shape_layer.assert_called_once()
+    assert "Excluding_mask" in fake_viewer.shapes_layers_added
+    assert curation_model.get_excluding_mask_shape_layers()[0].name == "Excluding_mask"
+    assert fake_subscriber.was_handled(Event.ACTION_CURATION_DRAW_EXCLUDING)
 
 
-def test_enable_shape_selection_viewer_merging(
-    curation_service: CurationService,
-    curation_model: CurationModel,
-    viewer: Viewer,
-) -> None:
+def test_enable_shape_selection_viewer_merging() -> None:
     # Arrange
-    curation_service.enable_shape_selection_viewer(mode=SelectionMode.MERGING)
+    fake_viewer: FakeViewer = FakeViewer()
+    curation_model = CurationModel()
+    fake_subscriber = FakeSubscriber()
+    curation_model.subscribe(
+        Event.ACTION_CURATION_DRAW_MERGING,
+        fake_subscriber,
+        lambda e: fake_subscriber.handle(e)
+    )
+    curation_service_fake_viewer: CurationService = CurationService(curation_model, fake_viewer)
 
-    viewer.add_shapes.assert_called_once_with(name="Merging Mask")
-    curation_model.append_merging_mask_shape_layer.assert_called_once()
+    # Act
+    curation_service_fake_viewer.enable_shape_selection_viewer(mode=SelectionMode.MERGING)
+
+    assert "Merging Mask" in fake_viewer.shapes_layers_added
+    assert curation_model.get_merging_mask_shape_layers()[0].name == "Merging Mask"
+    assert fake_subscriber.was_handled(Event.ACTION_CURATION_DRAW_MERGING)
 
 
 def test_select_directory_raw() -> None:
@@ -455,7 +476,7 @@ def test_next_image_no_seg2() -> None:
     )
     model.image_available = Mock(return_value=True)
     raw_path: Mock = Mock(spec=Path)
-    model.get_current_raw_image = Mock(return_value=raw_path)
+    model.get_current_raw_image = Mock(return_vƒalue=raw_path)
     model.get_current_seg1_image = Mock(return_value=raw_path)
     model.get_save_masks_path = Mock(return_value=Path("fake_path_save_mask"))
     model.get_seg2_images = Mock(return_value=None)
