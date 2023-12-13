@@ -17,6 +17,7 @@ class FakeLayer:
     def is_removed(self, layer: Layer):
         return layer in self.removed
 
+
 class FakeViewer(IViewer):
     def __init__(self):
         self._viewer = None
@@ -36,4 +37,3 @@ class FakeViewer(IViewer):
         mock_shapes_return = Mock(Shapes)
         mock_shapes_return.name = name
         return mock_shapes_return
-
