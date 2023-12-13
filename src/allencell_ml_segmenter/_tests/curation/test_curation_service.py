@@ -93,10 +93,10 @@ def test_build_seg1_images_list_invalid_path(
         curation_service.build_seg1_images_list()
 
 
-def test_build_seg2_images_list(
-    curation_service: CurationService, curation_model: CurationModel
-) -> None:
+def test_build_seg2_images_list() -> None:
     # Arrange
+    curation_model: CurationModel = CurationModel()
+    curation_service: CurationService = CurationService(curation_model, Mock(spec=Viewer))
     curation_model.get_seg2_directory = Mock(
         return_value=Path(__file__).parent / "curation_tests"
     )
@@ -109,10 +109,10 @@ def test_build_seg2_images_list(
     )
 
 
-def test_build_seg2_images_list_invalid_path(
-    curation_service: CurationService, curation_model: CurationModel
-) -> None:
+def test_build_seg2_images_list_invalid_path() -> None:
     # Arrange
+    curation_model: CurationModel = CurationModel()
+    curation_service: CurationService = CurationService(curation_model, Mock(spec=Viewer))
     # There is no raw direcotry set in the model- getter returns None
     curation_model.get_seg2_directory = Mock(return_value=None)
     # Act/ assert
