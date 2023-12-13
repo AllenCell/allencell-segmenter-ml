@@ -39,10 +39,10 @@ def curation_service(
     )
 
 
-def test_build_raw_images_list(
-    curation_service: CurationService, curation_model: CurationModel
-) -> None:
+def test_build_raw_images_list() -> None:
     # Arrange
+    curation_model: CurationModel = CurationModel()
+    curation_service: CurationService = CurationService(curation_model, Mock(spec=Viewer))
     curation_model.get_raw_directory = Mock(
         return_value=Path(__file__).parent / "curation_tests"
     )
