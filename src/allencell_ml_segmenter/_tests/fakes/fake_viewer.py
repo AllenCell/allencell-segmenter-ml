@@ -20,6 +20,10 @@ class FakeViewer(IViewer):
     def __init__(self):
         self._viewer = None
         self.layers = FakeLayer()
+        self.layers_cleared_count = 0
 
     def add_image(image, name):
         pass
+
+    def clear_layers(self) -> None:
+        self.layers_cleared_count = self.layers_cleared_count + 1
