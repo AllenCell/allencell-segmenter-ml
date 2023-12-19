@@ -201,6 +201,7 @@ def test_select_directory_seg2(curation_service: CurationService) -> None:
         Event.ACTION_CURATION_SEG2_SELECTED
     )
 
+
 @pytest.mark.skip(reason="found this broken on main")
 def test_write_curation_record(curation_service: CurationService) -> None:
     # Arrange
