@@ -1,24 +1,25 @@
 # from pathlib import Path
-from pathlib import PurePath
+from pathlib import Path
 import pytest
-from allencell_ml_segmenter.config.user_settings import CytoDlConfig
+from allencell_ml_segmenter.config.fake_user_settings import FakeUserSettings
+from allencell_ml_segmenter.config.i_user_settings import IUserSettings
 
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 
 
 @pytest.fixture
-def config() -> CytoDlConfig:
+def config() -> IUserSettings:
     """
     Fixture for MainModel testing.
     """
-    return CytoDlConfig()
+    return FakeUserSettings()
 
 
 def test_refresh_experiments() -> None:
     model = ExperimentsModel(
-        CytoDlConfig(
-            cyto_dl_home_path=PurePath(__file__).parent / "cyto_dl_home",
-            user_experiments_path=PurePath(__file__).parent
+        FakeUserSettings(
+            cyto_dl_home_path=Path(__file__).parent / "cyto_dl_home",
+            user_experiments_path=Path(__file__).parent
             / "experiments_home",
         )
     )
@@ -27,18 +28,18 @@ def test_refresh_experiments() -> None:
 
 
 def test_get_cyto_dl_config() -> None:
-    expected_config = CytoDlConfig(
-        cyto_dl_home_path=PurePath(__file__).parent / "cyto_dl_home",
-        user_experiments_path=PurePath(__file__).parent / "experiments_home",
+    expected_config = FakeUserSettings(
+        cyto_dl_home_path=Path(__file__).parent / "cyto_dl_home",
+        user_experiments_path=Path(__file__).parent / "experiments_home",
     )
     model = ExperimentsModel(expected_config)
     assert model.get_user_settings() == expected_config
 
 
 def test_get_user_experiments_path() -> None:
-    user_experiments_path = PurePath(__file__).parent / "experiments_home"
-    config = CytoDlConfig(
-        cyto_dl_home_path=PurePath(__file__).parent / "cyto_dl_home",
+    user_experiments_path = Path(__file__).parent / "experiments_home"
+    config = FakeUserSettings(
+        cyto_dl_home_path=Path(__file__).parent / "cyto_dl_home",
         user_experiments_path=user_experiments_path,
     )
     model = ExperimentsModel(config)
@@ -46,9 +47,9 @@ def test_get_user_experiments_path() -> None:
 
 
 def test_get_model_checkpoints() -> None:
-    user_experiments_path = PurePath(__file__).parent / "experiments_home"
-    config = CytoDlConfig(
-        cyto_dl_home_path=PurePath(__file__).parent / "cyto_dl_home",
+    user_experiments_path = Path(__file__).parent / "experiments_home"
+    config = FakeUserSettings(
+        cyto_dl_home_path=Path(__file__).parent / "cyto_dl_home",
         user_experiments_path=user_experiments_path,
     )
     expected = user_experiments_path / "foo" / "checkpoints" / "bar"
