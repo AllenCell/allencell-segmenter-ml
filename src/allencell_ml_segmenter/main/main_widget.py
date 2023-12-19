@@ -26,7 +26,14 @@ from allencell_ml_segmenter.training.model_selection_widget import (
 )
 from allencell_ml_segmenter.training.training_model import TrainingModel
 from allencell_ml_segmenter.training.view import TrainingView
+from allencell_ml_segmenter.config.cyto_dl_config import UserConfig
 
+from qtpy.QtWidgets import QFileDialog
+from qtpy.QtWidgets import QMessageBox
+from qtpy.QtCore import QSettings
+
+CYTO_DL_HOME_PATH = "/Users/chrishu/dev/code/test2/cyto-dl"
+EXPERIMENTS_HOME = "experimentshome"
 
 class MainWidget(AicsWidget):
     """
@@ -53,9 +60,9 @@ class MainWidget(AicsWidget):
             self._experiments_model = ExperimentsModel(config)
         else:
             self._experiments_model = ExperimentsModel(
-                self._config_service.get_user_config()
+                self._get_user_config()
             )
-            
+
         self._training_model: TrainingModel = TrainingModel(
             main_model=self._model, experiments_model=self._experiments_model
         )
@@ -97,6 +104,18 @@ class MainWidget(AicsWidget):
 
         self._view_container.currentChanged.connect(self._tab_changed)
 
+    def _get_user_config(self) -> UserConfig:
+        settings = QSettings("AAAICS", "Segmenter ML")
+        experiments_home_path = settings.value(EXPERIMENTS_HOME)
+        if experiments_home_path is None:
+            message_dialog = QMessageBox(parent = self, text = "Please select a folder to store your Segmenter ML data.")
+            message_dialog.exec()
+            directory_dialog = QFileDialog(parent = self)
+            directory_dialog.setFileMode(QFileDialog.Directory)
+            experiments_home_path = directory_dialog.getExistingDirectory();
+            settings.setValue(EXPERIMENTS_HOME, experiments_home_path)
+        return UserConfig(CYTO_DL_HOME_PATH, experiments_home_path)
+    
     def handle_change_view(self, event: Event) -> None:
         """
         Handle event function for the main widget, which handles MainEvents.
