@@ -1,4 +1,6 @@
 from typing import Dict
+from allencell_ml_segmenter.config.config_service import ConfigService
+
 from allencell_ml_segmenter.main.viewer import Viewer
 
 import napari
@@ -9,11 +11,8 @@ from qtpy.QtWidgets import (
     QSizePolicy,
     QTabWidget,
 )
-from allencell_ml_segmenter.config.cyto_dl_config import CytoDlConfig
-from allencell_ml_segmenter.constants import (
-    CYTO_DL_HOME_PATH,
-    USER_EXPERIMENTS_PATH,
-)
+from allencell_ml_segmenter.config.cyto_dl_config import UserConfig
+
 from allencell_ml_segmenter.core.aics_widget import AicsWidget
 
 from allencell_ml_segmenter.core.event import Event
@@ -34,7 +33,7 @@ class MainWidget(AicsWidget):
     Holds the pertinent view at the moment to be displayed to the user.
     """
 
-    def __init__(self, viewer: napari.Viewer, config: CytoDlConfig = None):
+    def __init__(self, viewer: napari.Viewer, config: UserConfig = None):
         super().__init__()
         self.viewer: Viewer = Viewer(viewer)
 
@@ -48,9 +47,22 @@ class MainWidget(AicsWidget):
             Event.ACTION_CHANGE_VIEW, self, self.handle_change_view
         )
 
-        if config is None:
-            config = CytoDlConfig(CYTO_DL_HOME_PATH, USER_EXPERIMENTS_PATH)
-        self._experiments_model = ExperimentsModel(config)
+        self._training_model: TrainingModel = TrainingModel(
+            main_model=self._model, experiments_model=self._experiments_model
+        )
+        self._training_service: TrainingService = TrainingService(
+            training_model=self._training_model,
+            experiments_model=self._experiments_model,
+        )
+
+        self._config_service: ConfigService = ConfigService()
+
+        if config:  # Passed in by test cases
+            self._experiments_model = ExperimentsModel(config)
+        else:
+            self._experiments_model = ExperimentsModel(
+                self._config_service.get_user_config()
+            )
 
         # Model selection which applies to all views
         model_selection_widget: ModelSelectionWidget = ModelSelectionWidget(
@@ -70,13 +82,6 @@ class MainWidget(AicsWidget):
         self._prediction_view: PredictionView = PredictionView(self._model)
         self._initialize_view(self._prediction_view, "Prediction")
 
-        self._training_model: TrainingModel = TrainingModel(
-            main_model=self._model, experiments_model=self._experiments_model
-        )
-        self._training_service: TrainingService = TrainingService(
-            training_model=self._training_model,
-            experiments_model=self._experiments_model,
-        )
         self._training_view: TrainingView = TrainingView(
             main_model=self._model,
             viewer=self.viewer,
