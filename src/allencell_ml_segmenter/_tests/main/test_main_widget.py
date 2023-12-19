@@ -1,4 +1,4 @@
-from pathlib import Path, PurePath
+from pathlib import Path
 from typing import Set
 
 import pytest
@@ -56,11 +56,10 @@ def test_experiments_home_initialized(qtbot: QtBot) -> None:
     Tests that the main widget promtps the user to choose a. 'experiments home' dir if one is not found in user settings.
     """
     # ARRANGE
-    EXPECTED_EXPERIMENTS_HOME = PurePath(
+    EXPECTED_EXPERIMENTS_HOME = Path(
         __file__
     ).parent  # simulates (in the fake settings) the location chosed by user
-    settings = FakeUserSettings(EXPECTED_EXPERIMENTS_HOME)
-    settings.set_cyto_dl_home_path(Path("foo/cyto/path"))
+    settings = FakeUserSettings(prompt_response=EXPECTED_EXPERIMENTS_HOME, cyto_dl_home_path=Path("foo/cyto/path"))
     settings.set_user_experiments_path(
         None
     )  # Simulates state where users has not yet chosen an experiments home.

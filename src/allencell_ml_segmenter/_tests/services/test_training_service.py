@@ -1,7 +1,7 @@
 from pathlib import Path
 import pytest
 import sys
-from allencell_ml_segmenter.config.user_settings import CytoDlConfig
+from allencell_ml_segmenter.config.fake_user_settings import FakeUserSettings
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
 
@@ -22,7 +22,7 @@ def training_service() -> TrainingService:
     """
     Returns a TrainingService object with arbitrary-set fields in the model for testing.
     """
-    experiments_model = ExperimentsModel(CytoDlConfig(Path(), Path()))
+    experiments_model = ExperimentsModel(FakeUserSettings(cyto_dl_home_path=Path(), user_experiments_path=Path()))
     training_model: TrainingModel = TrainingModel(
         MainModel(), FakeExperimentsModel()
     )
