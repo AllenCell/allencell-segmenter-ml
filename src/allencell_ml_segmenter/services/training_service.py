@@ -68,7 +68,7 @@ class TrainingService(Subscriber):
 
             # Source of configs relative to user's home.  We need a dynamic solution in prod.
             self._training_model.set_config_dir(
-                f"{self._experiments_model.get_cyto_dl_config().get_cyto_dl_home_path()}/configs"
+                f"{self._experiments_model.get_user_settings().get_cyto_dl_home_path()}/configs"
             )
             #############################################
             sys.argv.append(
