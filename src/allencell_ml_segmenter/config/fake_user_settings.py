@@ -4,6 +4,9 @@ from qtpy.QtWidgets import QWidget
 
 
 class FakeUserSettings(IUserSettings):
+    def __init__(self, prompt_response: Path = None):
+        self.prompt_response: Path = prompt_response
+
     def get_cyto_dl_home_path(self) -> Path:
         return self.cyto_dl_home_path
 
@@ -16,5 +19,5 @@ class FakeUserSettings(IUserSettings):
     def set_user_experiments_path(self, path: str):
         self.user_experiments_path = path
 
-    def prompt_for_user_experiments_home(self, _: QWidget) -> Path:
-        return Path("foo")
+    def prompt_for_user_experiments_home(self, parent: QWidget) -> Path:
+        return Path(self.prompt_response)
