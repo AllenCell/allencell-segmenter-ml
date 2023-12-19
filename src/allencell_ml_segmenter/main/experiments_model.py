@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from allencell_ml_segmenter.config.cyto_dl_config import UserConfig
+from allencell_ml_segmenter.config.user_config import UserConfig
 import copy
 
 from allencell_ml_segmenter.core.event import Event
