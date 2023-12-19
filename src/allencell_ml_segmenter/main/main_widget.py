@@ -39,7 +39,9 @@ class MainWidget(AicsWidget):
     Holds the pertinent view at the moment to be displayed to the user.
     """
 
-    def __init__(self, viewer: napari.Viewer, config: UserConfig = None):
+    def __init__(self, viewer: napari.Viewer, 
+                 config: UserConfig = None #this encapsulates settings object?
+                 ):
         super().__init__()
         self.viewer: Viewer = Viewer(viewer)
 
@@ -100,7 +102,7 @@ class MainWidget(AicsWidget):
         self._view_container.currentChanged.connect(self._tab_changed)
 
     def _get_user_config(self) -> UserConfig:
-        settings = QSettings("AICS", "Segmenter ML")
+        settings = QSettings("AICS", "Segmenter ML") # could be a fake
         experiments_home_path = settings.value(EXPERIMENTS_HOME)
         if experiments_home_path is None:
             message_dialog = QMessageBox(
@@ -110,8 +112,8 @@ class MainWidget(AicsWidget):
             message_dialog.exec()
             directory_dialog = QFileDialog(parent=self)
             directory_dialog.setFileMode(QFileDialog.Directory)
-            experiments_home_path = directory_dialog.getExistingDirectory()
-            settings.setValue(EXPERIMENTS_HOME, experiments_home_path)
+            experiments_home_path = directory_dialog.getExistingDirectory();
+            settings.setValue(EXPERIMENTS_HOME, experiments_home_path) # assert would check this state
         return UserConfig(CYTO_DL_HOME_PATH, experiments_home_path)
 
     def handle_change_view(self, event: Event) -> None:
