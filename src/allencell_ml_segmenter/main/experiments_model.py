@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from allencell_ml_segmenter.config.cyto_dl_config import CytoDlConfig
+from allencell_ml_segmenter.config.cyto_dl_config import UserConfig
 import copy
 
 from allencell_ml_segmenter.core.event import Event
@@ -8,7 +8,7 @@ from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
 
 
 class ExperimentsModel(IExperimentsModel):
-    def __init__(self, config: CytoDlConfig) -> None:
+    def __init__(self, config: UserConfig) -> None:
         super().__init__()
         self.config = config
 
@@ -80,7 +80,7 @@ class ExperimentsModel(IExperimentsModel):
     def get_experiments(self) -> dict:
         return copy.deepcopy(self.experiments)
 
-    def get_cyto_dl_config(self) -> CytoDlConfig:
+    def get_cyto_dl_config(self) -> UserConfig:
         return self.config
 
     def get_user_experiments_path(self) -> Path:
