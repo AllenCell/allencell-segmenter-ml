@@ -105,7 +105,7 @@ class MainWidget(AicsWidget):
         settings = QSettings("AICS", "Segmenter ML")
         experiments_home_path = settings.value(EXPERIMENTS_HOME)
         if experiments_home_path is None:
-            message_dialog = QMessageBox(parent = self, text = "Please select a folder to store your Segmenter ML data.")
+            message_dialog = QMessageBox(parent = self, text = "Please select a location to store your Segmenter ML data.")
             message_dialog.exec()
             directory_dialog = QFileDialog(parent = self)
             directory_dialog.setFileMode(QFileDialog.Directory)
