@@ -12,7 +12,6 @@ EXPERIMENTS_HOME_KEY = "experimentshome"
 
 class UserSettings(IUserSettings):
     def __init__(self):
-
         self.settings = QSettings("AIiCS", "Segmenter ML")
 
         # still hardcoding this for now, hoping that cytodl api will make it unecessary
@@ -22,7 +21,7 @@ class UserSettings(IUserSettings):
         return self._cyto_dl_home_path
 
     def get_user_experiments_path(self) -> Path:
-        if(self.settings.value(EXPERIMENTS_HOME_KEY) is None):
+        if self.settings.value(EXPERIMENTS_HOME_KEY) is None:
             return None
         else:
             return Path(self.settings.value(EXPERIMENTS_HOME_KEY))
