@@ -39,10 +39,10 @@ def test_curation_setup(curation_main_view: CurationMainView) -> None:
     curation_main_view.init_progress_bar.assert_called_once()
     curation_main_view._curation_service.remove_all_images_from_viewer_layers.assert_called_once()
     curation_main_view._curation_service.add_image_to_viewer.called_once_with(
-        ["path_raw"], f"[raw] path_raw"
+        ["path_raw"], "[raw] path_raw"
     )
     curation_main_view._curation_service.add_image_to_viewer.called_once_with(
-        ["path_seg1"], f"[raw] path_seg1"
+        ["path_seg1"], "[raw] path_seg1"
     )
 
 
