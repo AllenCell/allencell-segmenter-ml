@@ -4,7 +4,7 @@ from typing import Set
 import pytest
 import napari
 from pytestqt.qtbot import QtBot
-from allencell_ml_segmenter.config.user_config import CytoDlConfig
+from allencell_ml_segmenter.config.user_settings import CytoDlConfig
 
 from allencell_ml_segmenter.core.aics_widget import AicsWidget
 from allencell_ml_segmenter.main.main_widget import MainWidget

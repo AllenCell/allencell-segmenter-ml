@@ -1,7 +1,7 @@
 # from pathlib import Path
 from pathlib import PurePath
 import pytest
-from allencell_ml_segmenter.config.user_config import CytoDlConfig
+from allencell_ml_segmenter.config.user_settings import CytoDlConfig
 
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 
@@ -32,7 +32,7 @@ def test_get_cyto_dl_config() -> None:
         user_experiments_path=PurePath(__file__).parent / "experiments_home",
     )
     model = ExperimentsModel(expected_config)
-    assert model.get_cyto_dl_config() == expected_config
+    assert model.get_user_settings() == expected_config
 
 
 def test_get_user_experiments_path() -> None:

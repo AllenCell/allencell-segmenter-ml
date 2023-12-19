@@ -1,4 +1,5 @@
 from typing import Dict
+from allencell_ml_segmenter.config.i_user_settings import IUserSettings
 
 from allencell_ml_segmenter.main.viewer import Viewer
 
@@ -10,7 +11,7 @@ from qtpy.QtWidgets import (
     QSizePolicy,
     QTabWidget,
 )
-from allencell_ml_segmenter.config.user_config import UserConfig
+from allencell_ml_segmenter.config.user_settings import UserSettings
 
 from allencell_ml_segmenter.core.aics_widget import AicsWidget
 
@@ -26,23 +27,17 @@ from allencell_ml_segmenter.training.model_selection_widget import (
 from allencell_ml_segmenter.training.training_model import TrainingModel
 from allencell_ml_segmenter.training.view import TrainingView
 
-from qtpy.QtWidgets import QFileDialog
-from qtpy.QtWidgets import QMessageBox
-from qtpy.QtCore import QSettings
-
-CYTO_DL_HOME_PATH = "/Users/chrishu/dev/code/test2/cyto-dl"
-EXPERIMENTS_HOME = "experimentshome"
-
 
 class MainWidget(AicsWidget):
     """
     Holds the pertinent view at the moment to be displayed to the user.
     """
 
-    def __init__(self, viewer: napari.Viewer, 
-                 config: UserConfig = None #this encapsulates settings object?
-                 ):
+    def __init__(self, viewer: napari.Viewer, settings: IUserSettings = None):
         super().__init__()
+        self.user_settings: IUserSettings = settings
+        if self.user_settings is None:
+            self.user_settings = UserSettings()
         self.viewer: Viewer = Viewer(viewer)
 
         # basic styling
@@ -55,10 +50,12 @@ class MainWidget(AicsWidget):
             Event.ACTION_CHANGE_VIEW, self, self.handle_change_view
         )
 
-        if config:  # Passed in by test cases
-            self._experiments_model = ExperimentsModel(config)
-        else:
-            self._experiments_model = ExperimentsModel(self._get_user_config())
+        if self.user_settings.get_user_experiments_path() is None:
+            path = self.user_settings.prompt_for_user_experiments_home(
+                parent=self
+            )
+            self.user_settings.set_user_experiments_path(path)
+        self._experiments_model = ExperimentsModel(self.user_settings)
 
         self._training_model: TrainingModel = TrainingModel(
             main_model=self._model, experiments_model=self._experiments_model
@@ -100,21 +97,6 @@ class MainWidget(AicsWidget):
         self._initialize_view(self._curation_view, "Curation")
 
         self._view_container.currentChanged.connect(self._tab_changed)
-
-    def _get_user_config(self) -> UserConfig:
-        settings = QSettings("AICS", "Segmenter ML") # could be a fake
-        experiments_home_path = settings.value(EXPERIMENTS_HOME)
-        if experiments_home_path is None:
-            message_dialog = QMessageBox(
-                parent=self,
-                text="Please select a location to store your Segmenter ML data.",
-            )
-            message_dialog.exec()
-            directory_dialog = QFileDialog(parent=self)
-            directory_dialog.setFileMode(QFileDialog.Directory)
-            experiments_home_path = directory_dialog.getExistingDirectory();
-            settings.setValue(EXPERIMENTS_HOME, experiments_home_path) # assert would check this state
-        return UserConfig(CYTO_DL_HOME_PATH, experiments_home_path)
 
     def handle_change_view(self, event: Event) -> None:
         """
