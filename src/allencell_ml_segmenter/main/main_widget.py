@@ -47,14 +47,6 @@ class MainWidget(AicsWidget):
             Event.ACTION_CHANGE_VIEW, self, self.handle_change_view
         )
 
-        self._training_model: TrainingModel = TrainingModel(
-            main_model=self._model, experiments_model=self._experiments_model
-        )
-        self._training_service: TrainingService = TrainingService(
-            training_model=self._training_model,
-            experiments_model=self._experiments_model,
-        )
-
         self._config_service: ConfigService = ConfigService()
 
         if config:  # Passed in by test cases
@@ -63,6 +55,14 @@ class MainWidget(AicsWidget):
             self._experiments_model = ExperimentsModel(
                 self._config_service.get_user_config()
             )
+            
+        self._training_model: TrainingModel = TrainingModel(
+            main_model=self._model, experiments_model=self._experiments_model
+        )
+        self._training_service: TrainingService = TrainingService(
+            training_model=self._training_model,
+            experiments_model=self._experiments_model,
+        )
 
         # Model selection which applies to all views
         model_selection_widget: ModelSelectionWidget = ModelSelectionWidget(
