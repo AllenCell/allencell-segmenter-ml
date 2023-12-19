@@ -4,7 +4,9 @@ from qtpy.QtWidgets import QWidget
 
 
 class FakeUserSettings(IUserSettings):
-    def __init__(self, prompt_response: Path = None):
+    def __init__(self, cyto_dl_home_path=None, user_experiments_path=None, prompt_response: Path = None):
+        self.cyto_dl_home_path=cyto_dl_home_path
+        self.user_experiments_path=user_experiments_path
         self.prompt_response: Path = prompt_response
 
     def get_cyto_dl_home_path(self) -> Path:
