@@ -2,8 +2,7 @@ from typing import List
 from unittest.mock import Mock
 
 import pytest
-from qtpy.QtWidgets import QLabel, QComboBox, QPushButton
-from qtpy.QtCore import Qt
+from qtpy.QtWidgets import QComboBox
 from pytestqt.qtbot import QtBot
 
 from allencell_ml_segmenter.core.event import Event
