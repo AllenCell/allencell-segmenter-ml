@@ -10,7 +10,7 @@ from qtpy.QtWidgets import (
     QSizePolicy,
     QTabWidget,
 )
-from allencell_ml_segmenter.config.cyto_dl_config import UserConfig
+from allencell_ml_segmenter.config.user_config import UserConfig
 
 from allencell_ml_segmenter.core.aics_widget import AicsWidget
 
@@ -25,7 +25,6 @@ from allencell_ml_segmenter.training.model_selection_widget import (
 )
 from allencell_ml_segmenter.training.training_model import TrainingModel
 from allencell_ml_segmenter.training.view import TrainingView
-from allencell_ml_segmenter.config.cyto_dl_config import UserConfig
 
 from qtpy.QtWidgets import QFileDialog
 from qtpy.QtWidgets import QMessageBox
