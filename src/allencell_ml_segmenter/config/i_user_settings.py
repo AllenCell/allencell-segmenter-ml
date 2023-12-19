@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from qtpy.QtWidgets import QWidget
 
+
 class IUserSettings(ABC):
     def __init__(self):
         super.__init__(self)
@@ -13,7 +14,7 @@ class IUserSettings(ABC):
     @abstractmethod
     def get_user_experiments_path(self) -> Path:
         pass
-    
+
     @abstractmethod
     def set_user_experiments_path(self, path: Path):
         pass

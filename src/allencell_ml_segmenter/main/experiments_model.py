@@ -52,7 +52,9 @@ class ExperimentsModel(IExperimentsModel):
         self._checkpoint = checkpoint
 
     def refresh_experiments(self) -> None:
-        for experiment in self.user_settings.get_user_experiments_path().iterdir():
+        for (
+            experiment
+        ) in self.user_settings.get_user_experiments_path().iterdir():
             if (
                 experiment not in self.experiments
                 and not experiment.name.startswith(".")
