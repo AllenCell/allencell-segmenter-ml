@@ -1,7 +1,5 @@
 import pytest
 from pathlib import Path
-from unittest.mock import Mock
-from aicsimageio import AICSImage
 
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.curation.curation_model import CurationModel
