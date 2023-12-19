@@ -19,8 +19,7 @@ def test_refresh_experiments() -> None:
     model = ExperimentsModel(
         FakeUserSettings(
             cyto_dl_home_path=Path(__file__).parent / "cyto_dl_home",
-            user_experiments_path=Path(__file__).parent
-            / "experiments_home",
+            user_experiments_path=Path(__file__).parent / "experiments_home",
         )
     )
     expected = {"0_exp": set(), "1_exp": set(), "2_exp": {"0.ckpt", "1.ckpt"}}
