@@ -20,6 +20,7 @@ def curation_main_view(qtbot: QtBot) -> CurationMainView:
         curation_model, experiments_model, curation_service
     )
 
+
 @pytest.mark.skip(reason="found this broken on main")
 def test_curation_setup(curation_main_view: CurationMainView) -> None:
     # Arrange
@@ -44,6 +45,7 @@ def test_curation_setup(curation_main_view: CurationMainView) -> None:
         ["path_seg1"], f"[raw] path_seg1"
     )
 
+
 @pytest.mark.skip(reason="found this broken on main")
 def test_init_progress_bar(curation_main_view: CurationMainView) -> None:
     # Act
@@ -51,6 +53,7 @@ def test_init_progress_bar(curation_main_view: CurationMainView) -> None:
 
     # Assert
     assert curation_main_view.progress_bar.value() == 1
+
 
 @pytest.mark.skip(reason="found this broken on main")
 def test_next_image(curation_main_view: CurationMainView) -> None:
@@ -71,6 +74,7 @@ def test_next_image(curation_main_view: CurationMainView) -> None:
         curation_main_view._curation_service.add_image_to_viewer_from_path.call_count
         == 2
     )
+
 
 @pytest.mark.skip(reason="found this broken on main")
 def test_increment_progress_bar(curation_main_view: CurationMainView) -> None:

@@ -34,6 +34,7 @@ from qtpy.QtCore import QSettings
 CYTO_DL_HOME_PATH = "/Users/chrishu/dev/code/test2/cyto-dl"
 EXPERIMENTS_HOME = "experimentshome"
 
+
 class MainWidget(AicsWidget):
     """
     Holds the pertinent view at the moment to be displayed to the user.
@@ -56,9 +57,7 @@ class MainWidget(AicsWidget):
         if config:  # Passed in by test cases
             self._experiments_model = ExperimentsModel(config)
         else:
-            self._experiments_model = ExperimentsModel(
-                self._get_user_config()
-            )
+            self._experiments_model = ExperimentsModel(self._get_user_config())
 
         self._training_model: TrainingModel = TrainingModel(
             main_model=self._model, experiments_model=self._experiments_model
@@ -105,14 +104,17 @@ class MainWidget(AicsWidget):
         settings = QSettings("AICS", "Segmenter ML")
         experiments_home_path = settings.value(EXPERIMENTS_HOME)
         if experiments_home_path is None:
-            message_dialog = QMessageBox(parent = self, text = "Please select a location to store your Segmenter ML data.")
+            message_dialog = QMessageBox(
+                parent=self,
+                text="Please select a location to store your Segmenter ML data.",
+            )
             message_dialog.exec()
-            directory_dialog = QFileDialog(parent = self)
+            directory_dialog = QFileDialog(parent=self)
             directory_dialog.setFileMode(QFileDialog.Directory)
-            experiments_home_path = directory_dialog.getExistingDirectory();
+            experiments_home_path = directory_dialog.getExistingDirectory()
             settings.setValue(EXPERIMENTS_HOME, experiments_home_path)
         return UserConfig(CYTO_DL_HOME_PATH, experiments_home_path)
-    
+
     def handle_change_view(self, event: Event) -> None:
         """
         Handle event function for the main widget, which handles MainEvents.
