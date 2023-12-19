@@ -1,5 +1,4 @@
 from typing import Dict
-from allencell_ml_segmenter.config.config_service import ConfigService
 
 from allencell_ml_segmenter.main.viewer import Viewer
 
@@ -54,8 +53,6 @@ class MainWidget(AicsWidget):
             Event.ACTION_CHANGE_VIEW, self, self.handle_change_view
         )
 
-        self._config_service: ConfigService = ConfigService()
-
         if config:  # Passed in by test cases
             self._experiments_model = ExperimentsModel(config)
         else:
@@ -105,7 +102,7 @@ class MainWidget(AicsWidget):
         self._view_container.currentChanged.connect(self._tab_changed)
 
     def _get_user_config(self) -> UserConfig:
-        settings = QSettings("AAAICS", "Segmenter ML")
+        settings = QSettings("AICS", "Segmenter ML")
         experiments_home_path = settings.value(EXPERIMENTS_HOME)
         if experiments_home_path is None:
             message_dialog = QMessageBox(parent = self, text = "Please select a folder to store your Segmenter ML data.")
