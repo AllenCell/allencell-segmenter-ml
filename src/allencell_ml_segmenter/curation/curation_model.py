@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict, Tuple, List, Optional
+from typing import Tuple, List, Optional
 
 from napari.layers import Shapes
 
