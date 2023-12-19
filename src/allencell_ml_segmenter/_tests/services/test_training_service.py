@@ -22,7 +22,11 @@ def training_service() -> TrainingService:
     """
     Returns a TrainingService object with arbitrary-set fields in the model for testing.
     """
-    experiments_model = ExperimentsModel(FakeUserSettings(cyto_dl_home_path=Path(), user_experiments_path=Path()))
+    experiments_model = ExperimentsModel(
+        FakeUserSettings(
+            cyto_dl_home_path=Path(), user_experiments_path=Path()
+        )
+    )
     training_model: TrainingModel = TrainingModel(
         MainModel(), FakeExperimentsModel()
     )
