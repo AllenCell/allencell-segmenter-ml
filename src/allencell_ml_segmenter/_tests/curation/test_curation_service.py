@@ -1,12 +1,8 @@
-import builtins
-import csv
-from pathlib import Path, PurePath
+from pathlib import Path
 from typing import List
 from unittest.mock import Mock, mock_open, patch, call
 
 import pytest
-
-import napari
 
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.curation.curation_data_class import CurationRecord

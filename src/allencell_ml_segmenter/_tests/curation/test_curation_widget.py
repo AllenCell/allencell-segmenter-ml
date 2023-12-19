@@ -7,14 +7,9 @@ from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
     FakeExperimentsModel,
 )
 from allencell_ml_segmenter.curation.curation_service import CurationService
-from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.curation.curation_model import CurationModel
 from allencell_ml_segmenter.curation.input_view import CurationInputView
-from allencell_ml_segmenter.curation.main_view import CurationMainView
-from allencell_ml_segmenter.core.view import View
-from allencell_ml_segmenter.core.event import Event
-from qtpy.QtWidgets import QStackedWidget
 from pytestqt.qtbot import QtBot
 
 from allencell_ml_segmenter.curation.curation_widget import CurationWidget
