@@ -1,4 +1,6 @@
 from pathlib import Path
+from typing import List
+
 import pytest
 import sys
 from allencell_ml_segmenter.config.cyto_dl_config import CytoDlConfig
@@ -17,24 +19,36 @@ from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
 )
 
 
+@pytest.fixture()
+def experiments_model() -> ExperimentsModel:
+    model = ExperimentsModel(CytoDlConfig(Path(), Path()))
+    model.set_experiment_name("testing_experiment")
+    model.set_checkpoint("test_path_checkpoint")
+    return model
+
+
+@pytest.fixture()
+def training_model(experiments_model: ExperimentsModel) -> TrainingModel:
+    model: TrainingModel = TrainingModel(MainModel(), experiments_model)
+    model.set_experiment_type("segmentation")
+    model.set_hardware_type("cpu")
+    model.set_spatial_dims(2)
+    model.set_images_directory("/path/to/images")
+    model.set_channel_index(9)
+    model.set_max_time(9992)
+    model.set_config_dir("/path/to/configs")
+    model.set_patch_size("small")
+    model.set_max_epoch(100)
+    return model
+
+
 @pytest.fixture
-def training_service() -> TrainingService:
+def training_service(
+    training_model: TrainingModel, experiments_model: ExperimentsModel
+) -> TrainingService:
     """
     Returns a TrainingService object with arbitrary-set fields in the model for testing.
     """
-    experiments_model = ExperimentsModel(CytoDlConfig(Path(), Path()))
-    training_model: TrainingModel = TrainingModel(
-        MainModel(), FakeExperimentsModel()
-    )
-    training_model.set_experiment_type("segmentation")
-    training_model.set_hardware_type("cpu")
-    training_model.set_image_dims(2)
-    training_model.set_images_directory("/path/to/images")
-    training_model.set_channel_index(9)
-    training_model.set_max_time(9992)
-    training_model.set_config_dir("/path/to/configs")
-    training_model.set_patch_size("small")
-    training_model.set_max_epoch(100)
     return TrainingService(
         training_model=training_model, experiments_model=experiments_model
     )
@@ -78,98 +92,134 @@ def test_init(training_service: TrainingService) -> None:
 #     mock_train.assert_called_once()
 
 
-def test_set_experiment(training_service: TrainingService) -> None:
+def test_get_hardware_override(
+    training_service: TrainingService, training_model: TrainingModel
+) -> None:
     """
-    Tests the _set_experiment method.
+    Tests the _get_hardware_override method.
     """
     # ACT
-    training_service._set_experiment()
+    hardware_override: str = training_service._get_hardware_override()
 
     # ASSERT
     assert (
-        f"experiment=im2im/{training_service._training_model.get_experiment_type().value}.yaml"
-        in sys.argv
+        hardware_override
+        == f"trainer={training_model.get_hardware_type().value}"
     )
 
 
-def test_set_hardware(training_service: TrainingService) -> None:
+def test_get_spatial_dims_override(
+    training_service: TrainingService, training_model: TrainingModel
+) -> None:
     """
-    Tests the _set_hardware method.
+    Tests the _get_spatial_dims_override method.
     """
     # ACT
-    training_service._set_hardware()
+    spatial_dims_override: str = training_service._get_spatial_dims_override()
 
     # ASSERT
     assert (
-        f"trainer={training_service._training_model.get_hardware_type().value}"
-        in sys.argv
+        spatial_dims_override
+        == f"spatial_dims={training_model.get_spatial_dims()}"
     )
 
 
-def test_set_image_dims(training_service: TrainingService) -> None:
+def test_get_experiment_name_override(
+    training_service: TrainingService, experiments_model
+) -> None:
     """
-    Tests the _set_image_dims method.
+    Tests the _get_experiment_name_override method.
     """
     # ACT
-    training_service._set_image_dims()
+    override_str: str = training_service._get_experiment_name_override()
 
     # ASSERT
     assert (
-        f"++spatial_dims=[{training_service._training_model.get_image_dims()}]"
-        in sys.argv
+        override_str
+        == f"experiment_name={experiments_model.get_experiment_name()}"
     )
 
 
-def test_set_max_epoch(training_service: TrainingService) -> None:
+def test_get_max_epoch_override(
+    training_service: TrainingService, training_model: TrainingModel
+) -> None:
     """
-    Tests the _set_max_epoch method.
+    Tests the _get_max_epoch_override method.
     """
     # ACT
-    training_service._set_max_epoch()
+    max_epoch_override: str = training_service._get_max_epoch_override()
 
     # ASSERT
     assert (
-        f"++trainer.max_epochs={training_service._training_model.get_max_epoch()}"
-        in sys.argv
+        max_epoch_override
+        == f"trainer.max_epochs={training_model.get_max_epoch()}"
     )
 
 
-def test_set_images_directory(training_service: TrainingService) -> None:
+def test_get_images_directory_override(
+    training_service: TrainingService, training_model: TrainingModel
+) -> None:
     """
-    Tests the _set_images_directory method.
+    Tests the _get_images_directory_override method.
     """
     # ACT
-    training_service._set_images_directory()
+    im_dir_override: str = training_service._get_images_directory_override()
 
     # ASSERT
     assert (
-        f"++data.path={training_service._training_model.get_images_directory()}"
-        in sys.argv
+        im_dir_override
+        == f"data.path={str(training_model.get_images_directory())}"
     )
 
 
-def test_set_patch_shape_from_size(training_service: TrainingService) -> None:
+def test_get_patch_shape_override(
+    training_service: TrainingService, training_model: TrainingModel
+) -> None:
     """
-    Tests the _set_patch_shape_from_size method.
+    Tests the _get_patch_shape_override method.
     """
     # ACT
-    training_service._set_patch_shape_from_size()
+    patch_shape_override: str = training_service._get_patch_shape_override()
 
     # ASSERT
     assert (
-        f"++data._aux.patch_shape={training_service._training_model.get_patch_size().value}"
-        in sys.argv
+        patch_shape_override
+        == f"data._aux.patch_shape={_list_to_string(training_model.get_patch_size().value)}"
     )
 
 
-def test_set_config_dir(training_service: TrainingService) -> None:
+def test_get_checkpoint_override(
+    training_service: TrainingService, experiments_model: ExperimentsModel
+) -> None:
     """
-    Tests the _set_config_dir method.
+    Tests the _get_checkpoint_override method.
     """
-    # ACT
-    training_service._set_config_dir()
+    # Act
+    ckpt_path_override = training_service._get_checkpoint_override()
 
-    # ASSERT
-    assert ("--config-dir" in sys.argv) and (
-        training_service._training_model.get_config_dir() in sys.argv
+    # Assert
+    assert (
+        ckpt_path_override
+        == f"ckpt_path={experiments_model.get_model_checkpoints_path(experiments_model.get_experiment_name(), experiments_model.get_checkpoint())}"
     )
+
+
+def test_build_overrrides(
+    training_service,
+    training_model: TrainingModel,
+    experiments_model: ExperimentsModel,
+) -> None:
+    """
+    Tests the _build_overrides method.
+    """
+    # Act
+    all_overrides: List[str] = training_service._build_overrides()
+
+    # Assert
+    assert training_service._get_hardware_override() in all_overrides
+    assert training_service._get_spatial_dims_override() in all_overrides
+    assert training_service._get_experiment_name_override() in all_overrides
+    assert training_service._get_images_directory_override() in all_overrides
+    assert training_service._get_max_epoch_override() in all_overrides
+    assert training_service._get_patch_shape_override() in all_overrides
+    assert training_service._get_checkpoint_override() in all_overrides
