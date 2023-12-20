@@ -449,22 +449,18 @@ def test_finished_shape_selection_merging() -> None:
 
 
 def test_clear_merging_mask_layers_all() -> None:
+    # Arrange
     fake_viewer: FakeViewer = FakeViewer()
     curation_model: CurationModel = CurationModel()
-    test_service_with_viewer: CurationService = CurationService(
-        curation_model, Mock(spec=Viewer)
-    )
-    # Arrange
     shapes_layers: List[Shapes] = [
         Shapes(name="merging_layer"),
         Shapes(name="merging_layer2"),
         Shapes(name="merging_layer3"),
     ]
-
-    curation_model.get_merging_mask_shape_layers = Mock(
-        return_value=shapes_layers
+    curation_model.set_merging_mask_shape_layers(shapes_layers)
+    test_service_with_viewer: CurationService = CurationService(
+        curation_model, fake_viewer
     )
-    test_service_with_viewer._viewer.viewer = fake_viewer
 
     # act
     test_service_with_viewer.clear_merging_mask_layers_all()
@@ -477,25 +473,28 @@ def test_clear_merging_mask_layers_all() -> None:
 
 
 def test_clear_excluding_mask_layers_all() -> None:
-    curation_model: Mock = Mock(spec=CurationModel)
-    viewer: Mock = Mock(spec=Viewer)
-    curation_service: CurationService = CurationService(curation_model, viewer)
-
     # Arrange
+    curation_model: CurationModel = CurationModel()
     shapes_layers: List[Shapes] = [
         Shapes(name="merging_layer"),
         Shapes(name="merging_layer2"),
         Shapes(name="merging_layer3"),
     ]
+    curation_model.set_excluding_mask_shape_layers(shapes_layers)
 
-    curation_model.get_excluding_mask_shape_layers.return_value = shapes_layers
-    viewer.viewer = Mock()
+    fake_viewer: FakeViewer = FakeViewer()
+    curation_service: CurationService = CurationService(
+        curation_model, fake_viewer
+    )
 
     # act
     curation_service.clear_excluding_mask_layers_all()
 
     # Assert
     curation_model.excluding_mask_shape_layers = []
+    fake_viewer.layers.is_removed(shapes_layers[0])
+    fake_viewer.layers.is_removed(shapes_layers[1])
+    fake_viewer.layers.is_removed(shapes_layers[2])
 
 
 def test_next_image_no_seg2() -> None:

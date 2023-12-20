@@ -3,6 +3,7 @@ from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.curation.curation_model import CurationModel
 from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
+from allencell_ml_segmenter.main.i_viewer import IViewer
 from allencell_ml_segmenter.main.viewer import Viewer
 
 from pathlib import Path
@@ -23,7 +24,7 @@ class SelectionMode(Enum):
 class CurationService(Subscriber):
     """ """
 
-    def __init__(self, curation_model: CurationModel, viewer: Viewer) -> None:
+    def __init__(self, curation_model: CurationModel, viewer: IViewer) -> None:
         super().__init__()
         self._curation_model: CurationModel = curation_model
         self._viewer: Viewer = viewer
@@ -373,14 +374,18 @@ class CurationService(Subscriber):
         """
         Clear all merging mask layers in napari for one image
         """
-        self._viewer.clear_mask_layers(self._curation_model.get_merging_mask_shape_layers())
+        self._viewer.clear_mask_layers(
+            self._curation_model.get_merging_mask_shape_layers()
+        )
         self._curation_model.set_merging_mask_shape_layers([])
 
     def clear_excluding_mask_layers_all(self) -> None:
         """
         Clear all excluding mask layers in napari for one image
         """
-        self._viewer.clear_mask_layers(self._curation_model.get_excluding_mask_shape_layers())
+        self._viewer.clear_mask_layers(
+            self._curation_model.get_excluding_mask_shape_layers()
+        )
         self._curation_model.set_excluding_mask_shape_layers([])
 
     def update_curation_record(self, use_image: bool) -> None:
