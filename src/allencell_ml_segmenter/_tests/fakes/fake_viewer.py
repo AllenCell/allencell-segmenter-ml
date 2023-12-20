@@ -25,6 +25,7 @@ class FakeViewer(IViewer):
         self.layers_cleared_count = 0
         self.images_added = dict()
         self.shapes_layers_added = []
+        self.shapes_layers_removed = []
 
     def add_image(self, image, name=None):
         self.images_added[name] = image
@@ -37,3 +38,7 @@ class FakeViewer(IViewer):
         mock_shapes_return = Mock(Shapes)
         mock_shapes_return.name = name
         return mock_shapes_return
+
+    def clear_mask_layers(self, layers_to_remove: List[Shapes]) -> None:
+        for layer in layers_to_remove:
+            self.layers.remove(layer)
