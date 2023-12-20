@@ -2,7 +2,6 @@ from pathlib import Path
 from typing import List
 from unittest.mock import Mock, mock_open, patch, call
 
-import napari.layers
 import numpy as np
 import pytest
 from napari.layers import Shapes
