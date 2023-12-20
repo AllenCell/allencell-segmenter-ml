@@ -1,7 +1,7 @@
 # from pathlib import Path
 from pathlib import Path
 import pytest
-from allencell_ml_segmenter.config.fake_user_settings import FakeUserSettings
+from allencell_ml_segmenter._tests.fakes.fake_user_settings import FakeUserSettings
 from allencell_ml_segmenter.config.i_user_settings import IUserSettings
 
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
