@@ -373,20 +373,14 @@ class CurationService(Subscriber):
         """
         Clear all merging mask layers in napari for one image
         """
-        for (
-            merging_layer
-        ) in self._curation_model.get_merging_mask_shape_layers():
-            self._viewer.viewer.layers.remove(merging_layer)
+        self._viewer.clear_mask_layers(self._curation_model.get_merging_mask_shape_layers())
         self._curation_model.set_merging_mask_shape_layers([])
 
     def clear_excluding_mask_layers_all(self) -> None:
         """
         Clear all excluding mask layers in napari for one image
         """
-        for (
-            excluding_layer
-        ) in self._curation_model.get_excluding_mask_shape_layers():
-            self._viewer.viewer.layers.remove(excluding_layer)
+        self._viewer.clear_mask_layers(self._curation_model.get_excluding_mask_shape_layers())
         self._curation_model.set_excluding_mask_shape_layers([])
 
     def update_curation_record(self, use_image: bool) -> None:
