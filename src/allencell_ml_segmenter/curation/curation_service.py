@@ -365,7 +365,7 @@ class CurationService(Subscriber):
                 face_color="royalblue",
                 name="Saved Merging Mask",
             )
-            self._curation_model.merging_mask_shape_layers.append(
+            self._curation_model._merging_mask_shape_layers.append(
                 new_merging_shapes_layer
             )
         return continue_save

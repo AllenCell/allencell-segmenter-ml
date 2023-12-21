@@ -42,3 +42,6 @@ class FakeViewer(IViewer):
     def clear_mask_layers(self, layers_to_remove: List[Shapes]) -> None:
         for layer in layers_to_remove:
             self.layers.remove(layer)
+
+    def is_layer_removed(self, layer: Layer):
+        return self.layers.is_removed(layer)
