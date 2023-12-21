@@ -6,5 +6,17 @@ class IViewer(ABC):
         super().__init__()
 
     @abstractmethod
-    def add_image(image, name):
+    def add_image(self, image, name):
+        pass
+
+    @abstractmethod
+    def clear_layers(self):
+        pass
+
+    @abstractmethod
+    def add_shapes(self, name):
+        pass
+
+    @abstractmethod
+    def clear_mask_layers(self, layers_to_remove):
         pass

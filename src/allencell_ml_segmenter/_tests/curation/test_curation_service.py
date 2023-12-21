@@ -460,15 +460,16 @@ def test_clear_merging_mask_layers_all() -> None:
     test_service_with_viewer: CurationService = CurationService(
         curation_model, fake_viewer
     )
+    assert len(curation_model.get_merging_mask_shape_layers()) > 0
 
     # act
     test_service_with_viewer.clear_merging_mask_layers_all()
 
     # Assert
-    assert len(curation_model.merging_mask_shape_layers) == 0
-    fake_viewer.layers.is_removed(shapes_layers[0])
-    fake_viewer.layers.is_removed(shapes_layers[1])
-    fake_viewer.layers.is_removed(shapes_layers[2])
+    assert len(curation_model.get_merging_mask_shape_layers()) == 0
+    fake_viewer.is_layer_removed(shapes_layers[0])
+    fake_viewer.is_layer_removed(shapes_layers[1])
+    fake_viewer.is_layer_removed(shapes_layers[2])
 
 
 def test_clear_excluding_mask_layers_all() -> None:
@@ -485,15 +486,16 @@ def test_clear_excluding_mask_layers_all() -> None:
     curation_service: CurationService = CurationService(
         curation_model, fake_viewer
     )
+    assert len(curation_model.get_excluding_mask_shape_layers()) > 0
 
     # act
     curation_service.clear_excluding_mask_layers_all()
 
     # Assert
-    assert len(curation_model.excluding_mask_shape_layers) == 0
-    fake_viewer.layers.is_removed(shapes_layers[0])
-    fake_viewer.layers.is_removed(shapes_layers[1])
-    fake_viewer.layers.is_removed(shapes_layers[2])
+    assert len(curation_model.get_excluding_mask_shape_layers()) == 0
+    fake_viewer.is_layer_removed(shapes_layers[0])
+    fake_viewer.is_layer_removed(shapes_layers[1])
+    fake_viewer.is_layer_removed(shapes_layers[2])
 
 
 def test_next_image_no_seg2() -> None:
