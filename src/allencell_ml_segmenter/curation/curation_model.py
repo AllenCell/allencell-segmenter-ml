@@ -248,7 +248,7 @@ class CurationModel(Publisher):
     def append_excluding_mask_shape_layer(
         self, layer_to_append: Shapes
     ) -> None:
-        self.get_excluding_mask_shape_layers().append(layer_to_append)
+        self._excluding_mask_shape_layers.append(layer_to_append)
 
     def get_merging_mask_shape_layers(self) -> List[Shapes]:
         return self._merging_mask_shape_layers
@@ -257,7 +257,7 @@ class CurationModel(Publisher):
         self._merging_mask_shape_layers = layers
 
     def append_merging_mask_shape_layer(self, layer_to_append: Shapes) -> None:
-        self.get_merging_mask_shape_layers().append(layer_to_append)
+        self._merging_mask_shape_layers.append(layer_to_append)
 
     def is_user_experiment_selected(self) -> bool:
         if self.experiments_model.get_experiment_name() is None:
@@ -275,4 +275,4 @@ class CurationModel(Publisher):
         self._curation_index = i
 
     def append_curation_record(self, record: CurationRecord) -> None:
-        self.get_curation_record().append(record)
+        self._curation_record.append(record)
