@@ -378,7 +378,7 @@ def test_update_curation_record(
     curation_service: CurationService = CurationService(
         curation_model, Mock(spec=Viewer)
     )
-    curation_model.get_current_excluding_mask_path = Mock(
+    curation_model.get_current_excluding_mask_path_and_reset_mask = Mock(
         return_value="excluding_mask_path"
     )
     curation_model.get_current_merging_mask_path = Mock(
@@ -531,7 +531,7 @@ def test_next_image_no_seg2() -> None:
     )
     assert viewer.layers_cleared_count == 1
     assert model.get_current_merging_mask_path() == None
-    assert model.get_current_excluding_mask_path() == None
+    assert model.get_current_excluding_mask_path_and_reset_mask() == None
     assert model.get_current_loaded_images() == (raw_path, raw_path, None)
     assert fake_subscriber.was_handled(Event.PROCESS_CURATION_NEXT_IMAGE)
 
@@ -570,7 +570,7 @@ def test_next_image_with_seg2() -> None:
     )
     assert viewer.layers_cleared_count == 1
     assert model.get_current_merging_mask_path() == None
-    assert model.get_current_excluding_mask_path() == None
+    assert model.get_current_excluding_mask_path_and_reset_mask() == None
     assert model.get_current_loaded_images() == (
         raw_path,
         seg1_path,

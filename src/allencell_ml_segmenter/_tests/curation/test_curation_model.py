@@ -133,7 +133,7 @@ def test_set_merging_mask_base_layer(curation_model: CurationModel) -> None:
     curation_model.set_merging_mask_base_layer("layer_name")
 
     # Act/Assert
-    assert curation_model._merging_mask_base_layer == "layer_name"
+    assert curation_model.get_merging_mask_base_layer() == "layer_name"
 
 
 def test_get_curation_image_dims(curation_model: CurationModel) -> None:
@@ -146,13 +146,13 @@ def test_set_curation_image_dims(curation_model: CurationModel) -> None:
     curation_model.set_curation_image_dims((100, 200, 3))
 
     # Act/Assert
-    assert curation_model._curation_image_dims == (100, 200, 3)
+    assert curation_model.get_curation_image_dims() == (100, 200, 3)
 
 
 def test_get_raw_images(curation_model: CurationModel) -> None:
     # Arrange
     sample_paths: List[Path] = [Path("raw1"), Path("raw2"), Path("raw3")]
-    curation_model._raw_images = sample_paths
+    curation_model.set_raw_images(sample_paths)
 
     # Act/assert
     assert curation_model.get_raw_images() == sample_paths
@@ -177,7 +177,7 @@ def test_get_current_raw_image(curation_model: CurationModel) -> None:
 def test_get_seg1_images(curation_model: CurationModel) -> None:
     # Arrange
     sample_seg1: List[Path] = [Path("seg1"), Path("seg1_2"), Path("seg1_3")]
-    curation_model._seg1_images = sample_seg1
+    curation_model.set_seg1_images(sample_seg1)
 
     # Act/Assert
     assert curation_model.get_seg1_images() == sample_seg1
@@ -202,7 +202,7 @@ def test_get_current_seg1_image(curation_model: CurationModel) -> None:
 def test_get_seg2_images(curation_model: CurationModel) -> None:
     # Arrange
     sample_seg2: List[Path] = [Path("seg2"), Path("seg2_2"), Path("seg2_3")]
-    curation_model._seg2_images = sample_seg2
+    curation_model.set_seg2_images(sample_seg2)
 
     # Act/Assert
     assert curation_model.get_seg2_images() == sample_seg2
@@ -359,4 +359,4 @@ def test_append_curation_record(curation_model: CurationModel) -> None:
     curation_model.append_curation_record(record)
 
     # Assert
-    assert curation_model._curation_record == [record]
+    assert curation_model.get_curation_record() == [record]

@@ -206,7 +206,7 @@ class CurationService(Subscriber):
         path(Path): path to raw directory
         """
         self._curation_model.set_raw_directory(path)
-        self._curation_model.set_total_num_channels_raw(
+        self._curation_model.set_raw_image_channel_count(
             self.get_total_num_channels_of_images_in_path(path)
         )
         self._curation_model.dispatch(Event.ACTION_CURATION_RAW_SELECTED)
@@ -218,7 +218,7 @@ class CurationService(Subscriber):
         path(Path): path to seg1 directory
         """
         self._curation_model.set_seg1_directory(path)
-        self._curation_model.set_total_num_channels_seg1(
+        self._curation_model.set_seg1_image_channel_count(
             self.get_total_num_channels_of_images_in_path(path)
         )
         self._curation_model.dispatch(Event.ACTION_CURATION_SEG1_SELECTED)
@@ -230,7 +230,7 @@ class CurationService(Subscriber):
         path(Path): path to seg2 directory
         """
         self._curation_model.set_seg2_directory(path)
-        self._curation_model.set_total_num_channels_seg2(
+        self._curation_model.set_seg2_image_channel_count(
             self.get_total_num_channels_of_images_in_path(path)
         )
         self._curation_model.dispatch(Event.ACTION_CURATION_SEG2_SELECTED)
@@ -265,7 +265,7 @@ class CurationService(Subscriber):
             show_info("Please select an experiment to save masks.")
 
         # Checking to see if there is already a merging mask saved.
-        if self._curation_model.get_current_excluding_mask_path():
+        if self._curation_model.get_current_excluding_mask_path_and_reset_mask():
             # There is already a merging mask saved. Ask if user wants to overwrite
             overwrite_excluding_mask_dialog = DialogBox(
                 "There is already a excluding mask saved. Would you like to overwrite?"
@@ -365,7 +365,7 @@ class CurationService(Subscriber):
                 face_color="royalblue",
                 name="Saved Merging Mask",
             )
-            self._curation_model._merging_mask_shape_layers.append(
+            self._curation_model.get_merging_mask_shape_layers().append(
                 new_merging_shapes_layer
             )
         return continue_save
@@ -395,7 +395,7 @@ class CurationService(Subscriber):
         # DEAL WITH EXCLUDING MASKS
         excluding_mask_path: Union[
             Path, str
-        ] = self._curation_model.get_current_excluding_mask_path()
+        ] = self._curation_model.get_current_excluding_mask_path_and_reset_mask()
         if excluding_mask_path is not None:
             excluding_mask_path = str(excluding_mask_path)
         else:
