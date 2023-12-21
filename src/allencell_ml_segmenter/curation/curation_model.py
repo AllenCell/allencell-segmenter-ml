@@ -71,7 +71,7 @@ class CurationModel(Publisher):
         return self._raw_images
 
     def get_current_raw_image(self) -> Path:
-        return self.get_raw_images()[self._curation_index]
+        return self.get_raw_images()[self.get_curation_index()]
 
     def set_raw_images(self, images: List[Path]) -> None:
         self._raw_images = images
@@ -83,7 +83,7 @@ class CurationModel(Publisher):
         self._seg1_images = images
 
     def get_current_seg1_image(self) -> Path:
-        return self.get_seg1_images()[self._curation_index]
+        return self.get_seg1_images()[self.get_curation_index()]
 
     def get_seg2_images(self) -> List[Path]:
         return self._seg2_images
@@ -92,7 +92,7 @@ class CurationModel(Publisher):
         self._seg2_images = images
 
     def get_current_seg2_image(self) -> Path:
-        return self.get_seg2_images()[self._curation_index]
+        return self.get_seg2_images()[self.get_curation_index()]
 
     def set_raw_directory(self, dir: Path) -> None:
         """
@@ -196,13 +196,13 @@ class CurationModel(Publisher):
         """
         return self._seg2_image_channel_count
 
-    def set_total_num_channels_raw(self, channels: int) -> int:
+    def set_raw_image_channel_count(self, channels: int) -> int:
         self._raw_image_channel_count = channels
 
-    def set_total_num_channels_seg1(self, channels: int) -> int:
+    def set_seg1_image_channel_count(self, channels: int) -> int:
         self._seg1_image_channel_count = channels
 
-    def set_total_num_channels_seg2(self, channels: int) -> int:
+    def set_seg2_image_channel_count(self, channels: int) -> int:
         self._seg2_image_channel_count = channels
 
     def get_save_masks_path(self) -> Path:
@@ -225,10 +225,13 @@ class CurationModel(Publisher):
     def set_current_excluding_mask_path(self, path: Path):
         self._current_excluding_mask_path = path
 
-    def get_current_excluding_mask_path(self) -> Path:
-        current_mask_path: Path = self._current_excluding_mask_path
-        self._current_excluding_mask_path = None
+    def get_current_excluding_mask_path_and_reset_mask(self) -> Path:
+        current_mask_path: Path = self.get_current_excluding_mask_path()
+        self.set_current_excluding_mask_path(None)
         return current_mask_path
+
+    def get_current_excluding_mask_path(self) -> Path:
+        return self._current_excluding_mask_path
 
     def set_current_merging_mask_path(self, path: Path):
         self._current_merging_mask_path = path
@@ -245,7 +248,7 @@ class CurationModel(Publisher):
     def append_excluding_mask_shape_layer(
         self, layer_to_append: Shapes
     ) -> None:
-        self._excluding_mask_shape_layers.append(layer_to_append)
+        self.get_excluding_mask_shape_layers().append(layer_to_append)
 
     def get_merging_mask_shape_layers(self) -> List[Shapes]:
         return self._merging_mask_shape_layers
@@ -254,7 +257,7 @@ class CurationModel(Publisher):
         self._merging_mask_shape_layers = layers
 
     def append_merging_mask_shape_layer(self, layer_to_append: Shapes) -> None:
-        self._merging_mask_shape_layers.append(layer_to_append)
+        self.get_merging_mask_shape_layers().append(layer_to_append)
 
     def is_user_experiment_selected(self) -> bool:
         if self.experiments_model.get_experiment_name() is None:
@@ -263,7 +266,7 @@ class CurationModel(Publisher):
             return True
 
     def image_available(self) -> bool:
-        return self._curation_index < len(self._raw_images)
+        return self.get_curation_index() < len(self.get_raw_images())
 
     def get_curation_index(self) -> int:
         return self._curation_index
@@ -272,4 +275,4 @@ class CurationModel(Publisher):
         self._curation_index = i
 
     def append_curation_record(self, record: CurationRecord) -> None:
-        self._curation_record.append(record)
+        self.get_curation_record().append(record)
