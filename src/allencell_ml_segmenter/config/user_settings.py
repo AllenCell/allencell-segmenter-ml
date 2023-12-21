@@ -11,8 +11,8 @@ EXPERIMENTS_HOME_KEY = "experimentshome"
 
 
 class UserSettings(IUserSettings):
-    def __init__(self):
-        self.settings = QSettings("AICS", "Segmenter ML")
+    def __init__(self, settings: QSettings = QSettings("AICS", "Segmenter ML")):
+        self.settings = settings
 
         # still hardcoding this for now, hoping that cytodl api will make it unecessary
         self._cyto_dl_home_path: Path = Path(CYTO_DL_HOME_PATH)
