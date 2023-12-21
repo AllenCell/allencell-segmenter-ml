@@ -265,7 +265,9 @@ class CurationService(Subscriber):
             show_info("Please select an experiment to save masks.")
 
         # Checking to see if there is already a merging mask saved.
-        if self._curation_model.get_current_excluding_mask_path_and_reset_mask():
+        if (
+            self._curation_model.get_current_excluding_mask_path_and_reset_mask()
+        ):
             # There is already a merging mask saved. Ask if user wants to overwrite
             overwrite_excluding_mask_dialog = DialogBox(
                 "There is already a excluding mask saved. Would you like to overwrite?"
@@ -395,7 +397,9 @@ class CurationService(Subscriber):
         # DEAL WITH EXCLUDING MASKS
         excluding_mask_path: Union[
             Path, str
-        ] = self._curation_model.get_current_excluding_mask_path_and_reset_mask()
+        ] = (
+            self._curation_model.get_current_excluding_mask_path_and_reset_mask()
+        )
         if excluding_mask_path is not None:
             excluding_mask_path = str(excluding_mask_path)
         else:
