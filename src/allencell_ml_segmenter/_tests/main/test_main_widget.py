@@ -4,7 +4,9 @@ from typing import Set
 import pytest
 import napari
 from pytestqt.qtbot import QtBot
-from allencell_ml_segmenter._tests.fakes.fake_user_settings import FakeUserSettings
+from allencell_ml_segmenter._tests.fakes.fake_user_settings import (
+    FakeUserSettings,
+)
 from allencell_ml_segmenter.config.i_user_settings import IUserSettings
 
 from allencell_ml_segmenter.core.aics_widget import AicsWidget
