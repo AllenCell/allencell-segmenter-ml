@@ -38,61 +38,61 @@ class CurationModel(Publisher):
         self._raw_image_channel_count: int = None
         self._seg1_image_channel_count: int = None
         self._seg2_image_channel_count: int = None
-        self.excluding_mask_shape_layers = []
-        self.merging_mask_shape_layers = []
-        self.curation_record: List[CurationRecord] = []
-        self.curation_image_dims: Tuple[int, int, int] = None
+        self._excluding_mask_shape_layers = []
+        self._merging_mask_shape_layers = []
+        self._curation_record: List[CurationRecord] = []
+        self._curation_image_dims: Tuple[int, int, int] = None
 
         self._current_excluding_mask_path: Path = None
         self._current_merging_mask_path: Path = None
         self._current_loaded_images: Tuple[Path, Path] = (None, None)
-        self.merging_mask_base_layer: str = None
+        self._merging_mask_base_layer: str = None
 
-        self.curation_index: int = 0
-        self.raw_images: List[Path] = list()
-        self.seg1_images: List[Path] = list()
-        self.seg2_images: List[Path] = list()
+        self._curation_index: int = 0
+        self._raw_images: List[Path] = list()
+        self._seg1_images: List[Path] = list()
+        self._seg2_images: List[Path] = list()
 
     def get_merging_mask_base_layer(self) -> str:
-        return self.merging_mask_base_layer
+        return self._merging_mask_base_layer
 
     def set_merging_mask_base_layer(self, layer_name: str) -> None:
-        self.merging_mask_base_layer = layer_name
+        self._merging_mask_base_layer = layer_name
 
     def get_curation_image_dims(self) -> Tuple[int, int, int]:
-        return self.curation_image_dims
+        return self._curation_image_dims
 
     def set_curation_image_dims(
         self, image_dims: Tuple[int, int, int]
     ) -> None:
-        self.curation_image_dims = image_dims
+        self._curation_image_dims = image_dims
 
     def get_raw_images(self) -> List[Path]:
-        return self.raw_images
+        return self._raw_images
 
     def get_current_raw_image(self) -> Path:
-        return self.get_raw_images()[self.curation_index]
+        return self.get_raw_images()[self._curation_index]
 
     def set_raw_images(self, images: List[Path]) -> None:
-        self.raw_images = images
+        self._raw_images = images
 
     def get_seg1_images(self) -> List[Path]:
-        return self.seg1_images
+        return self._seg1_images
 
     def set_seg1_images(self, images: List[Path]) -> None:
-        self.seg1_images = images
+        self._seg1_images = images
 
     def get_current_seg1_image(self) -> Path:
-        return self.get_seg1_images()[self.curation_index]
+        return self.get_seg1_images()[self._curation_index]
 
     def get_seg2_images(self) -> List[Path]:
-        return self.seg2_images
+        return self._seg2_images
 
     def set_seg2_images(self, images: List[Path]) -> None:
-        self.seg2_images = images
+        self._seg2_images = images
 
     def get_current_seg2_image(self) -> Path:
-        return self.get_seg2_images()[self.curation_index]
+        return self.get_seg2_images()[self._curation_index]
 
     def set_raw_directory(self, dir: Path) -> None:
         """
@@ -220,7 +220,7 @@ class CurationModel(Publisher):
         return self._current_loaded_images
 
     def get_curation_record(self) -> List[CurationRecord]:
-        return self.curation_record
+        return self._curation_record
 
     def set_current_excluding_mask_path(self, path: Path):
         self._current_excluding_mask_path = path
@@ -237,24 +237,24 @@ class CurationModel(Publisher):
         return self._current_merging_mask_path
 
     def get_excluding_mask_shape_layers(self) -> List[Shapes]:
-        return self.excluding_mask_shape_layers
+        return self._excluding_mask_shape_layers
 
     def set_excluding_mask_shape_layers(self, layers: List[Shapes]) -> None:
-        self.excluding_mask_shape_layers = layers
+        self._excluding_mask_shape_layers = layers
 
     def append_excluding_mask_shape_layer(
         self, layer_to_append: Shapes
     ) -> None:
-        self.excluding_mask_shape_layers.append(layer_to_append)
+        self._excluding_mask_shape_layers.append(layer_to_append)
 
     def get_merging_mask_shape_layers(self) -> List[Shapes]:
-        return self.merging_mask_shape_layers
+        return self._merging_mask_shape_layers
 
     def set_merging_mask_shape_layers(self, layers: List[Shapes]) -> None:
-        self.merging_mask_shape_layers = layers
+        self._merging_mask_shape_layers = layers
 
     def append_merging_mask_shape_layer(self, layer_to_append: Shapes) -> None:
-        self.merging_mask_shape_layers.append(layer_to_append)
+        self._merging_mask_shape_layers.append(layer_to_append)
 
     def is_user_experiment_selected(self) -> bool:
         if self.experiments_model.get_experiment_name() is None:
@@ -263,13 +263,13 @@ class CurationModel(Publisher):
             return True
 
     def image_available(self) -> bool:
-        return self.curation_index < len(self.raw_images)
+        return self._curation_index < len(self._raw_images)
 
     def get_curation_index(self) -> int:
-        return self.curation_index
+        return self._curation_index
 
     def set_curation_index(self, i: int) -> None:
-        self.curation_index = i
+        self._curation_index = i
 
     def append_curation_record(self, record: CurationRecord) -> None:
-        self.curation_record.append(record)
+        self._curation_record.append(record)
