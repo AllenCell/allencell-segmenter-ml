@@ -55,7 +55,7 @@ def test_next_image(curation_main_view: CurationMainView) -> None:
     curation_main_view._update_curation_record = Mock()
     curation_main_view.raw_images = [None, Path("path_raw")]
     curation_main_view.seg1_images = [None, Path("path_seg1")]
-    assert curation_main_view._curation_model.curation_index == 0
+    assert curation_main_view._curation_model.get_curation_index() == 0
 
     # Act
     curation_main_view._next_image()
@@ -67,7 +67,7 @@ def test_next_image(curation_main_view: CurationMainView) -> None:
 def test_increment_progress_bar(curation_main_view: CurationMainView) -> None:
     # Arrange
     curation_main_view.init_progress_bar()
-    curation_main_view._curation_model.raw_images = [Path(), Path(), Path()]
+    curation_main_view._curation_model.set_raw_images([Path(), Path(), Path()])
     initial_value: int = curation_main_view.progress_bar.value()
     # Act
     curation_main_view._increment_progress_bar()
@@ -80,8 +80,8 @@ def test_stop_increment_progress_bar_when_curation_finished(
 ) -> None:
     # Arrange
     curation_main_view.init_progress_bar()
-    curation_main_view._curation_model.raw_images = [Path(), Path(), Path()]
-    curation_main_view._curation_model.curation_index = 3
+    curation_main_view._curation_model.set_raw_images([Path(), Path(), Path()])
+    curation_main_view._curation_model.set_curation_index(3)
     initial_value: int = curation_main_view.progress_bar.value()
 
     # Act

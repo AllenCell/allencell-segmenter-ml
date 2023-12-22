@@ -2,7 +2,6 @@ from pathlib import Path
 from typing import List
 from unittest.mock import Mock, mock_open, patch, call
 
-import napari.layers
 import numpy as np
 import pytest
 from napari.layers import Shapes
@@ -379,7 +378,7 @@ def test_update_curation_record(
     curation_service: CurationService = CurationService(
         curation_model, Mock(spec=Viewer)
     )
-    curation_model.get_current_excluding_mask_path = Mock(
+    curation_model.get_current_excluding_mask_path_and_reset_mask = Mock(
         return_value="excluding_mask_path"
     )
     curation_model.get_current_merging_mask_path = Mock(
@@ -449,53 +448,54 @@ def test_finished_shape_selection_merging() -> None:
 
 
 def test_clear_merging_mask_layers_all() -> None:
+    # Arrange
     fake_viewer: FakeViewer = FakeViewer()
     curation_model: CurationModel = CurationModel()
-    test_service_with_viewer: CurationService = CurationService(
-        curation_model, Mock(spec=Viewer)
-    )
-    # Arrange
     shapes_layers: List[Shapes] = [
         Shapes(name="merging_layer"),
         Shapes(name="merging_layer2"),
         Shapes(name="merging_layer3"),
     ]
-
-    curation_model.get_merging_mask_shape_layers = Mock(
-        return_value=shapes_layers
+    curation_model.set_merging_mask_shape_layers(shapes_layers)
+    test_service_with_viewer: CurationService = CurationService(
+        curation_model, fake_viewer
     )
-    test_service_with_viewer._viewer.viewer = fake_viewer
+    assert len(curation_model.get_merging_mask_shape_layers()) > 0
 
     # act
     test_service_with_viewer.clear_merging_mask_layers_all()
 
     # Assert
-    curation_model.merging_mask_shape_layers = []
-    fake_viewer.layers.is_removed(shapes_layers[0])
-    fake_viewer.layers.is_removed(shapes_layers[1])
-    fake_viewer.layers.is_removed(shapes_layers[2])
+    assert len(curation_model.get_merging_mask_shape_layers()) == 0
+    fake_viewer.is_layer_removed(shapes_layers[0])
+    fake_viewer.is_layer_removed(shapes_layers[1])
+    fake_viewer.is_layer_removed(shapes_layers[2])
 
 
 def test_clear_excluding_mask_layers_all() -> None:
-    curation_model: Mock = Mock(spec=CurationModel)
-    viewer: Mock = Mock(spec=Viewer)
-    curation_service: CurationService = CurationService(curation_model, viewer)
-
     # Arrange
+    curation_model: CurationModel = CurationModel()
     shapes_layers: List[Shapes] = [
         Shapes(name="merging_layer"),
         Shapes(name="merging_layer2"),
         Shapes(name="merging_layer3"),
     ]
+    curation_model.set_excluding_mask_shape_layers(shapes_layers)
 
-    curation_model.get_excluding_mask_shape_layers.return_value = shapes_layers
-    viewer.viewer = Mock()
+    fake_viewer: FakeViewer = FakeViewer()
+    curation_service: CurationService = CurationService(
+        curation_model, fake_viewer
+    )
+    assert len(curation_model.get_excluding_mask_shape_layers()) > 0
 
     # act
     curation_service.clear_excluding_mask_layers_all()
 
     # Assert
-    curation_model.excluding_mask_shape_layers = []
+    assert len(curation_model.get_excluding_mask_shape_layers()) == 0
+    fake_viewer.is_layer_removed(shapes_layers[0])
+    fake_viewer.is_layer_removed(shapes_layers[1])
+    fake_viewer.is_layer_removed(shapes_layers[2])
 
 
 def test_next_image_no_seg2() -> None:
@@ -531,7 +531,7 @@ def test_next_image_no_seg2() -> None:
     )
     assert viewer.layers_cleared_count == 1
     assert model.get_current_merging_mask_path() == None
-    assert model.get_current_excluding_mask_path() == None
+    assert model.get_current_excluding_mask_path_and_reset_mask() == None
     assert model.get_current_loaded_images() == (raw_path, raw_path, None)
     assert fake_subscriber.was_handled(Event.PROCESS_CURATION_NEXT_IMAGE)
 
@@ -570,7 +570,7 @@ def test_next_image_with_seg2() -> None:
     )
     assert viewer.layers_cleared_count == 1
     assert model.get_current_merging_mask_path() == None
-    assert model.get_current_excluding_mask_path() == None
+    assert model.get_current_excluding_mask_path_and_reset_mask() == None
     assert model.get_current_loaded_images() == (
         raw_path,
         seg1_path,
