@@ -50,3 +50,6 @@ class DialogBox(QDialog):
 
     def getMessage(self):
         return self._text.text()
+
+    def get_selection(self):
+        return self.selection
