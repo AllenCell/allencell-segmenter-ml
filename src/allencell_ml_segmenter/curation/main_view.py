@@ -1,4 +1,3 @@
-from pathlib import Path
 from typing import List
 
 from PyQt5.QtWidgets import QComboBox
@@ -14,7 +13,6 @@ from qtpy.QtWidgets import (
     QRadioButton,
 )
 from allencell_ml_segmenter._style import Style
-from allencell_ml_segmenter.core.dialog_box import DialogBox
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
