@@ -143,7 +143,6 @@ def test_remove_all_images_from_viewer_layers() -> None:
     # Assert
     assert fake_viewer.layers_cleared_count == 1
 
-
 def test_add_image_to_viewer() -> None:
     # Arrange
     fake_viewer: FakeViewer = FakeViewer()
