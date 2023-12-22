@@ -1,6 +1,6 @@
 from pathlib import Path
+from allencell_ml_segmenter.config.i_user_settings import IUserSettings
 
-from allencell_ml_segmenter.config.cyto_dl_config import CytoDlConfig
 import copy
 
 from allencell_ml_segmenter.core.event import Event
@@ -8,9 +8,9 @@ from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
 
 
 class ExperimentsModel(IExperimentsModel):
-    def __init__(self, config: CytoDlConfig = None) -> None:
+    def __init__(self, config: IUserSettings) -> None:
         super().__init__()
-        self.config = config
+        self.user_settings = config
 
         # options
         self.experiments = {}
@@ -52,9 +52,9 @@ class ExperimentsModel(IExperimentsModel):
         self._checkpoint = checkpoint
 
     def refresh_experiments(self) -> None:
-        for experiment in Path(
-            self.config.get_user_experiments_path()
-        ).iterdir():
+        for (
+            experiment
+        ) in self.user_settings.get_user_experiments_path().iterdir():
             if (
                 experiment not in self.experiments
                 and not experiment.name.startswith(".")
@@ -64,7 +64,7 @@ class ExperimentsModel(IExperimentsModel):
 
     def refresh_checkpoints(self, experiment: str) -> None:
         checkpoints_path = (
-            Path(self.config.get_user_experiments_path())
+            Path(self.user_settings.get_user_experiments_path())
             / experiment
             / "checkpoints"
         )
@@ -80,15 +80,15 @@ class ExperimentsModel(IExperimentsModel):
     def get_experiments(self) -> dict:
         return copy.deepcopy(self.experiments)
 
-    def get_cyto_dl_config(self) -> CytoDlConfig:
-        return self.config
+    def get_user_settings(self) -> IUserSettings:
+        return self.user_settings
 
     def get_user_experiments_path(self) -> Path:
-        return self.get_cyto_dl_config().get_user_experiments_path()
+        return self.get_user_settings().get_user_experiments_path()
 
     def get_model_test_images_path(self, experiment_name: str) -> Path:
         return (
-            Path(self.get_cyto_dl_config().get_user_experiments_path())
+            self.get_user_settings().get_user_experiments_path()
             / experiment_name
             / "test_images"
             if experiment_name

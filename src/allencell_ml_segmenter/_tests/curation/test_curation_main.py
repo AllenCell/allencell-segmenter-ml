@@ -35,10 +35,10 @@ def test_curation_setup(curation_main_view: CurationMainView) -> None:
     # Assert
     curation_main_view.init_progress_bar.assert_called_once()
     curation_main_view._curation_service.add_image_to_viewer.called_once_with(
-        ["path_raw"], f"[raw] path_raw"
+        ["path_raw"], "[raw] path_raw"
     )
     curation_main_view._curation_service.add_image_to_viewer.called_once_with(
-        ["path_seg1"], f"[raw] path_seg1"
+        ["path_seg1"], "[raw] path_seg1"
     )
 
 
@@ -73,7 +73,6 @@ def test_increment_progress_bar(curation_main_view: CurationMainView) -> None:
     curation_main_view._increment_progress_bar()
     # Assert
     assert curation_main_view.progress_bar.value() == initial_value + 1
-
 
 def test_stop_increment_progress_bar_when_curation_finished(
     curation_main_view: CurationMainView,

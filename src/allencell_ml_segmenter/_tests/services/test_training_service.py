@@ -2,8 +2,9 @@ from pathlib import Path
 from typing import List
 
 import pytest
-import sys
-from allencell_ml_segmenter.config.cyto_dl_config import CytoDlConfig
+from allencell_ml_segmenter._tests.fakes.fake_user_settings import (
+    FakeUserSettings,
+)
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
 
@@ -14,20 +15,21 @@ from allencell_ml_segmenter.services.training_service import (
 from allencell_ml_segmenter.training.training_model import (
     TrainingModel,
 )
-from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
-    FakeExperimentsModel,
-)
 
 
-@pytest.fixture()
+@pytest.fixture
 def experiments_model() -> ExperimentsModel:
-    model = ExperimentsModel(CytoDlConfig(Path(), Path()))
-    model.set_experiment_name("testing_experiment")
-    model.set_checkpoint("test_path_checkpoint")
-    return model
+    experiments_model = ExperimentsModel(
+        FakeUserSettings(
+            cyto_dl_home_path=Path(), user_experiments_path=Path()
+        )
+    )
+    experiments_model.set_experiment_name("testing_experiment")
+    experiments_model.set_checkpoint("test_path_checkpoint")
+    return experiments_model
 
 
-@pytest.fixture()
+@pytest.fixture
 def training_model(experiments_model: ExperimentsModel) -> TrainingModel:
     model: TrainingModel = TrainingModel(MainModel(), experiments_model)
     model.set_experiment_type("segmentation")
