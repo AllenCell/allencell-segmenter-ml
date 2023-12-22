@@ -74,6 +74,7 @@ def test_increment_progress_bar(curation_main_view: CurationMainView) -> None:
     # Assert
     assert curation_main_view.progress_bar.value() == initial_value + 1
 
+
 def test_stop_increment_progress_bar_when_curation_finished(
     curation_main_view: CurationMainView,
 ) -> None:
