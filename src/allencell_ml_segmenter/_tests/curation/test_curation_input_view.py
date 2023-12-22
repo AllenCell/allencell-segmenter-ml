@@ -72,7 +72,7 @@ def test_update_raw_channels(
     # Arrange
     # Simulate the raw image directory being selected
     event: Event = Event.ACTION_CURATION_RAW_SELECTED
-    curation_model._raw_image_channel_count = 3
+    curation_model.set_raw_image_channel_count(3)
 
     # Act
     curation_input_view.update_raw_channels(event)
@@ -94,7 +94,7 @@ def test_update_seg1_channels(
     # Arrange
     # Simulate the seg1 image directory being selected
     event: Event = Event.ACTION_CURATION_SEG1_SELECTED
-    curation_model._seg1_image_channel_count = 5
+    curation_model.set_seg1_image_channel_count(5)
 
     # Act
     curation_input_view.update_seg1_channels(event)
@@ -116,7 +116,7 @@ def test_update_seg2_channels(
     # Arrange
     # Simulate the seg2 image directory being selected
     event: Event = Event.ACTION_CURATION_SEG2_SELECTED
-    curation_model._seg2_image_channel_count = 10
+    curation_model.set_seg2_image_channel_count(10)
 
     # Act
     curation_input_view.update_seg2_channels(event)

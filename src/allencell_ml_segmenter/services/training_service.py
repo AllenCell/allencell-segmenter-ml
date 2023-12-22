@@ -1,20 +1,19 @@
+import asyncio
+
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.event import Event
 
+# from cyto_dl.api.model import CytoDLModel
 # from lightning.pytorch.callbacks import Callback
 
 # disabled for tests (cant import in ci yet)
 # from cyto_dl.train import main as cyto_train
-
-import sys
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.training.training_model import (
-    TrainingType,
     Hardware,
     PatchSize,
 )
 from allencell_ml_segmenter.training.training_model import TrainingModel
-from pathlib import Path
 from typing import List, Any
 
 
@@ -56,103 +55,118 @@ class TrainingService(Subscriber):
         if self._training_model.is_training_running():
             # Only supporting segmentation config for now
             self._training_model.set_experiment_type("segmentation")
+            # TODO make set_images_directory and get_images_directory less brittle.
+            #  https://github.com/AllenCell/allencell-ml-segmenter/issues/156
+            # this is just to test for now.
+            # self._training_model.set_images_directory(Path("/Users/brian.kim/work/cyto-dl/data/example_experiment_data/segmentation"))
 
-            # Only supporting MACOS and CPU use for now
-            self._training_model.set_hardware_type("cpu")
-
-            # UI is not activated yet.  Is 9 special?
-            self._training_model.set_channel_index(9)
-
-            # This field is not supported for now (maybe cancel button is sufficient?)
-            self._training_model.set_max_time(9992)
-
-            # Source of configs relative to user's home.  We need a dynamic solution in prod.
-            self._training_model.set_config_dir(
-                f"{self._experiments_model.get_user_settings().get_cyto_dl_home_path()}/configs"
-            )
+            # Following lines does nothing currently, need to implement
+            # self._training_model.set_channel_index(9)
+            # self._training_model.set_max_time(9992)
             #############################################
-            sys.argv.append(
-                # This is meant to be a string as is - not a string template.  In cyto-dl, it will be treated as a string template
-                "hydra.run.dir=${paths.log_dir}/${task_name}/runs/${experiment_name}"
-            )
-            if self._experiments_model.get_checkpoint() is not None:
-                sys.argv.append(
-                    f"ckpt_path={self._experiments_model.get_model_checkpoints_path(self._experiments_model.get_experiment_name(), self._experiments_model.get_checkpoint())}"
-                )
             # sys.argv.append(
-            #     "+callbacks.print_progress._target_=allencell_ml_segmenter.services.training_service.MyPrintingCallback"
+            #     # This is meant to be a string as is - not a string template.  In cyto-dl, it will be treated as a string template
+            #     "hydra.run.dir=${paths.log_dir}/${task_name}/runs/${experiment_name}"
             # )
-            # TODO - talk to Benji about these
-            # self._set_image_d–ims()
-            # self._set_patch_shape_from_size()
-            #######################
-            self._set_experiment_name()
-            self._set_max_epoch()
-            self._set_images_directory()
-            self._set_experiment()
-            self._set_hardware()
-            self._set_config_dir()
+            model = CytoDLModel()
+            model.download_example_data()
+            model.load_default_experiment(
+                self._training_model.get_experiment_type().value,
+                output_dir=f"{self._experiments_model.get_user_experiments_path()}/{self._experiments_model.get_experiment_name()}",
+                overrides=self._build_overrides(),
+            )
+            asyncio.run(model.train())
 
-            # disabled for tests (cant import in ci yet)
-            # cyto_train()
-
-    def _set_experiment(self) -> None:
+    def _get_hardware_override(self) -> str:
         """
-        Sets the experiment argument variable for hydra using sys.argv
-        """
-        experiment_type: TrainingType = (
-            self._training_model.get_experiment_type()
-        )
-        sys.argv.append(f"experiment=im2im/{experiment_type.value}.yaml")
-
-    def _set_hardware(self) -> None:
-        """
-        Sets the hardware argument variable for hydra using sys.argv
+        Get the hardware override for the CytoDLModel
         """
         hardware_type: Hardware = self._training_model.get_hardware_type()
-        sys.argv.append(f"trainer={hardware_type.value}")
+        return f"trainer={hardware_type.value}"
 
-    def _set_image_dims(self) -> None:
+    def _get_spatial_dims_override(self) -> str:
         """
-        Sets the spatial_dims argument variable for hydra override using sys.argv
+        Get the spatial_dims override for the CytoDlModel
         """
-        image_dims: int = self._training_model.get_image_dims()
-        sys.argv.append(f"++spatial_dims=[{image_dims}]")
+        return f"spatial_dims={self._training_model.get_spatial_dims()}"
 
-    def _set_experiment_name(self) -> None:
+    def _get_experiment_name_override(self) -> str:
         """
-        Sets the experiment_name argument variable for hydra override using sys.argv
+        Get the experiment name override for the CytoDlModel
         """
-        experiment_name: str = self._experiments_model.get_experiment_name()
-        sys.argv.append(f"++experiment_name={experiment_name}")
-
-    def _set_max_epoch(self) -> None:
-        """
-        Sets the trainer.max_epochs argument variable for hydra override using sys.argv
-        """
-        max_epoch: int = self._training_model.get_max_epoch()
-        sys.argv.append(f"++trainer.max_epochs={max_epoch}")
-
-    def _set_images_directory(self) -> None:
-        """
-        Sets the data.path argument variable for hydra override using sys.argv
-        """
-        images_directory: Path = self._training_model.get_images_directory()
-        sys.argv.append(f"++data.path={str(images_directory)}")
-
-    def _set_patch_shape_from_size(self) -> None:
-        """
-        Sets the data._aux.patch_shape argument variable for hydra override using sys.argv
-        """
-        patch_size: PatchSize = self._training_model.get_patch_size()
-        sys.argv.append(
-            f"++data._aux.patch_shape={_list_to_string(patch_size.value)}"
+        return (
+            f"experiment_name={self._experiments_model.get_experiment_name()}"
         )
 
-    def _set_config_dir(self) -> None:
+    def _get_max_epoch_override(self) -> str:
         """
-        Sets the config_dir hydra runtime variable using sys.argv
+        Get the max epoch override for the CytoDlModel
         """
-        # This hydra runtime variable needs to be set in separate calls to sys.argv
-        sys.argv.append("--config-dir")
-        sys.argv.append(str(self._training_model.get_config_dir()))
+        return f"trainer.max_epochs={self._training_model.get_max_epoch()}"
+
+    def _get_images_directory_override(self) -> str:
+        """
+        Get the data path override for the CytoDlModel
+        Cyto dl expects a train.csv, valid.csv, and a test.csv in this folder for training.
+        """
+        return f"data.path={str(self._training_model.get_images_directory())}"
+
+    def _get_patch_shape_override(self) -> str:
+        """
+        get the patch shape override for the CytoDLModel
+        """
+        patch_size: PatchSize = self._training_model.get_patch_size()
+        return f"data._aux.patch_shape={_list_to_string(patch_size.value)}"
+
+    def _get_checkpoint_override(self) -> str:
+        """
+        Get the checkpoint path override for the CytoDLModel
+        """
+        return f"ckpt_path={self._experiments_model.get_model_checkpoints_path(self._experiments_model.get_experiment_name(), self._experiments_model.get_checkpoint())}"
+
+    def _build_overrides(self) -> List[str]:
+        """
+        Build a list of overrides for the CytoDLModel from plugin state.
+        """
+        # TODO: Add channel index selection from UI
+        # TODO: Add max time from UI
+        overrides: List = []
+
+        # REQUIRED OVERRIDES for cyto-dl run
+        if self._training_model.get_hardware_type() is None:
+            # v1 defaults to cpu
+            self._training_model.set_hardware_type("cpu")
+        overrides.append(self._get_hardware_override())
+
+        if self._training_model.get_spatial_dims() is None:
+            raise ValueError(
+                "Must define spatial dims 2-d or 3-d to run training."
+            )
+        overrides.append(self._get_spatial_dims_override())
+
+        if self._experiments_model.get_experiment_name() is None:
+            raise ValueError(
+                "User has not selected experiment to save model into"
+            )
+        overrides.append(self._get_experiment_name_override())
+
+        if self._training_model.get_images_directory() is None:
+            raise ValueError("User has not selected input images for training")
+        overrides.append(self._get_images_directory_override())
+
+        # OPTIONAL OVERRIDES for cyto-dl run
+        if self._training_model.get_max_epoch() is not None:
+            # TODO: ask benji- what happens if a user does not define max_epoch?
+            # For now use the default coded values in cyto-dl's experiment config files
+            overrides.append(self._get_max_epoch_override())
+
+        if self._training_model.get_patch_size() is not None:
+            # If for some reason patch size is not selected, default to the patch size defined in cyto-dl's experiment
+            # config files.
+            overrides.append(self._get_patch_shape_override())
+
+        if self._experiments_model.get_checkpoint() is not None:
+            # If checkpoint path is selected, use
+            overrides.append(self._get_checkpoint_override())
+
+        return overrides

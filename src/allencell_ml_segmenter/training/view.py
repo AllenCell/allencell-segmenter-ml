@@ -110,13 +110,13 @@ class TrainingView(View):
         self._radio_3d: QRadioButton = QRadioButton()
         self._radio_3d.setObjectName("3DRadio")
         self._radio_3d.toggled.connect(
-            lambda: self._training_model.set_image_dims(3)
+            lambda: self._training_model.set_spatial_dims(3)
         )
         label_3d: LabelWithHint = LabelWithHint("3D")
 
         self._radio_2d: QRadioButton = QRadioButton()
         self._radio_2d.toggled.connect(
-            lambda: self._training_model.set_image_dims(2)
+            lambda: self._training_model.set_spatial_dims(2)
         )
         label_2d: LabelWithHint = LabelWithHint("2D")
 
@@ -245,6 +245,8 @@ class TrainingView(View):
         Starts training process
         """
         self._training_model.set_training_running(True)
+        # TODO uncomment- testing default segmentation.yaml through API
+        # This is broken and needs to be fixed- images now saved to experiment folder
         result_images = self.read_result_images(
             self._experiments_model.get_model_test_images_path(
                 self._experiments_model.get_experiment_name()

@@ -3,6 +3,7 @@ from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.curation.curation_model import CurationModel
 from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
+from allencell_ml_segmenter.main.i_viewer import IViewer
 from allencell_ml_segmenter.main.viewer import Viewer
 
 from pathlib import Path
@@ -23,7 +24,7 @@ class SelectionMode(Enum):
 class CurationService(Subscriber):
     """ """
 
-    def __init__(self, curation_model: CurationModel, viewer: Viewer) -> None:
+    def __init__(self, curation_model: CurationModel, viewer: IViewer) -> None:
         super().__init__()
         self._curation_model: CurationModel = curation_model
         self._viewer: Viewer = viewer
@@ -205,7 +206,7 @@ class CurationService(Subscriber):
         path(Path): path to raw directory
         """
         self._curation_model.set_raw_directory(path)
-        self._curation_model.set_total_num_channels_raw(
+        self._curation_model.set_raw_image_channel_count(
             self.get_total_num_channels_of_images_in_path(path)
         )
         self._curation_model.dispatch(Event.ACTION_CURATION_RAW_SELECTED)
@@ -217,7 +218,7 @@ class CurationService(Subscriber):
         path(Path): path to seg1 directory
         """
         self._curation_model.set_seg1_directory(path)
-        self._curation_model.set_total_num_channels_seg1(
+        self._curation_model.set_seg1_image_channel_count(
             self.get_total_num_channels_of_images_in_path(path)
         )
         self._curation_model.dispatch(Event.ACTION_CURATION_SEG1_SELECTED)
@@ -229,7 +230,7 @@ class CurationService(Subscriber):
         path(Path): path to seg2 directory
         """
         self._curation_model.set_seg2_directory(path)
-        self._curation_model.set_total_num_channels_seg2(
+        self._curation_model.set_seg2_image_channel_count(
             self.get_total_num_channels_of_images_in_path(path)
         )
         self._curation_model.dispatch(Event.ACTION_CURATION_SEG2_SELECTED)
@@ -257,14 +258,16 @@ class CurationService(Subscriber):
         """
         continue_save: bool = True
         # Checking to see if user has experiment selected
-        if not self._curation_model.get_user_experiment_selected():
+        if not self._curation_model.is_user_experiment_selected():
             # User does not have experiment selected
             continue_save = False
             # show information to user that experiment not selected
             show_info("Please select an experiment to save masks.")
 
         # Checking to see if there is already a merging mask saved.
-        if self._curation_model.get_current_excluding_mask_path():
+        if (
+            self._curation_model.get_current_excluding_mask_path_and_reset_mask()
+        ):
             # There is already a merging mask saved. Ask if user wants to overwrite
             overwrite_excluding_mask_dialog = DialogBox(
                 "There is already a excluding mask saved. Would you like to overwrite?"
@@ -313,7 +316,7 @@ class CurationService(Subscriber):
         """
         continue_save: bool = True
         # Checking to see if user has experiment selected
-        if not self._curation_model.get_user_experiment_selected():
+        if not self._curation_model.is_user_experiment_selected():
             # User does not have experiment selected
             continue_save = False
             # show information to user that experiment not selected
@@ -364,7 +367,7 @@ class CurationService(Subscriber):
                 face_color="royalblue",
                 name="Saved Merging Mask",
             )
-            self._curation_model.merging_mask_shape_layers.append(
+            self._curation_model.append_merging_mask_shape_layer(
                 new_merging_shapes_layer
             )
         return continue_save
@@ -373,20 +376,18 @@ class CurationService(Subscriber):
         """
         Clear all merging mask layers in napari for one image
         """
-        for (
-            merging_layer
-        ) in self._curation_model.get_merging_mask_shape_layers():
-            self._viewer.viewer.layers.remove(merging_layer)
+        self._viewer.clear_mask_layers(
+            self._curation_model.get_merging_mask_shape_layers()
+        )
         self._curation_model.set_merging_mask_shape_layers([])
 
     def clear_excluding_mask_layers_all(self) -> None:
         """
         Clear all excluding mask layers in napari for one image
         """
-        for (
-            excluding_layer
-        ) in self._curation_model.get_excluding_mask_shape_layers():
-            self._viewer.viewer.layers.remove(excluding_layer)
+        self._viewer.clear_mask_layers(
+            self._curation_model.get_excluding_mask_shape_layers()
+        )
         self._curation_model.set_excluding_mask_shape_layers([])
 
     def update_curation_record(self, use_image: bool) -> None:
@@ -396,7 +397,9 @@ class CurationService(Subscriber):
         # DEAL WITH EXCLUDING MASKS
         excluding_mask_path: Union[
             Path, str
-        ] = self._curation_model.get_current_excluding_mask_path()
+        ] = (
+            self._curation_model.get_current_excluding_mask_path_and_reset_mask()
+        )
         if excluding_mask_path is not None:
             excluding_mask_path = str(excluding_mask_path)
         else:
@@ -431,7 +434,7 @@ class CurationService(Subscriber):
 
         # increment curation index
         self._curation_model.set_curation_index(
-            self._curation_model.curation_index + 1
+            self._curation_model.get_curation_index() + 1
         )
 
     def next_image(self, use_image: bool) -> None:
