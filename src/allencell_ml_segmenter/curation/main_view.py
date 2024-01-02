@@ -290,7 +290,7 @@ class CurationMainView(View):
             self._curation_model.get_raw_images()
         ):
             # update progress bar
-            # TODO: refactor, store state of progress bar in model.
+            # TODO #161: refactor, store state of progress bar in model.
             self.progress_bar.setValue(self.progress_bar.value() + 1)
             # set progress bar hint
             self.progress_bar_image_count.setText(
