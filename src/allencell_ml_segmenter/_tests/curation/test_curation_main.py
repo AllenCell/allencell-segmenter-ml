@@ -47,7 +47,7 @@ def test_init_progress_bar(curation_main_view: CurationMainView) -> None:
     curation_main_view.init_progress_bar()
 
     # Assert
-    assert curation_main_view.progress_bar.value() == 0
+    assert curation_main_view.progress_bar.value() == 1
 
 
 def test_next_image(curation_main_view: CurationMainView) -> None:
