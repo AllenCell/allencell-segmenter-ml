@@ -1,3 +1,5 @@
+import asyncio
+
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.event import Event
 import sys
@@ -43,7 +45,7 @@ class PredictionService(Subscriber):
             self._predict_model,
         )
 
-    def _predict_model(self) -> None:
+    def _predict_model(self, _: Event) -> None:
         """
         Predict segmentations using model according to spec
         """
@@ -55,15 +57,30 @@ class PredictionService(Subscriber):
             show_warning("Please select an experiment before running prediction.")
             continue_prediction = False
 
-        # Check to see if training has occurred with the selected experiment
-        training_config = self._experiments_model.get_train_config_path()
+        # Check to see if training has occurred with the selected experiment.
+        training_config: Path = self._experiments_model.get_train_config_path(experiment_name)
         if not training_config.exists():
             show_warning(f"Please train with the experiment: {experiment_name} before running a prediction.")
+            continue_prediction = False
+
+        # Check to see the user has specified a ckpt to use.
+        checkpoint_selected: str = self._experiments_model.get_checkpoint()
+        if self._experiments_model.get_checkpoint() is None:
+            show_warning(f"Please select a checkpoint to run predictions with.")
             continue_prediction = False
 
         if continue_prediction:
             cyto_api: CytoDLModel = CytoDLModel()
             cyto_api.load_config_from_file(training_config)
+
+            print("working_config")
+            cyto_api.print_config()
+
+            # cyto_api.override_config(self._build_default_prediction_overrides(experiment_name, checkpoint_selected))
+            # cyto_api.print_config
+
+
+            asyncio.run(cyto_api.predict())
 
     def _set_config_dir(self) -> None:
         """
@@ -90,7 +107,15 @@ class PredictionService(Subscriber):
         sys.argv.append("--config-name")
         sys.argv.append(str(config_name))
 
-
-
-
+    def _build_default_prediction_overrides(self, experiment_name: str, checkpoint: str) -> List[str]:
+        """
+        Build an overrides list for the cyto-dl API containing the default
+        overrides requried to run predictions.
+        """
+        return [
+            "train=false",
+            "test=false",
+            "mode=predict",
+            f"ckpt_path={self._experiments_model.get_model_checkpoints_path(experiment_name=experiment_name, checkpoint=checkpoint)}"
+        ]
 
