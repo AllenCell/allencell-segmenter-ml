@@ -72,14 +72,7 @@ class PredictionService(Subscriber):
         if continue_prediction:
             cyto_api: CytoDLModel = CytoDLModel()
             cyto_api.load_config_from_file(training_config)
-
-            print("working_config")
-            cyto_api.print_config()
-
-            # cyto_api.override_config(self._build_default_prediction_overrides(experiment_name, checkpoint_selected))
-            # cyto_api.print_config
-
-
+            cyto_api.override_config(self._build_default_prediction_overrides(experiment_name, checkpoint_selected))
             asyncio.run(cyto_api.predict())
 
     def _set_config_dir(self) -> None:
@@ -113,8 +106,8 @@ class PredictionService(Subscriber):
         overrides requried to run predictions.
         """
         return [
-            "train=false",
-            "test=false",
+            "train=False",
+            "test=False",
             "mode=predict",
             f"ckpt_path={self._experiments_model.get_model_checkpoints_path(experiment_name=experiment_name, checkpoint=checkpoint)}"
         ]
