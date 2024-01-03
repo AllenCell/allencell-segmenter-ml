@@ -7,6 +7,7 @@ from allencell_ml_segmenter.prediction.model import PredictionModel
 from pathlib import Path
 from typing import List, Any
 from cyto_dl.api.model import CytoDLModel
+from napari.utils.notifications import show_warning
 
 # from cyto_dl.eval import main as cyto_predict
 
@@ -39,15 +40,19 @@ class PredictionService(Subscriber):
         self._prediction_model.subscribe(
             Event.PROCESS_PREDICTION,
             self,
-            self.predict_model,
+            self._predict_model,
         )
 
-    def predict_model(self) -> None:
+    def _predict_model(self) -> None:
         """
         Predict segmentations using model according to spec
         """
-        cyto_api: CytoDLModel = CytoDLModel()
-        cyto_api.load_config_from_file()
+        # Check to see if experiment selected
+        experiment_name: str = self._experiments_model.get_experiment_name()
+        if experiment_name is None:
+            show_warning("Please select an experiment before running prediction.")
+
+
 
     def _set_config_dir(self) -> None:
         """
@@ -75,7 +80,3 @@ class PredictionService(Subscriber):
         sys.argv.append(str(config_name))
 
 
-if __name__ == "__main__":
-    model = PredictionModel()
-    serv = PredictionService(model)
-    serv.predict_model()

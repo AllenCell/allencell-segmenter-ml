@@ -53,20 +53,20 @@ class ExperimentsModel(IExperimentsModel):
 
     def refresh_experiments(self) -> None:
         for (
-            experiment
+                experiment
         ) in self.user_settings.get_user_experiments_path().iterdir():
             if (
-                experiment not in self.experiments
-                and not experiment.name.startswith(".")
+                    experiment not in self.experiments
+                    and not experiment.name.startswith(".")
             ):
                 self.experiments[experiment.name] = set()
                 self.refresh_checkpoints(experiment.name)
 
     def refresh_checkpoints(self, experiment: str) -> None:
         checkpoints_path = (
-            Path(self.user_settings.get_user_experiments_path())
-            / experiment
-            / "checkpoints"
+                Path(self.user_settings.get_user_experiments_path())
+                / experiment
+                / "checkpoints"
         )
         if checkpoints_path.exists() and len([checkpoints_path.iterdir()]) > 0:
             for checkpoint in checkpoints_path.iterdir():
@@ -96,7 +96,7 @@ class ExperimentsModel(IExperimentsModel):
         )
 
     def get_model_checkpoints_path(
-        self, experiment_name: str, checkpoint: str
+            self, experiment_name: str, checkpoint: str
     ) -> Path:
         """
         Gets checkpoints for model path
@@ -112,7 +112,16 @@ class ExperimentsModel(IExperimentsModel):
 
     def get_csv_path(self) -> Path:
         return (
+                self.get_user_experiments_path()
+                / self.get_experiment_name()
+                / "data"
+        )
+
+    def get_train_config_path(self, experiment_name: str) -> Path:
+        return (
             self.get_user_experiments_path()
-            / self.get_experiment_name()
-            / "data"
+            / experiment_name
+            / "train_config.yaml"
+            if experiment_name
+            else None
         )
