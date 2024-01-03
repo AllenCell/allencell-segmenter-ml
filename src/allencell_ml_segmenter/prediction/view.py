@@ -28,9 +28,11 @@ class PredictionView(View):
     Holds the image and model input widgets for prediction.
     """
 
-    def __init__(self, main_model: MainModel):
+    def __init__(self, main_model: MainModel,
+                 prediction_model: PredictionModel):
         super().__init__()
         self._main_model: MainModel = main_model
+        self._prediction_model = prediction_model
 
         self._service: ModelFileService = ModelFileService(
             self._prediction_model

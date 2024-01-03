@@ -92,7 +92,8 @@ class MainWidget(AicsWidget):
         self._view_to_index: Dict[View, int] = dict()
 
         # initialize the tabs
-        self._prediction_view: PredictionView = PredictionView(main_model=self._model)
+        self._prediction_view: PredictionView = PredictionView(main_model=self._model,
+                                                               prediction_model=self._prediction_model)
         self._initialize_view(self._prediction_view, "Prediction")
 
         self._training_view: TrainingView = TrainingView(
