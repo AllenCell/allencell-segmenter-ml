@@ -65,7 +65,7 @@ class MainWidget(AicsWidget):
             main_model=self._model, experiments_model=self._experiments_model
         )
 
-        self._prediction_model: PredictionModel()
+        self._prediction_model: PredictionModel = PredictionModel()
 
         # init services
         self._training_service: TrainingService = TrainingService(
