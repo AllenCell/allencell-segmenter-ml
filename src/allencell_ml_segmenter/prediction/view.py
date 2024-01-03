@@ -31,7 +31,6 @@ class PredictionView(View):
     def __init__(self, main_model: MainModel):
         super().__init__()
         self._main_model: MainModel = main_model
-        self._prediction_model: PredictionModel = PredictionModel()
 
         self._service: ModelFileService = ModelFileService(
             self._prediction_model

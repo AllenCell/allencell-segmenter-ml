@@ -1,9 +1,12 @@
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.event import Event
 import sys
+
+from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.prediction.model import PredictionModel
 from pathlib import Path
 from typing import List, Any
+from cyto_dl.api.model import CytoDLModel
 
 # from cyto_dl.eval import main as cyto_predict
 
@@ -27,9 +30,12 @@ class PredictionService(Subscriber):
     #TODO create an ABC for cyto-service and have prediction_service inherit it
     """
 
-    def __init__(self, prediction_model: PredictionModel):
+    def __init__(self, prediction_model: PredictionModel,
+                 experiments_model: ExperimentsModel):
         super().__init__()
         self._prediction_model: PredictionModel = prediction_model
+        self._experiments_model: ExperimentsModel = experiments_model
+
         self._prediction_model.subscribe(
             Event.PROCESS_PREDICTION,
             self,
@@ -40,13 +46,8 @@ class PredictionService(Subscriber):
         """
         Predict segmentations using model according to spec
         """
-        self._prediction_model.set_config_name("config.yaml")
-        self._prediction_model.set_config_dir("/Users/brian.kim/Desktop/data")
-
-        # config needs to be called first
-        self._set_config_dir()
-        self._set_config_name()
-        # cyto_predict()
+        cyto_api: CytoDLModel = CytoDLModel()
+        cyto_api.load_config_from_file()
 
     def _set_config_dir(self) -> None:
         """
