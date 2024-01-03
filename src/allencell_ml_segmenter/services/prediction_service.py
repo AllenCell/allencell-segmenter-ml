@@ -47,12 +47,23 @@ class PredictionService(Subscriber):
         """
         Predict segmentations using model according to spec
         """
+        continue_prediction: bool = True
+
         # Check to see if experiment selected
         experiment_name: str = self._experiments_model.get_experiment_name()
         if experiment_name is None:
             show_warning("Please select an experiment before running prediction.")
+            continue_prediction = False
 
+        # Check to see if training has occurred with the selected experiment
+        training_config = self._experiments_model.get_train_config_path()
+        if not training_config.exists():
+            show_warning(f"Please train with the experiment: {experiment_name} before running a prediction.")
+            continue_prediction = False
 
+        if continue_prediction:
+            cyto_api: CytoDLModel = CytoDLModel()
+            cyto_api.load_config_from_file(training_config)
 
     def _set_config_dir(self) -> None:
         """
@@ -78,5 +89,8 @@ class PredictionService(Subscriber):
         # This hydra runtime variable needs to be set in separate calls to sys.argv
         sys.argv.append("--config-name")
         sys.argv.append(str(config_name))
+
+
+
 
 
