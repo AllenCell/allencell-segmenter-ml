@@ -87,12 +87,9 @@ class PredictionView(View):
         )
 
     def run_btn_handler(self):
-        # TODO remove this is for testing
-        self.test_file_service()
-        self._prediction_model.dispatch(Event.PROCESS_PREDICTION_COMPLETE)
-        # self.startLongTask()
+        # Just to test service for now.
+        self._prediction_model.dispatch(Event.PROCESS_PREDICTION)
 
-    # Abstract method implementations ##################################
 
     def doWork(self):
         print("doWork - prediction")
