@@ -3,6 +3,7 @@ from pytestqt.qtbot import QtBot
 
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.main.main_model import MainModel
+from allencell_ml_segmenter.prediction.model import PredictionModel
 from allencell_ml_segmenter.prediction.view import PredictionView
 
 
@@ -19,7 +20,8 @@ def prediction_view(main_model: MainModel, qtbot: QtBot) -> PredictionView:
     """
     Returns a PredictionView instance for testing.
     """
-    return PredictionView(main_model)
+    prediction_model: PredictionModel = PredictionModel()
+    return PredictionView(main_model, prediction_model)
 
 
 def test_prediction_view(
