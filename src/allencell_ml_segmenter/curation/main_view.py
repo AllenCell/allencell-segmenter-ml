@@ -275,7 +275,8 @@ class CurationMainView(View):
         self.progress_bar.setMaximum(
             len(self._curation_model.get_raw_images())
         )
-        self.progress_bar.setValue(0)
+        # start at 1 to indicate current image shown.
+        self.progress_bar.setValue(1)
         # set progress bar hint
         self.progress_bar_image_count.setText(
             f"{self._curation_model.get_curation_index() + 1}/{len(self._curation_model.get_raw_images())}"
@@ -289,6 +290,7 @@ class CurationMainView(View):
             self._curation_model.get_raw_images()
         ):
             # update progress bar
+            # TODO #161: refactor, store state of progress bar in model.
             self.progress_bar.setValue(self.progress_bar.value() + 1)
             # set progress bar hint
             self.progress_bar_image_count.setText(

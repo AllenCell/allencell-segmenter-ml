@@ -13,6 +13,7 @@ from pathlib import Path
 
 @pytest.fixture
 def curation_main_view(qtbot: QtBot) -> CurationMainView:
+    # TODO #161: refactor, dont mutate fixture in tests below
     curation_model: CurationModel = CurationModel()
     experiments_model: FakeExperimentsModel = FakeExperimentsModel()
     curation_service: Mock = Mock(spec=CurationService)
@@ -47,7 +48,7 @@ def test_init_progress_bar(curation_main_view: CurationMainView) -> None:
     curation_main_view.init_progress_bar()
 
     # Assert
-    assert curation_main_view.progress_bar.value() == 0
+    assert curation_main_view.progress_bar.value() == 1
 
 
 def test_next_image(curation_main_view: CurationMainView) -> None:
@@ -70,6 +71,7 @@ def test_increment_progress_bar(curation_main_view: CurationMainView) -> None:
     curation_main_view._curation_model.set_raw_images([Path(), Path(), Path()])
     initial_value: int = curation_main_view.progress_bar.value()
     # Act
+    # TODO #161: refactor, should be testing against public api
     curation_main_view._increment_progress_bar()
     # Assert
     assert curation_main_view.progress_bar.value() == initial_value + 1
@@ -85,6 +87,7 @@ def test_stop_increment_progress_bar_when_curation_finished(
     initial_value: int = curation_main_view.progress_bar.value()
 
     # Act
+    # TODO #161: refactor, should be testing against public api
     curation_main_view._increment_progress_bar()
     # Assert
     assert curation_main_view.progress_bar.value() == initial_value
