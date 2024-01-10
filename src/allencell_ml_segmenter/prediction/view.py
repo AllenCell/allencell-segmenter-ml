@@ -28,8 +28,9 @@ class PredictionView(View):
     Holds the image and model input widgets for prediction.
     """
 
-    def __init__(self, main_model: MainModel,
-                 prediction_model: PredictionModel):
+    def __init__(
+        self, main_model: MainModel, prediction_model: PredictionModel
+    ):
         super().__init__()
         self._main_model: MainModel = main_model
         self._prediction_model = prediction_model
@@ -89,7 +90,6 @@ class PredictionView(View):
     def run_btn_handler(self):
         # Just to test service for now.
         self._prediction_model.dispatch(Event.PROCESS_PREDICTION)
-
 
     def doWork(self):
         print("doWork - prediction")
