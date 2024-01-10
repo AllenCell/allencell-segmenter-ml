@@ -72,6 +72,7 @@ class PredictionService(Subscriber):
         if continue_prediction:
             cyto_api: CytoDLModel = CytoDLModel()
             cyto_api.load_config_from_file(training_config)
+            # TODO: override config currently does not set train: False correctly. Retest once benji fixes the method.
             cyto_api.override_config(
                 self._build_default_prediction_overrides(
                     experiment_name, checkpoint_selected
