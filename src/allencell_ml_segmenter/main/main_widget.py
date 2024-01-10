@@ -21,7 +21,9 @@ from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.prediction.model import PredictionModel
 from allencell_ml_segmenter.prediction.view import PredictionView
-from allencell_ml_segmenter.services.prediction_service import PredictionService
+from allencell_ml_segmenter.services.prediction_service import (
+    PredictionService,
+)
 from allencell_ml_segmenter.services.training_service import TrainingService
 from allencell_ml_segmenter.training.model_selection_widget import (
     ModelSelectionWidget,
@@ -74,7 +76,7 @@ class MainWidget(AicsWidget):
         )
         self._prediction_service: PredictionService = PredictionService(
             prediction_model=self._prediction_model,
-            experiments_model=self._experiments_model
+            experiments_model=self._experiments_model,
         )
 
         # Model selection which applies to all views
@@ -92,8 +94,9 @@ class MainWidget(AicsWidget):
         self._view_to_index: Dict[View, int] = dict()
 
         # initialize the tabs
-        self._prediction_view: PredictionView = PredictionView(main_model=self._model,
-                                                               prediction_model=self._prediction_model)
+        self._prediction_view: PredictionView = PredictionView(
+            main_model=self._model, prediction_model=self._prediction_model
+        )
         self._initialize_view(self._prediction_view, "Prediction")
 
         self._training_view: TrainingView = TrainingView(
