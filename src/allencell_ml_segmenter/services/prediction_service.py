@@ -33,8 +33,11 @@ class PredictionService(Subscriber):
     #TODO create an ABC for cyto-service and have prediction_service inherit it
     """
 
-    def __init__(self, prediction_model: PredictionModel,
-                 experiments_model: ExperimentsModel):
+    def __init__(
+        self,
+        prediction_model: PredictionModel,
+        experiments_model: ExperimentsModel,
+    ):
         super().__init__()
         self._prediction_model: PredictionModel = prediction_model
         self._experiments_model: ExperimentsModel = experiments_model
@@ -54,34 +57,52 @@ class PredictionService(Subscriber):
         # Check to see if experiment selected
         experiment_name: str = self._experiments_model.get_experiment_name()
         if experiment_name is None:
-            show_warning("Please select an experiment before running prediction.")
+            show_warning(
+                "Please select an experiment before running prediction."
+            )
             continue_prediction = False
 
         # Check to see if training has occurred with the selected experiment.
-        training_config: Path = self._experiments_model.get_train_config_path(experiment_name)
+        training_config: Path = self._experiments_model.get_train_config_path(
+            experiment_name
+        )
         if continue_prediction and not training_config.exists():
-            show_warning(f"Please train with the experiment: {experiment_name} before running a prediction.")
+            show_warning(
+                f"Please train with the experiment: {experiment_name} before running a prediction."
+            )
             continue_prediction = False
 
         # Check to see the user has specified a ckpt to use.
         checkpoint_selected: str = self._experiments_model.get_checkpoint()
-        if continue_prediction and self._experiments_model.get_checkpoint() is None:
-            show_warning(f"Please select a checkpoint to run predictions with.")
+        if (
+            continue_prediction
+            and self._experiments_model.get_checkpoint() is None
+        ):
+            show_warning(
+                f"Please select a checkpoint to run predictions with."
+            )
             continue_prediction = False
 
         if continue_prediction:
             cyto_api: CytoDLModel = CytoDLModel()
             cyto_api.load_config_from_file(training_config)
-            cyto_api.override_config(self._build_default_prediction_overrides(experiment_name, checkpoint_selected))
+            cyto_api.override_config(
+                self._build_default_prediction_overrides(
+                    experiment_name, checkpoint_selected
+                )
+            )
             asyncio.run(cyto_api.predict())
 
-    def _build_default_prediction_overrides(self, experiment_name: str, checkpoint: str) -> List[str]:
+    def _build_default_prediction_overrides(
+        self, experiment_name: str, checkpoint: str
+    ) -> List[str]:
         """
         Build an overrides list for the cyto-dl API containing the default
         overrides requried to run predictions.
         """
-        return ["test=False",
-                "train=False",
-                "mode=predict",
-                f"ckpt_path={str(self._experiments_model.get_model_checkpoints_path(experiment_name=experiment_name, checkpoint=checkpoint))}"]
-
+        return [
+            "test=False",
+            "train=False",
+            "mode=predict",
+            f"ckpt_path={str(self._experiments_model.get_model_checkpoints_path(experiment_name=experiment_name, checkpoint=checkpoint))}",
+        ]
