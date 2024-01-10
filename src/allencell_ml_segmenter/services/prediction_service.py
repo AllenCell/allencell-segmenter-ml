@@ -59,13 +59,13 @@ class PredictionService(Subscriber):
 
         # Check to see if training has occurred with the selected experiment.
         training_config: Path = self._experiments_model.get_train_config_path(experiment_name)
-        if not training_config.exists():
+        if continue_prediction and not training_config.exists():
             show_warning(f"Please train with the experiment: {experiment_name} before running a prediction.")
             continue_prediction = False
 
         # Check to see the user has specified a ckpt to use.
         checkpoint_selected: str = self._experiments_model.get_checkpoint()
-        if self._experiments_model.get_checkpoint() is None:
+        if continue_prediction and self._experiments_model.get_checkpoint() is None:
             show_warning(f"Please select a checkpoint to run predictions with.")
             continue_prediction = False
 
@@ -74,31 +74,6 @@ class PredictionService(Subscriber):
             cyto_api.load_config_from_file(training_config)
             cyto_api.override_config(self._build_default_prediction_overrides(experiment_name, checkpoint_selected))
             asyncio.run(cyto_api.predict())
-
-    def _set_config_dir(self) -> None:
-        """
-        Sets the config_dir hydra runtime variable using sys.argv
-        Used for both
-        """
-        # This hydra runtime variable needs to be set in separate calls to sys.argv
-        config_dir: Path = self._prediction_model.get_config_dir()
-        if config_dir is None:
-            raise ValueError(
-                "Config directory not set. Please set config directory."
-            )
-        sys.argv.append("--config-dir")
-        sys.argv.append(str(config_dir))
-
-    def _set_config_name(self) -> None:
-        """
-        Sets the config_name hydra runtime variable using sys.argv
-        Used for both
-        """
-        config_name: str = self._prediction_model.get_config_name()
-        # set config name for predictions, or set custom config for training
-        # This hydra runtime variable needs to be set in separate calls to sys.argv
-        sys.argv.append("--config-name")
-        sys.argv.append(str(config_name))
 
     def _build_default_prediction_overrides(self, experiment_name: str, checkpoint: str) -> List[str]:
         """
