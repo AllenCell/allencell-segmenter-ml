@@ -14,7 +14,6 @@ from unittest.mock import patch
 from allencell_ml_segmenter.services.prediction_service import (
     PredictionService,
 )
-import cyto_dl
 
 
 @pytest.fixture
