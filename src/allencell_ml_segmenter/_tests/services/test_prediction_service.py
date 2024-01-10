@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import List
 
 from allencell_ml_segmenter._tests.fakes.fake_user_settings import FakeUserSettings
 from allencell_ml_segmenter.config.i_user_settings import IUserSettings
@@ -20,7 +21,7 @@ def fake_user_settings() -> IUserSettings:
     return FakeUserSettings()
 
 
-def test_predict_model():
+def test_predict_model() -> None:
     # Arrange
     prediction_model: PredictionModel = PredictionModel()
     experiments_model: ExperimentsModel = ExperimentsModel(
@@ -40,7 +41,7 @@ def test_predict_model():
     # Assert
     patched_api.assert_called_once()
 
-def test_predict_model_no_experiment_selected():
+def test_predict_model_no_experiment_selected() -> None:
     # Arrange
     prediction_model: PredictionModel = PredictionModel()
     experiments_model: ExperimentsModel = ExperimentsModel(
@@ -59,7 +60,7 @@ def test_predict_model_no_experiment_selected():
     # Assert
     patched_api.assert_not_called()
 
-def test_predict_model_no_checkpoint_selected():
+def test_predict_model_no_checkpoint_selected() -> None:
     # Arrange
     prediction_model: PredictionModel = PredictionModel()
     experiments_model: ExperimentsModel = ExperimentsModel(
@@ -77,6 +78,32 @@ def test_predict_model_no_checkpoint_selected():
 
     # Assert
     patched_api.assert_not_called()
+
+def test_build_default_prediction_overrides() -> None:
+    # Arrange
+    prediction_model: PredictionModel = PredictionModel()
+    experiments_model: ExperimentsModel = ExperimentsModel(
+        FakeUserSettings(
+            cyto_dl_home_path=Path(__file__).parent / "cyto_dl_home",
+            user_experiments_path=Path(__file__).parent.parent / "main" / "experiments_home",
+        )
+    )
+    experiments_model.set_experiment_name("0_exp")
+    experiments_model.set_checkpoint("1.ckpt")
+    prediction_service: PredictionService = PredictionService(prediction_model, experiments_model)
+
+    # act
+    overrides: List[str] = prediction_service._build_default_prediction_overrides(experiments_model.get_experiment_name(), experiments_model.get_experiment_name())
+
+    # assert
+    # need these for prediction runs
+    assert "test=False" in overrides
+    assert "train=False" in overrides
+    assert "mode=predict" in overrides
+    assert f"ckpt_path={str(experiments_model.get_model_checkpoints_path(experiments_model.get_experiment_name(), experiments_model.get_experiment_name()))}" in overrides
+
+
+
 
 
 
