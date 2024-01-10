@@ -11,20 +11,6 @@ from typing import List, Any
 from cyto_dl.api.model import CytoDLModel
 from napari.utils.notifications import show_warning
 
-# from cyto_dl.eval import main as cyto_predict
-
-
-# static method
-def _list_to_string(list_to_convert: List[Any]) -> str:
-    """
-    Converts a list of ints to a string
-
-    list (List[int]): list of ints to convert
-    """
-    # fastest python implementation of list to string
-    ints_to_strings: str = ", ".join([str(i) for i in list_to_convert])
-    return f"[{ints_to_strings}]"
-
 
 class PredictionService(Subscriber):
     """
