@@ -16,9 +16,10 @@ class PredictionModel(Publisher):
         # state related to PredictionFileInput
         self.config_name: str = None
         self.config_dir: Path = None
-        self._input_image_paths: List[Path] = []
+        self._input_image_paths: Path = None
         self._image_input_channel_index: int = None
         self._output_directory: Path = None
+        self._max_channels: int = None
 
         # state related to ModelInputWidget
         self._model_path: Path = None
@@ -27,18 +28,21 @@ class PredictionModel(Publisher):
         self._postprocessing_simple_threshold: float = None
         self._postprocessing_auto_threshold: str = None
 
-    def get_input_image_paths(self) -> List[Path]:
+    def get_input_image_dir(self) -> Path:
         """
         Gets list of paths to input images.
         """
         return self._input_image_paths
 
-    def set_input_image_paths(self, paths: List[Path]) -> None:
+    def set_input_image_dir(self, path: Path) -> None:
         """
         Sets list of paths to input images.
         """
-        self._input_image_paths = paths
-        # TODO: make new event if a service is used
+        self._input_image_paths = path
+        # This will extract and set number of channels
+        self.dispatch(Event.ACTION_PREDICTION_EXTRACT_CHANNELS)
+        # this will enable the combobox
+        self.dispatch(Event.ACTION_PREDICTION_INPUT_PATH_SELECTED)
 
     def get_image_input_channel_index(self) -> int:
         """
@@ -140,3 +144,9 @@ class PredictionModel(Publisher):
 
     def get_config_name(self) -> str:
         return self.config_name
+
+    def set_max_channels(self, max: int) -> None:
+        self._max_channels = max
+
+    def get_max_channels(self) -> int:
+        return self._max_channels
