@@ -144,7 +144,7 @@ class PredictionFileInput(QWidget):
         self._channel_select_dropdown.setEnabled(False)
         self._model.subscribe(Event.ACTION_PREDICTION_INPUT_PATH_SELECTED,
                               self,
-                              lambda x: self._channel_select_dropdown.setEnabled(True))
+                              self._populate_input_channel_combobox)
 
 
         output_dir_label: LabelWithHint = LabelWithHint("Output directory")
@@ -178,7 +178,9 @@ class PredictionFileInput(QWidget):
         self._image_list.setEnabled(False)
         self._browse_dir_edit.setEnabled(True)
 
-    def _populate_input_channel_combobox(self) -> None:
-        self._channel_select_dropdown.addItem()
+    def _populate_input_channel_combobox(self, event: Event) -> None:
+        values_range: List[str] = [str(i) for i in range(self._model.get_max_channels())]
+        self._channel_select_dropdown.addItems(values_range)
+        self._channel_select_dropdown.setEnabled(True)
 
 
