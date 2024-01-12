@@ -14,6 +14,7 @@ from qtpy.QtWidgets import (
     QSizePolicy,
 )
 
+from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.widgets.input_button_widget import (
     InputButton,
     FileInputMode,
@@ -117,8 +118,8 @@ class PredictionFileInput(QWidget):
 
         self._browse_dir_edit: InputButton = InputButton(
             self._model,
-            lambda dir: self._model.set_input_image_paths(
-                self.map_input_file_directory_to_path_list(dir)
+            lambda dir: self._model.set_input_image_dir(
+                Path(dir)
             ),
             "Select directory...",
             FileInputMode.DIRECTORY_OR_CSV,
@@ -139,6 +140,12 @@ class PredictionFileInput(QWidget):
         self._channel_select_dropdown.setPlaceholderText(
             "select a channel index"
         )
+        self._channel_select_dropdown.currentIndexChanged.connect(self._model.set_image_input_channel_index)
+        self._channel_select_dropdown.setEnabled(False)
+        self._model.subscribe(Event.ACTION_PREDICTION_INPUT_PATH_SELECTED,
+                              self,
+                              lambda x: self._channel_select_dropdown.setEnabled(True))
+
 
         output_dir_label: LabelWithHint = LabelWithHint("Output directory")
         output_dir_label.set_hint("Location to save segmentations.")
@@ -171,12 +178,7 @@ class PredictionFileInput(QWidget):
         self._image_list.setEnabled(False)
         self._browse_dir_edit.setEnabled(True)
 
-    # TODO: replace with correct implementation and move to a service
-    def map_input_file_directory_to_path_list(
-        self, input_file_directory: str
-    ) -> List[Path]:
-        """
-        Maps a directory of input files to a list of file paths.
-        """
-        # dummy implementation
-        return list(Path(input_file_directory).glob("*"))
+    def _populate_input_channel_combobox(self) -> None:
+        self._channel_select_dropdown.addItem()
+
+
