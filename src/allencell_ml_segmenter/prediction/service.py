@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Generator
 
 from aicsimageio import AICSImage
 
@@ -45,7 +46,12 @@ class ModelFileService(Subscriber):
         # we expect user to have the same number of channels for all images in their folders
         # and that only images are stored in those folders
         # Get first image path
-        first_image: Path = next(self._model.get_input_image_dir().glob('*'))
+        path_generator: Generator = self._model.get_input_image_dir().glob('*')
+        first_image: Path = next(path_generator)
+        # ignore hidden files
+        while str(first_image.name).split('.')[0] == "":
+            first_image = next(path_generator)
+
         img: AICSImage = AICSImage(str(first_image.resolve()))
         return img.dims.C
 

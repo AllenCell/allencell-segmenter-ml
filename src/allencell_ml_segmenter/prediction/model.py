@@ -41,8 +41,7 @@ class PredictionModel(Publisher):
         self._input_image_paths = path
         # This will extract and set number of channels
         self.dispatch(Event.ACTION_PREDICTION_EXTRACT_CHANNELS)
-        # this will enable the combobox
-        self.dispatch(Event.ACTION_PREDICTION_INPUT_PATH_SELECTED)
+
 
     def get_image_input_channel_index(self) -> int:
         """
@@ -147,6 +146,8 @@ class PredictionModel(Publisher):
 
     def set_max_channels(self, max: int) -> None:
         self._max_channels = max
+        # this will enable the combobox
+        self.dispatch(Event.ACTION_PREDICTION_INPUT_PATH_SELECTED)
 
     def get_max_channels(self) -> int:
         return self._max_channels
