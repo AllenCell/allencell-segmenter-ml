@@ -102,10 +102,14 @@ class ExperimentsModel(IExperimentsModel):
         Gets checkpoints for model path
         """
         if experiment_name is None:
-            raise ValueError("Experiment name cannot be None in order to get model_checkpoint_path")
+            raise ValueError(
+                "Experiment name cannot be None in order to get model_checkpoint_path"
+            )
 
         if checkpoint is None:
-            raise ValueError("Checkpoint cannot be None in order to get model_checkpoint_path")
+            raise ValueError(
+                "Checkpoint cannot be None in order to get model_checkpoint_path"
+            )
         return (
             self.get_user_experiments_path()
             / experiment_name

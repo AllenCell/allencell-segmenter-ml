@@ -155,3 +155,69 @@ def test_build_overrides() -> None:
         / "prediction_output_test"
     )
     assert overrides["data.transforms.predict.transforms[0].reader[0].C"] == 3
+
+
+def test_build_overrides_experiment_none() -> None:
+    # Arrange
+    prediction_model: PredictionModel = PredictionModel()
+    experiments_model: ExperimentsModel = ExperimentsModel(
+        FakeUserSettings(
+            cyto_dl_home_path=Path(__file__).parent / "cyto_dl_home",
+            user_experiments_path=Path(__file__).parent.parent
+            / "main"
+            / "experiments_home",
+        )
+    )
+    experiments_model.set_checkpoint("1.ckpt")
+    prediction_service: PredictionService = PredictionService(
+        prediction_model, experiments_model
+    )
+    prediction_model.set_output_directory(
+        Path(__file__).parent.parent
+        / "main"
+        / "0_exp"
+        / "prediction_output_test"
+    )
+    prediction_model.set_image_input_channel_index(3)
+
+    # act/assert
+    with pytest.raises(ValueError):
+        overrides: Dict[
+            str, Union[str, int, float, bool]
+        ] = prediction_service.build_overrides(
+            experiments_model.get_experiment_name(),
+            experiments_model.get_checkpoint(),
+        )
+
+
+def test_build_overrides_checkpoint_none() -> None:
+    # Arrange
+    prediction_model: PredictionModel = PredictionModel()
+    experiments_model: ExperimentsModel = ExperimentsModel(
+        FakeUserSettings(
+            cyto_dl_home_path=Path(__file__).parent / "cyto_dl_home",
+            user_experiments_path=Path(__file__).parent.parent
+            / "main"
+            / "experiments_home",
+        )
+    )
+    experiments_model.set_experiment_name("0_exp")
+    prediction_service: PredictionService = PredictionService(
+        prediction_model, experiments_model
+    )
+    prediction_model.set_output_directory(
+        Path(__file__).parent.parent
+        / "main"
+        / "0_exp"
+        / "prediction_output_test"
+    )
+    prediction_model.set_image_input_channel_index(3)
+
+    # act/assert
+    with pytest.raises(ValueError):
+        overrides: Dict[
+            str, Union[str, int, float, bool]
+        ] = prediction_service.build_overrides(
+            experiments_model.get_experiment_name(),
+            experiments_model.get_checkpoint(),
+        )

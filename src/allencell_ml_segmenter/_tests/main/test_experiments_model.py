@@ -58,6 +58,32 @@ def test_get_model_checkpoints() -> None:
     assert model.get_model_checkpoints_path("foo", "bar") == expected
 
 
+def test_get_model_checkpoints_no_experiment_name() -> None:
+    user_experiments_path = Path(__file__).parent / "experiments_home"
+    config = FakeUserSettings(
+        cyto_dl_home_path=Path(__file__).parent / "cyto_dl_home",
+        user_experiments_path=user_experiments_path,
+    )
+    expected = user_experiments_path / "foo" / "checkpoints" / "bar"
+    model = ExperimentsModel(config)
+
+    with pytest.raises(ValueError):
+        model.get_model_checkpoints_path(None, "bar")
+
+
+def test_get_model_checkpoints_no_checkpoint() -> None:
+    user_experiments_path = Path(__file__).parent / "experiments_home"
+    config = FakeUserSettings(
+        cyto_dl_home_path=Path(__file__).parent / "cyto_dl_home",
+        user_experiments_path=user_experiments_path,
+    )
+    expected = user_experiments_path / "foo" / "checkpoints" / "bar"
+    model = ExperimentsModel(config)
+
+    with pytest.raises(ValueError):
+        model.get_model_checkpoints_path("foo", None)
+
+
 def test_get_train_config_path() -> None:
     # Arrange
     user_experiments_path = Path(__file__).parent / "experiments_home"
