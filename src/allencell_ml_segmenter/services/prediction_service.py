@@ -99,6 +99,9 @@ class PredictionService(Subscriber):
                 experiment_name=experiment_name, checkpoint=checkpoint
             )
         )
+        overrides["data.path"] = str(
+            self._prediction_model.get_input_image_path()
+        )
 
         # overrides from model
         # if output_dir is not set, will default to saving in the experiment folder
