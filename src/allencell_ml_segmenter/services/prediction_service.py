@@ -7,7 +7,7 @@ import sys
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.prediction.model import PredictionModel
 from pathlib import Path
-from typing import List, Union, Dict
+from typing import Union, Dict
 
 # from cyto_dl.api.model import CytoDLModel
 from napari.utils.notifications import show_warning
@@ -77,8 +77,6 @@ class PredictionService(Subscriber):
             cyto_api.override_config(
                 self._build_overrides(experiment_name, checkpoint_selected)
             )
-
-            # TODO: override config currently does not set train: False correctly. Retest once benji fixes the method.
             asyncio.run(cyto_api.predict())
 
     def _build_overrides(self, experiment_name: str, checkpoint: str) -> None:
@@ -91,7 +89,8 @@ class PredictionService(Subscriber):
         self._overrides["train"] = False
         self._overrides["mode"] = "predict"
         self._overrides["task_name"] = "predict_task_from_app"
-        # passing the experiment_name and checkpoint as params to this function ensures we have one selected before attempting to build the overrides dict
+        # passing the experiment_name and checkpoint as params to this function ensures we have a model before
+        # attempting to build the overrides dict for predictions
         self._overrides["ckpt_path"] = str(
             self._experiments_model.get_model_checkpoints_path(
                 experiment_name=experiment_name, checkpoint=checkpoint
@@ -99,10 +98,12 @@ class PredictionService(Subscriber):
         )
 
         # overrides from model
+        # if output_dir is not set, will default to saving in the experiment folder
         output_dir: Path = self._prediction_model.get_output_directory()
         if output_dir:
             self._overrides["paths.output_dir"] = str(output_dir)
 
+        # if channel is not set, will default to same channel used to train
         channel: int = self._prediction_model.get_image_input_channel_index()
         if channel:
             self._overrides[
