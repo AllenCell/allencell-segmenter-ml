@@ -146,6 +146,8 @@ def test_build_overrides() -> None:
         / "checkpoints"
         / "1.ckpt"
     )
+
+    # optional overrides
     assert prediction_service._overrides["paths.output_dir"] == str(
         Path(__file__).parent.parent
         / "main"
