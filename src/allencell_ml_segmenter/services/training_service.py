@@ -3,7 +3,7 @@ import asyncio
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.event import Event
 
-from #cyto_dl.api.model import CytoDLModel
+# from cyto_dl.api.model import CytoDLModel
 
 # from lightning.pytorch.callbacks import Callback
 
