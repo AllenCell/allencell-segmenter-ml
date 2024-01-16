@@ -127,7 +127,7 @@ def test_build_overrides() -> None:
     # act
     overrides: Dict[
         str, Union[str, int, float, bool]
-    ] = prediction_service._build_overrides(
+    ] = prediction_service.build_overrides(
         experiments_model.get_experiment_name(),
         experiments_model.get_checkpoint(),
     )
