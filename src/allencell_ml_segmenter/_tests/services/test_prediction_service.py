@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List
+from typing import List, Dict, Union
 
 from allencell_ml_segmenter._tests.fakes.fake_user_settings import (
     FakeUserSettings,
@@ -100,7 +100,7 @@ def test_predict_model_no_checkpoint_selected() -> None:
     patched_api.assert_not_called()
 
 
-def test_build_default_prediction_overrides() -> None:
+def test_build_overrides() -> None:
     # Arrange
     prediction_model: PredictionModel = PredictionModel()
     experiments_model: ExperimentsModel = ExperimentsModel(
@@ -111,26 +111,50 @@ def test_build_default_prediction_overrides() -> None:
             / "experiments_home",
         )
     )
-    experiments_model.set_experiment_name("0_exp")
+    experiments_model.set_experiment_name("2_exp")
     experiments_model.set_checkpoint("1.ckpt")
     prediction_service: PredictionService = PredictionService(
         prediction_model, experiments_model
     )
+    prediction_model.set_output_directory(
+        Path(__file__).parent.parent
+        / "main"
+        / "0_exp"
+        / "prediction_output_test"
+    )
+    prediction_model.set_image_input_channel_index(3)
 
     # act
-    overrides: List[
-        str
-    ] = prediction_service._build_default_prediction_overrides(
+    prediction_service._build_overrides(
         experiments_model.get_experiment_name(),
-        experiments_model.get_experiment_name(),
+        experiments_model.get_checkpoint(),
     )
 
     # assert
-    # need these for prediction runs
-    assert "test=False" in overrides
-    assert "train=False" in overrides
-    assert "mode=predict" in overrides
+    # Requried overrides- need these for prediction runs
+    assert prediction_service._overrides["test"] == False
+    assert prediction_service._overrides["train"] == False
+    assert prediction_service._overrides["mode"] == "predict"
     assert (
-        f"ckpt_path={str(experiments_model.get_model_checkpoints_path(experiments_model.get_experiment_name(), experiments_model.get_experiment_name()))}"
-        in overrides
+        prediction_service._overrides["task_name"] == "predict_task_from_app"
+    )
+    assert prediction_service._overrides["ckpt_path"] == str(
+        Path(__file__).parent.parent
+        / "main"
+        / "experiments_home"
+        / "2_exp"
+        / "checkpoints"
+        / "1.ckpt"
+    )
+    assert prediction_service._overrides["paths.output_dir"] == str(
+        Path(__file__).parent.parent
+        / "main"
+        / "0_exp"
+        / "prediction_output_test"
+    )
+    assert (
+        prediction_service._overrides[
+            "data.transforms.predict.transforms[0].reader[0].C"
+        ]
+        == 3
     )
