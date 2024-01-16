@@ -125,20 +125,20 @@ def test_build_overrides() -> None:
     prediction_model.set_image_input_channel_index(3)
 
     # act
-    prediction_service._build_overrides(
+    overrides: Dict[str, Union[str, int, float, bool]] = prediction_service._build_overrides(
         experiments_model.get_experiment_name(),
         experiments_model.get_checkpoint(),
     )
 
     # assert
     # Requried overrides- need these for prediction runs
-    assert prediction_service._overrides["test"] == False
-    assert prediction_service._overrides["train"] == False
-    assert prediction_service._overrides["mode"] == "predict"
+    assert overrides["test"] == False
+    assert overrides["train"] == False
+    assert overrides["mode"] == "predict"
     assert (
-        prediction_service._overrides["task_name"] == "predict_task_from_app"
+        overrides["task_name"] == "predict_task_from_app"
     )
-    assert prediction_service._overrides["ckpt_path"] == str(
+    assert overrides["ckpt_path"] == str(
         Path(__file__).parent.parent
         / "main"
         / "experiments_home"
@@ -148,14 +148,14 @@ def test_build_overrides() -> None:
     )
 
     # optional overrides
-    assert prediction_service._overrides["paths.output_dir"] == str(
+    assert overrides["paths.output_dir"] == str(
         Path(__file__).parent.parent
         / "main"
         / "0_exp"
         / "prediction_output_test"
     )
     assert (
-        prediction_service._overrides[
+        overrides[
             "data.transforms.predict.transforms[0].reader[0].C"
         ]
         == 3
