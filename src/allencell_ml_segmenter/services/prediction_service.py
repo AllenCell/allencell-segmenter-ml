@@ -7,7 +7,7 @@ import sys
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.prediction.model import PredictionModel
 from pathlib import Path
-from typing import List, Any, Union, Dict
+from typing import List, Union, Dict
 
 # from cyto_dl.api.model import CytoDLModel
 from napari.utils.notifications import show_warning
