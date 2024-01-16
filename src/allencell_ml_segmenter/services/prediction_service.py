@@ -74,14 +74,14 @@ class PredictionService(Subscriber):
         if continue_prediction:
             cyto_api: CytoDLModel = CytoDLModel()
             cyto_api.load_config_from_file(training_config)
-            cyto_api.override_config(self._build_overrides(experiment_name, checkpoint_selected))
+            cyto_api.override_config(
+                self._build_overrides(experiment_name, checkpoint_selected)
+            )
 
             # TODO: override config currently does not set train: False correctly. Retest once benji fixes the method.
             asyncio.run(cyto_api.predict())
 
-    def _build_overrides(
-        self, experiment_name: str, checkpoint: str
-    ) -> List[str]:
+    def _build_overrides(self, experiment_name: str, checkpoint: str) -> None:
         """
         Build an overrides list for the cyto-dl API containing the
         overrides requried to run predictions, formatted as cyto-dl expects.
@@ -90,9 +90,13 @@ class PredictionService(Subscriber):
         self._overrides["test"] = False
         self._overrides["train"] = False
         self._overrides["mode"] = "predict"
-        self._overrides["task_name"] = "predict_task"
+        self._overrides["task_name"] = "predict_task_from_app"
         # passing the experiment_name and checkpoint as params to this function ensures we have one selected before attempting to build the overrides dict
-        self._overrides["ckpt_path"] = self._experiments_model.get_model_checkpoints_path(experiment_name=experiment_name, checkpoint=checkpoint)
+        self._overrides["ckpt_path"] = str(
+            self._experiments_model.get_model_checkpoints_path(
+                experiment_name=experiment_name, checkpoint=checkpoint
+            )
+        )
 
         # overrides from model
         output_dir: Path = self._prediction_model.get_output_directory()
@@ -101,6 +105,6 @@ class PredictionService(Subscriber):
 
         channel: int = self._prediction_model.get_image_input_channel_index()
         if channel:
-            self._overrides["data.transforms.predict.transforms[0].reader[0].C"] = channel
-
-
+            self._overrides[
+                "data.transforms.predict.transforms[0].reader[0].C"
+            ] = channel
