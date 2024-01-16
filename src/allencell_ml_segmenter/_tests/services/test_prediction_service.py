@@ -125,7 +125,9 @@ def test_build_overrides() -> None:
     prediction_model.set_image_input_channel_index(3)
 
     # act
-    overrides: Dict[str, Union[str, int, float, bool]] = prediction_service._build_overrides(
+    overrides: Dict[
+        str, Union[str, int, float, bool]
+    ] = prediction_service._build_overrides(
         experiments_model.get_experiment_name(),
         experiments_model.get_checkpoint(),
     )
@@ -135,9 +137,7 @@ def test_build_overrides() -> None:
     assert overrides["test"] == False
     assert overrides["train"] == False
     assert overrides["mode"] == "predict"
-    assert (
-        overrides["task_name"] == "predict_task_from_app"
-    )
+    assert overrides["task_name"] == "predict_task_from_app"
     assert overrides["ckpt_path"] == str(
         Path(__file__).parent.parent
         / "main"
@@ -154,9 +154,4 @@ def test_build_overrides() -> None:
         / "0_exp"
         / "prediction_output_test"
     )
-    assert (
-        overrides[
-            "data.transforms.predict.transforms[0].reader[0].C"
-        ]
-        == 3
-    )
+    assert overrides["data.transforms.predict.transforms[0].reader[0].C"] == 3
