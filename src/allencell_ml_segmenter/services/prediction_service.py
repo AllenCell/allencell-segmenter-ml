@@ -81,12 +81,12 @@ class PredictionService(Subscriber):
 
     def _build_overrides(
         self, experiment_name: str, checkpoint: str
-    ) -> Dict[Union[str, int, float, bool]]:
+    ) -> Dict[str, Union[str, int, float, bool]]:
         """
         Build an overrides list for the cyto-dl API containing the
         overrides requried to run predictions, formatted as cyto-dl expects.
         """
-        overrides: Dict[Union[str, int, float, bool]] = dict()
+        overrides: Dict[str, Union[str, int, float, bool]] = dict()
         # Default overrides needed for prediction
         overrides["test"] = False
         overrides["train"] = False
