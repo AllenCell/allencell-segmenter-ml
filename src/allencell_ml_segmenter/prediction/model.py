@@ -63,6 +63,19 @@ class PredictionModel(Publisher):
         """
         self._output_directory = dir
 
+    def get_model_path(self) -> Path:
+        """
+        Gets path to model.
+        """
+        return self._model_path
+
+    def set_model_path(self, path: Path) -> None:
+        """
+        Sets path to model.
+        """
+        self._model_path = path
+        self.dispatch(Event.ACTION_PREDICTION_MODEL_FILE)
+
     def get_preprocessing_method(self) -> str:
         """
         Gets preprocessing method associated with currently-selected model.
