@@ -116,3 +116,12 @@ class ExperimentsModel(IExperimentsModel):
             / self.get_experiment_name()
             / "data"
         )
+
+    def get_train_config_path(self, experiment_name: str) -> Path:
+        return (
+            self.get_user_experiments_path()
+            / experiment_name
+            / "train_config.yaml"
+            if experiment_name
+            else None
+        )

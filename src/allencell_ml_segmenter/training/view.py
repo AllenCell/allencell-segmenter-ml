@@ -205,15 +205,7 @@ class TrainingView(View):
         """
         Starts training process
         """
-        ######### dirty HACKS#####
-        sys.argv = [sys.argv[0]]
-        GlobalHydra.instance().clear()
-        # TODO -  find a better way to solve this
         self.startLongTask()
-        # self._training_model.set_training_running(True)
-
-        # self.doWork()
-        # self.showResults()
 
     def read_result_images(self, dir_to_grab: Path):
         output_dir: Path = dir_to_grab

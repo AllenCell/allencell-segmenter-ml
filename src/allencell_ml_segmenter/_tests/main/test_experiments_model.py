@@ -56,3 +56,17 @@ def test_get_model_checkpoints() -> None:
     expected = user_experiments_path / "foo" / "checkpoints" / "bar"
     model = ExperimentsModel(config)
     assert model.get_model_checkpoints_path("foo", "bar") == expected
+
+
+def test_get_train_config_path() -> None:
+    # Arrange
+    user_experiments_path = Path(__file__).parent / "experiments_home"
+    config = FakeUserSettings(
+        cyto_dl_home_path=Path(__file__).parent / "cyto_dl_home",
+        user_experiments_path=user_experiments_path,
+    )
+    expected = user_experiments_path / "test_experiment" / "train_config.yaml"
+    model = ExperimentsModel(config)
+
+    # Act / Assert
+    assert model.get_train_config_path("test_experiment") == expected
