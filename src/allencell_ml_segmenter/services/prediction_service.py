@@ -75,11 +75,11 @@ class PredictionService(Subscriber):
             cyto_api.load_config_from_file(training_config)
             # We must override the config to set up predictions correctly
             cyto_api.override_config(
-                self._build_overrides(experiment_name, checkpoint_selected)
+                self.build_overrides(experiment_name, checkpoint_selected)
             )
             asyncio.run(cyto_api.predict())
 
-    def _build_overrides(
+    def build_overrides(
         self, experiment_name: str, checkpoint: str
     ) -> Dict[str, Union[str, int, float, bool]]:
         """
