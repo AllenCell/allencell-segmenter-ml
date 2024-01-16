@@ -7,7 +7,7 @@ import sys
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.prediction.model import PredictionModel
 from pathlib import Path
-from typing import List, Any
+from typing import List, Any, Union, Dict
 
 # from cyto_dl.api.model import CytoDLModel
 from napari.utils.notifications import show_warning
@@ -28,6 +28,7 @@ class PredictionService(Subscriber):
         super().__init__()
         self._prediction_model: PredictionModel = prediction_model
         self._experiments_model: ExperimentsModel = experiments_model
+        self._overrides: Dict[Union[str, int, float, bool]] = dict()
 
         self._prediction_model.subscribe(
             Event.PROCESS_PREDICTION,
@@ -73,24 +74,33 @@ class PredictionService(Subscriber):
         if continue_prediction:
             cyto_api: CytoDLModel = CytoDLModel()
             cyto_api.load_config_from_file(training_config)
+            cyto_api.override_config(self._build_overrides(experiment_name, checkpoint_selected))
+
             # TODO: override config currently does not set train: False correctly. Retest once benji fixes the method.
-            cyto_api.override_config(
-                self._build_default_prediction_overrides(
-                    experiment_name, checkpoint_selected
-                )
-            )
             asyncio.run(cyto_api.predict())
 
-    def _build_default_prediction_overrides(
+    def _build_overrides(
         self, experiment_name: str, checkpoint: str
     ) -> List[str]:
         """
-        Build an overrides list for the cyto-dl API containing the default
-        overrides requried to run predictions.
+        Build an overrides list for the cyto-dl API containing the
+        overrides requried to run predictions, formatted as cyto-dl expects.
         """
-        return [
-            "test=False",
-            "train=False",
-            "mode=predict",
-            f"ckpt_path={str(self._experiments_model.get_model_checkpoints_path(experiment_name=experiment_name, checkpoint=checkpoint))}",
-        ]
+        # Default overrides needed for prediction
+        self._overrides["test"] = False
+        self._overrides["train"] = False
+        self._overrides["mode"] = "predict"
+        self._overrides["task_name"] = "predict_task"
+        # passing the experiment_name and checkpoint as params to this function ensures we have one selected before attempting to build the overrides dict
+        self._overrides["ckpt_path"] = self._experiments_model.get_model_checkpoints_path(experiment_name=experiment_name, checkpoint=checkpoint)
+
+        # overrides from model
+        output_dir: Path = self._prediction_model.get_output_directory()
+        if output_dir:
+            self._overrides["paths.output_dir"] = str(output_dir)
+
+        channel: int = self._prediction_model.get_image_input_channel_index()
+        if channel:
+            self._overrides["data.transforms.predict.transforms[0].reader[0].C"] = channel
+
+
