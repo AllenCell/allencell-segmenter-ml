@@ -79,7 +79,9 @@ class PredictionService(Subscriber):
             )
             asyncio.run(cyto_api.predict())
 
-    def _build_overrides(self, experiment_name: str, checkpoint: str) -> Dict[Union[str, int, float, bool]]:
+    def _build_overrides(
+        self, experiment_name: str, checkpoint: str
+    ) -> Dict[Union[str, int, float, bool]]:
         """
         Build an overrides list for the cyto-dl API containing the
         overrides requried to run predictions, formatted as cyto-dl expects.
