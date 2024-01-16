@@ -28,10 +28,12 @@ class PredictionView(View):
     Holds the image and model input widgets for prediction.
     """
 
-    def __init__(self, main_model: MainModel):
+    def __init__(
+        self, main_model: MainModel, prediction_model: PredictionModel
+    ):
         super().__init__()
         self._main_model: MainModel = main_model
-        self._prediction_model: PredictionModel = PredictionModel()
+        self._prediction_model = prediction_model
 
         self._service: ModelFileService = ModelFileService(
             self._prediction_model
@@ -86,12 +88,8 @@ class PredictionView(View):
         )
 
     def run_btn_handler(self):
-        # TODO remove this is for testing
-        self.test_file_service()
-        self._prediction_model.dispatch(Event.PROCESS_PREDICTION_COMPLETE)
-        # self.startLongTask()
-
-    # Abstract method implementations ##################################
+        # Just to test service for now.
+        self._prediction_model.dispatch(Event.PROCESS_PREDICTION)
 
     def doWork(self):
         print("doWork - prediction")
