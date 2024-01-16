@@ -9,7 +9,7 @@ from allencell_ml_segmenter.prediction.model import PredictionModel
 from pathlib import Path
 from typing import Union, Dict
 
-from #cyto_dl.api.model import CytoDLModel
+# from cyto_dl.api.model import CytoDLModel
 from napari.utils.notifications import show_warning
 
 
