@@ -178,7 +178,7 @@ class PredictionFileInput(QWidget):
         self._image_list.setEnabled(False)
         self._browse_dir_edit.setEnabled(True)
 
-    def _populate_input_channel_combobox(self, event: Event) -> None:
+    def _populate_input_channel_combobox(self, event: Event = None) -> None:
         values_range: List[str] = [str(i) for i in range(self._model.get_max_channels())]
         self._channel_select_dropdown.addItems(values_range)
         self._channel_select_dropdown.setEnabled(True)
