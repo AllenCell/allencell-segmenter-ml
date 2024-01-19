@@ -16,13 +16,12 @@ class PredictionModel(Publisher):
         # state related to PredictionFileInput
         self.config_name: str = None
         self.config_dir: Path = None
-        self._input_image_paths: Path = None
+        self._input_image_dir: Path = None
         self._image_input_channel_index: int = None
         self._output_directory: Path = None
         self._max_channels: int = None
 
         # state related to ModelInputWidget
-        self._model_path: Path = None
         self._preprocessing_method: str = None
         self._postprocessing_method: str = None
         self._postprocessing_simple_threshold: float = None
@@ -32,16 +31,15 @@ class PredictionModel(Publisher):
         """
         Gets list of paths to input images.
         """
-        return self._input_image_paths
+        return self._input_image_dir
 
     def set_input_image_dir(self, path: Path) -> None:
         """
         Sets list of paths to input images.
         """
-        self._input_image_paths = path
+        self._input_image_dir = path
         # This will extract and set number of channels
         self.dispatch(Event.ACTION_PREDICTION_EXTRACT_CHANNELS)
-
 
     def get_image_input_channel_index(self) -> int:
         """
