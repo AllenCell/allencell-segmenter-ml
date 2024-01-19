@@ -31,7 +31,6 @@ def test_input_image_paths(prediction_model: PredictionModel) -> None:
     # ASSERT
     assert prediction_model.get_input_image_dir() == dummy_paths
 
-
 def test_image_input_channel_index(prediction_model: PredictionModel) -> None:
     """
     Tests that the channel index is set and retrieved properly.
