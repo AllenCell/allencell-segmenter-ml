@@ -142,6 +142,7 @@ class PredictionFileInput(QWidget):
         )
         self._channel_select_dropdown.currentIndexChanged.connect(self._model.set_image_input_channel_index)
         self._channel_select_dropdown.setEnabled(False)
+        # Event to trigger combobox populate on input image directory selection
         self._model.subscribe(Event.ACTION_PREDICTION_INPUT_PATH_SELECTED,
                               self,
                               self._populate_input_channel_combobox)
