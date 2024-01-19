@@ -64,7 +64,6 @@ def test_get_model_checkpoints_no_experiment_name() -> None:
         cyto_dl_home_path=Path(__file__).parent / "cyto_dl_home",
         user_experiments_path=user_experiments_path,
     )
-    expected = user_experiments_path / "foo" / "checkpoints" / "bar"
     model = ExperimentsModel(config)
 
     with pytest.raises(ValueError):
@@ -77,7 +76,6 @@ def test_get_model_checkpoints_no_checkpoint() -> None:
         cyto_dl_home_path=Path(__file__).parent / "cyto_dl_home",
         user_experiments_path=user_experiments_path,
     )
-    expected = user_experiments_path / "foo" / "checkpoints" / "bar"
     model = ExperimentsModel(config)
 
     with pytest.raises(ValueError):
