@@ -181,6 +181,7 @@ def test_build_overrides_experiment_none() -> None:
     prediction_model.set_image_input_channel_index(3)
 
     # act/assert
+    # Experiment name is None, so build_overrides should throw a ValueError
     with pytest.raises(ValueError):
         overrides: Dict[
             str, Union[str, int, float, bool]
@@ -214,6 +215,7 @@ def test_build_overrides_checkpoint_none() -> None:
     prediction_model.set_image_input_channel_index(3)
 
     # act/assert
+    # Checkpoint is None, so build_overrides should throw a ValueError
     with pytest.raises(ValueError):
         overrides: Dict[
             str, Union[str, int, float, bool]
