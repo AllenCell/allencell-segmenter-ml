@@ -65,7 +65,7 @@ class ModelFileService(Subscriber):
             reader: csv.reader = csv.reader(file)
             # skip heading
             next(reader)
-            line_data_path: str = next(reader)[1]
+            line_data_path: str = next(reader)[0]
             img: AICSImage = AICSImage(str(line_data_path))
             return img.dims.C
 
