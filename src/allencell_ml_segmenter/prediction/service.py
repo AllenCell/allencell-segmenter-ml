@@ -1,5 +1,6 @@
 from pathlib import Path
 from typing import Generator
+import csv
 
 from aicsimageio import AICSImage
 
@@ -26,7 +27,7 @@ class ModelFileService(Subscriber):
         self._model.subscribe(
             Event.ACTION_PREDICTION_EXTRACT_CHANNELS,
             self,
-            lambda e: self._model.set_max_channels(self.extract_num_channels_in_folder(self._model.get_input_image_dir()))
+            lambda e: self._model.set_max_channels(self._determine_input_selection_type(self._model.get_input_image_dir()))
         )
 
     def handle_event(self, event: Event) -> None:
@@ -54,4 +55,21 @@ class ModelFileService(Subscriber):
 
         img: AICSImage = AICSImage(str(first_image.resolve()))
         return img.dims.C
+
+    def extract_num_channels_from_csv(self, path: Path):
+        with open(path) as file:
+            reader: csv.reader = csv.reader(file)
+            # skip heading
+            next(reader)
+            line_data_path:str = next(reader)[0]
+            img: AICSImage = AICSImage(str(line_data_path))
+            return img.dims.C
+
+    def _determine_input_selection_type(self, path: Path):
+        if path.is_dir():
+            return self.extract_num_channels_in_folder(path)
+        elif path.suffix == ".csv":
+            return self.extract_num_channels_from_csv()
+
+
 
