@@ -27,7 +27,11 @@ class ModelFileService(Subscriber):
         self._model.subscribe(
             Event.ACTION_PREDICTION_EXTRACT_CHANNELS,
             self,
-            lambda e: self._model.set_max_channels(self._determine_input_selection_type(self._model.get_input_image_dir()))
+            lambda e: self._model.set_max_channels(
+                self._determine_input_selection_type(
+                    self._model.get_input_image_dir()
+                )
+            ),
         )
 
     def handle_event(self, event: Event) -> None:
@@ -47,10 +51,10 @@ class ModelFileService(Subscriber):
         # we expect user to have the same number of channels for all images in their folders
         # and that only images are stored in those folders
         # Get first image path
-        path_generator: Generator[Path] = path.glob('*')
+        path_generator: Generator[Path] = path.glob("*")
         first_image: Path = next(path_generator)
         # ignore hidden files
-        while str(first_image.name).split('.')[0] == "":
+        while str(first_image.name).split(".")[0] == "":
             first_image = next(path_generator)
 
         img: AICSImage = AICSImage(str(first_image.resolve()))
@@ -61,7 +65,7 @@ class ModelFileService(Subscriber):
             reader: csv.reader = csv.reader(file)
             # skip heading
             next(reader)
-            line_data_path:str = next(reader)[1]
+            line_data_path: str = next(reader)[1]
             img: AICSImage = AICSImage(str(line_data_path))
             return img.dims.C
 
@@ -74,6 +78,3 @@ class ModelFileService(Subscriber):
 
         # for testing current api
         return self.extract_num_channels_from_csv(path / "train.csv")
-
-
-
