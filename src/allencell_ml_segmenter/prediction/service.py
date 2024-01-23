@@ -61,15 +61,19 @@ class ModelFileService(Subscriber):
             reader: csv.reader = csv.reader(file)
             # skip heading
             next(reader)
-            line_data_path:str = next(reader)[0]
+            line_data_path:str = next(reader)[1]
             img: AICSImage = AICSImage(str(line_data_path))
             return img.dims.C
 
     def _determine_input_selection_type(self, path: Path):
-        if path.is_dir():
-            return self.extract_num_channels_in_folder(path)
-        elif path.suffix == ".csv":
-            return self.extract_num_channels_from_csv()
+        # this should work once benji releases dataloader
+        # if path.is_dir():
+        #     return self.extract_num_channels_in_folder(path)
+        # elif path.suffix == ".csv":
+        #     return self.extract_num_channels_from_csv(path)
+
+        # for testing current api
+        return self.extract_num_channels_from_csv(path / "train.csv")
 
 
 
