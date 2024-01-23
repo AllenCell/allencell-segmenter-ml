@@ -5,10 +5,6 @@ from allencell_ml_segmenter.prediction.service import ModelFileService
 from allencell_ml_segmenter.prediction.model import PredictionModel
 
 
-class PredicitonModel:
-    pass
-
-
 def test_extract_num_channels_in_a_folder() -> None:
     # Arrange
     prediction_model: PredictionModel = PredictionModel()
