@@ -26,7 +26,7 @@ class ModelFileService(Subscriber):
         self._model.subscribe(
             Event.ACTION_PREDICTION_EXTRACT_CHANNELS,
             self,
-            lambda e: self._model.set_max_channels(self.exctact_num_channels())
+            lambda e: self._model.set_max_channels(self.extract_num_channels_in_folder(self._model.get_input_image_dir()))
         )
 
     def handle_event(self, event: Event) -> None:
@@ -39,14 +39,14 @@ class ModelFileService(Subscriber):
         # TODO: replace dummy implementation
         self._model.set_preprocessing_method("foo")
 
-    def exctact_num_channels(self) -> int:
+    def extract_num_channels_in_folder(self, path: Path) -> int:
         """
         Determine total number of channels for image in a set folder
         """
         # we expect user to have the same number of channels for all images in their folders
         # and that only images are stored in those folders
         # Get first image path
-        path_generator: Generator = self._model.get_input_image_dir().glob('*')
+        path_generator: Generator[Path] = path.glob('*')
         first_image: Path = next(path_generator)
         # ignore hidden files
         while str(first_image.name).split('.')[0] == "":
