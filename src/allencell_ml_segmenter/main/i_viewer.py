@@ -20,3 +20,7 @@ class IViewer(ABC):
     @abstractmethod
     def clear_mask_layers(self, layers_to_remove):
         pass
+
+    @abstractmethod
+    def get_paths_of_image_laeyrs(self):
+        pass
