@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from napari.layers.shapes.shapes import Shapes
 
 from allencell_ml_segmenter.main.i_viewer import IViewer
@@ -29,3 +31,6 @@ class Viewer(IViewer):
     def clear_mask_layers(self, layers_to_remove: List[Shapes]) -> None:
         for layer in layers_to_remove:
             self.viewer.layers.remove(layer)
+
+    def get_paths_of_image_laeyrs(self) -> List[Path]:
+        return [layer.source.path for layer in self.viewer.layers]
