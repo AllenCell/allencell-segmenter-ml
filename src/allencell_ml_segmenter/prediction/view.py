@@ -21,6 +21,7 @@ from qtpy.QtWidgets import (
     QFrame,
     QLabel,
 )
+from napari.viewer import Viewer
 
 
 class PredictionView(View):
@@ -29,11 +30,12 @@ class PredictionView(View):
     """
 
     def __init__(
-        self, main_model: MainModel, prediction_model: PredictionModel
+        self, main_model: MainModel, prediction_model: PredictionModel, viewer: Viewer
     ):
         super().__init__()
         self._main_model: MainModel = main_model
-        self._prediction_model = prediction_model
+        self._prediction_model: PredictionModel = prediction_model
+        self._viewer: Viewer = viewer
 
         self._service: ModelFileService = ModelFileService(
             self._prediction_model
@@ -51,7 +53,7 @@ class PredictionView(View):
         self.layout().addWidget(self._title, alignment=Qt.AlignHCenter)
 
         self._file_input_widget: PredictionFileInput = PredictionFileInput(
-            self._prediction_model
+            self._prediction_model, self._viewer
         )
         self._file_input_widget.setObjectName("fileInput")
 
