@@ -22,5 +22,9 @@ class IViewer(ABC):
         pass
 
     @abstractmethod
-    def get_paths_of_image_laeyrs(self):
+    def get_paths_of_image_layers(self):
+        pass
+
+    @abstractmethod
+    def subscribe_layers_change_event(self, function):
         pass
