@@ -1,6 +1,7 @@
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
+from napari.utils.events import Event
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
     QWidget,
@@ -24,6 +25,8 @@ from allencell_ml_segmenter.widgets.check_box_list_widget import (
     CheckBoxListWidget,
 )
 
+from napari.viewer import Viewer
+
 
 class PredictionFileInput(QWidget):
     """
@@ -33,14 +36,18 @@ class PredictionFileInput(QWidget):
     TOP_TEXT: str = "On-screen image(s)"
     BOTTOM_TEXT: str = "Image(s) from a directory"
 
-    def __init__(self, model: PredictionModel):
+    def __init__(self, model: PredictionModel, viewer: Viewer):
         super().__init__()
 
         self._model: PredictionModel = model
-
+        self._viewer: Viewer = viewer
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
+
+        # set up napari event listener for layer changes
+        # this keeps the layer list in our UI updated as the layers are added/deleted from napari
+        self._viewer.subscribe_layers_change_event(self._update_layer_list)
 
         frame: QFrame = QFrame()
         frame.setLayout(QVBoxLayout())
@@ -163,11 +170,17 @@ class PredictionFileInput(QWidget):
         """Prohibits usage of non-related input fields if top button is checked."""
         self._image_list.setEnabled(True)
         self._browse_dir_edit.setEnabled(False)
+        self._update_layer_list()
 
     def _from_directory_slot(self) -> None:
         """Prohibits usage of non-related input fields if bottom button is checked."""
         self._image_list.setEnabled(False)
         self._browse_dir_edit.setEnabled(True)
+
+    def _update_layer_list(self, event: Optional[Event] = None) -> None:
+        self._image_list.clear()
+        for layer in self._viewer.get_layers():
+            self._image_list.add_item(layer.name)
 
     # TODO: replace with correct implementation and move to a service
     def map_input_file_directory_to_path_list(
