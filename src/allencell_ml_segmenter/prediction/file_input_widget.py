@@ -19,7 +19,7 @@ from allencell_ml_segmenter.widgets.input_button_widget import (
     FileInputMode,
 )
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
-from allencell_ml_segmenter.prediction.model import PredictionModel
+from allencell_ml_segmenter.prediction.model import PredictionModel, PredictionInputMode
 from allencell_ml_segmenter.widgets.check_box_list_widget import (
     CheckBoxListWidget,
 )
@@ -163,11 +163,13 @@ class PredictionFileInput(QWidget):
         """Prohibits usage of non-related input fields if top button is checked."""
         self._image_list.setEnabled(True)
         self._browse_dir_edit.setEnabled(False)
+        self._model.set_prediction_input_mode(PredictionInputMode.FROM_NAPARI_LAYERS)
 
     def _from_directory_slot(self) -> None:
         """Prohibits usage of non-related input fields if bottom button is checked."""
         self._image_list.setEnabled(False)
         self._browse_dir_edit.setEnabled(True)
+        self._model.set_prediction_input_mode(PredictionInputMode.FROM_PATH)
 
     # TODO: replace with correct implementation and move to a service
     def map_input_file_directory_to_path_list(
