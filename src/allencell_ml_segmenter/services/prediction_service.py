@@ -6,7 +6,7 @@ from allencell_ml_segmenter.core.event import Event
 import sys
 
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
-from allencell_ml_segmenter.prediction.model import PredictionModel
+from allencell_ml_segmenter.prediction.model import PredictionModel, PredictionInputMode
 from pathlib import Path
 from typing import Union, Dict, List
 
@@ -72,7 +72,10 @@ class PredictionService(Subscriber):
             continue_prediction = False
 
         # Set input images
-
+        if self._prediction_model.get_prediction_input_mode() == PredictionInputMode.FROM_PATH:
+            input_path: Path = self._prediction_model.get_input_image_path()
+            if input_path.is_dir():
+                self.write_csv_for_inputs(list(input_path.glob("*.*")))
 
         if continue_prediction:
             cyto_api: CytoDLModel = CytoDLModel()
