@@ -146,3 +146,6 @@ class PredictionModel(Publisher):
 
     def set_prediction_input_mode(self, mode: PredictionInputMode) -> None:
         self._input_mode = mode
+
+    def get_prediction_input_mode(self) -> PredictionInputMode:
+        return self._input_mode
