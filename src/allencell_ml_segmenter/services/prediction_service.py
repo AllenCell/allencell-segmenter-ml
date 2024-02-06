@@ -90,7 +90,7 @@ class PredictionService(Subscriber):
             cyto_api.override_config(
                 self.build_overrides(experiment_name, checkpoint_selected)
             )
-            asyncio.run(cyto_api._predict_async())
+            asyncio.run(cyto_api.predict(run_async=True))
 
     def build_overrides(
         self, experiment_name: str, checkpoint: str
