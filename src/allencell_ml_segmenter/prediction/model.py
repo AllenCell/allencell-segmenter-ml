@@ -4,6 +4,8 @@ from typing import List
 
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.publisher import Publisher
+
+
 class PredictionInputMode(Enum):
     FROM_PATH = "from_path"
     FROM_NAPARI_LAYERS = "from_napari_layers"
