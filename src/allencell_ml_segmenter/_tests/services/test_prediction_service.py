@@ -225,6 +225,7 @@ def test_build_overrides_checkpoint_none() -> None:
             )
         )
 
+
 def test_write_csv_for_inputs() -> None:
     # Arrange
     experiments_model: ExperimentsModel = ExperimentsModel(
@@ -244,18 +245,14 @@ def test_write_csv_for_inputs() -> None:
 
     # Act
     with patch("builtins.open", mock_open()) as mock_file_open:
-        with patch('csv.writer', mock_csv_write):
+        with patch("csv.writer", mock_csv_write):
             prediction_service.write_csv_for_inputs(["image1", "image2"])
 
     # Assert that CSV.write is called with correct rows
+    assert call().writerow(["", "raw", "split"]) in mock_csv_write.mock_calls
     assert (
-        call().writerow(["", "raw", "split"]) in mock_csv_write.mock_calls
+        call().writerow(["0", "image1", "test"]) in mock_csv_write.mock_calls
     )
     assert (
-        call().writerow(["0", "image1", "test"])
-        in mock_csv_write.mock_calls
-    )
-    assert (
-        call().writerow(["1", "image2", "test"])
-        in mock_csv_write.mock_calls
+        call().writerow(["1", "image2", "test"]) in mock_csv_write.mock_calls
     )
