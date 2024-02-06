@@ -74,7 +74,7 @@ class PredictionService(Subscriber):
             )
             continue_prediction = False
 
-        # Set input images
+        # Create a CSV if user selects a folder of input images.
         if (
             self._prediction_model.get_prediction_input_mode()
             == PredictionInputMode.FROM_PATH
@@ -129,6 +129,7 @@ class PredictionService(Subscriber):
                 "data.transforms.predict.transforms[0].reader[0].C"
             ] = channel
 
+        # Need these overrides to load in csv's
         overrides["data.columns"] = ["raw", "split"]
         overrides["data.split_column"] = "split"
 
