@@ -13,7 +13,7 @@ from allencell_ml_segmenter.prediction.model import (
 from pathlib import Path
 from typing import Union, Dict, List
 
-#from cyto_dl.api.model import CytoDLModel
+# from cyto_dl.api.model import CytoDLModel
 from napari.utils.notifications import show_warning
 
 
@@ -125,9 +125,9 @@ class PredictionService(Subscriber):
         # if channel is not set, will default to same channel used to train
         channel: int = self._prediction_model.get_image_input_channel_index()
         if channel:
-            overrides[
-                "data.transforms.predict.transforms[0].reader[0].C"
-            ] = channel
+            overrides["data.transforms.predict.transforms[0].reader[0].C"] = (
+                channel
+            )
 
         # Need these overrides to load in csv's
         overrides["data.columns"] = ["raw", "split"]
