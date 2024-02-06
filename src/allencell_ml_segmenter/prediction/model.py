@@ -1,8 +1,14 @@
+from enum import Enum
 from pathlib import Path
 from typing import List
 
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.publisher import Publisher
+
+
+class PredictionInputMode(Enum):
+    FROM_PATH = "from_path"
+    FROM_NAPARI_LAYERS = "from_napari_layers"
 
 
 class PredictionModel(Publisher):
@@ -18,6 +24,7 @@ class PredictionModel(Publisher):
         self.config_dir: Path = None
         self._input_image_path: Path = None
         self._image_input_channel_index: int = None
+        self._input_mode: PredictionInputMode = None
         self._output_directory: Path = None
 
         # state related to ModelInputWidget
@@ -138,3 +145,9 @@ class PredictionModel(Publisher):
 
     def get_config_name(self) -> str:
         return self.config_name
+
+    def set_prediction_input_mode(self, mode: PredictionInputMode) -> None:
+        self._input_mode = mode
+
+    def get_prediction_input_mode(self) -> PredictionInputMode:
+        return self._input_mode
