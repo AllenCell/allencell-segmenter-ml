@@ -54,7 +54,7 @@ class ModelFileService(Subscriber):
         path_generator: Generator[Path] = path.glob("*")
         first_image: Path = next(path_generator)
         # ignore hidden files
-        while str(first_image.name).split(".")[0] == "":
+        while str(first_image.name).startswith("."):
             first_image = next(path_generator)
 
         img: AICSImage = AICSImage(str(first_image.resolve()))
