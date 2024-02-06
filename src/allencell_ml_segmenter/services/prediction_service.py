@@ -106,9 +106,9 @@ class PredictionService(Subscriber):
                 experiment_name=experiment_name, checkpoint=checkpoint
             )
         )
-        # overrides["data.path"] = str(
-        #     self._prediction_model.get_input_image_path()
-        # )
+        overrides["data.path"] = str(
+            self._prediction_model.get_input_image_path()
+        )
 
         # overrides from model
         # if output_dir is not set, will default to saving in the experiment folder
@@ -125,12 +125,13 @@ class PredictionService(Subscriber):
 
         overrides["data.columns"] = ["raw", "split"]
         overrides["data.split_column"] = "split"
-        overrides["data.path"] = "/Users/brian.kim/Desktop/test.csv"
 
         return overrides
 
     def write_csv_for_inputs(self, list_images: List[Path]) -> None:
-        csv_path: Path = self._experiments_model.get_csv_path() / "prediction_input.csv"
+        data_folder: Path = self._experiments_model.get_csv_path()
+        data_folder.mkdir(parents=False, exist_ok=True)
+        csv_path: Path = data_folder / "prediction_input.csv"
         with open(csv_path, 'w') as file:
             writer: csv.writer = csv.writer(file)
             writer.writerow(["", "raw", "split"])
