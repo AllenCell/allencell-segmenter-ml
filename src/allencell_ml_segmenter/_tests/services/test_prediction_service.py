@@ -1,3 +1,4 @@
+import csv
 from pathlib import Path
 from typing import List, Dict, Union
 
@@ -9,7 +10,7 @@ from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.prediction.model import PredictionModel
 import pytest
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock, mock_open, call
 
 from allencell_ml_segmenter.services.prediction_service import (
     PredictionService,
@@ -222,4 +223,38 @@ def test_build_overrides_checkpoint_none() -> None:
         ] = prediction_service.build_overrides(
             experiments_model.get_experiment_name(),
             experiments_model.get_checkpoint(),
+        )
+
+    def test_write_csv_for_inputs() -> None:
+        # Arrange
+        experiments_model: ExperimentsModel = ExperimentsModel(
+            FakeUserSettings(
+                cyto_dl_home_path=Path(__file__).parent / "cyto_dl_home",
+                user_experiments_path=Path(__file__).parent.parent
+                / "main"
+                / "experiments_home",
+            )
+        )
+        experiments_model.set_experiment_name("0_exp")
+        prediction_model: PredictionModel = PredictionModel()
+        prediction_service: PredictionService = PredictionService(
+            prediction_model, experiments_model
+        )
+        mock_csv_write = MagicMock(spec=csv.writer)
+
+        # Act
+        with patch("builtins.open", mock_open()) as mock_file_open:
+            prediction_service.write_csv_for_inputs(["image1", "image2"])
+
+        # Assert that CSV.write is called with correct rows
+        assert (
+            call().writerow(["", "raw", "split"]) in mock_csv_write.mock_calls
+        )
+        assert (
+            call().writerow(["0", "image1", "test"])
+            in mock_csv_write.mock_calls
+        )
+        assert (
+            call().writerow(["1", "image2", "test"])
+            in mock_csv_write.mock_calls
         )
