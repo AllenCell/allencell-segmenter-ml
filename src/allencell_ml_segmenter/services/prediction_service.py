@@ -45,10 +45,15 @@ class PredictionService(Subscriber):
         """
         if self._able_to_continue_prediction():
             cyto_api: CytoDLModel = CytoDLModel()
-            cyto_api.load_config_from_file(self._experiments_model.get_train_config_path)
+            cyto_api.load_config_from_file(
+                self._experiments_model.get_train_config_path
+            )
             # We must override the config to set up predictions correctly
             cyto_api.override_config(
-                self.build_overrides(self._experiments_model.get_experiment_name(), self._experiments_model.get_checkpoint())
+                self.build_overrides(
+                    self._experiments_model.get_experiment_name(),
+                    self._experiments_model.get_checkpoint(),
+                )
             )
             asyncio.run(cyto_api.predict(run_async=True))
 
