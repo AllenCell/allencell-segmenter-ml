@@ -18,6 +18,7 @@ class CheckBoxListWidget(QListWidget):
         self.itemChanged.connect(self._send_checked_signal)
         self.setMaximumHeight(100)
         self.setStyleSheet("margin-top: 0px")
+
     def _send_checked_signal(self, item: QListWidgetItem) -> None:
         """
         Handles the itemChanged signal by emitting a checkedSignal that indicates which item was chosen.

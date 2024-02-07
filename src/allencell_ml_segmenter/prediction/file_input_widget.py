@@ -172,7 +172,7 @@ class PredictionFileInput(QWidget):
         self._model.subscribe(
             Event.ACTION_PREDICTION_INITIATED,
             self,
-            self._set_selected_image_paths_from_napari
+            self._set_selected_image_paths_from_napari,
         )
 
     def _on_screen_slot(self) -> None:
@@ -195,9 +195,13 @@ class PredictionFileInput(QWidget):
         for layer in self._viewer.get_layers():
             self._image_list.add_item(layer.name)
 
-    def _set_selected_image_paths_from_napari(self, event: Optional[Event] = None) -> None:
+    def _set_selected_image_paths_from_napari(
+        self, event: Optional[Event] = None
+    ) -> None:
         selected_indices: List[int] = self._image_list.get_checked_rows()
-        selected_paths: List[Path] = [self._viewer.get_layers()[i].source.path for i in selected_indices]
+        selected_paths: List[Path] = [
+            self._viewer.get_layers()[i].source.path for i in selected_indices
+        ]
         self._model.set_selected_paths(selected_paths)
 
     # TODO: replace with correct implementation and move to a service

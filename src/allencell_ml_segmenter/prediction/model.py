@@ -171,4 +171,3 @@ class PredictionModel(Publisher):
 
     def get_prediction_running(self) -> bool:
         return self._prediction_running
-
