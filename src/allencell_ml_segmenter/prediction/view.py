@@ -30,7 +30,10 @@ class PredictionView(View):
     """
 
     def __init__(
-        self, main_model: MainModel, prediction_model: PredictionModel, viewer: Viewer
+        self,
+        main_model: MainModel,
+        prediction_model: PredictionModel,
+        viewer: Viewer,
     ):
         super().__init__()
         self._main_model: MainModel = main_model
