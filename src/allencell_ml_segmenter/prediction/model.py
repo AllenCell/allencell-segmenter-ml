@@ -26,12 +26,16 @@ class PredictionModel(Publisher):
         self._image_input_channel_index: int = None
         self._input_mode: PredictionInputMode = None
         self._output_directory: Path = None
+        self._selected_paths: List[Path] = None
 
         # state related to ModelInputWidget
         self._preprocessing_method: str = None
         self._postprocessing_method: str = None
         self._postprocessing_simple_threshold: float = None
         self._postprocessing_auto_threshold: str = None
+
+        # app state
+        self._prediction_running: bool = False
 
     def get_input_image_path(self) -> Path:
         """
@@ -151,3 +155,20 @@ class PredictionModel(Publisher):
 
     def get_prediction_input_mode(self) -> PredictionInputMode:
         return self._input_mode
+
+    def set_selected_paths(self, paths: List[Path]) -> None:
+        self._selected_paths = paths
+
+    def get_selected_paths(self) -> List[Path]:
+        return self._selected_paths
+
+    def set_prediction_running(self, is_prediction_running: bool) -> None:
+        # To run some setup for predictions
+        self.dispatch(Event.ACTION_PREDICTION_INITIATED)
+        # Shoots off a prediction run
+        self.dispatch(Event.PROCESS_PREDICTION)
+        self._prediction_running = is_prediction_running
+
+    def get_prediction_running(self) -> bool:
+        return self._prediction_running
+

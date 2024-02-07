@@ -32,6 +32,7 @@ class Event(Enum):
     ACTION_PREDICTION_POSTPROCESSING_AUTO_THRESHOLD = (
         "postprocessing_auto_threshold"
     )
+    ACTION_PREDICTION_INITIATED = "prediction_initiated"
     # Curation
     ACTION_CURATION_RAW_SELECTED = "curation_raw_selected"
     ACTION_CURATION_SEG1_SELECTED = "curation_seg1_selected"

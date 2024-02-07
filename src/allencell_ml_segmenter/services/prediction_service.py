@@ -13,7 +13,7 @@ from allencell_ml_segmenter.prediction.model import (
 from pathlib import Path
 from typing import Union, Dict, List
 
-# from cyto_dl.api.model import CytoDLModel
+from cyto_dl.api.model import CytoDLModel
 from napari.utils.notifications import show_warning
 
 
@@ -74,14 +74,35 @@ class PredictionService(Subscriber):
             )
             continue_prediction = False
 
-        # Create a CSV if user selects a folder of input images.
-        if (
-            self._prediction_model.get_prediction_input_mode()
+        # Check to see if user has selected an input mode
+        input_mode_selected: PredictionInputMode = self._prediction_model.get_prediction_input_mode()
+        if not input_mode_selected:
+            show_warning("Please select input images before running prediction.")
+            continue_prediction = False
+        elif (
+            input_mode_selected
             == PredictionInputMode.FROM_PATH
         ):
+            # User has selected a directory or a csv as input images
             input_path: Path = self._prediction_model.get_input_image_path()
             if input_path.is_dir():
+                # if input path selected is a directory, we need to manually write a CSV for cyto-dl
                 self.write_csv_for_inputs(list(input_path.glob("*.*")))
+            elif input_path.suffix != ".csv":
+                # This should not be possible with FileInputWidget- throw an error.
+                raise ValueError("Somehow the user has selected a non-csv/directory for input images. Should not be possible with FileInputWidget")
+        elif input_mode_selected == PredictionInputMode.FROM_NAPARI_LAYERS:
+            # User has selected napari image layers as input images
+            selected_paths_from_napari: List[Path] = self._prediction_model.get_selected_paths()
+            if len(selected_paths_from_napari) < 1:
+                # No image layers selected
+                show_warning("Please select at least 1 image from the napari layer before running prediction.")
+                continue_prediction = False
+            else:
+                # If user selects input images from napari, we need to manually write a csv for cyto-dl
+                self.write_csv_for_inputs(self._prediction_model.get_selected_paths())
+
+
 
         if continue_prediction:
             cyto_api: CytoDLModel = CytoDLModel()
