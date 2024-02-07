@@ -91,7 +91,7 @@ class PredictionView(View):
 
     def run_btn_handler(self):
         # Just to test service for now.
-        self._prediction_model.dispatch(Event.PROCESS_PREDICTION)
+        self._prediction_model.set_prediction_running(True)
 
     def doWork(self):
         print("doWork - prediction")

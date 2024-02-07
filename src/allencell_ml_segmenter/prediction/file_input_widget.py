@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import List, Optional
 
-from napari.utils.events import Event
+from napari.utils.events import Event as NapariEvent
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
     QWidget,
@@ -15,6 +15,7 @@ from qtpy.QtWidgets import (
     QSizePolicy,
 )
 
+from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.widgets.input_button_widget import (
     InputButton,
     FileInputMode,
@@ -28,7 +29,7 @@ from allencell_ml_segmenter.widgets.check_box_list_widget import (
     CheckBoxListWidget,
 )
 
-from napari.viewer import Viewer
+from allencell_ml_segmenter.main.viewer import Viewer
 
 
 class PredictionFileInput(QWidget):
@@ -168,6 +169,11 @@ class PredictionFileInput(QWidget):
         grid_layout.setColumnStretch(1, 0)
 
         frame.layout().addLayout(grid_layout)
+        self._model.subscribe(
+            Event.ACTION_PREDICTION_INITIATED,
+            self,
+            self._set_selected_image_paths_from_napari
+        )
 
     def _on_screen_slot(self) -> None:
         """Prohibits usage of non-related input fields if top button is checked."""
@@ -184,10 +190,15 @@ class PredictionFileInput(QWidget):
         self._browse_dir_edit.setEnabled(True)
         self._model.set_prediction_input_mode(PredictionInputMode.FROM_PATH)
 
-    def _update_layer_list(self, event: Optional[Event] = None) -> None:
+    def _update_layer_list(self, event: Optional[NapariEvent] = None) -> None:
         self._image_list.clear()
         for layer in self._viewer.get_layers():
             self._image_list.add_item(layer.name)
+
+    def _set_selected_image_paths_from_napari(self, event: Optional[Event] = None) -> None:
+        selected_indices: List[int] = self._image_list.get_checked_rows()
+        selected_paths: List[Path] = [self._viewer.get_layers()[i].source.path for i in selected_indices]
+        self._model.set_selected_paths(selected_paths)
 
     # TODO: replace with correct implementation and move to a service
     def map_input_file_directory_to_path_list(
