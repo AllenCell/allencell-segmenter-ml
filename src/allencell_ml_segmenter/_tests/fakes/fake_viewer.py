@@ -10,9 +10,10 @@ from napari.layers.shapes.shapes import Shapes
 
 
 class FakeLayer:
-    def __init__(self):
+    def __init__(self, name=""):
         self.removed: List[Layer] = []
         self.connected: List[Callable] = []
+        self.name = name
 
     def remove(self, layer_remove: Layer):
         self.removed.append(layer_remove)
@@ -66,3 +67,7 @@ class FakeViewer(IViewer):
 
     def get_layers(self):
         return self.images_added.keys()
+
+    def add_layer(self, name):
+        self.layer_list.append(FakeLayer(name))
+
