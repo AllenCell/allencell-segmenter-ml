@@ -14,6 +14,7 @@ from allencell_ml_segmenter.core.aics_widget import AicsWidget
 from allencell_ml_segmenter.main.main_widget import MainWidget
 from unittest.mock import Mock
 
+
 @pytest.fixture
 def main_widget(qtbot: QtBot) -> MainWidget:
     """
