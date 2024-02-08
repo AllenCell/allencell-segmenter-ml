@@ -23,7 +23,8 @@ class FakeLayer:
     def connect(self, callable: Callable):
         self.connected.append(callable)
 
-class FakeNapariEvent():
+
+class FakeNapariEvent:
     def __init__(self):
         self.layers_change: FakeLayer = FakeLayer()
 
@@ -65,4 +66,3 @@ class FakeViewer(IViewer):
 
     def get_layers(self):
         return self.images_added.keys()
-
