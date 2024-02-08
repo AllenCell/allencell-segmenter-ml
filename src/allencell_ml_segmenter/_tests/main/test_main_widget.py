@@ -7,20 +7,12 @@ from pytestqt.qtbot import QtBot
 from allencell_ml_segmenter._tests.fakes.fake_user_settings import (
     FakeUserSettings,
 )
+from allencell_ml_segmenter._tests.fakes.fake_viewer import FakeViewer
 from allencell_ml_segmenter.config.i_user_settings import IUserSettings
 
 from allencell_ml_segmenter.core.aics_widget import AicsWidget
 from allencell_ml_segmenter.main.main_widget import MainWidget
 from unittest.mock import Mock
-
-
-@pytest.fixture
-def viewer() -> napari.Viewer:
-    """
-    Returns a mock napari viewer.
-    """
-    return Mock(spec=napari.Viewer)
-
 
 @pytest.fixture
 def main_widget(qtbot: QtBot) -> MainWidget:
@@ -30,7 +22,7 @@ def main_widget(qtbot: QtBot) -> MainWidget:
     settings: IUserSettings = FakeUserSettings()
     settings.set_cyto_dl_home_path(Path())
     settings.set_user_experiments_path(Path())
-    return MainWidget(viewer=viewer, settings=settings)
+    return MainWidget(viewer=FakeViewer(), settings=settings)
 
 
 def test_handle_action_change_view_event(
@@ -71,7 +63,7 @@ def test_experiments_home_initialized(qtbot: QtBot) -> None:
 
     # ACT
     MainWidget(
-        viewer, settings
+        FakeViewer(), settings
     )  # If the users settings does not find an experiments home path, it will prompt the user for one and persist it.
 
     # ASSERT
