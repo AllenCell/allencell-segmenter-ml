@@ -70,4 +70,3 @@ class FakeViewer(IViewer):
 
     def add_layer(self, name):
         self.layer_list.append(FakeLayer(name))
-
