@@ -36,7 +36,6 @@ class FakeViewer(IViewer):
         self.images_added = dict()
         self.shapes_layers_added = []
         self.shapes_layers_removed = []
-        self.layers_change_event = None
         self.events = FakeNapariEvent()
 
     def add_image(self, image, name=None):
@@ -62,4 +61,8 @@ class FakeViewer(IViewer):
         return list(self.images_added.keys())
 
     def subscribe_layers_change_event(self, function):
-        self.layers_change_event = function
+        self.events.layers_change.connect(function)
+
+    def get_layers(self):
+        return self.images_added.keys()
+
