@@ -5,6 +5,7 @@ from qtpy.QtWidgets import QFileDialog
 from qtpy.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
+from allencell_ml_segmenter._tests.fakes.fake_viewer import FakeViewer
 from allencell_ml_segmenter.prediction.file_input_widget import (
     PredictionFileInput,
 )
@@ -19,7 +20,7 @@ def file_input_widget(qtbot: QtBot):
     """
     Fixture that creates an instance of ModelInputWidget for testing.
     """
-    return PredictionFileInput(PredictionModel())
+    return PredictionFileInput(PredictionModel(), viewer=FakeViewer())
 
 
 def test_top_radio_button_slot(
