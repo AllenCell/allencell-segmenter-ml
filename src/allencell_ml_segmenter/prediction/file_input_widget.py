@@ -20,7 +20,10 @@ from allencell_ml_segmenter.widgets.input_button_widget import (
     FileInputMode,
 )
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
-from allencell_ml_segmenter.prediction.model import PredictionModel
+from allencell_ml_segmenter.prediction.model import (
+    PredictionModel,
+    PredictionInputMode,
+)
 from allencell_ml_segmenter.widgets.check_box_list_widget import (
     CheckBoxListWidget,
 )
@@ -118,7 +121,9 @@ class PredictionFileInput(QWidget):
 
         self._browse_dir_edit: InputButton = InputButton(
             self._model,
-            lambda dir: self._model.set_input_image_dir(Path(dir)),
+            lambda dir: self._model.set_input_image_path(
+                Path(dir), extract_channels=True
+            ),
             "Select directory...",
             FileInputMode.DIRECTORY_OR_CSV,
         )
@@ -174,11 +179,15 @@ class PredictionFileInput(QWidget):
         """Prohibits usage of non-related input fields if top button is checked."""
         self._image_list.setEnabled(True)
         self._browse_dir_edit.setEnabled(False)
+        self._model.set_prediction_input_mode(
+            PredictionInputMode.FROM_NAPARI_LAYERS
+        )
 
     def _from_directory_slot(self) -> None:
         """Prohibits usage of non-related input fields if bottom button is checked."""
         self._image_list.setEnabled(False)
         self._browse_dir_edit.setEnabled(True)
+        self._model.set_prediction_input_mode(PredictionInputMode.FROM_PATH)
 
     def _populate_input_channel_combobox(self, event: Event = None) -> None:
         values_range: List[str] = [
