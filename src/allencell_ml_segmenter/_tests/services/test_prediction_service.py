@@ -125,11 +125,11 @@ def test_build_overrides() -> None:
     prediction_model.set_image_input_channel_index(3)
 
     # act
-    overrides: Dict[
-        str, Union[str, int, float, bool]
-    ] = prediction_service.build_overrides(
-        experiments_model.get_experiment_name(),
-        experiments_model.get_checkpoint(),
+    overrides: Dict[str, Union[str, int, float, bool]] = (
+        prediction_service.build_overrides(
+            experiments_model.get_experiment_name(),
+            experiments_model.get_checkpoint(),
+        )
     )
 
     # assert
@@ -183,11 +183,11 @@ def test_build_overrides_experiment_none() -> None:
     # act/assert
     # Experiment name is None, so build_overrides should throw a ValueError
     with pytest.raises(ValueError):
-        overrides: Dict[
-            str, Union[str, int, float, bool]
-        ] = prediction_service.build_overrides(
-            experiments_model.get_experiment_name(),
-            experiments_model.get_checkpoint(),
+        overrides: Dict[str, Union[str, int, float, bool]] = (
+            prediction_service.build_overrides(
+                experiments_model.get_experiment_name(),
+                experiments_model.get_checkpoint(),
+            )
         )
 
 
@@ -217,9 +217,9 @@ def test_build_overrides_checkpoint_none() -> None:
     # act/assert
     # Checkpoint is None, so build_overrides should throw a ValueError
     with pytest.raises(ValueError):
-        overrides: Dict[
-            str, Union[str, int, float, bool]
-        ] = prediction_service.build_overrides(
-            experiments_model.get_experiment_name(),
-            experiments_model.get_checkpoint(),
+        overrides: Dict[str, Union[str, int, float, bool]] = (
+            prediction_service.build_overrides(
+                experiments_model.get_experiment_name(),
+                experiments_model.get_checkpoint(),
+            )
         )
