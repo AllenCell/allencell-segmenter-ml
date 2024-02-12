@@ -89,3 +89,18 @@ def test_preprocessing_method(
 
     # ASSERT 2
     assert file_input_widget._model.get_preprocessing_method() is None
+
+
+def test_populate_input_channel_combobox(qtbot: QtBot) -> None:
+    # Arrange
+    prediction_model: PredictionModel = PredictionModel()
+    prediction_file_input: PredictionFileInput = PredictionFileInput(
+        prediction_model
+    )
+    prediction_model.set_max_channels(6)
+
+    # Act
+    prediction_file_input._populate_input_channel_combobox()
+
+    # Assert
+    assert prediction_file_input._channel_select_dropdown.isEnabled()

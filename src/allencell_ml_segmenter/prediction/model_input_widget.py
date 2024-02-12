@@ -18,9 +18,6 @@ from allencell_ml_segmenter.core.aics_widget import AicsWidget
 
 from allencell_ml_segmenter.prediction.model import PredictionModel
 from allencell_ml_segmenter.core.event import Event
-from allencell_ml_segmenter.widgets.input_button_widget import (
-    InputButton,
-)
 from allencell_ml_segmenter.widgets.label_with_hint_widget import (
     LabelWithHint,
 )
@@ -48,14 +45,8 @@ class ModelInputWidget(AicsWidget):
 
         # instantiate widgets
         self._frame: QFrame = QFrame()
-        self._title: LabelWithHint = LabelWithHint("Model")
+        self._title: LabelWithHint = LabelWithHint("Pre/Post Processing")
         # TODO: hints for widget titles?
-
-        self._selection_label_with_hint: LabelWithHint = LabelWithHint()
-
-        self._input_button: InputButton = InputButton(
-            self._model, lambda path: self._model.set_model_path(path)
-        )
         self._preprocessing_label_with_hint: LabelWithHint = LabelWithHint()
         self._method_label: QLabel = QLabel("n/a")
         self._postprocessing_label_with_hint: LabelWithHint = LabelWithHint()
@@ -156,14 +147,6 @@ class ModelInputWidget(AicsWidget):
         self._frame.setObjectName("frame")
         self._title.setObjectName("title")
 
-        # selection label + hint
-        self._selection_label_with_hint.set_label_text(
-            "Select an existing model"
-        )
-        self._selection_label_with_hint.set_hint(
-            "Path to packaged model output from training."
-        )
-
         # preprocessing label + hint
         self._preprocessing_label_with_hint.set_label_text(
             "Preprocessing method"
@@ -262,15 +245,6 @@ class ModelInputWidget(AicsWidget):
         self.layout().addWidget(self._title)
         self.layout().addWidget(self._frame)
 
-        # horizontal layout containing widgets related to file selection
-        selection_layout: QHBoxLayout = QHBoxLayout()
-        selection_layout.setSpacing(0)
-
-        selection_layout.addWidget(
-            self._selection_label_with_hint, alignment=Qt.AlignLeft
-        )
-        selection_layout.addWidget(self._input_button, alignment=Qt.AlignRight)
-
         # horizontal layout containing widgets related to preprocessing
         preprocessing_layout: QHBoxLayout = QHBoxLayout()
         preprocessing_layout.setSpacing(0)
@@ -313,7 +287,6 @@ class ModelInputWidget(AicsWidget):
         grid_layout.setColumnStretch(1, 1)
 
         # add inner widgets and layouts to overarching layout
-        self._frame.layout().addLayout(selection_layout)
         self._frame.layout().addLayout(preprocessing_layout)
         self._frame.layout().addWidget(
             self._postprocessing_label_with_hint, alignment=Qt.AlignLeft

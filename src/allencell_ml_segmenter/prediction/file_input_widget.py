@@ -14,6 +14,7 @@ from qtpy.QtWidgets import (
     QSizePolicy,
 )
 
+from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.widgets.input_button_widget import (
     InputButton,
     FileInputMode,
@@ -120,7 +121,7 @@ class PredictionFileInput(QWidget):
 
         self._browse_dir_edit: InputButton = InputButton(
             self._model,
-            lambda dir: self._model.set_input_image_path(dir),
+            lambda dir: self._model.set_input_image_dir(Path(dir)),
             "Select directory...",
             FileInputMode.DIRECTORY_OR_CSV,
         )
@@ -139,6 +140,16 @@ class PredictionFileInput(QWidget):
         self._channel_select_dropdown.setCurrentIndex(-1)
         self._channel_select_dropdown.setPlaceholderText(
             "select a channel index"
+        )
+        self._channel_select_dropdown.currentIndexChanged.connect(
+            self._model.set_image_input_channel_index
+        )
+        self._channel_select_dropdown.setEnabled(False)
+        # Event to trigger combobox populate on input image directory selection
+        self._model.subscribe(
+            Event.ACTION_PREDICTION_INPUT_PATH_SELECTED,
+            self,
+            self._populate_input_channel_combobox,
         )
 
         output_dir_label: LabelWithHint = LabelWithHint("Output directory")
@@ -176,12 +187,9 @@ class PredictionFileInput(QWidget):
         self._browse_dir_edit.setEnabled(True)
         self._model.set_prediction_input_mode(PredictionInputMode.FROM_PATH)
 
-    # TODO: replace with correct implementation and move to a service
-    def map_input_file_directory_to_path_list(
-        self, input_file_directory: str
-    ) -> List[Path]:
-        """
-        Maps a directory of input files to a list of file paths.
-        """
-        # dummy implementation
-        return list(Path(input_file_directory).glob("*"))
+    def _populate_input_channel_combobox(self, event: Event = None) -> None:
+        values_range: List[str] = [
+            str(i) for i in range(self._model.get_max_channels())
+        ]
+        self._channel_select_dropdown.addItems(values_range)
+        self._channel_select_dropdown.setEnabled(True)
