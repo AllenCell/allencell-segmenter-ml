@@ -100,7 +100,7 @@ class PredictionService(Subscriber):
             )
         )
         overrides["data.path"] = str(
-            self._prediction_model.get_input_image_path()
+            self._prediction_model.get_input_image_dir()
         )
 
         # overrides from model
@@ -112,8 +112,8 @@ class PredictionService(Subscriber):
         # if channel is not set, will default to same channel used to train
         channel: int = self._prediction_model.get_image_input_channel_index()
         if channel:
-            overrides[
-                "data.transforms.predict.transforms[0].reader[0].C"
-            ] = channel
+            overrides["data.transforms.predict.transforms[0].reader[0].C"] = (
+                channel
+            )
 
         return overrides

@@ -7,6 +7,7 @@ see: https://napari.org/stable/plugins/guides.html?#sample-data
 
 Replace code below according to your needs.
 """
+
 from __future__ import annotations
 from typing import List, Tuple, Dict
 
