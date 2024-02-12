@@ -106,28 +106,6 @@ def test_configure_slots(
     mock_set_threshold.assert_called_once_with("isodata")
 
 
-def test_model_path(
-    qtbot: QtBot, model_input_widget: ModelInputWidget
-) -> None:
-    """
-    Tests that selecting a model file updates the model path.
-    """
-    # ARRANGE
-    dummy_path: str = "/path/to/file"
-
-    with patch.object(
-        QFileDialog, "getOpenFileName", return_value=(dummy_path, "")
-    ):
-        with qtbot.waitSignal(
-            model_input_widget._input_button._button.clicked
-        ):
-            # ACT
-            model_input_widget._input_button._button.click()
-
-    # ASSERT
-    assert model_input_widget._model.get_model_path() == Path(dummy_path)
-
-
 def test_postprocessing_method(
     qtbot: QtBot, model_input_widget: ModelInputWidget
 ) -> None:

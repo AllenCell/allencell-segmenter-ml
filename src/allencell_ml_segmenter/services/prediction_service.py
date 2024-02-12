@@ -113,7 +113,7 @@ class PredictionService(Subscriber):
             )
         )
         overrides["data.path"] = str(
-            self._prediction_model.get_input_image_path()
+            self._prediction_model.get_input_image_dir()
         )
 
         # overrides from model
@@ -128,7 +128,6 @@ class PredictionService(Subscriber):
             overrides["data.transforms.predict.transforms[0].reader[0].C"] = (
                 channel
             )
-
         # Need these overrides to load in csv's
         overrides["data.columns"] = ["raw", "split"]
         overrides["data.split_column"] = "split"
