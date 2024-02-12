@@ -121,7 +121,7 @@ class PredictionFileInput(QWidget):
 
         self._browse_dir_edit: InputButton = InputButton(
             self._model,
-            lambda dir: self._model.set_input_image_path(Path(dir)),
+            lambda dir: self._model.set_input_image_path(Path(dir), extract_channels=True),
             "Select directory...",
             FileInputMode.DIRECTORY_OR_CSV,
         )
