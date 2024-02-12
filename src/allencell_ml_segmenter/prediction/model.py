@@ -22,7 +22,7 @@ class PredictionModel(Publisher):
         # state related to PredictionFileInput
         self.config_name: str = None
         self.config_dir: Path = None
-        self._input_image_dir: Path = None
+        self._input_image_path: Path = None
         self._image_input_channel_index: int = None
         self._input_mode: PredictionInputMode = None
         self._output_directory: Path = None
@@ -34,19 +34,20 @@ class PredictionModel(Publisher):
         self._postprocessing_simple_threshold: float = None
         self._postprocessing_auto_threshold: str = None
 
-    def get_input_image_dir(self) -> Path:
+    def get_input_image_path(self) -> Path:
         """
         Gets list of paths to input images.
         """
-        return self._input_image_dir
+        return self._input_image_path
 
-    def set_input_image_dir(self, path: Path) -> None:
+    def set_input_image_path(self, path: Path, extract_channels: bool = False) -> None:
         """
         Sets list of paths to input images.
         """
-        self._input_image_dir = path
-        # This will extract and set number of channels
-        self.dispatch(Event.ACTION_PREDICTION_EXTRACT_CHANNELS)
+        self._input_image_path = path
+        if extract_channels:
+            # This will extract and set number of channels
+            self.dispatch(Event.ACTION_PREDICTION_EXTRACT_CHANNELS)
 
     def get_image_input_channel_index(self) -> int:
         """

@@ -113,7 +113,7 @@ class PredictionService(Subscriber):
             )
         )
         overrides["data.path"] = str(
-            self._prediction_model.get_input_image_dir()
+            self._prediction_model.get_input_image_path()
         )
 
         # overrides from model
