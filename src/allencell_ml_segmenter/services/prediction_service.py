@@ -1,13 +1,17 @@
 import asyncio
+import csv
 
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.event import Event
 import sys
 
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
-from allencell_ml_segmenter.prediction.model import PredictionModel
+from allencell_ml_segmenter.prediction.model import (
+    PredictionModel,
+    PredictionInputMode,
+)
 from pathlib import Path
-from typing import Union, Dict
+from typing import Union, Dict, List
 
 # from cyto_dl.api.model import CytoDLModel
 from napari.utils.notifications import show_warning
@@ -70,6 +74,15 @@ class PredictionService(Subscriber):
             )
             continue_prediction = False
 
+        # Create a CSV if user selects a folder of input images.
+        if (
+            self._prediction_model.get_prediction_input_mode()
+            == PredictionInputMode.FROM_PATH
+        ):
+            input_path: Path = self._prediction_model.get_input_image_path()
+            if input_path.is_dir():
+                self.write_csv_for_inputs(list(input_path.glob("*.*")))
+
         if continue_prediction:
             cyto_api: CytoDLModel = CytoDLModel()
             cyto_api.load_config_from_file(training_config)
@@ -77,7 +90,7 @@ class PredictionService(Subscriber):
             cyto_api.override_config(
                 self.build_overrides(experiment_name, checkpoint_selected)
             )
-            asyncio.run(cyto_api.predict())
+            asyncio.run(cyto_api.predict(run_async=True))
 
     def build_overrides(
         self, experiment_name: str, checkpoint: str
@@ -100,7 +113,7 @@ class PredictionService(Subscriber):
             )
         )
         overrides["data.path"] = str(
-            self._prediction_model.get_input_image_dir()
+            self._prediction_model.get_input_image_path()
         )
 
         # overrides from model
@@ -115,5 +128,20 @@ class PredictionService(Subscriber):
             overrides["data.transforms.predict.transforms[0].reader[0].C"] = (
                 channel
             )
+        # Need these overrides to load in csv's
+        overrides["data.columns"] = ["raw", "split"]
+        overrides["data.split_column"] = "split"
 
         return overrides
+
+    def write_csv_for_inputs(self, list_images: List[Path]) -> None:
+        data_folder: Path = self._experiments_model.get_csv_path()
+        data_folder.mkdir(parents=False, exist_ok=True)
+        csv_path: Path = data_folder / "prediction_input.csv"
+        with open(csv_path, "w") as file:
+            writer: csv.writer = csv.writer(file)
+            writer.writerow(["", "raw", "split"])
+            for i, path_of_image in enumerate(list_images):
+                writer.writerow([str(i), str(path_of_image), "test"])
+
+        self._prediction_model.set_input_image_path(csv_path)
