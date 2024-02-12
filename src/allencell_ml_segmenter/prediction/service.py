@@ -29,7 +29,7 @@ class ModelFileService(Subscriber):
             self,
             lambda e: self._model.set_max_channels(
                 self._determine_input_selection_type(
-                    self._model.get_input_image_dir()
+                    self._model.get_input_image_path()
                 )
             ),
         )
