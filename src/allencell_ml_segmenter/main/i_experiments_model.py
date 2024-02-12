@@ -5,7 +5,6 @@ from allencell_ml_segmenter.core.publisher import Publisher
 
 
 class IExperimentsModel(Publisher):
-
     """
     Interface for implementing and testing ExperimentsModel
     """
