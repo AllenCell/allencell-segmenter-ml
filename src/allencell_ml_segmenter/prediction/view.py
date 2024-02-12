@@ -88,13 +88,11 @@ class PredictionView(View):
         )
 
     def run_btn_handler(self):
-        # Just to test service for now.
-        self._prediction_model.dispatch(Event.PROCESS_PREDICTION)
+        self.startLongTask()
 
     def doWork(self):
-        print("doWork - prediction")
-        time.sleep(5)
-        print("doWork done - prediction")
+        # test service
+        self._prediction_model.dispatch(Event.PROCESS_PREDICTION)
 
     def getTypeOfWork(self):
         return "Prediction"
