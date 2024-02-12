@@ -40,7 +40,9 @@ class PredictionModel(Publisher):
         """
         return self._input_image_path
 
-    def set_input_image_path(self, path: Path, extract_channels: bool = False) -> None:
+    def set_input_image_path(
+        self, path: Path, extract_channels: bool = False
+    ) -> None:
         """
         Sets list of paths to input images.
         """
