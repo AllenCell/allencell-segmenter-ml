@@ -3,7 +3,7 @@ import asyncio
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.event import Event
 
-# from cyto_dl.api.model import CytoDLModel
+from cyto_dl.api.model import CytoDLModel
 
 # from lightning.pytorch.callbacks import Callback
 
@@ -76,7 +76,8 @@ class TrainingService(Subscriber):
                 output_dir=f"{self._experiments_model.get_user_experiments_path()}/{self._experiments_model.get_experiment_name()}",
                 overrides=self._build_overrides(),
             )
-            asyncio.run(model.train())
+            model.print_config()
+            asyncio.run(model._train_async())
 
     def _get_hardware_override(self) -> str:
         """
