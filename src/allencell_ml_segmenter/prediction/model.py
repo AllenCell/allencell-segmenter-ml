@@ -154,7 +154,7 @@ class PredictionModel(Publisher):
 
     def get_prediction_input_mode(self) -> PredictionInputMode:
         return self._input_mode
-      
+
     def set_max_channels(self, max: int) -> None:
         self._max_channels = max
         # this will enable the combobox
