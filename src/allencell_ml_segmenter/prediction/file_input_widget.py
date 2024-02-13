@@ -128,7 +128,9 @@ class PredictionFileInput(QWidget):
 
         self._browse_dir_edit: InputButton = InputButton(
             self._model,
-            lambda dir: self._model.set_input_image_path(dir),
+            lambda dir: self._model.set_input_image_path(
+                Path(dir), extract_channels=True
+            ),
             "Select directory...",
             FileInputMode.DIRECTORY_OR_CSV,
         )
@@ -147,6 +149,16 @@ class PredictionFileInput(QWidget):
         self._channel_select_dropdown.setCurrentIndex(-1)
         self._channel_select_dropdown.setPlaceholderText(
             "select a channel index"
+        )
+        self._channel_select_dropdown.currentIndexChanged.connect(
+            self._model.set_image_input_channel_index
+        )
+        self._channel_select_dropdown.setEnabled(False)
+        # Event to trigger combobox populate on input image directory selection
+        self._model.subscribe(
+            Event.ACTION_PREDICTION_INPUT_PATH_SELECTED,
+            self,
+            self._populate_input_channel_combobox,
         )
 
         output_dir_label: LabelWithHint = LabelWithHint("Output directory")
@@ -213,3 +225,10 @@ class PredictionFileInput(QWidget):
         """
         # dummy implementation
         return list(Path(input_file_directory).glob("*"))
+
+    def _populate_input_channel_combobox(self, event: Event = None) -> None:
+        values_range: List[str] = [
+            str(i) for i in range(self._model.get_max_channels())
+        ]
+        self._channel_select_dropdown.addItems(values_range)
+        self._channel_select_dropdown.setEnabled(True)
