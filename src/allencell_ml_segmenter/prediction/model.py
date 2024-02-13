@@ -27,6 +27,7 @@ class PredictionModel(Publisher):
         self._input_mode: PredictionInputMode = None
         self._output_directory: Path = None
         self._selected_paths: List[Path] = None
+        self._max_channels: int = None
 
         # state related to ModelInputWidget
         self._preprocessing_method: str = None
@@ -43,11 +44,16 @@ class PredictionModel(Publisher):
         """
         return self._input_image_path
 
-    def set_input_image_path(self, path: Path) -> None:
+    def set_input_image_path(
+        self, path: Path, extract_channels: bool = False
+    ) -> None:
         """
         Sets list of paths to input images.
         """
         self._input_image_path = path
+        if extract_channels:
+            # This will extract and set number of channels
+            self.dispatch(Event.ACTION_PREDICTION_EXTRACT_CHANNELS)
 
     def get_image_input_channel_index(self) -> int:
         """
@@ -171,3 +177,11 @@ class PredictionModel(Publisher):
 
     def get_prediction_running(self) -> bool:
         return self._prediction_running
+
+    def set_max_channels(self, max: int) -> None:
+        self._max_channels = max
+        # this will enable the combobox
+        self.dispatch(Event.ACTION_PREDICTION_INPUT_PATH_SELECTED)
+
+    def get_max_channels(self) -> int:
+        return self._max_channels

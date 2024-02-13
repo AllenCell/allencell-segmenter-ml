@@ -97,9 +97,8 @@ class PredictionView(View):
         self._prediction_model.set_prediction_running(True)
 
     def doWork(self):
-        print("doWork - prediction")
-        time.sleep(5)
-        print("doWork done - prediction")
+        # test service
+        self._prediction_model.dispatch(Event.PROCESS_PREDICTION)
 
     def getTypeOfWork(self):
         return "Prediction"
