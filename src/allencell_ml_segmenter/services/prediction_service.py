@@ -157,7 +157,6 @@ class PredictionService(Subscriber):
             overrides["data.transforms.predict.transforms[0].reader[0].C"] = (
                 channel
             )
-
         # Need these overrides to load in csv's
         overrides["data.columns"] = ["raw", "split"]
         overrides["data.split_column"] = "split"
