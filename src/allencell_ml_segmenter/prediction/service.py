@@ -70,11 +70,7 @@ class ModelFileService(Subscriber):
             return img.dims.C
 
     def _determine_input_selection_type(self, path: Path):
-        # this should work once benji releases dataloader
-        # if path.is_dir():
-        #     return self.extract_num_channels_in_folder(path)
-        # elif path.suffix == ".csv":
-        #     return self.extract_num_channels_from_csv(path)
-
-        # for testing current api
-        return self.extract_num_channels_from_csv(path / "train.csv")
+        if path.is_dir():
+            return self.extract_num_channels_in_folder(path)
+        elif path.suffix == ".csv":
+            return self.extract_num_channels_from_csv(path)
