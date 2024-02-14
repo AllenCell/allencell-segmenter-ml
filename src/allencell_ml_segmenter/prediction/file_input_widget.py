@@ -24,7 +24,10 @@ from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 from allencell_ml_segmenter.prediction.model import (
     PredictionModel,
     PredictionInputMode,
+
 )
+from allencell_ml_segmenter.prediction.service import extract_num_channels_from_image
+
 from allencell_ml_segmenter.widgets.check_box_list_widget import (
     CheckBoxListWidget,
 )
@@ -204,8 +207,14 @@ class PredictionFileInput(QWidget):
 
     def _update_layer_list(self, event: Optional[NapariEvent] = None) -> None:
         self._image_list.clear()
-        for layer in self._viewer.get_layers():
+        channels: Optional[int] = None
+        for idx, layer in enumerate(self._viewer.get_layers()):
             self._image_list.add_item(layer.name)
+            if idx == 0:
+                # This is slow, but there's no way around it
+                channels = extract_num_channels_from_image(layer.source.path)
+
+        self._model.set_max_channels(channels)
 
     def _set_selected_image_paths_from_napari(
         self, event: Optional[Event] = None
@@ -227,8 +236,19 @@ class PredictionFileInput(QWidget):
         return list(Path(input_file_directory).glob("*"))
 
     def _populate_input_channel_combobox(self, event: Event = None) -> None:
-        values_range: List[str] = [
-            str(i) for i in range(self._model.get_max_channels())
-        ]
-        self._channel_select_dropdown.addItems(values_range)
-        self._channel_select_dropdown.setEnabled(True)
+        channels_in_image: Optional[int] = self._model.get_max_channels()
+
+        if channels_in_image is not None and channels_in_image > 0:
+            values_range: List[str] = [
+                str(i) for i in range(self._model.get_max_channels())
+            ]
+            self._channel_select_dropdown.setPlaceholderText(
+                "select a channel index"
+            )
+
+            self._channel_select_dropdown.addItems(values_range)
+            self._channel_select_dropdown.setEnabled(True)
+        else:
+            self._channel_select_dropdown.setPlaceholderText(
+                "No channels to Select"
+            )
