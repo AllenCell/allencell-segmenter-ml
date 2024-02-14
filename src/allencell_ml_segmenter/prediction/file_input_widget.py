@@ -24,9 +24,10 @@ from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 from allencell_ml_segmenter.prediction.model import (
     PredictionModel,
     PredictionInputMode,
-
 )
-from allencell_ml_segmenter.prediction.service import extract_num_channels_from_image
+from allencell_ml_segmenter.prediction.service import (
+    extract_num_channels_from_image,
+)
 
 from allencell_ml_segmenter.widgets.check_box_list_widget import (
     CheckBoxListWidget,
