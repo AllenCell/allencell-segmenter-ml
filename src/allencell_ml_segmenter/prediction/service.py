@@ -57,20 +57,23 @@ class ModelFileService(Subscriber):
         while str(first_image.name).startswith("."):
             first_image = next(path_generator)
 
-        img: AICSImage = AICSImage(str(first_image.resolve()))
-        return img.dims.C
+        extract_num_channels_from_image(str(first_image.resolve()))
 
     def extract_num_channels_from_csv(self, path: Path):
         with open(path) as file:
             reader: csv.reader = csv.reader(file)
             # skip heading
             next(reader)
-            line_data_path: str = next(reader)[0]
-            img: AICSImage = AICSImage(str(line_data_path))
-            return img.dims.C
+            # first column contrains files of interest (zeroth column is index)
+            line_data_path: str = next(reader)[1]
+            return extract_num_channels_from_image(line_data_path)
 
     def _determine_input_selection_type(self, path: Path):
         if path.is_dir():
             return self.extract_num_channels_in_folder(path)
         elif path.suffix == ".csv":
             return self.extract_num_channels_from_csv(path)
+
+def extract_num_channels_from_image(path: Path):
+    img: AICSImage = AICSImage(str(path))
+    return img.dims.C
