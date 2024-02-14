@@ -74,6 +74,7 @@ class ModelFileService(Subscriber):
         elif path.suffix == ".csv":
             return self.extract_num_channels_from_csv(path)
 
+
 def extract_num_channels_from_image(path: Path):
     img: AICSImage = AICSImage(str(path))
     return img.dims.C
