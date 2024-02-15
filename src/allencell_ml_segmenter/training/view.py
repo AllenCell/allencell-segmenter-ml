@@ -33,9 +33,10 @@ from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 from qtpy.QtGui import QIntValidator
 from allencell_ml_segmenter.training.training_model import PatchSize
 from watchdog.observers import Observer
+from watchdog.observers.api import BaseObserver
 from allencell_ml_segmenter.training.metrics_csv_event_handler import MetricsCSVEventHandler
 
-
+import threading
 class TrainingView(View):
     """
     Holds widgets pertinent to training processes - ImageSelectionWidget & ModelSelectionWidget.
@@ -200,7 +201,7 @@ class TrainingView(View):
             lambda e: self._main_model.set_current_view(self),
         )
 
-        self._observer = None
+        self._observer: BaseObserver = None
         # apply styling
         self.setStyleSheet(Style.get_stylesheet("training_view.qss"))
 
@@ -211,13 +212,15 @@ class TrainingView(View):
         target_path: Path = csv_path / f"version_{self._get_last_csv_version() + 1}" / "metrics.csv"
         self.clear_csv_observer()
         self._observer = Observer()
-        event_handler: MetricsCSVEventHandler = MetricsCSVEventHandler(target_path)
+        event_handler: MetricsCSVEventHandler = MetricsCSVEventHandler(target_path, self.updateProgress)
         self._observer.schedule(event_handler,  path=csv_path,  recursive=True)
         self._observer.start()
     
     def clear_csv_observer(self) -> None:
         if self._observer:
+            print(f"before: {threading.active_count()}")
             self._observer.stop()
+            print(f"after: {threading.active_count()}")
             self._observer = None
 
     def _get_last_csv_version(self) -> int:
@@ -238,7 +241,7 @@ class TrainingView(View):
         Starts training process
         """
         self._observe_csv()
-        self.startLongTask(on_finish=self.clear_csv_observer)
+        self.startLongTask(on_finish=self.clear_csv_observer, progress_maximum=self._training_model.get_max_epoch())
 
     def read_result_images(self, dir_to_grab: Path):
         output_dir: Path = dir_to_grab

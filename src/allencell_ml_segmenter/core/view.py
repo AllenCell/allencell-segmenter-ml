@@ -36,10 +36,10 @@ class View(QWidget, Subscriber, metaclass=ViewMeta):
     def __init__(self):
         QWidget.__init__(self)
 
-    def startLongTask(self, on_finish: callable=None):
+    def startLongTask(self, on_finish: callable=None, progress_minimum: int=0, progress_maximum: int=0):
         self.longTaskThread = LongTaskThread(do_work=self.doWork)
         self.progressDialog = QProgressDialog(
-            f"{self.getTypeOfWork()} in Progress", "Cancel", 0, 0, self
+            f"{self.getTypeOfWork()} in Progress", "Cancel", progress_minimum, progress_maximum, self
         )
         self.progressDialog.setWindowTitle(f"{self.getTypeOfWork()} Progress")
         self.progressDialog.setWindowModality(Qt.ApplicationModal)

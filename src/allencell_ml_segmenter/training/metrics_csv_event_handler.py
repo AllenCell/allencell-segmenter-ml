@@ -5,9 +5,10 @@ from csv import DictReader
 
 
 class  MetricsCSVEventHandler(FileSystemEventHandler):
-    def __init__(self, target_path: Path):
+    def __init__(self, target_path: Path, progress_callback: callable):
         super().__init__()
         self._target_path: Path = target_path
+        self._progress_callback: callable = progress_callback
     
     def _get_latest_epoch(self) -> int:
         if not self._target_path.exists():
@@ -23,8 +24,9 @@ class  MetricsCSVEventHandler(FileSystemEventHandler):
 
     def on_any_event(self, event: FileSystemEvent) -> None:
         if self._target_path.exists() and self._target_path.samefile(event.src_path):
-            with open('/Users/daniel.saelid/Orgs/AllenCell/log.txt', 'a') as fw:
-                fw.write(f'epoch: {self._get_latest_epoch()}')
+            self._progress_callback(self._get_latest_epoch())
+            #with open('/Users/daniel.saelid/Orgs/AllenCell/log.txt', 'a') as fw:
+            #    fw.write(f'time: {strftime("%a, %d %b %Y %H:%M:%S +0000", localtime())}, epoch: {self._get_latest_epoch()}\n')
     
     """
     def  on_modified(self,  event: FileSystemEvent) -> None:
