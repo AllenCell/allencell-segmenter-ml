@@ -56,8 +56,7 @@ class ModelFileService(Subscriber):
         # ignore hidden files
         while str(first_image.name).startswith("."):
             first_image = next(path_generator)
-
-        extract_num_channels_from_image(str(first_image.resolve()))
+        return extract_num_channels_from_image(str(first_image.resolve()))
 
     def extract_num_channels_from_csv(self, path: Path):
         with open(path) as file:

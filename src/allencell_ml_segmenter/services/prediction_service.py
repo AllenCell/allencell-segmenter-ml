@@ -166,7 +166,7 @@ class PredictionService(Subscriber):
     def write_csv_for_inputs(self, list_images: List[Path]) -> None:
         data_folder: Path = self._experiments_model.get_csv_path()
         data_folder.mkdir(parents=False, exist_ok=True)
-        csv_path: Path = data_folder / "prediction_input.csv"
+        csv_path: Path = data_folder / "test_csv.csv"
         with open(csv_path, "w") as file:
             writer: csv.writer = csv.writer(file)
             writer.writerow(["", "raw", "split"])

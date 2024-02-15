@@ -117,7 +117,7 @@ def test_populate_input_channel_combobox(qtbot: QtBot) -> None:
     # Arrange
     prediction_model: PredictionModel = PredictionModel()
     prediction_file_input: PredictionFileInput = PredictionFileInput(
-        prediction_model
+        prediction_model, viewer=FakeViewer()
     )
     prediction_model.set_max_channels(6)
 
