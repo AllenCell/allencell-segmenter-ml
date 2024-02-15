@@ -36,7 +36,7 @@ class View(QWidget, Subscriber, metaclass=ViewMeta):
     def __init__(self):
         QWidget.__init__(self)
 
-    def startLongTask(self):
+    def startLongTask(self, on_finish: callable=None):
         self.longTaskThread = LongTaskThread(do_work=self.doWork)
         self.progressDialog = QProgressDialog(
             f"{self.getTypeOfWork()} in Progress", "Cancel", 0, 0, self
@@ -51,6 +51,8 @@ class View(QWidget, Subscriber, metaclass=ViewMeta):
         self.longTaskThread.finished.connect(self.longTaskThread.deleteLater)
         self.longTaskThread.finished.connect(self.progressDialog.close)
         self.longTaskThread.finished.connect(self.showResults)
+        if on_finish:
+            self.longTaskThread.finished.connect(on_finish)
 
         self.longTaskThread.start()
 
