@@ -32,6 +32,8 @@ from aicsimageio.readers import TiffReader
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 from qtpy.QtGui import QIntValidator
 from allencell_ml_segmenter.training.training_model import PatchSize
+from watchdog.observers import Observer
+from allencell_ml_segmenter.training.metrics_csv_event_handler import MetricsCSVEventHandler
 
 
 class TrainingView(View):
@@ -198,14 +200,45 @@ class TrainingView(View):
             lambda e: self._main_model.set_current_view(self),
         )
 
+        self._observer = None
         # apply styling
         self.setStyleSheet(Style.get_stylesheet("training_view.qss"))
 
+    def _observe_csv(self) -> None:
+        csv_path: Path = self._experiments_model.get_csv_path()
+        if not csv_path.exists():
+            csv_path.mkdir(parents=True)
+        target_path: Path = csv_path / f"version_{self._get_last_csv_version() + 1}" / "metrics.csv"
+        self.clear_csv_observer()
+        self._observer = Observer()
+        event_handler: MetricsCSVEventHandler = MetricsCSVEventHandler(target_path)
+        self._observer.schedule(event_handler,  path=csv_path,  recursive=True)
+        self._observer.start()
+    
+    def clear_csv_observer(self) -> None:
+        if self._observer:
+            self._observer.stop()
+            self._observer = None
+
+    def _get_last_csv_version(self) -> int:
+        csv_path: Path = self._experiments_model.get_csv_path()
+        last_version: int = -1
+        if csv_path.exists():
+            for child in csv_path.glob("version_*"):
+                if child.is_dir():
+                    version_str: str = child.name.split("_")[-1]
+                    try:
+                        last_version = int(version_str) if int(version_str) > last_version else last_version
+                    except ValueError:
+                        continue
+        return last_version
+                    
     def train_btn_handler(self) -> None:
         """
         Starts training process
         """
-        self.startLongTask()
+        self._observe_csv()
+        self.startLongTask(on_finish=self.clear_csv_observer)
 
     def read_result_images(self, dir_to_grab: Path):
         output_dir: Path = dir_to_grab
