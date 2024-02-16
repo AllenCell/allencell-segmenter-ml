@@ -32,11 +32,8 @@ from aicsimageio.readers import TiffReader
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 from qtpy.QtGui import QIntValidator
 from allencell_ml_segmenter.training.training_model import PatchSize
-from watchdog.observers import Observer
-from watchdog.observers.api import BaseObserver
-from allencell_ml_segmenter.core.view import MetricsCSVObserver
+from allencell_ml_segmenter.training.metrics_csv_progress_tracker import MetricsCSVProgressTracker
 
-import threading
 class TrainingView(View):
     """
     Holds widgets pertinent to training processes - ImageSelectionWidget & ModelSelectionWidget.
@@ -201,7 +198,6 @@ class TrainingView(View):
             lambda e: self._main_model.set_current_view(self),
         )
 
-        self._observer: BaseObserver = None
         # apply styling
         self.setStyleSheet(Style.get_stylesheet("training_view.qss"))
                     
@@ -209,8 +205,10 @@ class TrainingView(View):
         """
         Starts training process
         """
-        metrics_observer: MetricsCSVObserver = MetricsCSVObserver(self._experiments_model.get_csv_path(), progress_maximum=self._training_model.get_max_epoch())
-        self.startLongTaskWithProgressBar(metrics_observer)
+        progress_tracker: MetricsCSVProgressTracker = MetricsCSVProgressTracker(
+            self._experiments_model.get_csv_path(), progress_maximum=self._training_model.get_max_epoch()
+        )
+        self.startLongTaskWithProgressBar(progress_tracker)
 
     def read_result_images(self, dir_to_grab: Path):
         output_dir: Path = dir_to_grab

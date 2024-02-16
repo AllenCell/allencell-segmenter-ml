@@ -1,10 +1,14 @@
 from watchdog.events import FileSystemEvent, FileSystemEventHandler
-from time import localtime, strftime
 from pathlib import Path
 from csv import DictReader
 
-
 class  MetricsCSVEventHandler(FileSystemEventHandler):
+    """
+    A MetricsCSVEventHandler calls progress_callback upon any changes to
+    the provided target_path CSV file, passing the latest epoch in the modified
+    CSV to the callback.
+    """
+
     def __init__(self, target_path: Path, progress_callback: callable):
         super().__init__()
         self._target_path: Path = target_path
@@ -25,17 +29,3 @@ class  MetricsCSVEventHandler(FileSystemEventHandler):
     def on_any_event(self, event: FileSystemEvent) -> None:
         if self._target_path.exists() and self._target_path.samefile(event.src_path):
             self._progress_callback(self._get_latest_epoch())
-            #with open('/Users/daniel.saelid/Orgs/AllenCell/log.txt', 'a') as fw:
-            #    fw.write(f'time: {strftime("%a, %d %b %Y %H:%M:%S +0000", localtime())}, epoch: {self._get_latest_epoch()}\n')
-    
-    """
-    def  on_modified(self,  event: FileSystemEvent) -> None:
-         with open('/Users/daniel.saelid/Orgs/AllenCell/log.txt', 'a') as fw:
-            fw.write(f'time: {strftime("%a, %d %b %Y %H:%M:%S +0000", localtime())} event type: {event.event_type} path : {event.src_path}\n')
-    def  on_created(self,  event):
-         with open('/Users/daniel.saelid/Orgs/AllenCell/log.txt', 'a') as fw:
-            fw.write(f'time: {strftime("%a, %d %b %Y %H:%M:%S +0000", localtime())} event type: {event.event_type} path : {event.src_path}\n')
-    def  on_deleted(self,  event):
-         with open('/Users/daniel.saelid/Orgs/AllenCell/log.txt', 'a') as fw:
-            fw.write(f'time: {strftime("%a, %d %b %Y %H:%M:%S +0000", localtime())} event type: {event.event_type} path : {event.src_path}\n')
-    """
