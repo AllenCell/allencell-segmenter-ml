@@ -1,10 +1,10 @@
 from abc import abstractmethod
 from qtpy.QtWidgets import QWidget, QProgressDialog
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
-from pathlib import Path
 
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.progress_tracker import ProgressTracker
+
 
 class ViewMeta(type(QWidget), type(Subscriber)):
     pass
@@ -25,7 +25,8 @@ class LongTaskThread(QThread):
         # for i in range(1, 101):
         # self.taskProgress.emit(i)
         # self.msleep(100)  # Simulating some work
-    
+
+
 class ProgressThread(QThread):
     task_progress: pyqtSignal = pyqtSignal(int)
 
@@ -54,10 +55,10 @@ class View(QWidget, Subscriber, metaclass=ViewMeta):
         self.progressThread = ProgressThread(progress_tracker)
 
         self.progressDialog = QProgressDialog(
-            f"{self.getTypeOfWork()} in Progress", 
-            "Cancel", 
-            progress_tracker.get_progress_minimum(), 
-            progress_tracker.get_progress_maximum(), 
+            f"{self.getTypeOfWork()} in Progress",
+            "Cancel",
+            progress_tracker.get_progress_minimum(),
+            progress_tracker.get_progress_maximum(),
             self
         )
         self.progressDialog.setWindowTitle(f"{self.getTypeOfWork()} Progress")
