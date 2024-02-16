@@ -1,5 +1,4 @@
 from pathlib import Path
-import sys
 from allencell_ml_segmenter.main.i_viewer import IViewer
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
@@ -25,7 +24,7 @@ from allencell_ml_segmenter.training.image_selection_widget import (
     ImageSelectionWidget,
 )
 from allencell_ml_segmenter.training.training_model import TrainingModel
-from hydra.core.global_hydra import GlobalHydra
+# from hydra.core.global_hydra import GlobalHydra
 from aicsimageio import AICSImage
 from aicsimageio.readers import TiffReader
 
@@ -33,6 +32,7 @@ from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 from qtpy.QtGui import QIntValidator
 from allencell_ml_segmenter.training.training_model import PatchSize
 from allencell_ml_segmenter.training.metrics_csv_progress_tracker import MetricsCSVProgressTracker
+
 
 class TrainingView(View):
     """
@@ -200,7 +200,7 @@ class TrainingView(View):
 
         # apply styling
         self.setStyleSheet(Style.get_stylesheet("training_view.qss"))
-                    
+
     def train_btn_handler(self) -> None:
         """
         Starts training process
