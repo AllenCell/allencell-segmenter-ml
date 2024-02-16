@@ -23,10 +23,14 @@ class MetricsCSVEventHandler(FileSystemEventHandler):
         with self._target_path.open("r", newline="") as fr:
             dict_reader: DictReader = DictReader(fr)
             for row in dict_reader:
-                latest = int(row["epoch"]) if int(row["epoch"]) > latest else latest
+                latest = (
+                    int(row["epoch"]) if int(row["epoch"]) > latest else latest
+                )
 
         return latest
 
     def on_any_event(self, event: FileSystemEvent) -> None:
-        if self._target_path.exists() and self._target_path.samefile(event.src_path):
+        if self._target_path.exists() and self._target_path.samefile(
+            event.src_path
+        ):
             self._progress_callback(self._get_latest_epoch())
