@@ -34,7 +34,7 @@ from qtpy.QtGui import QIntValidator
 from allencell_ml_segmenter.training.training_model import PatchSize
 from watchdog.observers import Observer
 from watchdog.observers.api import BaseObserver
-from allencell_ml_segmenter.training.metrics_csv_event_handler import MetricsCSVEventHandler
+from allencell_ml_segmenter.core.view import MetricsCSVObserver
 
 import threading
 class TrainingView(View):
@@ -204,44 +204,13 @@ class TrainingView(View):
         self._observer: BaseObserver = None
         # apply styling
         self.setStyleSheet(Style.get_stylesheet("training_view.qss"))
-
-    def _observe_csv(self) -> None:
-        csv_path: Path = self._experiments_model.get_csv_path()
-        if not csv_path.exists():
-            csv_path.mkdir(parents=True)
-        target_path: Path = csv_path / f"version_{self._get_last_csv_version() + 1}" / "metrics.csv"
-        self.clear_csv_observer()
-        self._observer = Observer()
-        event_handler: MetricsCSVEventHandler = MetricsCSVEventHandler(target_path, self.updateProgress)
-        self._observer.schedule(event_handler,  path=csv_path,  recursive=True)
-        self._observer.start()
-    
-    def clear_csv_observer(self) -> None:
-        if self._observer:
-            print(f"before: {threading.active_count()}")
-            self._observer.stop()
-            print(f"after: {threading.active_count()}")
-            self._observer = None
-
-    def _get_last_csv_version(self) -> int:
-        csv_path: Path = self._experiments_model.get_csv_path()
-        last_version: int = -1
-        if csv_path.exists():
-            for child in csv_path.glob("version_*"):
-                if child.is_dir():
-                    version_str: str = child.name.split("_")[-1]
-                    try:
-                        last_version = int(version_str) if int(version_str) > last_version else last_version
-                    except ValueError:
-                        continue
-        return last_version
                     
     def train_btn_handler(self) -> None:
         """
         Starts training process
         """
-        self._observe_csv()
-        self.startLongTask(on_finish=self.clear_csv_observer, progress_maximum=self._training_model.get_max_epoch())
+        metrics_observer: MetricsCSVObserver = MetricsCSVObserver(self._experiments_model.get_csv_path(), progress_maximum=self._training_model.get_max_epoch())
+        self.startLongTaskWithProgressBar(metrics_observer)
 
     def read_result_images(self, dir_to_grab: Path):
         output_dir: Path = dir_to_grab
