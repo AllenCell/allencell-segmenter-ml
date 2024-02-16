@@ -35,7 +35,10 @@ class ProgressThread(QThread):
         self._progress_tracker: ProgressTracker = progress_tracker
 
     def run(self):
-        while self._progress_tracker.get_progress() < self._progress_tracker.get_progress_maximum():
+        while (
+            self._progress_tracker.get_progress()
+            < self._progress_tracker.get_progress_maximum()
+        ):
             self.task_progress.emit(self._progress_tracker.get_progress())
             self.msleep(100)
 
@@ -59,7 +62,7 @@ class View(QWidget, Subscriber, metaclass=ViewMeta):
             "Cancel",
             progress_tracker.get_progress_minimum(),
             progress_tracker.get_progress_maximum(),
-            self
+            self,
         )
         self.progressDialog.setWindowTitle(f"{self.getTypeOfWork()} Progress")
         self.progressDialog.setWindowModality(Qt.ApplicationModal)

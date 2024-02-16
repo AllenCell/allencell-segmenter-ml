@@ -1,7 +1,7 @@
 from abc import abstractmethod
 
 
-class ProgressTracker():
+class ProgressTracker:
     """
     Base class for all ProgressTrackers to inherit from. A ProgressTracker
     maintains an integer measure of progress between progress_minimum and
@@ -30,7 +30,12 @@ class ProgressTracker():
         self._progress_maximum = progress_maximum
 
     def set_progress(self, progress: int) -> None:
-        self._progress = progress if progress >= self._progress_minimum and progress <= self._progress_maximum else self._progress
+        self._progress = (
+            progress
+            if progress >= self._progress_minimum
+            and progress <= self._progress_maximum
+            else self._progress
+        )
 
     @abstractmethod
     def start_tracker(self) -> None:

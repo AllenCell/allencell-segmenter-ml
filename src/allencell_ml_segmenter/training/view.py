@@ -24,6 +24,7 @@ from allencell_ml_segmenter.training.image_selection_widget import (
     ImageSelectionWidget,
 )
 from allencell_ml_segmenter.training.training_model import TrainingModel
+
 # from hydra.core.global_hydra import GlobalHydra
 from aicsimageio import AICSImage
 from aicsimageio.readers import TiffReader
@@ -31,7 +32,9 @@ from aicsimageio.readers import TiffReader
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 from qtpy.QtGui import QIntValidator
 from allencell_ml_segmenter.training.training_model import PatchSize
-from allencell_ml_segmenter.training.metrics_csv_progress_tracker import MetricsCSVProgressTracker
+from allencell_ml_segmenter.training.metrics_csv_progress_tracker import (
+    MetricsCSVProgressTracker,
+)
 
 
 class TrainingView(View):
@@ -205,8 +208,11 @@ class TrainingView(View):
         """
         Starts training process
         """
-        progress_tracker: MetricsCSVProgressTracker = MetricsCSVProgressTracker(
-            self._experiments_model.get_metrics_csv_path(), progress_maximum=self._training_model.get_max_epoch()
+        progress_tracker: MetricsCSVProgressTracker = (
+            MetricsCSVProgressTracker(
+                self._experiments_model.get_metrics_csv_path(),
+                progress_maximum=self._training_model.get_max_epoch(),
+            )
         )
         self.startLongTaskWithProgressBar(progress_tracker)
 
