@@ -220,11 +220,12 @@ class PredictionFileInput(QWidget):
     def _set_selected_image_paths_from_napari(
         self, event: Optional[Event] = None
     ) -> None:
-        selected_indices: List[int] = self._image_list.get_checked_rows()
-        selected_paths: List[Path] = [
-            self._viewer.get_layers()[i].source.path for i in selected_indices
-        ]
-        self._model.set_selected_paths(selected_paths)
+        if self._model.is_prediction_running():
+            selected_indices: List[int] = self._image_list.get_checked_rows()
+            selected_paths: List[Path] = [
+                self._viewer.get_layers()[i].source.path for i in selected_indices
+            ]
+            self._model.set_selected_paths(selected_paths)
 
     # TODO: replace with correct implementation and move to a service
     def map_input_file_directory_to_path_list(
