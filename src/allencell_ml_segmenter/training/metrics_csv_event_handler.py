@@ -1,6 +1,7 @@
 from watchdog.events import FileSystemEvent, FileSystemEventHandler
 from pathlib import Path
 from csv import DictReader
+from typing import Callable
 
 
 class MetricsCSVEventHandler(FileSystemEventHandler):
@@ -10,10 +11,10 @@ class MetricsCSVEventHandler(FileSystemEventHandler):
     CSV to the callback.
     """
 
-    def __init__(self, target_path: Path, progress_callback: callable):
+    def __init__(self, target_path: Path, progress_callback: Callable):
         super().__init__()
         self._target_path: Path = target_path
-        self._progress_callback: callable = progress_callback
+        self._progress_callback: Callable = progress_callback
 
     def _get_latest_epoch(self) -> int:
         if not self._target_path.exists():
