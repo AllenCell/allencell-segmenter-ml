@@ -169,13 +169,14 @@ class PredictionModel(Publisher):
         return self._selected_paths
 
     def set_prediction_running(self, is_prediction_running: bool) -> None:
-        # To run some setup for predictions
-        self.dispatch(Event.ACTION_PREDICTION_INITIATED)
-        # Shoots off a prediction run
-        self.dispatch(Event.PROCESS_PREDICTION)
         self._prediction_running = is_prediction_running
+        if is_prediction_running:
+            # To run some setup for predictions
+            self.dispatch(Event.ACTION_PREDICTION_INITIATED)
+            # Shoots off a prediction run
+            self.dispatch(Event.PROCESS_PREDICTION)
 
-    def get_prediction_running(self) -> bool:
+    def is_prediction_running(self) -> bool:
         return self._prediction_running
 
     def set_max_channels(self, max: int) -> None:
@@ -185,3 +186,4 @@ class PredictionModel(Publisher):
 
     def get_max_channels(self) -> int:
         return self._max_channels
+
