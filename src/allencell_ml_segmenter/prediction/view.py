@@ -93,15 +93,17 @@ class PredictionView(View):
         )
 
     def run_btn_handler(self):
-        # Just to test service for now.
-        self._prediction_model.set_prediction_running(True)
+        self.startLongTask()
 
     def doWork(self):
         # test service
-        self._prediction_model.dispatch(Event.PROCESS_PREDICTION)
+        self._prediction_model.set_prediction_running(True)
+        # TODO Need way to set result images to show after prediction complete
+        self._prediction_model.set_prediction_running(False)
 
     def getTypeOfWork(self):
         return "Prediction"
 
     def showResults(self):
+        # TODO Need to implement way to show predicted images in napari.
         print("showResults - prediction")
