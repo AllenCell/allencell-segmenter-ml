@@ -186,4 +186,3 @@ class PredictionModel(Publisher):
 
     def get_max_channels(self) -> int:
         return self._max_channels
-
