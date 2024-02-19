@@ -60,11 +60,11 @@ class ModelFileService(Subscriber):
 
     def extract_num_channels_from_csv(self, path: Path):
         with open(path) as file:
-            reader: csv.reader = csv.reader(file)
+            reader: csv.reader = csv.DictReader(file)
             # skip heading
             next(reader)
             # first column contrains files of interest (zeroth column is index)
-            line_data_path: str = next(reader)[1]
+            line_data_path: str = next(reader)["raw"]
             return extract_num_channels_from_image(line_data_path)
 
     def _determine_input_selection_type(self, path: Path):

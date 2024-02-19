@@ -32,4 +32,3 @@ class IViewer(ABC):
     @abstractmethod
     def subscribe_layers_change_event(self, function):
         pass
-
