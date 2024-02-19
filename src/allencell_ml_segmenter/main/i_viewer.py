@@ -10,15 +10,19 @@ class IViewer(ABC):
         pass
 
     @abstractmethod
-    def clear_layers(self):
-        pass
-
-    @abstractmethod
     def add_shapes(self, name):
         pass
 
     @abstractmethod
+    def clear_layers(self):
+        pass
+
+    @abstractmethod
     def clear_mask_layers(self, layers_to_remove):
+        pass
+
+    @abstractmethod
+    def get_layers(self):
         pass
 
     @abstractmethod
@@ -28,3 +32,4 @@ class IViewer(ABC):
     @abstractmethod
     def subscribe_layers_change_event(self, function):
         pass
+

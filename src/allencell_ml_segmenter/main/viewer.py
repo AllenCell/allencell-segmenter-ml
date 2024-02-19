@@ -26,10 +26,6 @@ class Viewer(IViewer):
     def clear_layers(self) -> None:
         self.viewer.layers.clear()
 
-    def get_image_dims(self) -> Tuple:
-        # just return x_y dims
-        return self.viewer.layers[0].data.shape
-
     def clear_mask_layers(self, layers_to_remove: List[Shapes]) -> None:
         for layer in layers_to_remove:
             self.viewer.layers.remove(layer)
@@ -42,3 +38,7 @@ class Viewer(IViewer):
 
     def subscribe_layers_change_event(self, function: Callable):
         self.viewer.events.layers_change.connect(function)
+
+    def get_image_dims(self) -> Tuple:
+        # just return x_y dims
+        return self.viewer.layers[0].data.shape
