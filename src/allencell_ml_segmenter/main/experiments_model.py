@@ -128,7 +128,7 @@ class ExperimentsModel(IExperimentsModel):
         return (
             self.get_user_experiments_path()
             / self.get_experiment_name()
-            / "data"
+            / "csv"
         )
 
     def get_train_config_path(self, experiment_name: str) -> Path:

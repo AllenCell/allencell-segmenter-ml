@@ -30,11 +30,13 @@ class ProgressTracker:
         self._progress_maximum = progress_maximum
 
     def set_progress(self, progress: int) -> None:
-        self._progress = (
-            progress
-            if progress >= self._progress_minimum
-            and progress <= self._progress_maximum
-            else self._progress
+        """
+        If param progress > progress_maximum, sets this tracker's progress to progress_maximum.
+        If param progress < progress minimum, sets this tracker's progress to progress minimum.
+        Otherwise sets this trackers progress to param progress.
+        """
+        self._progress = min(
+            self._progress_maximum, max(self._progress_minimum, progress)
         )
 
     @abstractmethod
