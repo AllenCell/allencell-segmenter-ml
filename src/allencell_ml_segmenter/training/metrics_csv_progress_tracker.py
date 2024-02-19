@@ -14,13 +14,12 @@ class MetricsCSVProgressTracker(ProgressTracker):
     measure of progress. Relies heavily on current cyto-dl file logging procedure.
     """
 
-    def __init__(
-        self,
-        csv_path: Path,
-        progress_minimum: int = 0,
-        progress_maximum: int = 0,
-    ):
-        super().__init__(progress_minimum, progress_maximum)
+    def __init__(self, csv_path: Path, num_epochs: int):
+        """
+        @param csv_path: path to cyto-dl csv directory for an experiment
+        @param num_epochs: maximum number of epochs that will be recorded in the csv
+        """
+        super().__init__(progress_minimum=0, progress_maximum=num_epochs)
 
         self._csv_path: Path = csv_path
         if not csv_path.exists():
@@ -28,7 +27,7 @@ class MetricsCSVProgressTracker(ProgressTracker):
 
         self._target_path: Path = (
             csv_path
-            / f"version_{self._get_last_csv_version() + 1}"
+            / f"version_{self.get_last_csv_version() + 1}"
             / "metrics.csv"
         )
         self._observer: BaseObserver = None
@@ -48,7 +47,7 @@ class MetricsCSVProgressTracker(ProgressTracker):
         if self._observer:
             self._observer.stop()
 
-    def _get_last_csv_version(self) -> int:
+    def get_last_csv_version(self) -> int:
         """
         Returns version number of the most recent version directory within
         the cyto-dl CSV folder (self._csv_path) or -1 if no version directories
