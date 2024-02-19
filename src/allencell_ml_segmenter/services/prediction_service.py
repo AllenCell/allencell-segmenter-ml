@@ -93,32 +93,9 @@ class PredictionService(Subscriber):
             )
             return False
         elif input_mode_selected == PredictionInputMode.FROM_PATH:
-            # User has selected a directory or a csv as input images
-            input_path: Path = self._prediction_model.get_input_image_path()
-            if input_path.is_dir():
-                # if input path selected is a directory, we need to manually write a CSV for cyto-dl
-                self.write_csv_for_inputs(list(input_path.glob("*.*")))
-            elif input_path.suffix != ".csv":
-                # This should not be possible with FileInputWidget- throw an error.
-                raise ValueError(
-                    "Somehow the user has selected a non-csv/directory for input images. Should not be possible with FileInputWidget"
-                )
+            self._setup_inputs_from_path()
         elif input_mode_selected == PredictionInputMode.FROM_NAPARI_LAYERS:
-            # User has selected napari image layers as input images
-            selected_paths_from_napari: List[Path] = (
-                self._prediction_model.get_selected_paths()
-            )
-            if len(selected_paths_from_napari) < 1:
-                # No image layers selected
-                show_warning(
-                    "Please select at least 1 image from the napari layer before running prediction."
-                )
-                return False
-            else:
-                # If user selects input images from napari, we need to manually write a csv for cyto-dl
-                self.write_csv_for_inputs(
-                    self._prediction_model.get_selected_paths()
-                )
+            return self._setup_inputs_from_napari()
         return True
 
     def build_overrides(
@@ -174,3 +151,35 @@ class PredictionService(Subscriber):
                 writer.writerow([str(i), str(path_of_image), "test"])
 
         self._prediction_model.set_input_image_path(csv_path)
+
+    def _setup_inputs_from_path(self) -> None:
+        # User has selected a directory or a csv as input images
+        input_path: Path = self._prediction_model.get_input_image_path()
+        if input_path.is_dir():
+            # if input path selected is a directory, we need to manually write a CSV for cyto-dl
+            self.write_csv_for_inputs(list(input_path.glob("*.*")))
+        elif input_path.suffix != ".csv":
+            # This should not be possible with FileInputWidget- throw an error.
+            raise ValueError(
+                "Somehow the user has selected a non-csv/directory for input images. Should not be possible with FileInputWidget"
+            )
+        # if a csv is selected, do nothing
+
+    def _setup_inputs_from_napari(self) -> bool:
+        # User has selected napari image layers as input images
+        selected_paths_from_napari: List[Path] = (
+            self._prediction_model.get_selected_paths()
+        )
+        if len(selected_paths_from_napari) < 1:
+            # No image layers selected
+            show_warning(
+                "Please select at least 1 image from the napari layer before running prediction."
+            )
+            return False
+        else:
+            # If user selects input images from napari, we need to manually write a csv for cyto-dl
+            self.write_csv_for_inputs(
+                self._prediction_model.get_selected_paths()
+            )
+            return True
+
