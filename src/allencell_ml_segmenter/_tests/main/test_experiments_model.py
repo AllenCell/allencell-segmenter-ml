@@ -94,3 +94,70 @@ def test_get_train_config_path() -> None:
 
     # Act / Assert
     assert model.get_train_config_path("test_experiment") == expected
+
+def test_get_csv_path() -> None:
+    # Arrange
+    user_experiments_path = Path(__file__).parent / "experiments_home"
+    config = FakeUserSettings(
+        cyto_dl_home_path=Path(__file__).parent / "cyto_dl_home",
+        user_experiments_path=user_experiments_path,
+    )
+    model = ExperimentsModel(config)
+    model.set_experiment_name("0_exp")
+    expected = user_experiments_path / "0_exp" / "data"
+
+    # Act / Assert
+    assert model.get_csv_path() == expected
+
+def test_get_metrics_csv_path() -> None:
+    # Arrange
+    user_experiments_path = Path(__file__).parent / "experiments_home"
+    config = FakeUserSettings(
+        cyto_dl_home_path=Path(__file__).parent / "cyto_dl_home",
+        user_experiments_path=user_experiments_path,
+    )
+    model = ExperimentsModel(config)
+    model.set_experiment_name("0_exp")
+    expected = user_experiments_path / "0_exp" / "csv"
+
+    # Act / Assert
+    assert model.get_metrics_csv_path() == expected
+
+def test_get_latest_metrics_csv_version_no_versions() -> None:
+    # Arrange
+    user_experiments_path = Path(__file__).parent / "experiments_home"
+    config = FakeUserSettings(
+        cyto_dl_home_path=Path(__file__).parent / "cyto_dl_home",
+        user_experiments_path=user_experiments_path,
+    )
+    model = ExperimentsModel(config)
+    model.set_experiment_name("0_exp")
+
+    # Act / Assert
+    assert model.get_latest_metrics_csv_version() == -1
+
+def test_get_latest_metrics_csv_version_no_directory() -> None:
+    # Arrange
+    user_experiments_path = Path(__file__).parent / "experiments_home"
+    config = FakeUserSettings(
+        cyto_dl_home_path=Path(__file__).parent / "cyto_dl_home",
+        user_experiments_path=user_experiments_path,
+    )
+    model = ExperimentsModel(config)
+    model.set_experiment_name("2_exp")
+
+    # Act / Assert
+    assert model.get_latest_metrics_csv_version() == -1
+
+def test_get_latest_metrics_csv_version_version_1() -> None:
+    # Arrange
+    user_experiments_path = Path(__file__).parent / "experiments_home"
+    config = FakeUserSettings(
+        cyto_dl_home_path=Path(__file__).parent / "cyto_dl_home",
+        user_experiments_path=user_experiments_path,
+    )
+    model = ExperimentsModel(config)
+    model.set_experiment_name("1_exp")
+
+    # Act / Assert
+    assert model.get_latest_metrics_csv_version() == 1

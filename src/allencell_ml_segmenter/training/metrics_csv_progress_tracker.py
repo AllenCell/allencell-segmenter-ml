@@ -14,10 +14,11 @@ class MetricsCSVProgressTracker(ProgressTracker):
     measure of progress. Relies heavily on current cyto-dl file logging procedure.
     """
 
-    def __init__(self, csv_path: Path, num_epochs: int):
+    def __init__(self, csv_path: Path, num_epochs: int, version_number: int):
         """
-        @param csv_path: path to cyto-dl csv directory for an experiment
-        @param num_epochs: maximum number of epochs that will be recorded in the csv
+        :param csv_path: path to cyto-dl csv directory for an experiment
+        :param num_epochs: maximum number of epochs that will be recorded in the csv
+        :param version_number: experiment version to track
         """
         super().__init__(progress_minimum=0, progress_maximum=num_epochs)
 
@@ -27,7 +28,7 @@ class MetricsCSVProgressTracker(ProgressTracker):
 
         self._target_path: Path = (
             csv_path
-            / f"version_{self.get_last_csv_version() + 1}"
+            / f"version_{version_number}"
             / "metrics.csv"
         )
         self._observer: BaseObserver = None
@@ -46,24 +47,3 @@ class MetricsCSVProgressTracker(ProgressTracker):
     def stop_tracker(self) -> None:
         if self._observer:
             self._observer.stop()
-
-    def get_last_csv_version(self) -> int:
-        """
-        Returns version number of the most recent version directory within
-        the cyto-dl CSV folder (self._csv_path) or -1 if no version directories
-        exist
-        """
-        last_version: int = -1
-        if self._csv_path.exists():
-            for child in self._csv_path.glob("version_*"):
-                if child.is_dir():
-                    version_str: str = child.name.split("_")[-1]
-                    try:
-                        last_version = (
-                            int(version_str)
-                            if int(version_str) > last_version
-                            else last_version
-                        )
-                    except ValueError:
-                        continue
-        return last_version

@@ -130,7 +130,28 @@ class ExperimentsModel(IExperimentsModel):
             / self.get_experiment_name()
             / "csv"
         )
-
+    
+    def get_latest_metrics_csv_version(self) -> int:
+        """
+        Returns version number of the most recent version directory within
+        the cyto-dl CSV folder (self._csv_path) or -1 if no version directories
+        exist
+        """
+        last_version: int = -1
+        if self.get_metrics_csv_path().exists():
+            for child in self.get_metrics_csv_path().glob("version_*"):
+                if child.is_dir():
+                    version_str: str = child.name.split("_")[-1]
+                    try:
+                        last_version = (
+                            int(version_str)
+                            if int(version_str) > last_version
+                            else last_version
+                        )
+                    except ValueError:
+                        continue
+        return last_version
+    
     def get_train_config_path(self, experiment_name: str) -> Path:
         return (
             self.get_user_experiments_path()

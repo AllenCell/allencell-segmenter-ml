@@ -11,9 +11,10 @@ def test_csv_2_epochs():
     test_csv_path: Path = (
         Path(allencell_ml_segmenter.__file__).parent
         / "_tests"
-        / "test_files"
-        / "metrics_csv"
-        / "version_subdirs"
+        / "main"
+        / "experiments_home"
+        / "1_exp"
+        / "csv"
         / "version_1"
         / "test_metrics_csv_2_epochs.csv"
     )
@@ -30,9 +31,10 @@ def test_empty_csv():
     test_csv_path: Path = (
         Path(allencell_ml_segmenter.__file__).parent
         / "_tests"
-        / "test_files"
-        / "metrics_csv"
-        / "version_subdirs"
+        / "main"
+        / "experiments_home"
+        / "1_exp"
+        / "csv"
         / "version_0"
         / "test_metrics_csv_empty.csv"
     )
@@ -49,9 +51,10 @@ def test_nonexistent_csv():
     test_csv_path: Path = (
         Path(allencell_ml_segmenter.__file__).parent
         / "_tests"
-        / "test_files"
-        / "metrics_csv"
-        / "version_subdirs"
+        / "main"
+        / "experiments_home"
+        / "0_exp"
+        / "csv"
         / "version_0"
         / "test_metrics_does_not_exist.csv"
     )
