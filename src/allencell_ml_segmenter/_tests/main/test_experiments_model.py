@@ -95,6 +95,7 @@ def test_get_train_config_path() -> None:
     # Act / Assert
     assert model.get_train_config_path("test_experiment") == expected
 
+
 def test_get_csv_path() -> None:
     # Arrange
     user_experiments_path = Path(__file__).parent / "experiments_home"
@@ -108,6 +109,7 @@ def test_get_csv_path() -> None:
 
     # Act / Assert
     assert model.get_csv_path() == expected
+
 
 def test_get_metrics_csv_path() -> None:
     # Arrange
@@ -123,6 +125,7 @@ def test_get_metrics_csv_path() -> None:
     # Act / Assert
     assert model.get_metrics_csv_path() == expected
 
+
 def test_get_latest_metrics_csv_version_no_versions() -> None:
     # Arrange
     user_experiments_path = Path(__file__).parent / "experiments_home"
@@ -136,6 +139,7 @@ def test_get_latest_metrics_csv_version_no_versions() -> None:
     # Act / Assert
     assert model.get_latest_metrics_csv_version() == -1
 
+
 def test_get_latest_metrics_csv_version_no_directory() -> None:
     # Arrange
     user_experiments_path = Path(__file__).parent / "experiments_home"
@@ -148,6 +152,7 @@ def test_get_latest_metrics_csv_version_no_directory() -> None:
 
     # Act / Assert
     assert model.get_latest_metrics_csv_version() == -1
+
 
 def test_get_latest_metrics_csv_version_version_1() -> None:
     # Arrange

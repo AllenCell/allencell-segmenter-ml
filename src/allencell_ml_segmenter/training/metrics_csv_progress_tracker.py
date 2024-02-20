@@ -27,9 +27,7 @@ class MetricsCSVProgressTracker(ProgressTracker):
             csv_path.mkdir(parents=True)
 
         self._target_path: Path = (
-            csv_path
-            / f"version_{version_number}"
-            / "metrics.csv"
+            csv_path / f"version_{version_number}" / "metrics.csv"
         )
         self._observer: BaseObserver = None
 
