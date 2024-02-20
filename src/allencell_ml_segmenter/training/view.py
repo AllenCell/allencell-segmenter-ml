@@ -212,6 +212,7 @@ class TrainingView(View):
             MetricsCSVProgressTracker(
                 self._experiments_model.get_metrics_csv_path(),
                 self._training_model.get_max_epoch(),
+                self._experiments_model.get_latest_metrics_csv_version() + 1,
             )
         )
         self.startLongTaskWithProgressBar(progress_tracker)
