@@ -130,7 +130,7 @@ class ExperimentsModel(IExperimentsModel):
             / self.get_experiment_name()
             / "csv"
         )
-    
+
     def get_latest_metrics_csv_version(self) -> int:
         """
         Returns version number of the most recent version directory within
@@ -151,7 +151,7 @@ class ExperimentsModel(IExperimentsModel):
                     except ValueError:
                         continue
         return last_version
-    
+
     def get_train_config_path(self, experiment_name: str) -> Path:
         return (
             self.get_user_experiments_path()
