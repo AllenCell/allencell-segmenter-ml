@@ -1,5 +1,4 @@
-name: Test and lint
-
+name: Test and lint on push
 on: [push]
 
 jobs:
@@ -8,8 +7,6 @@ jobs:
     with:
       os: ${{ matrix.os }}
       python-version: ${{ matrix.python-version }}
-
-    name: ${{ matrix.os }} python${{ matrix.python-version}} reusable
 
     strategy:
       matrix:
