@@ -10,6 +10,7 @@ on:
 
 jobs:
   test_and_lint:
+    name: ${{ inputs.os }} python${{ inputs.python-version}} in reusable
     runs-on: ${{ inputs.os }}
 
     steps:
