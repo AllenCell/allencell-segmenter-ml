@@ -1,8 +1,11 @@
 name: Test and lint on push
+
 on: [push]
 
 jobs:
-  build:
+  test_and_lint:
+    name: ${{ matrix.os }} python${{ matrix.python-version}} push
+
     uses: ./.github/workflows/test_lint.yml
     with:
       os: ${{ matrix.os }}
