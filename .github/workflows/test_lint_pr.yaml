@@ -6,7 +6,7 @@ on: [pull_request]
 
 jobs:
   test_and_lint:
-    name: ${{ matrix.os }} python${{ matrix.python-version}} pr
+    name: ${{ matrix.os }} python${{ matrix.python-version }}
 
     uses: ./.github/workflows/test_lint.yml
     with:
