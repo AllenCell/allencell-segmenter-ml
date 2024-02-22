@@ -1,7 +1,7 @@
 from watchdog.events import FileSystemEvent, FileSystemEventHandler
 from pathlib import Path
 from csv import DictReader
-from typing import Callable, override
+from typing import Callable
 
 
 class MetricsCSVEventHandler(FileSystemEventHandler):
@@ -30,7 +30,7 @@ class MetricsCSVEventHandler(FileSystemEventHandler):
 
         return latest
 
-    @override
+    # override
     def on_any_event(self, event: FileSystemEvent) -> None:
         if self._target_path.exists() and self._target_path.samefile(
             event.src_path
