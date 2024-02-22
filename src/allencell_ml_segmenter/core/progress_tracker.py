@@ -23,21 +23,18 @@ class ProgressTracker:
     def get_progress(self) -> int:
         return self._progress
 
-    def set_progress_minimum(self, progress_minimum: int) -> None:
-        self._progress_minimum = progress_minimum
-
-    def set_progress_maximum(self, progress_maximum: int) -> None:
-        self._progress_maximum = progress_maximum
-
     def set_progress(self, progress: int) -> None:
         """
-        If param progress > progress_maximum, sets this tracker's progress to progress_maximum.
-        If param progress < progress minimum, sets this tracker's progress to progress minimum.
+        If param progress > progress_maximum, throws ValueError.
+        If param progress < progress minimum, throws ValueError.
         Otherwise sets this trackers progress to param progress.
         """
-        self._progress = min(
-            self._progress_maximum, max(self._progress_minimum, progress)
-        )
+        if progress > self._progress_maximum:
+            raise ValueError("cannot set progress to value greater than progress_maximum")
+        if progress < self._progress_minimum:
+            raise ValueError("cannot set progress to value less than progress_minimum")
+        
+        self._progress = progress
 
     @abstractmethod
     def start_tracker(self) -> None:

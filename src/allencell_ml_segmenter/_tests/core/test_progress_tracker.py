@@ -1,4 +1,5 @@
 from allencell_ml_segmenter.core.progress_tracker import ProgressTracker
+import pytest
 
 
 def test_set_progress_within_bounds():
@@ -19,17 +20,17 @@ def test_set_progress_greater_than_max():
     tracker: ProgressTracker = ProgressTracker(
         progress_minimum=0, progress_maximum=10
     )
-    tracker.set_progress(11)
-    assert tracker.get_progress() == 10
-    tracker.set_progress(10394)
-    assert tracker.get_progress() == 10
+    with pytest.raises(ValueError):
+        tracker.set_progress(11)
+    with pytest.raises(ValueError):
+        tracker.set_progress(10394)
 
 
 def test_set_progress_less_than_min():
     tracker: ProgressTracker = ProgressTracker(
         progress_minimum=0, progress_maximum=10
     )
-    tracker.set_progress(-1)
-    assert tracker.get_progress() == 0
-    tracker.set_progress(-1948)
-    assert tracker.get_progress() == 0
+    with pytest.raises(ValueError):
+        tracker.set_progress(-1)
+    with pytest.raises(ValueError):
+        tracker.set_progress(-1948)
