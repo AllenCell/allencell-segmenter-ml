@@ -51,7 +51,7 @@ class View(QWidget, Subscriber, metaclass=ViewMeta):
     def __init__(self):
         QWidget.__init__(self)
 
-    def startLongTaskWithProgressBar(self, progress_tracker: ProgressTracker):
+    def startLongTaskWithProgressBar(self, progress_tracker: ProgressTracker) -> None:
         self.longTaskThread = LongTaskThread(do_work=self.doWork)
         self.progressThread = ProgressThread(progress_tracker)
 
@@ -88,7 +88,7 @@ class View(QWidget, Subscriber, metaclass=ViewMeta):
         self.longTaskThread.start()
 
     # will remove once prediction is also ported to progress bar
-    def startLongTask(self):
+    def startLongTask(self) -> None:
         self.longTaskThread = LongTaskThread(do_work=self.doWork)
         self.progressDialog = QProgressDialog(
             f"{self.getTypeOfWork()} in Progress", "Cancel", 0, 0, self
@@ -110,7 +110,7 @@ class View(QWidget, Subscriber, metaclass=ViewMeta):
     def showResults(self):
         pass
 
-    def updateProgress(self, value):
+    def updateProgress(self, value: int) -> None:
         self.progressDialog.setValue(value)
 
     @abstractmethod
