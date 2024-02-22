@@ -25,7 +25,6 @@ from allencell_ml_segmenter.training.image_selection_widget import (
 )
 from allencell_ml_segmenter.training.training_model import TrainingModel
 
-# from hydra.core.global_hydra import GlobalHydra
 from aicsimageio import AICSImage
 from aicsimageio.readers import TiffReader
 
