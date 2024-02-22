@@ -13,7 +13,7 @@ from allencell_ml_segmenter.prediction.model import (
 from pathlib import Path
 from typing import Union, Dict, List
 
-from cyto_dl.api.model import CytoDLModel
+# from cyto_dl.api.model import CytoDLModel
 from napari.utils.notifications import show_warning
 
 
@@ -49,7 +49,9 @@ class PredictionService(Subscriber):
         ):
             cyto_api: CytoDLModel = CytoDLModel()
             cyto_api.load_config_from_file(
-                self._experiments_model.get_train_config_path(self._experiments_model.get_experiment_name())
+                self._experiments_model.get_train_config_path(
+                    self._experiments_model.get_experiment_name()
+                )
             )
             # We must override the config to set up predictions correctly
             cyto_api.override_config(
