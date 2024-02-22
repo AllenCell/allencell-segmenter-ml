@@ -92,10 +92,12 @@ exclude = ["*_tests/*"]
 "*" = ["*.yaml", "*.yml"]
 
 # tools
-# [tool.black]
-# commenting out for now b/c I dont want the workflow PR to change files
-# to work with black. Should uncomment and reformat files in the future.
-# line-length = 88
+[tool.black]
+line-length = 79 # should change to 88 once release_pipeline is merged
+
+[tool.isort]
+profile = "black"
+line_length = 79
 
 # https://flake8.pycqa.org/en/latest/user/options.html
 # https://gitlab.com/durko/flake8-pyprojecttoml
