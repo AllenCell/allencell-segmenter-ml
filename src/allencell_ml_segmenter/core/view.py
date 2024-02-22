@@ -1,7 +1,6 @@
 from abc import abstractmethod
 from qtpy.QtWidgets import QWidget, QProgressDialog
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
-from typing import override
 
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.progress_tracker import ProgressTracker
@@ -12,21 +11,15 @@ class ViewMeta(type(QWidget), type(Subscriber)):
 
 
 class LongTaskThread(QThread):
-    taskProgress = pyqtSignal(int)
 
     def __init__(self, do_work: callable, parent=None):
-        super(LongTaskThread, self).__init__(parent)
+        super().__init__(parent)
         self._do_work = do_work
 
-    @override
+    # override
     def run(self):
         print("running")
-        # time.sleep(5)
         self._do_work()
-
-        # for i in range(1, 101):
-        # self.taskProgress.emit(i)
-        # self.msleep(100)  # Simulating some work
 
 
 class ProgressThread(QThread):
@@ -35,10 +28,10 @@ class ProgressThread(QThread):
     task_progress: pyqtSignal = pyqtSignal(int)
 
     def __init__(self, progress_tracker: ProgressTracker, parent=None):
-        super(ProgressThread, self).__init__(parent)
+        super().__init__(parent)
         self._progress_tracker: ProgressTracker = progress_tracker
 
-    @override
+    # override
     def run(self):
         while (
             self._progress_tracker.get_progress()
