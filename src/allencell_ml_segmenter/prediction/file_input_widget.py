@@ -215,7 +215,9 @@ class PredictionFileInput(QWidget):
                 self._image_list.add_item(layer.name)
                 if not max_channels:
                     # This is slow, but there's no way around it
-                    max_channels = extract_num_channels_from_image(path_of_layer_image)
+                    max_channels = extract_num_channels_from_image(
+                        path_of_layer_image
+                    )
         if max_channels:
             self._model.set_max_channels(max_channels)
 
