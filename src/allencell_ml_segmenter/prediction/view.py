@@ -97,10 +97,8 @@ class PredictionView(View):
 
     def doWork(self):
         # test service
-        self._prediction_model.set_prediction_running(True)
-        # TODO Need way to set result images to show after prediction complete
-        self._prediction_model.set_prediction_running(False)
-
+        self._prediction_model.dispatch_prediction()
+        # TODO Need way to set result images to show after prediction complete and refresh viewer.
     def getTypeOfWork(self):
         return "Prediction"
 

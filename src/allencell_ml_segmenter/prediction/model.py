@@ -35,9 +35,6 @@ class PredictionModel(Publisher):
         self._postprocessing_simple_threshold: float = None
         self._postprocessing_auto_threshold: str = None
 
-        # app state
-        self._prediction_running: bool = False
-
     def get_input_image_path(self) -> Path:
         """
         Gets list of paths to input images.
@@ -168,13 +165,10 @@ class PredictionModel(Publisher):
     def get_selected_paths(self) -> List[Path]:
         return self._selected_paths
 
-    def set_prediction_running(self, is_prediction_running: bool) -> None:
-        self._prediction_running = is_prediction_running
-        if is_prediction_running:
-            # To run some setup for predictions
-            self.dispatch(Event.ACTION_PREDICTION_INITIATED)
-            # Shoots off a prediction run
-            self.dispatch(Event.PROCESS_PREDICTION)
+    def dispatch_prediction(self) -> None:
+        self.dispatch(Event.ACTION_PREDICTION_INITIATED)
+        # Shoots off a prediction run
+        self.dispatch(Event.PROCESS_PREDICTION)
 
     def is_prediction_running(self) -> bool:
         return self._prediction_running
