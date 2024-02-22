@@ -38,8 +38,15 @@ class ProgressTracker:
 
     @abstractmethod
     def start_tracker(self) -> None:
+        """
+        Enables updates to the progress measure from another thread.
+        """
         pass
 
     @abstractmethod
     def stop_tracker(self) -> None:
+        """
+        Stops any threads that may be active for progress updates.
+        Must be called before losing reference to the instance of the ProgressTracker.
+        """
         pass

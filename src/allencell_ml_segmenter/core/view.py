@@ -30,6 +30,8 @@ class LongTaskThread(QThread):
 
 
 class ProgressThread(QThread):
+    # pyqtSignal must be class attribute 
+    # https://www.riverbankcomputing.com/static/Docs/PyQt5/signals_slots.html#defining-new-signals-with-pyqtsignal
     task_progress: pyqtSignal = pyqtSignal(int)
 
     def __init__(self, progress_tracker: ProgressTracker, parent=None):
@@ -71,6 +73,7 @@ class View(QWidget, Subscriber, metaclass=ViewMeta):
         self.progressDialog.setWindowModality(Qt.ApplicationModal)
         self.progressDialog.canceled.connect(self.longTaskThread.terminate)
         self.progressDialog.canceled.connect(self.progressThread.terminate)
+        # stop the watchdog thread for file watching inside of the progress tracker
         self.progressDialog.canceled.connect(progress_tracker.stop_tracker)
 
         self.progressDialog.show()
@@ -80,7 +83,10 @@ class View(QWidget, Subscriber, metaclass=ViewMeta):
         self.longTaskThread.finished.connect(self.progressDialog.close)
         self.longTaskThread.finished.connect(self.showResults)
 
+        # progressThread's task_progress.emit now calls updateProgress
         self.progressThread.task_progress.connect(self.updateProgress)
+        # if the longTaskThread or the progressThread finishes, we no longer
+        # need to update progress, so we should stop the progress tracker
         self.progressThread.finished.connect(progress_tracker.stop_tracker)
         self.longTaskThread.finished.connect(progress_tracker.stop_tracker)
 
