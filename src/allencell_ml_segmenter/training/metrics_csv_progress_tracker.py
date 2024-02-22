@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import override
 from watchdog.observers.api import BaseObserver
 from watchdog.observers import Observer
 from allencell_ml_segmenter.core.progress_tracker import ProgressTracker
@@ -31,6 +32,7 @@ class MetricsCSVProgressTracker(ProgressTracker):
         )
         self._observer: BaseObserver = None
 
+    @override
     def start_tracker(self) -> None:
         self.stop_tracker()
         self._observer = Observer()
@@ -42,6 +44,7 @@ class MetricsCSVProgressTracker(ProgressTracker):
         )
         self._observer.start()
 
+    @override
     def stop_tracker(self) -> None:
         if self._observer:
             self._observer.stop()
