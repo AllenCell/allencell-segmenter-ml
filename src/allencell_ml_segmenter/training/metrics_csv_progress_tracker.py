@@ -5,6 +5,7 @@ from allencell_ml_segmenter.core.progress_tracker import ProgressTracker
 from allencell_ml_segmenter.training.metrics_csv_event_handler import (
     MetricsCSVEventHandler,
 )
+from typing import Optional
 
 
 class MetricsCSVProgressTracker(ProgressTracker):
@@ -29,7 +30,7 @@ class MetricsCSVProgressTracker(ProgressTracker):
         self._target_path: Path = (
             csv_path / f"version_{version_number}" / "metrics.csv"
         )
-        self._observer: BaseObserver = None
+        self._observer: Optional[BaseObserver] = None
 
     # override
     def start_tracker(self) -> None:
