@@ -1,10 +1,109 @@
+# package build
+# https://peps.python.org/pep-0518/
 [build-system]
-requires = ["setuptools>=42.0.0", "wheel"] # PEP 508 specifications.
+requires = ["setuptools>=65", "wheel"]
 build-backend = "setuptools.build_meta"
 
-[tool.black]
-line-length = 79
+# package basics
+# https://peps.python.org/pep-0621/
+[project]
+name = "allencell-ml-segmenter"
+version = "0.0.9"
+description = "A plugin to leverage ML segmentation in napari"
+readme = "README.md"
+requires-python = ">=3.8"
+license = { file = "LICENSE" }
+authors = [{ email = "brian.kim@alleninstitute.org", name = "Brian Kim" }]
 
-[tool.isort]
-profile = "black"
-line_length = 79
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Framework :: napari",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: Image Processing",
+]
+
+dependencies = [
+    "napari>=0.4.18",
+    "npe2>=0.6.2",
+    "numpy",
+    "hydra-core==1.3.2",
+    "aicsimageio",
+    "tifffile>=2023.4.12",
+    "watchdog",
+]
+
+[project.urls]
+Homepage = "https://github.com/AllenCell/allencell-ml-segmenter"
+"Bug Tracker" = "https://github.com/AllenCell/allencell-ml-segmenter/issues"
+Documentation = "https://github.com/AllenCell/allencell-ml-segmenter#README.md"
+"User Support" = "https://github.com/AllenCell/allencell-ml-segmenter/issues"
+
+# extra dependencies
+# https://peps.python.org/pep-0621/#dependencies-optional-dependencies
+[project.optional-dependencies]
+test_lint = [
+    "pytest<8.0.0", # https://docs.pytest.org/en/latest/contents.html
+    "pytest-cov",  # https://pytest-cov.readthedocs.io/en/latest/
+    "pytest-xvfb", # sys_platform == 'linux'
+    "pytest-qt",
+    "qtpy",
+    "pyqt5",
+    "black",
+]
+
+dev = [
+    "black>=23.1.0",
+    "bumpversion>=0.6.0",
+    "coverage>=7.2.2",
+    "flake8>=6.0.0",
+    "pytest>=7.2.2, <8.0.0",
+    "pytest-qt>=3.3.0",
+    "pytest-cov>=2.6.1",
+    "pyqt5>=5.15.9",
+    "wheel>=0.33.1",
+    "twine>=4.0.2",
+]
+
+# entry points
+# https://peps.python.org/pep-0621/#entry-points
+# [project.entry-points."console_scripts"]
+[project.entry-points."napari.manifest"]
+allencell-ml-segmenter = "allencell_ml_segmenter:napari.yaml"
+
+# build settings
+# https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+exclude = ["*_tests/*"]
+
+[tool.setuptools.package-data]
+"*" = ["*.yaml", "*.yml"]
+
+# tools
+[tool.black]
+line-length = 88
+
+# https://flake8.pycqa.org/en/latest/user/options.html
+# https://gitlab.com/durko/flake8-pyprojecttoml
+# configure flake8 to work with black
+[tool.flake8]
+max-line-length = 88
+max-complexity = 18
+ignore = "E203,E266,E501,W503"
+select = "B,C,E,F,W,T4"
+
+# allow pytest testing on pyqt5
+[tool.pytest]
+qt_api="pyqt5"
