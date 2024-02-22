@@ -208,14 +208,16 @@ class PredictionFileInput(QWidget):
 
     def _update_layer_list(self, event: Optional[NapariEvent] = None) -> None:
         self._image_list.clear()
-        channels: Optional[int] = None
-        for idx, layer in enumerate(self._viewer.get_layers()):
-            self._image_list.add_item(layer.name)
-            if idx == 0:
-                # This is slow, but there's no way around it
-                channels = extract_num_channels_from_image(layer.source.path)
-
-        self._model.set_max_channels(channels)
+        max_channels: Optional[int] = None
+        for layer in self._viewer.get_layers():
+            path_of_layer_image: Path = layer.source.path
+            if path_of_layer_image:
+                self._image_list.add_item(layer.name)
+                if not max_channels:
+                    # This is slow, but there's no way around it
+                    max_channels = extract_num_channels_from_image(path_of_layer_image)
+        if max_channels:
+            self._model.set_max_channels(max_channels)
 
     def _set_selected_image_paths_from_napari(
         self, event: Optional[Event] = None
