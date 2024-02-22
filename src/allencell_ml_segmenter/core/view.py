@@ -23,7 +23,7 @@ class LongTaskThread(QThread):
 
 
 class ProgressThread(QThread):
-    # pyqtSignal must be class attribute 
+    # pyqtSignal must be class attribute
     # https://www.riverbankcomputing.com/static/Docs/PyQt5/signals_slots.html#defining-new-signals-with-pyqtsignal
     task_progress: pyqtSignal = pyqtSignal(int)
 
@@ -51,7 +51,9 @@ class View(QWidget, Subscriber, metaclass=ViewMeta):
     def __init__(self):
         QWidget.__init__(self)
 
-    def startLongTaskWithProgressBar(self, progress_tracker: ProgressTracker) -> None:
+    def startLongTaskWithProgressBar(
+        self, progress_tracker: ProgressTracker
+    ) -> None:
         self.longTaskThread = LongTaskThread(do_work=self.doWork)
         self.progressThread = ProgressThread(progress_tracker)
 

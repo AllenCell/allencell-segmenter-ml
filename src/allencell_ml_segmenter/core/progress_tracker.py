@@ -30,10 +30,14 @@ class ProgressTracker:
         Otherwise sets this trackers progress to param progress.
         """
         if progress > self._progress_maximum:
-            raise ValueError("cannot set progress to value greater than progress_maximum")
+            raise ValueError(
+                "cannot set progress to value greater than progress_maximum"
+            )
         if progress < self._progress_minimum:
-            raise ValueError("cannot set progress to value less than progress_minimum")
-        
+            raise ValueError(
+                "cannot set progress to value less than progress_minimum"
+            )
+
         self._progress = progress
 
     @abstractmethod
