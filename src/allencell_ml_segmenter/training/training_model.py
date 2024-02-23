@@ -218,9 +218,7 @@ class TrainingModel(Publisher):
 
     def dispatch_training(self) -> None:
         """
-        Sets whether training is running
-
-        is_training_running (bool): whether training is running
+        Dispatches even to start training
         """
         self.dispatch(Event.PROCESS_TRAINING)
 
