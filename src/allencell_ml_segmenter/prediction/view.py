@@ -96,7 +96,7 @@ class PredictionView(View):
         self.startLongTask()
 
     def doWork(self):
-        # test service
+        self._prediction_model.dispatch_prediction_initiated()
         self._prediction_model.dispatch_prediction()
         # TODO Need way to set result images to show after prediction complete and refresh viewer.
 
