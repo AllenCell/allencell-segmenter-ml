@@ -166,12 +166,15 @@ class PredictionModel(Publisher):
         return self._selected_paths
 
     def dispatch_prediction(self) -> None:
+        # Does some pre-configuring if needed for prediction runs
         self.dispatch(Event.ACTION_PREDICTION_INITIATED)
         # Shoots off a prediction run
         self.dispatch(Event.PROCESS_PREDICTION)
 
-    def is_prediction_running(self) -> bool:
-        return self._prediction_running
+    def dispatch_prediction_initiated(self) -> None:
+        # Shoots off event to grab layers from napari before prediction starts
+
+
 
     def set_max_channels(self, max: int) -> None:
         self._max_channels = max
