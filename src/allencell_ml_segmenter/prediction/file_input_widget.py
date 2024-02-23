@@ -231,16 +231,6 @@ class PredictionFileInput(QWidget):
             ]
             self._model.set_selected_paths(selected_paths)
 
-    # TODO: replace with correct implementation and move to a service
-    def map_input_file_directory_to_path_list(
-        self, input_file_directory: str
-    ) -> List[Path]:
-        """
-        Maps a directory of input files to a list of file paths.
-        """
-        # dummy implementation
-        return list(Path(input_file_directory).glob("*"))
-
     def _populate_input_channel_combobox(self, event: Event = None) -> None:
         channels_in_image: Optional[int] = self._model.get_max_channels()
 
