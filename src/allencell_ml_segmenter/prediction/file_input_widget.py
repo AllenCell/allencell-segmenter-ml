@@ -220,7 +220,10 @@ class PredictionFileInput(QWidget):
     def _set_selected_image_paths_from_napari(
         self, event: Optional[Event] = None
     ) -> None:
-        if self._model.get_prediction_input_mode() == PredictionInputMode.FROM_NAPARI_LAYERS:
+        if (
+            self._model.get_prediction_input_mode()
+            == PredictionInputMode.FROM_NAPARI_LAYERS
+        ):
             selected_indices: List[int] = self._image_list.get_checked_rows()
             selected_paths: List[Path] = [
                 self._viewer.get_layers()[i].source.path
