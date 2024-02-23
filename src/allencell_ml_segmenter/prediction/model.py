@@ -167,13 +167,14 @@ class PredictionModel(Publisher):
 
     def dispatch_prediction(self) -> None:
         """
-        Dispatches an event to start prediction, as well as a pre-configuration event which
-        does any configuring if needed for a prediction run
+        Dispatches an event to start prediction
         """
-        # Does some pre-configuring if needed for prediction runs
-        self.dispatch(Event.ACTION_PREDICTION_INITIATED)
         # Shoots off a prediction run
         self.dispatch(Event.PROCESS_PREDICTION)
+
+    def dispatch_prediction_initiated(self) -> None:
+        # Does some pre-configuring if needed for prediction runs
+        self.dispatch(Event.ACTION_PREDICTION_INITIATED)
 
     def set_max_channels(self, max: int) -> None:
         self._max_channels = max
