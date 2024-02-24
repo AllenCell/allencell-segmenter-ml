@@ -1,7 +1,7 @@
 # package build
 # https://peps.python.org/pep-0518/
 [build-system]
-requires = ["setuptools>=65", "wheel"]
+requires = ["setuptools>=69", "setuptools-scm>=8"] # not including wheel based on https://setuptools.pypa.io/en/latest/userguide/quickstart.html
 build-backend = "setuptools.build_meta"
 
 # package basics
@@ -13,7 +13,11 @@ description = "A plugin to leverage ML segmentation in napari"
 readme = "README.md"
 requires-python = ">=3.8"
 license = { file = "LICENSE" }
-authors = [{ email = "brian.kim@alleninstitute.org", name = "Brian Kim" }]
+authors = [
+    { email = "brian.kim@alleninstitute.org", name = "Brian Kim" },
+    { email = "chrishu@alleninstitute.org", name = "Chris Hughes" },
+    { email = "daniel.saelid@alleninstitute.org", name = "Daniel Saelid" },
+]
 
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
@@ -53,29 +57,28 @@ Documentation = "https://github.com/AllenCell/allencell-ml-segmenter#README.md"
 test_lint = [
     "pytest<8.0.0", # https://docs.pytest.org/en/latest/contents.html
     "pytest-cov",  # https://pytest-cov.readthedocs.io/en/latest/
-    "pytest-xvfb", # sys_platform == 'linux'
     "pytest-qt",
     "qtpy",
     "pyqt5",
     "black>=24.2.0",
+    'pytest-xvfb; sys_platform == "linux"',
 ]
 
 dev = [
     "black>=24.2.0",
-    "bumpversion>=0.6.0",
+    "bumpver",
     "coverage>=7.2.2",
     "flake8>=6.0.0",
     "pytest>=7.2.2, <8.0.0",
     "pytest-qt>=3.3.0",
     "pytest-cov>=2.6.1",
     "pyqt5>=5.15.9",
-    "wheel>=0.33.1",
-    "twine>=4.0.2",
+    "build>=1.0.3",
+    "twine>=5.0.0",
 ]
 
 # entry points
 # https://peps.python.org/pep-0621/#entry-points
-# [project.entry-points."console_scripts"]
 [project.entry-points."napari.manifest"]
 allencell-ml-segmenter = "allencell_ml_segmenter:napari.yaml"
 
@@ -86,12 +89,26 @@ include-package-data = true
 
 [tool.setuptools.packages.find]
 where = ["src"]
-exclude = ["*_tests/*"]
 
-[tool.setuptools.package-data]
-"*" = ["*.yaml", "*.yml"]
+# does not work with include-package-data due to https://github.com/pypa/setuptools/issues/3260
+# exclude = ["*_tests*", "*sample*"]
 
-# tools
+[tool.setuptools_scm]
+
+# https://pypi.org/project/bumpver
+[tool.bumpver]
+current_version = "0.0.9"
+version_pattern = "MAJOR.MINOR.PATCH"
+commit_message  = "Bump version {old_version} -> {new_version}"
+tag_message = "v{new_version}"
+commit          = true
+tag             = true
+push            = false
+
+[tool.bumpver.file_patterns]
+"pyproject.toml" = ['current_version = "{version}"', 'version = "{version}"']
+"src/allencell_ml_segmenter/__init__.py" = ['__version__ = "{version}"']
+
 [tool.black]
 line-length = 79 # should change to 88 once release_pipeline is merged
 
