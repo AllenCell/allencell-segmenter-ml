@@ -19,7 +19,7 @@ jobs:
         with:
           python-version: ${{ inputs.python-version }}
 
-      # these libraries, along with pytest-xvfb (added in the `deps` in tox.ini),
+      # these libraries, along with pytest-xvfb (in pyproject.toml),
       # enable testing on Qt on linux
       - name: Install Linux libraries
         if: runner.os == 'Linux'
