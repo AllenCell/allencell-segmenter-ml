@@ -21,6 +21,7 @@ from qtpy.QtWidgets import (
     QFrame,
     QLabel,
 )
+from napari.viewer import Viewer
 
 
 class PredictionView(View):
@@ -29,11 +30,15 @@ class PredictionView(View):
     """
 
     def __init__(
-        self, main_model: MainModel, prediction_model: PredictionModel
+        self,
+        main_model: MainModel,
+        prediction_model: PredictionModel,
+        viewer: Viewer,
     ):
         super().__init__()
         self._main_model: MainModel = main_model
-        self._prediction_model = prediction_model
+        self._prediction_model: PredictionModel = prediction_model
+        self._viewer: Viewer = viewer
 
         self._service: ModelFileService = ModelFileService(
             self._prediction_model
@@ -51,7 +56,7 @@ class PredictionView(View):
         self.layout().addWidget(self._title, alignment=Qt.AlignHCenter)
 
         self._file_input_widget: PredictionFileInput = PredictionFileInput(
-            self._prediction_model
+            self._prediction_model, self._viewer
         )
         self._file_input_widget.setObjectName("fileInput")
 
@@ -91,11 +96,13 @@ class PredictionView(View):
         self.startLongTask()
 
     def doWork(self):
-        # test service
-        self._prediction_model.dispatch(Event.PROCESS_PREDICTION)
+        self._prediction_model.dispatch_prediction_initiated()
+        self._prediction_model.dispatch_prediction()
+        # TODO Need way to set result images to show after prediction complete and refresh viewer.
 
     def getTypeOfWork(self):
         return "Prediction"
 
     def showResults(self):
+        # TODO Need to implement way to show predicted images in napari.
         print("showResults - prediction")

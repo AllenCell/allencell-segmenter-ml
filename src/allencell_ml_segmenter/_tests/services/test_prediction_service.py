@@ -156,6 +156,8 @@ def test_build_overrides() -> None:
         / "prediction_output_test"
     )
     assert overrides["data.transforms.predict.transforms[0].reader[0].C"] == 3
+    assert overrides["data.columns"] == ["raw", "split"]
+    assert overrides["data.split_column"] == "split"
 
 
 def test_build_overrides_experiment_none() -> None:

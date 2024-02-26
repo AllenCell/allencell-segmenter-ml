@@ -245,7 +245,7 @@ class TrainingView(View):
         """
         Starts training process
         """
-        self._training_model.set_training_running(True)
+        self._training_model.dispatch_training()
         # TODO uncomment- testing default segmentation.yaml through API
         # This is broken and needs to be fixed- images now saved to experiment folder
         result_images = self.read_result_images(
@@ -256,7 +256,7 @@ class TrainingView(View):
         print("doWork - setting result images")
         self._training_model.set_result_images(result_images)
         print("doWork - done")
-        self._training_model.set_training_running(False)
+        self._training_model.dispatch_refresh()
 
     def getTypeOfWork(self) -> str:
         """

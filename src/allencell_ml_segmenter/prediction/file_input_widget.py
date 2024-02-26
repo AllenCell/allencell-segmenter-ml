@@ -1,6 +1,7 @@
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
+from napari.utils.events import Event as NapariEvent
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
     QWidget,
@@ -24,9 +25,15 @@ from allencell_ml_segmenter.prediction.model import (
     PredictionModel,
     PredictionInputMode,
 )
+from allencell_ml_segmenter.prediction.service import (
+    extract_num_channels_from_image,
+)
+
 from allencell_ml_segmenter.widgets.check_box_list_widget import (
     CheckBoxListWidget,
 )
+
+from allencell_ml_segmenter.main.viewer import Viewer
 
 
 class PredictionFileInput(QWidget):
@@ -37,14 +44,18 @@ class PredictionFileInput(QWidget):
     TOP_TEXT: str = "On-screen image(s)"
     BOTTOM_TEXT: str = "Image(s) from a directory"
 
-    def __init__(self, model: PredictionModel):
+    def __init__(self, model: PredictionModel, viewer: Viewer):
         super().__init__()
 
         self._model: PredictionModel = model
-
+        self._viewer: Viewer = viewer
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
+
+        # set up napari event listener for layer changes
+        # this keeps the layer list in our UI updated as the layers are added/deleted from napari
+        self._viewer.subscribe_layers_change_event(self._update_layer_list)
 
         frame: QFrame = QFrame()
         frame.setLayout(QVBoxLayout())
@@ -174,11 +185,17 @@ class PredictionFileInput(QWidget):
         grid_layout.setColumnStretch(1, 0)
 
         frame.layout().addLayout(grid_layout)
+        self._model.subscribe(
+            Event.ACTION_PREDICTION_INITIATED,
+            self,
+            self._set_selected_image_paths_from_napari,
+        )
 
     def _on_screen_slot(self) -> None:
         """Prohibits usage of non-related input fields if top button is checked."""
         self._image_list.setEnabled(True)
         self._browse_dir_edit.setEnabled(False)
+        self._update_layer_list()
         self._model.set_prediction_input_mode(
             PredictionInputMode.FROM_NAPARI_LAYERS
         )
@@ -189,9 +206,45 @@ class PredictionFileInput(QWidget):
         self._browse_dir_edit.setEnabled(True)
         self._model.set_prediction_input_mode(PredictionInputMode.FROM_PATH)
 
+    def _update_layer_list(self, event: Optional[NapariEvent] = None) -> None:
+        self._image_list.clear()
+        channels: Optional[int] = None
+        for idx, layer in enumerate(self._viewer.get_layers()):
+            self._image_list.add_item(layer.name)
+            if idx == 0:
+                # This is slow, but there's no way around it
+                channels = extract_num_channels_from_image(layer.source.path)
+
+        self._model.set_max_channels(channels)
+
+    def _set_selected_image_paths_from_napari(
+        self, event: Optional[Event] = None
+    ) -> None:
+        if (
+            self._model.get_prediction_input_mode()
+            == PredictionInputMode.FROM_NAPARI_LAYERS
+        ):
+            selected_indices: List[int] = self._image_list.get_checked_rows()
+            selected_paths: List[Path] = [
+                self._viewer.get_layers()[i].source.path
+                for i in selected_indices
+            ]
+            self._model.set_selected_paths(selected_paths)
+
     def _populate_input_channel_combobox(self, event: Event = None) -> None:
-        values_range: List[str] = [
-            str(i) for i in range(self._model.get_max_channels())
-        ]
-        self._channel_select_dropdown.addItems(values_range)
-        self._channel_select_dropdown.setEnabled(True)
+        channels_in_image: Optional[int] = self._model.get_max_channels()
+
+        if channels_in_image is not None and channels_in_image > 0:
+            values_range: List[str] = [
+                str(i) for i in range(self._model.get_max_channels())
+            ]
+            self._channel_select_dropdown.setPlaceholderText(
+                "select a channel index"
+            )
+
+            self._channel_select_dropdown.addItems(values_range)
+            self._channel_select_dropdown.setEnabled(True)
+        else:
+            self._channel_select_dropdown.setPlaceholderText(
+                "No channels to Select"
+            )
