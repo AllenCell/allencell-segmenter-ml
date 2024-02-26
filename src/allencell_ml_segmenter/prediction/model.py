@@ -26,6 +26,7 @@ class PredictionModel(Publisher):
         self._image_input_channel_index: int = None
         self._input_mode: PredictionInputMode = None
         self._output_directory: Path = None
+        self._selected_paths: List[Path] = None
         self._max_channels: int = None
 
         # state related to ModelInputWidget
@@ -157,6 +158,23 @@ class PredictionModel(Publisher):
 
     def get_prediction_input_mode(self) -> PredictionInputMode:
         return self._input_mode
+
+    def set_selected_paths(self, paths: List[Path]) -> None:
+        self._selected_paths = paths
+
+    def get_selected_paths(self) -> List[Path]:
+        return self._selected_paths
+
+    def dispatch_prediction(self) -> None:
+        """
+        Dispatches an event to start prediction
+        """
+        # Shoots off a prediction run
+        self.dispatch(Event.PROCESS_PREDICTION)
+
+    def dispatch_prediction_initiated(self) -> None:
+        # Does some pre-configuring if needed for prediction runs
+        self.dispatch(Event.ACTION_PREDICTION_INITIATED)
 
     def set_max_channels(self, max: int) -> None:
         self._max_channels = max
