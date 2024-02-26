@@ -63,7 +63,7 @@ class TrainingModel(Publisher):
         self._current_epoch: int = None
         self._max_time: int = None  # in seconds
         self._config_dir: Path = None
-        self._is_training_running: bool = False
+        self.result_images = []
 
     def get_experiment_type(self) -> TrainingType:
         """
@@ -216,24 +216,14 @@ class TrainingModel(Publisher):
         """
         self._config_dir = config_dir
 
-    def is_training_running(self) -> bool:
+    def dispatch_training(self) -> None:
         """
-        Gets whether training is running
+        Dispatches even to start training
         """
-        return self._is_training_running
-
-    def set_training_running(self, is_training_running: bool) -> None:
-        """
-        Sets whether training is running
-
-        is_training_running (bool): whether training is running
-        """
-        self._is_training_running = is_training_running
         self.dispatch(Event.PROCESS_TRAINING)
-        if not self.is_training_running():
-            self.experiments_model.dispatch(Event.ACTION_REFRESH)
 
-    result_images: list = []
+    def dispatch_refresh(self) -> None:
+        self.experiments_model.dispatch(Event.ACTION_REFRESH)
 
     def get_result_images(self) -> list:
         """

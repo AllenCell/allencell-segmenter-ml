@@ -5,25 +5,37 @@ from qtpy.QtWidgets import QFileDialog
 from qtpy.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
+from allencell_ml_segmenter._tests.fakes.fake_viewer import FakeViewer
 from allencell_ml_segmenter.prediction.file_input_widget import (
     PredictionFileInput,
 )
-from allencell_ml_segmenter.prediction.model import PredictionModel
-
+from allencell_ml_segmenter.prediction.model import (
+    PredictionModel,
+    PredictionInputMode,
+)
 
 MOCK_PATH: str = "/path/to/file"
 
 
 @pytest.fixture
-def file_input_widget(qtbot: QtBot):
+def prediction_model(qtbot: QtBot) -> PredictionModel:
+    return PredictionModel()
+
+
+@pytest.fixture
+def file_input_widget(
+    qtbot: QtBot, prediction_model: PredictionModel
+) -> PredictionFileInput:
     """
     Fixture that creates an instance of ModelInputWidget for testing.
     """
-    return PredictionFileInput(PredictionModel())
+    return PredictionFileInput(prediction_model, viewer=FakeViewer())
 
 
 def test_top_radio_button_slot(
-    qtbot: QtBot, file_input_widget: PredictionFileInput
+    qtbot: QtBot,
+    file_input_widget: PredictionFileInput,
+    prediction_model: PredictionModel,
 ) -> None:
     """
     Test the _top_radio_button_slot method of PredictionFileInput.
@@ -39,10 +51,16 @@ def test_top_radio_button_slot(
     # ASSERT - states should have flipped
     assert file_input_widget._image_list.isEnabled()
     assert not file_input_widget._browse_dir_edit.isEnabled()
+    assert (
+        prediction_model.get_prediction_input_mode()
+        == PredictionInputMode.FROM_NAPARI_LAYERS
+    )
 
 
 def test_bottom_radio_button_slot(
-    qtbot: QtBot, file_input_widget: PredictionFileInput
+    qtbot: QtBot,
+    file_input_widget: PredictionFileInput,
+    prediction_model: PredictionModel,
 ) -> None:
     """
     Test the _bottom_radio_button_slot method of PredictionFileInput.
@@ -58,6 +76,10 @@ def test_bottom_radio_button_slot(
     # ASSERT - states should have flipped
     assert not file_input_widget._image_list.isEnabled()
     assert file_input_widget._browse_dir_edit.isEnabled()
+    assert (
+        prediction_model.get_prediction_input_mode()
+        == PredictionInputMode.FROM_PATH
+    )
 
 
 # decorator used to stub QFileDialog and avoid nested context managers
@@ -95,7 +117,7 @@ def test_populate_input_channel_combobox(qtbot: QtBot) -> None:
     # Arrange
     prediction_model: PredictionModel = PredictionModel()
     prediction_file_input: PredictionFileInput = PredictionFileInput(
-        prediction_model
+        prediction_model, viewer=FakeViewer()
     )
     prediction_model.set_max_channels(6)
 
