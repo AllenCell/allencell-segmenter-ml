@@ -11,7 +11,6 @@ on:
         required: true
 
 jobs:
-  # run tests ?
   publish:
     name: Bump and publish
     runs-on: ubuntu-latest
@@ -28,10 +27,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install build bumpver
       
-      # change branch to main before merge
+      # change branch to main for final version
       - name: Bump version
         run: |
           git checkout feature/release_pipeline
           bumpver update --${{ inputs.semver_component }}
           git push origin feature/release_pipeline
+      # build and publish to pypi
       
