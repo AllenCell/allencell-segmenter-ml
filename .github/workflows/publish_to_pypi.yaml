@@ -7,13 +7,14 @@ on:
   workflow_dispatch:
     inputs:
       semver_component:
-        description: "Semantic versioning component to bump (must be one of {major, minor, patch, dev}). Current version: 0.0.9"
+        description: "Semantic versioning component to bump (must be one of {major, minor, patch, dev})"
         required: true
 
 jobs:
   publish:
     name: Bump and publish
     runs-on: ubuntu-latest
+    environment: release
     permissions:
       id-token: write
       contents: write
