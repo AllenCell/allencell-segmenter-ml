@@ -75,7 +75,7 @@ dev = [
 ]
 
 build_and_publish = [
-    "bumpver==2023.1129", # before changing, test with publish_bumpver_handler.py
+    "bumpver>=2023.1129",
     "build>=1.0.3",
     "twine>=5.0.0",
 ]
