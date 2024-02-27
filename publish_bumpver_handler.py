@@ -1,5 +1,6 @@
 # this file is intended to be called by a github workflow (.github/workflows/publish_to_pypi.yaml)
-# it encapsulates logic that is too complex to be expressed in workflow syntax
+# it makes decisions based on the current version and the component specified for bumping,
+# which the workflow cannot do
 import subprocess
 import sys
 from typing import Set, List
