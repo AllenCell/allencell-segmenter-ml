@@ -3,7 +3,7 @@
 import subprocess
 import sys
 from typing import Set, List
-from src.allencell_ml_segmenter import __version__
+import toml
 
 
 def main():
@@ -16,7 +16,8 @@ def main():
     if component not in valid_options:
         raise ValueError(f"Component must be one of {valid_options}")
 
-    version_components: List[str] = __version__.split(".")
+    version: str = toml.load("pyproject.toml")["project"]["version"]
+    version_components: List[str] = version.split(".")
 
     update_output: subprocess.CompletedProcess = None
     # 4 components means we currently have a dev version
@@ -49,7 +50,7 @@ def main():
 
     else:
         raise ValueError(
-            f"Unknown version format: {__version__}. Expected MAJOR.MINOR.PATCH[.PYTAGNUM]"
+            f"Unknown version format: {version}. Expected MAJOR.MINOR.PATCH[.PYTAGNUM]"
         )
 
     if update_output.returncode != 0:
