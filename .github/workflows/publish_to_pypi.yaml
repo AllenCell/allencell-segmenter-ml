@@ -32,25 +32,22 @@ jobs:
           python -m pip install --upgrade pip
           pip install build bumpver
 
-      # change branch to main for final version
       - name: Bump version
         run: |
-          git checkout feature/release_pipeline_2
-          git config --global user.name 'Publish to PyPI'
-          git config --global user.email 'githubactions@users.noreply.github.com'
+          git checkout main
+          git config --global user.name 'aicsgithub'
+          git config --global user.email 'aicsgithub@alleninstitute.org'
           python publish_bumpver_handler.py ${{ inputs.semver_component }}
 
       - name: Build Package
         run: |
           python -m build
 
-      - name: Publish to Test PyPI
+      - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          repository-url: https://test.pypi.org/legacy/
       
       - name: Push changes
         run: |
-          git push origin feature/release_pipeline_2
+          git push origin main
           git push origin --tags
       
