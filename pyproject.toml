@@ -66,13 +66,16 @@ test_lint = [
 
 dev = [
     "black>=24.2.0",
-    "bumpver",
     "coverage>=7.2.2",
     "flake8>=6.0.0",
     "pytest>=7.2.2, <8.0.0",
     "pytest-qt>=3.3.0",
     "pytest-cov>=2.6.1",
     "pyqt5>=5.15.9",
+]
+
+build_and_publish = [
+    "bumpver==2023.1129", # before changing, test with publish_bumpver_handler.py
     "build>=1.0.3",
     "twine>=5.0.0",
 ]
@@ -98,7 +101,7 @@ where = ["src"]
 # https://pypi.org/project/bumpver
 [tool.bumpver]
 current_version = "0.0.9"
-version_pattern = "MAJOR.MINOR.PATCH"
+version_pattern = "MAJOR.MINOR.PATCH[.PYTAGNUM]"
 commit_message  = "Bump version {old_version} -> {new_version}"
 tag_message = "v{new_version}"
 commit          = true
