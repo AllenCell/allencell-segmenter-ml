@@ -42,10 +42,10 @@ jobs:
         run: |
           python -m build
 
-      - name: Publish to Test PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          repository-url: https://test.pypi.org/legacy/
+      #- name: Publish to Test PyPI
+      #  uses: pypa/gh-action-pypi-publish@release/v1
+      #  with:
+      #    repository-url: https://test.pypi.org/legacy/
       
       #- name: Push changes
       #  run: |
