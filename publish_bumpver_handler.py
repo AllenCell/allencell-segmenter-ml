@@ -3,6 +3,7 @@
 import subprocess
 import sys
 from typing import Set, List
+from src.allencell_ml_segmenter import __version__
 
 
 def main():
@@ -15,20 +16,7 @@ def main():
     if component not in valid_options:
         raise ValueError(f"Component must be one of {valid_options}")
 
-    show_output: subprocess.CompletedProcess = subprocess.run(
-        ["bumpver", "show", "-n"], capture_output=True
-    )
-    if show_output.returncode != 0:
-        raise RuntimeError(
-            f"bumpver exited with code {show_output.returncode}"
-        )
-
-    # brittle, may break if 'bumpver show -n' output changes, so pinning bumpver dependency in
-    # pyproject.toml:project.optional_dependencies.build_and_publish
-    current_version: str = (
-        show_output.stdout.decode().split("\n")[0].split(": ")[-1].strip()
-    )
-    version_components: List[str] = current_version.split(".")
+    version_components: List[str] = __version__.split(".")
 
     update_output: subprocess.CompletedProcess = None
     # 4 components means we currently have a dev version
@@ -59,7 +47,7 @@ def main():
 
     else:
         raise ValueError(
-            f"Unknown version format: {current_version}. Expected MAJOR.MINOR.PATCH[.PYTAGNUM]"
+            f"Unknown version format: {__version__}. Expected MAJOR.MINOR.PATCH[.PYTAGNUM]"
         )
 
     if update_output.returncode != 0:
