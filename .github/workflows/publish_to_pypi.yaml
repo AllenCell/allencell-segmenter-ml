@@ -47,8 +47,8 @@ jobs:
         with:
           repository-url: https://test.pypi.org/legacy/
       
-      - name: Push changes
-        run: |
-          git push origin feature/release_pipeline_2
-          git push origin --tags
+      #- name: Push changes
+      #  run: |
+      #    git push origin feature/release_pipeline_2
+      #    git push origin --tags
       
