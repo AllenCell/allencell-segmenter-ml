@@ -31,6 +31,8 @@ jobs:
       - name: Bump version
         run: |
           git checkout feature/release_pipeline_2
+          git config --global user.name 'Publish to PyPI'
+          git config --global user.email 'nonexistent@users.noreply.github.com'
           python publish_bumpver_handler.py ${{ inputs.semver_component }}
           git push origin feature/release_pipeline_2
       # build and publish to pypi
