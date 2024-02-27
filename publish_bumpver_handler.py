@@ -23,11 +23,13 @@ def main():
     if len(version_components) == 4:
         if component == "dev":
             # increment the dev tag (e.g. 1.0.0.dev0 -> 1.0.0.dev1)
-            update_output = subprocess.run(["bumpver", "update", "--tag-num"])
+            update_output = subprocess.run(
+                ["bumpver", "update", "--tag-num", "-n"]
+            )
         elif component == "patch":
             # finalize the patch by removing dev tag (e.g. 1.0.0.dev1 -> 1.0.0)
             update_output = subprocess.run(
-                ["bumpver", "update", "--tag=final"]
+                ["bumpver", "update", "--tag=final", "-n"]
             )
         else:
             raise ValueError(
@@ -38,11 +40,11 @@ def main():
         if component == "dev":
             # increment patch and begin at dev0 (e.g. 1.0.0 -> 1.0.1.dev0)
             update_output = subprocess.run(
-                ["bumpver", "update", "--patch", "--tag=dev"]
+                ["bumpver", "update", "--patch", "--tag=dev", "-n"]
             )
         else:
             update_output = subprocess.run(
-                ["bumpver", "update", f"--{component}"]
+                ["bumpver", "update", f"--{component}", "-n"]
             )
 
     else:
@@ -95,4 +97,5 @@ TESTING:
   - expect: version updated to 2.1.2
 
 - git reset --hard {hash of the commit made at the beginning}
+- git tag --delete 1.0.0 2.0.0 2.1.0 2.1.1 2.1.2 2.1.2.dev0 2.1.2.dev1
 """
