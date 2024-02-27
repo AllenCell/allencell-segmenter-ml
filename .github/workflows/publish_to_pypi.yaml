@@ -30,8 +30,8 @@ jobs:
       # change branch to main for final version
       - name: Bump version
         run: |
-          git checkout feature/release_pipeline
+          git checkout feature/release_pipeline_2
           python publish_bumpver_handler.py ${{ inputs.semver_component }}
-          git push origin feature/release_pipeline
+          git push origin feature/release_pipeline_2
       # build and publish to pypi
       
