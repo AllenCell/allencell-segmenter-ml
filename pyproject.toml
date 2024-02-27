@@ -72,9 +72,6 @@ dev = [
     "pytest-qt>=3.3.0",
     "pytest-cov>=2.6.1",
     "pyqt5>=5.15.9",
-]
-
-build_and_publish = [
     "bumpver>=2023.1129",
     "build>=1.0.3",
     "twine>=5.0.0",
