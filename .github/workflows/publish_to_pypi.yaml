@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       semver_component:
-        description: "Semantic versioning component to bump (must be one of {major, minor, patch, dev})"
+        description: "Semantic versioning component to bump (must be one of {major, minor, patch, dev}). Current version: 0.0.9"
         required: true
 
 jobs:
@@ -37,8 +37,6 @@ jobs:
           git config --global user.name 'Publish to PyPI'
           git config --global user.email 'githubactions@users.noreply.github.com'
           python publish_bumpver_handler.py ${{ inputs.semver_component }}
-          git push origin feature/release_pipeline_2
-          git push origin --tags
 
       - name: Build Package
         run: |
@@ -48,4 +46,9 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           repository-url: https://test.pypi.org/legacy/
+      
+      - name: Push changes
+        run: |
+          git push origin feature/release_pipeline_2
+          git push origin --tags
       
