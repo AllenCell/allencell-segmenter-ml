@@ -43,10 +43,7 @@ class PredictionService(Subscriber):
         """
         Predict segmentations using model according to spec
         """
-        if (
-            self._prediction_model.is_prediction_running()
-            and self._able_to_continue_prediction()
-        ):
+        if self._able_to_continue_prediction():
             cyto_api: CytoDLModel = CytoDLModel()
             cyto_api.load_config_from_file(
                 self._experiments_model.get_train_config_path(
