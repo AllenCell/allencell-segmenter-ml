@@ -11,7 +11,6 @@ class ViewMeta(type(QWidget), type(Subscriber)):
 
 
 class LongTaskThread(QThread):
-
     def __init__(self, do_work: callable, parent=None):
         super().__init__(parent)
         self._do_work = do_work
