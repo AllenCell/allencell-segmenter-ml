@@ -1,5 +1,3 @@
-import time
-
 from qtpy.QtCore import Qt
 
 from allencell_ml_segmenter._style import Style
@@ -13,6 +11,9 @@ from allencell_ml_segmenter.prediction.service import ModelFileService
 from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.prediction.model_input_widget import (
     ModelInputWidget,
+)
+from allencell_ml_segmenter.prediction.prediction_folder_progress_tracker import (
+    PredictionFolderProgressTracker,
 )
 from qtpy.QtWidgets import (
     QVBoxLayout,
@@ -93,7 +94,16 @@ class PredictionView(View):
         )
 
     def run_btn_handler(self):
-        self.startLongTask()
+        # dispatch events to set _prediction_model._input_image_path to a real CSV here
+
+        # replace the hard-coded 2 with function on _prediction_model to get number of
+        # images in the CSV
+        progress_tracker: PredictionFolderProgressTracker = (
+            PredictionFolderProgressTracker(
+                self._prediction_model.get_output_directory(), 2
+            )
+        )
+        self.startLongTaskWithProgressBar(progress_tracker)
 
     def doWork(self):
         self._prediction_model.dispatch_prediction_initiated()
