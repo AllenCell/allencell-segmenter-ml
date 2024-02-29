@@ -8,7 +8,10 @@ class PredictionFolderEventHandler(FileSystemEventHandler):
     with an extension contained in PRED_FILE_EXTS. The argument to progress_callback
     will be how many files that fit these criteria have been created.
     """
-    PRED_FILE_EXTS: Set[str] = {".ome_seg_pred.tif"} # is this the only extension?
+
+    PRED_FILE_EXTS: Set[str] = {
+        ".ome_seg_pred.tif"
+    }  # is this the only extension?
 
     def __init__(self, progress_callback: Callable):
         super().__init__()
