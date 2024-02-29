@@ -90,8 +90,9 @@ class PredictionService(Subscriber):
                 f"Please select a checkpoint to run predictions with."
             )
             return False
+        return True
 
-    def _write_csv_for_prediction(self) -> None:
+    def _write_csv_for_prediction(self, _: Event) -> None:
         """
         If needed, write csv's for predictions
         """
@@ -177,7 +178,7 @@ class PredictionService(Subscriber):
         # User has selected a directory or a csv as input images
         input_path: Path = self._prediction_model.get_input_image_path()
         if input_path.is_dir():
-            all_files = list(input_path.glob("*.*"))
+            all_files = [path for path in input_path.glob("*.*") if not path.name.startswith(".")]
             # if input path selected is a directory, we need to manually write a CSV for cyto-dl
             self.write_csv_for_inputs(all_files)
             return len(all_files)
