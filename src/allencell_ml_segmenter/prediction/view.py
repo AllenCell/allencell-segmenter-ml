@@ -96,17 +96,21 @@ class PredictionView(View):
     def run_btn_handler(self):
         # dispatch events to set _prediction_model._input_image_path to a real CSV here
 
-        # replace the hard-coded 2 with function on _prediction_model to get number of
-        # images in the CSV
-        progress_tracker: PredictionFolderProgressTracker = (
-            PredictionFolderProgressTracker(
-                self._prediction_model.get_output_directory(), 2
+        self._prediction_model.dispatch_prediction_get_image_paths_from_napari()
+        self._prediction_model.dispatch_write_csv()
+
+        total_num_images = self._prediction_model.get_total_num_images()
+        if total_num_images:
+            # replace the hard-coded 2 with function on _prediction_model to get number of
+            # images in the CSV
+            progress_tracker: PredictionFolderProgressTracker = (
+                PredictionFolderProgressTracker(
+                    self._prediction_model.get_output_directory(), total_num_images
+                )
             )
-        )
-        self.startLongTaskWithProgressBar(progress_tracker)
+            self.startLongTaskWithProgressBar(progress_tracker)
 
     def doWork(self):
-        self._prediction_model.dispatch_prediction_initiated()
         self._prediction_model.dispatch_prediction()
         # TODO Need way to set result images to show after prediction complete and refresh viewer.
 

@@ -186,7 +186,7 @@ class PredictionFileInput(QWidget):
 
         frame.layout().addLayout(grid_layout)
         self._model.subscribe(
-            Event.ACTION_PREDICTION_INITIATED,
+            Event.ACTION_PREDICTION_GET_IMAGE_PATHS_FROM_NAPARI,
             self,
             self._set_selected_image_paths_from_napari,
         )
@@ -224,6 +224,7 @@ class PredictionFileInput(QWidget):
     def _set_selected_image_paths_from_napari(
         self, event: Optional[Event] = None
     ) -> None:
+        # If needed, get selected image paths from napari and set them as state.
         if (
             self._model.get_prediction_input_mode()
             == PredictionInputMode.FROM_NAPARI_LAYERS

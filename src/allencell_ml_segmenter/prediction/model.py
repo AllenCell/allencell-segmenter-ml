@@ -1,6 +1,6 @@
 from enum import Enum
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.publisher import Publisher
@@ -20,6 +20,7 @@ class PredictionModel(Publisher):
         super().__init__()
 
         # state related to PredictionFileInput
+        self.total_num_images: Optional[int] = None
         self.config_name: str = None
         self.config_dir: Path = None
         self._input_image_path: Path = None
@@ -172,9 +173,13 @@ class PredictionModel(Publisher):
         # Shoots off a prediction run
         self.dispatch(Event.PROCESS_PREDICTION)
 
-    def dispatch_prediction_initiated(self) -> None:
+    def dispatch_prediction_get_image_paths_from_napari(self) -> None:
         # Does some pre-configuring if needed for prediction runs
-        self.dispatch(Event.ACTION_PREDICTION_INITIATED)
+        self.dispatch(Event.ACTION_PREDICTION_GET_IMAGE_PATHS_FROM_NAPARI)
+
+    def dispatch_write_csv(self) -> None:
+        # Does some pre-configuring if needed for prediction runs
+        self.dispatch(Event.ACTION_PREDICTION_WRITE_CSV)
 
     def set_max_channels(self, max: int) -> None:
         self._max_channels = max
@@ -183,3 +188,9 @@ class PredictionModel(Publisher):
 
     def get_max_channels(self) -> int:
         return self._max_channels
+
+    def set_total_num_images(self, total: Optional[int]):
+        self.total_num_images = total
+    
+    def get_total_num_images(self) -> Optional[int]:
+        return self.total_num_images

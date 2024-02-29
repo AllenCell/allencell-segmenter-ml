@@ -11,7 +11,7 @@ from allencell_ml_segmenter.prediction.model import (
     PredictionInputMode,
 )
 from pathlib import Path
-from typing import Union, Dict, List
+from typing import Union, Dict, List, Optional
 
 # from cyto_dl.api.model import CytoDLModel
 from napari.utils.notifications import show_warning
@@ -37,6 +37,12 @@ class PredictionService(Subscriber):
             Event.PROCESS_PREDICTION,
             self,
             self._predict_model,
+        )
+
+        self._prediction_model.subscribe(
+            Event.ACTION_PREDICTION_WRITE_CSV,
+            self,
+            self._write_csv_for_prediction
         )
 
     def _predict_model(self, _: Event) -> None:
@@ -85,6 +91,10 @@ class PredictionService(Subscriber):
             )
             return False
 
+    def _write_csv_for_prediction(self) -> None:
+        """
+        If needed, write csv's for predictions
+        """
         # Check to see if user has selected an input mode
         input_mode_selected: PredictionInputMode = (
             self._prediction_model.get_prediction_input_mode()
@@ -93,12 +103,11 @@ class PredictionService(Subscriber):
             show_warning(
                 "Please select input images before running prediction."
             )
-            return False
+            # dont set state if we have an error in setup
         elif input_mode_selected == PredictionInputMode.FROM_PATH:
-            self._setup_inputs_from_path()
+            self._prediction_model.set_total_num_images(self._setup_inputs_from_path())
         elif input_mode_selected == PredictionInputMode.FROM_NAPARI_LAYERS:
-            return self._setup_inputs_from_napari()
-        return True
+            self._prediction_model.set_total_num_images(self._setup_inputs_from_napari())
 
     def build_overrides(
         self, experiment_name: str, checkpoint: str
@@ -143,6 +152,9 @@ class PredictionService(Subscriber):
         return overrides
 
     def write_csv_for_inputs(self, list_images: List[Path]) -> None:
+        """
+        write csv for inputs and return the total number of images
+        """
         data_folder: Path = self._experiments_model.get_csv_path()
         data_folder.mkdir(parents=False, exist_ok=True)
         csv_path: Path = data_folder / "test_csv.csv"
@@ -154,20 +166,35 @@ class PredictionService(Subscriber):
 
         self._prediction_model.set_input_image_path(csv_path)
 
-    def _setup_inputs_from_path(self) -> None:
+    def _setup_inputs_from_path(self) -> int:
+        """
+        setup inputs from path and return total number of images to predict
+        """
         # User has selected a directory or a csv as input images
         input_path: Path = self._prediction_model.get_input_image_path()
         if input_path.is_dir():
+            all_files = list(input_path.glob("*.*"))
             # if input path selected is a directory, we need to manually write a CSV for cyto-dl
-            self.write_csv_for_inputs(list(input_path.glob("*.*")))
-        elif input_path.suffix != ".csv":
+            self.write_csv_for_inputs(all_files)
+            return len(all_files)
+        elif input_path.suffix == ".csv":
+            return self._grab_csv_data_rows(input_path)
+        else:
             # This should not be possible with FileInputWidget- throw an error.
             raise ValueError(
                 "Somehow the user has selected a non-csv/directory for input images. Should not be possible with FileInputWidget"
             )
         # if a csv is selected, do nothing
 
-    def _setup_inputs_from_napari(self) -> bool:
+    def _grab_csv_data_rows(self, path: Path) -> int:
+        file = open(path, "r+")
+        reader = csv.reader(file)
+        return len(list(reader))
+
+    def _setup_inputs_from_napari(self) -> Optional[int]:
+        """
+        setup inputs from napari layers and return total number of images to predict
+        """
         # User has selected napari image layers as input images
         selected_paths_from_napari: List[Path] = (
             self._prediction_model.get_selected_paths()
@@ -177,10 +204,10 @@ class PredictionService(Subscriber):
             show_warning(
                 "Please select at least 1 image from the napari layer before running prediction."
             )
-            return False
+            return None
         else:
             # If user selects input images from napari, we need to manually write a csv for cyto-dl
             self.write_csv_for_inputs(
                 self._prediction_model.get_selected_paths()
             )
-            return True
+            return len(selected_paths_from_napari)
