@@ -105,7 +105,8 @@ class PredictionView(View):
             # images in the CSV
             progress_tracker: PredictionFolderProgressTracker = (
                 PredictionFolderProgressTracker(
-                    self._prediction_model.get_output_directory(), total_num_images
+                    self._prediction_model.get_output_directory(),
+                    total_num_images,
                 )
             )
             self.startLongTaskWithProgressBar(progress_tracker)
