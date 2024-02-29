@@ -104,7 +104,7 @@ class PredictionService(Subscriber):
 
     def _write_csv_for_prediction(self) -> None:
         """
-        If needed, write csv's for predictions
+        If needed, write csv's for predictions, and set total number of images to be processed
         """
         # Check to see if user has selected an input mode
         input_mode_selected: PredictionInputMode = (
@@ -208,7 +208,7 @@ class PredictionService(Subscriber):
     def _grab_csv_data_rows(self, path: Path) -> int:
         file = open(path, "r+")
         reader = csv.reader(file)
-        return len(list(reader))
+        return len(list(reader)) - 1  # ignore header for rowcount
 
     def _setup_inputs_from_napari(self) -> Optional[int]:
         """
