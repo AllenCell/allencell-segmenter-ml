@@ -96,7 +96,9 @@ class PredictionView(View):
     def run_btn_handler(self):
         # dispatch events to set _prediction_model._input_image_path to a real CSV here
 
+        # get image paths from napari if they are selected
         self._prediction_model.dispatch_prediction_get_image_paths_from_napari()
+        # Verify prediction is able to start, and write csv if needed
         self._prediction_model.dispatch_prediction_setup()
 
         total_num_images = self._prediction_model.get_total_num_images()
