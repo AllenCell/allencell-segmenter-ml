@@ -32,8 +32,8 @@ class PredictionFolderProgressTracker(ProgressTracker):
     def start_tracker(self) -> None:
         self.stop_tracker()
         self._observer = Observer()
-        event_handler: PredictionFolderEventHandler = PredictionFolderEventHandler(
-            self.set_progress
+        event_handler: PredictionFolderEventHandler = (
+            PredictionFolderEventHandler(self.set_progress)
         )
         self._observer.schedule(
             event_handler, path=self._prediction_folder_path, recursive=False
