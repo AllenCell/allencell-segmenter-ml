@@ -32,8 +32,9 @@ class Event(Enum):
     ACTION_PREDICTION_POSTPROCESSING_AUTO_THRESHOLD = (
         "postprocessing_auto_threshold"
     )
-    ACTION_PREDICTION_INITIATED = "prediction_initiated"
+    ACTION_PREDICTION_GET_IMAGE_PATHS_FROM_NAPARI = "prediction_get_image_paths_from_napari"
     ACTION_PREDICTION_INPUT_PATH_SELECTED = "prediction_input_path_selected"
+    ACTION_PREDICTION_WRITE_CSV = "prediction_write_csv"
     ACTION_PREDICTION_EXTRACT_CHANNELS = "prediction_extract_channels"
 
     # Curation
