@@ -395,7 +395,9 @@ class CurationService(Subscriber):
         Update the curation record with the users selection for the current image
         """
         # DEAL WITH EXCLUDING MASKS
-        excluding_mask_path: Union[Path, str] = (
+        excluding_mask_path: Union[
+            Path, str
+        ] = (
             self._curation_model.get_current_excluding_mask_path_and_reset_mask()
         )
         if excluding_mask_path is not None:
@@ -404,9 +406,9 @@ class CurationService(Subscriber):
             excluding_mask_path = ""
 
         # DEAL WITH MERGING MASKS
-        merging_mask_path: Union[Path, str] = (
-            self._curation_model.get_current_merging_mask_path()
-        )
+        merging_mask_path: Union[
+            Path, str
+        ] = self._curation_model.get_current_merging_mask_path()
         if merging_mask_path is not None:
             # user has drawn and saved merging masks.
             merging_mask_path = str(merging_mask_path)
