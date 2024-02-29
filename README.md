@@ -56,9 +56,16 @@ More useful dev tasks:
 
 Release a new version and publishing to Pypi is based on a Github Actions workflow. The steps are:
 
-- Increment the current version using `bumpversion`. This can be done directly, or using the convenience `make` tasks (eg. `make bumpversion-patch`)
-- Assuming that `main` is up to date with the changes that you intend to release, make a pr from `main` into `release`. Upon getting required approvals and merging, the new version will be published to Pypi and released on Github.
-  - Branch protections apply - currently, merging into `release` is restricted to project maintainers.
+- From repository homepage, go to `actions > Bump version and publish to PyPI`
+- Enter which semantic version component you want to bump for this release
+- Run the workflow
+
+A GitHub runner will then bump the version, build and release to PyPI, and push the version changes back to main.
+
+**Note**: There are restrictions on which component you can bump depending on the current version.
+If the current version has a dev component (e.g. `1.0.1.dev0`), you must bump the dev component or the patch component
+(bumping patch will finalize that patch without any dev version `1.0.1.dev0` -> `1.0.1`). Attempting to bump
+major or minor versions will cause the workflow to fail
 
 ## Installation
 
