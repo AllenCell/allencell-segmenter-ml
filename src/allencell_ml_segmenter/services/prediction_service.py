@@ -157,9 +157,9 @@ class PredictionService(Subscriber):
         # if channel is not set, will default to same channel used to train
         channel: int = self._prediction_model.get_image_input_channel_index()
         if channel:
-            overrides["data.transforms.predict.transforms[0].reader[0].C"] = (
-                channel
-            )
+            overrides[
+                "data.transforms.predict.transforms[0].reader[0].C"
+            ] = channel
         # Need these overrides to load in csv's
         overrides["data.columns"] = ["raw", "split"]
         overrides["data.split_column"] = "split"
@@ -188,7 +188,11 @@ class PredictionService(Subscriber):
         # User has selected a directory or a csv as input images
         input_path: Path = self._prediction_model.get_input_image_path()
         if input_path.is_dir():
-            all_files = [path for path in input_path.glob("*.*") if not path.name.startswith(".")]
+            all_files = [
+                path
+                for path in input_path.glob("*.*")
+                if not path.name.startswith(".")
+            ]
             # if input path selected is a directory, we need to manually write a CSV for cyto-dl
             self.write_csv_for_inputs(all_files)
             return len(all_files)
@@ -211,9 +215,9 @@ class PredictionService(Subscriber):
         setup inputs from napari layers and return total number of images to predict
         """
         # User has selected napari image layers as input images
-        selected_paths_from_napari: List[Path] = (
-            self._prediction_model.get_selected_paths()
-        )
+        selected_paths_from_napari: List[
+            Path
+        ] = self._prediction_model.get_selected_paths()
         if len(selected_paths_from_napari) < 1:
             # No image layers selected
             show_warning(

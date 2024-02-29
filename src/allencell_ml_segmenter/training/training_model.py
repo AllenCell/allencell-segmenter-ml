@@ -54,9 +54,9 @@ class TrainingModel(Publisher):
         self._hardware_type: Hardware = None
         self._images_directory: Path = None
         self._channel_index: Union[int, None] = None
-        self._model_path: Union[Path, None] = (
-            None  # if None, start a new model
-        )
+        self._model_path: Union[
+            Path, None
+        ] = None  # if None, start a new model
         self._patch_size: PatchSize = None
         self._spatial_dims: int = None
         self._max_epoch: int = None
