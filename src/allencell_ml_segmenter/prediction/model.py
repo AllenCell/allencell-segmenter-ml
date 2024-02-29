@@ -177,9 +177,9 @@ class PredictionModel(Publisher):
         # Does some pre-configuring if needed for prediction runs
         self.dispatch(Event.ACTION_PREDICTION_GET_IMAGE_PATHS_FROM_NAPARI)
 
-    def dispatch_write_csv(self) -> None:
+    def dispatch_prediction_setup(self) -> None:
         # Does some pre-configuring if needed for prediction runs
-        self.dispatch(Event.ACTION_PREDICTION_WRITE_CSV)
+        self.dispatch(Event.ACTION_PREDICTION_SETUP)
 
     def set_max_channels(self, max: int) -> None:
         self._max_channels = max
