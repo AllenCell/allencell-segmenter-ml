@@ -72,9 +72,6 @@ dev = [
     "pytest-qt>=3.3.0",
     "pytest-cov>=2.6.1",
     "pyqt5>=5.15.9",
-]
-
-build_and_publish = [
     "bumpver>=2023.1129",
     "build>=1.0.3",
     "twine>=5.0.0",
@@ -111,6 +108,7 @@ push            = false
 [tool.bumpver.file_patterns]
 "pyproject.toml" = ['current_version = "{version}"', 'version = "{version}"']
 "src/allencell_ml_segmenter/__init__.py" = ['__version__ = "{version}"']
+# ".github/workflows/publish_to_pypi.yaml" = ["Current version: {version}"]
 
 [tool.black]
 line-length = 79 # should change to 88 once release_pipeline is merged
