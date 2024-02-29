@@ -42,7 +42,7 @@ class PredictionService(Subscriber):
         self._prediction_model.subscribe(
             Event.ACTION_PREDICTION_WRITE_CSV,
             self,
-            self._write_csv_for_prediction
+            self._write_csv_for_prediction,
         )
 
     def _predict_model(self, _: Event) -> None:
@@ -105,9 +105,13 @@ class PredictionService(Subscriber):
             )
             # dont set state if we have an error in setup
         elif input_mode_selected == PredictionInputMode.FROM_PATH:
-            self._prediction_model.set_total_num_images(self._setup_inputs_from_path())
+            self._prediction_model.set_total_num_images(
+                self._setup_inputs_from_path()
+            )
         elif input_mode_selected == PredictionInputMode.FROM_NAPARI_LAYERS:
-            self._prediction_model.set_total_num_images(self._setup_inputs_from_napari())
+            self._prediction_model.set_total_num_images(
+                self._setup_inputs_from_napari()
+            )
 
     def build_overrides(
         self, experiment_name: str, checkpoint: str

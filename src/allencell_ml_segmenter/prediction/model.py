@@ -191,6 +191,6 @@ class PredictionModel(Publisher):
 
     def set_total_num_images(self, total: Optional[int]):
         self.total_num_images = total
-    
+
     def get_total_num_images(self) -> Optional[int]:
         return self.total_num_images
