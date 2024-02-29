@@ -40,30 +40,33 @@ class PredictionService(Subscriber):
         )
 
         self._prediction_model.subscribe(
-            Event.ACTION_PREDICTION_WRITE_CSV,
+            Event.ACTION_PREDICTION_SETUP,
             self,
-            self._write_csv_for_prediction,
+            self._prediction_setup,
         )
 
     def _predict_model(self, _: Event) -> None:
         """
         Predict segmentations using model according to spec
         """
+        cyto_api: CytoDLModel = CytoDLModel()
+        cyto_api.load_config_from_file(
+            self._experiments_model.get_train_config_path(
+                self._experiments_model.get_experiment_name()
+            )
+        )
+        # We must override the config to set up predictions correctly
+        cyto_api.override_config(
+            self.build_overrides(
+                self._experiments_model.get_experiment_name(),
+                self._experiments_model.get_checkpoint(),
+            )
+        )
+        asyncio.run(cyto_api.predict(run_async=True))
+
+    def _prediction_setup(self, _: Event):
         if self._able_to_continue_prediction():
-            cyto_api: CytoDLModel = CytoDLModel()
-            cyto_api.load_config_from_file(
-                self._experiments_model.get_train_config_path(
-                    self._experiments_model.get_experiment_name()
-                )
-            )
-            # We must override the config to set up predictions correctly
-            cyto_api.override_config(
-                self.build_overrides(
-                    self._experiments_model.get_experiment_name(),
-                    self._experiments_model.get_checkpoint(),
-                )
-            )
-            asyncio.run(cyto_api.predict(run_async=True))
+            self._write_csv_for_prediction()
 
     def _able_to_continue_prediction(self) -> bool:
         # Check to see if experiment selected
@@ -90,9 +93,16 @@ class PredictionService(Subscriber):
                 f"Please select a checkpoint to run predictions with."
             )
             return False
+
+        # Check to see the user has specified an output folder to use.
+        if self._prediction_model.get_output_directory() is None:
+            show_warning(
+                f"Please select an output folder to save predictions to."
+            )
+            return False
         return True
 
-    def _write_csv_for_prediction(self, _: Event) -> None:
+    def _write_csv_for_prediction(self) -> None:
         """
         If needed, write csv's for predictions
         """

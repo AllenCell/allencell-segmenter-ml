@@ -97,7 +97,7 @@ class PredictionView(View):
         # dispatch events to set _prediction_model._input_image_path to a real CSV here
 
         self._prediction_model.dispatch_prediction_get_image_paths_from_napari()
-        self._prediction_model.dispatch_write_csv()
+        self._prediction_model.dispatch_prediction_setup()
 
         total_num_images = self._prediction_model.get_total_num_images()
         if total_num_images:
