@@ -157,9 +157,9 @@ class PredictionService(Subscriber):
         # if channel is not set, will default to same channel used to train
         channel: int = self._prediction_model.get_image_input_channel_index()
         if channel:
-            overrides[
-                "data.transforms.predict.transforms[0].reader[0].C"
-            ] = channel
+            overrides["data.transforms.predict.transforms[0].reader[0].C"] = (
+                channel
+            )
         # Need these overrides to load in csv's
         overrides["data.columns"] = ["raw", "split"]
         overrides["data.split_column"] = "split"
@@ -215,9 +215,9 @@ class PredictionService(Subscriber):
         setup inputs from napari layers and return total number of images to predict
         """
         # User has selected napari image layers as input images
-        selected_paths_from_napari: List[
-            Path
-        ] = self._prediction_model.get_selected_paths()
+        selected_paths_from_napari: List[Path] = (
+            self._prediction_model.get_selected_paths()
+        )
         if len(selected_paths_from_napari) < 1:
             # No image layers selected
             show_warning(
