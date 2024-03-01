@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Generator
+from typing import Callable, Generator
 import csv
 
 from aicsimageio import AICSImage
@@ -7,6 +7,21 @@ from aicsimageio import AICSImage
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.prediction.model import PredictionModel
+
+from PyQt5.QtCore import QThread, pyqtSignal
+
+
+class ChannelExtractionThread(QThread):
+    channels_ready: pyqtSignal = pyqtSignal(int)
+
+    def __init__(self, extract_channels: Callable[[], int], parent=None):
+        super().__init__(parent)
+        self._extract_channels = extract_channels
+
+    # override
+    def run(self):
+        channels: int = self._extract_channels()
+        self.channels_ready.emit(channels)
 
 
 class ModelFileService(Subscriber):
@@ -27,11 +42,7 @@ class ModelFileService(Subscriber):
         self._model.subscribe(
             Event.ACTION_PREDICTION_EXTRACT_CHANNELS,
             self,
-            lambda e: self._model.set_max_channels(
-                self._determine_input_selection_type(
-                    self._model.get_input_image_path()
-                )
-            ),
+            lambda e: self._initiate_channel_extraction(),
         )
 
     def handle_event(self, event: Event) -> None:
@@ -58,20 +69,32 @@ class ModelFileService(Subscriber):
             first_image = next(path_generator)
         return extract_num_channels_from_image(str(first_image.resolve()))
 
-    def extract_num_channels_from_csv(self, path: Path):
+    def extract_num_channels_from_csv(self, path: Path) -> int:
         with open(path) as file:
             reader: csv.reader = csv.DictReader(file)
             # first column contrains files of interest (zeroth column is index)
             line_data_path: str = next(reader)["raw"]
             return extract_num_channels_from_image(line_data_path)
 
-    def _determine_input_selection_type(self, path: Path):
+    def _extract_num_channels_from_model(self) -> int:
+        path: Path = self._model.get_input_image_path()
         if path.is_dir():
             return self.extract_num_channels_in_folder(path)
         elif path.suffix == ".csv":
             return self.extract_num_channels_from_csv(path)
 
+    def _initiate_channel_extraction(self) -> None:
+        self.channel_extraction_thread: ChannelExtractionThread = (
+            ChannelExtractionThread(
+                extract_channels=self._extract_num_channels_from_model
+            )
+        )
+        self.channel_extraction_thread.channels_ready.connect(
+            self._model.set_max_channels
+        )
+        self.channel_extraction_thread.start()
 
-def extract_num_channels_from_image(path: Path):
+
+def extract_num_channels_from_image(path: Path) -> int:
     img: AICSImage = AICSImage(str(path))
     return img.dims.C
