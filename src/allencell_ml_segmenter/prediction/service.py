@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Callable, Generator
+from typing import Callable, Generator, List
 import csv
 
 from aicsimageio import AICSImage
@@ -78,10 +78,17 @@ class ModelFileService(Subscriber):
 
     def _extract_num_channels_from_model(self) -> int:
         path: Path = self._model.get_input_image_path()
-        if path.is_dir():
+        if not path: # using viewer input method
+            paths: List[Path] = self._model.get_selected_paths()
+            if not paths or len(paths) != 1:
+                raise ValueError(f"expected selected paths of length 1, got {paths} instead")
+            return extract_num_channels_from_image(paths[0])
+        elif path.is_dir():
             return self.extract_num_channels_in_folder(path)
         elif path.suffix == ".csv":
             return self.extract_num_channels_from_csv(path)
+        else:
+            raise ValueError(f"unrecognized input path in model: {path}")
 
     def _initiate_channel_extraction(self) -> None:
         self.channel_extraction_thread: ChannelExtractionThread = (
