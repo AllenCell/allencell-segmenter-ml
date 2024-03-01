@@ -20,7 +20,6 @@ class PredictionModel(Publisher):
         super().__init__()
 
         # state related to PredictionFileInput
-        self.total_num_images: Optional[int] = None
         self.config_name: str = None
         self.config_dir: Path = None
         self._input_image_path: Path = None
@@ -35,6 +34,11 @@ class PredictionModel(Publisher):
         self._postprocessing_method: str = None
         self._postprocessing_simple_threshold: float = None
         self._postprocessing_auto_threshold: str = None
+
+        # This is initialized as None, and set when the input data is processed during pre-processing
+        # If it is none after Event.ACTION_PREDICTION_SETUP is dispatched, the csv for
+        # prediction was not generated and prediction cannot continue.
+        self.total_num_images: Optional[int] = None
 
     def get_input_image_path(self) -> Path:
         """
