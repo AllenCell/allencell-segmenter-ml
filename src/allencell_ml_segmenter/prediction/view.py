@@ -94,7 +94,7 @@ class PredictionView(View):
         )
 
     def run_btn_handler(self):
-        # dispatch events to set _prediction_model._input_image_path to a real CSV here
+        # dispatch events to set _prediction_model._input_image_path to a real CSV
 
         # get image paths from napari if they are selected
         self._prediction_model.dispatch_prediction_get_image_paths_from_napari()
@@ -103,8 +103,6 @@ class PredictionView(View):
 
         total_num_images = self._prediction_model.get_total_num_images()
         if total_num_images:
-            # replace the hard-coded 2 with function on _prediction_model to get number of
-            # images in the CSV
             progress_tracker: PredictionFolderProgressTracker = (
                 PredictionFolderProgressTracker(
                     self._prediction_model.get_output_directory(),
