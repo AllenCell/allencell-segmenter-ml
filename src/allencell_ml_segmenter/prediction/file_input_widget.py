@@ -149,11 +149,7 @@ class PredictionFileInput(QWidget):
 
         self._channel_select_dropdown: QComboBox = QComboBox()
 
-        # set up disappearing placeholder text
         self._channel_select_dropdown.setCurrentIndex(-1)
-        self._channel_select_dropdown.setPlaceholderText(
-            "select a channel index"
-        )
         self._channel_select_dropdown.currentIndexChanged.connect(
             self._model.set_image_input_channel_index
         )
@@ -163,6 +159,12 @@ class PredictionFileInput(QWidget):
             Event.ACTION_PREDICTION_INPUT_PATH_SELECTED,
             self,
             self._populate_input_channel_combobox,
+        )
+        # Event to set combobox text to 'loading' when we begin extracting channels
+        self._model.subscribe(
+            Event.ACTION_PREDICTION_EXTRACT_CHANNELS,
+            self,
+            self._set_input_channel_combobox_to_loading,
         )
 
         output_dir_label: LabelWithHint = LabelWithHint("Output directory")
@@ -210,7 +212,7 @@ class PredictionFileInput(QWidget):
         self._image_list.clear()
         max_channels: Optional[int] = None
         for layer in self._viewer.get_layers():
-            path_of_layer_image: Path = layer.source.path
+            path_of_layer_image: str = layer.source.path
             if path_of_layer_image:
                 self._image_list.add_item(layer.name)
                 if not max_channels:
@@ -236,6 +238,11 @@ class PredictionFileInput(QWidget):
             ]
             self._model.set_selected_paths(selected_paths)
 
+    def _set_input_channel_combobox_to_loading(self, event: Event = None) -> None:
+        self._channel_select_dropdown.setPlaceholderText("loading channels...")
+        self._channel_select_dropdown.setCurrentIndex(-1)
+        self._channel_select_dropdown.setEnabled(False)
+
     def _populate_input_channel_combobox(self, event: Event = None) -> None:
         channels_in_image: Optional[int] = self._model.get_max_channels()
 
@@ -251,5 +258,5 @@ class PredictionFileInput(QWidget):
             self._channel_select_dropdown.setEnabled(True)
         else:
             self._channel_select_dropdown.setPlaceholderText(
-                "No channels to Select"
+                "no channels to select"
             )
