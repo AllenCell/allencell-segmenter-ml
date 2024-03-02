@@ -164,7 +164,9 @@ class PredictionModel(Publisher):
     def get_prediction_input_mode(self) -> PredictionInputMode:
         return self._input_mode
 
-    def set_selected_paths(self, paths: List[Path], extract_channels: bool = False) -> None:
+    def set_selected_paths(
+        self, paths: List[Path], extract_channels: bool = False
+    ) -> None:
         self._selected_paths = paths
         if extract_channels:
             self.dispatch(Event.ACTION_PREDICTION_EXTRACT_CHANNELS)

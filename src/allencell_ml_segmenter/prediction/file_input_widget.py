@@ -221,12 +221,20 @@ class PredictionFileInput(QWidget):
                 for i in selected_indices
             ]
 
-            if state == Qt.Checked and len(selected_indices) == 1: # it's the only one checked and it's just been checked
-                self._model.set_selected_paths(selected_paths, extract_channels=True)
+            if (
+                state == Qt.Checked and len(selected_indices) == 1
+            ):  # it's the only one checked and it's just been checked
+                self._model.set_selected_paths(
+                    selected_paths, extract_channels=True
+                )
             else:
-                if state == Qt.Unchecked and len(selected_indices) == 0: # we now have no images selected
+                if (
+                    state == Qt.Unchecked and len(selected_indices) == 0
+                ):  # we now have no images selected
                     self._reset_channel_combobox()
-                self._model.set_selected_paths(selected_paths, extract_channels=False)
+                self._model.set_selected_paths(
+                    selected_paths, extract_channels=False
+                )
 
     def _clear_channel_combobox(self) -> None:
         while self._channel_select_dropdown.count() > 0:
@@ -238,7 +246,9 @@ class PredictionFileInput(QWidget):
         self._channel_select_dropdown.setCurrentIndex(-1)
         self._channel_select_dropdown.setEnabled(False)
 
-    def _set_input_channel_combobox_to_loading(self, event: Event = None) -> None:
+    def _set_input_channel_combobox_to_loading(
+        self, event: Event = None
+    ) -> None:
         self._channel_select_dropdown.setPlaceholderText("loading channels...")
         self._channel_select_dropdown.setCurrentIndex(-1)
         self._channel_select_dropdown.setEnabled(False)
