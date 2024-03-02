@@ -78,10 +78,12 @@ class ModelFileService(Subscriber):
 
     def _extract_num_channels_from_model(self) -> int:
         path: Path = self._model.get_input_image_path()
-        if not path: # using viewer input method
+        if not path:  # using viewer input method
             paths: List[Path] = self._model.get_selected_paths()
             if not paths or len(paths) != 1:
-                raise ValueError(f"expected selected paths of length 1, got {paths} instead")
+                raise ValueError(
+                    f"expected selected paths of length 1, got {paths} instead"
+                )
             return extract_num_channels_from_image(paths[0])
         elif path.is_dir():
             return self.extract_num_channels_in_folder(path)
