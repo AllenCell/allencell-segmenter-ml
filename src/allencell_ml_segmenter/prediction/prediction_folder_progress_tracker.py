@@ -22,9 +22,9 @@ class PredictionFolderProgressTracker(ProgressTracker):
         """
         super().__init__(progress_minimum=0, progress_maximum=num_preds)
 
-        self._prediction_folder_path: Path = prediction_folder_path
         if not prediction_folder_path.exists():
             prediction_folder_path.mkdir(parents=True)
+        self._prediction_folder_path: Path = prediction_folder_path
 
         self._observer: Optional[BaseObserver] = None
 
