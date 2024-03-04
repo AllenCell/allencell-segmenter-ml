@@ -221,7 +221,7 @@ class PredictionFileInput(QWidget):
                 for i in selected_indices
             ]
 
-            if state == Qt.Checked:  
+            if state == Qt.Checked:
                 # only extract if it's the only one checked and it's just been checked;
                 # otherwise we assume they are checking images with same number of channels
                 self._model.set_selected_paths(

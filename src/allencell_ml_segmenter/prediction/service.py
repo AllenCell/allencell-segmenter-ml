@@ -32,7 +32,9 @@ class ModelFileService(Subscriber):
     def __init__(self, model: PredictionModel):
         super().__init__()
         self._model: PredictionModel = model
-        self._channel_extraction_thread: Optional[ChannelExtractionThread] = None
+        self._channel_extraction_thread: Optional[ChannelExtractionThread] = (
+            None
+        )
 
         self._model.subscribe(
             Event.ACTION_PREDICTION_MODEL_FILE,
@@ -107,11 +109,14 @@ class ModelFileService(Subscriber):
         return img.dims.C
 
     def _initiate_channel_extraction(self) -> None:
-        if self._channel_extraction_thread and self._channel_extraction_thread.isRunning():
+        if (
+            self._channel_extraction_thread
+            and self._channel_extraction_thread.isRunning()
+        ):
             self._channel_extraction_thread.exit()
 
-        self._channel_extraction_thread = (
-            ChannelExtractionThread(extract_channels=self.extract_num_channels)
+        self._channel_extraction_thread = ChannelExtractionThread(
+            extract_channels=self.extract_num_channels
         )
         self._channel_extraction_thread.channels_ready.connect(
             self._model.set_max_channels
