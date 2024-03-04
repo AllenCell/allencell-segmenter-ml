@@ -221,6 +221,8 @@ class PredictionFileInput(QWidget):
                 for i in selected_indices
             ]
 
+            # this will preserve the invariant: the options in the dropdown will be equal
+            # to the number of channels in at least one of the selected images (or empty if no images selected)
             if state == Qt.Checked:
                 # only extract if it's the only one checked and it's just been checked;
                 # otherwise we assume they are checking images with same number of channels
