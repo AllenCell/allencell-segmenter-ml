@@ -221,19 +221,20 @@ class PredictionFileInput(QWidget):
                 for i in selected_indices
             ]
 
-            if (
-                state == Qt.Checked and len(selected_indices) == 1
-            ):  # it's the only one checked and it's just been checked
+            if state == Qt.Checked:  
+                # only extract if it's the only one checked and it's just been checked;
+                # otherwise we assume they are checking images with same number of channels
                 self._model.set_selected_paths(
-                    selected_paths, extract_channels=True
+                    selected_paths, extract_channels=len(selected_paths) == 1
                 )
-            else:
-                if (
-                    state == Qt.Unchecked and len(selected_indices) == 0
-                ):  # we now have no images selected
+            elif state == Qt.Unchecked:
+                # could have unselected the img we got channels from originally, so need to re-extract
+                # as long as there are still some images selected
+                if len(selected_indices) == 0:
                     self._reset_channel_combobox()
+
                 self._model.set_selected_paths(
-                    selected_paths, extract_channels=False
+                    selected_paths, extract_channels=len(selected_paths) > 0
                 )
 
     def _clear_channel_combobox(self) -> None:
@@ -249,6 +250,7 @@ class PredictionFileInput(QWidget):
     def _set_input_channel_combobox_to_loading(
         self, event: Event = None
     ) -> None:
+        self._clear_channel_combobox()
         self._channel_select_dropdown.setPlaceholderText("loading channels...")
         self._channel_select_dropdown.setCurrentIndex(-1)
         self._channel_select_dropdown.setEnabled(False)
