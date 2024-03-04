@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Callable, Generator, List
+from typing import Callable, Generator, List, Union
 import csv
 
 from aicsimageio import AICSImage
@@ -55,7 +55,33 @@ class ModelFileService(Subscriber):
         # TODO: replace dummy implementation
         self._model.set_preprocessing_method("foo")
 
-    def extract_num_channels_in_folder(self, path: Path) -> int:
+    def extract_num_channels(self) -> int:
+        """
+        Extracts the number of channels from the prediction model. If model's
+        input_image_path is set, will attempt to infer channels from that field;
+        otherwise will attempt to infer channels from model's selected_paths field
+        (the images currently checked in the prediction widget). Throws ValueError
+        if both fields uninitialized.
+        """
+        path: Path = self._model.get_input_image_path()
+        img_path: Union[str, Path] = None
+        if not path:  # using viewer input method
+            paths: List[Path] = self._model.get_selected_paths()
+            if not paths or len(paths) <= 0:
+                raise ValueError(
+                    "expected input_image_path or selected_paths to be initialized and non-empty"
+                )
+            img_path = paths[0]
+        elif path.is_dir():
+            img_path = self._get_img_path_from_folder(path)
+        elif path.suffix == ".csv":
+            img_path = self._get_img_path_from_csv(path)
+        else:
+            raise ValueError(f"unrecognized input image path in model: {path}")
+
+        return self._extract_num_channels_from_image(img_path)
+
+    def _get_img_path_from_folder(self, path: Path) -> str:
         """
         Determine total number of channels for image in a set folder
         """
@@ -63,47 +89,27 @@ class ModelFileService(Subscriber):
         # and that only images are stored in those folders
         # Get first image path
         path_generator: Generator[Path] = path.glob("*")
-        first_image: Path = next(path_generator)
+        image: Path = next(path_generator)
         # ignore hidden files
-        while str(first_image.name).startswith("."):
-            first_image = next(path_generator)
-        return extract_num_channels_from_image(str(first_image.resolve()))
+        while str(image.name).startswith("."):
+            image = next(path_generator)
+        return str(image.resolve())
 
-    def extract_num_channels_from_csv(self, path: Path) -> int:
+    def _get_img_path_from_csv(self, path: Path) -> str:
         with open(path) as file:
             reader: csv.reader = csv.DictReader(file)
-            # first column contrains files of interest (zeroth column is index)
             line_data_path: str = next(reader)["raw"]
-            return extract_num_channels_from_image(line_data_path)
+        return line_data_path
 
-    def _extract_num_channels_from_model(self) -> int:
-        path: Path = self._model.get_input_image_path()
-        if not path:  # using viewer input method
-            paths: List[Path] = self._model.get_selected_paths()
-            if not paths or len(paths) != 1:
-                raise ValueError(
-                    f"expected selected paths of length 1, got {paths} instead"
-                )
-            return extract_num_channels_from_image(paths[0])
-        elif path.is_dir():
-            return self.extract_num_channels_in_folder(path)
-        elif path.suffix == ".csv":
-            return self.extract_num_channels_from_csv(path)
-        else:
-            raise ValueError(f"unrecognized input path in model: {path}")
+    def _extract_num_channels_from_image(self, path: Union[str, Path]) -> int:
+        img: AICSImage = AICSImage(str(path))
+        return img.dims.C
 
     def _initiate_channel_extraction(self) -> None:
         self.channel_extraction_thread: ChannelExtractionThread = (
-            ChannelExtractionThread(
-                extract_channels=self._extract_num_channels_from_model
-            )
+            ChannelExtractionThread(extract_channels=self.extract_num_channels)
         )
         self.channel_extraction_thread.channels_ready.connect(
             self._model.set_max_channels
         )
         self.channel_extraction_thread.start()
-
-
-def extract_num_channels_from_image(path: Path) -> int:
-    img: AICSImage = AICSImage(str(path))
-    return img.dims.C
