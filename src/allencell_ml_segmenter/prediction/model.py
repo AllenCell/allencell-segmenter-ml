@@ -192,7 +192,7 @@ class PredictionModel(Publisher):
     def set_max_channels(self, max: int) -> None:
         self._max_channels = max
         # this will enable the combobox
-        self.dispatch(Event.ACTION_PREDICTION_INPUT_PATH_SELECTED)
+        self.dispatch(Event.ACTION_PREDICTION_MAX_CHANNELS_SET)
 
     def get_max_channels(self) -> int:
         return self._max_channels
