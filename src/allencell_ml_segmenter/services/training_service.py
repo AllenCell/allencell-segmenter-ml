@@ -71,11 +71,13 @@ class TrainingService(Subscriber):
         # )
         if self._able_to_continue_training():
             model = CytoDLModel()
-            model.download_example_data()
+            # model.download_example_data()
             model.load_default_experiment(
                 self._training_model.get_experiment_type().value,
-                output_dir=f"{self._experiments_model.get_user_experiments_path()}/{self._experiments_model.get_experiment_name()}",
-                overrides=self._build_overrides(),
+                output_dir=f"{self._experiments_model.get_user_experiments_path()}/{self._experiments_model.get_experiment_name()}"
+            )
+            model.override_config(
+                self._build_overrides()
             )
             model.print_config()
             asyncio.run(model._train_async())
@@ -155,7 +157,7 @@ class TrainingService(Subscriber):
     #     """
     #     return f"ckpt_path={self._experiments_model.get_model_checkpoints_path(self._experiments_model.get_experiment_name(), self._experiments_model.get_checkpoint())}"
 
-    def _build_overrides(self) -> List[str]:
+    def _build_overrides(self) -> Dict[str, Union[str, int, float, bool]]:
         """
         Build a list of overrides for the CytoDLModel from plugin state.
         """
@@ -167,18 +169,16 @@ class TrainingService(Subscriber):
         hardware_type = "cpu"
         if self._training_model.get_hardware_type() == Hardware.GPU:
             hardware_type = "gpu"
-        overrides["trainer"] = hardware_type
+        overrides["trainer.accelerator"] = hardware_type
         overrides["spatial_dims"] = self._training_model.get_spatial_dims()
         overrides["experiment_name"] = self._experiments_model.get_experiment_name()
-        overrides["data.path"] = self._training_model.get_images_directory()
+        overrides["data.path"] = str(self._training_model.get_images_directory())
         overrides["trainer.max_epochs"] = self._training_model.get_max_epoch()
-        overrides["data._aux.patch_shape"] = _list_to_string(self._training_model.get_patch_size().value)
+        overrides["data._aux.patch_shape"] = self._training_model.get_patch_size().value
 
         if self._experiments_model.get_checkpoint() is not None:
             # We are going to continue training on an existing model
-            overrides["ckpt_path"] = self._experiments_model.get_model_checkpoints_path(
+            overrides["ckpt_path"] = str(self._experiments_model.get_model_checkpoints_path(
                 self._experiments_model.get_experiment_name(),
-                self._experiments_model.get_checkpoint())
-
-
+                self._experiments_model.get_checkpoint()))
         return overrides
