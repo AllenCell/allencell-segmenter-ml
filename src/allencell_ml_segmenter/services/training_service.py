@@ -102,10 +102,11 @@ class TrainingService(Subscriber):
             return False
 
         if self._training_model.get_max_epoch() is None:
-            show_warning(
-                "Please define max-epoch for trainer."
-            )
-            return False
+            if self._training_model.use_max_time() and self._training_model.get_max_time() is None:
+                show_warning(
+                    "Please define max epoch(s) to run, or max runtime for trainer."
+                )
+                return False
         return True
 
 
@@ -157,24 +158,37 @@ class TrainingService(Subscriber):
     #     """
     #     return f"ckpt_path={self._experiments_model.get_model_checkpoints_path(self._experiments_model.get_experiment_name(), self._experiments_model.get_checkpoint())}"
 
-    def _build_overrides(self) -> Dict[str, Union[str, int, float, bool]]:
+    def _build_overrides(self) -> Dict[str, Union[str, int, float, bool, Dict]]:
         """
         Build a list of overrides for the CytoDLModel from plugin state.
         """
         # TODO: Add channel index selection from UI
         # TODO: Add max time from UI
-        overrides: Dict[str, Union[str, int, float, bool]] = dict()
+        overrides: Dict[str, Union[str, int, float, bool, Dict]] = dict()
 
+        # Overrides for trainer
         # V1 defaults to CPU
+        # hardware type
         hardware_type = "cpu"
         if self._training_model.get_hardware_type() == Hardware.GPU:
             hardware_type = "gpu"
         overrides["trainer.accelerator"] = hardware_type
+        # max run in time or epochs
+        if self._training_model.use_max_time():
+            # define max runtime (in hours)
+            overrides["trainer.max_time"] = {"hours": self._training_model.get_max_time()}
+        else:
+            # define max run (in epochs)
+            overrides["trainer.max_epochs"] = self._training_model.get_max_epoch()
+
+        # Data overrides
+        overrides["data.path"] = str(self._training_model.get_images_directory())
+        overrides["data._aux.patch_shape"] = self._training_model.get_patch_size().value
+
+        # other stuff
         overrides["spatial_dims"] = self._training_model.get_spatial_dims()
         overrides["experiment_name"] = self._experiments_model.get_experiment_name()
-        overrides["data.path"] = str(self._training_model.get_images_directory())
-        overrides["trainer.max_epochs"] = self._training_model.get_max_epoch()
-        overrides["data._aux.patch_shape"] = self._training_model.get_patch_size().value
+
 
         if self._experiments_model.get_checkpoint() is not None:
             # We are going to continue training on an existing model

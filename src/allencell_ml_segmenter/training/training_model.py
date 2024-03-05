@@ -60,9 +60,10 @@ class TrainingModel(Publisher):
         self._spatial_dims: int = None
         self._max_epoch: int = None
         self._current_epoch: int = None
-        self._max_time: int = None  # in seconds
+        self._max_time: float = None  # in hours
         self._config_dir: Path = None
         self.result_images = []
+        self._use_max_time: bool = False # default is false. UI starts with max epoch defined rather than max time.
 
     def get_experiment_type(self) -> TrainingType:
         """
@@ -187,15 +188,15 @@ class TrainingModel(Publisher):
             )
         self._patch_size = PatchSize[patch_size]
 
-    def get_max_time(self) -> int:
+    def get_max_time(self) -> float:
         """
         Gets max runtime (in seconds)
         """
         return self._max_time
 
-    def set_max_time(self, max_time: int) -> None:
+    def set_max_time(self, max_time: float) -> None:
         """
-        Sets max runtime (in seconds)
+        Sets max runtime (in hours)
 
         max_time (int): maximum runtime for training, in seconds
         """
@@ -237,3 +238,16 @@ class TrainingModel(Publisher):
         images (list): list of images to display
         """
         self.result_images = images
+
+    def use_max_time(self) -> bool:
+        """
+        Will training run will be based off of max time
+        """
+        return self._use_max_time
+
+    def set_use_max_time(self, use_max: bool):
+        """
+        Set if training run will be based off of max time
+        """
+        self._use_max_time = use_max
+

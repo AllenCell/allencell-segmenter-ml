@@ -169,11 +169,8 @@ class TrainingView(View):
         self._max_time_in_hours_input.setEnabled(False)
         self._max_time_in_hours_input.setMaximumWidth(30)
         self._max_time_in_hours_input.setPlaceholderText("0")
-        # TODO: decide between converting as int(text) or float(text) -> will users want to use decimals? is there a better way to convert from hours to seconds?
-        # TODO: how to handle invalid (not convertible to a number) input?
         self._max_time_in_hours_input.textChanged.connect(
-            lambda text: self._training_model.set_max_time(
-                round(float(text) * 3600)
+            lambda text: self._training_model.set_max_time(float(text)
             )
         )
         max_time_layout.addWidget(self._max_time_in_hours_input)
@@ -278,5 +275,7 @@ class TrainingView(View):
         """
         if checked == Qt.Checked:
             self._max_time_in_hours_input.setEnabled(True)
+            self._training_model.set_use_max_time(True)
         else:
             self._max_time_in_hours_input.setEnabled(False)
+            self._training_model.set_use_max_time(False)
