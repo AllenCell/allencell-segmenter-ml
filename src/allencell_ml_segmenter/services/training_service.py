@@ -3,7 +3,7 @@ import asyncio
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.event import Event
 
-# from cyto_dl.api.model import CytoDLModel
+from cyto_dl.api.model import CytoDLModel
 
 # from lightning.pytorch.callbacks import Callback
 
@@ -15,7 +15,8 @@ from allencell_ml_segmenter.training.training_model import (
     PatchSize,
 )
 from allencell_ml_segmenter.training.training_model import TrainingModel
-from typing import List, Any
+from typing import List, Any, Dict, Union
+from napari.utils.notifications import show_warning
 
 
 # static method
@@ -68,62 +69,90 @@ class TrainingService(Subscriber):
         #     # This is meant to be a string as is - not a string template.  In cyto-dl, it will be treated as a string template
         #     "hydra.run.dir=${paths.log_dir}/${task_name}/runs/${experiment_name}"
         # )
-        model = CytoDLModel()
-        model.download_example_data()
-        model.load_default_experiment(
-            self._training_model.get_experiment_type().value,
-            output_dir=f"{self._experiments_model.get_user_experiments_path()}/{self._experiments_model.get_experiment_name()}",
-            overrides=self._build_overrides(),
-        )
-        model.print_config()
-        asyncio.run(model._train_async())
+        if self._able_to_continue_training():
+            model = CytoDLModel()
+            model.download_example_data()
+            model.load_default_experiment(
+                self._training_model.get_experiment_type().value,
+                output_dir=f"{self._experiments_model.get_user_experiments_path()}/{self._experiments_model.get_experiment_name()}",
+                overrides=self._build_overrides(),
+            )
+            model.print_config()
+            asyncio.run(model._train_async())
 
-    def _get_hardware_override(self) -> str:
-        """
-        Get the hardware override for the CytoDLModel
-        """
-        hardware_type: Hardware = self._training_model.get_hardware_type()
-        return f"trainer={hardware_type.value}"
+    def _able_to_continue_training(self) -> bool:
+        if self._experiments_model.get_experiment_name() is None:
+            show_warning(
+                "Please select an experiment before running prediction."
+            )
+            return False
 
-    def _get_spatial_dims_override(self) -> str:
-        """
-        Get the spatial_dims override for the CytoDlModel
-        """
-        return f"spatial_dims={self._training_model.get_spatial_dims()}"
+        if self._training_model.get_spatial_dims() is None:
+            show_warning(
+                "Please select spatial dims for training dataset. 2-D or 3-D."
+            )
+            return False
 
-    def _get_experiment_name_override(self) -> str:
-        """
-        Get the experiment name override for the CytoDlModel
-        """
-        return (
-            f"experiment_name={self._experiments_model.get_experiment_name()}"
-        )
+        if self._training_model.get_images_directory() is None:
+            show_warning(
+                "User has not selected input images for training"
+            )
+            return False
 
-    def _get_max_epoch_override(self) -> str:
-        """
-        Get the max epoch override for the CytoDlModel
-        """
-        return f"trainer.max_epochs={self._training_model.get_max_epoch()}"
+        if self._training_model.get_max_epoch() is None:
+            show_warning(
+                "Please define max-epoch for trainer."
+            )
+            return False
 
-    def _get_images_directory_override(self) -> str:
-        """
-        Get the data path override for the CytoDlModel
-        Cyto dl expects a train.csv, valid.csv, and a test.csv in this folder for training.
-        """
-        return f"data.path={str(self._training_model.get_images_directory())}"
 
-    def _get_patch_shape_override(self) -> str:
-        """
-        get the patch shape override for the CytoDLModel
-        """
-        patch_size: PatchSize = self._training_model.get_patch_size()
-        return f"data._aux.patch_shape={_list_to_string(patch_size.value)}"
 
-    def _get_checkpoint_override(self) -> str:
-        """
-        Get the checkpoint path override for the CytoDLModel
-        """
-        return f"ckpt_path={self._experiments_model.get_model_checkpoints_path(self._experiments_model.get_experiment_name(), self._experiments_model.get_checkpoint())}"
+    # def _get_hardware_override(self) -> str:
+    #     """
+    #     Get the hardware override for the CytoDLModel
+    #     """
+    #     hardware_type: Hardware = self._training_model.get_hardware_type()
+    #     return f"trainer={hardware_type.value}"
+    #
+    # def _get_spatial_dims_override(self) -> str:
+    #     """
+    #     Get the spatial_dims override for the CytoDlModel
+    #     """
+    #     return f"spatial_dims={self._training_model.get_spatial_dims()}"
+    #
+    # def _get_experiment_name_override(self) -> str:
+    #     """
+    #     Get the experiment name override for the CytoDlModel
+    #     """
+    #     return (
+    #         f"experiment_name={self._experiments_model.get_experiment_name()}"
+    #     )
+    #
+    # def _get_max_epoch_override(self) -> str:
+    #     """
+    #     Get the max epoch override for the CytoDlModel
+    #     """
+    #     return f"trainer.max_epochs={self._training_model.get_max_epoch()}"
+    #
+    # def _get_images_directory_override(self) -> str:
+    #     """
+    #     Get the data path override for the CytoDlModel
+    #     Cyto dl expects a train.csv, valid.csv, and a test.csv in this folder for training.
+    #     """
+    #     return f"data.path={str(self._training_model.get_images_directory())}"
+    #
+    # def _get_patch_shape_override(self) -> str:
+    #     """
+    #     get the patch shape override for the CytoDLModel
+    #     """
+    #     patch_size: PatchSize = self._training_model.get_patch_size()
+    #     return f"data._aux.patch_shape={_list_to_string(patch_size.value)}"
+    #
+    # def _get_checkpoint_override(self) -> str:
+    #     """
+    #     Get the checkpoint path override for the CytoDLModel
+    #     """
+    #     return f"ckpt_path={self._experiments_model.get_model_checkpoints_path(self._experiments_model.get_experiment_name(), self._experiments_model.get_checkpoint())}"
 
     def _build_overrides(self) -> List[str]:
         """
@@ -131,43 +160,24 @@ class TrainingService(Subscriber):
         """
         # TODO: Add channel index selection from UI
         # TODO: Add max time from UI
-        overrides: List = []
+        overrides: Dict[str, Union[str, int, float, bool]] = dict()
 
-        # REQUIRED OVERRIDES for cyto-dl run
-        if self._training_model.get_hardware_type() is None:
-            # v1 defaults to cpu
-            self._training_model.set_hardware_type("cpu")
-        overrides.append(self._get_hardware_override())
-
-        if self._training_model.get_spatial_dims() is None:
-            raise ValueError(
-                "Must define spatial dims 2-d or 3-d to run training."
-            )
-        overrides.append(self._get_spatial_dims_override())
-
-        if self._experiments_model.get_experiment_name() is None:
-            raise ValueError(
-                "User has not selected experiment to save model into"
-            )
-        overrides.append(self._get_experiment_name_override())
-
-        if self._training_model.get_images_directory() is None:
-            raise ValueError("User has not selected input images for training")
-        overrides.append(self._get_images_directory_override())
-
-        # OPTIONAL OVERRIDES for cyto-dl run
-        if self._training_model.get_max_epoch() is not None:
-            # TODO: ask benji- what happens if a user does not define max_epoch?
-            # For now use the default coded values in cyto-dl's experiment config files
-            overrides.append(self._get_max_epoch_override())
-
-        if self._training_model.get_patch_size() is not None:
-            # If for some reason patch size is not selected, default to the patch size defined in cyto-dl's experiment
-            # config files.
-            overrides.append(self._get_patch_shape_override())
+        # V1 defaults to CPU
+        hardware_type = "cpu"
+        if self._training_model.get_hardware_type() == Hardware.GPU:
+            hardware_type = "gpu"
+        overrides["trainer"] = hardware_type
+        overrides["spatial_dims"] = self._training_model.get_spatial_dims()
+        overrides["experiment_name"] = self._experiments_model.get_experiment_name()
+        overrides["data.path"] = self._training_model.get_images_directory()
+        overrides["trainer.max_epochs"] = self._training_model.get_max_epoch()
+        overrides["data._aux.patch_shape"] = _list_to_string(self._training_model.get_patch_size().value)
 
         if self._experiments_model.get_checkpoint() is not None:
-            # If checkpoint path is selected, use
-            overrides.append(self._get_checkpoint_override())
+            # We are going to continue training on an existing model
+            overrides["ckpt_path"] = self._experiments_model.get_model_checkpoints_path(
+                self._experiments_model.get_experiment_name(),
+                self._experiments_model.get_checkpoint())
+
 
         return overrides
