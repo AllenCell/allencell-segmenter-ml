@@ -104,6 +104,7 @@ class TrainingService(Subscriber):
                 "Please define max-epoch for trainer."
             )
             return False
+        return True
 
 
 
