@@ -1,5 +1,3 @@
-import time
-
 from qtpy.QtCore import Qt
 
 from allencell_ml_segmenter._style import Style
@@ -13,6 +11,9 @@ from allencell_ml_segmenter.prediction.service import ModelFileService
 from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.prediction.model_input_widget import (
     ModelInputWidget,
+)
+from allencell_ml_segmenter.prediction.prediction_folder_progress_tracker import (
+    PredictionFolderProgressTracker,
 )
 from qtpy.QtWidgets import (
     QVBoxLayout,
@@ -93,10 +94,24 @@ class PredictionView(View):
         )
 
     def run_btn_handler(self):
-        self.startLongTask()
+        # dispatch events to set _prediction_model._input_image_path to a real CSV
+
+        # get image paths from napari if they are selected
+        self._prediction_model.dispatch_prediction_get_image_paths_from_napari()
+        # Verify prediction is able to start, and write csv if needed
+        self._prediction_model.dispatch_prediction_setup()
+
+        total_num_images = self._prediction_model.get_total_num_images()
+        if total_num_images:
+            progress_tracker: PredictionFolderProgressTracker = (
+                PredictionFolderProgressTracker(
+                    self._prediction_model.get_output_directory(),
+                    total_num_images,
+                )
+            )
+            self.startLongTaskWithProgressBar(progress_tracker)
 
     def doWork(self):
-        self._prediction_model.dispatch_prediction_initiated()
         self._prediction_model.dispatch_prediction()
         # TODO Need way to set result images to show after prediction complete and refresh viewer.
 
