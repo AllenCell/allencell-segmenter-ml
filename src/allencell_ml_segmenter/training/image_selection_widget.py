@@ -116,7 +116,7 @@ class ImageSelectionWidget(QWidget):
     def _populate_channel_selection_combobox(self, _: Event) -> None:
         channels_in_image: Optional[int] = self._model.get_max_channels()
 
-        if channels_in_image is not None and channels_in_image > 0:
+        if channels_in_image > 0:
             values_range: List[str] = [
                 str(i) for i in range(self._model.get_max_channels())
             ]
@@ -127,6 +127,7 @@ class ImageSelectionWidget(QWidget):
             self._channel_combo_box.addItems(values_range)
             self._channel_combo_box.setEnabled(True)
         else:
+            # only one channel
             self._channel_combo_box.setPlaceholderText("No channels to Select")
 
     def set_max_channels_from_input_selection(self, _: Event) -> None:

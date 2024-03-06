@@ -97,6 +97,10 @@ class TrainingService(Subscriber):
             show_warning("User has not selected input images for training")
             return False
 
+        if self._training_model.get_patch_size() is None:
+            show_warning("User has not selected a patch size for training")
+            return False
+
         if self._training_model.get_max_epoch() is None:
             if (
                 self._training_model.use_max_time()
@@ -106,7 +110,15 @@ class TrainingService(Subscriber):
                     "Please define max epoch(s) to run, or max runtime for trainer."
                 )
                 return False
+
+        if self._training_model.get_max_channels() > 0 and self._training_model.get_channel_index() is None:
+            show_warning(
+                "Your raw images have multiple channels, please select a channel to train on."
+            )
+            return False
         return True
+
+
 
     # def _get_hardware_override(self) -> str:
     #     """
@@ -197,7 +209,9 @@ class TrainingService(Subscriber):
         overrides["experiment_name"] = (
             self._experiments_model.get_experiment_name()
         )
-        overrides["input_channel"] = self._training_model.get_channel_index()
+        channel_selection: int = self._training_model.get_channel_index()
+        if channel_selection is not None:
+            overrides["input_channel"] = channel_selection
 
         if self._experiments_model.get_checkpoint() is not None:
             # We are going to continue training on an existing model
