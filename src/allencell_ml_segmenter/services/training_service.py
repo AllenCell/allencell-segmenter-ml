@@ -121,53 +121,6 @@ class TrainingService(Subscriber):
             return False
         return True
 
-    # def _get_hardware_override(self) -> str:
-    #     """
-    #     Get the hardware override for the CytoDLModel
-    #     """
-    #     hardware_type: Hardware = self._training_model.get_hardware_type()
-    #     return f"trainer={hardware_type.value}"
-    #
-    # def _get_spatial_dims_override(self) -> str:
-    #     """
-    #     Get the spatial_dims override for the CytoDlModel
-    #     """
-    #     return f"spatial_dims={self._training_model.get_spatial_dims()}"
-    #
-    # def _get_experiment_name_override(self) -> str:
-    #     """
-    #     Get the experiment name override for the CytoDlModel
-    #     """
-    #     return (
-    #         f"experiment_name={self._experiments_model.get_experiment_name()}"
-    #     )
-    #
-    # def _get_max_epoch_override(self) -> str:
-    #     """
-    #     Get the max epoch override for the CytoDlModel
-    #     """
-    #     return f"trainer.max_epochs={self._training_model.get_max_epoch()}"
-    #
-    # def _get_images_directory_override(self) -> str:
-    #     """
-    #     Get the data path override for the CytoDlModel
-    #     Cyto dl expects a train.csv, valid.csv, and a test.csv in this folder for training.
-    #     """
-    #     return f"data.path={str(self._training_model.get_images_directory())}"
-    #
-    # def _get_patch_shape_override(self) -> str:
-    #     """
-    #     get the patch shape override for the CytoDLModel
-    #     """
-    #     patch_size: PatchSize = self._training_model.get_patch_size()
-    #     return f"data._aux.patch_shape={_list_to_string(patch_size.value)}"
-    #
-    # def _get_checkpoint_override(self) -> str:
-    #     """
-    #     Get the checkpoint path override for the CytoDLModel
-    #     """
-    #     return f"ckpt_path={self._experiments_model.get_model_checkpoints_path(self._experiments_model.get_experiment_name(), self._experiments_model.get_checkpoint())}"
-
     def _build_overrides(
         self,
     ) -> Dict[str, Union[str, int, float, bool, Dict]]:
