@@ -111,14 +111,15 @@ class TrainingService(Subscriber):
                 )
                 return False
 
-        if self._training_model.get_max_channels() > 0 and self._training_model.get_channel_index() is None:
+        if (
+            self._training_model.get_max_channels() > 0
+            and self._training_model.get_channel_index() is None
+        ):
             show_warning(
                 "Your raw images have multiple channels, please select a channel to train on."
             )
             return False
         return True
-
-
 
     # def _get_hardware_override(self) -> str:
     #     """
