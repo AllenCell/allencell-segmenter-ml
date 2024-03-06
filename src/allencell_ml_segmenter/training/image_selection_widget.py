@@ -17,6 +17,7 @@ from allencell_ml_segmenter.widgets.input_button_widget import (
     FileInputMode,
 )
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
+from allencell_ml_segmenter.services.prediction_service import extract_num_channels_from_csv
 
 
 class ImageSelectionWidget(QWidget):
