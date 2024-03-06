@@ -119,13 +119,9 @@ class TrainingService(Subscriber):
         patch_size: PatchSize = self._training_model.get_patch_size()
         return f"data._aux.patch_shape={_list_to_string(patch_size.value)}"
 
-    def _get_checkpoint_override(self) -> str:
-        """
-        Get the checkpoint path override for the CytoDLModel
-        """
-        return f"ckpt_path={self._experiments_model.get_model_checkpoints_path(self._experiments_model.get_experiment_name(), self._experiments_model.get_checkpoint())}"
-
-    def _build_overrides(self) -> List[str]:
+    def _build_overrides(
+        self,
+    ) -> Dict[str, Union[str, int, float, bool, Dict]]:
         """
         Build a list of overrides for the CytoDLModel from plugin state.
         """
