@@ -6,7 +6,7 @@ class Event(Enum):
     Different application Events
     """
 
-    # Process events. This signals that a long-running process is active. Progress updates should be shown to the user.
+    # Process events. This signals that a long-running process is active. Progress updates should be shown to the user
     PROCESS_TRAINING = "training"
     PROCESS_TRAINING_PROGRESS = "training_progress"
     PROCESS_TRAINING_SHOW_ERROR = "training_error"
@@ -22,6 +22,8 @@ class Event(Enum):
     ACTION_CHANGE_VIEW = "change_view"
     # Training
     ACTION_START_TRAINING = "start_training"
+    ACTION_TRAINING_EXTRACT_CHANNELS = "training_extract_channels"
+    ACTION_TRAINING_MAX_CHANNELS_SET = "training_max_channels_set"
     # Prediction
     ACTION_PREDICTION_MODEL_FILE = "model_file"
     ACTION_PREDICTION_PREPROCESSING_METHOD = "preprocessing_method"

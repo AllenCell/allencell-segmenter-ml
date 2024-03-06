@@ -1,7 +1,7 @@
 from allencell_ml_segmenter.core.publisher import Publisher
 from allencell_ml_segmenter.core.event import Event
 from enum import Enum
-from typing import Union
+from typing import Union, Optional
 from pathlib import Path
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 
@@ -64,6 +64,7 @@ class TrainingModel(Publisher):
         self._config_dir: Path = None
         self.result_images = []
         self._use_max_time: bool = False # default is false. UI starts with max epoch defined rather than max time.
+        self._max_channels: Optional[int] = None
 
     def get_experiment_type(self) -> TrainingType:
         """
@@ -152,7 +153,9 @@ class TrainingModel(Publisher):
 
         images_path (Path): path to images directory
         """
-        self._images_directory = images_path
+        if images_path and images_path.exists():
+            self._images_directory = images_path
+            self.dispatch(Event.ACTION_TRAINING_EXTRACT_CHANNELS)
 
     def get_channel_index(self) -> Union[int, None]:
         """
@@ -250,4 +253,11 @@ class TrainingModel(Publisher):
         Set if training run will be based off of max time
         """
         self._use_max_time = use_max
+
+    def get_max_channels(self) -> Optional[int]:
+        return self._max_channels
+
+    def set_max_channels(self, max: int):
+        self._max_channels = max
+        self.dispatch(Event.ACTION_TRAINING_MAX_CHANNELS_SET)
 
