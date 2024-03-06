@@ -20,7 +20,9 @@ from allencell_ml_segmenter.widgets.input_button_widget import (
     FileInputMode,
 )
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
-from allencell_ml_segmenter.prediction.service import extract_num_channels_from_csv
+from allencell_ml_segmenter.prediction.service import (
+    extract_num_channels_from_csv,
+)
 
 
 class ImageSelectionWidget(QWidget):
@@ -100,11 +102,15 @@ class ImageSelectionWidget(QWidget):
         )
 
         self._model.subscribe(
-            Event.ACTION_TRAINING_EXTRACT_CHANNELS, self, self.set_max_channels_from_input_selection
+            Event.ACTION_TRAINING_EXTRACT_CHANNELS,
+            self,
+            self.set_max_channels_from_input_selection,
         )
 
         self._model.subscribe(
-            Event.ACTION_TRAINING_MAX_CHANNELS_SET, self, self._populate_channel_selection_combobox
+            Event.ACTION_TRAINING_MAX_CHANNELS_SET,
+            self,
+            self._populate_channel_selection_combobox,
         )
 
     def _populate_channel_selection_combobox(self, _: Event) -> None:
@@ -121,18 +127,16 @@ class ImageSelectionWidget(QWidget):
             self._channel_combo_box.addItems(values_range)
             self._channel_combo_box.setEnabled(True)
         else:
-            self._channel_combo_box.setPlaceholderText(
-                "No channels to Select"
-            )
+            self._channel_combo_box.setPlaceholderText("No channels to Select")
 
     def set_max_channels_from_input_selection(self, _: Event) -> None:
         selected_input: Path = self._model.get_images_directory()
         if selected_input.is_dir():
             # directory selected, so grab csv
             selected_input = selected_input / "train.csv"
-        self._model.set_max_channels(extract_num_channels_from_csv(selected_input))
-
-
+        self._model.set_max_channels(
+            extract_num_channels_from_csv(selected_input)
+        )
 
     def set_inputs_csv(self, _: Event):
         # Automatically grab any training data, if available from curation.

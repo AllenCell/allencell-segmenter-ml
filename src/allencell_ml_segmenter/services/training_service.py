@@ -74,11 +74,9 @@ class TrainingService(Subscriber):
             # model.download_example_data()
             model.load_default_experiment(
                 self._training_model.get_experiment_type().value,
-                output_dir=f"{self._experiments_model.get_user_experiments_path()}/{self._experiments_model.get_experiment_name()}"
+                output_dir=f"{self._experiments_model.get_user_experiments_path()}/{self._experiments_model.get_experiment_name()}",
             )
-            model.override_config(
-                self._build_overrides()
-            )
+            model.override_config(self._build_overrides())
             model.print_config()
             asyncio.run(model._train_async())
 
@@ -96,20 +94,19 @@ class TrainingService(Subscriber):
             return False
 
         if self._training_model.get_images_directory() is None:
-            show_warning(
-                "User has not selected input images for training"
-            )
+            show_warning("User has not selected input images for training")
             return False
 
         if self._training_model.get_max_epoch() is None:
-            if self._training_model.use_max_time() and self._training_model.get_max_time() is None:
+            if (
+                self._training_model.use_max_time()
+                and self._training_model.get_max_time() is None
+            ):
                 show_warning(
                     "Please define max epoch(s) to run, or max runtime for trainer."
                 )
                 return False
         return True
-
-
 
     # def _get_hardware_override(self) -> str:
     #     """
@@ -158,7 +155,9 @@ class TrainingService(Subscriber):
     #     """
     #     return f"ckpt_path={self._experiments_model.get_model_checkpoints_path(self._experiments_model.get_experiment_name(), self._experiments_model.get_checkpoint())}"
 
-    def _build_overrides(self) -> Dict[str, Union[str, int, float, bool, Dict]]:
+    def _build_overrides(
+        self,
+    ) -> Dict[str, Union[str, int, float, bool, Dict]]:
         """
         Build a list of overrides for the CytoDLModel from plugin state.
         """
@@ -176,23 +175,36 @@ class TrainingService(Subscriber):
         # max run in time or epochs
         if self._training_model.use_max_time():
             # define max runtime (in hours)
-            overrides["trainer.max_time"] = {"hours": self._training_model.get_max_time()}
+            overrides["trainer.max_time"] = {
+                "hours": self._training_model.get_max_time()
+            }
         else:
             # define max run (in epochs)
-            overrides["trainer.max_epochs"] = self._training_model.get_max_epoch()
+            overrides["trainer.max_epochs"] = (
+                self._training_model.get_max_epoch()
+            )
 
         # Data overrides
-        overrides["data.path"] = str(self._training_model.get_images_directory())
-        overrides["data._aux.patch_shape"] = self._training_model.get_patch_size().value
+        overrides["data.path"] = str(
+            self._training_model.get_images_directory()
+        )
+        overrides["data._aux.patch_shape"] = (
+            self._training_model.get_patch_size().value
+        )
 
         # other stuff
         overrides["spatial_dims"] = self._training_model.get_spatial_dims()
-        overrides["experiment_name"] = self._experiments_model.get_experiment_name()
-
+        overrides["experiment_name"] = (
+            self._experiments_model.get_experiment_name()
+        )
+        overrides["input_channel"] = self._training_model.get_channel_index()
 
         if self._experiments_model.get_checkpoint() is not None:
             # We are going to continue training on an existing model
-            overrides["ckpt_path"] = str(self._experiments_model.get_model_checkpoints_path(
-                self._experiments_model.get_experiment_name(),
-                self._experiments_model.get_checkpoint()))
+            overrides["ckpt_path"] = str(
+                self._experiments_model.get_model_checkpoints_path(
+                    self._experiments_model.get_experiment_name(),
+                    self._experiments_model.get_checkpoint(),
+                )
+            )
         return overrides

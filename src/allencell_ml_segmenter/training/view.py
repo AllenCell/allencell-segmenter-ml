@@ -170,8 +170,7 @@ class TrainingView(View):
         self._max_time_in_hours_input.setMaximumWidth(30)
         self._max_time_in_hours_input.setPlaceholderText("0")
         self._max_time_in_hours_input.textChanged.connect(
-            lambda text: self._training_model.set_max_time(float(text)
-            )
+            lambda text: self._training_model.set_max_time(float(text))
         )
         max_time_layout.addWidget(self._max_time_in_hours_input)
 

@@ -63,7 +63,9 @@ class TrainingModel(Publisher):
         self._max_time: float = None  # in hours
         self._config_dir: Path = None
         self.result_images = []
-        self._use_max_time: bool = False # default is false. UI starts with max epoch defined rather than max time.
+        self._use_max_time: bool = (
+            False  # default is false. UI starts with max epoch defined rather than max time.
+        )
         self._max_channels: Optional[int] = None
 
     def get_experiment_type(self) -> TrainingType:
@@ -260,4 +262,3 @@ class TrainingModel(Publisher):
     def set_max_channels(self, max: int):
         self._max_channels = max
         self.dispatch(Event.ACTION_TRAINING_MAX_CHANNELS_SET)
-

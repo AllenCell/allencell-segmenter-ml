@@ -58,8 +58,6 @@ class ModelFileService(Subscriber):
             first_image = next(path_generator)
         return extract_num_channels_from_image(str(first_image.resolve()))
 
-
-
     def _determine_input_selection_type(self, path: Path):
         if path.is_dir():
             return self.extract_num_channels_in_folder(path)
