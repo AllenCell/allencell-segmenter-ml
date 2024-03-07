@@ -7,8 +7,15 @@ on:
   workflow_dispatch:
     inputs:
       semver_component:
-        description: "Semantic versioning component to bump (must be one of {major, minor, patch, dev})"
+        description: "Semantic versioning component to bump"
         required: true
+        type: choice
+        default: "patch"
+        options:
+          - major
+          - minor
+          - patch
+          - dev
 
 jobs:
   publish:
@@ -43,11 +50,11 @@ jobs:
         run: |
           python -m build
 
-      - name: Publish to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
-      
-      - name: Push changes
-        run: |
-          git push origin main
-          git push origin --tags
+#      - name: Publish to PyPI
+#        uses: pypa/gh-action-pypi-publish@release/v1
+#      
+#      - name: Push changes
+#        run: |
+#          git push origin main
+#          git push origin --tags
       
