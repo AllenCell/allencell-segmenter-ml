@@ -10,8 +10,9 @@ class PredictionFolderEventHandler(FileSystemEventHandler):
     """
 
     PRED_FILE_EXTS: Set[str] = {
-        ".ome_seg_pred.tif"
-    }  # is this the only extension?
+        ".ome_seg_pred.tif",
+        ".ome.tif"
+    }
 
     def __init__(self, progress_callback: Callable):
         super().__init__()
