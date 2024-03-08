@@ -9,10 +9,7 @@ class PredictionFolderEventHandler(FileSystemEventHandler):
     will be how many files that fit these criteria have been created.
     """
 
-    PRED_FILE_EXTS: Set[str] = {
-        ".ome_seg_pred.tif",
-        ".ome.tif"
-    }
+    PRED_FILE_EXTS: Set[str] = {".ome_seg_pred.tif", ".ome.tif"}
 
     def __init__(self, progress_callback: Callable):
         super().__init__()
