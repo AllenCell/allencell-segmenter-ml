@@ -41,7 +41,7 @@ jobs:
 
       - name: Bump version
         run: |
-          git checkout main
+          git checkout feature/dropdown_in_publish
           git config --global user.name 'aicsgithub'
           git config --global user.email 'aicsgithub@alleninstitute.org'
           python publish_bumpver_handler.py ${{ inputs.semver_component }}
