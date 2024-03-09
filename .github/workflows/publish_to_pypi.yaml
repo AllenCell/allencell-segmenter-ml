@@ -21,7 +21,7 @@ jobs:
   publish:
     name: Bump and publish
     runs-on: ubuntu-latest
-#    environment: release
+    environment: release
     permissions:
       id-token: write
       contents: write
@@ -41,7 +41,7 @@ jobs:
 
       - name: Bump version
         run: |
-          git checkout feature/dropdown_in_publish
+          git checkout main
           git config --global user.name 'aicsgithub'
           git config --global user.email 'aicsgithub@alleninstitute.org'
           python publish_bumpver_handler.py ${{ inputs.semver_component }}
@@ -50,11 +50,11 @@ jobs:
         run: |
           python -m build
 
-#      - name: Publish to PyPI
-#        uses: pypa/gh-action-pypi-publish@release/v1
-#      
-#      - name: Push changes
-#        run: |
-#          git push origin main
-#          git push origin --tags
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+      
+      - name: Push changes
+        run: |
+          git push origin main
+          git push origin --tags
       
