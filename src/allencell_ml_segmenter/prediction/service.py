@@ -1,6 +1,7 @@
 from pathlib import Path
-from typing import Callable, Generator, List, Union, Optional
+from typing import Callable, Generator, List, Union, Optional, Dict
 import csv
+from dataclasses import dataclass
 
 from aicsimageio import AICSImage
 
@@ -9,20 +10,29 @@ from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.prediction.model import PredictionModel
 
 from PyQt5.QtCore import QThread, pyqtSignal
-
+import threading
 
 class ChannelExtractionThread(QThread):
     channels_ready: pyqtSignal = pyqtSignal(int)
+    dep_thread_done: pyqtSignal = pyqtSignal(int)
 
-    def __init__(self, extract_channels: Callable[[], int], parent=None):
+    def __init__(self, extract_channels: Callable[[], int], id, parent=None):
         super().__init__(parent)
         self._extract_channels = extract_channels
+        self._id = id
 
     # override
     def run(self):
         channels: int = self._extract_channels()
-        self.channels_ready.emit(channels)
+        if QThread.currentThread().isInterruptionRequested():
+            self.dep_thread_done.emit(self._id)
+        else:
+            self.channels_ready.emit(channels)
 
+@dataclass
+class ThreadTracker():
+    id: int
+    thread: ChannelExtractionThread
 
 class ModelFileService(Subscriber):
     """
@@ -32,9 +42,11 @@ class ModelFileService(Subscriber):
     def __init__(self, model: PredictionModel):
         super().__init__()
         self._model: PredictionModel = model
-        self._channel_extraction_thread: Optional[ChannelExtractionThread] = (
+        self._current_thread: Optional[ThreadTracker] = (
             None
         )
+        self._deprecated_threads: Dict[int, ChannelExtractionThread] = {}
+        self._threads_created = 0
 
         self._model.subscribe(
             Event.ACTION_PREDICTION_MODEL_FILE,
@@ -108,17 +120,28 @@ class ModelFileService(Subscriber):
         img: AICSImage = AICSImage(str(path))
         return img.dims.C
 
-    def _initiate_channel_extraction(self) -> None:
+    def stop_channel_extraction(self) -> None:
         if (
-            self._channel_extraction_thread
-            and self._channel_extraction_thread.isRunning()
+            self._current_thread
+            and self._current_thread.thread.isRunning()
         ):
-            self._channel_extraction_thread.exit()
+            self._deprecated_threads[self._current_thread.id] = self._current_thread.thread
+            self._current_thread.thread.requestInterruption()
 
-        self._channel_extraction_thread = ChannelExtractionThread(
-            extract_channels=self.extract_num_channels
-        )
-        self._channel_extraction_thread.channels_ready.connect(
+    def _initiate_channel_extraction(self) -> None:
+        # must wait for the thread to finish naturally; otherwise
+        # we would be forcing an exit within AICSImage code, which
+        # could have unforeseen consequences
+        self.stop_channel_extraction()
+
+        self._current_thread = ThreadTracker(self._threads_created, ChannelExtractionThread(
+            self.extract_num_channels, self._threads_created))
+        self._threads_created += 1
+        
+        self._current_thread.thread.channels_ready.connect(
             self._model.set_max_channels
         )
-        self._channel_extraction_thread.start()
+        self._current_thread.thread.dep_thread_done.connect(
+            lambda id: self._deprecated_threads.pop(id)
+        )
+        self._current_thread.thread.start()
