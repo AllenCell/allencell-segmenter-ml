@@ -81,8 +81,6 @@ class ModelFileService(Subscriber):
     def _initiate_channel_extraction(self) -> None:
         img_path: Path = self._get_img_path_from_model()
 
-        # must wait for the thread to finish naturally; otherwise we would be forcing an exit within
-        # AICSImage code, which could have unforeseen consequences
         self.stop_channel_extraction()
 
         self._current_thread = ChannelExtractionThread(
@@ -91,7 +89,7 @@ class ModelFileService(Subscriber):
         self._threads_created += 1
 
         self._current_thread.channels_ready.connect(
-            self._model.set_max_channels
+            lambda id, channels: self._model.set_max_channels(channels)
         )
         self._current_thread.interrupted_thread_finished.connect(
             lambda id: self._deprecated_threads.pop(id).wait()
