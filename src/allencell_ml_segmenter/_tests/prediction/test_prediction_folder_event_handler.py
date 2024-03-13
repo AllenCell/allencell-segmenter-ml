@@ -24,6 +24,26 @@ def test_file_creation_omesegpredtif():
     callback_mock.assert_called_with(3)
 
 
+def test_file_creation_omesegpredtiff():
+    # ARRANGE
+    fake_file_path: str = "/path/to/some.ome_seg_pred.tiff"
+    callback_mock: Mock = Mock()
+    fs_event_mock: Mock = Mock(src_path=fake_file_path)
+    handler: PredictionFolderEventHandler = PredictionFolderEventHandler(
+        callback_mock
+    )
+
+    # ACT/ASSERT
+    handler.on_created(fs_event_mock)
+    callback_mock.assert_called_with(1)
+
+    handler.on_created(fs_event_mock)
+    callback_mock.assert_called_with(2)
+
+    handler.on_created(fs_event_mock)
+    callback_mock.assert_called_with(3)
+
+
 def test_file_creation_bad_ext():
     # ARRANGE
     callback_mock: Mock = Mock()
