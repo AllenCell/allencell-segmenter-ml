@@ -10,6 +10,11 @@ on:
         description: "Semantic versioning component to bump (must be one of {major, minor, patch, dev})"
         required: true
 
+# needed to grab org secrets for artifactory publish
+env:
+  ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
+  ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
+
 jobs:
   publish:
     name: Bump and publish
