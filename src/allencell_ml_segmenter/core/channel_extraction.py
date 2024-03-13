@@ -51,8 +51,8 @@ class ChannelExtractionThread(QThread):
     to the thread.
     """
 
-    channels_ready: pyqtSignal = pyqtSignal(int)
-    interrupted_thread_finished: pyqtSignal = pyqtSignal(int)
+    channels_ready: pyqtSignal = pyqtSignal(int, int)  # id, num_channels
+    interrupted_thread_finished: pyqtSignal = pyqtSignal(int)  # id
 
     def __init__(self, img_path: Path, id: int, parent: QObject = None):
         """
@@ -76,4 +76,4 @@ class ChannelExtractionThread(QThread):
         if QThread.currentThread().isInterruptionRequested():
             self.interrupted_thread_finished.emit(self._id)
         else:
-            self.channels_ready.emit(channels)
+            self.channels_ready.emit(self._id, channels)
