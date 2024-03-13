@@ -246,12 +246,8 @@ class PredictionFileInput(QWidget):
                     selected_paths, extract_channels=len(selected_paths) > 0
                 )
 
-    def _clear_channel_combobox(self) -> None:
-        while self._channel_select_dropdown.count() > 0:
-            self._channel_select_dropdown.removeItem(0)
-
     def _reset_channel_combobox(self) -> None:
-        self._clear_channel_combobox()
+        self._channel_select_dropdown.clear()
         self._channel_select_dropdown.setPlaceholderText("")
         self._channel_select_dropdown.setCurrentIndex(-1)
         self._channel_select_dropdown.setEnabled(False)
@@ -259,7 +255,7 @@ class PredictionFileInput(QWidget):
     def _set_input_channel_combobox_to_loading(
         self, event: Event = None
     ) -> None:
-        self._clear_channel_combobox()
+        self._channel_select_dropdown.clear()
         self._channel_select_dropdown.setPlaceholderText("loading channels...")
         self._channel_select_dropdown.setCurrentIndex(-1)
         self._channel_select_dropdown.setEnabled(False)
