@@ -32,6 +32,8 @@ from allencell_ml_segmenter.widgets.check_box_list_widget import (
 
 from allencell_ml_segmenter.main.viewer import Viewer
 from allencell_ml_segmenter.prediction.service import ModelFileService
+
+
 class PredictionFileInput(QWidget):
     """
     A widget containing file inputs for the input to a model prediction.
@@ -40,7 +42,9 @@ class PredictionFileInput(QWidget):
     TOP_TEXT: str = "On-screen image(s)"
     BOTTOM_TEXT: str = "Image(s) from a directory"
 
-    def __init__(self, model: PredictionModel, viewer: Viewer, service: ModelFileService):
+    def __init__(
+        self, model: PredictionModel, viewer: Viewer, service: ModelFileService
+    ):
         super().__init__()
 
         self._model: PredictionModel = model
@@ -235,7 +239,7 @@ class PredictionFileInput(QWidget):
                 # could have unselected the img we got channels from originally, so need to re-extract
                 # as long as there are still some images selected
                 if len(selected_indices) == 0:
-                    self._service.stop_channel_extraction() # stop so combobox doesn't reset after thread is finished
+                    self._service.stop_channel_extraction()  # stop so combobox doesn't reset after thread is finished
                     self._reset_channel_combobox()
 
                 self._model.set_selected_paths(
