@@ -12,6 +12,7 @@ def extract_channels_from_image(img_path: Path) -> int:
     """
     return AICSImage(str(img_path)).dims.C
 
+
 def get_img_path_from_folder(folder: Path) -> Path:
     """
     Returns path of an image in the folder.
@@ -26,6 +27,7 @@ def get_img_path_from_folder(folder: Path) -> Path:
     while str(image.name).startswith("."):
         image: Path = next(path_generator)
     return image.resolve()
+
 
 def get_img_path_from_csv(csv_path: Path) -> Path:
     """
@@ -44,14 +46,15 @@ class ChannelExtractionThread(QThread):
     the provided image. If the parent thread has not requested an interruption
     during the thread execution, the number of channels will be emitted through
     the channels_ready signal. If the parent thread has requested an
-    interruption, the id of the interrupted thread will be emitted through 
+    interruption, the id of the interrupted thread will be emitted through
     the interrupted_thread_finished signal when it is safe to call wait, then drop references
     to the thread.
     """
+
     channels_ready: pyqtSignal = pyqtSignal(int)
     interrupted_thread_finished: pyqtSignal = pyqtSignal(int)
 
-    def __init__(self, img_path: Path, id: int, parent: QObject=None):
+    def __init__(self, img_path: Path, id: int, parent: QObject = None):
         """
         :param img_path: path to image (must exist, otherwise ValueError)
         :param id: id for this thread instance, provided by parent thread
@@ -62,7 +65,7 @@ class ChannelExtractionThread(QThread):
 
         self._img_path: Path = img_path
         self._id: int = id
-    
+
     def get_id(self) -> int:
         return self._id
 

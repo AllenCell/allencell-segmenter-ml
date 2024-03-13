@@ -4,7 +4,11 @@ from typing import List, Union, Optional, Dict
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.prediction.model import PredictionModel
-from allencell_ml_segmenter.core.channel_extraction import ChannelExtractionThread, get_img_path_from_csv, get_img_path_from_folder
+from allencell_ml_segmenter.core.channel_extraction import (
+    ChannelExtractionThread,
+    get_img_path_from_csv,
+    get_img_path_from_folder,
+)
 
 
 class ModelFileService(Subscriber):
@@ -15,9 +19,7 @@ class ModelFileService(Subscriber):
     def __init__(self, model: PredictionModel):
         super().__init__()
         self._model: PredictionModel = model
-        self._current_thread: Optional[ChannelExtractionThread] = (
-            None
-        )
+        self._current_thread: Optional[ChannelExtractionThread] = None
         self._deprecated_threads: Dict[int, ChannelExtractionThread] = {}
         self._threads_created = 0
 
@@ -44,11 +46,10 @@ class ModelFileService(Subscriber):
         self._model.set_preprocessing_method("foo")
 
     def stop_channel_extraction(self) -> None:
-        if (
-            self._current_thread
-            and self._current_thread.isRunning()
-        ):
-            self._deprecated_threads[self._current_thread.get_id()] = self._current_thread
+        if self._current_thread and self._current_thread.isRunning():
+            self._deprecated_threads[self._current_thread.get_id()] = (
+                self._current_thread
+            )
             self._current_thread.requestInterruption()
 
     def _get_img_path_from_model(self) -> Path:
@@ -84,13 +85,15 @@ class ModelFileService(Subscriber):
         # AICSImage code, which could have unforeseen consequences
         self.stop_channel_extraction()
 
-        self._current_thread = ChannelExtractionThread(img_path, self._threads_created)
+        self._current_thread = ChannelExtractionThread(
+            img_path, self._threads_created
+        )
         self._threads_created += 1
 
         self._current_thread.channels_ready.connect(
             self._model.set_max_channels
         )
         self._current_thread.interrupted_thread_finished.connect(
-            lambda id: self._deprecated_threads.pop(id).wait() 
+            lambda id: self._deprecated_threads.pop(id).wait()
         )
         self._current_thread.start()
