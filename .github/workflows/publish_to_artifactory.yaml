@@ -45,8 +45,8 @@ jobs:
 
       - name: Publish to Artifactory
         env:
-          TWINE_USERNAME: ${{ secrets.ARTIFACTORY_TWINE_USER }}
-          TWINE_PASSWORD: ${{ secrets.ARTIFACTORY_TWINE_USER_PASSWORD }}
+          TWINE_USERNAME: ${{ secrets.ARTIFACTORY_USER }}
+          TWINE_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
           TWINE_NON_INTERACTIVE: true
         run: twine upload --verbose --repository-url='https://artifactory.corp.alleninstitute.org/artifactory/api/pypi/pypi-release-local' dist/*
 
