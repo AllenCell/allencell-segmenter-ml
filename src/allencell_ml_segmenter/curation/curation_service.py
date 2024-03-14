@@ -1,7 +1,10 @@
 from allencell_ml_segmenter.core.dialog_box import DialogBox
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.subscriber import Subscriber
-from allencell_ml_segmenter.core.channel_extraction import ChannelExtractionThread, get_img_path_from_folder
+from allencell_ml_segmenter.core.channel_extraction import (
+    ChannelExtractionThread,
+    get_img_path_from_folder,
+)
 from allencell_ml_segmenter.curation.curation_model import CurationModel
 from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
 from allencell_ml_segmenter.main.i_viewer import IViewer
@@ -32,7 +35,6 @@ class CurationService(Subscriber):
         self._raw_thread: Optional[ChannelExtractionThread] = None
         self._seg1_thread: Optional[ChannelExtractionThread] = None
         self._seg2_thread: Optional[ChannelExtractionThread] = None
-
 
     def build_raw_images_list(self) -> List[Path]:
         """
@@ -198,10 +200,14 @@ class CurationService(Subscriber):
             thread.requestInterruption()
             thread.wait()
 
-    def _start_channel_extraction_thread(self, folder: Path, channel_callback: Callable) -> ChannelExtractionThread:
+    def _start_channel_extraction_thread(
+        self, folder: Path, channel_callback: Callable
+    ) -> ChannelExtractionThread:
         img_path: Path = get_img_path_from_folder(folder)
         new_thread = ChannelExtractionThread(img_path, -1)
-        new_thread.channels_ready.connect(lambda id, channels: channel_callback(channels))
+        new_thread.channels_ready.connect(
+            lambda id, channels: channel_callback(channels)
+        )
         new_thread.start()
         return new_thread
 
@@ -213,7 +219,9 @@ class CurationService(Subscriber):
         """
         self._curation_model.set_raw_directory(path)
         self._stop_channel_extraction_thread(self._raw_thread)
-        self._raw_thread = self._start_channel_extraction_thread(path, self._curation_model.set_raw_image_channel_count)
+        self._raw_thread = self._start_channel_extraction_thread(
+            path, self._curation_model.set_raw_image_channel_count
+        )
 
     def select_directory_seg1(self, path: Path):
         """
@@ -223,7 +231,9 @@ class CurationService(Subscriber):
         """
         self._curation_model.set_seg1_directory(path)
         self._stop_channel_extraction_thread(self._seg1_thread)
-        self._seg1_thread = self._start_channel_extraction_thread(path, self._curation_model.set_seg1_image_channel_count)
+        self._seg1_thread = self._start_channel_extraction_thread(
+            path, self._curation_model.set_seg1_image_channel_count
+        )
 
     def select_directory_seg2(self, path: Path):
         """
@@ -233,7 +243,9 @@ class CurationService(Subscriber):
         """
         self._curation_model.set_seg2_directory(path)
         self._stop_channel_extraction_thread(self._seg2_thread)
-        self._seg2_thread = self._start_channel_extraction_thread(path, self._curation_model.set_seg2_image_channel_count)
+        self._seg2_thread = self._start_channel_extraction_thread(
+            path, self._curation_model.set_seg2_image_channel_count
+        )
 
     def finished_shape_selection(self, selection_mode: SelectionMode) -> None:
         """
