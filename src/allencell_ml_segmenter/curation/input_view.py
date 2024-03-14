@@ -160,7 +160,9 @@ class CurationInputView(View):
 
         # subscribers
         self._curation_model.subscribe(
-            Event.ACTION_CURATION_RAW_CHANNELS_SET, self, self.update_raw_channels
+            Event.ACTION_CURATION_RAW_CHANNELS_SET,
+            self,
+            self.update_raw_channels,
         )
         self._curation_model.subscribe(
             Event.ACTION_CURATION_SEG1_CHANNELS_SET,
@@ -182,7 +184,7 @@ class CurationInputView(View):
     def _on_raw_dir_select(self, dir: Path) -> None:
         self._set_combobox_to_loading(self._raw_image_channel_combo)
         self._curation_service.select_directory_raw(dir)
-    
+
     def _on_seg1_dir_select(self, dir: Path) -> None:
         self._set_combobox_to_loading(self._seg1_image_channel_combo)
         self._curation_service.select_directory_seg1(dir)
@@ -190,7 +192,7 @@ class CurationInputView(View):
     def _on_seg2_dir_select(self, dir: Path) -> None:
         self._set_combobox_to_loading(self._seg2_image_channel_combo)
         self._curation_service.select_directory_seg2(dir)
-    
+
     def doWork(self) -> None:
         print("work")
 
