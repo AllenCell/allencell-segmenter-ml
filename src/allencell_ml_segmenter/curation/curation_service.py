@@ -8,7 +8,7 @@ from allencell_ml_segmenter.main.i_viewer import IViewer
 from allencell_ml_segmenter.main.viewer import Viewer
 
 from pathlib import Path
-from typing import List, Union, Optional
+from typing import List, Union, Optional, Callable
 import csv
 import numpy as np
 from aicsimageio import AICSImage
@@ -47,23 +47,23 @@ class CurationService(Subscriber):
 
     def build_seg1_images_list(self) -> List[Path]:
         """
-        Return all raw images in the raw images path as a list of Paths
+        Return all seg1 images in the seg1 images path as a list of Paths
         """
         seg1_path: Path = self._curation_model.get_seg1_directory()
         if seg1_path is None:
             raise ValueError(
-                "Raw directory not set. Please set raw directory."
+                "Seg1 directory not set. Please set seg1 directory."
             )
         return self._get_files_list_from_path(seg1_path)
 
     def build_seg2_images_list(self) -> List[Path]:
         """
-        Return all raw images in the raw images path as a list of Paths
+        Return all seg2 images in the seg2 images path as a list of Paths
         """
         seg2_path: Path = self._curation_model.get_seg2_directory()
         if seg2_path is None:
             raise ValueError(
-                "Raw directory not set. Please set raw directory."
+                "Seg2 directory not set. Please set seg2 directory."
             )
         return self._get_files_list_from_path(seg2_path)
 
@@ -198,6 +198,13 @@ class CurationService(Subscriber):
             thread.requestInterruption()
             thread.wait()
 
+    def _start_channel_extraction_thread(self, folder: Path, channel_callback: Callable) -> ChannelExtractionThread:
+        img_path: Path = get_img_path_from_folder(folder)
+        new_thread = ChannelExtractionThread(img_path, -1)
+        new_thread.channels_ready.connect(lambda id, channels: channel_callback(channels))
+        new_thread.start()
+        return new_thread
+
     def select_directory_raw(self, path: Path):
         """
         Select a raw directory
@@ -206,10 +213,7 @@ class CurationService(Subscriber):
         """
         self._curation_model.set_raw_directory(path)
         self._stop_channel_extraction_thread(self._raw_thread)
-        img_path: Path = get_img_path_from_folder(path)
-        self._raw_thread = ChannelExtractionThread(img_path, -1)
-        self._raw_thread.channels_ready.connect(lambda id, channels: self._curation_model.set_raw_image_channel_count(channels))
-        self._raw_thread.start()
+        self._raw_thread = self._start_channel_extraction_thread(path, self._curation_model.set_raw_image_channel_count)
 
     def select_directory_seg1(self, path: Path):
         """
@@ -219,10 +223,7 @@ class CurationService(Subscriber):
         """
         self._curation_model.set_seg1_directory(path)
         self._stop_channel_extraction_thread(self._seg1_thread)
-        img_path: Path = get_img_path_from_folder(path)
-        self._seg1_thread = ChannelExtractionThread(img_path, -1)
-        self._seg1_thread.channels_ready.connect(lambda id, channels: self._curation_model.set_seg1_image_channel_count(channels))
-        self._seg1_thread.start()
+        self._seg1_thread = self._start_channel_extraction_thread(path, self._curation_model.set_seg1_image_channel_count)
 
     def select_directory_seg2(self, path: Path):
         """
@@ -232,10 +233,7 @@ class CurationService(Subscriber):
         """
         self._curation_model.set_seg2_directory(path)
         self._stop_channel_extraction_thread(self._seg2_thread)
-        img_path: Path = get_img_path_from_folder(path)
-        self._seg2_thread = ChannelExtractionThread(img_path, -1)
-        self._seg2_thread.channels_ready.connect(lambda id, channels: self._curation_model.set_seg2_image_channel_count(channels))
-        self._seg2_thread.start()
+        self._seg2_thread = self._start_channel_extraction_thread(path, self._curation_model.set_seg2_image_channel_count)
 
     def finished_shape_selection(self, selection_mode: SelectionMode) -> None:
         """
