@@ -191,20 +191,9 @@ class CurationService(Subscriber):
             if not file.name.endswith(".DS_Store")
         ]
 
-    def get_total_num_channels_of_images_in_path(self, path: Path) -> int:
-        """
-        Determine total number of channels for image in a set folder
-        """
-        # we expect user to have the same number of channels for all images in their folders
-        # and that only images are stored in those folders
-        first_image: Path = self._get_files_list_from_path(path)[0]
-        print(first_image.resolve())
-        print(str(first_image.resolve()))
-        img: AICSImage = AICSImage(str(first_image.resolve()))
-        # return num channel
-        return img.dims.C
-
     def _stop_channel_extraction_thread(self, thread: ChannelExtractionThread):
+        # if we find this is too slow, can switch to the method employed by
+        # prediction/service, but may be overkill initially
         if thread and thread.isRunning():
             thread.requestInterruption()
             thread.wait()
