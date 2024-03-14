@@ -7,8 +7,15 @@ on:
   workflow_dispatch:
     inputs:
       semver_component:
-        description: "Semantic versioning component to bump (must be one of {major, minor, patch, dev})"
+        description: "Semantic versioning component to bump"
         required: true
+        type: choice
+        default: "patch"
+        options:
+          - major
+          - minor
+          - patch
+          - dev
 
 jobs:
   publish:
