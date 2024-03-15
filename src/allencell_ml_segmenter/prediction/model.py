@@ -75,6 +75,12 @@ class PredictionModel(Publisher):
         """
         return self._output_directory
 
+    def get_output_seg_directory(self) -> Path:
+        """
+        Gets path to where segmentation predictions are stored.
+        """
+        return self._output_directory / "seg"
+
     def set_output_directory(self, dir: Path) -> None:
         """
         Sets path to output directory.
