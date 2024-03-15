@@ -45,35 +45,27 @@ class ChannelExtractionThread(QThread):
     A ChannelExtractionThread will extract the number of channels from
     the provided image. If the parent thread has not requested an interruption
     during the thread execution, the number of channels will be emitted through
-    the channels_ready signal. If the parent thread has requested an
-    interruption, the id of the interrupted thread will be emitted through
-    the interrupted_thread_finished signal when it is safe to call wait, then drop references
-    to the thread.
+    the channels_ready signal. If the parent thread has requested an interruption,
+    the thread will have no side effects.
     """
 
-    channels_ready: pyqtSignal = pyqtSignal(int, int)  # id, num_channels
-    interrupted_thread_finished: pyqtSignal = pyqtSignal(int)  # id
+    channels_ready: pyqtSignal = pyqtSignal(int)  # num_channels
 
-    def __init__(self, img_path: Path, id: int, parent: QObject = None):
+    def __init__(self, img_path: Path, parent: QObject = None):
         """
         :param img_path: path to image (must exist, otherwise ValueError)
         :param id: id for this thread instance, provided by parent thread
         """
         super().__init__(parent)
-        if not img_path.exists():
-            raise ValueError(f"{img_path} does not exist")
-
         self._img_path: Path = img_path
-        self._id: int = id
-
-    def get_id(self) -> int:
-        return self._id
 
     # override
     def run(self):
+        # will show up as a pop-up in the UI, does not force napari to quit
+        if not self._img_path.exists():
+            raise ValueError(f"{self._img_path} does not exist")
+
         channels: int = extract_channels_from_image(self._img_path)
 
-        if QThread.currentThread().isInterruptionRequested():
-            self.interrupted_thread_finished.emit(self._id)
-        else:
-            self.channels_ready.emit(self._id, channels)
+        if not QThread.currentThread().isInterruptionRequested():
+            self.channels_ready.emit(channels)
