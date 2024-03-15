@@ -20,7 +20,7 @@ class ModelFileService(Subscriber):
         super().__init__()
         self._model: PredictionModel = model
         self._current_thread: Optional[ChannelExtractionThread] = None
-        self._deprecated_threads: Dict[int, ChannelExtractionThread] = {}
+        self._running_threads: Dict[int, ChannelExtractionThread] = {}
         self._threads_created = 0
 
         self._model.subscribe(
@@ -47,9 +47,6 @@ class ModelFileService(Subscriber):
 
     def stop_channel_extraction(self) -> None:
         if self._current_thread and self._current_thread.isRunning():
-            self._deprecated_threads[self._current_thread.get_id()] = (
-                self._current_thread
-            )
             self._current_thread.requestInterruption()
 
     def _get_img_path_from_model(self) -> Path:
@@ -83,15 +80,15 @@ class ModelFileService(Subscriber):
 
         self.stop_channel_extraction()
 
-        self._current_thread = ChannelExtractionThread(
-            img_path, self._threads_created
-        )
+        self._current_thread = ChannelExtractionThread(img_path)
+        thread_id: int = self._threads_created
         self._threads_created += 1
+        self._running_threads[thread_id] = self._current_thread
 
         self._current_thread.channels_ready.connect(
-            lambda id, channels: self._model.set_max_channels(channels)
+            self._model.set_max_channels
         )
-        self._current_thread.interrupted_thread_finished.connect(
-            lambda id: self._deprecated_threads.pop(id).wait()
+        self._current_thread.finished.connect(
+            lambda: self._running_threads.pop(thread_id)
         )
         self._current_thread.start()
