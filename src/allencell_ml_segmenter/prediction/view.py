@@ -105,7 +105,7 @@ class PredictionView(View):
         if total_num_images:
             progress_tracker: PredictionFolderProgressTracker = (
                 PredictionFolderProgressTracker(
-                    self._prediction_model.get_output_directory(),
+                    self._prediction_model.get_output_seg_directory(),
                     total_num_images,
                 )
             )
