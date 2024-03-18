@@ -51,7 +51,8 @@ class TrainingModel(Publisher):
         self._main_model = main_model
         self.experiments_model = experiments_model
         self._experiment_type: TrainingType = None
-        self._hardware_type: Hardware = None
+
+        self._hardware_type: Hardware = Hardware.CPU
         self._images_directory: Path = None
         self._channel_index: Union[int, None] = None
         self._model_path: Union[Path, None] = (
