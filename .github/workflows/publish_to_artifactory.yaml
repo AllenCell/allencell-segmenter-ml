@@ -1,26 +1,24 @@
 # takes the most recent commit on main, bumps version based on
 # semver_component input, pushes changes back to main, and publishes
 # new version to PyPI
-name: Bump version and publish to PyPI
+name: Bump version and publish to Internal Artifactory
 
 on:
   workflow_dispatch:
     inputs:
       semver_component:
-        description: "Semantic versioning component to bump"
+        description: "Semantic versioning component to bump (must be one of {major, minor, patch, dev})"
         required: true
-        type: choice
-        default: "patch"
-        options:
-          - major
-          - minor
-          - patch
-          - dev
+
+# needed to grab org secrets for artifactory publish
+env:
+  ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
+  ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
 
 jobs:
   publish:
     name: Bump and publish
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, build]
     environment: release
     permissions:
       id-token: write
@@ -37,7 +35,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install build bumpver
+          pip install build bumpver twine
 
       - name: Bump version
         run: |
@@ -50,9 +48,13 @@ jobs:
         run: |
           python -m build
 
-      - name: Publish to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
-      
+      - name: Publish to Artifactory
+        env:
+          TWINE_USERNAME: ${{ secrets.ARTIFACTORY_USER }}
+          TWINE_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
+          TWINE_NON_INTERACTIVE: true
+        run: twine upload --verbose --repository-url='https://artifactory.corp.alleninstitute.org/artifactory/api/pypi/pypi-release-local' dist/*
+
       - name: Push changes
         run: |
           git push origin main

@@ -57,7 +57,7 @@ class PredictionView(View):
         self.layout().addWidget(self._title, alignment=Qt.AlignHCenter)
 
         self._file_input_widget: PredictionFileInput = PredictionFileInput(
-            self._prediction_model, self._viewer
+            self._prediction_model, self._viewer, self._service
         )
         self._file_input_widget.setObjectName("fileInput")
 
@@ -105,7 +105,7 @@ class PredictionView(View):
         if total_num_images:
             progress_tracker: PredictionFolderProgressTracker = (
                 PredictionFolderProgressTracker(
-                    self._prediction_model.get_output_directory(),
+                    self._prediction_model.get_output_seg_directory(),
                     total_num_images,
                 )
             )

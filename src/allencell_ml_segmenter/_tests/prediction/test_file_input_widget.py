@@ -29,7 +29,9 @@ def file_input_widget(
     """
     Fixture that creates an instance of ModelInputWidget for testing.
     """
-    return PredictionFileInput(prediction_model, viewer=FakeViewer())
+    return PredictionFileInput(
+        prediction_model, viewer=FakeViewer(), service=None
+    )
 
 
 def test_top_radio_button_slot(
@@ -117,7 +119,7 @@ def test_populate_input_channel_combobox(qtbot: QtBot) -> None:
     # Arrange
     prediction_model: PredictionModel = PredictionModel()
     prediction_file_input: PredictionFileInput = PredictionFileInput(
-        prediction_model, viewer=FakeViewer()
+        prediction_model, viewer=FakeViewer(), service=None
     )
     prediction_model.set_max_channels(6)
 
