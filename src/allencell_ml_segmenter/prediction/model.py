@@ -170,8 +170,12 @@ class PredictionModel(Publisher):
     def get_prediction_input_mode(self) -> PredictionInputMode:
         return self._input_mode
 
-    def set_selected_paths(self, paths: List[Path]) -> None:
+    def set_selected_paths(
+        self, paths: List[Path], extract_channels: bool = False
+    ) -> None:
         self._selected_paths = paths
+        if extract_channels:
+            self.dispatch(Event.ACTION_PREDICTION_EXTRACT_CHANNELS)
 
     def get_selected_paths(self) -> List[Path]:
         return self._selected_paths
@@ -194,7 +198,7 @@ class PredictionModel(Publisher):
     def set_max_channels(self, max: int) -> None:
         self._max_channels = max
         # this will enable the combobox
-        self.dispatch(Event.ACTION_PREDICTION_INPUT_PATH_SELECTED)
+        self.dispatch(Event.ACTION_PREDICTION_MAX_CHANNELS_SET)
 
     def get_max_channels(self) -> int:
         return self._max_channels
