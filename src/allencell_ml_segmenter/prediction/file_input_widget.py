@@ -25,15 +25,13 @@ from allencell_ml_segmenter.prediction.model import (
     PredictionModel,
     PredictionInputMode,
 )
-from allencell_ml_segmenter.prediction.service import (
-    extract_num_channels_from_image,
-)
 
 from allencell_ml_segmenter.widgets.check_box_list_widget import (
     CheckBoxListWidget,
 )
 
 from allencell_ml_segmenter.main.viewer import Viewer
+from allencell_ml_segmenter.prediction.service import ModelFileService
 
 
 class PredictionFileInput(QWidget):
@@ -44,11 +42,14 @@ class PredictionFileInput(QWidget):
     TOP_TEXT: str = "On-screen image(s)"
     BOTTOM_TEXT: str = "Image(s) from a directory"
 
-    def __init__(self, model: PredictionModel, viewer: Viewer):
+    def __init__(
+        self, model: PredictionModel, viewer: Viewer, service: ModelFileService
+    ):
         super().__init__()
 
         self._model: PredictionModel = model
         self._viewer: Viewer = viewer
+        self._service: ModelFileService = service
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
@@ -95,6 +96,7 @@ class PredictionFileInput(QWidget):
         self._image_list: CheckBoxListWidget = CheckBoxListWidget()
         self._image_list.setEnabled(False)
         self._image_list.setObjectName("imageList")
+        self._image_list.checkedSignal.connect(self._process_checked_signal)
         frame.layout().addWidget(self._image_list)
 
         # radiobox for images from directory
@@ -149,20 +151,22 @@ class PredictionFileInput(QWidget):
 
         self._channel_select_dropdown: QComboBox = QComboBox()
 
-        # set up disappearing placeholder text
         self._channel_select_dropdown.setCurrentIndex(-1)
-        self._channel_select_dropdown.setPlaceholderText(
-            "select a channel index"
-        )
         self._channel_select_dropdown.currentIndexChanged.connect(
             self._model.set_image_input_channel_index
         )
         self._channel_select_dropdown.setEnabled(False)
-        # Event to trigger combobox populate on input image directory selection
+        # Event to trigger combobox populate when we know the number of channels
         self._model.subscribe(
-            Event.ACTION_PREDICTION_INPUT_PATH_SELECTED,
+            Event.ACTION_PREDICTION_MAX_CHANNELS_SET,
             self,
             self._populate_input_channel_combobox,
+        )
+        # Event to set combobox text to 'loading' when we begin extracting channels
+        self._model.subscribe(
+            Event.ACTION_PREDICTION_EXTRACT_CHANNELS,
+            self,
+            self._set_input_channel_combobox_to_loading,
         )
 
         output_dir_label: LabelWithHint = LabelWithHint("Output directory")
@@ -185,14 +189,10 @@ class PredictionFileInput(QWidget):
         grid_layout.setColumnStretch(1, 0)
 
         frame.layout().addLayout(grid_layout)
-        self._model.subscribe(
-            Event.ACTION_PREDICTION_GET_IMAGE_PATHS_FROM_NAPARI,
-            self,
-            self._set_selected_image_paths_from_napari,
-        )
 
     def _on_screen_slot(self) -> None:
         """Prohibits usage of non-related input fields if top button is checked."""
+        self._reset_channel_combobox()
         self._image_list.setEnabled(True)
         self._browse_dir_edit.setEnabled(False)
         self._update_layer_list()
@@ -202,29 +202,21 @@ class PredictionFileInput(QWidget):
 
     def _from_directory_slot(self) -> None:
         """Prohibits usage of non-related input fields if bottom button is checked."""
+        self._reset_channel_combobox()
         self._image_list.setEnabled(False)
         self._browse_dir_edit.setEnabled(True)
         self._model.set_prediction_input_mode(PredictionInputMode.FROM_PATH)
 
     def _update_layer_list(self, event: Optional[NapariEvent] = None) -> None:
         self._image_list.clear()
-        max_channels: Optional[int] = None
+        self._model.set_selected_paths([], extract_channels=False)
+        self._reset_channel_combobox()
         for layer in self._viewer.get_layers():
-            path_of_layer_image: Path = layer.source.path
+            path_of_layer_image: str = layer.source.path
             if path_of_layer_image:
                 self._image_list.add_item(layer.name)
-                if not max_channels:
-                    # This is slow, but there's no way around it
-                    max_channels = extract_num_channels_from_image(
-                        path_of_layer_image
-                    )
-        if max_channels:
-            self._model.set_max_channels(max_channels)
 
-    def _set_selected_image_paths_from_napari(
-        self, event: Optional[Event] = None
-    ) -> None:
-        # If needed, get selected image paths from napari and set them as state.
+    def _process_checked_signal(self, row: int, state: Qt.CheckState) -> None:
         if (
             self._model.get_prediction_input_mode()
             == PredictionInputMode.FROM_NAPARI_LAYERS
@@ -234,11 +226,43 @@ class PredictionFileInput(QWidget):
                 self._viewer.get_layers()[i].source.path
                 for i in selected_indices
             ]
-            self._model.set_selected_paths(selected_paths)
+
+            # this will preserve the invariant: the options in the dropdown will be equal
+            # to the number of channels in at least one of the selected images (or empty if no images selected)
+            if state == Qt.Checked:
+                # only extract if it's the only one checked and it's just been checked;
+                # otherwise we assume they are checking images with same number of channels
+                self._model.set_selected_paths(
+                    selected_paths, extract_channels=len(selected_paths) == 1
+                )
+            elif state == Qt.Unchecked:
+                # could have unselected the img we got channels from originally, so need to re-extract
+                # as long as there are still some images selected
+                if len(selected_indices) == 0:
+                    self._service.stop_channel_extraction()  # stop so combobox doesn't reset after thread is finished
+                    self._reset_channel_combobox()
+
+                self._model.set_selected_paths(
+                    selected_paths, extract_channels=len(selected_paths) > 0
+                )
+
+    def _reset_channel_combobox(self) -> None:
+        self._channel_select_dropdown.clear()
+        self._channel_select_dropdown.setPlaceholderText("")
+        self._channel_select_dropdown.setCurrentIndex(-1)
+        self._channel_select_dropdown.setEnabled(False)
+
+    def _set_input_channel_combobox_to_loading(
+        self, event: Event = None
+    ) -> None:
+        self._channel_select_dropdown.clear()
+        self._channel_select_dropdown.setPlaceholderText("loading channels...")
+        self._channel_select_dropdown.setCurrentIndex(-1)
+        self._channel_select_dropdown.setEnabled(False)
 
     def _populate_input_channel_combobox(self, event: Event = None) -> None:
         channels_in_image: Optional[int] = self._model.get_max_channels()
-
+        self._reset_channel_combobox()
         if channels_in_image is not None and channels_in_image > 0:
             values_range: List[str] = [
                 str(i) for i in range(self._model.get_max_channels())
@@ -251,5 +275,5 @@ class PredictionFileInput(QWidget):
             self._channel_select_dropdown.setEnabled(True)
         else:
             self._channel_select_dropdown.setPlaceholderText(
-                "No channels to Select"
+                "no channels to select"
             )
