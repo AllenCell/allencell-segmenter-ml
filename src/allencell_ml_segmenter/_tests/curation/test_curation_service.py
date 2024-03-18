@@ -238,9 +238,9 @@ def test_select_directory_raw(start_mock: Mock) -> None:
 
     # Act
     curation_service.select_directory_raw(img_folder)
-    # manually run the thread task without creating a new thread so
-    # that updates are testable
-    curation_service._raw_thread.run()
+    # simulate the expected effect of the ChannelExtractionThread
+    # since we mocked the start method
+    model.set_raw_image_channel_count(3)
 
     # Assert
     start_mock.assert_called()
@@ -274,9 +274,9 @@ def test_select_directory_seg1(start_mock: Mock) -> None:
 
     # Act
     curation_service.select_directory_seg1(img_folder)
-    # manually run the thread task without creating a new thread so
-    # that updates are testable
-    curation_service._seg1_thread.run()
+    # simulate the expected effect of the ChannelExtractionThread
+    # since we mocked the start method
+    model.set_seg1_image_channel_count(3)
 
     # Assert
     start_mock.assert_called()
@@ -290,10 +290,10 @@ def test_select_directory_seg1(start_mock: Mock) -> None:
 )
 def test_select_directory_seg2(start_mock: Mock) -> None:
     # Arrange
-    curation_model = CurationModel()
+    model = CurationModel()
 
     curation_service = CurationService(
-        curation_model=curation_model, viewer=Mock(spec=Viewer)
+        curation_model=model, viewer=Mock(spec=Viewer)
     )
     img_folder: Path = (
         Path(allencell_ml_segmenter.__file__).parent
@@ -303,7 +303,7 @@ def test_select_directory_seg2(start_mock: Mock) -> None:
     )
 
     fake_subscriber: FakeSubscriber = FakeSubscriber()
-    curation_model.subscribe(
+    model.subscribe(
         Event.ACTION_CURATION_SEG2_CHANNELS_SET,
         fake_subscriber,
         lambda e: fake_subscriber.handle(e),
@@ -311,14 +311,14 @@ def test_select_directory_seg2(start_mock: Mock) -> None:
 
     # Act
     curation_service.select_directory_seg2(img_folder)
-    # manually run the thread task without creating a new thread so
-    # that updates are testable
-    curation_service._seg2_thread.run()
+    # simulate the expected effect of the ChannelExtractionThread
+    # since we mocked the start method
+    model.set_seg2_image_channel_count(3)
 
     # Assert
     start_mock.assert_called()
-    assert curation_model.get_seg2_directory() == img_folder
-    assert curation_model.get_total_num_channels_seg2() == 3
+    assert model.get_seg2_directory() == img_folder
+    assert model.get_total_num_channels_seg2() == 3
     assert fake_subscriber.was_handled(Event.ACTION_CURATION_SEG2_CHANNELS_SET)
 
 
