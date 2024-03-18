@@ -314,18 +314,13 @@ def test_write_curation_record() -> None:
         ),
     ]
     # Mock open, Path, and csv.writer
-    with (
-        patch(
-            "allencell_ml_segmenter.curation.curation_service.open",
-            mock_open(),
-        ) as mock_file,
-        patch(
-            "allencell_ml_segmenter.curation.curation_service.Path"
-        ) as mock_path,
-        patch(
-            "allencell_ml_segmenter.curation.curation_service.csv.writer"
-        ) as mock_writer,
-    ):
+    with patch(
+        "allencell_ml_segmenter.curation.curation_service.open", mock_open()
+    ) as mock_file, patch(
+        "allencell_ml_segmenter.curation.curation_service.Path"
+    ) as mock_path, patch(
+        "allencell_ml_segmenter.curation.curation_service.csv.writer"
+    ) as mock_writer:
         mock_path.return_value.parents = [Path("/parent")]
 
         # Act
