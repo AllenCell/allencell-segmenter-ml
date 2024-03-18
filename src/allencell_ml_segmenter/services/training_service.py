@@ -134,9 +134,6 @@ class TrainingService(Subscriber):
         overrides: List = []
 
         # REQUIRED OVERRIDES for cyto-dl run
-        if self._training_model.get_hardware_type() is None:
-            # v1 defaults to cpu
-            self._training_model.set_hardware_type("cpu")
         overrides.append(self._get_hardware_override())
 
         if self._training_model.get_spatial_dims() is None:
