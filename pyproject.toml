@@ -43,6 +43,7 @@ dependencies = [
     "aicsimageio",
     "tifffile>=2023.4.12",
     "watchdog",
+    "cyto-dl",
 ]
 
 [project.urls]
