@@ -204,10 +204,8 @@ class CurationService(Subscriber):
         self, folder: Path, channel_callback: Callable
     ) -> ChannelExtractionThread:
         img_path: Path = get_img_path_from_folder(folder)
-        new_thread = ChannelExtractionThread(img_path, -1)
-        new_thread.channels_ready.connect(
-            lambda id, channels: channel_callback(channels)
-        )
+        new_thread = ChannelExtractionThread(img_path)
+        new_thread.channels_ready.connect(channel_callback)
         new_thread.start()
         return new_thread
 
