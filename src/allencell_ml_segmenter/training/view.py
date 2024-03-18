@@ -30,7 +30,7 @@ from aicsimageio.readers import TiffReader
 
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 from qtpy.QtGui import QIntValidator
-from allencell_ml_segmenter.training.training_model import PatchSize
+from allencell_ml_segmenter.training.training_model import PatchSize, Hardware
 from allencell_ml_segmenter.training.metrics_csv_progress_tracker import (
     MetricsCSVProgressTracker,
 )
@@ -183,6 +183,23 @@ class TrainingView(View):
         max_time_layout.addStretch()
 
         bottom_grid_layout.addLayout(max_time_layout, 3, 1)
+
+        hardware_label: LabelWithHint = LabelWithHint("Hardware")
+        bottom_grid_layout.addWidget(hardware_label, 4, 0)
+
+        self._hardware_combo_box: QComboBox = QComboBox()
+        self._hardware_combo_box.setObjectName("hardwareComboBox")
+        self._hardware_combo_box.addItems(
+            [hardware.name for hardware in Hardware]
+        )
+        # default hardware set to CPU
+        self._hardware_combo_box.setCurrentIndex(0)
+        self._hardware_combo_box.currentTextChanged.connect(
+            lambda hardware_name: self._training_model.set_hardware_type(hardware_name)
+        )
+        bottom_grid_layout.addWidget(self._hardware_combo_box, 4, 1)
+
+
         bottom_grid_layout.setColumnStretch(1, 8)
         bottom_grid_layout.setColumnStretch(0, 3)
 
