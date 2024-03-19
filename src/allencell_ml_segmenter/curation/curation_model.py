@@ -7,6 +7,7 @@ from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.publisher import Publisher
 from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
+from allencell_ml_segmenter.curation.curation_image_loader import CurationImageLoader, ImageData
 
 
 class CurationModel(Publisher):
@@ -45,13 +46,15 @@ class CurationModel(Publisher):
 
         self._current_excluding_mask_path: Path = None
         self._current_merging_mask_path: Path = None
-        self._current_loaded_images: Tuple[Path, Path] = (None, None)
         self._merging_mask_base_layer: str = None
 
-        self._curation_index: int = 0
-        self._raw_images: List[Path] = list()
-        self._seg1_images: List[Path] = list()
-        self._seg2_images: List[Path] = list()
+        self._image_loader: Optional[CurationImageLoader] = None
+
+    def set_image_loader(self, image_loader: CurationImageLoader) -> None:
+        self._image_loader = image_loader
+
+    def get_image_loader(self) -> Optional[CurationImageLoader]:
+        return self._image_loader
 
     def get_merging_mask_base_layer(self) -> str:
         return self._merging_mask_base_layer
@@ -66,33 +69,6 @@ class CurationModel(Publisher):
         self, image_dims: Tuple[int, int, int]
     ) -> None:
         self._curation_image_dims = image_dims
-
-    def get_raw_images(self) -> List[Path]:
-        return self._raw_images
-
-    def get_current_raw_image(self) -> Path:
-        return self.get_raw_images()[self.get_curation_index()]
-
-    def set_raw_images(self, images: List[Path]) -> None:
-        self._raw_images = images
-
-    def get_seg1_images(self) -> List[Path]:
-        return self._seg1_images
-
-    def set_seg1_images(self, images: List[Path]) -> None:
-        self._seg1_images = images
-
-    def get_current_seg1_image(self) -> Path:
-        return self.get_seg1_images()[self.get_curation_index()]
-
-    def get_seg2_images(self) -> List[Path]:
-        return self._seg2_images
-
-    def set_seg2_images(self, images: List[Path]) -> None:
-        self._seg2_images = images
-
-    def get_current_seg2_image(self) -> Path:
-        return self.get_seg2_images()[self.get_curation_index()]
 
     def set_raw_directory(self, dir: Path) -> None:
         """
@@ -214,14 +190,6 @@ class CurationModel(Publisher):
             / self.experiments_model.get_experiment_name()
         )
 
-    def set_current_loaded_images(
-        self, images: Tuple[Path, Path, Optional[Path]]
-    ):
-        self._current_loaded_images = images
-
-    def get_current_loaded_images(self):
-        return self._current_loaded_images
-
     def get_curation_record(self) -> List[CurationRecord]:
         return self._curation_record
 
@@ -267,15 +235,6 @@ class CurationModel(Publisher):
             return False
         else:
             return True
-
-    def image_available(self) -> bool:
-        return self.get_curation_index() < len(self.get_raw_images())
-
-    def get_curation_index(self) -> int:
-        return self._curation_index
-
-    def set_curation_index(self, i: int) -> None:
-        self._curation_index = i
 
     def append_curation_record(self, record: CurationRecord) -> None:
         self._curation_record.append(record)
