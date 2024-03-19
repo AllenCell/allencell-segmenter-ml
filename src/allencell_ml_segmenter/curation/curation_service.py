@@ -7,6 +7,7 @@ from allencell_ml_segmenter.core.channel_extraction import (
 )
 from allencell_ml_segmenter.curation.curation_model import CurationModel
 from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
+from allencell_ml_segmenter.curation.curation_image_loader import CurationImageLoader, ImageData
 from allencell_ml_segmenter.main.i_viewer import IViewer
 from allencell_ml_segmenter.main.viewer import Viewer
 
@@ -128,35 +129,20 @@ class CurationService(Subscriber):
         self._curation_model.set_excluding_mask_shape_layers([])
         self._curation_model.set_merging_mask_shape_layers([])
 
-    def add_image_to_viewer(
-        self, image_data: np.ndarray, title: str = ""
-    ) -> None:
+    def add_image_to_viewer(self, img_data: ImageData, title: str) -> None:
         """
         Add an image to the napari viewer as its own layer
 
-        image_data(np.ndarray): image to display in napari
-        title(str): title of layer that will be displayed in napari
+        :param img_data: data for image to display in napari
         """
-        self._viewer.add_image(image_data, name=title)
-
-    def add_image_to_viewer_from_path(
-        self, path: Path, title: str = ""
-    ) -> None:
-        """
-        Add an image to the napari viewer from a path
-
-        path(Path): path to image to display in napari
-        title(str): title of layer that will be displayed in napari
-        """
-        image: AICSImage = self.open_image_from_path(path)
         self._curation_model.set_curation_image_dims(
             (
-                image.dims.X,
-                image.dims.Y,
-                image.dims.Z,
+                img_data.dim_x,
+                img_data.dim_y,
+                img_data.dim_z,
             )
         )
-        self.add_image_to_viewer(image.data, title)
+        self._viewer.add_image(img_data.np_data, name=title)
 
     def enable_shape_selection_viewer(self, mode: SelectionMode) -> None:
         """
@@ -299,7 +285,7 @@ class CurationService(Subscriber):
             # save mask and keep record of path
             save_path_mask_file: Path = (
                 folder_path
-                / f"excluding_mask_{self._curation_model.get_current_loaded_images()[0].stem}.npy"
+                / f"excluding_mask_{self._curation_model.get_image_loader().get_raw_image_data().path.stem}.npy"
             )
             np.save(save_path_mask_file, np.asarray(mask_to_save))
             # if current mask path is set, we know that we've saved an excluding mask for the curationrecord.
@@ -357,7 +343,7 @@ class CurationService(Subscriber):
             # save mask with same name as original raw file and keep record of path
             save_path_mask_file: Path = (
                 folder_path
-                / f"merging_mask_{self._curation_model.get_current_loaded_images()[0].stem}.npy"
+                / f"merging_mask_{self._curation_model.get_image_loader().get_raw_image_data().path.stem}.npy"
             )
             np.save(
                 save_path_mask_file, np.asarray(mask_to_save, dtype=object)
@@ -428,21 +414,17 @@ class CurationService(Subscriber):
             merging_mask_path = ""
             base_image_name = ""
         # Save this curation record.
+        loader: CurationImageLoader = self._curation_model.get_image_loader()
         self._curation_model.append_curation_record(
             CurationRecord(
-                self._curation_model.get_current_raw_image(),
-                self._curation_model.get_current_seg1_image(),
-                self._curation_model.get_current_seg2_image(),
+                loader.get_raw_image_data().path,
+                loader.get_seg1_image_data().path,
+                loader.get_seg2_image_data().path,
                 excluding_mask_path,
                 merging_mask_path,
                 base_image_name,
                 use_image,
             )
-        )
-
-        # increment curation index
-        self._curation_model.set_curation_index(
-            self._curation_model.get_curation_index() + 1
         )
 
     def next_image(self, use_image: bool) -> None:
@@ -451,39 +433,22 @@ class CurationService(Subscriber):
         """
         _ = show_info("Loading the next image...")
         self.update_curation_record(use_image)
-
+        loader: CurationImageLoader = self._curation_model.get_image_loader()
         # load next image
-        if self._curation_model.image_available():
+        if loader.has_next():
             self.remove_all_images_from_viewer_layers()
             self._curation_model.set_current_merging_mask_path(None)
             self._curation_model.set_current_excluding_mask_path(None)
+            loader.next()
+            raw_img_data: ImageData = loader.get_raw_image_data()
+            seg1_img_data: ImageData = loader.get_seg1_image_data()
+            seg2_img_data: Optional[ImageData] = loader.get_seg2_image_data()
+            self.add_image_to_viewer(raw_img_data, f"[raw] {raw_img_data.path.name}")
+            self.add_image_to_viewer(seg1_img_data, f"[seg1] {seg1_img_data.path.name}")
 
-            raw_to_view: Path = self._curation_model.get_current_raw_image()
-            # Add image with [raw] prepended to layer name
-            self.add_image_to_viewer_from_path(
-                raw_to_view, title=f"[raw] {raw_to_view.name}"
-            )
+            if seg2_img_data:
+                self.add_image_to_viewer(seg2_img_data, f"[seg2] {seg2_img_data.path.name}")
 
-            seg1_to_view: Path = self._curation_model.get_current_seg1_image()
-            # Add image with [seg] prepended to layer name
-            self.add_image_to_viewer_from_path(
-                seg1_to_view, title=f"[seg 1] {seg1_to_view.name}"
-            )
-            if self._curation_model.get_seg2_images() is not None:
-                seg2_to_view: Path = (
-                    self._curation_model.get_current_seg2_image()
-                )
-                # Add image with [seg] prepended to layer name
-                self.add_image_to_viewer_from_path(
-                    seg2_to_view, title=f"[seg 2] {seg2_to_view.name}"
-                )
-            else:
-                seg2_to_view = None
-
-            self._curation_model.set_current_loaded_images(
-                (raw_to_view, seg1_to_view, seg2_to_view)
-            )
-            self._curation_model.dispatch(Event.PROCESS_CURATION_NEXT_IMAGE)
         else:
             # No more images to load - curation is complete
             _ = show_info("No more image to load")
@@ -501,35 +466,26 @@ class CurationService(Subscriber):
         Set up curation workflow, called once
         """
         # build list of raw images, ignore .DS_Store files
-        self._curation_model.set_raw_images(self.build_seg2_images_list())
+        raw: List[Path] = self.build_raw_images_list()
         # build list of seg1 images, ignore .DS_Store files
-        self._curation_model.set_seg1_images(self.build_seg1_images_list())
+        seg1: List[Path] = self.build_seg1_images_list()
 
         # If seg 2 is selected, build list of seg2 images
         if self._curation_model.get_seg2_directory() is not None:
-            self._curation_model.set_seg2_images(self.build_seg2_images_list())
+            seg2 = self.build_seg2_images_list()
         else:
-            self._curation_model.set_seg2_images(None)
+            seg2 = None
 
+        loader: CurationImageLoader = CurationImageLoader(raw, seg1, seg2)
+        self._curation_model.set_image_loader(loader)
         # reset
         self.remove_all_images_from_viewer_layers()
 
-        first_raw: Path = self._curation_model.get_raw_images()[0]
-        self.add_image_to_viewer_from_path(
-            first_raw, title=f"[raw] {first_raw.name}"
-        )
+        raw_img_data: ImageData = loader.get_raw_image_data()
+        seg1_img_data: ImageData = loader.get_seg1_image_data()
+        seg2_img_data: Optional[ImageData] = loader.get_seg2_image_data()
 
-        first_seg1: Path = self._curation_model.get_seg1_images()[0]
-        self.add_image_to_viewer_from_path(
-            first_seg1, title=f"[Seg 1] {first_seg1.name}"
-        )
-        if self._curation_model.get_seg2_directory() is not None:
-            first_seg2: Path = self._curation_model.get_seg2_images()[0]
-            self.add_image_to_viewer_from_path(
-                first_seg2, title=f"[Seg 2] {first_seg2.name}"
-            )
-        else:
-            first_seg2 = None
-        self._curation_model.set_current_loaded_images(
-            (first_raw, first_seg1, first_seg2)
-        )
+        self.add_image_to_viewer(raw_img_data, f"[raw] {raw_img_data.path.name}")
+        self.add_image_to_viewer(seg1_img_data, f"[seg1] {seg1_img_data.path.name}")
+        if seg2_img_data is not None:
+            self.add_image_to_viewer(seg2_img_data, f"[seg2] {seg2_img_data.path.name}")

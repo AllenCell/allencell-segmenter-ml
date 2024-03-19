@@ -13,6 +13,7 @@ class ImageData:
     dim_y: int
     dim_z: int
     np_data: np.ndarray
+    path: Path
 
 
 class Worker(QRunnable):
@@ -89,7 +90,7 @@ class CurationImageLoader:
     def _get_image_data(self, img_path: Path) -> ImageData:
         aics_img: AICSImage = AICSImage(img_path)
         return ImageData(
-            aics_img.dims.X, aics_img.dims.Y, aics_img.dims.Z, aics_img.data
+            aics_img.dims.X, aics_img.dims.Y, aics_img.dims.Z, aics_img.data, img_path
         )
 
     def _update_data_dict(
@@ -134,14 +135,20 @@ class CurationImageLoader:
             while len(self._next_img_data) < expected_length:
                 time.sleep(0.1)
 
+    def get_num_images(self) -> int:
+        return self._num_images
+
+    def get_current_index(self) -> int:
+        return self._cursor
+
     def get_raw_image_data(self) -> ImageData:
         return self._curr_img_data["raw"]
 
     def get_seg1_image_data(self) -> ImageData:
         return self._curr_img_data["seg1"]
 
-    def get_seg2_image_data(self) -> ImageData:
-        return self._curr_img_data["seg2"]
+    def get_seg2_image_data(self) -> Optional[ImageData]:
+        return self._curr_img_data["seg2"] if "seg2" in self._curr_img_data else None
 
     def has_next(self) -> bool:
         """
