@@ -198,12 +198,15 @@ class CurationModel(Publisher):
 
     def set_raw_image_channel_count(self, channels: int) -> int:
         self._raw_image_channel_count = channels
+        self.dispatch(Event.ACTION_CURATION_RAW_CHANNELS_SET)
 
     def set_seg1_image_channel_count(self, channels: int) -> int:
         self._seg1_image_channel_count = channels
+        self.dispatch(Event.ACTION_CURATION_SEG1_CHANNELS_SET)
 
     def set_seg2_image_channel_count(self, channels: int) -> int:
         self._seg2_image_channel_count = channels
+        self.dispatch(Event.ACTION_CURATION_SEG2_CHANNELS_SET)
 
     def get_save_masks_path(self) -> Path:
         return (

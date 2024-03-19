@@ -17,6 +17,7 @@ from allencell_ml_segmenter.curation.curation_service import (
 )
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.main.viewer import Viewer
+import allencell_ml_segmenter
 
 
 def test_build_raw_images_list() -> None:
@@ -212,80 +213,113 @@ def test_enable_shape_selection_viewer_merging() -> None:
     assert fake_subscriber.was_handled(Event.ACTION_CURATION_DRAW_MERGING)
 
 
-def test_select_directory_raw() -> None:
+@patch(
+    "allencell_ml_segmenter.core.channel_extraction.ChannelExtractionThread.start"
+)
+def test_select_directory_raw(start_mock: Mock) -> None:
     # Arrange
     model: CurationModel = CurationModel()
     curation_service: CurationService = CurationService(
-        model, viewer=Mock(spec=Viewer)
+        curation_model=model, viewer=Mock(spec=Viewer)
     )
-    curation_service.get_total_num_channels_of_images_in_path: Mock = Mock(
-        return_value=3
+    img_folder: Path = (
+        Path(allencell_ml_segmenter.__file__).parent
+        / "_tests"
+        / "test_files"
+        / "images"
     )
+
     fake_subscriber: FakeSubscriber = FakeSubscriber()
     model.subscribe(
-        Event.ACTION_CURATION_RAW_SELECTED,
+        Event.ACTION_CURATION_RAW_CHANNELS_SET,
         fake_subscriber,
         lambda e: fake_subscriber.handle(e),
     )
 
     # Act
-    curation_service.select_directory_raw(Path("test_path"))
+    curation_service.select_directory_raw(img_folder)
+    # manually run the thread task without creating a new thread so
+    # that updates are testable
+    curation_service._raw_thread.run()
 
     # Assert
-    assert model.get_raw_directory() == Path("test_path")
+    start_mock.assert_called()
+    assert model.get_raw_directory() == img_folder
     assert model.get_total_num_channels_raw() == 3
-    assert fake_subscriber.was_handled(Event.ACTION_CURATION_RAW_SELECTED)
+    assert fake_subscriber.was_handled(Event.ACTION_CURATION_RAW_CHANNELS_SET)
 
 
-def test_select_directory_seg1() -> None:
+@patch(
+    "allencell_ml_segmenter.core.channel_extraction.ChannelExtractionThread.start"
+)
+def test_select_directory_seg1(start_mock: Mock) -> None:
     # Arrange
     model: CurationModel = CurationModel()
-    test_service_with_model: CurationService = CurationService(
-        model, viewer=Mock(spec=Viewer)
+    curation_service: CurationService = CurationService(
+        curation_model=model, viewer=Mock(spec=Viewer)
     )
-    test_service_with_model.get_total_num_channels_of_images_in_path: Mock = (
-        Mock(return_value=4)
+    img_folder: Path = (
+        Path(allencell_ml_segmenter.__file__).parent
+        / "_tests"
+        / "test_files"
+        / "images"
     )
+
     fake_subscriber: FakeSubscriber = FakeSubscriber()
     model.subscribe(
-        Event.ACTION_CURATION_SEG1_SELECTED,
+        Event.ACTION_CURATION_SEG1_CHANNELS_SET,
         fake_subscriber,
         lambda e: fake_subscriber.handle(e),
     )
 
     # Act
-    test_service_with_model.select_directory_seg1(Path("test_path"))
+    curation_service.select_directory_seg1(img_folder)
+    # manually run the thread task without creating a new thread so
+    # that updates are testable
+    curation_service._seg1_thread.run()
 
     # Assert
-    assert model.get_seg1_directory() == Path("test_path")
-    assert model.get_total_num_channels_seg1() == 4
-    assert fake_subscriber.was_handled(Event.ACTION_CURATION_SEG1_SELECTED)
+    start_mock.assert_called()
+    assert model.get_seg1_directory() == img_folder
+    assert model.get_total_num_channels_seg1() == 3
+    assert fake_subscriber.was_handled(Event.ACTION_CURATION_SEG1_CHANNELS_SET)
 
 
-def test_select_directory_seg2() -> None:
+@patch(
+    "allencell_ml_segmenter.core.channel_extraction.ChannelExtractionThread.start"
+)
+def test_select_directory_seg2(start_mock: Mock) -> None:
     # Arrange
-    curation_model = CurationModel()
+    model = CurationModel()
 
     curation_service = CurationService(
-        curation_model=curation_model, viewer=Mock(spec=Viewer)
+        curation_model=model, viewer=Mock(spec=Viewer)
     )
-    curation_service.get_total_num_channels_of_images_in_path: Mock = Mock(
-        return_value=2
+    img_folder: Path = (
+        Path(allencell_ml_segmenter.__file__).parent
+        / "_tests"
+        / "test_files"
+        / "images"
     )
+
     fake_subscriber: FakeSubscriber = FakeSubscriber()
-    curation_model.subscribe(
-        Event.ACTION_CURATION_SEG2_SELECTED,
+    model.subscribe(
+        Event.ACTION_CURATION_SEG2_CHANNELS_SET,
         fake_subscriber,
         lambda e: fake_subscriber.handle(e),
     )
 
     # Act
-    curation_service.select_directory_seg2(Path("test_path"))
+    curation_service.select_directory_seg2(img_folder)
+    # manually run the thread task without creating a new thread so
+    # that updates are testable
+    curation_service._seg2_thread.run()
 
     # Assert
-    assert curation_model.get_seg2_directory() == Path("test_path")
-    assert curation_model.get_total_num_channels_seg2() == 2
-    assert fake_subscriber.was_handled(Event.ACTION_CURATION_SEG2_SELECTED)
+    start_mock.assert_called()
+    assert model.get_seg2_directory() == img_folder
+    assert model.get_total_num_channels_seg2() == 3
+    assert fake_subscriber.was_handled(Event.ACTION_CURATION_SEG2_CHANNELS_SET)
 
 
 def test_write_curation_record() -> None:

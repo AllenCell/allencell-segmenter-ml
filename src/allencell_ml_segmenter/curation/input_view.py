@@ -17,6 +17,7 @@ from qtpy.QtWidgets import (
     QPushButton,
 )
 from allencell_ml_segmenter.core.event import Event
+from pathlib import Path
 
 
 class CurationInputView(View):
@@ -64,7 +65,7 @@ class CurationInputView(View):
         )
         self._raw_directory_select: InputButton = InputButton(
             self._curation_model,
-            lambda dir: self._curation_service.select_directory_raw(dir),
+            self._on_raw_dir_select,
             "Select directory...",
             FileInputMode.DIRECTORY,
         )
@@ -98,7 +99,7 @@ class CurationInputView(View):
         # TODO update model accordingly
         self._seg1_directory_select: InputButton = InputButton(
             self._curation_model,
-            lambda dir: self._curation_service.select_directory_seg1(dir),
+            self._on_seg1_dir_select,
             "Select directory...",
             FileInputMode.DIRECTORY,
         )
@@ -132,7 +133,7 @@ class CurationInputView(View):
         # TODO update model accordingly
         self._seg2_directory_select: InputButton = InputButton(
             self._curation_model,
-            lambda dir: self._curation_service.select_directory_seg2(dir),
+            self._on_seg2_dir_select,
             "Select directory...",
             FileInputMode.DIRECTORY,
         )
@@ -159,18 +160,38 @@ class CurationInputView(View):
 
         # subscribers
         self._curation_model.subscribe(
-            Event.ACTION_CURATION_RAW_SELECTED, self, self.update_raw_channels
+            Event.ACTION_CURATION_RAW_CHANNELS_SET,
+            self,
+            self.update_raw_channels,
         )
         self._curation_model.subscribe(
-            Event.ACTION_CURATION_SEG1_SELECTED,
+            Event.ACTION_CURATION_SEG1_CHANNELS_SET,
             self,
             self.update_seg1_channels,
         )
         self._curation_model.subscribe(
-            Event.ACTION_CURATION_SEG2_SELECTED,
+            Event.ACTION_CURATION_SEG2_CHANNELS_SET,
             self,
             self.update_seg2_channels,
         )
+
+    def _set_combobox_to_loading(self, combobox: QComboBox) -> None:
+        combobox.clear()
+        combobox.setPlaceholderText("loading channels...")
+        combobox.setCurrentIndex(-1)
+        combobox.setEnabled(False)
+
+    def _on_raw_dir_select(self, dir: Path) -> None:
+        self._set_combobox_to_loading(self._raw_image_channel_combo)
+        self._curation_service.select_directory_raw(dir)
+
+    def _on_seg1_dir_select(self, dir: Path) -> None:
+        self._set_combobox_to_loading(self._seg1_image_channel_combo)
+        self._curation_service.select_directory_seg1(dir)
+
+    def _on_seg2_dir_select(self, dir: Path) -> None:
+        self._set_combobox_to_loading(self._seg2_image_channel_combo)
+        self._curation_service.select_directory_seg2(dir)
 
     def doWork(self) -> None:
         print("work")
@@ -186,55 +207,55 @@ class CurationInputView(View):
         Event handler when raw image directory is selected. Updates combobox to the correct number of channels in the
         images from the raw directory.
         """
-        if event == Event.ACTION_CURATION_RAW_SELECTED:
-            self._raw_image_channel_combo.clear()
-            self._raw_image_channel_combo.addItems(
-                [
-                    str(x)
-                    for x in range(
-                        self._curation_model.get_total_num_channels_raw()
-                    )
-                ]
-            )
-            # default first index
-            self._raw_image_channel_combo.setCurrentIndex(0)
-            self._curation_model.set_raw_channel(0)
+        self._raw_image_channel_combo.clear()
+        self._raw_image_channel_combo.addItems(
+            [
+                str(x)
+                for x in range(
+                    self._curation_model.get_total_num_channels_raw()
+                )
+            ]
+        )
+        # default first index
+        self._raw_image_channel_combo.setCurrentIndex(0)
+        self._raw_image_channel_combo.setEnabled(True)
+        self._curation_model.set_raw_channel(0)
 
     def update_seg1_channels(self, event) -> None:
         """
         Event handler when seg1 image directory is selected. Updates combobox to the correct number of channels in the
         images from the seg1 directory.
         """
-        if event == Event.ACTION_CURATION_SEG1_SELECTED:
-            self._seg1_image_channel_combo.clear()
-            self._seg1_image_channel_combo.addItems(
-                [
-                    str(x)
-                    for x in range(
-                        self._curation_model.get_total_num_channels_seg1()
-                    )
-                ]
-            )
-            self._seg1_image_channel_combo.setCurrentIndex(0)
-            self._curation_model.set_seg1_channel(0)
+        self._seg1_image_channel_combo.clear()
+        self._seg1_image_channel_combo.addItems(
+            [
+                str(x)
+                for x in range(
+                    self._curation_model.get_total_num_channels_seg1()
+                )
+            ]
+        )
+        self._seg1_image_channel_combo.setCurrentIndex(0)
+        self._seg1_image_channel_combo.setEnabled(True)
+        self._curation_model.set_seg1_channel(0)
 
     def update_seg2_channels(self, event) -> None:
         """
         Event handler when seg2 image directory is selected. Updates combobox to the correct number of channels in the
         images from the seg2 directory.
         """
-        if event == Event.ACTION_CURATION_SEG2_SELECTED:
-            self._seg2_image_channel_combo.clear()
-            self._seg2_image_channel_combo.addItems(
-                [
-                    str(x)
-                    for x in range(
-                        self._curation_model.get_total_num_channels_seg2()
-                    )
-                ]
-            )
-            self._seg2_image_channel_combo.setCurrentIndex(0)
-            self._curation_model.set_seg2_channel(0)
+        self._seg2_image_channel_combo.clear()
+        self._seg2_image_channel_combo.addItems(
+            [
+                str(x)
+                for x in range(
+                    self._curation_model.get_total_num_channels_seg2()
+                )
+            ]
+        )
+        self._seg2_image_channel_combo.setCurrentIndex(0)
+        self._seg2_image_channel_combo.setEnabled(True)
+        self._curation_model.set_seg2_channel(0)
 
     def raw_channel_selected(self, index) -> None:
         """

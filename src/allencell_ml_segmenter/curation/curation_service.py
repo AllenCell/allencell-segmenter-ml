@@ -1,13 +1,17 @@
 from allencell_ml_segmenter.core.dialog_box import DialogBox
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.subscriber import Subscriber
+from allencell_ml_segmenter.core.channel_extraction import (
+    ChannelExtractionThread,
+    get_img_path_from_folder,
+)
 from allencell_ml_segmenter.curation.curation_model import CurationModel
 from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
 from allencell_ml_segmenter.main.i_viewer import IViewer
 from allencell_ml_segmenter.main.viewer import Viewer
 
 from pathlib import Path
-from typing import List, Union
+from typing import List, Union, Optional, Callable
 import csv
 import numpy as np
 from aicsimageio import AICSImage
@@ -28,6 +32,9 @@ class CurationService(Subscriber):
         super().__init__()
         self._curation_model: CurationModel = curation_model
         self._viewer: Viewer = viewer
+        self._raw_thread: Optional[ChannelExtractionThread] = None
+        self._seg1_thread: Optional[ChannelExtractionThread] = None
+        self._seg2_thread: Optional[ChannelExtractionThread] = None
 
     def build_raw_images_list(self) -> List[Path]:
         """
@@ -42,23 +49,23 @@ class CurationService(Subscriber):
 
     def build_seg1_images_list(self) -> List[Path]:
         """
-        Return all raw images in the raw images path as a list of Paths
+        Return all seg1 images in the seg1 images path as a list of Paths
         """
         seg1_path: Path = self._curation_model.get_seg1_directory()
         if seg1_path is None:
             raise ValueError(
-                "Raw directory not set. Please set raw directory."
+                "Seg1 directory not set. Please set seg1 directory."
             )
         return self._get_files_list_from_path(seg1_path)
 
     def build_seg2_images_list(self) -> List[Path]:
         """
-        Return all raw images in the raw images path as a list of Paths
+        Return all seg2 images in the seg2 images path as a list of Paths
         """
         seg2_path: Path = self._curation_model.get_seg2_directory()
         if seg2_path is None:
             raise ValueError(
-                "Raw directory not set. Please set raw directory."
+                "Seg2 directory not set. Please set seg2 directory."
             )
         return self._get_files_list_from_path(seg2_path)
 
@@ -186,18 +193,21 @@ class CurationService(Subscriber):
             if not file.name.endswith(".DS_Store")
         ]
 
-    def get_total_num_channels_of_images_in_path(self, path: Path) -> int:
-        """
-        Determine total number of channels for image in a set folder
-        """
-        # we expect user to have the same number of channels for all images in their folders
-        # and that only images are stored in those folders
-        first_image: Path = self._get_files_list_from_path(path)[0]
-        print(first_image.resolve())
-        print(str(first_image.resolve()))
-        img: AICSImage = AICSImage(str(first_image.resolve()))
-        # return num channel
-        return img.dims.C
+    def _stop_channel_extraction_thread(self, thread: ChannelExtractionThread):
+        # if we find this is too slow, can switch to the method employed by
+        # prediction/service, but may be overkill initially
+        if thread and thread.isRunning():
+            thread.requestInterruption()
+            thread.wait()
+
+    def _start_channel_extraction_thread(
+        self, folder: Path, channel_callback: Callable
+    ) -> ChannelExtractionThread:
+        img_path: Path = get_img_path_from_folder(folder)
+        new_thread = ChannelExtractionThread(img_path)
+        new_thread.channels_ready.connect(channel_callback)
+        new_thread.start()
+        return new_thread
 
     def select_directory_raw(self, path: Path):
         """
@@ -206,10 +216,10 @@ class CurationService(Subscriber):
         path(Path): path to raw directory
         """
         self._curation_model.set_raw_directory(path)
-        self._curation_model.set_raw_image_channel_count(
-            self.get_total_num_channels_of_images_in_path(path)
+        self._stop_channel_extraction_thread(self._raw_thread)
+        self._raw_thread = self._start_channel_extraction_thread(
+            path, self._curation_model.set_raw_image_channel_count
         )
-        self._curation_model.dispatch(Event.ACTION_CURATION_RAW_SELECTED)
 
     def select_directory_seg1(self, path: Path):
         """
@@ -218,10 +228,10 @@ class CurationService(Subscriber):
         path(Path): path to seg1 directory
         """
         self._curation_model.set_seg1_directory(path)
-        self._curation_model.set_seg1_image_channel_count(
-            self.get_total_num_channels_of_images_in_path(path)
+        self._stop_channel_extraction_thread(self._seg1_thread)
+        self._seg1_thread = self._start_channel_extraction_thread(
+            path, self._curation_model.set_seg1_image_channel_count
         )
-        self._curation_model.dispatch(Event.ACTION_CURATION_SEG1_SELECTED)
 
     def select_directory_seg2(self, path: Path):
         """
@@ -230,10 +240,10 @@ class CurationService(Subscriber):
         path(Path): path to seg2 directory
         """
         self._curation_model.set_seg2_directory(path)
-        self._curation_model.set_seg2_image_channel_count(
-            self.get_total_num_channels_of_images_in_path(path)
+        self._stop_channel_extraction_thread(self._seg2_thread)
+        self._seg2_thread = self._start_channel_extraction_thread(
+            path, self._curation_model.set_seg2_image_channel_count
         )
-        self._curation_model.dispatch(Event.ACTION_CURATION_SEG2_SELECTED)
 
     def finished_shape_selection(self, selection_mode: SelectionMode) -> None:
         """
