@@ -238,9 +238,9 @@ def test_select_directory_raw(start_mock: Mock) -> None:
 
     # Act
     curation_service.select_directory_raw(img_folder)
-    # simulate the expected effect of the ChannelExtractionThread
-    # since we mocked the start method
-    model.set_raw_image_channel_count(3)
+    # manually run the thread task without creating a new thread so
+    # that updates are testable
+    curation_service._raw_thread.run()
 
     # Assert
     start_mock.assert_called()
@@ -274,9 +274,9 @@ def test_select_directory_seg1(start_mock: Mock) -> None:
 
     # Act
     curation_service.select_directory_seg1(img_folder)
-    # simulate the expected effect of the ChannelExtractionThread
-    # since we mocked the start method
-    model.set_seg1_image_channel_count(3)
+    # manually run the thread task without creating a new thread so
+    # that updates are testable
+    curation_service._seg1_thread.run()
 
     # Assert
     start_mock.assert_called()
@@ -311,9 +311,9 @@ def test_select_directory_seg2(start_mock: Mock) -> None:
 
     # Act
     curation_service.select_directory_seg2(img_folder)
-    # simulate the expected effect of the ChannelExtractionThread
-    # since we mocked the start method
-    model.set_seg2_image_channel_count(3)
+    # manually run the thread task without creating a new thread so
+    # that updates are testable
+    curation_service._seg2_thread.run()
 
     # Assert
     start_mock.assert_called()
