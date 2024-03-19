@@ -40,9 +40,9 @@ class Event(Enum):
     ACTION_PREDICTION_EXTRACT_CHANNELS = "prediction_extract_channels"
 
     # Curation
-    ACTION_CURATION_RAW_SELECTED = "curation_raw_selected"
-    ACTION_CURATION_SEG1_SELECTED = "curation_seg1_selected"
-    ACTION_CURATION_SEG2_SELECTED = "curation_seg2_selected"
+    ACTION_CURATION_RAW_CHANNELS_SET = "curation_raw_channels_set"
+    ACTION_CURATION_SEG1_CHANNELS_SET = "curation_seg1_channels_set"
+    ACTION_CURATION_SEG2_CHANNELS_SET = "curation_seg2_channels_set"
     # Experiment related
     ACTION_EXPERIMENT_SELECTED = "experiment_selected"
     ACTION_CURATION_DRAW_EXCLUDING = "curation_draw_excluding"
