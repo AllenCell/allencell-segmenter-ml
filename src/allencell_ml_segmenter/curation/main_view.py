@@ -272,7 +272,9 @@ class CurationMainView(View):
         Initialize progress bar based on number of images to curate, and set progress bar label
         """
         # set progress bar
-        num_images: int = self._curation_model.get_image_loader().get_num_images()
+        num_images: int = (
+            self._curation_model.get_image_loader().get_num_images()
+        )
         self.progress_bar.setMaximum(num_images)
         # start at 1 to indicate current image shown.
         self.progress_bar.setValue(1)
@@ -285,8 +287,12 @@ class CurationMainView(View):
         """
         increment the progress bar by 1
         """
-        curr_val: int = self._curation_model.get_image_loader().get_current_index() + 1
-        num_images: int = self._curation_model.get_image_loader().get_num_images()
+        curr_val: int = (
+            self._curation_model.get_image_loader().get_current_index() + 1
+        )
+        num_images: int = (
+            self._curation_model.get_image_loader().get_num_images()
+        )
         self.progress_bar.setValue(curr_val)
         # set progress bar hint
         self.progress_bar_image_count.setText(f"{curr_val}/{num_images}")

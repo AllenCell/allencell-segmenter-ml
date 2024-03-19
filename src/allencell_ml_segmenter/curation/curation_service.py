@@ -7,7 +7,10 @@ from allencell_ml_segmenter.core.channel_extraction import (
 )
 from allencell_ml_segmenter.curation.curation_model import CurationModel
 from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
-from allencell_ml_segmenter.curation.curation_image_loader import CurationImageLoader, ImageData
+from allencell_ml_segmenter.curation.curation_image_loader import (
+    CurationImageLoader,
+    ImageData,
+)
 from allencell_ml_segmenter.main.i_viewer import IViewer
 from allencell_ml_segmenter.main.viewer import Viewer
 
@@ -443,11 +446,17 @@ class CurationService(Subscriber):
             raw_img_data: ImageData = loader.get_raw_image_data()
             seg1_img_data: ImageData = loader.get_seg1_image_data()
             seg2_img_data: Optional[ImageData] = loader.get_seg2_image_data()
-            self.add_image_to_viewer(raw_img_data, f"[raw] {raw_img_data.path.name}")
-            self.add_image_to_viewer(seg1_img_data, f"[seg1] {seg1_img_data.path.name}")
+            self.add_image_to_viewer(
+                raw_img_data, f"[raw] {raw_img_data.path.name}"
+            )
+            self.add_image_to_viewer(
+                seg1_img_data, f"[seg1] {seg1_img_data.path.name}"
+            )
 
             if seg2_img_data:
-                self.add_image_to_viewer(seg2_img_data, f"[seg2] {seg2_img_data.path.name}")
+                self.add_image_to_viewer(
+                    seg2_img_data, f"[seg2] {seg2_img_data.path.name}"
+                )
 
         else:
             # No more images to load - curation is complete
@@ -485,7 +494,13 @@ class CurationService(Subscriber):
         seg1_img_data: ImageData = loader.get_seg1_image_data()
         seg2_img_data: Optional[ImageData] = loader.get_seg2_image_data()
 
-        self.add_image_to_viewer(raw_img_data, f"[raw] {raw_img_data.path.name}")
-        self.add_image_to_viewer(seg1_img_data, f"[seg1] {seg1_img_data.path.name}")
+        self.add_image_to_viewer(
+            raw_img_data, f"[raw] {raw_img_data.path.name}"
+        )
+        self.add_image_to_viewer(
+            seg1_img_data, f"[seg1] {seg1_img_data.path.name}"
+        )
         if seg2_img_data is not None:
-            self.add_image_to_viewer(seg2_img_data, f"[seg2] {seg2_img_data.path.name}")
+            self.add_image_to_viewer(
+                seg2_img_data, f"[seg2] {seg2_img_data.path.name}"
+            )
