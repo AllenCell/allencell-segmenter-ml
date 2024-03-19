@@ -90,7 +90,11 @@ class CurationImageLoader:
     def _get_image_data(self, img_path: Path) -> ImageData:
         aics_img: AICSImage = AICSImage(img_path)
         return ImageData(
-            aics_img.dims.X, aics_img.dims.Y, aics_img.dims.Z, aics_img.data, img_path
+            aics_img.dims.X,
+            aics_img.dims.Y,
+            aics_img.dims.Z,
+            aics_img.data,
+            img_path,
         )
 
     def _update_data_dict(
@@ -148,7 +152,11 @@ class CurationImageLoader:
         return self._curr_img_data["seg1"]
 
     def get_seg2_image_data(self) -> Optional[ImageData]:
-        return self._curr_img_data["seg2"] if "seg2" in self._curr_img_data else None
+        return (
+            self._curr_img_data["seg2"]
+            if "seg2" in self._curr_img_data
+            else None
+        )
 
     def has_next(self) -> bool:
         """
