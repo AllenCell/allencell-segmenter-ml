@@ -9,7 +9,7 @@ from allencell_ml_segmenter.core.image_data_extractor import ImageData
 from allencell_ml_segmenter.curation.curation_model import CurationModel
 from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
 from allencell_ml_segmenter.curation.curation_image_loader import (
-    CurationImageLoader
+    ICurationImageLoader, CurationImageLoader
 )
 from allencell_ml_segmenter.main.i_viewer import IViewer
 from allencell_ml_segmenter.main.viewer import Viewer
@@ -417,7 +417,7 @@ class CurationService(Subscriber):
             merging_mask_path = ""
             base_image_name = ""
         # Save this curation record.
-        loader: CurationImageLoader = self._curation_model.get_image_loader()
+        loader: ICurationImageLoader = self._curation_model.get_image_loader()
         self._curation_model.append_curation_record(
             CurationRecord(
                 loader.get_raw_image_data().path,
@@ -436,7 +436,7 @@ class CurationService(Subscriber):
         """
         _ = show_info("Loading the next image...")
         self.update_curation_record(use_image)
-        loader: CurationImageLoader = self._curation_model.get_image_loader()
+        loader: ICurationImageLoader = self._curation_model.get_image_loader()
         # load next image
         if loader.has_next():
             self.remove_all_images_from_viewer_layers()
@@ -485,7 +485,7 @@ class CurationService(Subscriber):
         else:
             seg2 = None
 
-        loader: CurationImageLoader = CurationImageLoader(raw, seg1, seg2)
+        loader: ICurationImageLoader = CurationImageLoader(raw, seg1, seg2)
         self._curation_model.set_image_loader(loader)
         # reset
         self.remove_all_images_from_viewer_layers()
