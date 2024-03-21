@@ -1,8 +1,16 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional
 from pathlib import Path
-from allencell_ml_segmenter.core.q_runnable_manager import IQRunnableManager, GlobalQRunnableManager
-from allencell_ml_segmenter.core.image_data_extractor import IImageDataExtractor, AICSImageDataExtractor, ImageData
+from allencell_ml_segmenter.core.q_runnable_manager import (
+    IQRunnableManager,
+    GlobalQRunnableManager,
+)
+from allencell_ml_segmenter.core.image_data_extractor import (
+    IImageDataExtractor,
+    AICSImageDataExtractor,
+    ImageData,
+)
+
 
 class ICurationImageLoader(ABC):
     @abstractmethod
@@ -62,14 +70,14 @@ class ICurationImageLoader(ABC):
         Returns true iff next() can be safely called.
         """
         pass
-    
+
     @abstractmethod
     def has_prev(self) -> bool:
         """
         Returns true iff prev() can be safely called.
         """
         pass
-    
+
     @abstractmethod
     def next(self) -> None:
         """

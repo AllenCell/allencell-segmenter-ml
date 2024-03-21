@@ -9,7 +9,8 @@ from allencell_ml_segmenter.core.image_data_extractor import ImageData
 from allencell_ml_segmenter.curation.curation_model import CurationModel
 from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
 from allencell_ml_segmenter.curation.curation_image_loader import (
-    ICurationImageLoader, CurationImageLoader
+    ICurationImageLoader,
+    CurationImageLoader,
 )
 from allencell_ml_segmenter.main.i_viewer import IViewer
 from allencell_ml_segmenter.main.viewer import Viewer
