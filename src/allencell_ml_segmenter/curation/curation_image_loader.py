@@ -5,15 +5,15 @@ import time
 import numpy as np
 from aicsimageio.aics_image import AICSImage
 from PyQt5.QtCore import QThreadPool, QRunnable
-
-
-@dataclass
-class ImageData:
-    dim_x: int
-    dim_y: int
-    dim_z: int
-    np_data: np.ndarray
-    path: Path
+from allencell_ml_segmenter.core.image_data_extractor import (
+    ImageData,
+    IImageDataExtractor,
+    AICSImageDataExtractor,
+)
+from allencell_ml_segmenter.core.q_runnable_manager import (
+    IQRunnableManager,
+    GlobalQRunnableManager,
+)
 
 
 class Worker(QRunnable):
@@ -44,6 +44,8 @@ class CurationImageLoader:
         raw_images: List[Path],
         seg1_images: List[Path],
         seg2_images: Optional[List[Path]] = None,
+        qr_manager: IQRunnableManager = GlobalQRunnableManager.global_instance(),
+        img_data_extractor: IImageDataExtractor = AICSImageDataExtractor.global_instance(),
     ):
         """
         Raises ValueError if provided lists are unequal in size or empty.
@@ -65,6 +67,8 @@ class CurationImageLoader:
         self._seg2_images: Optional[List[Path]] = (
             list(seg2_images) if seg2_images else None
         )
+        self._qr_manager = qr_manager
+        self._img_data_extractor = img_data_extractor
 
         # private invariant: _next_img_data will only have < _num_data_dict_keys keys if there is
         # no next image or a thread is currently updating _next_img_data. Same goes for _prev_img_data
@@ -75,32 +79,28 @@ class CurationImageLoader:
 
         self._cursor: int = 0
         # grab data for first images synchronously, start thread for next images
-        self._curr_img_data["raw"] = self._get_image_data(self._raw_images[0])
-        self._curr_img_data["seg1"] = self._get_image_data(
-            self._seg1_images[0]
+        self._curr_img_data["raw"] = (
+            self._img_data_extractor.extract_image_data(self._raw_images[0])
+        )
+        self._curr_img_data["seg1"] = (
+            self._img_data_extractor.extract_image_data(self._seg1_images[0])
         )
         if seg2_images:
-            self._curr_img_data["seg2"] = self._get_image_data(
-                self._seg2_images[0]
+            self._curr_img_data["seg2"] = (
+                self._img_data_extractor.extract_image_data(
+                    self._seg2_images[0]
+                )
             )
 
         if self.has_next():
             self._start_extraction_threads(1, self._next_img_data)
 
-    def _get_image_data(self, img_path: Path) -> ImageData:
-        aics_img: AICSImage = AICSImage(img_path)
-        return ImageData(
-            aics_img.dims.X,
-            aics_img.dims.Y,
-            aics_img.dims.Z,
-            aics_img.data,
-            img_path,
-        )
-
     def _update_data_dict(
         self, data_dict: Dict[str, ImageData], key: str, img_path: Path
     ) -> None:
-        img_data: ImageData = self._get_image_data(img_path)
+        img_data: ImageData = self._img_data_extractor.extract_image_data(
+            img_path
+        )
         data_dict[key] = img_data
 
     def _start_extraction_threads(
@@ -123,9 +123,9 @@ class CurationImageLoader:
                     data_dict, "seg2", self._seg2_images[img_index]
                 )
             )
-            QThreadPool.globalInstance().start(seg2_worker)
-        QThreadPool.globalInstance().start(raw_worker)
-        QThreadPool.globalInstance().start(seg1_worker)
+            self._qr_manager.run(seg2_worker)
+        self._qr_manager.run(raw_worker)
+        self._qr_manager.run(seg1_worker)
 
     def _wait_on_data_dicts(self) -> None:
         """
