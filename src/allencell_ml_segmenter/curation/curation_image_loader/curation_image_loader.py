@@ -11,7 +11,9 @@ from allencell_ml_segmenter.core.q_runnable_manager import (
     IQRunnableManager,
     GlobalQRunnableManager,
 )
-from allencell_ml_segmenter.curation.curation_image_loader import ICurationImageLoader
+from allencell_ml_segmenter.curation.curation_image_loader import (
+    ICurationImageLoader,
+)
 
 
 class Worker(QRunnable):
