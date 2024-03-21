@@ -285,7 +285,7 @@ class CurationMainView(View):
 
     def _update_progress_bar(self) -> None:
         """
-        increment the progress bar by 1
+        update progress bar based on state of image loader
         """
         curr_val: int = (
             self._curation_model.get_image_loader().get_current_index() + 1
