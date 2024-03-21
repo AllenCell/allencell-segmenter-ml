@@ -15,5 +15,5 @@ class GlobalQRunnableManager(IQRunnableManager):
     @classmethod
     def global_instance(cls):
         if cls._instance is None:
-            cls._instance = super(GlobalQRunnableManager, cls).__new__(cls)
+            cls._instance = super().__new__(cls)
         return cls._instance
