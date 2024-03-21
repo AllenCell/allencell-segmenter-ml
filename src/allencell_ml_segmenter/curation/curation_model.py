@@ -8,8 +8,7 @@ from allencell_ml_segmenter.core.publisher import Publisher
 from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.curation.curation_image_loader import (
-    CurationImageLoader,
-    ImageData,
+    CurationImageLoader
 )
 
 

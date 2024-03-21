@@ -21,6 +21,12 @@ def curation_main_view(qtbot: QtBot) -> CurationMainView:
 
 
 def test_curation_setup(curation_main_view: CurationMainView) -> None:
+    # Danny: this test currently only tests that main_view calls init_progress_bar
+    # when main_view.curation_setup(first_setup=True) is called. See comments below
+    # for more info
+    # Alternatives: test that certain buttons are enabled/disabled after the call?
+    # This will require reaching into the state of main_view, though
+
     # Arrange
     curation_main_view._curation_service.build_raw_images_list = Mock(
         return_value=[Path("path_raw")]
@@ -35,6 +41,9 @@ def test_curation_setup(curation_main_view: CurationMainView) -> None:
 
     # Assert
     curation_main_view.init_progress_bar.assert_called_once()
+    # Danny: AFAIK, the method we want here is 'assert_called_once_with'; since 'called_once_with'
+    # doesn't exist, this just returns another Mock and nothing is asserted. Regardless, I think this
+    # type of thing should be in the tests for CurationService.curation_setup, not MainView.curation_setup
     curation_main_view._curation_service.add_image_to_viewer.called_once_with(
         ["path_raw"], "[raw] path_raw"
     )
@@ -52,6 +61,12 @@ def test_init_progress_bar(curation_main_view: CurationMainView) -> None:
 
 
 def test_next_image(curation_main_view: CurationMainView) -> None:
+    # Danny: this one mainly tests that MainView._next_image calls
+    # CurationService.next_image
+    # Alternatives: not sure on this... maybe we could use QtBot (I think I've seen that somewhere before) 
+    # to simulate click on next button
+    # and then check status of UI components that should update? Again, requires reaching into
+    # MainView state in some way
     # Arrange
     curation_main_view._update_curation_record = Mock()
     curation_main_view.raw_images = [None, Path("path_raw")]

@@ -1,10 +1,7 @@
 from typing import List, Dict, Optional, Callable
 from pathlib import Path
-from dataclasses import dataclass
 import time
-import numpy as np
-from aicsimageio.aics_image import AICSImage
-from PyQt5.QtCore import QThreadPool, QRunnable
+from PyQt5.QtCore import QRunnable
 from allencell_ml_segmenter.core.image_data_extractor import (
     ImageData,
     IImageDataExtractor,
@@ -14,6 +11,7 @@ from allencell_ml_segmenter.core.q_runnable_manager import (
     IQRunnableManager,
     GlobalQRunnableManager,
 )
+from allencell_ml_segmenter.curation.curation_image_loader import ICurationImageLoader
 
 
 class Worker(QRunnable):
@@ -33,7 +31,7 @@ class Worker(QRunnable):
         self._do_work()
 
 
-class CurationImageLoader:
+class CurationImageLoader(ICurationImageLoader):
     """
     CurationImageLoader manages image data for curation with the invariant
     that the getter functions will never be blocking.
@@ -140,18 +138,38 @@ class CurationImageLoader:
                 time.sleep(0.1)
 
     def get_num_images(self) -> int:
+        """
+        Returns number of image sets (one set includes raw + its segmentations) in
+        this image loader.
+        """
         return self._num_images
 
     def get_current_index(self) -> int:
+        """
+        Returns the current index of our 'cursor' within the image sets (always <
+        num images)
+        """
         return self._cursor
 
     def get_raw_image_data(self) -> ImageData:
+        """
+        Returns the image data for the raw image in the set that the 'cursor' is
+        currently pointing at.
+        """
         return self._curr_img_data["raw"]
 
     def get_seg1_image_data(self) -> ImageData:
+        """
+        Returns the image data for the seg1 image in the set that the 'cursor' is
+        currently pointing at.
+        """
         return self._curr_img_data["seg1"]
 
     def get_seg2_image_data(self) -> Optional[ImageData]:
+        """
+        Returns the image data for the seg2 image in the set that the 'cursor' is
+        currently pointing at. If this loader does not have two segmentations, returns None.
+        """
         return (
             self._curr_img_data["seg2"]
             if "seg2" in self._curr_img_data
