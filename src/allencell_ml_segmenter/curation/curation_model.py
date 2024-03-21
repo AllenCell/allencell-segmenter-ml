@@ -8,7 +8,7 @@ from allencell_ml_segmenter.core.publisher import Publisher
 from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.curation.curation_image_loader import (
-    CurationImageLoader
+    ICurationImageLoader
 )
 
 
@@ -50,12 +50,12 @@ class CurationModel(Publisher):
         self._current_merging_mask_path: Path = None
         self._merging_mask_base_layer: str = None
 
-        self._image_loader: Optional[CurationImageLoader] = None
+        self._image_loader: Optional[ICurationImageLoader] = None
 
-    def set_image_loader(self, image_loader: CurationImageLoader) -> None:
+    def set_image_loader(self, image_loader: ICurationImageLoader) -> None:
         self._image_loader = image_loader
 
-    def get_image_loader(self) -> Optional[CurationImageLoader]:
+    def get_image_loader(self) -> Optional[ICurationImageLoader]:
         return self._image_loader
 
     def get_merging_mask_base_layer(self) -> str:
