@@ -67,8 +67,12 @@ class FakeCurationImageLoader(ICurationImageLoader):
         Returns the image data for the seg2 image in the set that the 'cursor' is
         currently pointing at. If this loader does not have two segmentations, returns None.
         """
-        return self._img_data_extractor.extract_image_data(
-            self._seg2_images[self._cursor]
+        return (
+            self._img_data_extractor.extract_image_data(
+                self._seg2_images[self._cursor]
+            )
+            if self._seg2_images
+            else None
         )
 
     def has_next(self) -> bool:
