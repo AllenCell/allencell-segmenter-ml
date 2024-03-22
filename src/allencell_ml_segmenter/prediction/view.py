@@ -1,3 +1,7 @@
+from pathlib import Path
+from typing import List
+
+from aicsimageio import AICSImage
 from qtpy.QtCore import Qt
 
 from allencell_ml_segmenter._style import Style
@@ -119,5 +123,8 @@ class PredictionView(View):
         return "Prediction"
 
     def showResults(self):
-        # TODO Need to implement way to show predicted images in napari.
-        print("showResults - prediction")
+        output_path: Path = self._prediction_model.get_output_seg_directory()
+        images_list: List[Path] = [x for x in output_path.glob("*.*") if not x.name.startswith(".")]
+        for output_img in images_list:
+            self._viewer.add_image(AICSImage(output_img).data, name=output_img.name)
+
