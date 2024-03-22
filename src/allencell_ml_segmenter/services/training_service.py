@@ -8,7 +8,7 @@ from cyto_dl.api.model import CytoDLModel
 # from lightning.pytorch.callbacks import Callback
 
 # disabled for tests (cant import in ci yet)
-# from cyto_dl.train import main as cyto_train
+#from cyto_dl.train import main as cyto_train
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.training.training_model import (
     Hardware,
