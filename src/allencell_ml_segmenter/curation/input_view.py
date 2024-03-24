@@ -1,5 +1,6 @@
 from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.curation.curation_service import CurationService
+from allencell_ml_segmenter.curation.stacked_spinner import StackedSpinner
 from allencell_ml_segmenter.widgets.input_button_widget import (
     InputButton,
     FileInputMode,
@@ -69,7 +70,8 @@ class CurationInputView(View):
             "Select directory...",
             FileInputMode.DIRECTORY,
         )
-        raw_grid_layout.addWidget(self._raw_directory_select, 0, 2)
+        self._raw_dir_stacked_spinner = StackedSpinner(self._raw_directory_select)
+        raw_grid_layout.addWidget(self._raw_dir_stacked_spinner, 0, 2, alignment=Qt.AlignRight)
 
         # Second Row in Gridlayout
         raw_grid_layout.addWidget(
@@ -103,7 +105,8 @@ class CurationInputView(View):
             "Select directory...",
             FileInputMode.DIRECTORY,
         )
-        seg1_grid_layout.addWidget(self._seg1_directory_select, 0, 2)
+        self._seg1_dir_stacked_spinner = StackedSpinner(self._seg1_directory_select)
+        seg1_grid_layout.addWidget(self._seg1_dir_stacked_spinner, 0, 2, alignment=Qt.AlignRight)
 
         # Second Row in Gridlayout
         seg1_grid_layout.addWidget(
@@ -137,7 +140,8 @@ class CurationInputView(View):
             "Select directory...",
             FileInputMode.DIRECTORY,
         )
-        seg2_grid_layout.addWidget(self._seg2_directory_select, 0, 2)
+        self._seg2_dir_stacked_spinner = StackedSpinner(self._seg2_directory_select)
+        seg2_grid_layout.addWidget(self._seg2_dir_stacked_spinner, 0, 2, alignment=Qt.AlignRight)
 
         # Second Row in Gridlayout
         seg2_grid_layout.addWidget(
@@ -175,22 +179,23 @@ class CurationInputView(View):
             self.update_seg2_channels,
         )
 
-    def _set_combobox_to_loading(self, combobox: QComboBox) -> None:
+    def _set_to_loading(self, combobox: QComboBox, stacked_spinner: StackedSpinner) -> None:
+        stacked_spinner.start()
         combobox.clear()
         combobox.setPlaceholderText("loading channels...")
         combobox.setCurrentIndex(-1)
         combobox.setEnabled(False)
 
     def _on_raw_dir_select(self, dir: Path) -> None:
-        self._set_combobox_to_loading(self._raw_image_channel_combo)
+        self._set_to_loading(self._raw_image_channel_combo, self._raw_dir_stacked_spinner)
         self._curation_service.select_directory_raw(dir)
 
     def _on_seg1_dir_select(self, dir: Path) -> None:
-        self._set_combobox_to_loading(self._seg1_image_channel_combo)
+        self._set_to_loading(self._seg1_image_channel_combo, self._seg1_dir_stacked_spinner)
         self._curation_service.select_directory_seg1(dir)
 
     def _on_seg2_dir_select(self, dir: Path) -> None:
-        self._set_combobox_to_loading(self._seg2_image_channel_combo)
+        self._set_to_loading(self._seg2_image_channel_combo, self._seg2_dir_stacked_spinner)
         self._curation_service.select_directory_seg2(dir)
 
     def doWork(self) -> None:
@@ -207,6 +212,7 @@ class CurationInputView(View):
         Event handler when raw image directory is selected. Updates combobox to the correct number of channels in the
         images from the raw directory.
         """
+        self._raw_dir_stacked_spinner.stop()
         self._raw_image_channel_combo.clear()
         self._raw_image_channel_combo.addItems(
             [
@@ -226,6 +232,7 @@ class CurationInputView(View):
         Event handler when seg1 image directory is selected. Updates combobox to the correct number of channels in the
         images from the seg1 directory.
         """
+        self._seg1_dir_stacked_spinner.stop()
         self._seg1_image_channel_combo.clear()
         self._seg1_image_channel_combo.addItems(
             [
@@ -244,6 +251,7 @@ class CurationInputView(View):
         Event handler when seg2 image directory is selected. Updates combobox to the correct number of channels in the
         images from the seg2 directory.
         """
+        self._seg2_dir_stacked_spinner.stop()
         self._seg2_image_channel_combo.clear()
         self._seg2_image_channel_combo.addItems(
             [
