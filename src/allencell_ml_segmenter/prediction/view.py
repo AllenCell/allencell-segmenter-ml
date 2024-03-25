@@ -124,7 +124,10 @@ class PredictionView(View):
 
     def showResults(self):
         output_path: Path = self._prediction_model.get_output_seg_directory()
-        images_list: List[Path] = [x for x in output_path.glob("*.*") if not x.name.startswith(".")]
+        images_list: List[Path] = [
+            x for x in output_path.glob("*.*") if not x.name.startswith(".")
+        ]
         for output_img in images_list:
-            self._viewer.add_image(AICSImage(output_img).data, name=output_img.name)
-
+            self._viewer.add_image(
+                AICSImage(output_img).data, name=output_img.name
+            )
