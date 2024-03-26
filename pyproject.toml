@@ -41,6 +41,7 @@ dependencies = [
     "tifffile>=2023.4.12",
     "watchdog",
     "cyto-dl",
+    "pyqtspinner==2.0.0",
 ]
 
 [project.urls]
