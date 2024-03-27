@@ -65,6 +65,7 @@ def test_init(training_service: TrainingService) -> None:
         "training"
     ] == {training_service: training_service._train_model_handler}
 
+
 def test_hardware_override(
     training_service: TrainingService, training_model: TrainingModel
 ) -> None:
@@ -76,7 +77,8 @@ def test_hardware_override(
 
     # ASSERT
     assert (
-        training_service.get_overrides()["trainer.accelerator"]==training_model.get_hardware_type().value
+        training_service.get_overrides()["trainer.accelerator"]
+        == training_model.get_hardware_type().value
     )
 
 
@@ -91,7 +93,8 @@ def test_spatial_dims_override(
 
     # ASSERT
     assert (
-        training_service.get_overrides()["spatial_dims"]==training_model.get_spatial_dims()
+        training_service.get_overrides()["spatial_dims"]
+        == training_model.get_spatial_dims()
     )
 
 
@@ -106,7 +109,8 @@ def test_experiment_name_override(
 
     # ASSERT
     assert (
-        training_service.get_overrides()["experiment_name"]==experiments_model.get_experiment_name()
+        training_service.get_overrides()["experiment_name"]
+        == experiments_model.get_experiment_name()
     )
 
 
@@ -121,10 +125,12 @@ def test_max_run_override(
 
     # ASSERT
     assert (
-        training_service.get_overrides()["trainer.max_epochs"]==training_model.get_max_epoch()
+        training_service.get_overrides()["trainer.max_epochs"]
+        == training_model.get_max_epoch()
     )
     assert (
-        training_service.get_overrides()["trainer.max_time"]["minutes"] == training_model.get_max_time()
+        training_service.get_overrides()["trainer.max_time"]["minutes"]
+        == training_model.get_max_time()
     )
 
 
@@ -138,8 +144,8 @@ def test_images_directory_override(
     training_service._images_directory_override()
 
     # ASSERT
-    assert (
-        training_service.get_overrides()["data.path"] == str(training_model.get_images_directory())
+    assert training_service.get_overrides()["data.path"] == str(
+        training_model.get_images_directory()
     )
 
 
@@ -154,7 +160,8 @@ def test_patch_shape_override(
 
     # ASSERT
     assert (
-        training_service.get_overrides()["data._aux.patch_shape"]==training_model.get_patch_size().value
+        training_service.get_overrides()["data._aux.patch_shape"]
+        == training_model.get_patch_size().value
     )
 
 
@@ -168,6 +175,9 @@ def test_checkpoint_override(
     training_service._checkpoint_override()
 
     # Assert
-    assert (
-        training_service.get_overrides()["ckpt_path"] == str(experiments_model.get_model_checkpoints_path(experiments_model.get_experiment_name(), experiments_model.get_checkpoint()))
+    assert training_service.get_overrides()["ckpt_path"] == str(
+        experiments_model.get_model_checkpoints_path(
+            experiments_model.get_experiment_name(),
+            experiments_model.get_checkpoint(),
+        )
     )

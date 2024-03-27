@@ -4,18 +4,12 @@ from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.event import Event
 
 from cyto_dl.api.model import CytoDLModel
-
-# from lightning.pytorch.callbacks import Callback
-
-# disabled for tests (cant import in ci yet)
-# from cyto_dl.train import main as cyto_train
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.training.training_model import (
     Hardware,
-    PatchSize,
 )
 from allencell_ml_segmenter.training.training_model import TrainingModel
-from typing import List, Any, Dict, Union, Optional
+from typing import Dict, Union, Optional
 from napari.utils.notifications import show_warning
 
 
