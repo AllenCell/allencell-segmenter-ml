@@ -5,7 +5,9 @@ from allencell_ml_segmenter.core.image_data_extractor import ImageData
 
 class IImageDataExtractor(ABC):
     def __init__(self):
-        super().__init__()
+        raise RuntimeError(
+            "Cannot initialize new singleton, please use .global_instance() instead"
+        )
 
     @abstractmethod
     def extract_image_data(
