@@ -23,7 +23,7 @@ def test_get_all_files_in_dir() -> None:
     assert all_files[1].name == "t2.tiff"
 
 
-def test_get_all_files_in_dir_ignore_hidden_files() -> None:
+def test_get_all_files_in_dir_with_hidden_files() -> None:
     # arrange
     folder: Path = (
         Path(allencell_ml_segmenter.__file__).parent
@@ -33,7 +33,7 @@ def test_get_all_files_in_dir_ignore_hidden_files() -> None:
     )
 
     # act
-    all_files = FileUtils.get_all_files_in_dir_ignore_hidden(folder, ignore_hidden=True)
+    all_files = FileUtils.get_all_files_in_dir_ignore_hidden(folder)
 
     # assert
     assert len(all_files) == 1
