@@ -64,7 +64,9 @@ class TrainingModel(Publisher):
         self._max_time: int = None  # in minutes
         self._config_dir: Path = None
         self.result_images = []
-        self._use_max_time: bool = False # default is false. UI starts with max epoch defined rather than max time.
+        self._use_max_time: bool = (
+            False  # default is false. UI starts with max epoch defined rather than max time.
+        )
 
     def get_experiment_type(self) -> TrainingType:
         """
