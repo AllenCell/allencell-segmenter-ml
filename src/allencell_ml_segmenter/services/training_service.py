@@ -58,17 +58,6 @@ class TrainingService(Subscriber):
         self._training_model.set_experiment_type("segmentation")
         # TODO make set_images_directory and get_images_directory less brittle.
         #  https://github.com/AllenCell/allencell-ml-segmenter/issues/156
-        # this is just to test for now.
-        # self._training_model.set_images_directory(Path("/Users/brian.kim/work/cyto-dl/data/example_experiment_data/segmentation"))
-
-        # Following lines does nothing currently, need to implement
-        # self._training_model.set_channel_index(9)
-        # self._training_model.set_max_time(9992)
-        #############################################
-        # sys.argv.append(
-        #     # This is meant to be a string as is - not a string template.  In cyto-dl, it will be treated as a string template
-        #     "hydra.run.dir=${paths.log_dir}/${task_name}/runs/${experiment_name}"
-        # )
         if self._able_to_continue_training():
             model = CytoDLModel()
             model.download_example_data()
