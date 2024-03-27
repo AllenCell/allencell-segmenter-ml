@@ -37,7 +37,9 @@ class TrainingService(Subscriber):
             self,
             self.train_model_handler,
         )
-        self._overrides: Optional[Dict[str, Union[str, int, float, bool, Dict]]] = None
+        self._overrides: Optional[
+            Dict[str, Union[str, int, float, bool, Dict]]
+        ] = None
 
     def train_model_handler(self, _: Event) -> None:
         """
@@ -52,12 +54,10 @@ class TrainingService(Subscriber):
             # model.download_example_data()
             model.load_default_experiment(
                 self._training_model.get_experiment_type().value,
-                output_dir=f"{self._experiments_model.get_user_experiments_path()}/{self._experiments_model.get_experiment_name()}"
+                output_dir=f"{self._experiments_model.get_user_experiments_path()}/{self._experiments_model.get_experiment_name()}",
             )
             self._build_overrides()
-            model.override_config(
-                self._overrides
-            )
+            model.override_config(self._overrides)
             model.print_config()
             asyncio.run(model._train_async())
 
@@ -92,12 +92,16 @@ class TrainingService(Subscriber):
                 )
                 return False
 
-        if self._training_model.get_max_channels() > 0 and self._training_model.get_channel_index() is None:
+        if (
+            self._training_model.get_max_channels() > 0
+            and self._training_model.get_channel_index() is None
+        ):
             show_warning(
                 "Your raw images have multiple channels, please select a channel to train on."
             )
             return False
         return True
+
     def _hardware_override(self) -> None:
         """
         Get the hardware override for the CytoDLModel
@@ -111,7 +115,9 @@ class TrainingService(Subscriber):
         """
         Get the spatial_dims override for the CytoDlModel
         """
-        self._overrides["spatial_dims"] = self._training_model.get_spatial_dims()
+        self._overrides["spatial_dims"] = (
+            self._training_model.get_spatial_dims()
+        )
 
     def _experiment_name_override(self) -> None:
         """
@@ -126,25 +132,33 @@ class TrainingService(Subscriber):
         Get the max epoch or time override for the CytoDlModel
         """
         # define max run (in epochs)
-        self._overrides["trainer.max_epochs"] = self._training_model.get_max_epoch()
+        self._overrides["trainer.max_epochs"] = (
+            self._training_model.get_max_epoch()
+        )
         # max run in time is also defined
         if self._training_model.use_max_time():
             # define max runtime (in hours)
-            self._overrides["trainer.max_time"] = {"minutes": self._training_model.get_max_time()}
-
+            self._overrides["trainer.max_time"] = {
+                "minutes": self._training_model.get_max_time()
+            }
 
     def _images_directory_override(self) -> None:
         """
         Get the data path override for the CytoDlModel
         Cyto dl expects a train.csv, valid.csv, and a test.csv in this folder for training.
         """
-        self._overrides["data.path"] = str(self._training_model.get_images_directory())
+        self._overrides["data.path"] = str(
+            self._training_model.get_images_directory()
+        )
+
     #
     def _patch_shape_override(self) -> None:
         """
         get the patch shape override for the CytoDLModel
         """
-        self._overrides["data._aux.patch_shape"] = self._training_model.get_patch_size().value
+        self._overrides["data._aux.patch_shape"] = (
+            self._training_model.get_patch_size().value
+        )
 
     def _checkpoint_override(self) -> None:
         """
@@ -158,6 +172,7 @@ class TrainingService(Subscriber):
                     self._experiments_model.get_checkpoint(),
                 )
             )
+
     def _build_overrides(self):
         """
         Build a list of overrides for the CytoDLModel from plugin state.
