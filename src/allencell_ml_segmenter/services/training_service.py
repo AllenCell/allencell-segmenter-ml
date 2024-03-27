@@ -57,7 +57,7 @@ class TrainingService(Subscriber):
                 output_dir=f"{self._experiments_model.get_user_experiments_path()}/{self._experiments_model.get_experiment_name()}",
             )
             self._build_overrides()
-            model.override_config(self._overrides)
+            model.override_config(self.get_overrides())
             model.print_config()
             asyncio.run(model._train_async())
 
