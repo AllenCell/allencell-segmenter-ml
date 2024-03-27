@@ -19,18 +19,6 @@ from typing import List, Any, Dict, Union, Optional
 from napari.utils.notifications import show_warning
 
 
-# static method
-def _list_to_string(list_to_convert: List[Any]) -> str:
-    """
-    Converts a list of ints to a string
-
-    list (List[int]): list of ints to convert
-    """
-    # fastest python implementation of list to string
-    ints_to_strings: str = ", ".join([str(i) for i in list_to_convert])
-    return f"[{ints_to_strings}]"
-
-
 class TrainingService(Subscriber):
     """
     Interface for training a model. Uses cyto-dl to train model according to spec
@@ -146,9 +134,7 @@ class TrainingService(Subscriber):
         """
         get the patch shape override for the CytoDLModel
         """
-        self._overrides["data._aux.patch_shape"] = _list_to_string(
-            self._training_model.get_patch_size().value
-        )
+        self._overrides["data._aux.patch_shape"] = self._training_model.get_patch_size().value
 
     def _checkpoint_override(self) -> None:
         """
@@ -168,7 +154,7 @@ class TrainingService(Subscriber):
         """
         # TODO: Add channel index selection from UI
         # TODO: Add max time from UI
-        self.overrides = dict()
+        self._overrides = dict()
 
         # do overrides based on user selections
         self._hardware_override()

@@ -275,5 +275,7 @@ class TrainingView(View):
         """
         if checked == Qt.CheckState.Checked:
             self._max_time_in_minutes_input.setEnabled(True)
+            self._training_model.set_use_max_time(True)
         else:
             self._max_time_in_minutes_input.setEnabled(False)
+            self._training_model.set_use_max_time(False)
