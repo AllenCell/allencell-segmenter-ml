@@ -53,9 +53,5 @@ class ResultDisplayService(Subscriber):
                         f"Could not load image {str(file)} into napari viewer. Image cannot be opened by AICSImage"
                     )
 
-    def grab_files_from_folder(self, path: Path):
-        allfiles = path.glob("**/*")
-        return [x for x in allfiles if x.is_file()]
-
     def add_image_to_viewer(self, image: AICSImage, display_name: str):
         self._viewer.add_image(image, name=display_name)
