@@ -173,7 +173,6 @@ class PredictionService(Subscriber):
         else:
             overrides["trainer.accelerator"] = "cpu"
 
-
         return overrides
 
     def write_csv_for_inputs(self, list_images: List[Path]) -> None:
