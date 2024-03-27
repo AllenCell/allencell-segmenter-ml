@@ -1,6 +1,6 @@
 from abc import abstractmethod
 from qtpy.QtWidgets import QWidget, QProgressDialog
-from qtpy.QtCore import Qt, QThread, pyqtSignal
+from qtpy.QtCore import Qt, QThread, Signal
 
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.progress_tracker import ProgressTracker
@@ -24,7 +24,7 @@ class LongTaskThread(QThread):
 class ProgressThread(QThread):
     # pyqtSignal must be class attribute
     # https://www.riverbankcomputing.com/static/Docs/PyQt5/signals_slots.html#defining-new-signals-with-pyqtsignal
-    task_progress: pyqtSignal = pyqtSignal(int)
+    task_progress: Signal = Signal(int)
 
     def __init__(self, progress_tracker: ProgressTracker, parent=None):
         super().__init__(parent)
