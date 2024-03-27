@@ -4,7 +4,9 @@ from qtpy.QtCore import QRunnable
 
 class IQRunnableManager(ABC):
     def __init__(self):
-        super().__init__()
+        raise RuntimeError(
+            "Cannot initialize new singleton, please use .global_instance() instead"
+        )
 
     @abstractmethod
     def run(self, runnable: QRunnable) -> None:
