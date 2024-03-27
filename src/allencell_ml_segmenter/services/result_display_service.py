@@ -40,7 +40,9 @@ class ResultDisplayService(Subscriber):
         if output_dir is None:
             raise ValueError("No output directory to grab images from.")
         else:
-            files = FileUtils.get_all_files_in_dir(output_dir, ignore_hidden=True)
+            files = FileUtils.get_all_files_in_dir(
+                output_dir, ignore_hidden=True
+            )
             for idx, file in enumerate(files):
                 try:
                     image = AICSImage(str(file), reader=TiffReader)
