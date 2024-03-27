@@ -1,5 +1,5 @@
 from allencell_ml_segmenter.core.q_runnable_manager import IQRunnableManager
-from PyQt5.QtCore import QRunnable, QThreadPool
+from qtpy.QtCore import QRunnable, QThreadPool
 
 
 class GlobalQRunnableManager(IQRunnableManager):

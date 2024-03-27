@@ -1,7 +1,7 @@
 from typing import List, Dict, Optional, Callable
 from pathlib import Path
 import time
-from PyQt5.QtCore import QRunnable
+from qtpy.QtCore import QRunnable
 from allencell_ml_segmenter.core.image_data_extractor import (
     ImageData,
     IImageDataExtractor,

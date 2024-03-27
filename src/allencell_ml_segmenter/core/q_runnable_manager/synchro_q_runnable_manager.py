@@ -1,5 +1,5 @@
 from allencell_ml_segmenter.core.q_runnable_manager import IQRunnableManager
-from PyQt5.QtCore import QRunnable
+from qtpy.QtCore import QRunnable
 
 
 class SynchroQRunnableManager(IQRunnableManager):
