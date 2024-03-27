@@ -1,6 +1,11 @@
-import pytest
-from pytestqt.qtbot import QtBot
+from pathlib import Path
 
+import pytest
+from aicsimageio import AICSImage
+from pytestqt.qtbot import QtBot
+from numpy import array_equal
+
+import allencell_ml_segmenter
 from allencell_ml_segmenter._tests.fakes.fake_viewer import FakeViewer
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.main.main_model import MainModel
@@ -36,3 +41,41 @@ def test_prediction_view(
 
     # ASSERT
     assert main_model.get_current_view() == prediction_view
+
+
+def test_show_results(main_model: MainModel) -> None:
+    """
+    Testing the showresults that runs after a prediction run
+    """
+    # ARRANGE
+    prediction_model: PredictionModel = PredictionModel()
+    prediction_model.set_output_directory(
+        Path(allencell_ml_segmenter.__file__).parent
+        / "_tests"
+        / "test_files"
+        / "output_test_folder"
+    )
+    fake_viewer: FakeViewer = FakeViewer()
+
+    prediction_view: PredictionView = PredictionView(
+        main_model, prediction_model, fake_viewer
+    )
+
+    # ACT
+    prediction_view.showResults()
+
+    # ASSERT
+    assert len(fake_viewer.images_added) == 2  # correct number
+    image: Path = (
+        Path(allencell_ml_segmenter.__file__).parent
+        / "_tests"
+        / "test_files"
+        / "output_test_folder"
+        / "seg"
+        / "output_1.tiff"
+    )
+    assert array_equal(
+        fake_viewer.images_added[image.name],
+        AICSImage(image).data,
+        equal_nan=True,
+    )
