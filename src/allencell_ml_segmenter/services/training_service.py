@@ -77,14 +77,10 @@ class TrainingService(Subscriber):
             return False
 
         if self._training_model.get_max_epoch() is None:
-            if (
-                self._training_model.use_max_time()
-                and self._training_model.get_max_time() is None
-            ):
-                show_warning(
-                    "Please define max epoch(s) to run, or max runtime for trainer."
-                )
-                return False
+            show_warning(
+                "Please define max epoch(s) to run for"
+            )
+            return False
 
         if (
             self._training_model.get_max_channels() > 0
