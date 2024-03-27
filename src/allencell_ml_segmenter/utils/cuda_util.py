@@ -1,4 +1,6 @@
 import torch
+
+
 class CUDAUtils:
 
     @staticmethod
