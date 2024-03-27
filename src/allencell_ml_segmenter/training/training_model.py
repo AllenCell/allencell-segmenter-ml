@@ -61,9 +61,10 @@ class TrainingModel(Publisher):
         self._spatial_dims: int = None
         self._max_epoch: int = None
         self._current_epoch: int = None
-        self._max_time: int = None  # in seconds
+        self._max_time: int = None  # in minutes
         self._config_dir: Path = None
         self.result_images = []
+        self._use_max_time: bool = False # default is false. UI starts with max epoch defined rather than max time.
 
     def get_experiment_type(self) -> TrainingType:
         """
@@ -238,3 +239,15 @@ class TrainingModel(Publisher):
         images (list): list of images to display
         """
         self.result_images = images
+
+    def use_max_time(self) -> bool:
+        """
+        Will training run will be based off of max time
+        """
+        return self._use_max_time
+
+    def set_use_max_time(self, use_max: bool):
+        """
+        Set if training run will be based off of max time
+        """
+        self._use_max_time = use_max
