@@ -110,10 +110,10 @@ def test_set_max_time(
     with qtbot.waitSignal(training_view._max_time_checkbox.toggled):
         training_view._max_time_checkbox.click()  # enables the QLineEdit
 
-    qtbot.keyClicks(training_view._max_time_in_minutes_input, "1")
+    qtbot.keyClicks(training_view._max_time_in_minutes_input, "30")
 
     # ASSERT
-    assert training_model.get_max_time() == 3600
+    assert training_model.get_max_time() == 30
 
 
 def test_checkbox_slot(
