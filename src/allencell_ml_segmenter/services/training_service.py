@@ -35,13 +35,13 @@ class TrainingService(Subscriber):
         self._training_model.subscribe(
             Event.PROCESS_TRAINING,
             self,
-            self.train_model_handler,
+            self._train_model_handler,
         )
         self._overrides: Optional[
             Dict[str, Union[str, int, float, bool, Dict]]
-        ] = None
+        ] = dict()
 
-    def train_model_handler(self, _: Event) -> None:
+    def _train_model_handler(self, _: Event) -> None:
         """
         Trains the model according to the spec
         """
@@ -173,14 +173,15 @@ class TrainingService(Subscriber):
                 )
             )
 
+    def get_overrides(self) -> Dict[str, Union[str, int, float, bool, Dict]]:
+        return self._overrides
+
     def _build_overrides(self):
         """
         Build a list of overrides for the CytoDLModel from plugin state.
         """
         # TODO: Add channel index selection from UI
         # TODO: Add max time from UI
-        self._overrides = dict()
-
         # do overrides based on user selections
         self._hardware_override()
         self._spatial_dims_override()
