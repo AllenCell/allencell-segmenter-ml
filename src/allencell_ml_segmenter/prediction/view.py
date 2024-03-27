@@ -126,7 +126,8 @@ class PredictionView(View):
     def showResults(self):
         output_path: Path = self._prediction_model.get_output_seg_directory()
         images_list: List[Path] = FileUtils.get_all_files_in_dir_ignore_hidden(
-            output_path)
+            output_path
+        )
         for output_img in images_list:
             self._viewer.add_image(
                 AICSImage(output_img).data, name=output_img.name
