@@ -1,6 +1,6 @@
 from abc import abstractmethod
 from qtpy.QtWidgets import QWidget, QProgressDialog
-from PyQt5.QtCore import Qt, QThread, pyqtSignal
+from qtpy.QtCore import Qt, QThread, pyqtSignal
 
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.progress_tracker import ProgressTracker
