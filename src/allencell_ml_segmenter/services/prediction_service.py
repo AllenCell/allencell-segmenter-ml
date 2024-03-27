@@ -190,8 +190,7 @@ class PredictionService(Subscriber):
         input_path: Path = self._prediction_model.get_input_image_path()
         if input_path.is_dir():
             all_files = FileUtils.get_all_files_in_dir_ignore_hidden(
-                input_path, ignore_hidden=True
-            )
+                input_path)
             # if input path selected is a directory, we need to manually write a CSV for cyto-dl
             self.write_csv_for_inputs(all_files)
             return len(all_files)
