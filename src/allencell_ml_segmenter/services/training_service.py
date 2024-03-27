@@ -127,13 +127,13 @@ class TrainingService(Subscriber):
         """
         Get the max epoch or time override for the CytoDlModel
         """
-        # max run in time or epochs
+        # define max run (in epochs)
+        self._overrides["trainer.max_epochs"] = self._training_model.get_max_epoch()
+        # max run in time is also defined
         if self._training_model.use_max_time():
             # define max runtime (in hours)
-            self._overrides["trainer.max_time"] = {"hours": self._training_model.get_max_time()}
-        else:
-            # define max run (in epochs)
-            self._overrides["trainer.max_epochs"] = self._training_model.get_max_epoch()
+            self._overrides["trainer.max_time"] = {"minutes": self._training_model.get_max_time()}
+
 
     def _images_directory_override(self) -> None:
         """
