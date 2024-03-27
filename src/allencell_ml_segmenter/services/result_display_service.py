@@ -40,7 +40,7 @@ class ResultDisplayService(Subscriber):
         if output_dir is None:
             raise ValueError("No output directory to grab images from.")
         else:
-            files = FileUtils.get_all_files_in_dir(
+            files = FileUtils.get_all_files_in_dir_ignore_hidden(
                 output_dir, ignore_hidden=True
             )
             for idx, file in enumerate(files):
