@@ -75,19 +75,29 @@ class TrainingService(Subscriber):
             return False
 
         if self._training_model.get_images_directory() is None:
-            show_warning(
-                "User has not selected input images for training"
-            )
+            show_warning("User has not selected input images for training")
+            return False
+
+        if self._training_model.get_patch_size() is None:
+            show_warning("User has not selected a patch size for training")
             return False
 
         if self._training_model.get_max_epoch() is None:
-            if self._training_model.use_max_time() and self._training_model.get_max_time() is None:
+            if (
+                self._training_model.use_max_time()
+                and self._training_model.get_max_time() is None
+            ):
                 show_warning(
                     "Please define max epoch(s) to run, or max runtime for trainer."
                 )
                 return False
-        return True
 
+        if self._training_model.get_max_channels() > 0 and self._training_model.get_channel_index() is None:
+            show_warning(
+                "Your raw images have multiple channels, please select a channel to train on."
+            )
+            return False
+        return True
     def _hardware_override(self) -> None:
         """
         Get the hardware override for the CytoDLModel
