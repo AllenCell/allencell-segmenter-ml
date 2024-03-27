@@ -4,6 +4,7 @@ from allencell_ml_segmenter.core.publisher import Publisher
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.prediction.model import PredictionModel
 from allencell_ml_segmenter.training.training_model import TrainingModel
+from allencell_ml_segmenter.utils.file_utils import FileUtils
 from pathlib import Path
 from aicsimageio import AICSImage
 from aicsimageio.readers import TiffReader
@@ -39,8 +40,7 @@ class ResultDisplayService(Subscriber):
         if output_dir is None:
             raise ValueError("No output directory to grab images from.")
         else:
-            # unsanitized list of all files in output folder
-            files = self.grab_files_from_folder(output_dir)
+            files = FileUtils.get_all_files_in_dir(output_dir, ignore_hidden=True)
             for idx, file in enumerate(files):
                 try:
                     image = AICSImage(str(file), reader=TiffReader)
