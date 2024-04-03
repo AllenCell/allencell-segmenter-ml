@@ -102,7 +102,9 @@ class ImageSelectionWidget(QWidget):
         )
 
         self._model.subscribe(
-            Event.ACTION_TRAINING_MAX_NUMBER_CHANNELS_SET, self, self._update_channels
+            Event.ACTION_TRAINING_MAX_NUMBER_CHANNELS_SET,
+            self,
+            self._update_channels,
         )
 
     def set_inputs_csv(self, event: Event):
@@ -119,10 +121,10 @@ class ImageSelectionWidget(QWidget):
             self._images_directory_input_button._text_display.setText("")
             self._model.set_images_directory(None)
 
-
-
     def _on_input_images_select(self, dir: Path) -> None:
-        self._set_to_loading(self._channel_combo_box, self._training_data_stacked_spinner)
+        self._set_to_loading(
+            self._channel_combo_box, self._training_data_stacked_spinner
+        )
         self._model.set_images_directory(dir)
 
     def _set_to_loading(
@@ -143,5 +145,3 @@ class ImageSelectionWidget(QWidget):
         self._channel_combo_box.setCurrentIndex(0)
         self._channel_combo_box.setEnabled(True)
         self._model.set_channel_index(0)
-
-
