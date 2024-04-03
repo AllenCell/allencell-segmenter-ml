@@ -1,7 +1,10 @@
 import asyncio
 from pathlib import Path
 
-from allencell_ml_segmenter.core.channel_extraction import ChannelExtractionThread, get_img_path_from_csv
+from allencell_ml_segmenter.core.channel_extraction import (
+    ChannelExtractionThread,
+    get_img_path_from_csv,
+)
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.event import Event
 
@@ -50,12 +53,14 @@ class TrainingService(Subscriber):
             self,
             self.train_model_handler,
         )
-        self._channel_extraction_thread: Optional[ChannelExtractionThread] = None
+        self._channel_extraction_thread: Optional[ChannelExtractionThread] = (
+            None
+        )
 
         self._training_model.subscribe(
             Event.ACTION_TRAINING_DATASET_SELECTED,
             self,
-            self._training_image_directory_selected
+            self._training_image_directory_selected,
         )
 
     def train_model_handler(self, _: Event) -> None:
@@ -181,18 +186,28 @@ class TrainingService(Subscriber):
 
         return overrides
 
-    def _start_channel_extraction(self, to_extract: Path, channel_callback: Callable):
-        self._channel_extraction_thread = ChannelExtractionThread(get_img_path_from_csv(to_extract / "train.csv"))
-        self._channel_extraction_thread.channels_ready.connect(channel_callback)
+    def _start_channel_extraction(
+        self, to_extract: Path, channel_callback: Callable
+    ):
+        self._channel_extraction_thread = ChannelExtractionThread(
+            get_img_path_from_csv(to_extract / "train.csv")
+        )
+        self._channel_extraction_thread.channels_ready.connect(
+            channel_callback
+        )
         self._channel_extraction_thread.start()
 
     def _stop_channel_extraction(self) -> None:
-        if self._channel_extraction_thread and self._channel_extraction_thread.isRunning():
+        if (
+            self._channel_extraction_thread
+            and self._channel_extraction_thread.isRunning()
+        ):
             self._channel_extraction_thread.requestInterruption()
             self._channel_extraction_thread.wait()
 
     def _training_image_directory_selected(self, _: Event) -> None:
-        self._stop_channel_extraction() # stop if already running
-        self._start_channel_extraction(self._training_model.get_images_directory(), self._training_model.set_max_channel)
-
-
+        self._stop_channel_extraction()  # stop if already running
+        self._start_channel_extraction(
+            self._training_model.get_images_directory(),
+            self._training_model.set_max_channel,
+        )
