@@ -55,7 +55,7 @@ class TrainingService(Subscriber):
         self._training_model.subscribe(
             Event.ACTION_TRAINING_DATASET_SELECTED,
             self,
-            self.training_image_directory_selected
+            self._training_image_directory_selected
         )
 
     def train_model_handler(self, _: Event) -> None:
@@ -191,7 +191,7 @@ class TrainingService(Subscriber):
             self._channel_extraction_thread.requestInterruption()
             self._channel_extraction_thread.wait()
 
-    def training_image_directory_selected(self, _: Event) -> None:
+    def _training_image_directory_selected(self, _: Event) -> None:
         self._stop_channel_extraction() # stop if already running
         self._start_channel_extraction(self._training_model.get_images_directory(), self._training_model.set_max_channel)
 
