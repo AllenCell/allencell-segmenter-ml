@@ -64,6 +64,7 @@ class TrainingModel(Publisher):
         self._max_time: int = None  # in seconds
         self._config_dir: Path = None
         self.result_images = []
+        self._max_channel = None
 
     def get_experiment_type(self) -> TrainingType:
         """
@@ -153,6 +154,7 @@ class TrainingModel(Publisher):
         images_path (Path): path to images directory
         """
         self._images_directory = images_path
+        self.dispatch(Event.ACTION_TRAINING_DATASET_SELECTED)
 
     def get_channel_index(self) -> Union[int, None]:
         """
@@ -238,3 +240,16 @@ class TrainingModel(Publisher):
         images (list): list of images to display
         """
         self.result_images = images
+
+    def set_max_channel(self, max: int) -> None:
+        """
+        Set the max number of channels in the images in the training dataset
+        """
+        self._max_channel = max
+        self.dispatch(Event.ACTION_TRAINING_MAX_NUMBER_CHANNELS_SET)
+
+    def get_max_channel(self) -> int:
+        """
+        Get the max number of channels in the images in the training dataset
+        """
+        return self._max_channel
