@@ -13,6 +13,7 @@ class TrainingType(Enum):
     Different cyto-dl experiment types
     """
 
+    SEGMENTATION_PLUGIN = "segmentation_plugin"
     SEGMENTATION = "segmentation"
     GAN = "gan"
     OMNIPOSE = "omnipose"
