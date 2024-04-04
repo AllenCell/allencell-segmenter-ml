@@ -10,7 +10,10 @@ from allencell_ml_segmenter.prediction.model import (
     PredictionModel,
     PredictionInputMode,
 )
+
+from allencell_ml_segmenter.utils.cuda_util import CUDAUtils
 from allencell_ml_segmenter.utils.file_utils import FileUtils
+
 from pathlib import Path
 from typing import Union, Dict, List, Optional
 
@@ -138,6 +141,10 @@ class PredictionService(Subscriber):
         overrides["train"] = False
         overrides["mode"] = "predict"
         overrides["task_name"] = "predict_task_from_app"
+        # Need these overrides to load in csv's
+        overrides["data.columns"] = ["raw", "split"]
+        overrides["data.split_column"] = "split"
+
         # passing the experiment_name and checkpoint as params to this function ensures we have a model before
         # attempting to build the overrides dict for predictions
         overrides["ckpt_path"] = str(
@@ -161,9 +168,13 @@ class PredictionService(Subscriber):
             overrides["data.transforms.predict.transforms[0].reader[0].C"] = (
                 channel
             )
-        # Need these overrides to load in csv's
-        overrides["data.columns"] = ["raw", "split"]
-        overrides["data.split_column"] = "split"
+
+        # selecting hardware- GPU if available (and correct drivers installed),
+        # CPU otherwise.
+        if CUDAUtils.cuda_available():
+            overrides["trainer.accelerator"] = "gpu"
+        else:
+            overrides["trainer.accelerator"] = "cpu"
 
         return overrides
 
