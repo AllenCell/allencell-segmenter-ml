@@ -3,12 +3,12 @@ from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.channel_extraction import (
     ChannelExtractionThread,
-    get_img_path_from_folder,
 )
 from allencell_ml_segmenter.curation.curation_model import CurationModel
 from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
 from allencell_ml_segmenter.main.i_viewer import IViewer
 from allencell_ml_segmenter.main.viewer import Viewer
+from allencell_ml_segmenter.utils.file_utils import FileUtils
 
 from pathlib import Path
 from typing import List, Union, Optional, Callable
@@ -203,7 +203,7 @@ class CurationService(Subscriber):
     def _start_channel_extraction_thread(
         self, folder: Path, channel_callback: Callable
     ) -> ChannelExtractionThread:
-        img_path: Path = get_img_path_from_folder(folder)
+        img_path: Path = FileUtils.get_img_path_from_folder(folder)
         new_thread = ChannelExtractionThread(img_path)
         new_thread.channels_ready.connect(channel_callback)
         new_thread.start()
