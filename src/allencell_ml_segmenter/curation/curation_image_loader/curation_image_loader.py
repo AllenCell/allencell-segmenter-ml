@@ -53,8 +53,13 @@ class CurationImageLoader(ICurationImageLoader):
         :param seg1_images: paths to segmentations
         :param seg2_images: (optional) paths to second segmentations
         """
-        super().__init__(raw_images, seg1_images, seg2_images, qr_manager, img_data_extractor)
-        
+        super().__init__(
+            raw_images,
+            seg1_images,
+            seg2_images,
+            qr_manager,
+            img_data_extractor,
+        )
 
         # private invariant: _next_img_data will only have < _num_data_dict_keys keys if there is
         # no next image or a thread is currently updating _next_img_data. Same goes for _prev_img_data
