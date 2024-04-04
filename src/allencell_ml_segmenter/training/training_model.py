@@ -69,11 +69,11 @@ class TrainingModel(Publisher):
             False  # default is false. UI starts with max epoch defined rather than max time.
         )
 
-    def get_experiment_type(self) -> TrainingType:
+    def get_experiment_type(self) -> str:
         """
         Gets experiment type
         """
-        return self._experiment_type
+        return self._experiment_type.value
 
     def set_experiment_type(self, training_type: str) -> None:
         """
