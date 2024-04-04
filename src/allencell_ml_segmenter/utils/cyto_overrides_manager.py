@@ -2,27 +2,35 @@ from typing import Dict, Union, Optional
 
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.prediction.model import PredictionModel
-from allencell_ml_segmenter.training.training_model import TrainingModel, Hardware
+from allencell_ml_segmenter.training.training_model import (
+    TrainingModel,
+    Hardware,
+)
 
 
-class CytoDLOverridesManager():
+class CytoDLOverridesManager:
     """
     Class to generate overrides for cyto-dl based on user selections in app state
     """
+
     # TODO use a similar pattern for Predictions- willdo in another ticket
     # https://github.com/AllenCell/allencell-ml-segmenter/issues/234
     def __init__(
-            self,
-            experiments_model: ExperimentsModel,
-            training_model: TrainingModel = None,
+        self,
+        experiments_model: ExperimentsModel,
+        training_model: TrainingModel = None,
     ) -> None:
         self._experiments_model: ExperimentsModel = experiments_model
         self._training_model: Optional[TrainingModel] = training_model
 
-    def get_training_overrides(self) -> Dict[str, Union[str, int, float, bool, Dict]]:
+    def get_training_overrides(
+        self,
+    ) -> Dict[str, Union[str, int, float, bool, Dict]]:
         # check to see if CytoOverridesManager was constructed with a training model
         if self._training_model is None:
-            raise ValueError("CytoOverridesManager must be constructed with a training model in order to get training overrides.")
+            raise ValueError(
+                "CytoOverridesManager must be constructed with a training model in order to get training overrides."
+            )
 
         overrides_dict: Dict[str, Union[str, int, float, bool, Dict]] = dict()
 
