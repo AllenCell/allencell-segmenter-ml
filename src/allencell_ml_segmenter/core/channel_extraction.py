@@ -12,6 +12,7 @@ def extract_channels_from_image(img_path: Path) -> int:
     """
     return AICSImage(str(img_path)).dims.C
 
+
 def get_img_path_from_csv(csv_path: Path) -> Path:
     """
     Returns path of an image in the 'raw' column of the csv.
