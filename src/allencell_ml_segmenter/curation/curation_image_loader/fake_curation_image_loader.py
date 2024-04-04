@@ -17,9 +17,15 @@ class FakeCurationImageLoader(ICurationImageLoader):
         self,
         raw_images: List[Path],
         seg1_images: List[Path],
-        seg2_images: Optional[List[Path]] = None
+        seg2_images: Optional[List[Path]] = None,
     ):
-        super().__init__(raw_images, seg1_images, seg2_images, SynchroQRunnableManager.global_instance(), FakeImageDataExtractor.global_instance())
+        super().__init__(
+            raw_images,
+            seg1_images,
+            seg2_images,
+            SynchroQRunnableManager.global_instance(),
+            FakeImageDataExtractor.global_instance(),
+        )
 
     def get_raw_image_data(self) -> ImageData:
         """
