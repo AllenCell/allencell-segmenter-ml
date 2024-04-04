@@ -272,30 +272,30 @@ class CurationMainView(View):
         Initialize progress bar based on number of images to curate, and set progress bar label
         """
         # set progress bar
-        self.progress_bar.setMaximum(
-            len(self._curation_model.get_raw_images())
+        num_images: int = (
+            self._curation_model.get_image_loader().get_num_images()
         )
+        self.progress_bar.setMaximum(num_images)
         # start at 1 to indicate current image shown.
         self.progress_bar.setValue(1)
         # set progress bar hint
         self.progress_bar_image_count.setText(
-            f"{self._curation_model.get_curation_index() + 1}/{len(self._curation_model.get_raw_images())}"
+            f"{self._curation_model.get_image_loader().get_current_index() + 1}/{num_images}"
         )
 
-    def _increment_progress_bar(self) -> None:
+    def _update_progress_bar(self) -> None:
         """
-        increment the progress bar by 1
+        update progress bar based on state of image loader
         """
-        if (self._curation_model.get_curation_index() + 1) <= len(
-            self._curation_model.get_raw_images()
-        ):
-            # update progress bar
-            # TODO #161: refactor, store state of progress bar in model.
-            self.progress_bar.setValue(self.progress_bar.value() + 1)
-            # set progress bar hint
-            self.progress_bar_image_count.setText(
-                f"{self._curation_model.get_curation_index() + 1}/{len(self._curation_model.get_raw_images())}"
-            )
+        curr_val: int = (
+            self._curation_model.get_image_loader().get_current_index() + 1
+        )
+        num_images: int = (
+            self._curation_model.get_image_loader().get_num_images()
+        )
+        self.progress_bar.setValue(curr_val)
+        # set progress bar hint
+        self.progress_bar_image_count.setText(f"{curr_val}/{num_images}")
 
     def _next_image(self) -> None:
         """
@@ -307,7 +307,7 @@ class CurationMainView(View):
 
         self._curation_service.next_image(use_this_image)
         self.curation_setup()
-        self._increment_progress_bar()
+        self._update_progress_bar()
         self.reset_excluding_mask_status_label()
         self.reset_merging_mask_status_label()
 
