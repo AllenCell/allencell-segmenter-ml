@@ -38,14 +38,14 @@ class TrainingService(Subscriber):
         """
         Trains the model according to the spec
         """
-        # Only supporting segmentation config for now
+        # Only supporting segmentation config for now, in the future this will be an option in the UI
         self._training_model.set_experiment_type("segmentation_plugin")
         # TODO make set_images_directory and get_images_directory less brittle.
         #  https://github.com/AllenCell/allencell-ml-segmenter/issues/156
         if self._able_to_continue_training():
             model = CytoDLModel()
             model.load_default_experiment(
-                self._training_model.get_experiment_type().value,
+                self._training_model.get_experiment_type(),
                 output_dir=f"{self._experiments_model.get_user_experiments_path()}/{self._experiments_model.get_experiment_name()}",
             )
             cyto_overrides_manager: CytoDLOverridesManager = CytoDLOverridesManager(self._experiments_model, self._training_model)
