@@ -28,7 +28,8 @@ class ICurationImageLoader(ABC):
         )
 
         if len(self._raw_images) != len(self._seg1_images) or (
-            self._seg2_images and len(self._seg1_images) != len(self._seg2_images)
+            self._seg2_images
+            and len(self._seg1_images) != len(self._seg2_images)
         ):
             raise ValueError("provided image lists must be of same length")
         elif len(self._raw_images) < 1:
