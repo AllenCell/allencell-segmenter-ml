@@ -15,6 +15,7 @@ from allencell_ml_segmenter.training.training_model import (
     PatchSize,
 )
 from allencell_ml_segmenter.training.training_model import TrainingModel
+from allencell_ml_segmenter.utils.cuda_util import CUDAUtils
 from typing import List, Any
 
 
@@ -82,8 +83,10 @@ class TrainingService(Subscriber):
         """
         Get the hardware override for the CytoDLModel
         """
-        hardware_type: Hardware = self._training_model.get_hardware_type()
-        return f"trainer={hardware_type.value}"
+        if CUDAUtils.cuda_available():
+            return "trainer=gpu"
+        else:
+            return "trainer=cpu"
 
     def _get_spatial_dims_override(self) -> str:
         """
