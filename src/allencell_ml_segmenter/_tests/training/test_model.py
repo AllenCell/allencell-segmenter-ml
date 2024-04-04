@@ -33,7 +33,7 @@ def test_get_experiment_type(training_model: TrainingModel) -> None:
     training_model._experiment_type = experiment
 
     # ACT/ASSERT
-    assert training_model.get_experiment_type() == experiment
+    assert training_model.get_experiment_type() == experiment.value
 
 
 def test_set_experiment_type(training_model: TrainingModel) -> None:

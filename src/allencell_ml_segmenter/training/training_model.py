@@ -1,7 +1,7 @@
 from allencell_ml_segmenter.core.publisher import Publisher
 from allencell_ml_segmenter.core.event import Event
 from enum import Enum
-from typing import Union
+from typing import Union, Optional
 from pathlib import Path
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 
@@ -69,10 +69,12 @@ class TrainingModel(Publisher):
             False  # default is false. UI starts with max epoch defined rather than max time.
         )
 
-    def get_experiment_type(self) -> str:
+    def get_experiment_type(self) -> Optional[str]:
         """
         Gets experiment type
         """
+        if self._experiment_type is None:
+            return None
         return self._experiment_type.value
 
     def set_experiment_type(self, training_type: str) -> None:
