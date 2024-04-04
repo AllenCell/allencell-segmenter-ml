@@ -9,12 +9,10 @@ from allencell_ml_segmenter.training.training_model import (
     Hardware,
 )
 from allencell_ml_segmenter.training.training_model import TrainingModel
-from typing import Dict, Union, Optional
+from typing import Dict, Union, Optional, List, Any
 from napari.utils.notifications import show_warning
-
-from allencell_ml_segmenter.utils.cyto_overrides_manager import (
-    CytoDLOverridesManager,
-)
+from allencell_ml_segmenter.utils.cuda_util import CUDAUtils
+from allencell_ml_segmenter.utils.cyto_overrides_manager import CytoDLOverridesManager
 
 
 class TrainingService(Subscriber):

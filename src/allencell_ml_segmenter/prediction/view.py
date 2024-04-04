@@ -19,6 +19,7 @@ from allencell_ml_segmenter.prediction.model_input_widget import (
 from allencell_ml_segmenter.prediction.prediction_folder_progress_tracker import (
     PredictionFolderProgressTracker,
 )
+from allencell_ml_segmenter.utils.file_utils import FileUtils
 from qtpy.QtWidgets import (
     QVBoxLayout,
     QSizePolicy,
@@ -124,9 +125,9 @@ class PredictionView(View):
 
     def showResults(self):
         output_path: Path = self._prediction_model.get_output_seg_directory()
-        images_list: List[Path] = [
-            x for x in output_path.glob("*.*") if not x.name.startswith(".")
-        ]
+        images_list: List[Path] = FileUtils.get_all_files_in_dir_ignore_hidden(
+            output_path
+        )
         for output_img in images_list:
             self._viewer.add_image(
                 AICSImage(output_img).data, name=output_img.name

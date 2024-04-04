@@ -7,10 +7,6 @@ from allencell_ml_segmenter._tests.fakes.fake_user_settings import (
 )
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
-
-from allencell_ml_segmenter.services.training_service import (
-    TrainingService,
-)
 from allencell_ml_segmenter.training.training_model import (
     TrainingModel,
 )
