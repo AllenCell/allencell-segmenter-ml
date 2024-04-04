@@ -21,20 +21,21 @@ class ICurationImageLoader(ABC):
         qr_manager: IQRunnableManager,
         img_data_extractor: IImageDataExtractor,
     ):
-        if len(raw_images) != len(seg1_images) or (
-            seg2_images and len(seg1_images) != len(seg2_images)
-        ):
-            raise ValueError("provided image lists must be of same length")
-        elif len(raw_images) < 1:
-            raise ValueError("cannot load images from empty image list")
-
-        self._num_images = len(raw_images)
-
         self._raw_images: List[Path] = list(raw_images)
         self._seg1_images: List[Path] = list(seg1_images)
         self._seg2_images: Optional[List[Path]] = (
             list(seg2_images) if seg2_images else None
         )
+
+        if len(self._raw_images) != len(self._seg1_images) or (
+            self._seg2_images and len(self._seg1_images) != len(self._seg2_images)
+        ):
+            raise ValueError("provided image lists must be of same length")
+        elif len(self._raw_images) < 1:
+            raise ValueError("cannot load images from empty image list")
+
+        self._num_images = len(self._raw_images)
+
         self._qr_manager: IQRunnableManager = qr_manager
         self._img_data_extractor: IImageDataExtractor = img_data_extractor
         self._cursor: int = 0
