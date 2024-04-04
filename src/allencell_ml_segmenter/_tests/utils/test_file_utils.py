@@ -39,6 +39,7 @@ def test_get_all_files_in_dir_with_hidden_files() -> None:
     assert len(all_files) == 1
     assert all_files[0].name == "t1.tiff"
 
+
 def test_get_img_path_from_folder():
     folder: Path = (
         Path(allencell_ml_segmenter.__file__).parent
@@ -62,6 +63,7 @@ def test_get_img_path_from_folder():
     )
     img: Path = FileUtils.get_img_path_from_folder(folder)
     assert img.samefile(t1) or img.samefile(t2)
+
 
 def test_get_img_path_from_folder_hidden_files():
     folder: Path = (
