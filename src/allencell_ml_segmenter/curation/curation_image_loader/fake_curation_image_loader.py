@@ -4,12 +4,9 @@ from allencell_ml_segmenter.curation.curation_image_loader import (
 from typing import List, Optional
 from pathlib import Path
 from allencell_ml_segmenter.core.q_runnable_manager import (
-    IQRunnableManager,
-    GlobalQRunnableManager,
+    SynchroQRunnableManager,
 )
 from allencell_ml_segmenter.core.image_data_extractor import (
-    IImageDataExtractor,
-    AICSImageDataExtractor,
     FakeImageDataExtractor,
     ImageData,
 )
@@ -20,29 +17,9 @@ class FakeCurationImageLoader(ICurationImageLoader):
         self,
         raw_images: List[Path],
         seg1_images: List[Path],
-        seg2_images: Optional[List[Path]] = None,
-        qr_manager: IQRunnableManager = GlobalQRunnableManager.global_instance(),
-        img_data_extractor: IImageDataExtractor = AICSImageDataExtractor.global_instance(),
+        seg2_images: Optional[List[Path]] = None
     ):
-        self._raw_images = raw_images
-        self._seg1_images = seg1_images
-        self._seg2_images = seg2_images
-        self._cursor = 0
-        self._img_data_extractor = FakeImageDataExtractor.global_instance()
-
-    def get_num_images(self) -> int:
-        """
-        Returns number of image sets (one set includes raw + its segmentations) in
-        this image loader.
-        """
-        return len(self._raw_images)
-
-    def get_current_index(self) -> int:
-        """
-        Returns the current index of our 'cursor' within the image sets (always <
-        num images)
-        """
-        return self._cursor
+        super().__init__(raw_images, seg1_images, seg2_images, SynchroQRunnableManager.global_instance(), FakeImageDataExtractor.global_instance())
 
     def get_raw_image_data(self) -> ImageData:
         """
@@ -74,18 +51,6 @@ class FakeCurationImageLoader(ICurationImageLoader):
             if self._seg2_images
             else None
         )
-
-    def has_next(self) -> bool:
-        """
-        Returns true iff next() can be safely called.
-        """
-        return self._cursor + 1 < len(self._raw_images)
-
-    def has_prev(self) -> bool:
-        """
-        Returns true iff prev() can be safely called.
-        """
-        return self._cursor > 0
 
     def next(self) -> None:
         """
