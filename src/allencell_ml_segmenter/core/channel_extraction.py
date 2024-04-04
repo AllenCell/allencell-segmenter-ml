@@ -12,23 +12,6 @@ def extract_channels_from_image(img_path: Path) -> int:
     """
     return AICSImage(str(img_path)).dims.C
 
-
-def get_img_path_from_folder(folder: Path) -> Path:
-    """
-    Returns path of an image in the folder.
-    :param folder: path to a folder containing images
-    """
-    # we expect user to have the same number of channels for all images in their folders
-    # and that only images are stored in those folders
-
-    path_generator: Generator[Path] = folder.glob("*")
-    image: Path = next(path_generator)
-    # ignore hidden files
-    while str(image.name).startswith("."):
-        image: Path = next(path_generator)
-    return image.resolve()
-
-
 def get_img_path_from_csv(csv_path: Path) -> Path:
     """
     Returns path of an image in the 'raw' column of the csv.
