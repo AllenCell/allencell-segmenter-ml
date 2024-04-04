@@ -10,7 +10,10 @@ from allencell_ml_segmenter.prediction.model import (
     PredictionModel,
     PredictionInputMode,
 )
+
 from allencell_ml_segmenter.utils.cuda_util import CUDAUtils
+from allencell_ml_segmenter.utils.file_utils import FileUtils
+
 from pathlib import Path
 from typing import Union, Dict, List, Optional
 
@@ -197,11 +200,9 @@ class PredictionService(Subscriber):
         # User has selected a directory or a csv as input images
         input_path: Path = self._prediction_model.get_input_image_path()
         if input_path.is_dir():
-            all_files = [
-                path
-                for path in input_path.glob("*.*")
-                if not path.name.startswith(".")
-            ]
+            all_files = FileUtils.get_all_files_in_dir_ignore_hidden(
+                input_path
+            )
             # if input path selected is a directory, we need to manually write a CSV for cyto-dl
             self.write_csv_for_inputs(all_files)
             return len(all_files)
