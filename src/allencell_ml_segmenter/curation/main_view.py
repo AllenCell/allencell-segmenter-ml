@@ -1,6 +1,6 @@
 from typing import List
 
-from PyQt5.QtWidgets import QComboBox
+from qtpy.QtWidgets import QComboBox
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
     QVBoxLayout,
