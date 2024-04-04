@@ -12,7 +12,9 @@ from allencell_ml_segmenter.training.training_model import TrainingModel
 from typing import Dict, Union, Optional
 from napari.utils.notifications import show_warning
 
-from allencell_ml_segmenter.utils.cyto_overrides_manager import CytoDLOverridesManager
+from allencell_ml_segmenter.utils.cyto_overrides_manager import (
+    CytoDLOverridesManager,
+)
 
 
 class TrainingService(Subscriber):
@@ -48,8 +50,14 @@ class TrainingService(Subscriber):
                 self._training_model.get_experiment_type(),
                 output_dir=f"{self._experiments_model.get_user_experiments_path()}/{self._experiments_model.get_experiment_name()}",
             )
-            cyto_overrides_manager: CytoDLOverridesManager = CytoDLOverridesManager(self._experiments_model, self._training_model)
-            model.override_config(cyto_overrides_manager.get_training_overrides())
+            cyto_overrides_manager: CytoDLOverridesManager = (
+                CytoDLOverridesManager(
+                    self._experiments_model, self._training_model
+                )
+            )
+            model.override_config(
+                cyto_overrides_manager.get_training_overrides()
+            )
             model.print_config()
             asyncio.run(model.train(run_async=True))
 

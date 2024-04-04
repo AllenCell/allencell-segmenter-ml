@@ -14,7 +14,9 @@ from allencell_ml_segmenter.services.training_service import (
 from allencell_ml_segmenter.training.training_model import (
     TrainingModel,
 )
-from allencell_ml_segmenter.utils.cyto_overrides_manager import CytoDLOverridesManager
+from allencell_ml_segmenter.utils.cyto_overrides_manager import (
+    CytoDLOverridesManager,
+)
 
 
 @pytest.fixture
@@ -45,30 +47,34 @@ def training_model(experiments_model: ExperimentsModel) -> TrainingModel:
     return model
 
 
-def test_get_training_overrides(experiments_model: ExperimentsModel, training_model: TrainingModel):
-    cyto_overrides_manager: CytoDLOverridesManager = CytoDLOverridesManager(experiments_model,
-                                                                            training_model)
+def test_get_training_overrides(
+    experiments_model: ExperimentsModel, training_model: TrainingModel
+):
+    cyto_overrides_manager: CytoDLOverridesManager = CytoDLOverridesManager(
+        experiments_model, training_model
+    )
 
-    training_overrides: Dict[str, Union[str, int, float, bool, Dict]] = cyto_overrides_manager.get_training_overrides()
+    training_overrides: Dict[str, Union[str, int, float, bool, Dict]] = (
+        cyto_overrides_manager.get_training_overrides()
+    )
 
     # ASSERT
     assert (
-            training_overrides["trainer.accelerator"]
-            == training_model.get_hardware_type().value
+        training_overrides["trainer.accelerator"]
+        == training_model.get_hardware_type().value
     )
 
     assert (
-            training_overrides["spatial_dims"]
-            == training_model.get_spatial_dims()
+        training_overrides["spatial_dims"] == training_model.get_spatial_dims()
     )
 
     assert (
-            training_overrides["trainer.max_epochs"]
-            == training_model.get_max_epoch()
+        training_overrides["trainer.max_epochs"]
+        == training_model.get_max_epoch()
     )
     assert (
-            training_overrides["trainer.max_time"]["minutes"]
-            == training_model.get_max_time()
+        training_overrides["trainer.max_time"]["minutes"]
+        == training_model.get_max_time()
     )
 
     assert training_overrides["data.path"] == str(
@@ -76,8 +82,8 @@ def test_get_training_overrides(experiments_model: ExperimentsModel, training_mo
     )
 
     assert (
-            training_overrides["data._aux.patch_shape"]
-            == training_model.get_patch_size().value
+        training_overrides["data._aux.patch_shape"]
+        == training_model.get_patch_size().value
     )
 
     assert training_overrides["ckpt_path"] == str(
@@ -86,4 +92,3 @@ def test_get_training_overrides(experiments_model: ExperimentsModel, training_mo
             experiments_model.get_checkpoint(),
         )
     )
-
