@@ -53,22 +53,8 @@ class CurationImageLoader(ICurationImageLoader):
         :param seg1_images: paths to segmentations
         :param seg2_images: (optional) paths to second segmentations
         """
-        if len(raw_images) != len(seg1_images) or (
-            seg2_images and len(seg1_images) != len(seg2_images)
-        ):
-            raise ValueError("provided image lists must be of same length")
-        elif len(raw_images) < 1:
-            raise ValueError("cannot load images from empty image list")
-
-        self._num_images = len(raw_images)
-
-        self._raw_images: List[Path] = list(raw_images)
-        self._seg1_images: List[Path] = list(seg1_images)
-        self._seg2_images: Optional[List[Path]] = (
-            list(seg2_images) if seg2_images else None
-        )
-        self._qr_manager = qr_manager
-        self._img_data_extractor = img_data_extractor
+        super().__init__(raw_images, seg1_images, seg2_images, qr_manager, img_data_extractor)
+        
 
         # private invariant: _next_img_data will only have < _num_data_dict_keys keys if there is
         # no next image or a thread is currently updating _next_img_data. Same goes for _prev_img_data
@@ -77,7 +63,6 @@ class CurationImageLoader(ICurationImageLoader):
         self._next_img_data: Dict[str, ImageData] = {}
         self._prev_img_data: Dict[str, ImageData] = {}
 
-        self._cursor: int = 0
         # grab data for first images synchronously, start thread for next images
         self._curr_img_data["raw"] = (
             self._img_data_extractor.extract_image_data(self._raw_images[0])
@@ -139,20 +124,6 @@ class CurationImageLoader(ICurationImageLoader):
             while len(self._next_img_data) < expected_length:
                 time.sleep(0.1)
 
-    def get_num_images(self) -> int:
-        """
-        Returns number of image sets (one set includes raw + its segmentations) in
-        this image loader.
-        """
-        return self._num_images
-
-    def get_current_index(self) -> int:
-        """
-        Returns the current index of our 'cursor' within the image sets (always <
-        num images)
-        """
-        return self._cursor
-
     def get_raw_image_data(self) -> ImageData:
         """
         Returns the image data for the raw image in the set that the 'cursor' is
@@ -177,18 +148,6 @@ class CurationImageLoader(ICurationImageLoader):
             if "seg2" in self._curr_img_data
             else None
         )
-
-    def has_next(self) -> bool:
-        """
-        Returns true iff next() can be safely called.
-        """
-        return self._cursor + 1 < self._num_images
-
-    def has_prev(self) -> bool:
-        """
-        Returns true iff prev() can be safely called.
-        """
-        return self._cursor > 0
 
     def next(self) -> None:
         """
