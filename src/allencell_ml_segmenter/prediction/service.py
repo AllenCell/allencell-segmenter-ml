@@ -7,8 +7,8 @@ from allencell_ml_segmenter.prediction.model import PredictionModel
 from allencell_ml_segmenter.core.channel_extraction import (
     ChannelExtractionThread,
     get_img_path_from_csv,
-    get_img_path_from_folder,
 )
+from allencell_ml_segmenter.utils.file_utils import FileUtils
 
 
 class ModelFileService(Subscriber):
@@ -67,7 +67,7 @@ class ModelFileService(Subscriber):
                 )
             img_path = Path(paths[0])
         elif path.is_dir():
-            img_path = get_img_path_from_folder(path)
+            img_path = FileUtils.get_img_path_from_folder(path)
         elif path.suffix == ".csv":
             img_path = get_img_path_from_csv(path)
         else:

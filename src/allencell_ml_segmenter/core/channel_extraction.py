@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Generator
 import csv
-from PyQt5.QtCore import QObject, QThread, pyqtSignal
+from qtpy.QtCore import QObject, QThread, Signal
 from aicsimageio import AICSImage
 
 
@@ -11,22 +11,6 @@ def extract_channels_from_image(img_path: Path) -> int:
     :param img_path: image to extract channels from
     """
     return AICSImage(str(img_path)).dims.C
-
-
-def get_img_path_from_folder(folder: Path) -> Path:
-    """
-    Returns path of an image in the folder.
-    :param folder: path to a folder containing images
-    """
-    # we expect user to have the same number of channels for all images in their folders
-    # and that only images are stored in those folders
-
-    path_generator: Generator[Path] = folder.glob("*")
-    image: Path = next(path_generator)
-    # ignore hidden files
-    while str(image.name).startswith("."):
-        image: Path = next(path_generator)
-    return image.resolve()
 
 
 def get_img_path_from_csv(csv_path: Path) -> Path:
@@ -49,7 +33,7 @@ class ChannelExtractionThread(QThread):
     the thread will have no side effects.
     """
 
-    channels_ready: pyqtSignal = pyqtSignal(int)  # num_channels
+    channels_ready: Signal = Signal(int)  # num_channels
 
     def __init__(self, img_path: Path, parent: QObject = None):
         """
