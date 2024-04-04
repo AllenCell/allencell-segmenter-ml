@@ -3,7 +3,7 @@ from allencell_ml_segmenter.widgets.input_button_widget import (
 )
 from qtpy.QtWidgets import QStackedWidget
 from pyqtspinner import WaitingSpinner
-from PyQt5.QtGui import QColor
+from qtpy.QtGui import QColor
 
 
 class StackedSpinner(QStackedWidget):
