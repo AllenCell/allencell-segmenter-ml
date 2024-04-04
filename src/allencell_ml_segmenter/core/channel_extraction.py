@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Generator
 import csv
-from PyQt5.QtCore import QObject, QThread, pyqtSignal
+from qtpy.QtCore import QObject, QThread, Signal
 from aicsimageio import AICSImage
 
 
@@ -33,7 +33,7 @@ class ChannelExtractionThread(QThread):
     the thread will have no side effects.
     """
 
-    channels_ready: pyqtSignal = pyqtSignal(int)  # num_channels
+    channels_ready: Signal = Signal(int)  # num_channels
 
     def __init__(self, img_path: Path, parent: QObject = None):
         """
