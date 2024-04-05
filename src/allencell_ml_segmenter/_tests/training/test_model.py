@@ -40,11 +40,13 @@ def test_set_experiment_type(training_model: TrainingModel) -> None:
     """
     Tests that set_experiment_type sets the correct experiment type.
     """
+    training_type_str = "segmentation"
+
     # ACT
-    training_model.set_experiment_type("segmentation")
+    training_model.set_experiment_type(training_type_str)
 
     # ASSERT
-    assert training_model.get_experiment_type() == TrainingType("segmentation")
+    assert training_model.get_experiment_type() == training_type_str
 
 
 def test_set_experiment_type_invalid_experiment(
