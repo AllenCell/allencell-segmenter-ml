@@ -160,3 +160,10 @@ class ExperimentsModel(IExperimentsModel):
             if experiment_name
             else None
         )
+    
+    def _get_best_ckpt(self) -> str:
+        checkpoints_path = (
+            Path(self.user_settings.get_user_experiments_path())
+            / self._experiment_name
+            / "checkpoints"
+        )
