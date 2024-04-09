@@ -12,8 +12,8 @@ from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
     FakeExperimentsModel,
 )
-from allencell_ml_segmenter._tests.fakes.fake_image_selection_widget import (
-    FakeImageSelectionWidget,
+from allencell_ml_segmenter._tests.fakes.fake_combo_box import (
+    FakeComboBox,
 )
 
 from allencell_ml_segmenter.training.image_selection_widget import (
@@ -94,29 +94,21 @@ def test_set_channel_index(
         assert training_model.get_channel_index() == i
 
 
-def test_update_channels_subscription(experiments_model: FakeExperimentsModel):
+def test_update_channels_subscription(training_model: TrainingModel, experiments_model: FakeExperimentsModel):
 
     # Arrange
-    training_model: TrainingModel = TrainingModel(
-        MainModel(), experiments_model=experiments_model
+    image_selection_widget: ImageSelectionWidget = (
+        ImageSelectionWidget(training_model, experiments_model)
     )
-    training_model.set_images_directory(
-        (
-            Path(allencell_ml_segmenter.__file__).parent
-            / "_tests"
-            / "test_files"
-            / "images"
-        )
-    )
-    fake_image_selection_widget: FakeImageSelectionWidget = (
-        FakeImageSelectionWidget(training_model, experiments_model)
-    )
+    fake_combo_box: FakeComboBox = FakeComboBox()
+    image_selection_widget.set_combo_box_for_testing(
+        fake_combo_box)
 
     # Act
-    training_model.dispatch_channel_extraction()
+    training_model.set_max_channel(9)
 
     # Assert
-    assert (
-        fake_image_selection_widget.channels_updated_with_max
-        == training_model.get_max_channel()
-    )
+    assert fake_combo_box.enabled
+    assert fake_combo_box.clear_call_count == 1
+    assert fake_combo_box.current_index == 0
+    assert len(fake_combo_box.items_added) == 9

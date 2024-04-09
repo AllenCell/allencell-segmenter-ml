@@ -11,6 +11,7 @@ from qtpy.QtWidgets import (
     QComboBox,
 )
 
+from allencell_ml_segmenter._tests.fakes.fake_combo_box import FakeComboBox
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.curation.stacked_spinner import StackedSpinner
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
@@ -30,7 +31,7 @@ class ImageSelectionWidget(QWidget):
     TITLE_TEXT: str = "Training images"
 
     def __init__(
-        self, model: TrainingModel, experiments_model: ExperimentsModel
+            self, model: TrainingModel, experiments_model: ExperimentsModel
     ):
         super().__init__()
 
@@ -130,7 +131,7 @@ class ImageSelectionWidget(QWidget):
         self._model.set_images_directory(dir)
 
     def _set_to_loading(
-        self, combobox: QComboBox, stacked_spinner: StackedSpinner
+            self, combobox: QComboBox, stacked_spinner: StackedSpinner
     ) -> None:
         stacked_spinner.start()
         combobox.clear()
@@ -147,3 +148,6 @@ class ImageSelectionWidget(QWidget):
         self._channel_combo_box.setCurrentIndex(0)
         self._channel_combo_box.setEnabled(True)
         self._model.set_channel_index(0)
+
+    def set_combo_box_for_testing(self, combobox: FakeComboBox) -> None:
+        self._channel_combo_box = combobox
