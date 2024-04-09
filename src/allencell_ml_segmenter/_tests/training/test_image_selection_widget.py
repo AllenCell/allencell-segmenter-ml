@@ -94,15 +94,16 @@ def test_set_channel_index(
         assert training_model.get_channel_index() == i
 
 
-def test_update_channels_subscription(training_model: TrainingModel, experiments_model: FakeExperimentsModel):
+def test_update_channels_subscription(
+    training_model: TrainingModel, experiments_model: FakeExperimentsModel
+):
 
     # Arrange
-    image_selection_widget: ImageSelectionWidget = (
-        ImageSelectionWidget(training_model, experiments_model)
+    image_selection_widget: ImageSelectionWidget = ImageSelectionWidget(
+        training_model, experiments_model
     )
     fake_combo_box: FakeComboBox = FakeComboBox()
-    image_selection_widget.set_combo_box_for_testing(
-        fake_combo_box)
+    image_selection_widget.set_combo_box_for_testing(fake_combo_box)
 
     # Act
     training_model.set_max_channel(9)
