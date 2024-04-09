@@ -20,8 +20,3 @@ class FakeComboBox:
 
     def setEnabled(self, enabled: bool) -> None:
         self.enabled = enabled
-
-
-
-
-

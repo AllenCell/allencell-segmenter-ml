@@ -31,7 +31,7 @@ class ImageSelectionWidget(QWidget):
     TITLE_TEXT: str = "Training images"
 
     def __init__(
-            self, model: TrainingModel, experiments_model: ExperimentsModel
+        self, model: TrainingModel, experiments_model: ExperimentsModel
     ):
         super().__init__()
 
@@ -131,7 +131,7 @@ class ImageSelectionWidget(QWidget):
         self._model.set_images_directory(dir)
 
     def _set_to_loading(
-            self, combobox: QComboBox, stacked_spinner: StackedSpinner
+        self, combobox: QComboBox, stacked_spinner: StackedSpinner
     ) -> None:
         stacked_spinner.start()
         combobox.clear()

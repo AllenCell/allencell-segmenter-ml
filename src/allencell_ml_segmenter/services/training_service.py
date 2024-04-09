@@ -1,6 +1,9 @@
 import asyncio
 from pathlib import Path
 
+from allencell_ml_segmenter._tests.fakes.fake_channel_extraction import (
+    FakeChannelExtractionThread,
+)
 from allencell_ml_segmenter.core.channel_extraction import (
     ChannelExtractionThread,
     get_img_path_from_csv,
@@ -189,9 +192,12 @@ class TrainingService(Subscriber):
     def _start_channel_extraction(
         self, to_extract: Path, channel_callback: Callable
     ):
-        self._channel_extraction_thread = ChannelExtractionThread(
-            get_img_path_from_csv(to_extract / "train.csv")
-        )
+        if not isinstance(
+            self._channel_extraction_thread, FakeChannelExtractionThread
+        ):
+            self._channel_extraction_thread = ChannelExtractionThread(
+                get_img_path_from_csv(to_extract / "train.csv")
+            )
         self._channel_extraction_thread.channels_ready.connect(
             channel_callback
         )
@@ -210,3 +216,8 @@ class TrainingService(Subscriber):
             self._training_model.get_images_directory(),
             self._training_model.set_max_channel,
         )
+
+    def set_channel_extraction_thread_for_test(
+        self, thread: FakeChannelExtractionThread
+    ):
+        self._channel_extraction_thread = thread
