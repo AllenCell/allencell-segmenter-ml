@@ -27,18 +27,22 @@ import allencell_ml_segmenter
 def test_build_raw_images_list() -> None:
     # Arrange
     curation_model: CurationModel = CurationModel()
+    cur_tests_path = Path(__file__).parent / "curation_tests"
+    curation_model.set_raw_directory(cur_tests_path)
     curation_service: CurationService = CurationService(
         curation_model, Mock(spec=Viewer)
     )
-    curation_model.get_raw_directory = Mock(
-        return_value=Path(__file__).parent / "curation_tests"
-    )
-    curation_service._get_files_list_from_path = Mock()
     # Act
-    curation_service.build_raw_images_list()
+    raw_images: List[Path] = curation_service.build_raw_images_list()
     # Assert
-    curation_service._get_files_list_from_path.assert_called_once_with(
-        Path(__file__).parent / "curation_tests"
+    assert any(
+        [
+            raw.samefile(cur_tests_path / "file_test.ome.tiff")
+            for raw in raw_images
+        ]
+    )
+    assert any(
+        [raw.samefile(cur_tests_path / "file1.ome.tiff") for raw in raw_images]
     )
 
 
@@ -49,7 +53,6 @@ def test_build_raw_images_list_invalid_path() -> None:
         curation_model, Mock(spec=Viewer)
     )
     # There is no raw direcotry set in the model- getter returns None
-    curation_model.get_raw_directory = Mock(return_value=None)
     # Act/ assert
     with pytest.raises(ValueError):
         curation_service.build_raw_images_list()
@@ -58,18 +61,26 @@ def test_build_raw_images_list_invalid_path() -> None:
 def test_build_seg1_images_list() -> None:
     # Arrange
     curation_model: CurationModel = CurationModel()
+    cur_tests_path = Path(__file__).parent / "curation_tests"
+    curation_model.set_seg1_directory(cur_tests_path)
     curation_service: CurationService = CurationService(
         curation_model, Mock(spec=Viewer)
     )
-    curation_model.get_seg1_directory = Mock(
-        return_value=Path(__file__).parent / "curation_tests"
-    )
-    curation_service._get_files_list_from_path = Mock()
-    curation_service.build_seg1_images_list()
 
-    # Act/Assert
-    curation_service._get_files_list_from_path.assert_called_once_with(
-        Path(__file__).parent / "curation_tests"
+    # Act
+    seg1_images: List[Path] = curation_service.build_seg1_images_list()
+    # Assert
+    assert any(
+        [
+            seg1.samefile(cur_tests_path / "file_test.ome.tiff")
+            for seg1 in seg1_images
+        ]
+    )
+    assert any(
+        [
+            seg1.samefile(cur_tests_path / "file1.ome.tiff")
+            for seg1 in seg1_images
+        ]
     )
 
 
@@ -80,7 +91,6 @@ def test_build_seg1_images_list_invalid_path() -> None:
         curation_model, Mock(spec=Viewer)
     )
     # There is no raw direcotry set in the model- getter returns None
-    curation_model.get_seg1_directory = Mock(return_value=None)
     # Act/ assert
     with pytest.raises(ValueError):
         curation_service.build_seg1_images_list()
@@ -89,18 +99,26 @@ def test_build_seg1_images_list_invalid_path() -> None:
 def test_build_seg2_images_list() -> None:
     # Arrange
     curation_model: CurationModel = CurationModel()
+    cur_tests_path = Path(__file__).parent / "curation_tests"
+    curation_model.set_seg2_directory(cur_tests_path)
     curation_service: CurationService = CurationService(
         curation_model, Mock(spec=Viewer)
     )
-    curation_model.get_seg2_directory = Mock(
-        return_value=Path(__file__).parent / "curation_tests"
-    )
-    curation_service._get_files_list_from_path = Mock()
+
     # Act
-    curation_service.build_seg2_images_list()
+    seg2_images: List[Path] = curation_service.build_seg2_images_list()
     # Assert
-    curation_service._get_files_list_from_path.assert_called_once_with(
-        Path(__file__).parent / "curation_tests"
+    assert any(
+        [
+            seg2.samefile(cur_tests_path / "file_test.ome.tiff")
+            for seg2 in seg2_images
+        ]
+    )
+    assert any(
+        [
+            seg2.samefile(cur_tests_path / "file1.ome.tiff")
+            for seg2 in seg2_images
+        ]
     )
 
 
@@ -111,28 +129,9 @@ def test_build_seg2_images_list_invalid_path() -> None:
         curation_model, Mock(spec=Viewer)
     )
     # There is no raw direcotry set in the model- getter returns None
-    curation_model.get_seg2_directory = Mock(return_value=None)
     # Act/ assert
     with pytest.raises(ValueError):
         curation_service.build_seg2_images_list()
-
-
-def test_get_files_list_from_path() -> None:
-    # Arrange
-    curation_service: CurationService = CurationService(
-        Mock(spec=CurationModel), Mock(spec=Viewer)
-    )
-
-    # Act
-    paths: List[Path] = curation_service._get_files_list_from_path(
-        Path(__file__).parent / "curation_tests"
-    )
-
-    # Assert
-    assert len(paths) == 2
-    assert (
-        paths[0] == Path(__file__).parent / "curation_tests" / "file1.ome.tiff"
-    )
 
 
 def test_remove_all_images_from_viewer_layers() -> None:
