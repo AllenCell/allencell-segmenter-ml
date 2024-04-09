@@ -126,6 +126,7 @@ class ImageSelectionWidget(QWidget):
             self._channel_combo_box, self._training_data_stacked_spinner
         )
         self._model.set_images_directory(dir)
+        self._model.dispatch_channel_extraction()
 
     def _set_to_loading(
         self, combobox: QComboBox, stacked_spinner: StackedSpinner
