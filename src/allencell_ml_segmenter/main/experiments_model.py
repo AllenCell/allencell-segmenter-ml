@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import List, Optional
 from allencell_ml_segmenter.config.i_user_settings import IUserSettings
 
 import copy
@@ -161,9 +162,18 @@ class ExperimentsModel(IExperimentsModel):
             else None
         )
     
-    def _get_best_ckpt(self) -> str:
+    def _get_best_ckpt(self) -> Optional[str]:
         checkpoints_path = (
             Path(self.user_settings.get_user_experiments_path())
             / self._experiment_name
             / "checkpoints"
         )
+        if not checkpoints_path.exists():
+            return None
+        
+        files: List[Path] = [entry for entry in checkpoints_path.iterdir() if entry.is_file() and entry.name != "last.ckpt"]
+        if not files:
+            return None
+        
+        files.sort(key=lambda file: file.stat().st_mtime)
+        return files[-1]
