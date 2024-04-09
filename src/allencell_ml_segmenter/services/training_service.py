@@ -206,7 +206,6 @@ class TrainingService(Subscriber):
             self._channel_extraction_thread.wait()
 
     def _training_image_directory_selected(self, _: Event) -> None:
-        self._stop_channel_extraction()  # stop if already running
         self._start_channel_extraction(
             self._training_model.get_images_directory(),
             self._training_model.set_max_channel,
