@@ -30,4 +30,3 @@ class FakeImageSelectionWidget(Subscriber):
 
     def _update_channels(self) -> None:
         self.channels_updated_with_max = self._model.get_max_channel()
-

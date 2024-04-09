@@ -12,7 +12,9 @@ from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
     FakeExperimentsModel,
 )
-from allencell_ml_segmenter._tests.fakes.fake_image_selection_widget import FakeImageSelectionWidget
+from allencell_ml_segmenter._tests.fakes.fake_image_selection_widget import (
+    FakeImageSelectionWidget,
+)
 
 from allencell_ml_segmenter.training.image_selection_widget import (
     ImageSelectionWidget,
@@ -91,22 +93,30 @@ def test_set_channel_index(
         # ASSERT
         assert training_model.get_channel_index() == i
 
-def test_update_channels_subscription(
-    experiments_model: FakeExperimentsModel
-):
+
+def test_update_channels_subscription(experiments_model: FakeExperimentsModel):
 
     # Arrange
-    training_model: TrainingModel = TrainingModel(MainModel(), experiments_model=experiments_model)
-    training_model.set_images_directory((
-        Path(allencell_ml_segmenter.__file__).parent
-        / "_tests"
-        / "test_files"
-        / "images"))
-    fake_image_selection_widget: FakeImageSelectionWidget = FakeImageSelectionWidget(training_model, experiments_model)
+    training_model: TrainingModel = TrainingModel(
+        MainModel(), experiments_model=experiments_model
+    )
+    training_model.set_images_directory(
+        (
+            Path(allencell_ml_segmenter.__file__).parent
+            / "_tests"
+            / "test_files"
+            / "images"
+        )
+    )
+    fake_image_selection_widget: FakeImageSelectionWidget = (
+        FakeImageSelectionWidget(training_model, experiments_model)
+    )
 
     # Act
     training_model.dispatch_channel_extraction()
 
     # Assert
-    assert fake_image_selection_widget.channels_updated_with_max == training_model.get_max_channel()
-
+    assert (
+        fake_image_selection_widget.channels_updated_with_max
+        == training_model.get_max_channel()
+    )

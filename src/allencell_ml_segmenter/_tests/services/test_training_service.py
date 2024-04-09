@@ -5,6 +5,9 @@ import pytest
 from allencell_ml_segmenter._tests.fakes.fake_user_settings import (
     FakeUserSettings,
 )
+from allencell_ml_segmenter._tests.fakes.fake_training_service import (
+    FakeTrainingService,
+)
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
 
@@ -225,3 +228,24 @@ def test_build_overrrides(
     assert training_service._get_max_epoch_override() in all_overrides
     assert training_service._get_patch_shape_override() in all_overrides
     assert training_service._get_checkpoint_override() in all_overrides
+
+
+def test_training_image_directory_selected_subscription(
+    training_model: TrainingModel,
+    experiments_model: ExperimentsModel,
+) -> None:
+    # Arrange
+    fake_service: FakeTrainingService = FakeTrainingService(
+        training_model, experiments_model
+    )
+
+    # Act
+    training_model.dispatch_channel_extraction()
+
+    # Assert
+    assert fake_service.channel_extraction_started
+    assert (
+        fake_service.extraction_path_set
+        == training_model.get_images_directory()
+    )
+    assert fake_service.channel_callback_set == training_model.set_max_channel

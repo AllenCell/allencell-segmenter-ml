@@ -255,7 +255,7 @@ class TrainingModel(Publisher):
 
     def dispatch_channel_extraction(self):
         if self._images_directory is None:
-            raise ValueError("Images directory should be defined before dispatching channel extraction")
+            raise ValueError(
+                "Images directory should be defined before dispatching channel extraction"
+            )
         self.dispatch(Event.ACTION_TRAINING_DATASET_SELECTED)
-
-
