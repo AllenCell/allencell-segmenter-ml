@@ -50,7 +50,7 @@ class CurationService(Subscriber):
             raise ValueError(
                 "Raw directory not set. Please set raw directory."
             )
-        return self._get_files_list_from_path(raw_path)
+        return FileUtils.get_all_files_in_dir_ignore_hidden(raw_path)
 
     def build_seg1_images_list(self) -> List[Path]:
         """
@@ -61,7 +61,7 @@ class CurationService(Subscriber):
             raise ValueError(
                 "Seg1 directory not set. Please set seg1 directory."
             )
-        return self._get_files_list_from_path(seg1_path)
+        return FileUtils.get_all_files_in_dir_ignore_hidden(seg1_path)
 
     def build_seg2_images_list(self) -> List[Path]:
         """
@@ -72,7 +72,7 @@ class CurationService(Subscriber):
             raise ValueError(
                 "Seg2 directory not set. Please set seg2 directory."
             )
-        return self._get_files_list_from_path(seg2_path)
+        return FileUtils.get_all_files_in_dir_ignore_hidden(seg2_path)
 
     def open_image_from_path(self, path: Path) -> AICSImage:
         """
@@ -172,16 +172,6 @@ class CurationService(Subscriber):
             points_layer.mode = "add_polygon"
             self._curation_model.append_merging_mask_shape_layer(points_layer)
             self._curation_model.dispatch(Event.ACTION_CURATION_DRAW_MERGING)
-
-    def _get_files_list_from_path(self, path: Path) -> List[Path]:
-        """
-        Return all files in the path as a list of Paths
-        """
-        return [
-            file
-            for file in sorted(path.iterdir())
-            if not file.name.endswith(".DS_Store")
-        ]
 
     def _stop_channel_extraction_thread(self, thread: ChannelExtractionThread):
         # if we find this is too slow, can switch to the method employed by
