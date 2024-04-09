@@ -2,11 +2,13 @@ from pathlib import Path
 from typing import List
 
 import pytest
+
+import allencell_ml_segmenter
 from allencell_ml_segmenter._tests.fakes.fake_user_settings import (
     FakeUserSettings,
 )
-from allencell_ml_segmenter._tests.fakes.fake_training_service import (
-    FakeTrainingService,
+from allencell_ml_segmenter._tests.fakes.fake_channel_extraction import (
+    FakeChannelExtractionThread,
 )
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
@@ -235,17 +237,27 @@ def test_training_image_directory_selected_subscription(
     experiments_model: ExperimentsModel,
 ) -> None:
     # Arrange
-    fake_service: FakeTrainingService = FakeTrainingService(
-        training_model, experiments_model
+    training_service: TrainingService = TrainingService(
+        training_model=training_model, experiments_model=experiments_model
+    )
+    fake_extraction_thread: FakeChannelExtractionThread = (
+        FakeChannelExtractionThread()
+    )
+    training_service.set_channel_extraction_thread_for_test(
+        fake_extraction_thread
     )
 
     # Act
-    training_model.dispatch_channel_extraction()
+    training_model.set_images_directory(
+        Path(allencell_ml_segmenter.__file__).parent
+        / "_tests"
+        / "test_files"
+        / "csv"
+    )
 
     # Assert
-    assert fake_service.channel_extraction_started
+    assert fake_extraction_thread.started
     assert (
-        fake_service.extraction_path_set
-        == training_model.get_images_directory()
+        fake_extraction_thread.channels_ready.connected
+        == training_model.set_max_channel
     )
-    assert fake_service.channel_callback_set == training_model.set_max_channel
