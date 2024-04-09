@@ -16,11 +16,17 @@ from unittest.mock import Mock
 from pytestqt.qtbot import QtBot
 from pathlib import Path
 
-IMG_DIR_PATH = Path(allencell_ml_segmenter.__file__).parent / "_tests" / "test_files" / "img_folder"
+IMG_DIR_PATH = (
+    Path(allencell_ml_segmenter.__file__).parent
+    / "_tests"
+    / "test_files"
+    / "img_folder"
+)
 
-def get_test_instances(include_seg_2: bool) -> (
-    Tuple[FakeViewer, CurationModel, CurationService, CurationMainView]
-):
+
+def get_test_instances(
+    include_seg_2: bool,
+) -> Tuple[FakeViewer, CurationModel, CurationService, CurationMainView]:
     curation_model = CurationModel()
 
     curation_model.set_raw_directory(IMG_DIR_PATH)
@@ -51,6 +57,7 @@ def get_test_instances(include_seg_2: bool) -> (
         main_view,
     )
 
+
 def test_initial_state_with_seg2(qtbot: QtBot) -> None:
     # Arrange
     viewer, model, service, view = get_test_instances(True)
@@ -63,12 +70,14 @@ def test_initial_state_with_seg2(qtbot: QtBot) -> None:
     assert view.merging_base_combo.isEnabled()
     assert view.merging_delete_button.isEnabled()
 
+    # why are these buttons disabled until we create a merging mask?
     assert not view.excluding_create_button.isEnabled()
     assert not view.excluding_save_button.isEnabled()
     assert not view.excluding_delete_button.isEnabled()
 
     assert view.progress_bar.value() == 1
     assert view.progress_bar.maximum() == 3
+
 
 def test_initial_state_no_seg2(qtbot: QtBot) -> None:
     # Arrange
@@ -95,7 +104,7 @@ def test_next_image_with_seg2(qtbot: QtBot) -> None:
     viewer, model, service, view = get_test_instances(True)
 
     # Act
-    # 1 = left click: https://het.as.utexas.edu/HET/Software/html/qt.html#MouseButton-enum 
+    # 1 = left click: https://het.as.utexas.edu/HET/Software/html/qt.html#MouseButton-enum
     qtbot.mouseClick(view.next_button, 1)
 
     # Assert
@@ -120,7 +129,7 @@ def test_next_image_no_seg2(qtbot: QtBot) -> None:
     viewer, model, service, view = get_test_instances(False)
 
     # Act
-    # 1 = left click: https://het.as.utexas.edu/HET/Software/html/qt.html#MouseButton-enum 
+    # 1 = left click: https://het.as.utexas.edu/HET/Software/html/qt.html#MouseButton-enum
     qtbot.mouseClick(view.next_button, 1)
 
     # Assert
@@ -138,4 +147,3 @@ def test_next_image_no_seg2(qtbot: QtBot) -> None:
     assert "[raw] raw 2" in viewer.images_added
     assert "[seg1] seg1 2" in viewer.images_added
     assert "[seg2] seg2 2" in viewer.images_added
-
