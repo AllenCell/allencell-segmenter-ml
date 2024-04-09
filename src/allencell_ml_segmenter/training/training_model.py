@@ -154,7 +154,6 @@ class TrainingModel(Publisher):
         images_path (Path): path to images directory
         """
         self._images_directory = images_path
-        self.dispatch(Event.ACTION_TRAINING_DATASET_SELECTED)
 
     def get_channel_index(self) -> Union[int, None]:
         """
@@ -253,3 +252,10 @@ class TrainingModel(Publisher):
         Get the max number of channels in the images in the training dataset
         """
         return self._max_channel
+
+    def dispatch_channel_extraction(self):
+        if self._images_directory is None:
+            raise ValueError("Images directory should be defined before dispatching channel extraction")
+        self.dispatch(Event.ACTION_TRAINING_DATASET_SELECTED)
+
+
