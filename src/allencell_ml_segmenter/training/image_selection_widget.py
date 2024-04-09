@@ -114,6 +114,7 @@ class ImageSelectionWidget(QWidget):
             self._images_directory_input_button._text_display.setText(
                 str(self._experiments_model.get_csv_path())
             )
+            # This also dispatches channel extraction
             self._model.set_images_directory(
                 self._experiments_model.get_csv_path()
             )
@@ -125,8 +126,8 @@ class ImageSelectionWidget(QWidget):
         self._set_to_loading(
             self._channel_combo_box, self._training_data_stacked_spinner
         )
+        # This also dispatches channel extraction
         self._model.set_images_directory(dir)
-        self._model.dispatch_channel_extraction()
 
     def _set_to_loading(
         self, combobox: QComboBox, stacked_spinner: StackedSpinner
