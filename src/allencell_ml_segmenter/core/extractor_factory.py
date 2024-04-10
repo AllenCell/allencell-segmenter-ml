@@ -1,7 +1,11 @@
 from pathlib import Path
 
-from allencell_ml_segmenter._tests.fakes.fake_channel_extraction import FakeChannelExtractionThread
-from allencell_ml_segmenter.core.channel_extraction import ChannelExtractionThread
+from allencell_ml_segmenter._tests.fakes.fake_channel_extraction import (
+    FakeChannelExtractionThread,
+)
+from allencell_ml_segmenter.core.channel_extraction import (
+    ChannelExtractionThread,
+)
 from allencell_ml_segmenter.core.i_extractor_factory import IExtractorFactory
 
 
