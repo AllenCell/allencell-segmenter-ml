@@ -7,25 +7,24 @@ from allencell_ml_segmenter._tests.fakes.fake_user_settings import (
 from allencell_ml_segmenter.config.i_user_settings import IUserSettings
 
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
+import allencell_ml_segmenter
 
 
 @pytest.fixture
-def config() -> IUserSettings:
-    """
-    Fixture for MainModel testing.
-    """
-    return FakeUserSettings()
-
-
-def test_refresh_experiments() -> None:
-    model = ExperimentsModel(
+def experiments_model() -> ExperimentsModel:
+    exp_path: Path = Path(allencell_ml_segmenter.__file__).parent / "_tests" / "main" / "experiments_home"
+    experiments_model = ExperimentsModel(
         FakeUserSettings(
-            cyto_dl_home_path=Path(__file__).parent / "cyto_dl_home",
-            user_experiments_path=Path(__file__).parent / "experiments_home",
+            cyto_dl_home_path=Path(), user_experiments_path=exp_path
         )
     )
-    expected = {"0_exp": set(), "1_exp": set(), "2_exp": {"0.ckpt", "1.ckpt"}}
-    assert model.get_experiments() == expected
+    experiments_model.set_experiment_name("2_exp")
+    return experiments_model
+
+
+def test_refresh_experiments(experiments_model: ExperimentsModel) -> None:
+    expected = ["0_exp", "1_exp", "2_exp"]
+    assert experiments_model.get_experiments() == expected
 
 
 def test_get_cyto_dl_config() -> None:
