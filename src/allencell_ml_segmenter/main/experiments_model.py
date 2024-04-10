@@ -142,11 +142,11 @@ class ExperimentsModel(IExperimentsModel):
             if experiment_name
             else None
         )
-    
+
     def _get_best_ckpt(self) -> Optional[str]:
         if not self._experiment_name:
             return None
-        
+
         checkpoints_path = (
             Path(self.user_settings.get_user_experiments_path())
             / self._experiment_name
@@ -154,10 +154,14 @@ class ExperimentsModel(IExperimentsModel):
         )
         if not checkpoints_path.exists():
             return None
-        
-        files: List[Path] = [entry for entry in checkpoints_path.iterdir() if entry.is_file() and entry.name != "last.ckpt"]
+
+        files: List[Path] = [
+            entry
+            for entry in checkpoints_path.iterdir()
+            if entry.is_file() and not "last" in entry.name.lower()
+        ]
         if not files:
             return None
-        
+
         files.sort(key=lambda file: file.stat().st_mtime)
         return files[-1]

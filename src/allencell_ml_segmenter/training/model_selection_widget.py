@@ -135,4 +135,3 @@ class ModelSelectionWidget(QWidget):
         self._combo_box_existing_models.addItems(
             self._experiments_model.get_experiments()
         )
-
