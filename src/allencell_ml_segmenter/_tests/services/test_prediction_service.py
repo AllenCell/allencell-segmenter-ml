@@ -113,7 +113,6 @@ def test_build_overrides() -> None:
         )
     )
     experiments_model.set_experiment_name("2_exp")
-    experiments_model.set_checkpoint("1.ckpt")
     prediction_service: PredictionService = PredictionService(
         prediction_model, experiments_model
     )
@@ -171,7 +170,6 @@ def test_build_overrides_experiment_none() -> None:
             / "experiments_home",
         )
     )
-    experiments_model.set_checkpoint("1.ckpt")
     prediction_service: PredictionService = PredictionService(
         prediction_model, experiments_model
     )
