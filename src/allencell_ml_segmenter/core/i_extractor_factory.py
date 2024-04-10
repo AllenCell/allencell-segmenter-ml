@@ -9,4 +9,3 @@ class IExtractorFactory(ABC):
     @abstractmethod
     def create(self, img_path: Path):
         pass
-
