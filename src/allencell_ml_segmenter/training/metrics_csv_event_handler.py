@@ -11,7 +11,9 @@ class MetricsCSVEventHandler(FileSystemEventHandler):
     CSV to the callback.
     """
 
-    def __init__(self, target_path: Path, progress_callback: Callable, min_epoch: int):
+    def __init__(
+        self, target_path: Path, progress_callback: Callable, min_epoch: int
+    ):
         super().__init__()
         self._target_path: Path = target_path
         self._progress_callback: Callable = progress_callback
