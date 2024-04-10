@@ -196,7 +196,9 @@ class CurationInputView(View):
             Event.ACTION_CURATION_RAW_THREAD_ERROR,
             self,
             lambda x: self._set_to_stopped(
-                self._raw_image_channel_combo, self._raw_dir_stacked_spinner, self._raw_directory_select
+                self._raw_image_channel_combo,
+                self._raw_dir_stacked_spinner,
+                self._raw_directory_select,
             ),
         )
         self._curation_model.subscribe(
@@ -224,7 +226,10 @@ class CurationInputView(View):
         combobox.setEnabled(False)
 
     def _set_to_stopped(
-        self, combobox: QComboBox, stacked_spinner: StackedSpinner, input_button: InputButton
+        self,
+        combobox: QComboBox,
+        stacked_spinner: StackedSpinner,
+        input_button: InputButton,
     ) -> None:
         # reset everything to default
         stacked_spinner.stop()
