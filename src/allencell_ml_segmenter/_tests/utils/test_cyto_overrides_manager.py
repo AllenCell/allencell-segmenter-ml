@@ -18,7 +18,12 @@ import allencell_ml_segmenter
 
 @pytest.fixture
 def experiments_model() -> ExperimentsModel:
-    exp_path: Path = Path(allencell_ml_segmenter.__file__).parent / "_tests" / "main" / "experiments_home"
+    exp_path: Path = (
+        Path(allencell_ml_segmenter.__file__).parent
+        / "_tests"
+        / "main"
+        / "experiments_home"
+    )
     experiments_model = ExperimentsModel(
         FakeUserSettings(
             cyto_dl_home_path=Path(), user_experiments_path=exp_path
