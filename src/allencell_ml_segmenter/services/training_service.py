@@ -8,6 +8,7 @@ from allencell_ml_segmenter.core.channel_extraction import (
     ChannelExtractionThread,
     get_img_path_from_csv,
 )
+from allencell_ml_segmenter.core.extractor_factory import ExtractorFactory
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.event import Event
 
@@ -47,6 +48,7 @@ class TrainingService(Subscriber):
         self,
         training_model: TrainingModel,
         experiments_model: ExperimentsModel,
+        extractor_factory: ExtractorFactory
     ):
         super().__init__()
         self._training_model: TrainingModel = training_model
@@ -56,6 +58,7 @@ class TrainingService(Subscriber):
             self,
             self.train_model_handler,
         )
+        self._extractor_factory = extractor_factory
         self._channel_extraction_thread: Optional[ChannelExtractionThread] = (
             None
         )
@@ -192,12 +195,9 @@ class TrainingService(Subscriber):
     def _start_channel_extraction(
         self, to_extract: Path, channel_callback: Callable
     ):
-        if not isinstance(
-            self._channel_extraction_thread, FakeChannelExtractionThread
-        ):
-            self._channel_extraction_thread = ChannelExtractionThread(
-                get_img_path_from_csv(to_extract / "train.csv")
-            )
+        self._channel_extraction_thread = ChannelExtractionThread(
+            get_img_path_from_csv(to_extract / "train.csv")
+        )
         self._channel_extraction_thread.channels_ready.connect(
             channel_callback
         )

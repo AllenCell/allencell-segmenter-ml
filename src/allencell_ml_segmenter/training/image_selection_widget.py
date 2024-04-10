@@ -148,5 +148,3 @@ class ImageSelectionWidget(QWidget):
         self._channel_combo_box.setEnabled(True)
         self._model.set_channel_index(0)
 
-    def set_combo_box_for_testing(self, combobox: FakeComboBox) -> None:
-        self._channel_combo_box = combobox
