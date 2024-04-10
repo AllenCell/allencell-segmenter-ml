@@ -59,7 +59,9 @@ def training_service(
     Returns a TrainingService object with arbitrary-set fields in the model for testing.
     """
     return TrainingService(
-        training_model=training_model, experiments_model=experiments_model, extractor_factory=FakeExtractorFactory(0)
+        training_model=training_model,
+        experiments_model=experiments_model,
+        extractor_factory=FakeExtractorFactory(0),
     )
 
 
@@ -241,12 +243,16 @@ def test_training_image_directory_selected_subscription(
     # Arrange
     fake_value: int = 3
     training_service: TrainingService = TrainingService(
-        training_model=training_model, experiments_model=experiments_model, extractor_factory=FakeExtractorFactory(fake_value)
+        training_model=training_model,
+        experiments_model=experiments_model,
+        extractor_factory=FakeExtractorFactory(fake_value),
     )
 
     # Act
     # patch since we wont use a real image for the fake extraction thread.
-    with patch("allencell_ml_segmenter.services.training_service.get_img_path_from_csv"):
+    with patch(
+        "allencell_ml_segmenter.services.training_service.get_img_path_from_csv"
+    ):
         training_model.set_images_directory(
             Path(allencell_ml_segmenter.__file__).parent
             / "_tests"

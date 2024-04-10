@@ -49,7 +49,7 @@ class TrainingService(Subscriber):
         self,
         training_model: TrainingModel,
         experiments_model: ExperimentsModel,
-        extractor_factory: IExtractorFactory
+        extractor_factory: IExtractorFactory,
     ):
         super().__init__()
         self._training_model: TrainingModel = training_model

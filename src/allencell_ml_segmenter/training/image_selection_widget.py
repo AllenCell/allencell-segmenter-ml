@@ -147,4 +147,3 @@ class ImageSelectionWidget(QWidget):
         self._channel_combo_box.setCurrentIndex(0)
         self._channel_combo_box.setEnabled(True)
         self._model.set_channel_index(0)
-
