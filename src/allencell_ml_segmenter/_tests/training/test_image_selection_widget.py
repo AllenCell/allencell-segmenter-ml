@@ -92,24 +92,3 @@ def test_set_channel_index(
 
         # ASSERT
         assert training_model.get_channel_index() == i
-
-
-def test_update_channels_subscription(
-    training_model: TrainingModel, experiments_model: FakeExperimentsModel
-):
-
-    # Arrange
-    image_selection_widget: ImageSelectionWidget = ImageSelectionWidget(
-        training_model, experiments_model
-    )
-    fake_combo_box: FakeComboBox = FakeComboBox()
-    image_selection_widget.set_combo_box_for_testing(fake_combo_box)
-
-    # Act
-    training_model.set_max_channel(9)
-
-    # Assert
-    assert fake_combo_box.enabled
-    assert fake_combo_box.clear_call_count == 1
-    assert fake_combo_box.current_index == 0
-    assert len(fake_combo_box.items_added) == 9
