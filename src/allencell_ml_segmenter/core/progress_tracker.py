@@ -1,7 +1,7 @@
-from abc import abstractmethod
+from abc import abstractmethod, ABC
 
 
-class ProgressTracker:
+class ProgressTracker(ABC):
     """
     Base class for all ProgressTrackers to inherit from. A ProgressTracker
     maintains an integer measure of progress between progress_minimum and
