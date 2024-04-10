@@ -195,17 +195,23 @@ class CurationInputView(View):
         self._curation_model.subscribe(
             Event.ACTION_CURATION_RAW_THREAD_ERROR,
             self,
-            lambda x: self._set_to_stopped(self._raw_image_channel_combo, self._raw_dir_stacked_spinner)
+            lambda x: self._set_to_stopped(
+                self._raw_image_channel_combo, self._raw_dir_stacked_spinner
+            ),
         )
         self._curation_model.subscribe(
             Event.ACTION_CURATION_SEG1_THREAD_ERROR,
             self,
-            lambda x: self._set_to_stopped(self._seg1_image_channel_combo, self._seg1_dir_stacked_spinner)
+            lambda x: self._set_to_stopped(
+                self._seg1_image_channel_combo, self._seg1_dir_stacked_spinner
+            ),
         )
         self._curation_model.subscribe(
             Event.ACTION_CURATION_SEG2_THREAD_ERROR,
             self,
-            lambda x: self._set_to_stopped(self._seg2_image_channel_combo, self._seg2_dir_stacked_spinner)
+            lambda x: self._set_to_stopped(
+                self._seg2_image_channel_combo, self._seg2_dir_stacked_spinner
+            ),
         )
 
     def _set_to_loading(
@@ -217,7 +223,9 @@ class CurationInputView(View):
         combobox.setCurrentIndex(-1)
         combobox.setEnabled(False)
 
-    def _set_to_stopped(self, combobox: QComboBox, stacked_spinner: StackedSpinner) -> None:
+    def _set_to_stopped(
+        self, combobox: QComboBox, stacked_spinner: StackedSpinner
+    ) -> None:
         # reset everything to default
         stacked_spinner.stop()
         combobox.clear()
