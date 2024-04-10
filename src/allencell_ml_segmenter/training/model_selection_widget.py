@@ -68,10 +68,6 @@ class ModelSelectionWidget(QWidget):
 
         label_existing_model: LabelWithHint = LabelWithHint("Existing model")
         top_grid_layout.addWidget(label_existing_model, 1, 1)
-        label_existing_model_checkpoint: LabelWithHint = LabelWithHint(
-            "Checkpoint"
-        )
-        top_grid_layout.addWidget(label_existing_model_checkpoint, 2, 1)
 
         self._combo_box_existing_models: QComboBox = QComboBox()
         self._combo_box_existing_models.setCurrentIndex(-1)
@@ -89,23 +85,8 @@ class ModelSelectionWidget(QWidget):
 
         top_grid_layout.addWidget(self._combo_box_existing_models, 1, 2)
 
-        self._combo_box_existing_models_checkpoint: QComboBox = QComboBox()
-        self._combo_box_existing_models_checkpoint.setCurrentIndex(-1)
-        self._combo_box_existing_models_checkpoint.setPlaceholderText(
-            "Select an option"
-        )
-        self._combo_box_existing_models_checkpoint.setEnabled(False)
-        self._combo_box_existing_models_checkpoint.setMinimumWidth(306)
-        self._combo_box_existing_models_checkpoint.currentTextChanged.connect(
-            lambda path_text: self._experiments_model.set_checkpoint(path_text)
-        )
         self._combo_box_existing_models.setEnabled(False)
-        self._combo_box_existing_models_checkpoint.setEnabled(False)
         self.experiment_info_widget.set_enabled(False)
-
-        top_grid_layout.addWidget(
-            self._combo_box_existing_models_checkpoint, 2, 2
-        )
 
         frame.layout().addLayout(top_grid_layout)
 
@@ -118,7 +99,6 @@ class ModelSelectionWidget(QWidget):
             self._experiments_model.set_experiment_name(None)
         else:
             self._experiments_model.set_experiment_name(experiment_name)
-            self._refresh_checkpoint_options()
 
     def _model_radio_handler(self) -> None:
         if self._radio_new_model.isChecked():
@@ -130,11 +110,7 @@ class ModelSelectionWidget(QWidget):
             self._combo_box_existing_models.setEnabled(False)
             self.experiment_info_widget.set_enabled(True)
 
-            self._combo_box_existing_models_checkpoint.setEnabled(False)
-            self._combo_box_existing_models_checkpoint.clear()
-
             self._experiments_model.set_experiment_name(None)
-            self._experiments_model.set_checkpoint(None)
 
         if self._radio_existing_model.isChecked():
             """
@@ -152,29 +128,11 @@ class ModelSelectionWidget(QWidget):
         """
         if self._radio_new_model.isChecked():
             self._refresh_experiment_options()
-        if (
-            self._radio_existing_model.isChecked()
-            and self._experiments_model.get_experiment_name() is not None
-        ):
-            self._refresh_checkpoint_options()
 
     def _refresh_experiment_options(self):
         self._experiments_model.refresh_experiments()
         self._combo_box_existing_models.clear()
         self._combo_box_existing_models.addItems(
-            self._experiments_model.get_experiments().keys()
+            self._experiments_model.get_experiments()
         )
 
-    def _refresh_checkpoint_options(self):
-        # update and enable checkpoint combo box
-        self._experiments_model.refresh_checkpoints(
-            self._experiments_model.get_experiment_name()
-        )
-        self._combo_box_existing_models_checkpoint.clear()
-        self._combo_box_existing_models_checkpoint.addItems(
-            self._experiments_model.get_experiments()[
-                self._experiments_model.get_experiment_name()
-            ]
-        )
-        self._combo_box_existing_models_checkpoint.setCurrentIndex(-1)
-        self._combo_box_existing_models_checkpoint.setEnabled(True)
