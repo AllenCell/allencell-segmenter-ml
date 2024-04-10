@@ -20,9 +20,11 @@ class FakeChannelExtractionThread:
     Fake of Channel Extraction Thread
     """
 
-    def __init__(self):
+    def __init__(self, fake_value: int):
         self.channels_ready = FakeChannelsReady()
         self.started: bool = False
+        self._fake_value = fake_value
 
     def start(self):
         self.started = True
+        self.channels_ready.connected(self._fake_value)
