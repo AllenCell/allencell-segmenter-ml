@@ -52,6 +52,10 @@ class Event(Enum):
     ACTION_CURATION_DRAW_MERGING = "curation_draw_merging"
     ACTION_CURATION_SAVE_EXCLUDING_MASK = "curation_save_excluding_mask"
     ACTION_CURATION_SAVED_MERGING_MASK = "curation_saved_merging_mask"
+    # error handling
+    ACTION_CURATION_SEG2_THREAD_ERROR = "curation_seg2_thread_error"
+    ACTION_CURATION_SEG1_THREAD_ERROR = "curation_seg1_thread_error"
+    ACTION_CURATION_RAW_THREAD_ERROR = "curation_raw_thread_error"
 
     # View selection events. These can stem from a user action, or from a process (i.e. prediction process ends, and a new view is shown automatically).
     VIEW_SELECTION_TRAINING = "training_selected"
