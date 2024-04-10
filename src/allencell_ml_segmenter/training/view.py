@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Optional
 from allencell_ml_segmenter.main.i_viewer import IViewer
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
@@ -203,9 +204,11 @@ class TrainingView(View):
         """
         Starts training process
         """
+        current_epoch: Optional[int] = self._experiments_model.get_current_epoch()
         progress_tracker: MetricsCSVProgressTracker = (
             MetricsCSVProgressTracker(
                 self._experiments_model.get_metrics_csv_path(),
+                current_epoch + 1 if current_epoch else 0,
                 self._training_model.get_max_epoch(),
                 self._experiments_model.get_latest_metrics_csv_version() + 1,
             )
