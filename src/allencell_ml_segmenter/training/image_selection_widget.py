@@ -11,7 +11,6 @@ from qtpy.QtWidgets import (
     QComboBox,
 )
 
-from allencell_ml_segmenter._tests.fakes.fake_combo_box import FakeComboBox
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.curation.stacked_spinner import StackedSpinner
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
