@@ -12,9 +12,6 @@ from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
     FakeExperimentsModel,
 )
-from allencell_ml_segmenter._tests.fakes.fake_combo_box import (
-    FakeComboBox,
-)
 
 from allencell_ml_segmenter.training.image_selection_widget import (
     ImageSelectionWidget,
