@@ -13,17 +13,18 @@ from allencell_ml_segmenter.services.training_service import (
 from allencell_ml_segmenter.training.training_model import (
     TrainingModel,
 )
+import allencell_ml_segmenter
 
 
 @pytest.fixture
 def experiments_model() -> ExperimentsModel:
+    exp_path: Path = Path(allencell_ml_segmenter.__file__).parent / "_tests" / "main" / "experiments_home"
     experiments_model = ExperimentsModel(
         FakeUserSettings(
-            cyto_dl_home_path=Path(), user_experiments_path=Path()
+            cyto_dl_home_path=Path(), user_experiments_path=exp_path
         )
     )
-    experiments_model.set_experiment_name("testing_experiment")
-    experiments_model.set_checkpoint("test_path_checkpoint")
+    experiments_model.set_experiment_name("2_exp")
     return experiments_model
 
 
