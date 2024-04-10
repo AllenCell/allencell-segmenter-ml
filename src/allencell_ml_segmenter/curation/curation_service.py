@@ -203,19 +203,23 @@ class CurationService(Subscriber):
         return new_thread
 
     def _handle_raw_thread_error(self, _: Exception) -> None:
-        show_info("Selected directory does not contain images that are able to be curated. Please select directory of only supported images")
+        show_info(
+            "Selected directory does not contain images that are able to be curated. Please select directory of only supported images"
+        )
         self._stop_channel_extraction_thread(self._raw_thread)
         self._curation_model.dispatch(Event.ACTION_CURATION_RAW_THREAD_ERROR)
 
     def _handle_seg1_thread_error(self, _: Exception) -> None:
         show_info(
-            "Selected directory does not contain images that are able to be curated. Please select directory of only supported images")
+            "Selected directory does not contain images that are able to be curated. Please select directory of only supported images"
+        )
         self._stop_channel_extraction_thread(self._seg1_thread)
         self._curation_model.dispatch(Event.ACTION_CURATION_SEG1_THREAD_ERROR)
 
     def _handle_seg2_thread_error(self, _: Exception) -> None:
         show_info(
-            "Selected directory does not contain images that are able to be curated. Please select directory of only supported images")
+            "Selected directory does not contain images that are able to be curated. Please select directory of only supported images"
+        )
         self._stop_channel_extraction_thread(self._seg2_thread)
         self._curation_model.dispatch(Event.ACTION_CURATION_SEG2_THREAD_ERROR)
 
