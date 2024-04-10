@@ -56,7 +56,7 @@ class ChannelExtractionThread(QThread):
             channels: int = extract_channels_from_image(self._img_path)
         except UnsupportedFileFormatError as ex:
             self.task_failed.emit(ex)
-            raise  # reraise exception
+            return  # return instead of reraise to surprss error message in napari console
 
         if not QThread.currentThread().isInterruptionRequested():
             self.channels_ready.emit(channels)
