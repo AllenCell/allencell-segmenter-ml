@@ -150,7 +150,6 @@ class ExperimentsModel(IExperimentsModel):
         # assumes checkpoint format: epoch_001.ckpt
         return int(ckpt.split(".")[0].split("_")[-1])
 
-
     def _get_best_ckpt(self) -> Optional[str]:
         if not self._experiment_name:
             return None
