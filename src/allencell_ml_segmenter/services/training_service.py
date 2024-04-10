@@ -9,6 +9,7 @@ from allencell_ml_segmenter.core.channel_extraction import (
     get_img_path_from_csv,
 )
 from allencell_ml_segmenter.core.extractor_factory import ExtractorFactory
+from allencell_ml_segmenter.core.i_extractor_factory import IExtractorFactory
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.event import Event
 
@@ -48,7 +49,7 @@ class TrainingService(Subscriber):
         self,
         training_model: TrainingModel,
         experiments_model: ExperimentsModel,
-        extractor_factory: ExtractorFactory
+        extractor_factory: IExtractorFactory
     ):
         super().__init__()
         self._training_model: TrainingModel = training_model
