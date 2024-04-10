@@ -1,5 +1,6 @@
 from pathlib import Path
 from typing import List
+from unittest.mock import patch
 
 import pytest
 
@@ -10,6 +11,7 @@ from allencell_ml_segmenter._tests.fakes.fake_user_settings import (
 from allencell_ml_segmenter._tests.fakes.fake_channel_extraction import (
     FakeChannelExtractionThread,
 )
+from allencell_ml_segmenter.core.extractor_factory import FakeExtractorFactory
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
 
@@ -57,7 +59,7 @@ def training_service(
     Returns a TrainingService object with arbitrary-set fields in the model for testing.
     """
     return TrainingService(
-        training_model=training_model, experiments_model=experiments_model
+        training_model=training_model, experiments_model=experiments_model, extractor_factory=FakeExtractorFactory(0)
     )
 
 
@@ -237,27 +239,20 @@ def test_training_image_directory_selected_subscription(
     experiments_model: ExperimentsModel,
 ) -> None:
     # Arrange
+    fake_value: int = 3
     training_service: TrainingService = TrainingService(
-        training_model=training_model, experiments_model=experiments_model
-    )
-    fake_extraction_thread: FakeChannelExtractionThread = (
-        FakeChannelExtractionThread()
-    )
-    training_service.set_channel_extraction_thread_for_test(
-        fake_extraction_thread
+        training_model=training_model, experiments_model=experiments_model, extractor_factory=FakeExtractorFactory(fake_value)
     )
 
     # Act
-    training_model.set_images_directory(
-        Path(allencell_ml_segmenter.__file__).parent
-        / "_tests"
-        / "test_files"
-        / "csv"
-    )
+    # patch since we wont use a real image for the fake extraction thread.
+    with patch("allencell_ml_segmenter.services.training_service.get_img_path_from_csv"):
+        training_model.set_images_directory(
+            Path(allencell_ml_segmenter.__file__).parent
+            / "_tests"
+            / "test_files"
+            / "csv"
+        )
 
     # Assert
-    assert fake_extraction_thread.started
-    assert (
-        fake_extraction_thread.channels_ready.connected
-        == training_model.set_max_channel
-    )
+    assert training_model.get_max_channel() == fake_value
