@@ -221,7 +221,7 @@ class CurationService(Subscriber):
         self._raw_thread = self._start_channel_extraction_thread(
             path,
             self._curation_model.set_raw_image_channel_count,
-            lambda _: self._handle_thread_error(self._raw_thread, Event.ACTION_CURATION_RAW_THREAD_ERROR),
+            lambda err: self._handle_thread_error(self._raw_thread, Event.ACTION_CURATION_RAW_THREAD_ERROR, err),
         )
 
     def select_directory_seg1(self, path: Path):
@@ -235,7 +235,7 @@ class CurationService(Subscriber):
         self._seg1_thread = self._start_channel_extraction_thread(
             path,
             self._curation_model.set_seg1_image_channel_count,
-            lambda _: self._handle_thread_error(self._seg1_thread, Event.ACTION_CURATION_SEG1_THREAD_ERROR),
+            lambda err: self._handle_thread_error(self._seg1_thread, Event.ACTION_CURATION_SEG1_THREAD_ERROR, err),
         )
 
     def select_directory_seg2(self, path: Path):
@@ -249,7 +249,7 @@ class CurationService(Subscriber):
         self._seg2_thread = self._start_channel_extraction_thread(
             path,
             self._curation_model.set_seg2_image_channel_count,
-            lambda _: self._handle_thread_error(self._seg2_thread, Event.ACTION_CURATION_SEG2_THREAD_ERROR),
+            lambda err: self._handle_thread_error(self._seg2_thread, Event.ACTION_CURATION_SEG2_THREAD_ERROR, err),
         )
 
     def finished_shape_selection(self, selection_mode: SelectionMode) -> None:
