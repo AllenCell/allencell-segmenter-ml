@@ -110,10 +110,10 @@ def test_set_max_time(
     with qtbot.waitSignal(training_view._max_time_checkbox.toggled):
         training_view._max_time_checkbox.click()  # enables the QLineEdit
 
-    qtbot.keyClicks(training_view._max_time_in_hours_input, "1")
+    qtbot.keyClicks(training_view._max_time_in_minutes_input, "30")
 
     # ASSERT
-    assert training_model.get_max_time() == 3600
+    assert training_model.get_max_time() == 30
 
 
 def test_checkbox_slot(
@@ -123,18 +123,18 @@ def test_checkbox_slot(
     Test the slot connected to the timeout checkbox.
     """
     # ASSERT (QLineEdit related to timeout limit is disabled by default)
-    assert not training_view._max_time_in_hours_input.isEnabled()
+    assert not training_view._max_time_in_minutes_input.isEnabled()
 
     # ACT (enable QLineEdit related to timeout limit)
     with qtbot.waitSignal(training_view._max_time_checkbox.stateChanged):
         training_view._max_time_checkbox.click()
 
     # ASSERT
-    assert training_view._max_time_in_hours_input.isEnabled()
+    assert training_view._max_time_in_minutes_input.isEnabled()
 
     # ACT (disabled QLineEdit related to timeout limit)
     with qtbot.waitSignal(training_view._max_time_checkbox.stateChanged):
         training_view._max_time_checkbox.click()
 
     # ASSERT
-    assert not training_view._max_time_in_hours_input.isEnabled()
+    assert not training_view._max_time_in_minutes_input.isEnabled()

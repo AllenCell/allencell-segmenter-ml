@@ -146,81 +146,6 @@ def test_set_curation_image_dims(curation_model: CurationModel) -> None:
     assert curation_model.get_curation_image_dims() == (100, 200, 3)
 
 
-def test_get_raw_images(curation_model: CurationModel) -> None:
-    # Arrange
-    sample_paths: List[Path] = [Path("raw1"), Path("raw2"), Path("raw3")]
-    curation_model.set_raw_images(sample_paths)
-
-    # Act/assert
-    assert curation_model.get_raw_images() == sample_paths
-
-
-def test_set_raw_images(curation_model: CurationModel) -> None:
-    # Act
-    curation_model.set_raw_images([Path("image1"), Path("image2")])
-
-    # Assert
-    assert curation_model.get_raw_images() == [Path("image1"), Path("image2")]
-
-
-def test_get_current_raw_image(curation_model: CurationModel) -> None:
-    # Arrange
-    curation_model.set_raw_images([Path("image1"), Path("image2")])
-
-    # Act/Assert
-    assert curation_model.get_current_raw_image() == Path("image1")
-
-
-def test_get_seg1_images(curation_model: CurationModel) -> None:
-    # Arrange
-    sample_seg1: List[Path] = [Path("seg1"), Path("seg1_2"), Path("seg1_3")]
-    curation_model.set_seg1_images(sample_seg1)
-
-    # Act/Assert
-    assert curation_model.get_seg1_images() == sample_seg1
-
-
-def test_set_seg1_images(curation_model: CurationModel) -> None:
-    # Act
-    curation_model.set_seg1_images([Path("image1"), Path("image2")])
-
-    # Assert
-    assert curation_model.get_seg1_images() == [Path("image1"), Path("image2")]
-
-
-def test_get_current_seg1_image(curation_model: CurationModel) -> None:
-    # Act
-    curation_model.set_seg1_images([Path("image1"), Path("image2")])
-
-    # Assert
-    assert curation_model.get_current_seg1_image() == Path("image1")
-
-
-def test_get_seg2_images(curation_model: CurationModel) -> None:
-    # Arrange
-    sample_seg2: List[Path] = [Path("seg2"), Path("seg2_2"), Path("seg2_3")]
-    curation_model.set_seg2_images(sample_seg2)
-
-    # Act/Assert
-    assert curation_model.get_seg2_images() == sample_seg2
-
-
-def test_set_seg2_images(curation_model: CurationModel) -> None:
-    # Act
-    curation_model.set_seg2_images([Path("image1"), Path("image2")])
-
-    # Assert
-    assert curation_model.get_seg2_images() == [Path("image1"), Path("image2")]
-
-
-def test_get_current_seg2_image(curation_model: CurationModel) -> None:
-    # Arrange
-    curation_model.set_seg2_images([Path("image1"), Path("image2")])
-
-    # Act/Assert
-    assert curation_model.get_current_seg2_image() == Path("image1")
-
-
 def test_set_current_merging_mask_path(curation_model: CurationModel) -> None:
     # Act
     curation_model.set_current_merging_mask_path(Path("mask_path"))
@@ -311,33 +236,6 @@ def test_append_merging_mask_shape_layer(
 
     # Assert
     assert curation_model.get_merging_mask_shape_layers() == [layer]
-
-
-def test_image_available(curation_model: CurationModel) -> None:
-    # Arrange
-    assert not curation_model.image_available()
-
-    curation_model.set_raw_images([Path("image1"), Path("image2")])
-
-    # Act/Assert
-    assert curation_model.image_available()
-
-
-def test_get_curation_index(curation_model: CurationModel) -> None:
-    # Arrange
-    assert curation_model.get_curation_index() == 0
-    curation_model.set_curation_index(4)
-
-    # Act/assert
-    assert curation_model.get_curation_index() == 4
-
-
-def test_set_curation_index(curation_model: CurationModel) -> CurationModel:
-    # Arrange
-    curation_model.set_curation_index(2)
-
-    # Act/Assert
-    assert curation_model.get_curation_index() == 2
 
 
 def test_append_curation_record(curation_model: CurationModel) -> None:
