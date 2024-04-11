@@ -110,7 +110,7 @@ class TrainingService(Subscriber):
             return False
 
         if (
-            self._training_model.get_max_channels() > 0
+            self._training_model.get_max_channel() > 0
             and self._training_model.get_channel_index() is None
         ):
             show_warning(
