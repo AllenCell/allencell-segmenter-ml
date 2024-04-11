@@ -28,8 +28,11 @@ def experiments_model() -> ExperimentsModel:
 
 
 def test_refresh_experiments(experiments_model: ExperimentsModel) -> None:
-    expected = ["0_exp", "1_exp", "2_exp"]
-    assert experiments_model.get_experiments() == expected
+    expected = ["0_exp", "1_exp", "2_exp", "one_ckpt_exp"]
+    experiments_model.refresh_experiments()
+    assert len(experiments_model.get_experiments()) == len(expected)
+    for e in experiments_model.get_experiments():
+        assert e in expected
 
 
 def test_get_cyto_dl_config() -> None:
@@ -170,3 +173,32 @@ def test_get_latest_metrics_csv_version_version_1() -> None:
 
     # Act / Assert
     assert model.get_latest_metrics_csv_version() == 1
+
+
+def test_get_current_epoch_with_ckpt() -> None:
+    # Arrange
+    user_experiments_path = Path(__file__).parent / "experiments_home"
+    config = FakeUserSettings(
+        cyto_dl_home_path=Path(__file__).parent / "cyto_dl_home",
+        user_experiments_path=user_experiments_path,
+    )
+    model = ExperimentsModel(config)
+    model.set_experiment_name("one_ckpt_exp")
+
+    # Act / Assert
+    assert model.get_current_epoch() == 0
+
+
+def test_get_current_epoch_no_ckpt() -> None:
+    # Arrange
+    user_experiments_path = Path(__file__).parent / "experiments_home"
+    config = FakeUserSettings(
+        cyto_dl_home_path=Path(__file__).parent / "cyto_dl_home",
+        user_experiments_path=user_experiments_path,
+    )
+    model = ExperimentsModel(config)
+    # this experiment has no checkpoints, so we expect current epoch to be undefined
+    model.set_experiment_name("0_exp")
+
+    # Act / Assert
+    assert model.get_current_epoch() is None
