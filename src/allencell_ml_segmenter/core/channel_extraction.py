@@ -57,6 +57,9 @@ class ChannelExtractionThread(QThread):
         except UnsupportedFileFormatError as ex:
             self.task_failed.emit(ex)
             return  # return instead of reraise to surprss error message in napari console
+        except FileNotFoundError as ex:
+            self.task_failed.emit(ex)
+            return
 
         if not QThread.currentThread().isInterruptionRequested():
             self.channels_ready.emit(channels)
