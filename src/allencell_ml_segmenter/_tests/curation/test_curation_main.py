@@ -1,20 +1,14 @@
-import pytest
 from dataclasses import dataclass
-from typing import Tuple
 from allencell_ml_segmenter.curation.main_view import CurationMainView
-from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
-    FakeExperimentsModel,
-)
 from allencell_ml_segmenter._tests.fakes.fake_viewer import FakeViewer
 from allencell_ml_segmenter.main.i_viewer import IViewer
 from allencell_ml_segmenter.curation.curation_model import CurationModel
 from allencell_ml_segmenter.curation.curation_service import CurationService
 from allencell_ml_segmenter.curation.curation_image_loader import (
-    FakeCurationImageLoader,
+    FakeCurationImageLoaderFactory,
 )
 import allencell_ml_segmenter
 
-from unittest.mock import Mock
 from pytestqt.qtbot import QtBot
 from pathlib import Path
 
@@ -44,18 +38,10 @@ def get_test_environment(
     if include_seg_2:
         curation_model.set_seg2_directory(IMG_DIR_PATH)
 
-    curation_model.set_image_loader(
-        FakeCurationImageLoader(
-            [Path("raw 1"), Path("raw 2"), Path("raw 3")],
-            [Path("seg1 1"), Path("seg1 2"), Path("seg1 3")],
-            [Path("seg2 1"), Path("seg2 2"), Path("seg2 3")],
-        )
-    )
     viewer: IViewer = FakeViewer()
-    curation_service: CurationService = CurationService(curation_model, viewer)
-    # with our current setup, need to mock this since this will set up a real
-    # image loader and start trying to load images into memory
-    curation_service.curation_setup = Mock()
+    curation_service: CurationService = CurationService(
+        curation_model, viewer, FakeCurationImageLoaderFactory()
+    )
     main_view: CurationMainView = CurationMainView(
         curation_model, curation_service
     )
@@ -87,7 +73,11 @@ def test_initial_state_with_seg2(qtbot: QtBot) -> None:
     assert not env.view.excluding_delete_button.isEnabled()
 
     assert env.view.progress_bar.value() == 1
-    assert env.view.progress_bar.maximum() == 3
+    assert env.view.progress_bar.maximum() == 2
+
+    assert "[raw] t1.tiff" in env.viewer.images_added
+    assert "[seg1] t1.tiff" in env.viewer.images_added
+    assert "[seg2] t1.tiff" in env.viewer.images_added
 
 
 def test_initial_state_no_seg2(qtbot: QtBot) -> None:
@@ -107,7 +97,11 @@ def test_initial_state_no_seg2(qtbot: QtBot) -> None:
     assert env.view.excluding_delete_button.isEnabled()
 
     assert env.view.progress_bar.value() == 1
-    assert env.view.progress_bar.maximum() == 3
+    assert env.view.progress_bar.maximum() == 2
+
+    assert "[raw] t1.tiff" in env.viewer.images_added
+    assert "[seg1] t1.tiff" in env.viewer.images_added
+    assert "[seg2] t1.tiff" not in env.viewer.images_added
 
 
 def test_next_image_with_seg2(qtbot: QtBot) -> None:
@@ -130,9 +124,9 @@ def test_next_image_with_seg2(qtbot: QtBot) -> None:
 
     assert env.view.progress_bar.value() == 2
 
-    assert "[raw] raw 2" in env.viewer.images_added
-    assert "[seg1] seg1 2" in env.viewer.images_added
-    assert "[seg2] seg2 2" in env.viewer.images_added
+    assert "[raw] t2.tiff" in env.viewer.images_added
+    assert "[seg1] t2.tiff" in env.viewer.images_added
+    assert "[seg2] t2.tiff" in env.viewer.images_added
 
 
 def test_next_image_no_seg2(qtbot: QtBot) -> None:
@@ -155,6 +149,6 @@ def test_next_image_no_seg2(qtbot: QtBot) -> None:
 
     assert env.view.progress_bar.value() == 2
 
-    assert "[raw] raw 2" in env.viewer.images_added
-    assert "[seg1] seg1 2" in env.viewer.images_added
-    assert "[seg2] seg2 2" in env.viewer.images_added
+    assert "[raw] t2.tiff" in env.viewer.images_added
+    assert "[seg1] t2.tiff" in env.viewer.images_added
+    assert "[seg2] t2.tiff" not in env.viewer.images_added

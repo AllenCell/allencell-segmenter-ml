@@ -9,7 +9,7 @@ from allencell_ml_segmenter.curation.curation_model import CurationModel
 from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
 from allencell_ml_segmenter.curation.curation_image_loader import (
     ICurationImageLoader,
-    CurationImageLoader,
+    ICurationImageLoaderFactory,
 )
 from allencell_ml_segmenter.main.i_viewer import IViewer
 from allencell_ml_segmenter.main.viewer import Viewer
@@ -33,10 +33,16 @@ class SelectionMode(Enum):
 class CurationService(Subscriber):
     """ """
 
-    def __init__(self, curation_model: CurationModel, viewer: IViewer) -> None:
+    def __init__(
+        self,
+        curation_model: CurationModel,
+        viewer: IViewer,
+        img_loader_factory: ICurationImageLoaderFactory,
+    ) -> None:
         super().__init__()
         self._curation_model: CurationModel = curation_model
         self._viewer: Viewer = viewer
+        self._img_loader_factory = img_loader_factory
         self._raw_thread: Optional[ChannelExtractionThread] = None
         self._seg1_thread: Optional[ChannelExtractionThread] = None
         self._seg2_thread: Optional[ChannelExtractionThread] = None
@@ -114,7 +120,7 @@ class CurationService(Subscriber):
                             str(idx),
                             str(record.raw_file),
                             str(record.seg1),
-                            str(record.seg2),
+                            str(record.seg2) if record.seg2 else "",
                             str(record.excluding_mask),
                             str(record.merging_mask),
                             str(record.base_image_index),
@@ -413,7 +419,11 @@ class CurationService(Subscriber):
             CurationRecord(
                 loader.get_raw_image_data().path,
                 loader.get_seg1_image_data().path,
-                loader.get_seg2_image_data().path,
+                (
+                    loader.get_seg2_image_data().path
+                    if loader.get_seg2_image_data()
+                    else None
+                ),
                 excluding_mask_path,
                 merging_mask_path,
                 base_image_name,
@@ -476,7 +486,9 @@ class CurationService(Subscriber):
         else:
             seg2 = None
 
-        loader: ICurationImageLoader = CurationImageLoader(raw, seg1, seg2)
+        loader: ICurationImageLoader = self._img_loader_factory.create(
+            raw, seg1, seg2
+        )
         self._curation_model.set_image_loader(loader)
         # reset
         self.remove_all_images_from_viewer_layers()

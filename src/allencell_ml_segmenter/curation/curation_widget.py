@@ -13,6 +13,9 @@ from allencell_ml_segmenter.curation.curation_model import CurationModel
 from allencell_ml_segmenter.curation.input_view import CurationInputView
 from allencell_ml_segmenter.curation.main_view import CurationMainView
 from allencell_ml_segmenter.curation.curation_service import CurationService
+from allencell_ml_segmenter.curation.curation_image_loader import (
+    CurationImageLoaderFactory,
+)
 
 import napari
 from napari.utils.notifications import show_info
@@ -46,7 +49,7 @@ class CurationWidget(QStackedWidget, Subscriber, metaclass=CurationUiMeta):
             experiments_model=experiments_model
         )
         self.curation_service: CurationService = CurationService(
-            curation_model=self.curation_model, viewer=self.viewer
+            self.curation_model, self.viewer, CurationImageLoaderFactory()
         )
 
         # basic styling
