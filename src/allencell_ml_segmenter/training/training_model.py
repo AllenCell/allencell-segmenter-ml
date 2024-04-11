@@ -1,7 +1,7 @@
 from allencell_ml_segmenter.core.publisher import Publisher
 from allencell_ml_segmenter.core.event import Event
 from enum import Enum
-from typing import Union
+from typing import Union, Optional
 from pathlib import Path
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 
@@ -13,6 +13,7 @@ class TrainingType(Enum):
     Different cyto-dl experiment types
     """
 
+    SEGMENTATION_PLUGIN = "segmentation_plugin"
     SEGMENTATION = "segmentation"
     GAN = "gan"
     OMNIPOSE = "omnipose"
@@ -61,16 +62,21 @@ class TrainingModel(Publisher):
         self._spatial_dims: int = None
         self._max_epoch: int = None
         self._current_epoch: int = None
-        self._max_time: int = None  # in seconds
+        self._max_time: int = None  # in minutes
         self._config_dir: Path = None
         self.result_images = []
         self._max_channel = None
+        self._use_max_time: bool = (
+            False  # default is false. UI starts with max epoch defined rather than max time.
+        )
 
-    def get_experiment_type(self) -> TrainingType:
+    def get_experiment_type(self) -> Optional[str]:
         """
         Gets experiment type
         """
-        return self._experiment_type
+        if self._experiment_type is None:
+            return None
+        return self._experiment_type.value
 
     def set_experiment_type(self, training_type: str) -> None:
         """
@@ -254,3 +260,15 @@ class TrainingModel(Publisher):
         Get the max number of channels in the images in the training dataset
         """
         return self._max_channel
+
+    def use_max_time(self) -> bool:
+        """
+        Will training run will be based off of max time
+        """
+        return self._use_max_time
+
+    def set_use_max_time(self, use_max: bool):
+        """
+        Set if training run will be based off of max time
+        """
+        self._use_max_time = use_max
