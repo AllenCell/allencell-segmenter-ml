@@ -23,6 +23,7 @@ def test_csv_2_epochs():
     )
     fs_event_mock: Mock = Mock(src_path=test_csv_path)
     handler.on_any_event(fs_event_mock)
+    # test_metrics_csv_2_epochs.csv greatest epoch is 2
     callback_mock.assert_called_with(2)
 
 
@@ -43,6 +44,7 @@ def test_empty_csv():
     )
     fs_event_mock: Mock = Mock(src_path=test_csv_path)
     handler.on_any_event(fs_event_mock)
+    # since test_metrics_csv_empty.csv is empty, we expect the min_epoch (2) to be used for the callback
     callback_mock.assert_called_with(2)
 
 
