@@ -20,9 +20,6 @@ class MetricsCSVEventHandler(FileSystemEventHandler):
         self._min_epoch: int = min_epoch
 
     def _get_latest_epoch(self) -> int:
-        if not self._target_path.exists():
-            return self._min_epoch
-
         latest: int = self._min_epoch
         with self._target_path.open("r", newline="") as fr:
             dict_reader: DictReader = DictReader(fr)
