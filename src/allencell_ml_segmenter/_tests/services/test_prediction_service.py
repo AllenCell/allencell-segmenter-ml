@@ -112,7 +112,7 @@ def test_build_overrides() -> None:
             / "experiments_home",
         )
     )
-    experiments_model.set_experiment_name("2_exp")
+    experiments_model.set_experiment_name("one_ckpt_exp")
     prediction_service: PredictionService = PredictionService(
         prediction_model, experiments_model
     )
@@ -142,9 +142,9 @@ def test_build_overrides() -> None:
         Path(__file__).parent.parent
         / "main"
         / "experiments_home"
-        / "2_exp"
+        / "one_ckpt_exp"
         / "checkpoints"
-        / "1.ckpt"
+        / "epoch_000.ckpt"
     )
 
     # optional overrides
