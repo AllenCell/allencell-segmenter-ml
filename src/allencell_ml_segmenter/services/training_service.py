@@ -79,7 +79,7 @@ class TrainingService(Subscriber):
                 cyto_overrides_manager.get_training_overrides()
             )
             model.print_config()
-            asyncio.run(model.train(run_async=True))
+            asyncio.run(model._train_async())
 
     def _able_to_continue_training(self) -> bool:
         if self._experiments_model.get_experiment_name() is None:
@@ -96,6 +96,28 @@ class TrainingService(Subscriber):
                 "Please select spatial dims for training dataset. 2-D or 3-D."
             )
             return False
+
+        if self._training_model.get_images_directory() is None:
+            show_warning("User has not selected input images for training")
+            return False
+
+        if self._training_model.get_patch_size() is None:
+            show_warning("User has not selected a patch size for training")
+            return False
+
+        if self._training_model.get_max_epoch() is None:
+            show_warning("Please define max epoch(s) to run for")
+            return False
+
+        if (
+            self._training_model.get_max_channels() > 0
+            and self._training_model.get_channel_index() is None
+        ):
+            show_warning(
+                "Your raw images have multiple channels, please select a channel to train on."
+            )
+            return False
+        return True
 
     def _start_channel_extraction(
         self, to_extract: Path, channel_callback: Callable
@@ -121,29 +143,3 @@ class TrainingService(Subscriber):
             self._training_model.get_images_directory(),
             self._training_model.set_max_channel,
         )
-
-    def set_channel_extraction_thread_for_test(
-        self, thread: FakeChannelExtractionThread
-    ):
-        self._channel_extraction_thread = thread
-        if self._training_model.get_images_directory() is None:
-            show_warning("User has not selected input images for training")
-            return False
-
-        if self._training_model.get_patch_size() is None:
-            show_warning("User has not selected a patch size for training")
-            return False
-
-        if self._training_model.get_max_epoch() is None:
-            show_warning("Please define max epoch(s) to run for")
-            return False
-
-        if (
-            self._training_model.get_max_channels() > 0
-            and self._training_model.get_channel_index() is None
-        ):
-            show_warning(
-                "Your raw images have multiple channels, please select a channel to train on."
-            )
-            return False
-        return True
