@@ -6,6 +6,8 @@ import pytest
 from qtpy.QtWidgets import QFileDialog
 from qtpy.QtCore import Qt
 from pytestqt.qtbot import QtBot
+
+import allencell_ml_segmenter
 from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
     FakeExperimentsModel,

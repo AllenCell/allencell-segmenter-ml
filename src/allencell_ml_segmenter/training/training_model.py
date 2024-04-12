@@ -65,6 +65,7 @@ class TrainingModel(Publisher):
         self._max_time: int = None  # in minutes
         self._config_dir: Path = None
         self.result_images = []
+        self._max_channel = None
         self._use_max_time: bool = (
             False  # default is false. UI starts with max epoch defined rather than max time.
         )
@@ -154,11 +155,13 @@ class TrainingModel(Publisher):
 
     def set_images_directory(self, images_path: Path) -> None:
         """
-        Sets images directory
+        Sets images directory, and dispatches channel extraction
 
         images_path (Path): path to images directory
         """
         self._images_directory = images_path
+        if images_path is not None:
+            self.dispatch(Event.ACTION_TRAINING_DATASET_SELECTED)
 
     def get_channel_index(self) -> Union[int, None]:
         """
@@ -244,6 +247,19 @@ class TrainingModel(Publisher):
         images (list): list of images to display
         """
         self.result_images = images
+
+    def set_max_channel(self, max: int) -> None:
+        """
+        Set the max number of channels in the images in the training dataset
+        """
+        self._max_channel = max
+        self.dispatch(Event.ACTION_TRAINING_MAX_NUMBER_CHANNELS_SET)
+
+    def get_max_channel(self) -> int:
+        """
+        Get the max number of channels in the images in the training dataset
+        """
+        return self._max_channel
 
     def use_max_time(self) -> bool:
         """
