@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import List, Optional
 from allencell_ml_segmenter.config.i_user_settings import IUserSettings
 
 import copy
@@ -13,20 +14,19 @@ class ExperimentsModel(IExperimentsModel):
         self.user_settings = config
 
         # options
-        self.experiments = {}
+        self.experiments = []
         self.refresh_experiments()
 
         # state
-        self._experiment_name: str = None
-        self._checkpoint: str = None
+        self._experiment_name: Optional[str] = None
 
-    def get_experiment_name(self) -> str:
+    def get_experiment_name(self) -> Optional[str]:
         """
         Gets experiment name
         """
         return self._experiment_name
 
-    def set_experiment_name(self, name: str) -> None:
+    def set_experiment_name(self, name: Optional[str]) -> None:
         """
         Sets experiment name
 
@@ -37,21 +37,15 @@ class ExperimentsModel(IExperimentsModel):
             # if a experiment name is set
             self.dispatch(Event.ACTION_EXPERIMENT_SELECTED)
 
-    def get_checkpoint(self) -> str:
+    def get_checkpoint(self) -> Optional[str]:
         """
         Gets checkpoint
         """
-        return self._checkpoint
-
-    def set_checkpoint(self, checkpoint: str) -> None:
-        """
-        Sets checkpoint
-
-        checkpoint (str): name of checkpoint to use
-        """
-        self._checkpoint = checkpoint
+        return self._get_best_ckpt()
 
     def refresh_experiments(self) -> None:
+        # TODO: make a FileUtils method for this?
+        self.experiments = []
         for (
             experiment
         ) in self.user_settings.get_user_experiments_path().iterdir():
@@ -59,25 +53,13 @@ class ExperimentsModel(IExperimentsModel):
                 experiment not in self.experiments
                 and not experiment.name.startswith(".")
             ):
-                self.experiments[experiment.name] = set()
-                self.refresh_checkpoints(experiment.name)
-
-    def refresh_checkpoints(self, experiment: str) -> None:
-        checkpoints_path = (
-            Path(self.user_settings.get_user_experiments_path())
-            / experiment
-            / "checkpoints"
-        )
-        if checkpoints_path.exists() and len([checkpoints_path.iterdir()]) > 0:
-            for checkpoint in checkpoints_path.iterdir():
-                if checkpoint.suffix == ".ckpt":
-                    self.experiments[experiment].add(checkpoint.name)
+                self.experiments.append(experiment.name)
 
     """
-    Returns a defensive copy of Experiments dict.
+    Returns a defensive copy of Experiments list.
     """
 
-    def get_experiments(self) -> dict:
+    def get_experiments(self) -> List[str]:
         return copy.deepcopy(self.experiments)
 
     def get_user_settings(self) -> IUserSettings:
@@ -160,3 +142,33 @@ class ExperimentsModel(IExperimentsModel):
             if experiment_name
             else None
         )
+
+    def get_current_epoch(self) -> Optional[int]:
+        ckpt: Optional[str] = self.get_checkpoint()
+        if not ckpt:
+            return None
+        # assumes checkpoint format: epoch_001.ckpt
+        return int(ckpt.split(".")[0].split("_")[-1])
+
+    def _get_best_ckpt(self) -> Optional[str]:
+        if not self._experiment_name:
+            return None
+
+        checkpoints_path = (
+            Path(self.user_settings.get_user_experiments_path())
+            / self._experiment_name
+            / "checkpoints"
+        )
+        if not checkpoints_path.exists():
+            return None
+
+        files: List[Path] = [
+            entry
+            for entry in checkpoints_path.iterdir()
+            if entry.is_file() and not "last" in entry.name.lower()
+        ]
+        if not files:
+            return None
+
+        files.sort(key=lambda file: file.stat().st_mtime)
+        return files[-1].name

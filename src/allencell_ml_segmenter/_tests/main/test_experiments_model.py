@@ -7,25 +7,32 @@ from allencell_ml_segmenter._tests.fakes.fake_user_settings import (
 from allencell_ml_segmenter.config.i_user_settings import IUserSettings
 
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
+import allencell_ml_segmenter
 
 
 @pytest.fixture
-def config() -> IUserSettings:
-    """
-    Fixture for MainModel testing.
-    """
-    return FakeUserSettings()
-
-
-def test_refresh_experiments() -> None:
-    model = ExperimentsModel(
+def experiments_model() -> ExperimentsModel:
+    exp_path: Path = (
+        Path(allencell_ml_segmenter.__file__).parent
+        / "_tests"
+        / "main"
+        / "experiments_home"
+    )
+    experiments_model = ExperimentsModel(
         FakeUserSettings(
-            cyto_dl_home_path=Path(__file__).parent / "cyto_dl_home",
-            user_experiments_path=Path(__file__).parent / "experiments_home",
+            cyto_dl_home_path=Path(), user_experiments_path=exp_path
         )
     )
-    expected = {"0_exp": set(), "1_exp": set(), "2_exp": {"0.ckpt", "1.ckpt"}}
-    assert model.get_experiments() == expected
+    experiments_model.set_experiment_name("2_exp")
+    return experiments_model
+
+
+def test_refresh_experiments(experiments_model: ExperimentsModel) -> None:
+    expected = ["0_exp", "1_exp", "2_exp", "one_ckpt_exp"]
+    experiments_model.refresh_experiments()
+    assert len(experiments_model.get_experiments()) == len(expected)
+    for e in experiments_model.get_experiments():
+        assert e in expected
 
 
 def test_get_cyto_dl_config() -> None:
@@ -166,3 +173,32 @@ def test_get_latest_metrics_csv_version_version_1() -> None:
 
     # Act / Assert
     assert model.get_latest_metrics_csv_version() == 1
+
+
+def test_get_current_epoch_with_ckpt() -> None:
+    # Arrange
+    user_experiments_path = Path(__file__).parent / "experiments_home"
+    config = FakeUserSettings(
+        cyto_dl_home_path=Path(__file__).parent / "cyto_dl_home",
+        user_experiments_path=user_experiments_path,
+    )
+    model = ExperimentsModel(config)
+    model.set_experiment_name("one_ckpt_exp")
+
+    # Act / Assert
+    assert model.get_current_epoch() == 0
+
+
+def test_get_current_epoch_no_ckpt() -> None:
+    # Arrange
+    user_experiments_path = Path(__file__).parent / "experiments_home"
+    config = FakeUserSettings(
+        cyto_dl_home_path=Path(__file__).parent / "cyto_dl_home",
+        user_experiments_path=user_experiments_path,
+    )
+    model = ExperimentsModel(config)
+    # this experiment has no checkpoints, so we expect current epoch to be undefined
+    model.set_experiment_name("0_exp")
+
+    # Act / Assert
+    assert model.get_current_epoch() is None
