@@ -11,7 +11,7 @@ from allencell_ml_segmenter.curation.curation_model import CurationModel
 from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
 from allencell_ml_segmenter.curation.curation_image_loader import (
     ICurationImageLoader,
-    CurationImageLoader,
+    ICurationImageLoaderFactory,
 )
 from allencell_ml_segmenter.main.i_viewer import IViewer
 from allencell_ml_segmenter.main.viewer import Viewer
@@ -35,10 +35,16 @@ class SelectionMode(Enum):
 class CurationService(Subscriber):
     """ """
 
-    def __init__(self, curation_model: CurationModel, viewer: IViewer) -> None:
+    def __init__(
+        self,
+        curation_model: CurationModel,
+        viewer: IViewer,
+        img_loader_factory: ICurationImageLoaderFactory,
+    ) -> None:
         super().__init__()
         self._curation_model: CurationModel = curation_model
         self._viewer: Viewer = viewer
+        self._img_loader_factory = img_loader_factory
         self._raw_thread: Optional[ChannelExtractionThread] = None
         self._seg1_thread: Optional[ChannelExtractionThread] = None
         self._seg2_thread: Optional[ChannelExtractionThread] = None
@@ -52,7 +58,7 @@ class CurationService(Subscriber):
             raise ValueError(
                 "Raw directory not set. Please set raw directory."
             )
-        return self._get_files_list_from_path(raw_path)
+        return FileUtils.get_all_files_in_dir_ignore_hidden(raw_path)
 
     def build_seg1_images_list(self) -> List[Path]:
         """
@@ -63,7 +69,7 @@ class CurationService(Subscriber):
             raise ValueError(
                 "Seg1 directory not set. Please set seg1 directory."
             )
-        return self._get_files_list_from_path(seg1_path)
+        return FileUtils.get_all_files_in_dir_ignore_hidden(seg1_path)
 
     def build_seg2_images_list(self) -> List[Path]:
         """
@@ -74,7 +80,7 @@ class CurationService(Subscriber):
             raise ValueError(
                 "Seg2 directory not set. Please set seg2 directory."
             )
-        return self._get_files_list_from_path(seg2_path)
+        return FileUtils.get_all_files_in_dir_ignore_hidden(seg2_path)
 
     def open_image_from_path(self, path: Path) -> AICSImage:
         """
@@ -116,7 +122,7 @@ class CurationService(Subscriber):
                             str(idx),
                             str(record.raw_file),
                             str(record.seg1),
-                            str(record.seg2),
+                            str(record.seg2) if record.seg2 else "",
                             str(record.excluding_mask),
                             str(record.merging_mask),
                             str(record.base_image_index),
@@ -174,16 +180,6 @@ class CurationService(Subscriber):
             points_layer.mode = "add_polygon"
             self._curation_model.append_merging_mask_shape_layer(points_layer)
             self._curation_model.dispatch(Event.ACTION_CURATION_DRAW_MERGING)
-
-    def _get_files_list_from_path(self, path: Path) -> List[Path]:
-        """
-        Return all files in the path as a list of Paths
-        """
-        return [
-            file
-            for file in sorted(path.iterdir())
-            if not file.name.endswith(".DS_Store")
-        ]
 
     def _stop_channel_extraction_thread(self, thread: ChannelExtractionThread):
         # if we find this is too slow, can switch to the method employed by
@@ -451,7 +447,11 @@ class CurationService(Subscriber):
             CurationRecord(
                 loader.get_raw_image_data().path,
                 loader.get_seg1_image_data().path,
-                loader.get_seg2_image_data().path,
+                (
+                    loader.get_seg2_image_data().path
+                    if loader.get_seg2_image_data()
+                    else None
+                ),
                 excluding_mask_path,
                 merging_mask_path,
                 base_image_name,
@@ -514,7 +514,9 @@ class CurationService(Subscriber):
         else:
             seg2 = None
 
-        loader: ICurationImageLoader = CurationImageLoader(raw, seg1, seg2)
+        loader: ICurationImageLoader = self._img_loader_factory.create(
+            raw, seg1, seg2
+        )
         self._curation_model.set_image_loader(loader)
         # reset
         self.remove_all_images_from_viewer_layers()
