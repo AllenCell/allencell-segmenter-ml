@@ -1,5 +1,14 @@
 import asyncio
+from pathlib import Path
 
+from allencell_ml_segmenter._tests.fakes.fake_channel_extraction import (
+    FakeChannelExtractionThread,
+)
+from allencell_ml_segmenter.core.channel_extraction import (
+    ChannelExtractionThread,
+    get_img_path_from_csv,
+)
+from allencell_ml_segmenter.core.i_extractor_factory import IExtractorFactory
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.event import Event
 
@@ -9,7 +18,7 @@ from allencell_ml_segmenter.training.training_model import (
     Hardware,
 )
 from allencell_ml_segmenter.training.training_model import TrainingModel
-from typing import Dict, Union, Optional, List, Any
+from typing import Dict, Union, Optional, List, Any, Callable
 from napari.utils.notifications import show_warning
 from allencell_ml_segmenter.utils.cuda_util import CUDAUtils
 from allencell_ml_segmenter.utils.cyto_overrides_manager import (
@@ -26,6 +35,7 @@ class TrainingService(Subscriber):
         self,
         training_model: TrainingModel,
         experiments_model: ExperimentsModel,
+        extractor_factory: IExtractorFactory,
     ):
         super().__init__()
         self._training_model: TrainingModel = training_model
@@ -34,6 +44,16 @@ class TrainingService(Subscriber):
             Event.PROCESS_TRAINING,
             self,
             self._train_model_handler,
+        )
+        self._extractor_factory: IExtractorFactory = extractor_factory
+        self._channel_extraction_thread: Optional[ChannelExtractionThread] = (
+            None
+        )
+
+        self._training_model.subscribe(
+            Event.ACTION_TRAINING_DATASET_SELECTED,
+            self,
+            self._training_image_directory_selected,
         )
 
     def _train_model_handler(self, _: Event) -> None:
@@ -89,7 +109,7 @@ class TrainingService(Subscriber):
             show_warning("Please define max epoch(s) to run for")
             return False
         if (
-            self._training_model.get_max_channels() > 0
+            self._training_model.get_max_channel() > 0
             and self._training_model.get_channel_index() is None
         ):
             show_warning(
@@ -97,3 +117,28 @@ class TrainingService(Subscriber):
             )
             return False
         return True
+
+    def _start_channel_extraction(
+        self, to_extract: Path, channel_callback: Callable
+    ):
+        self._channel_extraction_thread = self._extractor_factory.create(
+            get_img_path_from_csv(to_extract / "train.csv")
+        )
+        self._channel_extraction_thread.channels_ready.connect(
+            channel_callback
+        )
+        self._channel_extraction_thread.start()
+
+    def _stop_channel_extraction(self) -> None:
+        if (
+            self._channel_extraction_thread
+            and self._channel_extraction_thread.isRunning()
+        ):
+            self._channel_extraction_thread.requestInterruption()
+            self._channel_extraction_thread.wait()
+
+    def _training_image_directory_selected(self, _: Event) -> None:
+        self._start_channel_extraction(
+            self._training_model.get_images_directory(),
+            self._training_model.set_max_channel,
+        )
