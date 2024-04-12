@@ -39,7 +39,7 @@ class InputButton(QWidget):
         mode: FileInputMode = FileInputMode.FILE,
     ):
         super().__init__()
-
+        self._default_placeholder = placeholder
         self._model: Publisher = model
 
         self.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
@@ -53,7 +53,7 @@ class InputButton(QWidget):
 
         # text box that will eventually display the chosen file path
         self._text_display: QLineEdit = QLineEdit()
-        self._text_display.setPlaceholderText(placeholder)
+        self._text_display.setPlaceholderText(self._default_placeholder)
         self._text_display.setObjectName("textDisplay")
         self._text_display.setReadOnly(True)
 
@@ -121,3 +121,7 @@ class InputButton(QWidget):
 
         if file_path:
             self._update_path_text(file_path)
+
+    def clear_selection(self) -> None:
+        self._text_display.clear()
+        self._text_display.setPlaceholderText(self._default_placeholder)

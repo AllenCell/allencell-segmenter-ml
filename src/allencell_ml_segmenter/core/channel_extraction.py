@@ -1,6 +1,8 @@
 from pathlib import Path
 from typing import Generator
 import csv
+
+from aicsimageio.exceptions import UnsupportedFileFormatError
 from qtpy.QtCore import QObject, QThread, Signal
 from aicsimageio import AICSImage
 
@@ -34,6 +36,7 @@ class ChannelExtractionThread(QThread):
     """
 
     channels_ready: Signal = Signal(int)  # num_channels
+    task_failed: Signal = Signal(Exception)
 
     def __init__(self, img_path: Path, parent: QObject = None):
         """
@@ -49,7 +52,14 @@ class ChannelExtractionThread(QThread):
         if not self._img_path.exists():
             raise ValueError(f"{self._img_path} does not exist")
 
-        channels: int = extract_channels_from_image(self._img_path)
+        try:
+            channels: int = extract_channels_from_image(self._img_path)
+        except UnsupportedFileFormatError as ex:
+            self.task_failed.emit(ex)
+            return  # return instead of reraise to surprss error message in napari console
+        except FileNotFoundError as ex:
+            self.task_failed.emit(ex)
+            return
 
         if not QThread.currentThread().isInterruptionRequested():
             self.channels_ready.emit(channels)
