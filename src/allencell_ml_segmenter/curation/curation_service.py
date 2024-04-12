@@ -1,3 +1,5 @@
+import aicsimageio.exceptions
+
 from allencell_ml_segmenter.core.dialog_box import DialogBox
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.subscriber import Subscriber
@@ -191,13 +193,27 @@ class CurationService(Subscriber):
             thread.wait()
 
     def _start_channel_extraction_thread(
-        self, folder: Path, channel_callback: Callable
+        self, folder: Path, channel_callback: Callable, error_handler: Callable
     ) -> ChannelExtractionThread:
         img_path: Path = FileUtils.get_img_path_from_folder(folder)
         new_thread = ChannelExtractionThread(img_path)
         new_thread.channels_ready.connect(channel_callback)
+        new_thread.task_failed.connect(error_handler)
         new_thread.start()
         return new_thread
+
+    def _handle_thread_error(
+        self,
+        thread: ChannelExtractionThread,
+        err_event: Event,
+        err: Exception = None,
+    ):
+        if err:
+            show_info(
+                "Selected directory does not contain images that are able to be curated. Please select directory of only supported images"
+            )
+            self._stop_channel_extraction_thread(thread)
+            self._curation_model.dispatch(err_event)
 
     def select_directory_raw(self, path: Path):
         """
@@ -208,7 +224,11 @@ class CurationService(Subscriber):
         self._curation_model.set_raw_directory(path)
         self._stop_channel_extraction_thread(self._raw_thread)
         self._raw_thread = self._start_channel_extraction_thread(
-            path, self._curation_model.set_raw_image_channel_count
+            path,
+            self._curation_model.set_raw_image_channel_count,
+            lambda err: self._handle_thread_error(
+                self._raw_thread, Event.ACTION_CURATION_RAW_THREAD_ERROR, err
+            ),
         )
 
     def select_directory_seg1(self, path: Path):
@@ -220,7 +240,11 @@ class CurationService(Subscriber):
         self._curation_model.set_seg1_directory(path)
         self._stop_channel_extraction_thread(self._seg1_thread)
         self._seg1_thread = self._start_channel_extraction_thread(
-            path, self._curation_model.set_seg1_image_channel_count
+            path,
+            self._curation_model.set_seg1_image_channel_count,
+            lambda err: self._handle_thread_error(
+                self._seg1_thread, Event.ACTION_CURATION_SEG1_THREAD_ERROR, err
+            ),
         )
 
     def select_directory_seg2(self, path: Path):
@@ -232,7 +256,11 @@ class CurationService(Subscriber):
         self._curation_model.set_seg2_directory(path)
         self._stop_channel_extraction_thread(self._seg2_thread)
         self._seg2_thread = self._start_channel_extraction_thread(
-            path, self._curation_model.set_seg2_image_channel_count
+            path,
+            self._curation_model.set_seg2_image_channel_count,
+            lambda err: self._handle_thread_error(
+                self._seg2_thread, Event.ACTION_CURATION_SEG2_THREAD_ERROR, err
+            ),
         )
 
     def finished_shape_selection(self, selection_mode: SelectionMode) -> None:

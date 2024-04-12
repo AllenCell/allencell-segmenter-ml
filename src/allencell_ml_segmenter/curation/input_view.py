@@ -191,6 +191,35 @@ class CurationInputView(View):
             self.update_seg2_channels,
         )
 
+        # error handling events
+        self._curation_model.subscribe(
+            Event.ACTION_CURATION_RAW_THREAD_ERROR,
+            self,
+            lambda x: self._set_to_stopped(
+                self._raw_image_channel_combo,
+                self._raw_dir_stacked_spinner,
+                self._raw_directory_select,
+            ),
+        )
+        self._curation_model.subscribe(
+            Event.ACTION_CURATION_SEG1_THREAD_ERROR,
+            self,
+            lambda x: self._set_to_stopped(
+                self._seg1_image_channel_combo,
+                self._seg1_dir_stacked_spinner,
+                self._seg1_directory_select,
+            ),
+        )
+        self._curation_model.subscribe(
+            Event.ACTION_CURATION_SEG2_THREAD_ERROR,
+            self,
+            lambda x: self._set_to_stopped(
+                self._seg2_image_channel_combo,
+                self._seg2_dir_stacked_spinner,
+                self._seg2_directory_select,
+            ),
+        )
+
     def _set_to_loading(
         self, combobox: QComboBox, stacked_spinner: StackedSpinner
     ) -> None:
@@ -199,6 +228,19 @@ class CurationInputView(View):
         combobox.setPlaceholderText("loading channels...")
         combobox.setCurrentIndex(-1)
         combobox.setEnabled(False)
+
+    def _set_to_stopped(
+        self,
+        combobox: QComboBox,
+        stacked_spinner: StackedSpinner,
+        input_button: InputButton,
+    ) -> None:
+        # reset everything to default
+        stacked_spinner.stop()
+        combobox.clear()
+        combobox.setPlaceholderText("")
+        combobox.setEnabled(True)
+        input_button.clear_selection()
 
     def _on_raw_dir_select(self, dir: Path) -> None:
         self._set_to_loading(
