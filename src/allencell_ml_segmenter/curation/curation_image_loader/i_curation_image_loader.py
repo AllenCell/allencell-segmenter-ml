@@ -3,11 +3,9 @@ from typing import List, Optional
 from pathlib import Path
 from allencell_ml_segmenter.core.q_runnable_manager import (
     IQRunnableManager,
-    GlobalQRunnableManager,
 )
 from allencell_ml_segmenter.core.image_data_extractor import (
     IImageDataExtractor,
-    AICSImageDataExtractor,
     ImageData,
 )
 
