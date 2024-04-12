@@ -143,6 +143,13 @@ class ExperimentsModel(IExperimentsModel):
             else None
         )
 
+    def get_current_epoch(self) -> Optional[int]:
+        ckpt: Optional[str] = self.get_checkpoint()
+        if not ckpt:
+            return None
+        # assumes checkpoint format: epoch_001.ckpt
+        return int(ckpt.split(".")[0].split("_")[-1])
+
     def _get_best_ckpt(self) -> Optional[str]:
         if not self._experiment_name:
             return None
@@ -164,4 +171,4 @@ class ExperimentsModel(IExperimentsModel):
             return None
 
         files.sort(key=lambda file: file.stat().st_mtime)
-        return files[-1]
+        return files[-1].name

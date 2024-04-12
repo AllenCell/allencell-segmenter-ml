@@ -11,16 +11,16 @@ class MetricsCSVEventHandler(FileSystemEventHandler):
     CSV to the callback.
     """
 
-    def __init__(self, target_path: Path, progress_callback: Callable):
+    def __init__(
+        self, target_path: Path, progress_callback: Callable, min_epoch: int
+    ):
         super().__init__()
         self._target_path: Path = target_path
         self._progress_callback: Callable = progress_callback
+        self._min_epoch: int = min_epoch
 
     def _get_latest_epoch(self) -> int:
-        if not self._target_path.exists():
-            return 0
-
-        latest: int = 0
+        latest: int = self._min_epoch
         with self._target_path.open("r", newline="") as fr:
             dict_reader: DictReader = DictReader(fr)
             for row in dict_reader:
