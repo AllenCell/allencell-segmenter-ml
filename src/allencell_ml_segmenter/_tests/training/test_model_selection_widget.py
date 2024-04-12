@@ -81,7 +81,6 @@ def test_select_new_model_radio(
     experiment_model: IExperimentsModel,
 ) -> None:
     # ARRANGE
-    experiment_model.set_checkpoint("dummy_checkpoint")
     experiment_model.set_experiment_name("dummy_experiment")
 
     # ACT - press "start a new model" radio button, which should set model_path to None
@@ -107,11 +106,10 @@ def test_select_existing_model_option(
     ):
         model_selection_widget._radio_existing_model.click()  # enables the combo box
 
-    for i, experiment in enumerate(experiment_model.get_experiments().keys()):
+    for i, experiment in enumerate(experiment_model.get_experiments()):
         # ACT
         # Invariant: options in existing_models combo were added in the order the appear in the model.
         model_selection_widget._combo_box_existing_models.setCurrentIndex(i)
-        experiment_model.set_checkpoint(dummy_checkpoint)
 
         # ASSERT
         assert experiment == experiment_model.get_experiment_name()

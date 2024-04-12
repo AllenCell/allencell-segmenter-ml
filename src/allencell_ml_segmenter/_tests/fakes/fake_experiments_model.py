@@ -1,7 +1,7 @@
 from pathlib import Path
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
-from typing import Dict, Callable
+from typing import Dict, Callable, List
 from allencell_ml_segmenter.core.event import Event
 
 
@@ -25,8 +25,8 @@ class FakeExperimentsModel(IExperimentsModel):
     def set_checkpoint(self, checkpoint: str):
         self._checkpoint = checkpoint
 
-    def get_experiments(self):
-        return {"0_exp": {}, "1_exp": {}, "2_exp": {"0.ckpt", "1.ckpt"}}
+    def get_experiments(self) -> List[str]:
+        return ["0_exp", "1_exp", "2_exp"]
 
     def refresh_experiments(self):
         pass

@@ -1,5 +1,6 @@
 from abc import abstractmethod
 from pathlib import Path
+from typing import List
 
 from allencell_ml_segmenter.core.publisher import Publisher
 
@@ -25,19 +26,11 @@ class IExperimentsModel(Publisher):
         pass
 
     @abstractmethod
-    def set_checkpoint(self, checkpoint: str):
-        pass
-
-    @abstractmethod
-    def get_experiments(self):
+    def get_experiments(self) -> List[str]:
         pass
 
     @abstractmethod
     def refresh_experiments(self):
-        pass
-
-    @abstractmethod
-    def refresh_checkpoints(self, experiment: str):
         pass
 
     @abstractmethod
