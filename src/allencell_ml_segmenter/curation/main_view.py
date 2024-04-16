@@ -267,7 +267,7 @@ class CurationMainView(View):
         """
         Enable the buttons for excluding mask in the UI
         """
-        self.excluding_save_button.setEnabled(True)
+        self.excluding_save_button.setEnabled(False)
         self.excluding_create_button.setEnabled(True)
         self.excluding_delete_button.setEnabled(True)
 
