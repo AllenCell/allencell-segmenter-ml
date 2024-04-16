@@ -113,7 +113,9 @@ class CurationMainView(View):
         merging_mask_label_and_status.addWidget(merging_mask_label)
         merging_mask_label_and_status.addWidget(self.merging_mask_status)
         self.layout().addLayout(merging_mask_label_and_status)
-        merging_mask_subtext: QLabel = QLabel("Without merging mask, Seg 1 will be used for training.")
+        merging_mask_subtext: QLabel = QLabel(
+            "Without merging mask, Seg 1 will be used for training."
+        )
         merging_mask_subtext.setObjectName("subtext")
         self.layout().addWidget(merging_mask_subtext)
 
@@ -154,7 +156,9 @@ class CurationMainView(View):
         )
         self.layout().addLayout(excluding_mask_labels)
 
-        excluding_mask_subtext: QLabel = QLabel("If performing merging, merge first before excluding mask.")
+        excluding_mask_subtext: QLabel = QLabel(
+            "If performing merging, merge first before excluding mask."
+        )
         excluding_mask_subtext.setObjectName("subtext")
         self.layout().addWidget(excluding_mask_subtext)
 
@@ -458,5 +462,3 @@ class CurationMainView(View):
         self.enable_excluding_mask_buttons()
         # redo curation_setup to reset UI to original state
         self.curation_setup(first_setup=False)
-
-
