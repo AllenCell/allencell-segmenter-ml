@@ -113,6 +113,9 @@ class CurationMainView(View):
         merging_mask_label_and_status.addWidget(merging_mask_label)
         merging_mask_label_and_status.addWidget(self.merging_mask_status)
         self.layout().addLayout(merging_mask_label_and_status)
+        merging_mask_subtext: QLabel = QLabel("Without merging mask, Seg 1 will be used for training.")
+        merging_mask_subtext.setObjectName("subtext")
+        self.layout().addWidget(merging_mask_subtext)
 
         # buttons for merging mask
         merging_mask_buttons: QHBoxLayout = QHBoxLayout()
@@ -150,6 +153,10 @@ class CurationMainView(View):
             self.excluding_mask_label, alignment=Qt.AlignLeft
         )
         self.layout().addLayout(excluding_mask_labels)
+
+        excluding_mask_subtext: QLabel = QLabel("If performing merging, merge first before excluding mask.")
+        excluding_mask_subtext.setObjectName("subtext")
+        self.layout().addWidget(excluding_mask_subtext)
 
         # buttons for excluding mask
         excluding_mask_buttons: QHBoxLayout = QHBoxLayout()
@@ -223,10 +230,6 @@ class CurationMainView(View):
         # If there is only one segmentation image set for curation disable merging masks.
         if self._curation_model.get_seg2_directory() is None:
             self.disable_merging_mask_buttons()
-        # If there are two segmentation image sets for curation keep merging masks enabled
-        # but disable excluding masks until user has merging mask selection ready
-        else:
-            self.disable_excluding_mask_buttons()
 
         if first_setup:
             _ = show_info("Loading curation images")
@@ -453,7 +456,7 @@ class CurationMainView(View):
     def enable_all_masks(self) -> None:
         self.enable_merging_mask_buttons()
         self.enable_excluding_mask_buttons()
-        # reset UI to how it was before disabling
+        # redo curation_setup to reset UI to original state
         self.curation_setup(first_setup=False)
 
 
