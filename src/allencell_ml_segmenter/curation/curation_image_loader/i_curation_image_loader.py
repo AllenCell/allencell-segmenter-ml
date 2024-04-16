@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Optional
+from typing import Callable, List, Optional
 from pathlib import Path
 from allencell_ml_segmenter.core.q_runnable_manager import (
     IQRunnableManager,
@@ -100,5 +100,13 @@ class ICurationImageLoader(ABC):
     def prev(self) -> None:
         """
         Move to the previous set of images in this image loader.
+        """
+        pass
+
+    @abstractmethod
+    def initialize(self, callback: Callable = None) -> None:
+        """
+        Initialize the image loader. This should be called before any other methods.
+        Callback will be called when initialization is complete.
         """
         pass

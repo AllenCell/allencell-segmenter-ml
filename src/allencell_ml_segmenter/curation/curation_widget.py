@@ -22,7 +22,8 @@ from napari.utils.notifications import show_info
 
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
-
+from pyqtspinner import WaitingSpinner
+from qtpy.QtGui import QColor
 
 class CurationUiMeta(type(QStackedWidget), type(Subscriber)):
     """
@@ -41,6 +42,13 @@ class CurationWidget(QStackedWidget, Subscriber, metaclass=CurationUiMeta):
         experiments_model: ExperimentsModel,
     ) -> None:
         super().__init__()
+        self.spinner = WaitingSpinner(
+            parent=self,
+            center_on_parent=True,
+            disable_parent_when_spinning=True,
+            color=QColor(244, 244, 244),
+        )
+        self.addWidget(self.spinner)
         self.main_model: MainModel = main_model
         self.viewer: napari.Viewer = viewer
         self.experiments_model: ExperimentsModel = experiments_model
@@ -73,6 +81,18 @@ class CurationWidget(QStackedWidget, Subscriber, metaclass=CurationUiMeta):
             self,
             lambda x: self.go_to_main_view(self.curation_main_view),
         )
+        self.curation_model.subscribe(
+            Event.CURATION_SETUP_COMPLETE,
+            self,
+            lambda x : self.handle_curation_setup_complete(self.curation_main_view),
+        )
+
+    def handle_curation_setup_complete(self, view: View) -> None:
+        """
+        Handle curation setup complete event
+        """
+        self.spinner.stop()
+        self.set_view(view)
 
     def go_to_main_view(self, view: View) -> None:
         """
@@ -84,7 +104,9 @@ class CurationWidget(QStackedWidget, Subscriber, metaclass=CurationUiMeta):
             and self.curation_model.get_seg1_directory() is not None
             and self.curation_model.get_seg1_channel() is not None
         ):
-            self.set_view(view)
+            self.setCurrentWidget(self.spinner)
+            self.spinner.start()
+
             self.curation_main_view.curation_setup(first_setup=True)
         else:
             _ = show_info("Please select all required fields")

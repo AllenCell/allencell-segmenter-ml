@@ -1,3 +1,4 @@
+import time
 import aicsimageio.exceptions
 
 from allencell_ml_segmenter.core.dialog_box import DialogBox
@@ -499,6 +500,11 @@ class CurationService(Subscriber):
                 / "train.csv",
             )
 
+    def dispatch_setup_complete(self):
+        self._curation_model.dispatch(Event.CURATION_SETUP_COMPLETE)
+        self.reset()
+        print(f"init time: {time.time() - self._init_time}")
+
     def curation_setup(self) -> None:
         """
         Set up curation workflow, called once
@@ -517,13 +523,17 @@ class CurationService(Subscriber):
         loader: ICurationImageLoader = self._img_loader_factory.create(
             raw, seg1, seg2
         )
+        # Asyncronously init the loader by loading the first images into memory.  Then, exectute callback.
+        self._init_time = time.time()
+        loader.initialize(self.dispatch_setup_complete)
         self._curation_model.set_image_loader(loader)
-        # reset
+    
+    def reset(self) -> None:
         self.remove_all_images_from_viewer_layers()
 
-        raw_img_data: ImageData = loader.get_raw_image_data()
-        seg1_img_data: ImageData = loader.get_seg1_image_data()
-        seg2_img_data: Optional[ImageData] = loader.get_seg2_image_data()
+        raw_img_data: ImageData = self._curation_model.get_image_loader().get_raw_image_data() # cant do this until init completes
+        seg1_img_data: ImageData = self._curation_model.get_image_loader().get_seg1_image_data()
+        seg2_img_data: Optional[ImageData] = self._curation_model.get_image_loader().get_seg2_image_data()
 
         self.add_image_to_viewer(
             raw_img_data, f"[raw] {raw_img_data.path.name}"

@@ -9,11 +9,43 @@ from allencell_ml_segmenter.core.image_data_extractor import (
 )
 from allencell_ml_segmenter.core.q_runnable_manager import (
     IQRunnableManager,
-    GlobalQRunnableManager,
 )
+from allencell_ml_segmenter.core.q_runnable_manager.q_thread_runnable_manager import QThreadRunnableManager
 from allencell_ml_segmenter.curation.curation_image_loader import (
     ICurationImageLoader,
 )
+from qtpy.QtCore import QThread, Signal, QObject
+from PyQt5.QtCore import pyqtSlot
+
+
+class LoaderThread(QThread):
+    task_failed: Signal = Signal(Exception)
+
+    def __init__(self, runnable: QRunnable, parent: QObject = None):
+        super().__init__(parent)
+        self._runnable = runnable
+
+    def run(self):
+        try:
+            self._runnable.run()
+        except Exception as e:
+            self.task_failed.emit(e)
+
+class CountdownLatchThread(QThread):
+    
+    def __init__(self, count: int, parent: QObject = None):
+        super().__init__(parent)
+        self.count = count
+
+    @pyqtSlot()
+    def count_down(self):
+        self.count = self.count - 1
+        print(f'countdown {self.count}')
+
+    def run(self):
+        while(self.count > 0):
+            time.sleep(.5)
+
 
 
 class Worker(QRunnable):
@@ -44,7 +76,7 @@ class CurationImageLoader(ICurationImageLoader):
         raw_images: List[Path],
         seg1_images: List[Path],
         seg2_images: Optional[List[Path]] = None,
-        qr_manager: IQRunnableManager = GlobalQRunnableManager.global_instance(),
+        qr_manager: IQRunnableManager = QThreadRunnableManager.global_instance(), #TODO this can go away, in the current design (cleanup)
         img_data_extractor: IImageDataExtractor = AICSImageDataExtractor.global_instance(),
     ):
         """
@@ -67,35 +99,34 @@ class CurationImageLoader(ICurationImageLoader):
         self._curr_img_data: Dict[str, ImageData] = {}
         self._next_img_data: Dict[str, ImageData] = {}
         self._prev_img_data: Dict[str, ImageData] = {}
+        self._running_thread = []
 
-        # grab data for first images synchronously, start thread for next images
-        self._curr_img_data["raw"] = (
-            self._img_data_extractor.extract_image_data(self._raw_images[0])
-        )
-        self._curr_img_data["seg1"] = (
-            self._img_data_extractor.extract_image_data(self._seg1_images[0])
-        )
-        if seg2_images:
-            self._curr_img_data["seg2"] = (
-                self._img_data_extractor.extract_image_data(
-                    self._seg2_images[0]
-                )
-            )
 
+    def initialize(self, callback: Callable = None) -> None:
+        """
+        Initialize the image loader.
+        """
+        self._start_extraction_threads(0, self._curr_img_data, callback)
         if self.has_next():
             self._start_extraction_threads(1, self._next_img_data)
+    
 
     def _update_data_dict(
         self, data_dict: Dict[str, ImageData], key: str, img_path: Path
     ) -> None:
+        print(f"update {key} start")
+        update_time = time.time()
         img_data: ImageData = self._img_data_extractor.extract_image_data(
             img_path
         )
         data_dict[key] = img_data
+        print(f"update {key} time: {time.time() - update_time}")
+        print(f"update {key} complete")
 
     def _start_extraction_threads(
-        self, img_index: int, data_dict: Dict[str, ImageData]
+        self, img_index: int, data_dict: Dict[str, ImageData], callback: Callable = lambda: None
     ) -> None:
+        print(f"start extraction threads {img_index}\n")
         data_dict.clear()
         raw_worker: Worker = Worker(
             lambda: self._update_data_dict(
@@ -107,15 +138,32 @@ class CurationImageLoader(ICurationImageLoader):
                 data_dict, "seg1", self._seg1_images[img_index]
             )
         )
+        workers = [raw_worker, seg1_worker]
         if self._seg2_images:
             seg2_worker: Worker = Worker(
                 lambda: self._update_data_dict(
                     data_dict, "seg2", self._seg2_images[img_index]
                 )
             )
-            self._qr_manager.run(seg2_worker)
-        self._qr_manager.run(raw_worker)
-        self._qr_manager.run(seg1_worker)
+            workers.append(seg2_worker)
+        latch_thread = CountdownLatchThread(len(workers))
+        # latch_thread.open_latch.connect(lambda: None)
+        latch_thread.finished.connect(callback)
+        self._running_thread.append(latch_thread)
+        latch_thread.start() # instead of internal open latch signal, just loop on could and connect callbakc to finished signal?
+        for worker in workers:
+            self._run_with_callback(worker, latch_thread, lambda: None)
+
+    def _run_with_callback(self, runnable: QRunnable, latch_thread: CountdownLatchThread, fail_callback: Callable) -> None:
+        thread = LoaderThread(runnable)
+        thread.task_failed.connect(fail_callback)
+        self._running_thread.append(thread)
+        thread.finished.connect(latch_thread.count_down)
+        # thread.finished.connect(lambda: self._pop_thread(thread))
+        thread.start()
+
+    def _pop_thread(self, thread):
+        self._running_thread.remove(thread)
 
     def _wait_on_data_dicts(self) -> None:
         """

@@ -22,11 +22,9 @@ class StackedSpinner(QStackedWidget):
         self.setCurrentWidget(self.input_button)
 
     def start(self):
-        print()
         self.setCurrentWidget(self.spinner)
         self.spinner.start()
 
     def stop(self):
-        print()
         self.setCurrentWidget(self.input_button)
         self.spinner.stop()
