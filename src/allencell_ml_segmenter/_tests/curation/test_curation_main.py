@@ -117,9 +117,9 @@ def test_next_image_with_seg2(qtbot: QtBot) -> None:
     assert env.view.merging_base_combo.isEnabled()
     assert env.view.merging_delete_button.isEnabled()
 
-    assert not env.view.excluding_create_button.isEnabled()
+    assert env.view.excluding_create_button.isEnabled()
     assert not env.view.excluding_save_button.isEnabled()
-    assert not env.view.excluding_delete_button.isEnabled()
+    assert env.view.excluding_delete_button.isEnabled()
 
     assert env.view.progress_bar.value() == 2
 
