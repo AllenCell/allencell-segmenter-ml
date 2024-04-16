@@ -7,10 +7,6 @@ from allencell_ml_segmenter.core.image_data_extractor import (
     IImageDataExtractor,
     AICSImageDataExtractor,
 )
-from allencell_ml_segmenter.core.q_runnable_manager import (
-    IQRunnableManager,
-)
-from allencell_ml_segmenter.core.q_runnable_manager.q_thread_runnable_manager import QThreadRunnableManager
 from allencell_ml_segmenter.curation.curation_image_loader import (
     ICurationImageLoader,
 )
@@ -76,7 +72,6 @@ class CurationImageLoader(ICurationImageLoader):
         raw_images: List[Path],
         seg1_images: List[Path],
         seg2_images: Optional[List[Path]] = None,
-        qr_manager: IQRunnableManager = QThreadRunnableManager.global_instance(), #TODO this can go away, in the current design (cleanup)
         img_data_extractor: IImageDataExtractor = AICSImageDataExtractor.global_instance(),
     ):
         """
@@ -89,7 +84,6 @@ class CurationImageLoader(ICurationImageLoader):
             raw_images,
             seg1_images,
             seg2_images,
-            qr_manager,
             img_data_extractor,
         )
 

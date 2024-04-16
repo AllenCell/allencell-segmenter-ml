@@ -16,7 +16,6 @@ class ICurationImageLoader(ABC):
         raw_images: List[Path],
         seg1_images: List[Path],
         seg2_images: Optional[List[Path]],
-        qr_manager: IQRunnableManager,
         img_data_extractor: IImageDataExtractor,
     ):
         self._raw_images: List[Path] = list(raw_images)
@@ -35,7 +34,6 @@ class ICurationImageLoader(ABC):
 
         self._num_images = len(self._raw_images)
 
-        self._qr_manager: IQRunnableManager = qr_manager
         self._img_data_extractor: IImageDataExtractor = img_data_extractor
         self._cursor: int = 0
 
