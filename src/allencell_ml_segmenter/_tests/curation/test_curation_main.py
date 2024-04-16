@@ -68,9 +68,9 @@ def test_initial_state_with_seg2(qtbot: QtBot) -> None:
     assert env.view.merging_delete_button.isEnabled()
 
     # why are these buttons disabled until we create a merging mask?
-    assert not env.view.excluding_create_button.isEnabled()
+    assert env.view.excluding_create_button.isEnabled()
+    assert env.view.excluding_delete_button.isEnabled()
     assert not env.view.excluding_save_button.isEnabled()
-    assert not env.view.excluding_delete_button.isEnabled()
 
     assert env.view.progress_bar.value() == 1
     assert env.view.progress_bar.maximum() == 2
