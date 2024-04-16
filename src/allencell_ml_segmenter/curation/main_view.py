@@ -99,8 +99,10 @@ class CurationMainView(View):
         )
         self.yes_radio: QRadioButton = QRadioButton("Yes")
         self.yes_radio.setChecked(True)
+        self.yes_radio.clicked.connect(self.enable_all_masks)
         use_image_frame.layout().addWidget(self.yes_radio)
         self.no_radio: QRadioButton = QRadioButton("No")
+        self.no_radio.clicked.connect(self.disable_all_masks)
         use_image_frame.layout().addWidget(self.no_radio)
         self.layout().addWidget(use_image_frame, alignment=Qt.AlignHCenter)
 
@@ -218,8 +220,6 @@ class CurationMainView(View):
 
         first_setup (bool): True if first call to curation_setup, false if used to set up subsequent image sets
         """
-        _ = show_info("Loading curation images")
-
         # If there is only one segmentation image set for curation disable merging masks.
         if self._curation_model.get_seg2_directory() is None:
             self.disable_merging_mask_buttons()
@@ -229,6 +229,7 @@ class CurationMainView(View):
             self.disable_excluding_mask_buttons()
 
         if first_setup:
+            _ = show_info("Loading curation images")
             self._curation_service.curation_setup()
             self.init_progress_bar()
 
@@ -444,3 +445,15 @@ class CurationMainView(View):
         button.setText("+ Create")
         button.disconnect()
         button.clicked.connect(on_click)
+
+    def disable_all_masks(self) -> None:
+        self.disable_merging_mask_buttons()
+        self.disable_excluding_mask_buttons()
+
+    def enable_all_masks(self) -> None:
+        self.enable_merging_mask_buttons()
+        self.enable_excluding_mask_buttons()
+        # reset UI to how it was before disabling
+        self.curation_setup(first_setup=False)
+
+
