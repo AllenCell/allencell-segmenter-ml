@@ -29,7 +29,6 @@ def experiments_model() -> ExperimentsModel:
             cyto_dl_home_path=Path(), user_experiments_path=exp_path
         )
     )
-    experiments_model.set_experiment_name("one_ckpt_exp")
     return experiments_model
 
 
@@ -52,6 +51,7 @@ def training_model(experiments_model: ExperimentsModel) -> TrainingModel:
 def test_get_training_overrides(
     experiments_model: ExperimentsModel, training_model: TrainingModel
 ):
+    experiments_model.set_experiment_name("one_ckpt_exp")
     cyto_overrides_manager: CytoDLOverridesManager = CytoDLOverridesManager(
         experiments_model, training_model
     )
@@ -96,4 +96,25 @@ def test_get_training_overrides(
             experiments_model.get_experiment_name(),
             experiments_model.get_checkpoint(),
         )
+    )
+
+
+def test_max_epochs_no_existing_ckpt(
+    experiments_model: ExperimentsModel, training_model: TrainingModel
+):
+    experiments_model.set_experiment_name("0_exp")
+    cyto_overrides_manager: CytoDLOverridesManager = CytoDLOverridesManager(
+        experiments_model, training_model
+    )
+
+    training_overrides: Dict[str, Union[str, int, float, bool, Dict]] = (
+        cyto_overrides_manager.get_training_overrides()
+    )
+
+    # the experiments model fixture is set to the experiment @ _tests/experiments_home/0_exp,
+    # for which there are no existing checkpoints. So, we expect the max epoch to be equal to what the
+    # user has entered in the field
+    assert (
+        training_overrides["trainer.max_epochs"]
+        == training_model.get_num_epochs()
     )
