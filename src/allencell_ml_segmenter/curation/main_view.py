@@ -179,6 +179,11 @@ class CurationMainView(View):
         excluding_mask_buttons.addWidget(self.excluding_save_button)
         self.layout().addLayout(excluding_mask_buttons)
 
+        self._save_curation_csv_button: QPushButton = QPushButton("Save Curation CSV")
+        self._save_curation_csv_button.clicked.connect(self._handle_save_curation_csv)
+        self._save_curation_csv_button.setObjectName("save_csv_btn")
+        self.layout().addWidget(self._save_curation_csv_button)
+
         self._curation_model.subscribe(
             Event.ACTION_CURATION_DRAW_EXCLUDING,
             self,
@@ -444,3 +449,6 @@ class CurationMainView(View):
         button.setText("+ Create")
         button.disconnect()
         button.clicked.connect(on_click)
+
+    def _handle_save_curation_csv(self) -> None:
+        print("yolo")

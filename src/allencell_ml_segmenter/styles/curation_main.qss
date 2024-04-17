@@ -16,3 +16,7 @@ QPushButton {
     background: #007ACC;
     height: 40%
 }
+
+#save_csv_btn {
+    margin-top: 12px;
+}
