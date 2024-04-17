@@ -1,5 +1,7 @@
 import aicsimageio.exceptions
+from PyQt5.QtCore import QThread
 
+from allencell_ml_segmenter.core.csv_writer_thread import CSVWriterThread, CSVWriterMode
 from allencell_ml_segmenter.core.dialog_box import DialogBox
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.subscriber import Subscriber
@@ -48,6 +50,7 @@ class CurationService(Subscriber):
         self._raw_thread: Optional[ChannelExtractionThread] = None
         self._seg1_thread: Optional[ChannelExtractionThread] = None
         self._seg2_thread: Optional[ChannelExtractionThread] = None
+        self._csv_write_thread: Optional[CSVWriterThread] = None
 
     def build_raw_images_list(self) -> List[Path]:
         """
@@ -97,40 +100,9 @@ class CurationService(Subscriber):
         curation_record (List[CurationRecord]): record to save to csv
         path (Path): path to save csv
         """
-        parent_path: Path = path.parents[0]
-        if not parent_path.is_dir():
-            parent_path.mkdir(parents=True)
+        self._stop_thread(self._csv_write_thread)
+        self._csv_write_thread = self._start_csv_writer_thread(path, curation_record)
 
-        with open(path, "w") as f:
-            # need file header
-            writer: csv.writer = csv.writer(f, delimiter=",")
-            writer.writerow(
-                [
-                    "",
-                    "raw",
-                    "seg1",
-                    "seg2",
-                    "excluding_mask",
-                    "merging_mask",
-                    "merging_col",
-                ]
-            )
-            for idx, record in enumerate(curation_record):
-                if record.to_use:
-                    writer.writerow(
-                        [
-                            str(idx),
-                            str(record.raw_file),
-                            str(record.seg1),
-                            str(record.seg2) if record.seg2 else "",
-                            str(record.excluding_mask),
-                            str(record.merging_mask),
-                            str(record.base_image_index),
-                        ]
-                    )
-                f.flush()
-
-        # TODO: WRITE ACTUAL VALIDATION AND TEST SETS
 
     def remove_all_images_from_viewer_layers(self) -> None:
         """
@@ -181,7 +153,7 @@ class CurationService(Subscriber):
             self._curation_model.append_merging_mask_shape_layer(points_layer)
             self._curation_model.dispatch(Event.ACTION_CURATION_DRAW_MERGING)
 
-    def _stop_channel_extraction_thread(self, thread: ChannelExtractionThread):
+    def _stop_thread(self, thread: QThread):
         # if we find this is too slow, can switch to the method employed by
         # prediction/service, but may be overkill initially
         if thread and thread.isRunning():
@@ -198,6 +170,17 @@ class CurationService(Subscriber):
         new_thread.start()
         return new_thread
 
+    def _start_csv_writer_thread(
+        self, csv_path: Path, curation_record: List[CurationRecord]
+    ) -> CSVWriterThread:
+        new_thread = CSVWriterThread(csv_path, CSVWriterMode.curation, curation_record)
+        # connect write finished
+        # new_thread.write_finished.connect(channel_callback)
+        # connect error handling
+        # new_thread.task_failed.connect(error_handler)
+        new_thread.start()
+        return new_thread
+
     def _handle_thread_error(
         self,
         thread: ChannelExtractionThread,
@@ -208,7 +191,7 @@ class CurationService(Subscriber):
             show_info(
                 "Selected directory does not contain images that are able to be curated. Please select directory of only supported images"
             )
-            self._stop_channel_extraction_thread(thread)
+            self._stop_thread(thread)
             self._curation_model.dispatch(err_event)
 
     def select_directory_raw(self, path: Path):
@@ -218,7 +201,7 @@ class CurationService(Subscriber):
         path(Path): path to raw directory
         """
         self._curation_model.set_raw_directory(path)
-        self._stop_channel_extraction_thread(self._raw_thread)
+        self._stop_thread(self._raw_thread)
         self._raw_thread = self._start_channel_extraction_thread(
             path,
             self._curation_model.set_raw_image_channel_count,
@@ -234,7 +217,7 @@ class CurationService(Subscriber):
         path(Path): path to seg1 directory
         """
         self._curation_model.set_seg1_directory(path)
-        self._stop_channel_extraction_thread(self._seg1_thread)
+        self._stop_thread(self._seg1_thread)
         self._seg1_thread = self._start_channel_extraction_thread(
             path,
             self._curation_model.set_seg1_image_channel_count,
@@ -250,7 +233,7 @@ class CurationService(Subscriber):
         path(Path): path to seg2 directory
         """
         self._curation_model.set_seg2_directory(path)
-        self._stop_channel_extraction_thread(self._seg2_thread)
+        self._stop_thread(self._seg2_thread)
         self._seg2_thread = self._start_channel_extraction_thread(
             path,
             self._curation_model.set_seg2_image_channel_count,
