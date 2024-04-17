@@ -29,7 +29,7 @@ def experiments_model() -> ExperimentsModel:
             cyto_dl_home_path=Path(), user_experiments_path=exp_path
         )
     )
-    experiments_model.set_experiment_name("2_exp")
+    experiments_model.set_experiment_name("one_ckpt_exp")
     return experiments_model
 
 
@@ -45,7 +45,7 @@ def training_model(experiments_model: ExperimentsModel) -> TrainingModel:
     model.set_max_time(9992)
     model.set_config_dir("/path/to/configs")
     model.set_patch_size("small")
-    model.set_max_epoch(100)
+    model.set_num_epochs(100)
     return model
 
 
@@ -70,9 +70,12 @@ def test_get_training_overrides(
         training_overrides["spatial_dims"] == training_model.get_spatial_dims()
     )
 
+    # the experiments model fixture is set to the experiment @ _tests/experiments_home/one_ckpt_exp,
+    # for which the last 'best' checkpoint is epoch_000.ckpt. Since we are currently at the first epoch checkpoint,
+    # in order to run training_model.get_num_epochs() more epochs, we need to increment by 1
     assert (
         training_overrides["trainer.max_epochs"]
-        == training_model.get_max_epoch()
+        == training_model.get_num_epochs() + 1
     )
     assert (
         training_overrides["trainer.max_time"]["minutes"]

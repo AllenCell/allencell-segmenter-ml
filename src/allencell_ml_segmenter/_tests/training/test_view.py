@@ -94,10 +94,10 @@ def test_set_max_epoch(
     Tests that the max epoch field is properly set by the associated QLineEdit.
     """
     # ACT
-    qtbot.keyClicks(training_view._max_epoch_input, "100")
+    qtbot.keyClicks(training_view._num_epochs_input, "100")
 
     # ASSERT
-    assert training_model.get_max_epoch() == 100
+    assert training_model.get_num_epochs() == 100
 
 
 def test_set_max_time(
