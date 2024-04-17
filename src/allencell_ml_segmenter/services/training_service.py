@@ -61,7 +61,7 @@ class TrainingService(Subscriber):
         Trains the model according to the spec
         """
         # Only supporting segmentation config for now, in the future this will be an option in the UI
-        self._training_model.set_experiment_type("segmentation_plugin")
+        self._training_model.set_experiment_type("segmentation")
         # TODO make set_images_directory and get_images_directory less brittle.
         #  https://github.com/AllenCell/allencell-ml-segmenter/issues/156
         if self._able_to_continue_training():
@@ -105,7 +105,7 @@ class TrainingService(Subscriber):
             show_warning("User has not selected a patch size for training")
             return False
 
-        if self._training_model.get_max_epoch() is None:
+        if self._training_model.get_num_epochs() is None:
             show_warning("Please define max epoch(s) to run for")
             return False
         if (
