@@ -52,7 +52,7 @@ def training_model(experiments_model: ExperimentsModel) -> TrainingModel:
     model.set_max_time(9992)
     model.set_config_dir("/path/to/configs")
     model.set_patch_size("small")
-    model.set_max_epoch(100)
+    model.set_num_epochs(100)
     return model
 
 
