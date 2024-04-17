@@ -175,7 +175,7 @@ class CurationService(Subscriber):
     ) -> CSVWriterThread:
         new_thread = CSVWriterThread(csv_path, CSVWriterMode.curation, curation_record)
         # connect write finished
-        # new_thread.write_finished.connect(channel_callback)
+        new_thread.write_finished.connect(self._csv_write_finished)
         # connect error handling
         # new_thread.task_failed.connect(error_handler)
         new_thread.start()
@@ -518,3 +518,6 @@ class CurationService(Subscriber):
             self.add_image_to_viewer(
                 seg2_img_data, f"[seg2] {seg2_img_data.path.name}"
             )
+
+    def _csv_write_finished(self, saved_path) -> None:
+        show_info(f"CSV Written to: {saved_path}")
