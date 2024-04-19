@@ -315,7 +315,9 @@ class CurationService(Subscriber):
                 folder_path
                 / f"excluding_mask_{self._curation_model.get_image_loader().get_raw_image_data().path.stem}.npy"
             )
-            np.save(save_path_mask_file, np.asarray(mask_to_save))
+            np.save(
+                save_path_mask_file, np.asarray(mask_to_save, dtype=object)
+            )
             # if current mask path is set, we know that we've saved an excluding mask for the curationrecord.
             self._curation_model.set_current_excluding_mask_path(
                 save_path_mask_file
