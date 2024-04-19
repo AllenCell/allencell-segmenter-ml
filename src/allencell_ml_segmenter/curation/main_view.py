@@ -451,4 +451,4 @@ class CurationMainView(View):
         button.clicked.connect(on_click)
 
     def _handle_save_curation_csv(self) -> None:
-        print("yolo")
+        self._curation_service.write_curation_record()

@@ -16,8 +16,8 @@ class CSVWriterThread(QThread):
     """
     Thread to handle csv file writing.
     """
-    write_finished: Signal(Path)
-    error: Signal(Exception)
+    write_finished: Signal = Signal(Path)
+    error: Signal = Signal(Exception)
 
     def __init__(self, write_path: Path, write_mode: CSVWriterMode, curation_record: List[CurationRecord] = None):
         """
@@ -41,7 +41,7 @@ class CSVWriterThread(QThread):
                 CSVUtils.write_curation_csv(self._curation_record, self._path)
 
         if not QThread.currentThread().isInterruptionRequested():
-            self.write_finished(self._path)
+            self.write_finished.emit(self._path)
 
 
 

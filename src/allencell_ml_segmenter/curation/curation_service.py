@@ -92,7 +92,7 @@ class CurationService(Subscriber):
         return AICSImage(str(path))
 
     def write_curation_record(
-        self, curation_record: List[CurationRecord], path: Path
+        self
     ) -> None:
         """
         Save the curation record as a csv at the specified path. will create parent directories to path as needed.
@@ -100,8 +100,15 @@ class CurationService(Subscriber):
         curation_record (List[CurationRecord]): record to save to csv
         path (Path): path to save csv
         """
-        self._stop_thread(self._csv_write_thread)
-        self._csv_write_thread = self._start_csv_writer_thread(path, curation_record)
+        # only if we have something to write
+        curation_record = self._curation_model.get_curation_record()
+        if len(curation_record) > 0:
+            self._stop_thread(self._csv_write_thread)
+            # Start csv writing thread
+            self._csv_write_thread = self._start_csv_writer_thread(self._curation_model.experiments_model.get_user_experiments_path()
+        / self._curation_model.experiments_model.get_experiment_name()
+        / "data"
+        / "train.csv", curation_record)
 
 
     def remove_all_images_from_viewer_layers(self) -> None:
@@ -473,14 +480,6 @@ class CurationService(Subscriber):
         else:
             # No more images to load - curation is complete
             _ = show_info("No more image to load")
-
-            self.write_curation_record(
-                self._curation_model.get_curation_record(),
-                path=self._curation_model.experiments_model.get_user_experiments_path()
-                / self._curation_model.experiments_model.get_experiment_name()
-                / "data"
-                / "train.csv",
-            )
 
     def curation_setup(self) -> None:
         """
