@@ -69,6 +69,9 @@ class CurationImageLoader(ICurationImageLoader):
 
     def __init__(
         self,
+        raw_channel: int,
+        seg1_channel: int,
+        seg2_channel: int,
         raw_images: List[Path],
         seg1_images: List[Path],
         seg2_images: Optional[List[Path]] = None,
@@ -87,6 +90,9 @@ class CurationImageLoader(ICurationImageLoader):
             img_data_extractor,
         )
 
+        self._raw_channel: int = raw_channel
+        self._seg1_channel: int = seg1_channel
+        self._seg2_channel: int = seg2_channel
         # private invariant: _next_img_data will only have < _num_data_dict_keys keys if there is
         # no next image or a thread is currently updating _next_img_data. Same goes for _prev_img_data
         self._num_data_dict_keys: int = 3 if self._seg2_images else 2
@@ -106,16 +112,12 @@ class CurationImageLoader(ICurationImageLoader):
     
 
     def _update_data_dict(
-        self, data_dict: Dict[str, ImageData], key: str, img_path: Path
+        self, data_dict: Dict[str, ImageData], key: str, img_path: Path, channel: int
     ) -> None:
-        print(f"update {key} start")
-        update_time = time.time()
         img_data: ImageData = self._img_data_extractor.extract_image_data(
-            img_path
+            img_path=img_path, channel=channel
         )
         data_dict[key] = img_data
-        print(f"update {key} time: {time.time() - update_time}")
-        print(f"update {key} complete")
 
     def _start_extraction_threads(
         self, img_index: int, data_dict: Dict[str, ImageData], callback: Callable = lambda: None
@@ -124,27 +126,26 @@ class CurationImageLoader(ICurationImageLoader):
         data_dict.clear()
         raw_worker: Worker = Worker(
             lambda: self._update_data_dict(
-                data_dict, "raw", self._raw_images[img_index]
+                data_dict, "raw", self._raw_images[img_index], self._raw_channel
             )
         )
         seg1_worker: Worker = Worker(
             lambda: self._update_data_dict(
-                data_dict, "seg1", self._seg1_images[img_index]
+                data_dict, "seg1", self._seg1_images[img_index], self._seg1_channel
             )
         )
         workers = [raw_worker, seg1_worker]
         if self._seg2_images:
             seg2_worker: Worker = Worker(
                 lambda: self._update_data_dict(
-                    data_dict, "seg2", self._seg2_images[img_index]
+                    data_dict, "seg2", self._seg2_images[img_index], self._seg2_channel
                 )
             )
             workers.append(seg2_worker)
         latch_thread = CountdownLatchThread(len(workers))
-        # latch_thread.open_latch.connect(lambda: None)
         latch_thread.finished.connect(callback)
         self._running_thread.append(latch_thread)
-        latch_thread.start() # instead of internal open latch signal, just loop on could and connect callbakc to finished signal?
+        latch_thread.start()
         for worker in workers:
             self._run_with_callback(worker, latch_thread, lambda: None)
 

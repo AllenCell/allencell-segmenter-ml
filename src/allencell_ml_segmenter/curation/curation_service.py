@@ -521,7 +521,10 @@ class CurationService(Subscriber):
             seg2 = None
 
         loader: ICurationImageLoader = self._img_loader_factory.create(
-            raw, seg1, seg2
+            self._curation_model.get_raw_channel(),
+            self._curation_model.get_seg1_channel(),
+            self._curation_model.get_seg2_channel(),
+            raw, seg1, seg2, 
         )
         # Asyncronously init the loader by loading the first images into memory.  Then, exectute callback.
         self._init_time = time.time()

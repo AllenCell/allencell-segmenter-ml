@@ -8,8 +8,11 @@ from pathlib import Path
 class CurationImageLoaderFactory(ICurationImageLoaderFactory):
     def create(
         self,
+        raw_channel: int, 
+        seg1_channel: int, 
+        seg2_channel: int,
         raw_images: List[Path],
         seg1_images: List[Path],
         seg2_images: Optional[List[Path]] = None,
     ) -> ICurationImageLoader:
-        return CurationImageLoader(raw_images, seg1_images, seg2_images)
+        return CurationImageLoader(raw_channel, seg1_channel, seg2_channel, raw_images, seg1_images, seg2_images)
