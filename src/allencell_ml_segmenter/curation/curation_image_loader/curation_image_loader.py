@@ -36,7 +36,6 @@ class CountdownLatchThread(QThread):
     @pyqtSlot()
     def count_down(self):
         self.count = self.count - 1
-        print(f'countdown {self.count}')
 
     def run(self):
         while(self.count > 0):
@@ -123,7 +122,6 @@ class CurationImageLoader(ICurationImageLoader):
     def _start_extraction_threads(
         self, img_index: int, data_dict: Dict[str, ImageData], callback: Callable = lambda: None
     ) -> None:
-        print(f"start extraction threads {img_index}\n")
         data_dict.clear()
         raw_worker: Worker = Worker(
             lambda: self._update_data_dict(

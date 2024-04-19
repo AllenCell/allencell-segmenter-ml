@@ -503,7 +503,6 @@ class CurationService(Subscriber):
     def dispatch_setup_complete(self):
         self._curation_model.dispatch(Event.CURATION_SETUP_COMPLETE)
         self.reset()
-        print(f"init time: {time.time() - self._init_time}")
 
     def curation_setup(self) -> None:
         """
