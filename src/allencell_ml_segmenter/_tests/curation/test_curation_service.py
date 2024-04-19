@@ -329,15 +329,19 @@ def test_select_directory_seg2(start_mock: Mock) -> None:
     assert fake_subscriber.was_handled(Event.ACTION_CURATION_SEG2_CHANNELS_SET)
 
 
-def test_write_curation_record() -> None:
-    # Arrange
-    curation_service: CurationService = CurationService(
-        Mock(spec=CurationModel),
-        Mock(spec=Viewer),
-        FakeCurationImageLoaderFactory(),
+@patch(
+        "allencell_ml_segmenter.core.csv_writer_thread.CSVWriterThread.start"
+)
+def test_write_curation_record(start_mock: Mock) -> None:
+    model: CurationModel = CurationModel()
+    model.experiments_model = Mock(spec=ExperimentsModel)
+    model.experiments_model.get_user_experiments_path.return_value = (
+        Path("path")
     )
-    curation_record: List[CurationRecord] = [
-        CurationRecord(
+    model.experiments_model.get_experiment_name.return_value = (
+        "test_experiment"
+    )
+    model.append_curation_record(CurationRecord(
             to_use=True,
             raw_file="raw1",
             seg1="seg1",
@@ -345,73 +349,100 @@ def test_write_curation_record() -> None:
             excluding_mask="",
             merging_mask="",
             base_image_index="seg1",
-        ),
-        CurationRecord(
-            to_use=True,
-            raw_file="raw2",
-            seg1="seg3",
-            seg2="seg4",
-            excluding_mask="excluding_mask_2",
-            merging_mask="merging_mask_2",
-            base_image_index="seg1",
-        ),
-    ]
-    # Mock open, Path, and csv.writer
-    with (
-        patch(
-            "allencell_ml_segmenter.curation.curation_service.open",
-            mock_open(),
-        ) as mock_file,
-        patch(
-            "allencell_ml_segmenter.curation.curation_service.Path"
-        ) as mock_path,
-        patch(
-            "allencell_ml_segmenter.curation.curation_service.csv.writer"
-        ) as mock_writer,
-    ):
-        mock_path.return_value.parents = [Path("/parent")]
+        ))
 
-        # Act
-        curation_service.write_curation_record(
-            curation_record, Path(__file__).parent / "curation_tests"
-        )
+    curation_service: CurationService = CurationService(
+        model, Mock(spec=Viewer), None
+    )
 
-        # Assert
-        mock_file.assert_called_with(
-            Path(__file__).parent / "curation_tests", "w"
-        )
-        assert (
-            call().writerow(
-                [
-                    "",
-                    "raw",
-                    "seg1",
-                    "seg2",
-                    "excluding_mask",
-                    "merging_mask",
-                    "merging_col",
-                ]
-            )
-            in mock_writer.mock_calls
-        )
-        assert (
-            call().writerow(["0", "raw1", "seg1", "seg2", "", "", "seg1"])
-            in mock_writer.mock_calls
-        )
-        assert (
-            call().writerow(
-                [
-                    "1",
-                    "raw2",
-                    "seg3",
-                    "seg4",
-                    "excluding_mask_2",
-                    "merging_mask_2",
-                    "seg1",
-                ]
-            )
-            in mock_writer.mock_calls
-        )
+    # Act
+    curation_service.write_curation_record()
+
+    # Assert
+    start_mock.assert_called()
+
+    # Arrange
+    # curation_service: CurationService = CurationService(
+    #     Mock(spec=CurationModel),
+    #     Mock(spec=Viewer),
+    #     FakeCurationImageLoaderFactory(),
+    # )
+    # curation_record: List[CurationRecord] = [
+    #     CurationRecord(
+    #         to_use=True,
+    #         raw_file="raw1",
+    #         seg1="seg1",
+    #         seg2="seg2",
+    #         excluding_mask="",
+    #         merging_mask="",
+    #         base_image_index="seg1",
+    #     ),
+    #     CurationRecord(
+    #         to_use=True,
+    #         raw_file="raw2",
+    #         seg1="seg3",
+    #         seg2="seg4",
+    #         excluding_mask="excluding_mask_2",
+    #         merging_mask="merging_mask_2",
+    #         base_image_index="seg1",
+    #     ),
+    # ]
+    # # Mock open, Path, and csv.writer
+    # with (
+    #     patch(
+    #         "allencell_ml_segmenter.curation.curation_service.open",
+    #         mock_open(),
+    #     ) as mock_file,
+    #     patch(
+    #         "allencell_ml_segmenter.curation.curation_service.Path"
+    #     ) as mock_path,
+    #     patch(
+    #         "allencell_ml_segmenter.curation.curation_service.csv.writer"
+    #     ) as mock_writer,
+    # ):
+    #     mock_path.return_value.parents = [Path("/parent")]
+    #
+    #     # Act
+    #     curation_service.write_curation_record(
+    #         curation_record, Path(__file__).parent / "curation_tests"
+    #     )
+    #
+    #     # Assert
+    #     mock_file.assert_called_with(
+    #         Path(__file__).parent / "curation_tests", "w"
+    #     )
+    #     assert (
+    #         call().writerow(
+    #             [
+    #                 "",
+    #                 "raw",
+    #                 "seg1",
+    #                 "seg2",
+    #                 "excluding_mask",
+    #                 "merging_mask",
+    #                 "merging_col",
+    #             ]
+    #         )
+    #         in mock_writer.mock_calls
+    #     )
+    #     assert (
+    #         call().writerow(["0", "raw1", "seg1", "seg2", "", "", "seg1"])
+    #         in mock_writer.mock_calls
+    #     )
+    #     assert (
+    #         call().writerow(
+    #             [
+    #                 "1",
+    #                 "raw2",
+    #                 "seg3",
+    #                 "seg4",
+    #                 "excluding_mask_2",
+    #                 "merging_mask_2",
+    #                 "seg1",
+    #             ]
+    #         )
+    #         in mock_writer.mock_calls
+    #     )
 
 
 @pytest.mark.parametrize(

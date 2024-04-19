@@ -41,7 +41,7 @@ class CurationService(Subscriber):
         self,
         curation_model: CurationModel,
         viewer: IViewer,
-        img_loader_factory: ICurationImageLoaderFactory,
+        img_loader_factory: Optional[ICurationImageLoaderFactory],
     ) -> None:
         super().__init__()
         self._curation_model: CurationModel = curation_model
