@@ -99,6 +99,7 @@ class CurationImageLoader(ICurationImageLoader):
         self._curr_img_data: Dict[str, ImageData] = {}
         self._next_img_data: Dict[str, ImageData] = {}
         self._prev_img_data: Dict[str, ImageData] = {}
+        # This is a list of threads that are currently running.  It only exists for holding a reference to the threads, preventing GC
         self._running_thread = []
 
 
@@ -154,7 +155,7 @@ class CurationImageLoader(ICurationImageLoader):
         thread.task_failed.connect(fail_callback)
         self._running_thread.append(thread)
         thread.finished.connect(latch_thread.count_down)
-        # thread.finished.connect(lambda: self._pop_thread(thread))
+        thread.finished.connect(lambda: self._pop_thread(thread))
         thread.start()
 
     def _pop_thread(self, thread):
