@@ -71,7 +71,7 @@ class CurationWidget(QStackedWidget, Subscriber, metaclass=CurationUiMeta):
         self.initialize_view(self.curation_input_view)
 
         self.curation_main_view: CurationMainView = CurationMainView(
-            self.curation_model, self.curation_service
+            self.curation_model, self.curation_service, self.loading
         )
         self.initialize_view(self.curation_main_view)
 
@@ -84,15 +84,8 @@ class CurationWidget(QStackedWidget, Subscriber, metaclass=CurationUiMeta):
         self.curation_model.subscribe(
             Event.CURATION_SETUP_COMPLETE,
             self,
-            lambda x : self.handle_curation_setup_complete(self.curation_main_view),
+            lambda x : self.loading(loading=False),
         )
-
-    def handle_curation_setup_complete(self, view: View) -> None:
-        """
-        Handle curation setup complete event
-        """
-        self.spinner.stop()
-        self.set_view(view)
 
     def go_to_main_view(self, view: View) -> None:
         """
@@ -104,12 +97,22 @@ class CurationWidget(QStackedWidget, Subscriber, metaclass=CurationUiMeta):
             and self.curation_model.get_seg1_directory() is not None
             and self.curation_model.get_seg1_channel() is not None
         ):
-            self.setCurrentWidget(self.spinner)
-            self.spinner.start()
-
+            self.loading(loading=True)
             self.curation_main_view.curation_setup(first_setup=True)
         else:
             _ = show_info("Please select all required fields")
+
+    def loading(self, loading: bool) -> None:
+        """
+        Show spinner when loading
+        """
+        print(f"loading: {loading}")
+        if loading:
+            self.spinner.start()
+            self.setCurrentWidget(self.spinner)
+        else:
+            self.spinner.stop()
+            self.set_view(self.curation_main_view)
 
     def set_view(self, view: View) -> None:
         """

@@ -460,7 +460,7 @@ class CurationService(Subscriber):
             )
         )
 
-    def next_image(self, use_image: bool) -> None:
+    def next_image(self, use_image: bool, complete_callback: Callable) -> None:
         """
         Load the next image in the curation image stack. Updates curation record and progress bar accordingly.
         """
@@ -472,8 +472,8 @@ class CurationService(Subscriber):
             self.remove_all_images_from_viewer_layers()
             self._curation_model.set_current_merging_mask_path(None)
             self._curation_model.set_current_excluding_mask_path(None)
-            loader.next()
-            raw_img_data: ImageData = loader.get_raw_image_data()
+            loader.next() # loads async
+            raw_img_data: ImageData = loader.get_raw_image_data() # will be None until next() completes
             seg1_img_data: ImageData = loader.get_seg1_image_data()
             seg2_img_data: Optional[ImageData] = loader.get_seg2_image_data()
             self.add_image_to_viewer(
@@ -487,6 +487,7 @@ class CurationService(Subscriber):
                 self.add_image_to_viewer(
                     seg2_img_data, f"[seg2] {seg2_img_data.path.name}"
                 )
+            complete_callback()
 
         else:
             # No more images to load - curation is complete

@@ -35,10 +35,12 @@ class CurationMainView(View):
         self,
         curation_model: CurationModel,
         curation_service: CurationService,
+        loading_callback: callable,
     ) -> None:
         super().__init__()
         self._curation_model: CurationModel = curation_model
         self._curation_service: CurationService = curation_service
+        self.loading_callback: callable = loading_callback
         self.curation_record: List[CurationRecord] = list()
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 10, 0, 10)
@@ -305,7 +307,8 @@ class CurationMainView(View):
         if self.no_radio.isChecked():
             use_this_image = False
 
-        self._curation_service.next_image(use_this_image)
+        self.loading_callback(loading=True)
+        self._curation_service.next_image(use_this_image, lambda: self.loading_callback(loading=False))
         self.curation_setup()
         self._update_progress_bar()
         self.reset_excluding_mask_status_label()
