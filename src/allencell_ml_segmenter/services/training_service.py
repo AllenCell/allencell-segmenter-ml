@@ -105,7 +105,7 @@ class TrainingService(Subscriber):
             show_warning("User has not selected a patch size for training")
             return False
 
-        if self._training_model.get_max_epoch() is None:
+        if self._training_model.get_num_epochs() is None:
             show_warning("Please define max epoch(s) to run for")
             return False
         if (
