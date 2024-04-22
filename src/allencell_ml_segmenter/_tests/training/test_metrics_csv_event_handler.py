@@ -19,7 +19,7 @@ def test_csv_2_epochs():
         / "test_metrics_csv_2_epochs.csv"
     )
     handler: MetricsCSVEventHandler = MetricsCSVEventHandler(
-        test_csv_path, callback_mock, 0
+        test_csv_path, callback_mock
     )
     fs_event_mock: Mock = Mock(src_path=test_csv_path)
     handler.on_any_event(fs_event_mock)
@@ -40,12 +40,12 @@ def test_empty_csv():
         / "test_metrics_csv_empty.csv"
     )
     handler: MetricsCSVEventHandler = MetricsCSVEventHandler(
-        test_csv_path, callback_mock, 2
+        test_csv_path, callback_mock
     )
     fs_event_mock: Mock = Mock(src_path=test_csv_path)
     handler.on_any_event(fs_event_mock)
-    # since test_metrics_csv_empty.csv is empty, we expect the min_epoch (2) to be used for the callback
-    callback_mock.assert_called_with(2)
+    # since test_metrics_csv_empty.csv is empty, we expect 0
+    callback_mock.assert_called_with(0)
 
 
 def test_nonexistent_csv():
@@ -61,7 +61,7 @@ def test_nonexistent_csv():
         / "test_metrics_does_not_exist.csv"
     )
     handler: MetricsCSVEventHandler = MetricsCSVEventHandler(
-        test_csv_path, callback_mock, 0
+        test_csv_path, callback_mock
     )
     fs_event_mock: Mock = Mock(src_path=test_csv_path)
     handler.on_any_event(fs_event_mock)
