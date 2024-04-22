@@ -139,18 +139,18 @@ class TrainingView(View):
 
         bottom_grid_layout.addWidget(dimension_choice_dummy, 1, 1)
 
-        max_epoch_label: LabelWithHint = LabelWithHint("Training steps")
-        bottom_grid_layout.addWidget(max_epoch_label, 2, 0)
+        num_epochs_label: LabelWithHint = LabelWithHint("Training steps")
+        bottom_grid_layout.addWidget(num_epochs_label, 2, 0)
 
-        self._max_epoch_input: QLineEdit = QLineEdit()
+        self._num_epochs_input: QLineEdit = QLineEdit()
         # allow only integers TODO [needs test coverage]
-        self._max_epoch_input.setValidator(QIntValidator())
-        self._max_epoch_input.setPlaceholderText("1000")
-        self._max_epoch_input.setObjectName("trainingStepInput")
-        self._max_epoch_input.textChanged.connect(
-            self._max_epochtext_field_handler
+        self._num_epochs_input.setValidator(QIntValidator())
+        self._num_epochs_input.setPlaceholderText("1000")
+        self._num_epochs_input.setObjectName("trainingStepInput")
+        self._num_epochs_input.textChanged.connect(
+            self._num_epochs_field_handler
         )
-        bottom_grid_layout.addWidget(self._max_epoch_input, 2, 1)
+        bottom_grid_layout.addWidget(self._num_epochs_input, 2, 1)
 
         max_time_layout: QHBoxLayout = QHBoxLayout()
         max_time_layout.setSpacing(0)
@@ -207,11 +207,12 @@ class TrainingView(View):
         current_epoch: Optional[int] = (
             self._experiments_model.get_current_epoch()
         )
+        min_epoch: int = current_epoch + 1 if current_epoch is not None else 0
         progress_tracker: MetricsCSVProgressTracker = (
             MetricsCSVProgressTracker(
                 self._experiments_model.get_metrics_csv_path(),
-                current_epoch + 1 if current_epoch else 0,
-                self._training_model.get_max_epoch(),
+                min_epoch,
+                min_epoch + self._training_model.get_num_epochs(),
                 self._experiments_model.get_latest_metrics_csv_version() + 1,
             )
         )
@@ -269,8 +270,8 @@ class TrainingView(View):
         for idx, image in enumerate(self._training_model.get_result_images()):
             self.add_image_to_viewer(image.data, f"Segmentation {str(idx)}")
 
-    def _max_epochtext_field_handler(self, max_epochs: str) -> None:
-        self._training_model.set_max_epoch(int(max_epochs))
+    def _num_epochs_field_handler(self, num_epochs: str) -> None:
+        self._training_model.set_num_epochs(int(num_epochs))
 
     def _max_time_checkbox_slot(self, checked: Qt.CheckState) -> None:
         """

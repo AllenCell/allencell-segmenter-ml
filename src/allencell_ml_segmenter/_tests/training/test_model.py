@@ -119,29 +119,29 @@ def test_set_invalid_image_dims(training_model: TrainingModel) -> None:
         training_model.set_spatial_dims(4)
 
 
-def test_get_max_epoch(training_model: TrainingModel) -> None:
+def test_get_num_epochs(training_model: TrainingModel) -> None:
     """
     Tests that get_max_epoch returns the correct max epoch.
     """
     # ASSERT
-    assert training_model.get_max_epoch() is None
+    assert training_model.get_num_epochs() is None
 
     # ARRANGE
-    training_model._max_epoch = 100
+    training_model._num_epochs = 100
 
     # ACT/ASSERT
-    assert training_model.get_max_epoch() == 100
+    assert training_model.get_num_epochs() == 100
 
 
-def test_set_max_epoch(training_model: TrainingModel) -> None:
+def test_set_num_epochs(training_model: TrainingModel) -> None:
     """
     Tests that set_max_epoch sets the correct max epoch.
     """
     # ACT
-    training_model.set_max_epoch(100)
+    training_model.set_num_epochs(100)
 
     # ASSERT
-    assert training_model._max_epoch == 100
+    assert training_model._num_epochs == 100
 
 
 def test_get_images_directory(training_model: TrainingModel) -> None:

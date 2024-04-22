@@ -60,7 +60,7 @@ class TrainingModel(Publisher):
         )
         self._patch_size: PatchSize = None
         self._spatial_dims: int = None
-        self._max_epoch: int = None
+        self._num_epochs: int = None
         self._current_epoch: int = None
         self._max_time: int = None  # in minutes
         self._config_dir: Path = None
@@ -118,19 +118,19 @@ class TrainingModel(Publisher):
             raise ValueError("No support for non 2D and 3D images.")
         self._spatial_dims = spatial_dims
 
-    def get_max_epoch(self) -> int:
+    def get_num_epochs(self) -> int:
         """
         Gets max epoch
         """
-        return self._max_epoch
+        return self._num_epochs
 
-    def set_max_epoch(self, max: int) -> None:
+    def set_num_epochs(self, num_epochs: int) -> None:
         """
-        Sets max epoch
+        Sets num epochs
 
-        max_epoch (int): max number of epochs to train for
+        num_epochs (int): number of additional epochs to train for
         """
-        self._max_epoch = max
+        self._num_epochs = num_epochs
 
     def get_current_epoch(self) -> int:
         """

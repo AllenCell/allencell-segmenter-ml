@@ -46,8 +46,10 @@ class CytoDLOverridesManager:
 
         # Max Run
         # define max run (in epochs, required)
+        current_epoch: int = self._experiments_model.get_current_epoch()
+        current_epoch = current_epoch + 1 if current_epoch is not None else 0
         overrides_dict["trainer.max_epochs"] = (
-            self._training_model.get_max_epoch()
+            self._training_model.get_num_epochs() + current_epoch
         )
         # max run in time is also defined (optional)
         if self._training_model.use_max_time():
