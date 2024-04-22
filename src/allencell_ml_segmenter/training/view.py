@@ -204,15 +204,10 @@ class TrainingView(View):
         """
         Starts training process
         """
-        current_epoch: Optional[int] = (
-            self._experiments_model.get_current_epoch()
-        )
-        min_epoch: int = current_epoch + 1 if current_epoch is not None else 0
         progress_tracker: MetricsCSVProgressTracker = (
             MetricsCSVProgressTracker(
                 self._experiments_model.get_metrics_csv_path(),
-                min_epoch,
-                min_epoch + self._training_model.get_num_epochs(),
+                self._training_model.get_num_epochs(),
                 self._experiments_model.get_latest_metrics_csv_version() + 1,
             )
         )
