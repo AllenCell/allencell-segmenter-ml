@@ -26,9 +26,7 @@ class MetricsCSVProgressTracker(ProgressTracker):
         :param num_epochs: number of epochs that will be recorded in the csv
         :param version_number: experiment version to track
         """
-        super().__init__(
-            progress_minimum=0, progress_maximum=num_epochs
-        )
+        super().__init__(progress_minimum=0, progress_maximum=num_epochs)
 
         self._csv_path: Path = csv_path
         if not csv_path.exists():
