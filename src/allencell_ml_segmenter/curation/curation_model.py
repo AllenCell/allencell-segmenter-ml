@@ -49,6 +49,7 @@ class CurationModel(Publisher):
         self._current_excluding_mask_path: Path = None
         self._current_merging_mask_path: Path = None
         self._merging_mask_base_layer: str = None
+        self._csv_written_path: Optional[Path] = None
 
         self._image_loader: Optional[ICurationImageLoader] = None
 
@@ -240,3 +241,9 @@ class CurationModel(Publisher):
 
     def append_curation_record(self, record: CurationRecord) -> None:
         self._curation_record.append(record)
+
+    def set_csv_written_path(self, path: Path) -> None:
+        self._csv_written_path = path
+
+    def get_csv_written_path(self) -> Path:
+        return self._csv_written_path

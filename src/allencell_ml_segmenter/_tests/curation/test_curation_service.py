@@ -335,12 +335,15 @@ def test_select_directory_seg2(start_mock: Mock) -> None:
 def test_write_curation_record(start_mock: Mock) -> None:
     model: CurationModel = CurationModel()
     model.experiments_model = Mock(spec=ExperimentsModel)
+    base_path: Path = Path("path")
     model.experiments_model.get_user_experiments_path.return_value = (
-        Path("path")
+        base_path
     )
+    test_name = "test_experiment"
     model.experiments_model.get_experiment_name.return_value = (
-        "test_experiment"
+        test_name
     )
+    expected_path = base_path / test_name / "data" / "train.csv"
     model.append_curation_record(CurationRecord(
             to_use=True,
             raw_file="raw1",
@@ -357,9 +360,11 @@ def test_write_curation_record(start_mock: Mock) -> None:
 
     # Act
     curation_service.write_curation_record()
+    curation_service._csv_write_thread.run()
 
     # Assert
     start_mock.assert_called()
+    assert model.get_csv_written_path() == expected_path
 
     # Arrange
     # curation_service: CurationService = CurationService(
@@ -652,17 +657,12 @@ def test_next_image_finished() -> None:
         curation_model, Mock(spec=Viewer), FakeCurationImageLoaderFactory()
     )
     curation_service.update_curation_record = Mock()
-    curation_service.write_curation_record = Mock()
-    curation_model.experiments_model = Mock(spec=ExperimentsModel)
-    curation_model.experiments_model.get_user_experiments_path.return_value = (
-        Path("path")
-    )
-    curation_model.experiments_model.get_experiment_name.return_value = Path(
-        "test_exp"
-    )
 
     # Act
-    curation_service.next_image(use_image=True)
+    with patch("napari.utils.notifications.show_info") as show_info:
+        curation_service.next_image(use_image=True)
 
     # Assert
-    curation_service.write_curation_record.assert_called_once()
+    # Test that no more image info box is displayed at end of curation
+    show_info.assert_called_once_with("No more image to load")
+

@@ -518,5 +518,6 @@ class CurationService(Subscriber):
                 seg2_img_data, f"[seg2] {seg2_img_data.path.name}"
             )
 
-    def _csv_write_finished(self, saved_path) -> None:
+    def _csv_write_finished(self, saved_path: Path) -> None:
+        self._curation_model.set_csv_written_path(saved_path)
         show_info(f"CSV Written to: {saved_path}")
