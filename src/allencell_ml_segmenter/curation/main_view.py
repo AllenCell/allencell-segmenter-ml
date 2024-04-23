@@ -182,13 +182,13 @@ class CurationMainView(View):
         self._curation_model.subscribe(
             Event.ACTION_CURATION_SAVED_MERGING_MASK,
             self,
-            lambda e: self.update_merging_mask_status_label(),
+            lambda e: self.on_merging_mask_saved(),
         )
 
         self._curation_model.subscribe(
             Event.ACTION_CURATION_SAVE_EXCLUDING_MASK,
             self,
-            lambda e: self.update_excluding_mask_status_label(),
+            lambda e: self.on_excluding_mask_saved(),
         )
 
     def doWork(self) -> None:
@@ -324,7 +324,7 @@ class CurationMainView(View):
         """
         self._curation_service.save_excluding_mask()
 
-    def update_merging_mask_status_label(self) -> None:
+    def on_merging_mask_saved(self) -> None:
         """
         Update the merging mask status label when a mask is saved
         """
@@ -336,7 +336,7 @@ class CurationMainView(View):
         """
         self.merging_mask_status.setText("Create and draw mask")
 
-    def update_excluding_mask_status_label(self) -> None:
+    def on_excluding_mask_saved(self) -> None:
         """
         Update the excluding mask status label when a mask is saved
         """
