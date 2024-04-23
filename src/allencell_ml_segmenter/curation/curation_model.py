@@ -41,13 +41,8 @@ class CurationModel(Publisher):
         self._raw_image_channel_count: int = None
         self._seg1_image_channel_count: int = None
         self._seg2_image_channel_count: int = None
-        self._excluding_mask_shape_layers = []
-        self._merging_mask_shape_layers = []
         self._curation_record: List[CurationRecord] = []
         self._curation_image_dims: Tuple[int, int, int] = None
-
-        self._current_excluding_mask_path: Path = None
-        self._current_merging_mask_path: Path = None
         self._merging_mask_base_layer: str = None
 
         self._image_loader: Optional[ICurationImageLoader] = None
@@ -194,43 +189,6 @@ class CurationModel(Publisher):
 
     def get_curation_record(self) -> List[CurationRecord]:
         return self._curation_record
-
-    def set_current_excluding_mask_path(self, path: Path):
-        self._current_excluding_mask_path = path
-
-    def get_current_excluding_mask_path_and_reset_mask(self) -> Path:
-        current_mask_path: Path = self.get_current_excluding_mask_path()
-        self.set_current_excluding_mask_path(None)
-        return current_mask_path
-
-    def get_current_excluding_mask_path(self) -> Path:
-        return self._current_excluding_mask_path
-
-    def set_current_merging_mask_path(self, path: Path):
-        self._current_merging_mask_path = path
-
-    def get_current_merging_mask_path(self):
-        return self._current_merging_mask_path
-
-    def get_excluding_mask_shape_layers(self) -> List[Shapes]:
-        return self._excluding_mask_shape_layers
-
-    def set_excluding_mask_shape_layers(self, layers: List[Shapes]) -> None:
-        self._excluding_mask_shape_layers = layers
-
-    def append_excluding_mask_shape_layer(
-        self, layer_to_append: Shapes
-    ) -> None:
-        self._excluding_mask_shape_layers.append(layer_to_append)
-
-    def get_merging_mask_shape_layers(self) -> List[Shapes]:
-        return self._merging_mask_shape_layers
-
-    def set_merging_mask_shape_layers(self, layers: List[Shapes]) -> None:
-        self._merging_mask_shape_layers = layers
-
-    def append_merging_mask_shape_layer(self, layer_to_append: Shapes) -> None:
-        self._merging_mask_shape_layers.append(layer_to_append)
 
     def is_user_experiment_selected(self) -> bool:
         if self.experiments_model.get_experiment_name() is None:
