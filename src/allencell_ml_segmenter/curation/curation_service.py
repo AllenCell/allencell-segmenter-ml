@@ -166,7 +166,7 @@ class CurationService(Subscriber):
 
         if matching_layer is not None:
             discard_layer_prompt = DialogBox(
-                f"There is already a '{name}' layer in the viewer. Would you like to discard this layer and lose any unsaved progress?"
+                f"There is already a '{name}' layer in the viewer. Would you like to discard this layer?"
             )
             discard_layer_prompt.exec()
             if not discard_layer_prompt.selection:
@@ -275,6 +275,11 @@ class CurationService(Subscriber):
             show_info("Please select an experiment to save masks.")
             return False
         
+        mask_to_save: Shapes = self._get_layer_by_name(EXCLUDING_MASK_LAYER_NAME)
+        if mask_to_save is None:
+            show_info("Please create mask before saving.")
+            return False
+
         folder_path: Path = (
             self._curation_model.get_save_masks_path() / "excluding_masks"
         )
@@ -295,11 +300,6 @@ class CurationService(Subscriber):
                 return False
         else:
             folder_path.mkdir(parents=True, exist_ok=True)
-
-        mask_to_save: Shapes = self._get_layer_by_name(EXCLUDING_MASK_LAYER_NAME)
-        if mask_to_save is None:
-            show_info("Please create mask before saving.")
-            return False
         
         np.save(
             save_path_mask_file, np.asarray(mask_to_save, dtype=object)
@@ -316,6 +316,11 @@ class CurationService(Subscriber):
         """
         if not self._curation_model.is_user_experiment_selected():
             show_info("Please select an experiment to save masks.")
+            return False
+        
+        mask_to_save: Shapes = self._get_layer_by_name(MERGING_MASK_LAYER_NAME)
+        if mask_to_save is None:
+            show_info("Please create mask before saving.")
             return False
         
         folder_path: Path = (
@@ -338,11 +343,6 @@ class CurationService(Subscriber):
                 return False
         else:
             folder_path.mkdir(parents=True, exist_ok=True)
-
-        mask_to_save: Shapes = self._get_layer_by_name(MERGING_MASK_LAYER_NAME)
-        if mask_to_save is None:
-            show_info("Please create mask before saving.")
-            return False
 
         np.save(
             save_path_mask_file, np.asarray(mask_to_save, dtype=object)
