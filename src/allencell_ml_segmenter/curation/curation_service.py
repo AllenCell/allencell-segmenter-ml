@@ -267,6 +267,27 @@ class CurationService(Subscriber):
             ),
         )
 
+    def _get_curr_mask_path(self, mask_type: str) -> Path:
+        """
+        Returns a path to the current mask at .../{mask_type}s/{mask_type}_...
+        :param mask_type: either 'excluding_mask' or 'merging_mask'
+        """
+        folder_path: Path = (
+            self._curation_model.get_save_masks_path() / f"{mask_type}s"
+        )
+        # TODO: make this long self._curation_model.get_image... into a method on curation_model itself
+        mask_path: Path = (
+            folder_path
+            / f"{mask_type}_{self._curation_model.get_image_loader().get_raw_image_data().path.stem}.npy"
+        )
+        return mask_path
+
+    def _get_curr_excluding_mask_path(self) -> Path:
+        return self._get_curr_mask_path("excluding_mask")
+
+    def _get_curr_merging_mask_path(self) -> Path:
+        return self._get_curr_mask_path("merging_mask")
+
     def save_excluding_mask(self) -> None:
         """
         Save the current excluding mask to disk and update napari
@@ -280,14 +301,7 @@ class CurationService(Subscriber):
             show_info("Please create mask before saving.")
             return False
 
-        folder_path: Path = (
-            self._curation_model.get_save_masks_path() / "excluding_masks"
-        )
-        # TODO: make this long self._curation_model.get_image... into a method on curation_model itself
-        save_path_mask_file: Path = (
-            folder_path
-            / f"excluding_mask_{self._curation_model.get_image_loader().get_raw_image_data().path.stem}.npy"
-        )
+        save_path_mask_file: Path = self._get_curr_excluding_mask_path()
 
         # Checking to see if there is already a merging mask saved.
         if save_path_mask_file.exists():
@@ -299,10 +313,10 @@ class CurationService(Subscriber):
             if not overwrite_merging_mask_dialog.selection:
                 return False
         else:
-            folder_path.mkdir(parents=True, exist_ok=True)
+            save_path_mask_file.parent.mkdir(parents=True, exist_ok=True)
         
         np.save(
-            save_path_mask_file, np.asarray(mask_to_save, dtype=object)
+            save_path_mask_file, np.asarray(mask_to_save.data, dtype=object)
         )
         self._curation_model.dispatch(
             Event.ACTION_CURATION_SAVE_EXCLUDING_MASK
@@ -323,14 +337,7 @@ class CurationService(Subscriber):
             show_info("Please create mask before saving.")
             return False
         
-        folder_path: Path = (
-            self._curation_model.get_save_masks_path() / "merging_masks"
-        )
-        # TODO: make this long self._curation_model.get_image... into a method on curation_model itself
-        save_path_mask_file: Path = (
-            folder_path
-            / f"merging_mask_{self._curation_model.get_image_loader().get_raw_image_data().path.stem}.npy"
-        )
+        save_path_mask_file: Path = self._get_curr_merging_mask_path()
 
         # Checking to see if there is already a merging mask saved.
         if save_path_mask_file.exists():
@@ -342,10 +349,10 @@ class CurationService(Subscriber):
             if not overwrite_merging_mask_dialog.selection:
                 return False
         else:
-            folder_path.mkdir(parents=True, exist_ok=True)
+            save_path_mask_file.parent.mkdir(parents=True, exist_ok=True)
 
         np.save(
-            save_path_mask_file, np.asarray(mask_to_save, dtype=object)
+            save_path_mask_file, np.asarray(mask_to_save.data, dtype=object)
         )
         self._curation_model.set_merging_mask_base_layer(base_image)
         self._curation_model.dispatch(
@@ -358,19 +365,15 @@ class CurationService(Subscriber):
         Update the curation record with the users selection for the current image
         """
         # DEAL WITH EXCLUDING MASKS
-        excluding_mask_path: Union[Path, str] = (
-            self._curation_model.get_current_excluding_mask_path_and_reset_mask()
-        )
-        if excluding_mask_path is not None:
-            excluding_mask_path = str(excluding_mask_path)
+        excluding_mask_path: Path = self._get_curr_excluding_mask_path()
+        if excluding_mask_path.exists():
+            excluding_mask_path = str(excluding_mask_path.resolve())
         else:
             excluding_mask_path = ""
 
         # DEAL WITH MERGING MASKS
-        merging_mask_path: Union[Path, str] = (
-            self._curation_model.get_current_merging_mask_path()
-        )
-        if merging_mask_path is not None:
+        merging_mask_path: Path = self._get_curr_merging_mask_path()
+        if merging_mask_path.exists():
             # user has drawn and saved merging masks.
             merging_mask_path = str(merging_mask_path)
             base_image_name: str = (
