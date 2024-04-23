@@ -161,7 +161,7 @@ class CurationService(Subscriber):
                 break
         return matching_layer
     
-    def _create_mask_layer(self, name: str, color: Optional[str]=None):
+    def _create_mask_layer(self, name: str, face_color: str):
         matching_layer = self._get_layer_by_name(name)
 
         if matching_layer is not None:
@@ -177,17 +177,15 @@ class CurationService(Subscriber):
 
         # TODO: encapsulate mode / color in add_shapes?
         points_layer: Shapes = self._viewer.add_shapes(
-            name=name
+            name, face_color
         )
         points_layer.mode = "add_polygon"
-        if color is not None:
-            points_layer.face_color = color
 
     def create_excluding_mask_layer(self) -> None:
-        self._create_mask_layer(EXCLUDING_MASK_LAYER_NAME, color="coral")
+        self._create_mask_layer(EXCLUDING_MASK_LAYER_NAME, "coral")
     
     def create_merging_mask_layer(self) -> None:
-        self._create_mask_layer(MERGING_MASK_LAYER_NAME, color="royalblue")
+        self._create_mask_layer(MERGING_MASK_LAYER_NAME, "royalblue")
 
     def _stop_channel_extraction_thread(self, thread: ChannelExtractionThread):
         # if we find this is too slow, can switch to the method employed by
