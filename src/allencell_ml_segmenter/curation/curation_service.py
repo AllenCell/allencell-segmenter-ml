@@ -411,8 +411,6 @@ class CurationService(Subscriber):
         # load next image
         if loader.has_next():
             self.remove_all_images_from_viewer_layers()
-            self._curation_model.set_current_merging_mask_path(None)
-            self._curation_model.set_current_excluding_mask_path(None)
             loader.next()
             raw_img_data: ImageData = loader.get_raw_image_data()
             seg1_img_data: ImageData = loader.get_seg1_image_data()
