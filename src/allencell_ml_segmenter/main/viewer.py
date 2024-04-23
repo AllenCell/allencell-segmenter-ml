@@ -20,8 +20,8 @@ class Viewer(IViewer):
     def add_image(self, image, name: str) -> None:
         self.viewer.add_image(image, name=name)
 
-    def add_shapes(self, name: str):
-        return self.viewer.add_shapes(None, name=name)
+    def add_shapes(self, name: str, face_color: str):
+        return self.viewer.add_shapes(None, name=name, face_color=face_color)
 
     def clear_layers(self) -> None:
         self.viewer.layers.clear()

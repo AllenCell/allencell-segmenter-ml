@@ -10,7 +10,7 @@ class IViewer(ABC):
         pass
 
     @abstractmethod
-    def add_shapes(self, name):
+    def add_shapes(self, name, face_color):
         pass
 
     @abstractmethod

@@ -46,7 +46,7 @@ class FakeViewer(IViewer):
     def clear_layers(self) -> None:
         self.layers_cleared_count = self.layers_cleared_count + 1
 
-    def add_shapes(self, name) -> Shapes:
+    def add_shapes(self, name, face_color) -> Shapes:
         self.shapes_layers_added.append(name)
         mock_shapes_return = Mock(Shapes)
         mock_shapes_return.name = name
