@@ -19,7 +19,6 @@ from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
 from allencell_ml_segmenter.curation.curation_model import CurationModel
 from allencell_ml_segmenter.curation.curation_service import (
     CurationService,
-    SelectionMode,
 )
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 
@@ -109,7 +108,7 @@ class CurationMainView(View):
         # Label for Merging mask
         merging_mask_label_and_status: QHBoxLayout = QHBoxLayout()
         merging_mask_label: LabelWithHint = LabelWithHint("Merging mask")
-        self.merging_mask_status: QLabel = QLabel()
+        self.merging_mask_status: QLabel = QLabel("Create and draw mask")
         merging_mask_label_and_status.addWidget(merging_mask_label)
         merging_mask_label_and_status.addWidget(self.merging_mask_status)
         self.layout().addLayout(merging_mask_label_and_status)
@@ -122,7 +121,7 @@ class CurationMainView(View):
         # buttons for merging mask
         merging_mask_buttons: QHBoxLayout = QHBoxLayout()
         self.merging_create_button: QPushButton = QPushButton("+ Create")
-        self.merging_create_button.clicked.connect(self._curation_service.create_merging_mask_layer)
+        self.merging_create_button.clicked.connect(self._create_merging_mask)
         self.merging_create_button.setObjectName("small_blue_btn")
         self.merging_base_combo: QComboBox = QComboBox()
         self.merging_base_combo.addItem("Base Image:")
@@ -144,9 +143,9 @@ class CurationMainView(View):
         excluding_mask_labels: QHBoxLayout = QHBoxLayout()
         excluding_mask_label: LabelWithHint = LabelWithHint("Excluding mask")
         excluding_mask_labels.addWidget(excluding_mask_label)
-        self.excluding_mask_label = QLabel("File name...")
+        self.excluding_mask_status = QLabel("Create and draw mask")
         excluding_mask_labels.addWidget(
-            self.excluding_mask_label, alignment=Qt.AlignLeft
+            self.excluding_mask_status, alignment=Qt.AlignLeft
         )
         self.layout().addLayout(excluding_mask_labels)
 
@@ -298,6 +297,7 @@ class CurationMainView(View):
     def _create_merging_mask(self) -> None:
         self._curation_service.create_merging_mask_layer()
         self.merging_save_button.setEnabled(True)
+        self.merging_mask_status.setText("Draw mask")
 
     def save_merging_mask(self) -> None:
         """
@@ -316,6 +316,7 @@ class CurationMainView(View):
     def _create_excluding_mask(self) -> None:
         self._curation_service.create_excluding_mask_layer()
         self.excluding_save_button.setEnabled(True)
+        self.excluding_mask_status.setText("Draw mask")
 
     def save_excluding_mask(self) -> None:
         """
@@ -327,27 +328,27 @@ class CurationMainView(View):
         """
         Update the merging mask status label when a mask is saved
         """
-        self.merging_mask_status.setText("Merging mask saved to experiment.")
+        self.merging_mask_status.setText("Merging mask saved")
 
     def reset_merging_mask_status_label(self) -> None:
         """
         Reset the merging mask status label to its default state
         """
-        self.merging_mask_status.setText("Please select merging mask.")
+        self.merging_mask_status.setText("Create and draw mask")
 
     def update_excluding_mask_status_label(self) -> None:
         """
         Update the excluding mask status label when a mask is saved
         """
-        self.excluding_mask_label.setText(
-            "Excluding mask saved to experiment."
+        self.excluding_mask_status.setText(
+            "Excluding mask saved"
         )
 
     def reset_excluding_mask_status_label(self) -> None:
         """
         Reset the excluding mask status label to its default state
         """
-        self.excluding_mask_label.setText("Please select excluding mask.")
+        self.excluding_mask_status.setText("Create and draw mask")
 
     def disable_all_masks(self) -> None:
         self.disable_merging_mask_buttons()
