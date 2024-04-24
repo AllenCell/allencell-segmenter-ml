@@ -209,7 +209,11 @@ class CurationMainView(View):
         # If there is only one segmentation image set for curation disable merging masks.
         if self._curation_model.get_seg2_directory() is None:
             self.disable_merging_mask_buttons()
-
+        else:
+            self.enable_merging_mask_buttons()
+        self.enable_excluding_mask_buttons()
+        self.reset_excluding_mask_status_label()
+        self.reset_merging_mask_status_label()
         if first_setup:
             _ = show_info("Loading curation images")
             self._curation_service.curation_setup()
@@ -291,8 +295,6 @@ class CurationMainView(View):
         self._curation_service.next_image(use_this_image)
         self.curation_setup()
         self._update_progress_bar()
-        self.reset_excluding_mask_status_label()
-        self.reset_merging_mask_status_label()
 
     def _create_merging_mask(self) -> None:
         self._curation_service.create_merging_mask_layer()
@@ -310,8 +312,6 @@ class CurationMainView(View):
             saved: bool = self._curation_service.save_merging_mask(
                 self.merging_base_combo.currentText()
             )
-            if saved:
-                self.enable_excluding_mask_buttons()
 
     def _create_excluding_mask(self) -> None:
         self._curation_service.create_excluding_mask_layer()

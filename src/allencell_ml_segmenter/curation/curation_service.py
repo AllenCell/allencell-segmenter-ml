@@ -286,7 +286,7 @@ class CurationService(Subscriber):
     def _get_curr_merging_mask_path(self) -> Path:
         return self._get_curr_mask_path("merging_mask")
 
-    def save_excluding_mask(self) -> None:
+    def save_excluding_mask(self) -> bool:
         """
         Save the current excluding mask to disk and update napari
         """
