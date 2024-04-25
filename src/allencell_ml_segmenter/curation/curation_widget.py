@@ -9,7 +9,7 @@ from qtpy.QtWidgets import (
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.view import View
-from allencell_ml_segmenter.curation.curation_model import CurationModel
+from allencell_ml_segmenter.curation.curation_model import CurationModel, CurationView
 from allencell_ml_segmenter.curation.input_view import CurationInputView
 from allencell_ml_segmenter.curation.main_view import CurationMainView
 from allencell_ml_segmenter.curation.curation_service import CurationService
@@ -45,8 +45,9 @@ class CurationWidget(QStackedWidget, Subscriber, metaclass=CurationUiMeta):
         self.viewer: napari.Viewer = viewer
         self.experiments_model: ExperimentsModel = experiments_model
         self.view_to_index: Dict[View, int] = dict()
+        # TODO: make factories singletons
         self.curation_model: CurationModel = CurationModel(
-            experiments_model=experiments_model
+            experiments_model=experiments_model, img_loader_factory=CurationImageLoaderFactory()
         )
         self.curation_service: CurationService = CurationService(
             self.curation_model, self.viewer, CurationImageLoaderFactory()
@@ -68,27 +69,14 @@ class CurationWidget(QStackedWidget, Subscriber, metaclass=CurationUiMeta):
         self.initialize_view(self.curation_main_view)
 
         self.set_view(self.curation_input_view)
-        self.curation_model.subscribe(
-            Event.PROCESS_CURATION_INPUT_STARTED,
-            self,
-            lambda x: self.go_to_main_view(self.curation_main_view),
-        )
+        self.curation_model.current_view_changed.connect(self._on_view_changed)
 
-    def go_to_main_view(self, view: View) -> None:
-        """
-        Switch to main curation view
-        """
-        if (
-            self.curation_model.get_raw_directory() is not None
-            and self.curation_model.get_raw_channel() is not None
-            and self.curation_model.get_seg1_directory() is not None
-            and self.curation_model.get_seg1_channel() is not None
-        ):
-            self.set_view(view)
-            self.curation_main_view.curation_setup(first_setup=True)
-        else:
-            _ = show_info("Please select all required fields")
-
+    def _on_view_changed(self) -> None:
+        if self.curation_model.get_current_view() == CurationView.INPUT_VIEW:
+            self.set_view(self.curation_input_view)
+        elif self.curation_model.get_current_view() == CurationView.MAIN_VIEW:
+            self.set_view(self.curation_main_view)
+            
     def set_view(self, view: View) -> None:
         """
         Set the current views, must be initialized first

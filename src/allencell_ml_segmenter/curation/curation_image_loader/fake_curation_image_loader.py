@@ -23,7 +23,6 @@ class FakeCurationImageLoader(ICurationImageLoader):
             raw_images,
             seg1_images,
             seg2_images,
-            SynchroQRunnableManager.global_instance(),
             FakeImageDataExtractor.global_instance(),
         )
 

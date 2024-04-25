@@ -6,7 +6,7 @@ from allencell_ml_segmenter.widgets.input_button_widget import (
     FileInputMode,
 )
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
-from allencell_ml_segmenter.curation.curation_model import CurationModel
+from allencell_ml_segmenter.curation.curation_model import CurationModel, CurationView
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
     QSizePolicy,
@@ -19,6 +19,7 @@ from qtpy.QtWidgets import (
 )
 from allencell_ml_segmenter.core.event import Event
 from pathlib import Path
+from napari.utils.notifications import show_info
 
 
 class CurationInputView(View):
@@ -27,11 +28,10 @@ class CurationInputView(View):
     """
 
     def __init__(
-        self, curation_model: CurationModel, curation_service: CurationService
+        self, curation_model: CurationModel
     ) -> None:
         super().__init__()
         self._curation_model: CurationModel = curation_model
-        self._curation_service: CurationService = curation_service
 
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
@@ -171,27 +171,16 @@ class CurationInputView(View):
         frame.layout().addLayout(seg2_grid_layout)
 
         self._start_btn: QPushButton = QPushButton("Start")
-        self._start_btn.clicked.connect(self._curation_model.set_view)
+        self._start_btn.clicked.connect(self._on_start)
         frame.layout().addWidget(self._start_btn)
 
         # subscribers
-        self._curation_model.subscribe(
-            Event.ACTION_CURATION_RAW_CHANNELS_SET,
-            self,
-            self.update_raw_channels,
-        )
-        self._curation_model.subscribe(
-            Event.ACTION_CURATION_SEG1_CHANNELS_SET,
-            self,
-            self.update_seg1_channels,
-        )
-        self._curation_model.subscribe(
-            Event.ACTION_CURATION_SEG2_CHANNELS_SET,
-            self,
-            self.update_seg2_channels,
-        )
+        self._curation_model.raw_image_channel_count_set.connect(self.update_raw_channels)
+        self._curation_model.seg1_image_channel_count_set.connect(self.update_seg1_channels)
+        self._curation_model.seg2_image_channel_count_set.connect(self.update_seg2_channels)
 
         # error handling events
+        """
         self._curation_model.subscribe(
             Event.ACTION_CURATION_RAW_THREAD_ERROR,
             self,
@@ -219,7 +208,19 @@ class CurationInputView(View):
                 self._seg2_directory_select,
             ),
         )
+        """
 
+    def _on_start(self) -> None:
+        if any([value is None for value in [self._curation_model.get_raw_directory(), self._curation_model.get_raw_channel(), self._curation_model.get_seg1_directory(), self._curation_model.get_seg1_channel()]]):
+            show_info("Please select a directory and channel for at least raw and seg1.")
+            return
+        
+        if self._curation_model.get_seg2_directory() is not None and self._curation_model.get_seg2_channel() is None:
+            show_info("Please select a channel for seg2.")
+            return
+        
+        self._curation_model.set_current_view(CurationView.MAIN_VIEW)
+        
     def _set_to_loading(
         self, combobox: QComboBox, stacked_spinner: StackedSpinner
     ) -> None:
@@ -246,19 +247,19 @@ class CurationInputView(View):
         self._set_to_loading(
             self._raw_image_channel_combo, self._raw_dir_stacked_spinner
         )
-        self._curation_service.select_directory_raw(dir)
+        self._curation_model.set_raw_directory(dir)
 
     def _on_seg1_dir_select(self, dir: Path) -> None:
         self._set_to_loading(
             self._seg1_image_channel_combo, self._seg1_dir_stacked_spinner
         )
-        self._curation_service.select_directory_seg1(dir)
+        self._curation_model.set_seg1_directory(dir)
 
     def _on_seg2_dir_select(self, dir: Path) -> None:
         self._set_to_loading(
             self._seg2_image_channel_combo, self._seg2_dir_stacked_spinner
         )
-        self._curation_service.select_directory_seg2(dir)
+        self._curation_model.set_seg2_directory(dir)
 
     def doWork(self) -> None:
         print("work")
@@ -280,7 +281,7 @@ class CurationInputView(View):
             [
                 str(x)
                 for x in range(
-                    self._curation_model.get_total_num_channels_raw()
+                    self._curation_model.get_raw_image_channel_count()
                 )
             ]
         )
@@ -300,7 +301,7 @@ class CurationInputView(View):
             [
                 str(x)
                 for x in range(
-                    self._curation_model.get_total_num_channels_seg1()
+                    self._curation_model.get_seg1_image_channel_count()
                 )
             ]
         )
@@ -319,7 +320,7 @@ class CurationInputView(View):
             [
                 str(x)
                 for x in range(
-                    self._curation_model.get_total_num_channels_seg2()
+                    self._curation_model.get_seg2_image_channel_count()
                 )
             ]
         )
