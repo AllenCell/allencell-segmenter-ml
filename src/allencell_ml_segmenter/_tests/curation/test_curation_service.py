@@ -252,7 +252,7 @@ def test_select_directory_raw(start_mock: Mock) -> None:
     # Assert
     start_mock.assert_called()
     assert model.get_raw_directory() == img_folder
-    assert model.get_total_num_channels_raw() == 3
+    assert model.get_raw_image_channel_count() == 3
     assert fake_subscriber.was_handled(Event.ACTION_CURATION_RAW_CHANNELS_SET)
 
 
@@ -288,7 +288,7 @@ def test_select_directory_seg1(start_mock: Mock) -> None:
     # Assert
     start_mock.assert_called()
     assert model.get_seg1_directory() == img_folder
-    assert model.get_total_num_channels_seg1() == 3
+    assert model.get_seg1_image_channel_count() == 3
     assert fake_subscriber.was_handled(Event.ACTION_CURATION_SEG1_CHANNELS_SET)
 
 
@@ -325,7 +325,7 @@ def test_select_directory_seg2(start_mock: Mock) -> None:
     # Assert
     start_mock.assert_called()
     assert model.get_seg2_directory() == img_folder
-    assert model.get_total_num_channels_seg2() == 3
+    assert model.get_seg2_image_channel_count() == 3
     assert fake_subscriber.was_handled(Event.ACTION_CURATION_SEG2_CHANNELS_SET)
 
 
