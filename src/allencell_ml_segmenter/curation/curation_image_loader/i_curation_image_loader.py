@@ -9,14 +9,13 @@ from allencell_ml_segmenter.core.image_data_extractor import (
     ImageData,
 )
 
-
+# TODO: how to specify abstract signals?
 class ICurationImageLoader(ABC):
     def __init__(
         self,
         raw_images: List[Path],
         seg1_images: List[Path],
         seg2_images: Optional[List[Path]],
-        qr_manager: IQRunnableManager,
         img_data_extractor: IImageDataExtractor,
     ):
         self._raw_images: List[Path] = list(raw_images)
@@ -35,7 +34,6 @@ class ICurationImageLoader(ABC):
 
         self._num_images = len(self._raw_images)
 
-        self._qr_manager: IQRunnableManager = qr_manager
         self._img_data_extractor: IImageDataExtractor = img_data_extractor
         self._cursor: int = 0
 
@@ -52,6 +50,10 @@ class ICurationImageLoader(ABC):
         num images)
         """
         return self._cursor
+
+    @abstractmethod
+    def is_busy(self) -> bool:
+        pass
 
     @abstractmethod
     def get_raw_image_data(self) -> ImageData:
