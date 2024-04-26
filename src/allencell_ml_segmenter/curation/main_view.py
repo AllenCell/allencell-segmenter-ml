@@ -64,7 +64,7 @@ class CurationMainView(View):
         frame.setLayout(QVBoxLayout())
         self.layout().addWidget(frame)
 
-        input_images_label: QLabel = QLabel("Progress")
+        input_images_label: QLabel = QLabel("Curation Progress")
         frame.layout().addWidget(input_images_label, alignment=Qt.AlignHCenter)
 
         progress_bar_layout: QHBoxLayout = QHBoxLayout()
@@ -77,10 +77,6 @@ class CurationMainView(View):
         inner_progress_frame: QFrame = QFrame()
         inner_progress_frame.setLayout(QHBoxLayout())
         inner_progress_frame.setObjectName("frame")
-        progress_bar_label: QLabel = QLabel("Image")
-        inner_progress_frame.layout().addWidget(
-            progress_bar_label, alignment=Qt.AlignLeft
-        )
         self.progress_bar: QProgressBar = QProgressBar()
         inner_progress_frame.layout().addWidget(self.progress_bar)
         self.progress_bar_image_count: QLabel = QLabel("0/0")
@@ -96,7 +92,7 @@ class CurationMainView(View):
         )
         self.layout().addLayout(progress_bar_layout)
 
-        self.file_name: QLabel = QLabel("Example_file_1")
+        self.file_name: QLabel = QLabel()
         self.layout().addWidget(self.file_name, alignment=Qt.AlignHCenter)
 
         use_image_frame: QFrame = QFrame()
@@ -173,11 +169,12 @@ class CurationMainView(View):
         self.excluding_create_button.clicked.connect(self._create_excluding_mask)
         # propogate button disabled for v1
         # TODO: enable this in v2
-        excluding_propagate_button: QPushButton = QPushButton(
-            "Propagate in 3D"
-        )
-        excluding_propagate_button.setEnabled(False)
-
+        #excluding_propagate_button: QPushButton = QPushButton(
+        #    "Propagate in 3D"
+        #)
+        #excluding_propagate_button.setEnabled(False)
+        
+        # TODO: connect the delete button to some functionality
         self.excluding_delete_button: QPushButton = QPushButton("Delete")
         self.excluding_save_button: QPushButton = QPushButton("Save")
         self.excluding_save_button.setObjectName("small_blue_btn")
@@ -185,7 +182,6 @@ class CurationMainView(View):
         self.excluding_save_button.setEnabled(False)
 
         excluding_mask_buttons.addWidget(self.excluding_create_button)
-        excluding_mask_buttons.addWidget(excluding_propagate_button)
         excluding_mask_buttons.addWidget(self.excluding_delete_button)
         excluding_mask_buttons.addWidget(self.excluding_save_button)
         self.layout().addLayout(excluding_mask_buttons)
@@ -239,6 +235,7 @@ class CurationMainView(View):
             self._viewer.add_image(seg2_img_data.np_data, f"[seg2] {seg2_img_data.path.name}")
 
         self.enable_valid_masks()
+        self.file_name.setText(raw_img_data.path.name)
         self.merging_mask_status.setText("Create and draw mask")
         self.excluding_mask_status.setText("Create and draw mask")
 
@@ -264,6 +261,7 @@ class CurationMainView(View):
             self.disable_all_masks()
             self.yes_radio.setEnabled(False)
             self.no_radio.setEnabled(False)
+            self.file_name.setText("None")
             self._set_next_button_to_finished()
         self._update_progress_bar()
 
