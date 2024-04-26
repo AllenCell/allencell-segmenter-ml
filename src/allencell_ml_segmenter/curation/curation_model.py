@@ -1,3 +1,4 @@
+import numpy as np
 from pathlib import Path
 from typing import Tuple, List, Optional
 from enum import Enum
@@ -67,21 +68,21 @@ class CurationModel(QObject):
         self._seg2_image_channel_count: Optional[int] = None
         self._curation_record: List[CurationRecord] = []
 
-        self._merging_mask: Optional[Shapes] = None
-        self._excluding_mask: Optional[Shapes] = None
+        self._merging_mask: Optional[np.ndarray] = None
+        self._excluding_mask: Optional[np.ndarray] = None
 
         self._image_loader: Optional[ICurationImageLoader] = None
     
-    def get_merging_mask(self) -> Optional[Shapes]:
+    def get_merging_mask(self) -> Optional[np.ndarray]:
         return self._merging_mask
     
-    def set_merging_mask(self, mask: Shapes) -> None:
+    def set_merging_mask(self, mask: np.ndarray) -> None:
         self._merging_mask = mask
     
-    def get_excluding_mask(self) -> Optional[Shapes]:
+    def get_excluding_mask(self) -> Optional[np.ndarray]:
         return self._excluding_mask
     
-    def set_excluding_mask(self, mask: Shapes) -> None:
+    def set_excluding_mask(self, mask: np.ndarray) -> None:
         self._excluding_mask = mask
 
     def set_raw_directory(self, dir: Path) -> None:
