@@ -177,7 +177,7 @@ class CurationModel(QObject):
             if view == CurationView.MAIN_VIEW:
                 self._image_loader = self._img_loader_factory.create(self._raw_directory_paths, self._seg1_directory_paths, self._seg2_directory_paths)
                 self._image_loader.first_image_ready.connect(lambda: self.first_image_data_ready.emit())
-                self._image_loader.is_idle.connect(lambda: self.next_image_data_ready.emit())
+                self._image_loader.next_image_ready.connect(lambda: self.next_image_data_ready.emit())
             else:
                 self._image_loader = None
             self._current_view = view
@@ -249,23 +249,31 @@ class CurationModel(QObject):
     def get_curr_image_index(self) -> int:
         return self._image_loader.get_current_index()
     
-    def next_image(self, use_image: bool, base_image: Optional[str]) -> None:
-        if self._image_loader.is_busy():
-            raise RuntimeError("Image loader is busy. Please see image_data_ready signal.")
-        
-        # for now, we always append, if we support the prev button, we need to insert the record
-        # at the old record's place
+    def has_next_image(self) -> bool:
+        return self._image_loader.has_next()
+
+    def save_curr_curation_record(self, use_image: bool, base_image: Optional[str]):
+        idx: int = self.get_curr_image_index()
         record: CurationRecord = CurationRecord(
             self.get_raw_image_data().path,
             self.get_seg1_image_data().path,
             self.get_seg2_image_data().path,
             self.get_excluding_mask(),
             self.get_merging_mask(),
-            base_image,
+            base_image if base_image and self.get_merging_mask() is not None else "seg1",
             use_image
         )
-        self._curation_record.append(record)
+        if idx == len(self._curation_record):
+            self._curation_record.append(record)
+        else:
+            self._curation_record[idx] = record
+
+    def next_image(self) -> None:
+        if self._image_loader.is_busy():
+            raise RuntimeError("Image loader is busy. Please see image_data_ready signal.")
         self._image_loader.next()
+        self._merging_mask = None
+        self._excluding_mask = None
     
     def is_image_data_ready(self) -> bool:
         return not self._image_loader.is_busy() if self._image_loader is not None else False
