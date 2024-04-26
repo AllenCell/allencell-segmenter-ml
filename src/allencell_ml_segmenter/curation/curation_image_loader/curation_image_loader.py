@@ -23,7 +23,8 @@ class CurationImageLoader(ICurationImageLoader):
     that the getter functions will never be blocking.
     """
 
-    is_idle: Signal = Signal()
+    next_image_ready: Signal = Signal()
+    prev_image_ready: Signal = Signal()
     first_image_ready: Signal = Signal()
 
     def __init__(
@@ -59,37 +60,37 @@ class CurationImageLoader(ICurationImageLoader):
         # start threads for first and next images
         self._set_curr_is_busy(True)
         curr_worker: FunctionWorker = self._start_extraction_threads(0, self._curr_img_data)
-        curr_worker.finished.connect(self._first_image_ready)
+        curr_worker.finished.connect(self._on_first_image_ready)
         curr_worker.start()
 
         self._set_next_is_busy(True)
         next_worker: FunctionWorker = self._start_extraction_threads(1, self._next_img_data)
-        next_worker.finished.connect(lambda: self._set_next_is_busy(False))
+        next_worker.finished.connect(self._on_next_image_ready)
         next_worker.start()
 
     def is_busy(self):
         return any(self._is_busy)
 
-    def _first_image_ready(self):
-        # Note: we do not want to use _set_curr_is_busy here b/c we don't want the first images to emit
-        # an idle signal
-        self._is_busy[1] = False
+    def _on_first_image_ready(self):
+        self._set_curr_is_busy(False)
         self.first_image_ready.emit()
+    
+    def _on_next_image_ready(self):
+        self._set_next_is_busy(False)
+        self.next_image_ready.emit()
+    
+    def _on_prev_image_ready(self):
+        self._set_prev_is_busy(False)
+        self.prev_image_ready.emit()
 
     def _set_curr_is_busy(self, busy: bool):
         self._is_busy[1] = busy
-        if not self.is_busy():
-            self.is_idle.emit()
 
     def _set_prev_is_busy(self, busy: bool):
         self._is_busy[0] = busy
-        if not self.is_busy():
-            self.is_idle.emit()
     
     def _set_next_is_busy(self, busy: bool):
         self._is_busy[2] = busy
-        if not self.is_busy():
-            self.is_idle.emit()
 
     @thread_worker
     def _start_img_data_extraction(self, img_path: Path) -> ImageData:
@@ -164,7 +165,7 @@ class CurationImageLoader(ICurationImageLoader):
             next_worker: FunctionWorker = self._start_extraction_threads(
                 self._cursor + 1, self._next_img_data
             )
-            next_worker.finished.connect(lambda: self._set_next_is_busy(False))
+            next_worker.finished.connect(self._on_next_image_ready)
             next_worker.start()
 
     def prev(self) -> None:
@@ -188,5 +189,5 @@ class CurationImageLoader(ICurationImageLoader):
             prev_worker: FunctionWorker = self._start_extraction_threads(
                 self._cursor - 1, self._prev_img_data
             )
-            prev_worker.finished.connect(lambda: self._set_next_is_busy(False))
+            prev_worker.finished.connect(self._on_prev_image_ready)
             prev_worker.start()

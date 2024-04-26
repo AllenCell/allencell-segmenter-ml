@@ -28,6 +28,7 @@ from allencell_ml_segmenter.curation.stacked_spinner import StackedSpinner
 
 from napari.utils.notifications import show_info
 from napari.layers import Layer
+from copy import deepcopy
 
 MERGING_MASK_LAYER_NAME: str = "Merging Mask"
 EXCLUDING_MASK_LAYER_NAME: str = "Excluding Mask"
@@ -68,9 +69,10 @@ class CurationMainView(View):
 
         progress_bar_layout: QHBoxLayout = QHBoxLayout()
         # Button and progress bar on top row
-        self.back_button: QPushButton = QPushButton("◄ Back")
-        self.back_button.setObjectName("big_blue_btn")
-        progress_bar_layout.addWidget(self.back_button, alignment=Qt.AlignLeft)
+        #self.back_button: QPushButton = QPushButton("◄ Back")
+        #self.back_button.setObjectName("big_blue_btn")
+        #progress_bar_layout.addWidget(self.back_button, alignment=Qt.AlignLeft)
+
         # inner progress bar frame and layout
         inner_progress_frame: QFrame = QFrame()
         inner_progress_frame.setLayout(QHBoxLayout())
@@ -87,7 +89,6 @@ class CurationMainView(View):
         )
         progress_bar_layout.addWidget(inner_progress_frame)
         self.next_button: QPushButton = QPushButton()
-        self._set_next_button_to_loading()
         self.next_button.setObjectName("big_blue_btn")
         self.next_button.clicked.connect(self._on_next)
         progress_bar_layout.addWidget(
@@ -189,8 +190,13 @@ class CurationMainView(View):
         excluding_mask_buttons.addWidget(self.excluding_save_button)
         self.layout().addLayout(excluding_mask_buttons)
 
+        # NOTE: this is prone to a small bug: if the next image is ready first and the user quickly
+        # clicks next, a runtime error from the image loader will show up as a popup. Since this is
+        # unlikely and would take some work to fix, I'm leaving it for now
         self._curation_model.first_image_data_ready.connect(self._on_first_image_data_ready)
         self._curation_model.next_image_data_ready.connect(self._enable_next_button)
+
+        self._set_to_initial_state()
 
     def doWork(self) -> None:
         print("work")
@@ -200,8 +206,14 @@ class CurationMainView(View):
 
     def showResults(self) -> None:
         print("show result")
-    
+
+    def _set_to_initial_state(self):
+        self._set_next_button_to_loading()
+        self.disable_all_masks()
+        self._use_img_stacked_spinner.start()
+
     def _on_first_image_data_ready(self) -> None:
+        self._use_img_stacked_spinner.stop()
         self._update_progress_bar()
         self._add_curr_images_to_widget()
 
@@ -212,6 +224,10 @@ class CurationMainView(View):
     def _set_next_button_to_loading(self) -> None:
         self.next_button.setEnabled(False)
         self.next_button.setText("Loading next...")
+    
+    def _set_next_button_to_finished(self) -> None:
+        self.next_button.setEnabled(False)
+        self.next_button.setText("No more images")
 
     def _add_curr_images_to_widget(self) -> None:
         raw_img_data: ImageData = self._curation_model.get_raw_image_data()
@@ -233,11 +249,22 @@ class CurationMainView(View):
         use_this_image: bool = self.yes_radio.isChecked()
 
         self._viewer.clear_layers()
-        # TODO: need to think more about this
-        self._curation_model.next_image(use_this_image, self.merging_base_combo.currentText())
-        self._add_curr_images_to_widget()
-        # TODO: handle end of curation
-        self._set_next_button_to_loading()
+        # NOTE: logic of how to deal with merging_base_combo value is handled in curation model
+        self._curation_model.save_curr_curation_record(use_this_image, self.merging_base_combo.currentText())
+
+        # NOTE: this logic is kinda complicated, maybe worth a rethink when there's more time
+        if self._curation_model.has_next_image():
+            self._curation_model.next_image()
+            self._add_curr_images_to_widget()
+            if self._curation_model.has_next_image():
+                self._set_next_button_to_loading()
+            else:
+                self._enable_next_button()
+        else:
+            self.disable_all_masks()
+            self.yes_radio.setEnabled(False)
+            self.no_radio.setEnabled(False)
+            self._set_next_button_to_finished()
         self._update_progress_bar()
 
     def disable_merging_mask_buttons(self):
@@ -329,8 +356,10 @@ class CurationMainView(View):
         if self._curation_model.get_merging_mask() is not None:
             if not self._replace_saved_mask_prompt("merging"):
                 return
-            
-        self._curation_model.set_merging_mask(merging_mask)
+        
+        # deepcopy so that if a user adds more shapes to existing layer, they don't show up in model
+        # could change this behavior based on UX input
+        self._curation_model.set_merging_mask(deepcopy(merging_mask))
         self.merging_mask_status.setText("Merging mask saved")
 
     def _create_excluding_mask(self) -> None:
@@ -358,7 +387,7 @@ class CurationMainView(View):
             if not self._replace_saved_mask_prompt("excluding"):
                 return
 
-        self._curation_model.set_excluding_mask(excluding_mask)
+        self._curation_model.set_excluding_mask(deepcopy(excluding_mask))
         self.excluding_mask_status.setText(
             "Excluding mask saved"
         )
