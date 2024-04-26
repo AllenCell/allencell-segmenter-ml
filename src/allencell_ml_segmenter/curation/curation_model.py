@@ -4,7 +4,7 @@ from enum import Enum
 
 from napari.layers import Shapes
 from qtpy.QtWidgets import QWidget
-from qtpy.QtCore import Signal
+from qtpy.QtCore import Signal, QObject
 
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.publisher import Publisher
@@ -20,7 +20,7 @@ class CurationView(Enum):
     INPUT_VIEW = "input_view"
     MAIN_VIEW = "main_view"
 
-class CurationModel(Publisher):
+class CurationModel(QObject):
     """
     Stores state relevant to prediction processes.
     """
@@ -34,7 +34,8 @@ class CurationModel(Publisher):
     seg1_image_channel_count_set: Signal = Signal()
     seg2_image_channel_count_set: Signal = Signal()
 
-    image_data_ready: Signal = Signal()
+    first_image_data_ready: Signal = Signal()
+    next_image_data_ready: Signal = Signal()
 
     def __init__(
         self,
@@ -65,15 +66,23 @@ class CurationModel(Publisher):
         self._seg1_image_channel_count: Optional[int] = None
         self._seg2_image_channel_count: Optional[int] = None
         self._curation_record: List[CurationRecord] = []
-        self._merging_mask_base_layer: Optional[str] = None
+
+        self._merging_mask: Optional[Shapes] = None
+        self._excluding_mask: Optional[Shapes] = None
 
         self._image_loader: Optional[ICurationImageLoader] = None
-
-    def get_merging_mask_base_layer(self) -> Optional[str]:
-        return self._merging_mask_base_layer
-
-    def set_merging_mask_base_layer(self, layer_name: str) -> None:
-        self._merging_mask_base_layer = layer_name
+    
+    def get_merging_mask(self) -> Optional[Shapes]:
+        return self._merging_mask
+    
+    def set_merging_mask(self, mask: Shapes) -> None:
+        self._merging_mask = mask
+    
+    def get_excluding_mask(self) -> Optional[Shapes]:
+        return self._excluding_mask
+    
+    def set_excluding_mask(self, mask: Shapes) -> None:
+        self._excluding_mask = mask
 
     def set_raw_directory(self, dir: Path) -> None:
         """
@@ -167,7 +176,8 @@ class CurationModel(Publisher):
         if view != self._current_view:
             if view == CurationView.MAIN_VIEW:
                 self._image_loader = self._img_loader_factory.create(self._raw_directory_paths, self._seg1_directory_paths, self._seg2_directory_paths)
-                self._image_loader.is_idle.connect(lambda: self.image_data_ready.emit())
+                self._image_loader.first_image_ready.connect(lambda: self.first_image_data_ready.emit())
+                self._image_loader.is_idle.connect(lambda: self.next_image_data_ready.emit())
             else:
                 self._image_loader = None
             self._current_view = view
@@ -223,9 +233,6 @@ class CurationModel(Publisher):
             return False
         else:
             return True
-
-    def append_curation_record(self, record: CurationRecord) -> None:
-        self._curation_record.append(record)
     
     def get_raw_image_data(self) -> ImageData:
         return self._image_loader.get_raw_image_data()
@@ -235,9 +242,30 @@ class CurationModel(Publisher):
 
     def get_seg2_image_data(self) -> Optional[ImageData]:
         return self._image_loader.get_seg2_image_data()
+
+    def get_num_images(self) -> int:
+        return self._image_loader.get_num_images()
     
-    def next_image(self) -> None:
+    def get_curr_image_index(self) -> int:
+        return self._image_loader.get_current_index()
+    
+    def next_image(self, use_image: bool, base_image: Optional[str]) -> None:
         if self._image_loader.is_busy():
             raise RuntimeError("Image loader is busy. Please see image_data_ready signal.")
+        
+        # for now, we always append, if we support the prev button, we need to insert the record
+        # at the old record's place
+        record: CurationRecord = CurationRecord(
+            self.get_raw_image_data().path,
+            self.get_seg1_image_data().path,
+            self.get_seg2_image_data().path,
+            self.get_excluding_mask(),
+            self.get_merging_mask(),
+            base_image,
+            use_image
+        )
+        self._curation_record.append(record)
         self._image_loader.next()
-        self._image_loader.is_idle.connect(lambda: self.image_data_ready.emit())
+    
+    def is_image_data_ready(self) -> bool:
+        return not self._image_loader.is_busy() if self._image_loader is not None else False
