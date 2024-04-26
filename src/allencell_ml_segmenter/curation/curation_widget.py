@@ -49,23 +49,17 @@ class CurationWidget(QStackedWidget, Subscriber, metaclass=CurationUiMeta):
         self.curation_model: CurationModel = CurationModel(
             experiments_model=experiments_model, img_loader_factory=CurationImageLoaderFactory()
         )
-        self.curation_service: CurationService = CurationService(
-            self.curation_model, self.viewer, CurationImageLoaderFactory()
-        )
+        self.curation_service: CurationService = CurationService(self.curation_model)
 
         # basic styling
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
 
-        self.curation_input_view: CurationInputView = CurationInputView(
-            self.curation_model, self.curation_service
-        )
+        self.curation_input_view: CurationInputView = CurationInputView(self.curation_model)
         self.initialize_view(self.curation_input_view)
 
-        self.curation_main_view: CurationMainView = CurationMainView(
-            self.curation_model, self.curation_service
-        )
+        self.curation_main_view: CurationMainView = CurationMainView(self.curation_model, self.viewer)
         self.initialize_view(self.curation_main_view)
 
         self.set_view(self.curation_input_view)
@@ -76,7 +70,7 @@ class CurationWidget(QStackedWidget, Subscriber, metaclass=CurationUiMeta):
             self.set_view(self.curation_input_view)
         elif self.curation_model.get_current_view() == CurationView.MAIN_VIEW:
             self.set_view(self.curation_main_view)
-            
+
     def set_view(self, view: View) -> None:
         """
         Set the current views, must be initialized first

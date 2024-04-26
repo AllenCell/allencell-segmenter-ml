@@ -270,7 +270,7 @@ class CurationInputView(View):
     def showResults(self) -> None:
         print("show result")
 
-    def update_raw_channels(self, event) -> None:
+    def update_raw_channels(self) -> None:
         """
         Event handler when raw image directory is selected. Updates combobox to the correct number of channels in the
         images from the raw directory.
@@ -290,7 +290,7 @@ class CurationInputView(View):
         self._raw_image_channel_combo.setEnabled(True)
         self._curation_model.set_raw_channel(0)
 
-    def update_seg1_channels(self, event) -> None:
+    def update_seg1_channels(self) -> None:
         """
         Event handler when seg1 image directory is selected. Updates combobox to the correct number of channels in the
         images from the seg1 directory.
@@ -309,7 +309,7 @@ class CurationInputView(View):
         self._seg1_image_channel_combo.setEnabled(True)
         self._curation_model.set_seg1_channel(0)
 
-    def update_seg2_channels(self, event) -> None:
+    def update_seg2_channels(self) -> None:
         """
         Event handler when seg2 image directory is selected. Updates combobox to the correct number of channels in the
         images from the seg2 directory.

@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from qtpy.QtCore import QObject
 from typing import List, Optional
 from pathlib import Path
 from allencell_ml_segmenter.core.q_runnable_manager import (
@@ -10,7 +11,7 @@ from allencell_ml_segmenter.core.image_data_extractor import (
 )
 
 # TODO: how to specify abstract signals?
-class ICurationImageLoader(ABC):
+class ICurationImageLoader(QObject):
     def __init__(
         self,
         raw_images: List[Path],
@@ -18,6 +19,7 @@ class ICurationImageLoader(ABC):
         seg2_images: Optional[List[Path]],
         img_data_extractor: IImageDataExtractor,
     ):
+        super().__init__()
         self._raw_images: List[Path] = list(raw_images)
         self._seg1_images: List[Path] = list(seg1_images)
         self._seg2_images: Optional[List[Path]] = (
