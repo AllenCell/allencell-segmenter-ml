@@ -1,4 +1,5 @@
 from typing import List
+import numpy as np
 
 from qtpy.QtWidgets import QComboBox
 from qtpy.QtCore import Qt
@@ -357,7 +358,7 @@ class CurationMainView(View):
         
         # deepcopy so that if a user adds more shapes to existing layer, they don't show up in model
         # could change this behavior based on UX input
-        self._curation_model.set_merging_mask(deepcopy(merging_mask))
+        self._curation_model.set_merging_mask(deepcopy(np.asarray(merging_mask.data, dtype=object)))
         self.merging_mask_status.setText("Merging mask saved")
 
     def _create_excluding_mask(self) -> None:
@@ -385,7 +386,7 @@ class CurationMainView(View):
             if not self._replace_saved_mask_prompt("excluding"):
                 return
 
-        self._curation_model.set_excluding_mask(deepcopy(excluding_mask))
+        self._curation_model.set_excluding_mask(deepcopy(np.asarray(excluding_mask.data, dtype=object)))
         self.excluding_mask_status.setText(
             "Excluding mask saved"
         )
