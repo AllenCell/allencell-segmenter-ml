@@ -24,7 +24,10 @@ from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.training.image_selection_widget import (
     ImageSelectionWidget,
 )
-from allencell_ml_segmenter.training.training_model import TrainingModel, ModelSize
+from allencell_ml_segmenter.training.training_model import (
+    TrainingModel,
+    ModelSize,
+)
 
 from aicsimageio import AICSImage
 from aicsimageio.readers import TiffReader
