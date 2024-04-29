@@ -52,7 +52,10 @@ class MainWidget(AicsWidget):
 
         self._model: MainModel = MainModel()
         self._model.subscribe(
-            Event.ACTION_CHANGE_VIEW, self, self.handle_change_view
+            Event.ACTION_CHANGE_VIEW, self, self._handle_change_view
+        )
+        self._model.subscribe(
+            Event.ACTION_NEW_MODEL, self, self._handle_new_model
         )
 
         if self.user_settings.get_user_experiments_path() is None:
@@ -83,6 +86,7 @@ class MainWidget(AicsWidget):
 
         # Model selection which applies to all views
         model_selection_widget: ModelSelectionWidget = ModelSelectionWidget(
+            self._model,
             self._experiments_model
         )
         model_selection_widget.setObjectName("modelSelection")
@@ -113,10 +117,22 @@ class MainWidget(AicsWidget):
             viewer=self.viewer,
         )
         self._initialize_view(self._prediction_view, "Prediction")
-        self._tab_changed(0)
+        self._tab_changed(0) # Manually invoke code to resize the frist tab
         self._view_container.currentChanged.connect(self._tab_changed)
+
+    def _handle_new_model(self, _: Event) -> None:
+        """
+        Handle the new model radio button toggled event.
+
+        inputs:
+            is_new_model - bool
+        """
+        self._view_container.setTabEnabled(0, self._model.is_new_model())
+        self._view_container.setTabEnabled(1, self._model.is_new_model())
+        self._set_view(self._curation_view if self._model.is_new_model() else self._prediction_view)
+
         
-    def handle_change_view(self, event: Event) -> None:
+    def _handle_change_view(self, event: Event) -> None:
         """
         Handle event function for the main widget, which handles MainEvents.
 

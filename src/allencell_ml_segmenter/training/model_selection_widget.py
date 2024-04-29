@@ -9,6 +9,7 @@ from qtpy.QtWidgets import (
 )
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
+from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.training.experiment_info_widget import (
     ExperimentInfoWidget,
 )
@@ -25,10 +26,12 @@ class ModelSelectionWidget(QWidget):
 
     def __init__(
         self,
+        main_model: MainModel,
         experiments_model: IExperimentsModel,
     ):
         super().__init__()
 
+        self._main_model: MainModel = main_model
         self._experiments_model: IExperimentsModel = experiments_model
 
         # widget skeleton
@@ -101,6 +104,7 @@ class ModelSelectionWidget(QWidget):
             self._experiments_model.set_experiment_name(experiment_name)
 
     def _model_radio_handler(self) -> None:
+        self._main_model.set_new_model(self._radio_new_model.isChecked())
         if self._radio_new_model.isChecked():
             """
             Triggered when the user selects the "start a new model" radio button.
