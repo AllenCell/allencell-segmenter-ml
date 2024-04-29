@@ -25,3 +25,16 @@ class MainModel(Publisher):
         """
         self._current_view = view
         self.dispatch(Event.ACTION_CHANGE_VIEW)
+
+    def set_new_model(self, is_new_model: bool):
+        """
+        Dispatches a new model event
+        """
+        self._is_new_model = is_new_model
+        self.dispatch(Event.ACTION_NEW_MODEL)
+
+    def is_new_model(self):
+        """
+        getter/property for is_new_model
+        """
+        return self._is_new_model
