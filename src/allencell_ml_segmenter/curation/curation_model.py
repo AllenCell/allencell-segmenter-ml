@@ -74,11 +74,15 @@ class CurationModel(QObject):
         self._raw_image_channel_count: Optional[int] = None
         self._seg1_image_channel_count: Optional[int] = None
         self._seg2_image_channel_count: Optional[int] = None
+
         self._curation_record: List[CurationRecord] = []
         self._curation_record_saved_to_disk: bool = False
 
         self._merging_mask: Optional[np.ndarray] = None
         self._excluding_mask: Optional[np.ndarray] = None
+
+        self._base_image: Optional[str] = None
+        self._use_image: bool = True
 
         self._image_loader: Optional[ICurationImageLoader] = None
 
@@ -93,6 +97,18 @@ class CurationModel(QObject):
 
     def set_excluding_mask(self, mask: np.ndarray) -> None:
         self._excluding_mask = mask
+
+    def get_base_image(self) -> Optional[str]:
+        return self._base_image
+
+    def set_base_image(self, base: str) -> None:
+        self._base_image = base
+
+    def get_use_image(self) -> bool:
+        return self._use_image
+
+    def set_use_image(self, use: bool) -> None:
+        self._use_image = use
 
     def set_raw_directory(self, dir: Path) -> None:
         """
@@ -190,6 +206,7 @@ class CurationModel(QObject):
                 self._curation_record_saved_to_disk = False
                 self._merging_mask = None
                 self._excluding_mask = None
+
                 self._image_loader = self._img_loader_factory.create(
                     self._raw_directory_paths,
                     self._seg1_directory_paths,
@@ -276,9 +293,7 @@ class CurationModel(QObject):
     def has_next_image(self) -> bool:
         return self._image_loader.has_next()
 
-    def save_curr_curation_record(
-        self, use_image: bool, base_image: Optional[str]
-    ):
+    def save_curr_curation_record(self):
         idx: int = self.get_curr_image_index()
         record: CurationRecord = CurationRecord(
             self.get_raw_image_data().path,
@@ -291,13 +306,13 @@ class CurationModel(QObject):
             self.get_excluding_mask(),
             self.get_merging_mask(),
             (
-                base_image
-                if base_image
+                self.get_base_image()
+                if self.get_base_image() is not None
                 and self.get_merging_mask() is not None
                 and self.get_seg2_image_data() is not None
                 else "seg1"
             ),
-            use_image,
+            self.get_use_image(),
         )
         if idx == len(self._curation_record):
             self._curation_record.append(record)
