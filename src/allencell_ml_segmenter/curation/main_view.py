@@ -388,7 +388,7 @@ class CurationMainView(View):
         """
         Wrapper for curation_service.save_merging_mask() for ui interactivity
         """
-        if self.merging_base_combo.currentText() == "Base Image:":
+        if self._curation_model.get_base_image() is None:
             show_info("Please select a base image to merge with")
             return
 
