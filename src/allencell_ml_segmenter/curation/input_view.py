@@ -6,7 +6,10 @@ from allencell_ml_segmenter.widgets.input_button_widget import (
     FileInputMode,
 )
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
-from allencell_ml_segmenter.curation.curation_model import CurationModel, CurationView
+from allencell_ml_segmenter.curation.curation_model import (
+    CurationModel,
+    CurationView,
+)
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
     QSizePolicy,
@@ -27,9 +30,7 @@ class CurationInputView(View):
     View for Curation UI
     """
 
-    def __init__(
-        self, curation_model: CurationModel
-    ) -> None:
+    def __init__(self, curation_model: CurationModel) -> None:
         super().__init__()
         self._curation_model: CurationModel = curation_model
 
@@ -175,52 +176,42 @@ class CurationInputView(View):
         frame.layout().addWidget(self._start_btn)
 
         # subscribers
-        self._curation_model.raw_image_channel_count_set.connect(self.update_raw_channels)
-        self._curation_model.seg1_image_channel_count_set.connect(self.update_seg1_channels)
-        self._curation_model.seg2_image_channel_count_set.connect(self.update_seg2_channels)
-
-        # error handling events
-        """
-        self._curation_model.subscribe(
-            Event.ACTION_CURATION_RAW_THREAD_ERROR,
-            self,
-            lambda x: self._set_to_stopped(
-                self._raw_image_channel_combo,
-                self._raw_dir_stacked_spinner,
-                self._raw_directory_select,
-            ),
+        self._curation_model.raw_image_channel_count_set.connect(
+            self.update_raw_channels
         )
-        self._curation_model.subscribe(
-            Event.ACTION_CURATION_SEG1_THREAD_ERROR,
-            self,
-            lambda x: self._set_to_stopped(
-                self._seg1_image_channel_combo,
-                self._seg1_dir_stacked_spinner,
-                self._seg1_directory_select,
-            ),
+        self._curation_model.seg1_image_channel_count_set.connect(
+            self.update_seg1_channels
         )
-        self._curation_model.subscribe(
-            Event.ACTION_CURATION_SEG2_THREAD_ERROR,
-            self,
-            lambda x: self._set_to_stopped(
-                self._seg2_image_channel_combo,
-                self._seg2_dir_stacked_spinner,
-                self._seg2_directory_select,
-            ),
+        self._curation_model.seg2_image_channel_count_set.connect(
+            self.update_seg2_channels
         )
-        """
 
     def _on_start(self) -> None:
-        if any([value is None for value in [self._curation_model.get_raw_directory(), self._curation_model.get_raw_channel(), self._curation_model.get_seg1_directory(), self._curation_model.get_seg1_channel()]]):
-            show_info("Please select a directory and channel for at least raw and seg1.")
+        if any(
+            [
+                value is None
+                for value in [
+                    self._curation_model.get_raw_directory(),
+                    self._curation_model.get_raw_channel(),
+                    self._curation_model.get_seg1_directory(),
+                    self._curation_model.get_seg1_channel(),
+                ]
+            ]
+        ):
+            show_info(
+                "Please select a directory and channel for at least raw and seg1."
+            )
             return
-        
-        if self._curation_model.get_seg2_directory() is not None and self._curation_model.get_seg2_channel() is None:
+
+        if (
+            self._curation_model.get_seg2_directory() is not None
+            and self._curation_model.get_seg2_channel() is None
+        ):
             show_info("Please select a channel for seg2.")
             return
-        
+
         self._curation_model.set_current_view(CurationView.MAIN_VIEW)
-        
+
     def _set_to_loading(
         self, combobox: QComboBox, stacked_spinner: StackedSpinner
     ) -> None:
@@ -270,7 +261,9 @@ class CurationInputView(View):
     def showResults(self) -> None:
         print("show result")
 
-    def _populate_channel_combo(self, channel_combo: QComboBox, num_channels: int):
+    def _populate_channel_combo(
+        self, channel_combo: QComboBox, num_channels: int
+    ):
         channel_combo.clear()
         if num_channels > 0:
             channel_combo.addItems([str(x) for x in range(num_channels)])
@@ -286,7 +279,10 @@ class CurationInputView(View):
         images from the raw directory.
         """
         self._raw_dir_stacked_spinner.stop()
-        self._populate_channel_combo(self._raw_image_channel_combo, self._curation_model.get_raw_image_channel_count())
+        self._populate_channel_combo(
+            self._raw_image_channel_combo,
+            self._curation_model.get_raw_image_channel_count(),
+        )
         self._curation_model.set_raw_channel(0)
 
     def update_seg1_channels(self) -> None:
@@ -295,7 +291,10 @@ class CurationInputView(View):
         images from the seg1 directory.
         """
         self._seg1_dir_stacked_spinner.stop()
-        self._populate_channel_combo(self._seg1_image_channel_combo, self._curation_model.get_seg1_image_channel_count())
+        self._populate_channel_combo(
+            self._seg1_image_channel_combo,
+            self._curation_model.get_seg1_image_channel_count(),
+        )
         self._curation_model.set_seg1_channel(0)
 
     def update_seg2_channels(self) -> None:
@@ -304,7 +303,10 @@ class CurationInputView(View):
         images from the seg2 directory.
         """
         self._seg2_dir_stacked_spinner.stop()
-        self._populate_channel_combo(self._seg2_image_channel_combo, self._curation_model.get_seg2_image_channel_count())
+        self._populate_channel_combo(
+            self._seg2_image_channel_combo,
+            self._curation_model.get_seg2_image_channel_count(),
+        )
         self._curation_model.set_seg2_channel(0)
 
     def raw_channel_selected(self, index) -> None:
