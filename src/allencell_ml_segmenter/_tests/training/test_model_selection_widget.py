@@ -18,25 +18,32 @@ from allencell_ml_segmenter.training.training_model import (
 def experiment_model() -> IExperimentsModel:
     return FakeExperimentsModel()
 
+@pytest.fixture
+def main_model() -> MainModel:
+    """
+    Fixture for MainModel testing.
+    """
+    return MainModel()
 
 @pytest.fixture
-def training_model() -> TrainingModel:
+def training_model(main_model: MainModel) -> TrainingModel:
     """
     Fixture that creates an instance of TrainingModel for testing.
     """
     return TrainingModel(  # instead of this, how about i mock os.listdir ?
-        MainModel(), FakeExperimentsModel()
+        main_model, FakeExperimentsModel()
     )
 
 
 @pytest.fixture
 def model_selection_widget(
+    main_model: MainModel,
     experiment_model: IExperimentsModel,
 ) -> ModelSelectionWidget:
     """
     Fixture that creates an instance of ModelSelectionWidget for testing.
     """
-    return ModelSelectionWidget(experiments_model=experiment_model)
+    return ModelSelectionWidget(main_model=main_model, experiments_model=experiment_model)
 
 
 def test_radio_new_slot(
