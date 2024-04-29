@@ -96,13 +96,10 @@ class MainWidget(AicsWidget):
         self._view_to_index: Dict[View, int] = dict()
 
         # initialize the tabs
-        self._prediction_view: PredictionView = PredictionView(
-            main_model=self._model,
-            prediction_model=self._prediction_model,
-            viewer=self.viewer,
+        self._curation_view: CurationWidget = CurationWidget(
+            self.viewer, self._model, self._experiments_model
         )
-        self._initialize_view(self._prediction_view, "Prediction")
-
+        self._initialize_view(self._curation_view, "Curation")
         self._training_view: TrainingView = TrainingView(
             main_model=self._model,
             viewer=self.viewer,
@@ -110,14 +107,15 @@ class MainWidget(AicsWidget):
             training_model=self._training_model,
         )
         self._initialize_view(self._training_view, "Training")
-
-        self._curation_view: CurationWidget = CurationWidget(
-            self.viewer, self._model, self._experiments_model
+        self._prediction_view: PredictionView = PredictionView(
+            main_model=self._model,
+            prediction_model=self._prediction_model,
+            viewer=self.viewer,
         )
-        self._initialize_view(self._curation_view, "Curation")
-
+        self._initialize_view(self._prediction_view, "Prediction")
+        self._tab_changed(0)
         self._view_container.currentChanged.connect(self._tab_changed)
-
+        
     def handle_change_view(self, event: Event) -> None:
         """
         Handle event function for the main widget, which handles MainEvents.
