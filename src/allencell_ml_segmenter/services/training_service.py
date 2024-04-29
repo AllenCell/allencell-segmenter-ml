@@ -117,6 +117,9 @@ class TrainingService(Subscriber):
                 "Your raw images have multiple channels, please select a channel to train on."
             )
             return False
+        if self._training_model.get_model_size() is None:
+            show_warning("Please define model size.")
+            return False
         return True
 
     def _start_channel_extraction(
