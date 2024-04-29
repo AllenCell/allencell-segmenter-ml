@@ -18,12 +18,14 @@ from allencell_ml_segmenter.training.training_model import (
 def experiment_model() -> IExperimentsModel:
     return FakeExperimentsModel()
 
+
 @pytest.fixture
 def main_model() -> MainModel:
     """
     Fixture for MainModel testing.
     """
     return MainModel()
+
 
 @pytest.fixture
 def training_model(main_model: MainModel) -> TrainingModel:
@@ -43,7 +45,9 @@ def model_selection_widget(
     """
     Fixture that creates an instance of ModelSelectionWidget for testing.
     """
-    return ModelSelectionWidget(main_model=main_model, experiments_model=experiment_model)
+    return ModelSelectionWidget(
+        main_model=main_model, experiments_model=experiment_model
+    )
 
 
 def test_radio_new_slot(
