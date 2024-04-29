@@ -6,6 +6,7 @@ from allencell_ml_segmenter.core.image_data_extractor import IImageDataExtractor
 from allencell_ml_segmenter.utils.file_utils import FileUtils
 
 from pathlib import Path
+from qtpy.QtCore import QObject
 from typing import List, Tuple
 from napari.qt.threading import thread_worker, FunctionWorker
 
@@ -15,7 +16,7 @@ EXCLUDING_MASK_LAYER_NAME: str = "Excluding Mask"
 
 # Important note: we do not want to access the model in any of the threads because model state may change
 # while thread is executing. So, opt to copy/pass in all relevant model state to threads
-class CurationService(Subscriber):
+class CurationService(QObject):
     """ """
 
     def __init__(
@@ -41,31 +42,46 @@ class CurationService(Subscriber):
     def _on_raw_dir_data_extracted(self, dir_data: Tuple[List[Path], int]) -> None:
         self._curation_model.set_raw_directory_paths(dir_data[0])
         self._curation_model.set_raw_image_channel_count(dir_data[1])
+    
+    def _on_raw_dir_errored(self, e: Exception) -> None:
+        self._curation_model.set_raw_image_channel_count(0)
+        raise e
 
     def _on_raw_dir_set(self) -> None:
         raw_dir: Path = self._curation_model.get_raw_directory()
         dir_extractor: FunctionWorker = self._get_dir_data(raw_dir)
         dir_extractor.returned.connect(self._on_raw_dir_data_extracted)
+        dir_extractor.errored.connect(self._on_raw_dir_errored)
         dir_extractor.start()
     
     def _on_seg1_dir_data_extracted(self, dir_data: Tuple[List[Path], int]) -> None:
         self._curation_model.set_seg1_directory_paths(dir_data[0])
         self._curation_model.set_seg1_image_channel_count(dir_data[1])
 
+    def _on_seg1_dir_errored(self, e: Exception) -> None:
+        self._curation_model.set_seg1_image_channel_count(0)
+        raise e
+
     def _on_seg1_dir_set(self) -> None:
         seg1_dir: Path = self._curation_model.get_seg1_directory()
         dir_extractor: FunctionWorker = self._get_dir_data(seg1_dir)
         dir_extractor.returned.connect(self._on_seg1_dir_data_extracted)
+        dir_extractor.errored.connect(self._on_seg1_dir_errored)
         dir_extractor.start()
     
     def _on_seg2_dir_data_extracted(self, dir_data: Tuple[List[Path], int]) -> None:
         self._curation_model.set_seg2_directory_paths(dir_data[0])
         self._curation_model.set_seg2_image_channel_count(dir_data[1])
 
+    def _on_seg2_dir_errored(self, e: Exception) -> None:
+        self._curation_model.set_seg2_image_channel_count(0)
+        raise e
+    
     def _on_seg2_dir_set(self) -> None:
         seg2_dir: Path = self._curation_model.get_seg2_directory()
         dir_extractor: FunctionWorker = self._get_dir_data(seg2_dir)
         dir_extractor.returned.connect(self._on_seg2_dir_data_extracted)
+        dir_extractor.errored.connect(self._on_seg2_dir_errored)
         dir_extractor.start()
 
     @thread_worker

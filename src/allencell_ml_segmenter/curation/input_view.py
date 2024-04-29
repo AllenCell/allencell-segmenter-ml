@@ -270,24 +270,23 @@ class CurationInputView(View):
     def showResults(self) -> None:
         print("show result")
 
+    def _populate_channel_combo(self, channel_combo: QComboBox, num_channels: int):
+        channel_combo.clear()
+        if num_channels > 0:
+            channel_combo.addItems([str(x) for x in range(num_channels)])
+            channel_combo.setCurrentIndex(0)
+            channel_combo.setEnabled(True)
+        else:
+            channel_combo.setPlaceholderText("")
+            channel_combo.setEnabled(False)
+
     def update_raw_channels(self) -> None:
         """
         Event handler when raw image directory is selected. Updates combobox to the correct number of channels in the
         images from the raw directory.
         """
         self._raw_dir_stacked_spinner.stop()
-        self._raw_image_channel_combo.clear()
-        self._raw_image_channel_combo.addItems(
-            [
-                str(x)
-                for x in range(
-                    self._curation_model.get_raw_image_channel_count()
-                )
-            ]
-        )
-        # default first index
-        self._raw_image_channel_combo.setCurrentIndex(0)
-        self._raw_image_channel_combo.setEnabled(True)
+        self._populate_channel_combo(self._raw_image_channel_combo, self._curation_model.get_raw_image_channel_count())
         self._curation_model.set_raw_channel(0)
 
     def update_seg1_channels(self) -> None:
@@ -296,17 +295,7 @@ class CurationInputView(View):
         images from the seg1 directory.
         """
         self._seg1_dir_stacked_spinner.stop()
-        self._seg1_image_channel_combo.clear()
-        self._seg1_image_channel_combo.addItems(
-            [
-                str(x)
-                for x in range(
-                    self._curation_model.get_seg1_image_channel_count()
-                )
-            ]
-        )
-        self._seg1_image_channel_combo.setCurrentIndex(0)
-        self._seg1_image_channel_combo.setEnabled(True)
+        self._populate_channel_combo(self._seg1_image_channel_combo, self._curation_model.get_seg1_image_channel_count())
         self._curation_model.set_seg1_channel(0)
 
     def update_seg2_channels(self) -> None:
@@ -315,17 +304,7 @@ class CurationInputView(View):
         images from the seg2 directory.
         """
         self._seg2_dir_stacked_spinner.stop()
-        self._seg2_image_channel_combo.clear()
-        self._seg2_image_channel_combo.addItems(
-            [
-                str(x)
-                for x in range(
-                    self._curation_model.get_seg2_image_channel_count()
-                )
-            ]
-        )
-        self._seg2_image_channel_combo.setCurrentIndex(0)
-        self._seg2_image_channel_combo.setEnabled(True)
+        self._populate_channel_combo(self._seg2_image_channel_combo, self._curation_model.get_seg2_image_channel_count())
         self._curation_model.set_seg2_channel(0)
 
     def raw_channel_selected(self, index) -> None:
