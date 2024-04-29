@@ -24,6 +24,7 @@ def main_widget(qtbot: QtBot) -> MainWidget:
     settings.set_user_experiments_path(Path())
     return MainWidget(viewer=FakeViewer(), settings=settings)
 
+
 def test_tabs_react_to_new_model_event(
     main_widget: MainWidget,
 ) -> None:
@@ -35,11 +36,30 @@ def test_tabs_react_to_new_model_event(
     main_widget._model.set_new_model(True)
 
     # ASSERT: check that the main widget's current view (after setting) is curation
-    assert main_widget._view_container.currentIndex() == main_widget._view_to_index[main_widget._curation_view]
+    assert (
+        main_widget._view_container.currentIndex()
+        == main_widget._view_to_index[main_widget._curation_view]
+    )
     # ASSERT: check that the correct tabs are enabled
-    assert main_widget._view_container.isTabEnabled(main_widget._view_to_index[main_widget._prediction_view]) == True
-    assert main_widget._view_container.isTabEnabled(main_widget._view_to_index[main_widget._curation_view]) == True
-    assert main_widget._view_container.isTabEnabled(main_widget._view_to_index[main_widget._training_view]) == True
+    assert (
+        main_widget._view_container.isTabEnabled(
+            main_widget._view_to_index[main_widget._prediction_view]
+        )
+        == True
+    )
+    assert (
+        main_widget._view_container.isTabEnabled(
+            main_widget._view_to_index[main_widget._curation_view]
+        )
+        == True
+    )
+    assert (
+        main_widget._view_container.isTabEnabled(
+            main_widget._view_to_index[main_widget._training_view]
+        )
+        == True
+    )
+
 
 def test_tabs_react_to_existing_model_event(
     main_widget: MainWidget,
@@ -52,11 +72,30 @@ def test_tabs_react_to_existing_model_event(
     main_widget._model.set_new_model(False)
 
     # ASSERT: check that the main widget's current view (after setting) is prediction
-    assert main_widget._view_container.currentIndex() == main_widget._view_to_index[main_widget._prediction_view]
+    assert (
+        main_widget._view_container.currentIndex()
+        == main_widget._view_to_index[main_widget._prediction_view]
+    )
     # ASSERT: check that the correct tabs are enabled
-    assert main_widget._view_container.isTabEnabled(main_widget._view_to_index[main_widget._prediction_view]) == True
-    assert main_widget._view_container.isTabEnabled(main_widget._view_to_index[main_widget._curation_view]) == False
-    assert main_widget._view_container.isTabEnabled(main_widget._view_to_index[main_widget._training_view]) == False
+    assert (
+        main_widget._view_container.isTabEnabled(
+            main_widget._view_to_index[main_widget._prediction_view]
+        )
+        == True
+    )
+    assert (
+        main_widget._view_container.isTabEnabled(
+            main_widget._view_to_index[main_widget._curation_view]
+        )
+        == False
+    )
+    assert (
+        main_widget._view_container.isTabEnabled(
+            main_widget._view_to_index[main_widget._training_view]
+        )
+        == False
+    )
+
 
 def test_handle_action_change_view_event(
     main_widget: MainWidget,

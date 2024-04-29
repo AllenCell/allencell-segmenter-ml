@@ -86,8 +86,7 @@ class MainWidget(AicsWidget):
 
         # Model selection which applies to all views
         model_selection_widget: ModelSelectionWidget = ModelSelectionWidget(
-            self._model,
-            self._experiments_model
+            self._model, self._experiments_model
         )
         model_selection_widget.setObjectName("modelSelection")
         self.layout().addWidget(model_selection_widget, Qt.AlignTop)
@@ -129,9 +128,12 @@ class MainWidget(AicsWidget):
         """
         self._view_container.setTabEnabled(0, self._model.is_new_model())
         self._view_container.setTabEnabled(1, self._model.is_new_model())
-        self._set_view(self._curation_view if self._model.is_new_model() else self._prediction_view)
+        self._set_view(
+            self._curation_view
+            if self._model.is_new_model()
+            else self._prediction_view
+        )
 
-        
     def _handle_change_view(self, event: Event) -> None:
         """
         Handle event function for the main widget, which handles MainEvents.
