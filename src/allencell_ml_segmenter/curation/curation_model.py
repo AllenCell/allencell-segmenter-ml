@@ -182,9 +182,14 @@ class CurationModel(QObject):
         """
         Set current curation view
         """
-        # TODO: reset all state?
+        # TODO: reset all state? only relevant if we expect a nonlinear path through curation, or multiple curation
+        # rounds in a single session
         if view != self._current_view:
             if view == CurationView.MAIN_VIEW:
+                self._curation_record = []
+                self._curation_record_saved_to_disk = False
+                self._merging_mask = None
+                self._excluding_mask = None
                 self._image_loader = self._img_loader_factory.create(
                     self._raw_directory_paths,
                     self._seg1_directory_paths,
@@ -196,10 +201,7 @@ class CurationModel(QObject):
                 self._image_loader.next_image_ready.connect(
                     lambda: self.next_image_data_ready.emit()
                 )
-                self._curation_record = []
-                self._curation_record_saved_to_disk = False
-                self._merging_mask = None
-                self._excluding_mask = None
+                self._image_loader.start()
             else:
                 self._image_loader = None
             self._current_view = view
