@@ -40,6 +40,15 @@ class PatchSize(Enum):
     LARGE = [20, 40, 40]
 
 
+class ModelSize(Enum):
+    """
+    Model size for training, and their respective filters overrides
+    """
+    SMALL = [8, 16, 32]
+    MEDIUM = [16, 32, 64]
+    LARGE = [32, 64, 128]
+
+
 class TrainingModel(Publisher):
     """
     Stores state relevant to training processes.
@@ -69,6 +78,7 @@ class TrainingModel(Publisher):
         self._use_max_time: bool = (
             False  # default is false. UI starts with max epoch defined rather than max time.
         )
+        self._model_filters: Optional[ModelSize] = None
 
     def get_experiment_type(self) -> Optional[str]:
         """
