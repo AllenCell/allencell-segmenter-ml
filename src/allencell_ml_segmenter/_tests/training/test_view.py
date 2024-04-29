@@ -5,7 +5,8 @@ from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
 from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.training.training_model import (
     PatchSize,
-    TrainingModel, ModelSize,
+    TrainingModel,
+    ModelSize,
 )
 from allencell_ml_segmenter.training.view import TrainingView
 import pytest
@@ -139,6 +140,7 @@ def test_checkbox_slot(
     # ASSERT
     assert not training_view._max_time_in_minutes_input.isEnabled()
 
+
 def test_set_model_size(
     training_view: TrainingView, training_model: TrainingModel
 ) -> None:
@@ -147,7 +149,7 @@ def test_set_model_size(
     """
     for idx, model_size in enumerate(ModelSize):
         # ACT
-        training_view._patch_size_combo_box.setCurrentIndex(idx)
+        training_view._model_size_combo_box.setCurrentIndex(idx)
 
         # ASSERT
-        True or training_model.get_patch_size() == model_size
+        assert training_model.get_model_size() == model_size
