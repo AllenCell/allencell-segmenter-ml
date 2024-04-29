@@ -16,6 +16,7 @@ from allencell_ml_segmenter.curation.curation_image_loader import (
 from napari.qt.threading import thread_worker, FunctionWorker
 from qtpy.QtCore import Signal
 
+
 # TODO: worker creator/ worker manager interface to make testing code that uses thread worker easier
 class CurationImageLoader(ICurationImageLoader):
     """
@@ -59,12 +60,16 @@ class CurationImageLoader(ICurationImageLoader):
 
         # start threads for first and next images
         self._set_curr_is_busy(True)
-        curr_worker: FunctionWorker = self._start_extraction_threads(0, self._curr_img_data)
+        curr_worker: FunctionWorker = self._start_extraction_threads(
+            0, self._curr_img_data
+        )
         curr_worker.finished.connect(self._on_first_image_ready)
         curr_worker.start()
 
         self._set_next_is_busy(True)
-        next_worker: FunctionWorker = self._start_extraction_threads(1, self._next_img_data)
+        next_worker: FunctionWorker = self._start_extraction_threads(
+            1, self._next_img_data
+        )
         next_worker.finished.connect(self._on_next_image_ready)
         next_worker.start()
 
@@ -74,11 +79,11 @@ class CurationImageLoader(ICurationImageLoader):
     def _on_first_image_ready(self):
         self._set_curr_is_busy(False)
         self.first_image_ready.emit()
-    
+
     def _on_next_image_ready(self):
         self._set_next_is_busy(False)
         self.next_image_ready.emit()
-    
+
     def _on_prev_image_ready(self):
         self._set_prev_is_busy(False)
         self.prev_image_ready.emit()
@@ -88,7 +93,7 @@ class CurationImageLoader(ICurationImageLoader):
 
     def _set_prev_is_busy(self, busy: bool):
         self._is_busy[0] = busy
-    
+
     def _set_next_is_busy(self, busy: bool):
         self._is_busy[2] = busy
 
@@ -105,21 +110,32 @@ class CurationImageLoader(ICurationImageLoader):
         self, img_index: int, data_dict: Dict[str, ImageData]
     ) -> FunctionWorker:
         data_dict.clear()
-        raw_worker: FunctionWorker = self._start_img_data_extraction(self._raw_images[img_index])
-        raw_worker.returned.connect(lambda img_data: data_dict.update({"raw": img_data}))
+        raw_worker: FunctionWorker = self._start_img_data_extraction(
+            self._raw_images[img_index]
+        )
+        raw_worker.returned.connect(
+            lambda img_data: data_dict.update({"raw": img_data})
+        )
         raw_worker.start()
-        
-        seg1_worker: FunctionWorker = self._start_img_data_extraction(self._seg1_images[img_index])
-        seg1_worker.returned.connect(lambda img_data: data_dict.update({"seg1": img_data}))
+
+        seg1_worker: FunctionWorker = self._start_img_data_extraction(
+            self._seg1_images[img_index]
+        )
+        seg1_worker.returned.connect(
+            lambda img_data: data_dict.update({"seg1": img_data})
+        )
         seg1_worker.start()
 
         if self._seg2_images:
-            seg2_worker: FunctionWorker = self._start_img_data_extraction(self._seg2_images[img_index])
-            seg2_worker.returned.connect(lambda img_data: data_dict.update({"seg2": img_data}))
+            seg2_worker: FunctionWorker = self._start_img_data_extraction(
+                self._seg2_images[img_index]
+            )
+            seg2_worker.returned.connect(
+                lambda img_data: data_dict.update({"seg2": img_data})
+            )
             seg2_worker.start()
-        
-        return self._wait_on_data_dict(data_dict)
 
+        return self._wait_on_data_dict(data_dict)
 
     def get_raw_image_data(self) -> ImageData:
         """
@@ -179,7 +195,7 @@ class CurationImageLoader(ICurationImageLoader):
             raise RuntimeError(
                 "cannot move cursor before beginning of image lists"
             )
-        
+
         self._next_img_data = self._curr_img_data
         self._curr_img_data = self._prev_img_data
         self._prev_img_data = {}

@@ -10,6 +10,7 @@ from allencell_ml_segmenter.core.image_data_extractor import (
     ImageData,
 )
 
+
 # TODO: how to specify abstract signals?
 class ICurationImageLoader(QObject):
     def __init__(

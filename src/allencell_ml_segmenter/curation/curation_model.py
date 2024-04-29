@@ -17,14 +17,17 @@ from allencell_ml_segmenter.curation.curation_image_loader import (
 )
 from allencell_ml_segmenter.core.image_data_extractor import ImageData
 
+
 class CurationView(Enum):
     INPUT_VIEW = "input_view"
     MAIN_VIEW = "main_view"
+
 
 class CurationModel(QObject):
     """
     Stores state relevant to prediction processes.
     """
+
     current_view_changed: Signal = Signal()
 
     raw_directory_set: Signal = Signal()
@@ -50,7 +53,9 @@ class CurationModel(QObject):
         # should always start at input view
 
         self._experiments_model = experiments_model
-        self._img_loader_factory: ICurationImageLoaderFactory = img_loader_factory
+        self._img_loader_factory: ICurationImageLoaderFactory = (
+            img_loader_factory
+        )
         self._current_view: CurationView = CurationView.INPUT_VIEW
 
         self._raw_directory: Optional[Path] = None
@@ -76,16 +81,16 @@ class CurationModel(QObject):
         self._excluding_mask: Optional[np.ndarray] = None
 
         self._image_loader: Optional[ICurationImageLoader] = None
-    
+
     def get_merging_mask(self) -> Optional[np.ndarray]:
         return self._merging_mask
-    
+
     def set_merging_mask(self, mask: np.ndarray) -> None:
         self._merging_mask = mask
-    
+
     def get_excluding_mask(self) -> Optional[np.ndarray]:
         return self._excluding_mask
-    
+
     def set_excluding_mask(self, mask: np.ndarray) -> None:
         self._excluding_mask = mask
 
@@ -127,13 +132,13 @@ class CurationModel(QObject):
         Get the seg2 image directory path
         """
         return self._seg2_directory
-    
+
     def set_raw_directory_paths(self, paths: List[Path]) -> None:
         self._raw_directory_paths = paths
 
     def set_seg1_directory_paths(self, paths: List[Path]) -> None:
         self._seg1_directory_paths = paths
-    
+
     def set_seg2_directory_paths(self, paths: List[Path]) -> None:
         self._seg2_directory_paths = paths
 
@@ -180,9 +185,17 @@ class CurationModel(QObject):
         # TODO: reset all state?
         if view != self._current_view:
             if view == CurationView.MAIN_VIEW:
-                self._image_loader = self._img_loader_factory.create(self._raw_directory_paths, self._seg1_directory_paths, self._seg2_directory_paths)
-                self._image_loader.first_image_ready.connect(lambda: self.first_image_data_ready.emit())
-                self._image_loader.next_image_ready.connect(lambda: self.next_image_data_ready.emit())
+                self._image_loader = self._img_loader_factory.create(
+                    self._raw_directory_paths,
+                    self._seg1_directory_paths,
+                    self._seg2_directory_paths,
+                )
+                self._image_loader.first_image_ready.connect(
+                    lambda: self.first_image_data_ready.emit()
+                )
+                self._image_loader.next_image_ready.connect(
+                    lambda: self.next_image_data_ready.emit()
+                )
             else:
                 self._image_loader = None
             self._current_view = view
@@ -238,10 +251,10 @@ class CurationModel(QObject):
             return False
         else:
             return True
-    
+
     def get_raw_image_data(self) -> ImageData:
         return self._image_loader.get_raw_image_data()
-    
+
     def get_seg1_image_data(self) -> ImageData:
         return self._image_loader.get_seg1_image_data()
 
@@ -250,23 +263,35 @@ class CurationModel(QObject):
 
     def get_num_images(self) -> int:
         return self._image_loader.get_num_images()
-    
+
     def get_curr_image_index(self) -> int:
         return self._image_loader.get_current_index()
-    
+
     def has_next_image(self) -> bool:
         return self._image_loader.has_next()
 
-    def save_curr_curation_record(self, use_image: bool, base_image: Optional[str]):
+    def save_curr_curation_record(
+        self, use_image: bool, base_image: Optional[str]
+    ):
         idx: int = self.get_curr_image_index()
         record: CurationRecord = CurationRecord(
             self.get_raw_image_data().path,
             self.get_seg1_image_data().path,
-            self.get_seg2_image_data().path if self.get_seg2_image_data() is not None else None,
+            (
+                self.get_seg2_image_data().path
+                if self.get_seg2_image_data() is not None
+                else None
+            ),
             self.get_excluding_mask(),
             self.get_merging_mask(),
-            base_image if base_image and self.get_merging_mask() is not None and self.get_seg2_image_data() is not None else "seg1",
-            use_image
+            (
+                base_image
+                if base_image
+                and self.get_merging_mask() is not None
+                and self.get_seg2_image_data() is not None
+                else "seg1"
+            ),
+            use_image,
         )
         if idx == len(self._curation_record):
             self._curation_record.append(record)
@@ -278,14 +303,20 @@ class CurationModel(QObject):
 
     def next_image(self) -> None:
         if self._image_loader.is_busy():
-            raise RuntimeError("Image loader is busy. Please see image_data_ready signal.")
+            raise RuntimeError(
+                "Image loader is busy. Please see image_data_ready signal."
+            )
         self._image_loader.next()
         self._merging_mask = None
         self._excluding_mask = None
-    
+
     def is_image_data_ready(self) -> bool:
-        return not self._image_loader.is_busy() if self._image_loader is not None else False
-    
+        return (
+            not self._image_loader.is_busy()
+            if self._image_loader is not None
+            else False
+        )
+
     def set_curation_record_saved_to_disk(self, saved: bool) -> None:
         if saved:
             self.saved_to_disk.emit()
@@ -293,6 +324,11 @@ class CurationModel(QObject):
     def save_curr_curation_record_to_disk(self) -> None:
         if not self._curation_record_saved_to_disk:
             self.save_to_disk_requested.emit()
-    
+
     def get_csv_path(self) -> Path:
-        return self._experiments_model.get_user_experiments_path() / self._experiments_model.get_experiment_name() / "data" / "train.csv"
+        return (
+            self._experiments_model.get_user_experiments_path()
+            / self._experiments_model.get_experiment_name()
+            / "data"
+            / "train.csv"
+        )

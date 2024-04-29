@@ -34,16 +34,13 @@ from copy import deepcopy
 MERGING_MASK_LAYER_NAME: str = "Merging Mask"
 EXCLUDING_MASK_LAYER_NAME: str = "Excluding Mask"
 
+
 class CurationMainView(View):
     """
     View for Curation UI
     """
 
-    def __init__(
-        self,
-        curation_model: CurationModel,
-        viewer: IViewer
-    ) -> None:
+    def __init__(self, curation_model: CurationModel, viewer: IViewer) -> None:
         super().__init__()
         self._curation_model: CurationModel = curation_model
         self._viewer: IViewer = viewer
@@ -70,9 +67,9 @@ class CurationMainView(View):
 
         progress_bar_layout: QHBoxLayout = QHBoxLayout()
         # Button and progress bar on top row
-        #self.back_button: QPushButton = QPushButton("◄ Back")
-        #self.back_button.setObjectName("big_blue_btn")
-        #progress_bar_layout.addWidget(self.back_button, alignment=Qt.AlignLeft)
+        # self.back_button: QPushButton = QPushButton("◄ Back")
+        # self.back_button.setObjectName("big_blue_btn")
+        # progress_bar_layout.addWidget(self.back_button, alignment=Qt.AlignLeft)
 
         # inner progress bar frame and layout
         inner_progress_frame: QFrame = QFrame()
@@ -93,8 +90,12 @@ class CurationMainView(View):
         )
         self.layout().addLayout(progress_bar_layout)
 
-        self._save_curation_csv_button: QPushButton = QPushButton("Save Curation CSV")
-        self._save_curation_csv_button.clicked.connect(self._on_save_curation_csv)
+        self._save_curation_csv_button: QPushButton = QPushButton(
+            "Save Curation CSV"
+        )
+        self._save_curation_csv_button.clicked.connect(
+            self._on_save_curation_csv
+        )
         self._save_curation_csv_button.setObjectName("save_csv_btn")
         self.layout().addWidget(self._save_curation_csv_button)
 
@@ -116,7 +117,9 @@ class CurationMainView(View):
         use_image_frame.layout().addWidget(self.no_radio)
 
         self._use_img_stacked_spinner = StackedSpinner(use_image_frame)
-        self.layout().addWidget(self._use_img_stacked_spinner, alignment=Qt.AlignHCenter)
+        self.layout().addWidget(
+            self._use_img_stacked_spinner, alignment=Qt.AlignHCenter
+        )
 
         # Label for Merging mask
         merging_mask_label_and_status: QHBoxLayout = QHBoxLayout()
@@ -172,14 +175,16 @@ class CurationMainView(View):
         excluding_mask_buttons: QHBoxLayout = QHBoxLayout()
         self.excluding_create_button: QPushButton = QPushButton("+ Create")
         self.excluding_create_button.setObjectName("small_blue_btn")
-        self.excluding_create_button.clicked.connect(self._create_excluding_mask)
+        self.excluding_create_button.clicked.connect(
+            self._create_excluding_mask
+        )
         # propogate button disabled for v1
         # TODO: enable this in v2
-        #excluding_propagate_button: QPushButton = QPushButton(
+        # excluding_propagate_button: QPushButton = QPushButton(
         #    "Propagate in 3D"
-        #)
-        #excluding_propagate_button.setEnabled(False)
-        
+        # )
+        # excluding_propagate_button.setEnabled(False)
+
         # TODO: connect the delete button to some functionality
         self.excluding_delete_button: QPushButton = QPushButton("Delete")
         self.excluding_save_button: QPushButton = QPushButton("Save")
@@ -195,8 +200,12 @@ class CurationMainView(View):
         # NOTE: this is prone to a small bug: if the next image is ready first and the user quickly
         # clicks next, a runtime error from the image loader will show up as a popup. Since this is
         # unlikely and would take some work to fix, I'm leaving it for now
-        self._curation_model.first_image_data_ready.connect(self._on_first_image_data_ready)
-        self._curation_model.next_image_data_ready.connect(self._enable_next_button)
+        self._curation_model.first_image_data_ready.connect(
+            self._on_first_image_data_ready
+        )
+        self._curation_model.next_image_data_ready.connect(
+            self._enable_next_button
+        )
 
         self._curation_model.saved_to_disk.connect(self._on_saved_to_disk)
 
@@ -224,23 +233,31 @@ class CurationMainView(View):
     def _enable_next_button(self) -> None:
         self.next_button.setEnabled(True)
         self.next_button.setText("Next ►")
-    
+
     def _set_next_button_to_loading(self) -> None:
         self.next_button.setEnabled(False)
         self.next_button.setText("Loading next...")
-    
+
     def _set_next_button_to_finished(self) -> None:
         self.next_button.setEnabled(False)
         self.next_button.setText("No more images")
 
     def _add_curr_images_to_widget(self) -> None:
         raw_img_data: ImageData = self._curation_model.get_raw_image_data()
-        self._viewer.add_image(raw_img_data.np_data, f"[raw] {raw_img_data.path.name}")
+        self._viewer.add_image(
+            raw_img_data.np_data, f"[raw] {raw_img_data.path.name}"
+        )
         seg1_img_data: ImageData = self._curation_model.get_seg1_image_data()
-        self._viewer.add_image(seg1_img_data.np_data, f"[seg1] {seg1_img_data.path.name}")
+        self._viewer.add_image(
+            seg1_img_data.np_data, f"[seg1] {seg1_img_data.path.name}"
+        )
         if self._curation_model.get_seg2_image_data() is not None:
-            seg2_img_data: ImageData = self._curation_model.get_seg2_image_data()
-            self._viewer.add_image(seg2_img_data.np_data, f"[seg2] {seg2_img_data.path.name}")
+            seg2_img_data: ImageData = (
+                self._curation_model.get_seg2_image_data()
+            )
+            self._viewer.add_image(
+                seg2_img_data.np_data, f"[seg2] {seg2_img_data.path.name}"
+            )
 
         self.enable_valid_masks()
         self.file_name.setText(raw_img_data.path.name)
@@ -255,7 +272,9 @@ class CurationMainView(View):
 
         self._viewer.clear_layers()
         # NOTE: logic of how to deal with merging_base_combo value is handled in curation model
-        self._curation_model.save_curr_curation_record(use_this_image, self.merging_base_combo.currentText())
+        self._curation_model.save_curr_curation_record(
+            use_this_image, self.merging_base_combo.currentText()
+        )
 
         # NOTE: this logic is kinda complicated, maybe worth a rethink when there's more time
         if self._curation_model.has_next_image():
@@ -274,7 +293,9 @@ class CurationMainView(View):
         self._update_progress_bar()
 
     def _on_save_curation_csv(self) -> None:
-        self._curation_model.save_curr_curation_record(self.yes_radio.isChecked(), self.merging_base_combo.currentText())
+        self._curation_model.save_curr_curation_record(
+            self.yes_radio.isChecked(), self.merging_base_combo.currentText()
+        )
         self._curation_model.save_curr_curation_record_to_disk()
         self._save_curation_csv_button.setEnabled(False)
 
@@ -334,7 +355,7 @@ class CurationMainView(View):
         )
         discard_layer_prompt.exec()
         return discard_layer_prompt.selection
-    
+
     def _replace_saved_mask_prompt(self, merging_or_excluding: str):
         replace_prompt = DialogBox(
             f"There is already a {merging_or_excluding} mask layer saved. Would you like to overwrite?"
@@ -348,8 +369,10 @@ class CurationMainView(View):
             if not self._discard_layer_prompt(merging_mask):
                 return
             self._viewer.clear_mask_layers([merging_mask])
-    
-        merging_layer: Layer = self._viewer.add_shapes(MERGING_MASK_LAYER_NAME, "royalblue")
+
+        merging_layer: Layer = self._viewer.add_shapes(
+            MERGING_MASK_LAYER_NAME, "royalblue"
+        )
         # TODO: add as param to add_shapes?
         merging_layer.mode = "add_polygon"
         self.merging_save_button.setEnabled(True)
@@ -362,29 +385,35 @@ class CurationMainView(View):
         if self.merging_base_combo.currentText() == "Base Image:":
             show_info("Please select a base image to merge with")
             return
-        
+
         merging_mask: Layer = self._get_layer_by_name(MERGING_MASK_LAYER_NAME)
         if merging_mask is None:
             show_info("Please create a merging mask layer")
             return
-        
+
         if self._curation_model.get_merging_mask() is not None:
             if not self._replace_saved_mask_prompt("merging"):
                 return
-        
+
         # deepcopy so that if a user adds more shapes to existing layer, they don't show up in model
         # could change this behavior based on UX input
-        self._curation_model.set_merging_mask(deepcopy(np.asarray(merging_mask.data, dtype=object)))
+        self._curation_model.set_merging_mask(
+            deepcopy(np.asarray(merging_mask.data, dtype=object))
+        )
         self.merging_mask_status.setText("Merging mask saved")
 
     def _create_excluding_mask(self) -> None:
-        excluding_mask: Layer = self._get_layer_by_name(EXCLUDING_MASK_LAYER_NAME)
+        excluding_mask: Layer = self._get_layer_by_name(
+            EXCLUDING_MASK_LAYER_NAME
+        )
         if excluding_mask is not None:
             if not self._discard_layer_prompt(excluding_mask):
                 return
             self._viewer.clear_mask_layers([excluding_mask])
-    
-        excluding_layer: Layer = self._viewer.add_shapes(EXCLUDING_MASK_LAYER_NAME, "coral")
+
+        excluding_layer: Layer = self._viewer.add_shapes(
+            EXCLUDING_MASK_LAYER_NAME, "coral"
+        )
         excluding_layer.mode = "add_polygon"
         self.excluding_save_button.setEnabled(True)
         self.excluding_mask_status.setText("Draw mask")
@@ -393,19 +422,21 @@ class CurationMainView(View):
         """
         Wrapper for curation_service.save_excluding_mask() for ui interactivity
         """
-        excluding_mask: Layer = self._get_layer_by_name(EXCLUDING_MASK_LAYER_NAME)
+        excluding_mask: Layer = self._get_layer_by_name(
+            EXCLUDING_MASK_LAYER_NAME
+        )
         if excluding_mask is None:
             show_info("Please create an excluding mask layer")
             return
-        
+
         if self._curation_model.get_excluding_mask() is not None:
             if not self._replace_saved_mask_prompt("excluding"):
                 return
 
-        self._curation_model.set_excluding_mask(deepcopy(np.asarray(excluding_mask.data, dtype=object)))
-        self.excluding_mask_status.setText(
-            "Excluding mask saved"
+        self._curation_model.set_excluding_mask(
+            deepcopy(np.asarray(excluding_mask.data, dtype=object))
         )
+        self.excluding_mask_status.setText("Excluding mask saved")
 
     def disable_all_masks(self) -> None:
         self.disable_merging_mask_buttons()
@@ -426,4 +457,3 @@ class CurationMainView(View):
                 output_layer = layer
                 break
         return output_layer
-
