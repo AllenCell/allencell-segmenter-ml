@@ -283,8 +283,10 @@ class CurationMainView(View):
             if self._curation_model.has_next_image():
                 self._set_next_button_to_loading()
             else:
-                self._enable_next_button()
+                self.next_button.setEnabled(True)
+                self.next_button.setText("Finish ►")
         else:
+            self._on_save_curation_csv()
             self.disable_all_masks()
             self.yes_radio.setEnabled(False)
             self.no_radio.setEnabled(False)
