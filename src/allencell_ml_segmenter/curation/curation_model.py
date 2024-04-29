@@ -38,6 +38,9 @@ class CurationModel(QObject):
     first_image_data_ready: Signal = Signal()
     next_image_data_ready: Signal = Signal()
 
+    save_to_disk_requested: Signal = Signal()
+    saved_to_disk: Signal = Signal()
+
     def __init__(
         self,
         experiments_model: ExperimentsModel,
@@ -67,6 +70,7 @@ class CurationModel(QObject):
         self._seg1_image_channel_count: Optional[int] = None
         self._seg2_image_channel_count: Optional[int] = None
         self._curation_record: List[CurationRecord] = []
+        self._curation_record_saved_to_disk: bool = False
 
         self._merging_mask: Optional[np.ndarray] = None
         self._excluding_mask: Optional[np.ndarray] = None
@@ -258,16 +262,19 @@ class CurationModel(QObject):
         record: CurationRecord = CurationRecord(
             self.get_raw_image_data().path,
             self.get_seg1_image_data().path,
-            self.get_seg2_image_data().path,
+            self.get_seg2_image_data().path if self.get_seg2_image_data() is not None else None,
             self.get_excluding_mask(),
             self.get_merging_mask(),
-            base_image if base_image and self.get_merging_mask() is not None else "seg1",
+            base_image if base_image and self.get_merging_mask() is not None and self.get_seg2_image_data() is not None else "seg1",
             use_image
         )
         if idx == len(self._curation_record):
             self._curation_record.append(record)
         else:
             self._curation_record[idx] = record
+
+        # here, I don't actually check that the record changed, seems unnecessary
+        self._curation_record_saved_to_disk = False
 
     def next_image(self) -> None:
         if self._image_loader.is_busy():
@@ -278,3 +285,14 @@ class CurationModel(QObject):
     
     def is_image_data_ready(self) -> bool:
         return not self._image_loader.is_busy() if self._image_loader is not None else False
+    
+    def set_curation_record_saved_to_disk(self, saved: bool) -> None:
+        if saved:
+            self.saved_to_disk.emit()
+
+    def save_curr_curation_record_to_disk(self) -> None:
+        if not self._curation_record_saved_to_disk:
+            self.save_to_disk_requested.emit()
+    
+    def get_csv_path(self) -> Path:
+        return self._experiments_model.get_user_experiments_path() / self._experiments_model.get_experiment_name() / "data" / "train.csv"
