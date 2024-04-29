@@ -196,6 +196,10 @@ class CurationModel(QObject):
                 self._image_loader.next_image_ready.connect(
                     lambda: self.next_image_data_ready.emit()
                 )
+                self._curation_record = []
+                self._curation_record_saved_to_disk = False
+                self._merging_mask = None
+                self._excluding_mask = None
             else:
                 self._image_loader = None
             self._current_view = view
