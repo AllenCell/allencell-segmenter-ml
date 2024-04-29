@@ -5,12 +5,16 @@ from aicsimageio import AICSImage
 from qtpy.QtCore import Qt
 
 from allencell_ml_segmenter._style import Style
+from allencell_ml_segmenter.core.dialog_box import DialogBox
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.prediction.file_input_widget import (
     PredictionFileInput,
 )
-from allencell_ml_segmenter.prediction.model import PredictionModel
+from allencell_ml_segmenter.prediction.model import (
+    PredictionModel,
+    PredictionInputMode,
+)
 from allencell_ml_segmenter.prediction.service import ModelFileService
 from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.prediction.model_input_widget import (
@@ -125,10 +129,24 @@ class PredictionView(View):
 
     def showResults(self):
         output_path: Path = self._prediction_model.get_output_seg_directory()
-        images_list: List[Path] = FileUtils.get_all_files_in_dir_ignore_hidden(
-            output_path
-        )
-        for output_img in images_list:
-            self._viewer.add_image(
-                AICSImage(output_img).data, name=output_img.name
+
+        # Display images if prediction inputs are from Napari Layers
+        if (
+            self._prediction_model.get_prediction_input_mode()
+            == PredictionInputMode.FROM_NAPARI_LAYERS
+        ):
+            images_list: List[Path] = (
+                FileUtils.get_all_files_in_dir_ignore_hidden(output_path)
             )
+            for output_img in images_list:
+                self._viewer.add_image(
+                    AICSImage(output_img).data, name=output_img.name
+                )
+        # Display popup with saved images path if prediction inputs are from a directory
+        else:
+            dialog_box = DialogBox(
+                f"Predicted images saved to {str(output_path)}. \nWould you like to open this folder?"
+            )
+            dialog_box.exec()
+            if dialog_box.get_selection():
+                FileUtils.open_directory_in_window(output_path)
