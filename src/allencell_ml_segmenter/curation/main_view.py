@@ -111,9 +111,15 @@ class CurationMainView(View):
         self.yes_radio: QRadioButton = QRadioButton("Yes")
         self.yes_radio.setChecked(True)
         self.yes_radio.clicked.connect(self.enable_valid_masks)
+        self.yes_radio.clicked.connect(
+            lambda: self._curation_model.set_use_image(True)
+        )
         use_image_frame.layout().addWidget(self.yes_radio)
         self.no_radio: QRadioButton = QRadioButton("No")
         self.no_radio.clicked.connect(self.disable_all_masks)
+        self.no_radio.clicked.connect(
+            lambda: self._curation_model.set_use_image(False)
+        )
         use_image_frame.layout().addWidget(self.no_radio)
 
         self._use_img_stacked_spinner = StackedSpinner(use_image_frame)
@@ -140,9 +146,14 @@ class CurationMainView(View):
         self.merging_create_button.clicked.connect(self._create_merging_mask)
         self.merging_create_button.setObjectName("small_blue_btn")
         self.merging_base_combo: QComboBox = QComboBox()
-        self.merging_base_combo.addItem("Base Image:")
+        self.merging_base_combo.setPlaceholderText("Base Image:")
         self.merging_base_combo.addItem("seg1")
         self.merging_base_combo.addItem("seg2")
+        self.merging_base_combo.currentIndexChanged.connect(
+            lambda idx: self._curation_model.set_base_image(
+                self.merging_base_combo.currentText() if idx >= 0 else None
+            )
+        )
         self.merging_delete_button: QPushButton = QPushButton("Delete")
         self.merging_save_button: QPushButton = QPushButton("Save")
         self.merging_save_button.setEnabled(False)
@@ -238,10 +249,6 @@ class CurationMainView(View):
         self.next_button.setEnabled(False)
         self.next_button.setText("Loading next...")
 
-    def _set_next_button_to_finished(self) -> None:
-        self.next_button.setEnabled(False)
-        self.next_button.setText("No more images")
-
     def _add_curr_images_to_widget(self) -> None:
         raw_img_data: ImageData = self._curation_model.get_raw_image_data()
         self._viewer.add_image(
@@ -268,13 +275,8 @@ class CurationMainView(View):
         """
         Advance to next image set.
         """
-        use_this_image: bool = self.yes_radio.isChecked()
-
         self._viewer.clear_layers()
-        # NOTE: logic of how to deal with merging_base_combo value is handled in curation model
-        self._curation_model.save_curr_curation_record(
-            use_this_image, self.merging_base_combo.currentText()
-        )
+        self._curation_model.save_curr_curation_record()
 
         # NOTE: this logic is kinda complicated, maybe worth a rethink when there's more time
         if self._curation_model.has_next_image():
@@ -291,13 +293,15 @@ class CurationMainView(View):
             self.yes_radio.setEnabled(False)
             self.no_radio.setEnabled(False)
             self.file_name.setText("None")
-            self._set_next_button_to_finished()
+            self.next_button.setEnabled(False)
+            self.next_button.setText("No more images")
+
+        self.yes_radio.click()
+        self.merging_base_combo.setCurrentIndex(-1)
         self._update_progress_bar()
 
     def _on_save_curation_csv(self) -> None:
-        self._curation_model.save_curr_curation_record(
-            self.yes_radio.isChecked(), self.merging_base_combo.currentText()
-        )
+        self._curation_model.save_curr_curation_record()
         self._curation_model.save_curr_curation_record_to_disk()
         self._save_curation_csv_button.setEnabled(False)
 
