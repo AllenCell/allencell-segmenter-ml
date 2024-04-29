@@ -44,6 +44,7 @@ class ModelSize(Enum):
     """
     Model size for training, and their respective filters overrides
     """
+
     SMALL = [8, 16, 32]
     MEDIUM = [16, 32, 64]
     LARGE = [32, 64, 128]
