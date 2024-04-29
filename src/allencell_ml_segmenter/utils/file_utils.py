@@ -65,9 +65,9 @@ class FileUtils:
                     "raw",
                     "seg1",
                     "seg2",
-                    "excluding_mask",
-                    "merging_mask",
-                    "merging_col",
+                    "merge_mask",
+                    "exclude_mask",
+                    "base_image",
                 ]
             )
 
@@ -88,8 +88,8 @@ class FileUtils:
                             str(record.raw_file.resolve()),
                             str(record.seg1.resolve()),
                             str(record.seg2.resolve()) if record.seg2 is not None else "",
-                            get_excl_mask_path(record.raw_file.resolve()) if record.excluding_mask is not None else "",
                             get_merg_mask_path(record.raw_file.resolve()) if record.merging_mask is not None else "",
+                            get_excl_mask_path(record.raw_file.resolve()) if record.excluding_mask is not None else "",
                             str(record.base_image_index),
                         ]
                     )

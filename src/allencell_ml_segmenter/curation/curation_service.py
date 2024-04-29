@@ -1,31 +1,20 @@
-import aicsimageio.exceptions
-
-from allencell_ml_segmenter.core.dialog_box import DialogBox
-from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.image_data_extractor import ImageData
 from allencell_ml_segmenter.curation.curation_model import CurationModel
 from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
 from allencell_ml_segmenter.core.image_data_extractor import IImageDataExtractor, AICSImageDataExtractor
-from allencell_ml_segmenter.main.i_viewer import IViewer
-from allencell_ml_segmenter.main.viewer import Viewer
 from allencell_ml_segmenter.utils.file_utils import FileUtils
 
 from pathlib import Path
-from typing import List, Union, Optional, Callable, Tuple
-import csv
-import numpy as np
-from aicsimageio import AICSImage
-from enum import Enum
-from napari.utils.notifications import show_info
-from napari.layers.shapes.shapes import Shapes
+from typing import List, Tuple
 from napari.qt.threading import thread_worker, FunctionWorker
 
 
 MERGING_MASK_LAYER_NAME: str = "Merging Mask"
 EXCLUDING_MASK_LAYER_NAME: str = "Excluding Mask"
 
-
+# Important note: we do not want to access the model in any of the threads because model state may change
+# while thread is executing. So, opt to copy/pass in all relevant model state to threads
 class CurationService(Subscriber):
     """ """
 
@@ -41,6 +30,7 @@ class CurationService(Subscriber):
         self._curation_model.raw_directory_set.connect(self._on_raw_dir_set)
         self._curation_model.seg1_directory_set.connect(self._on_seg1_dir_set)
         self._curation_model.seg2_directory_set.connect(self._on_seg2_dir_set)
+        self._curation_model.save_to_disk_requested.connect(self._on_save_to_disk)
 
     @thread_worker
     def _get_dir_data(self, dir: Path) -> Tuple[List[Path], int]:
@@ -78,47 +68,14 @@ class CurationService(Subscriber):
         dir_extractor.returned.connect(self._on_seg2_dir_data_extracted)
         dir_extractor.start()
 
-    def write_curation_record(
-        self, curation_record: List[CurationRecord], path: Path
-    ) -> None:
-        """
-        Save the curation record as a csv at the specified path. will create parent directories to path as needed.
+    @thread_worker
+    def _save_curation_record(self, curation_record: CurationRecord, csv_path: Path, mask_dir_path: Path) -> None:
+        FileUtils.write_curation_record(curation_record, csv_path, mask_dir_path)
 
-        curation_record (List[CurationRecord]): record to save to csv
-        path (Path): path to save csv
-        """
-        parent_path: Path = path.parents[0]
-        if not parent_path.is_dir():
-            parent_path.mkdir(parents=True)
+    def _on_save_to_disk(self) -> None:
+        curation_record: List[CurationRecord] = self._curation_model.get_curation_record()
+        record_saver: FunctionWorker = self._save_curation_record(curation_record, self._curation_model.get_csv_path(), self._curation_model.get_save_masks_path())
+        record_saver.finished.connect(lambda: self._curation_model.set_curation_record_saved_to_disk(True))
+        record_saver.start()
 
-        with open(path, "w") as f:
-            # need file header
-            writer: csv.writer = csv.writer(f, delimiter=",")
-            writer.writerow(
-                [
-                    "",
-                    "raw",
-                    "seg1",
-                    "seg2",
-                    "excluding_mask",
-                    "merging_mask",
-                    "merging_col",
-                ]
-            )
-            for idx, record in enumerate(curation_record):
-                if record.to_use:
-                    writer.writerow(
-                        [
-                            str(idx),
-                            str(record.raw_file),
-                            str(record.seg1),
-                            str(record.seg2) if record.seg2 else "",
-                            str(record.excluding_mask),
-                            str(record.merging_mask),
-                            str(record.base_image_index),
-                        ]
-                    )
-                f.flush()
-
-        # TODO: WRITE ACTUAL VALIDATION AND TEST SETS
 
