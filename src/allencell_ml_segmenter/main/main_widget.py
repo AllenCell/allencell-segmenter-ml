@@ -117,8 +117,8 @@ class MainWidget(AicsWidget):
             viewer=self.viewer,
         )
         self._initialize_view(self._prediction_view, "Prediction")
-        self._tab_changed(0) # Manually invoke code to resize the frist tab
         self._view_container.currentChanged.connect(self._tab_changed)
+        self._model.set_new_model(False)
 
     def _handle_new_model(self, _: Event) -> None:
         """
