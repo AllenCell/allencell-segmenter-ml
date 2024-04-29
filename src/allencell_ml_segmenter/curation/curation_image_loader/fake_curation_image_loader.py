@@ -26,6 +26,12 @@ class FakeCurationImageLoader(ICurationImageLoader):
             FakeImageDataExtractor.global_instance(),
         )
 
+    def start(self) -> None:
+        pass
+
+    def is_busy(self) -> bool:
+        return False
+
     def get_raw_image_data(self) -> ImageData:
         """
         Returns the image data for the raw image in the set that the 'cursor' is
