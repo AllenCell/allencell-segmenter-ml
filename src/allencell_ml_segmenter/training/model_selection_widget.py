@@ -83,7 +83,7 @@ class ModelSelectionWidget(QWidget):
             self._model_combo_handler
         )
         self._experiments_model.subscribe(
-            Event.ACTION_REFRESH, self, self._process_event_handler
+            Event.ACTION_REFRESH, self, self._handle_process_event
         )
 
         top_grid_layout.addWidget(self._combo_box_existing_models, 1, 2)
@@ -92,6 +92,9 @@ class ModelSelectionWidget(QWidget):
         self.experiment_info_widget.set_enabled(False)
 
         frame.layout().addLayout(top_grid_layout)
+        main_model.subscribe(
+            Event.ACTION_NEW_MODEL, self, self._handle_new_model_selection
+        )
 
     def _model_combo_handler(self, experiment_name: str) -> None:
         """
@@ -126,7 +129,11 @@ class ModelSelectionWidget(QWidget):
             self.experiment_info_widget.set_enabled(False)
             self.experiment_info_widget.clear()
 
-    def _process_event_handler(self, _: Event = None) -> None:
+    def _handle_new_model_selection(self, _: Event = None) -> None:
+        self._radio_existing_model.setChecked(not self._main_model.is_new_model())
+        self._radio_new_model.setChecked(self._main_model.is_new_model())
+
+    def _handle_process_event(self, _: Event = None) -> None:
         """
         Refreshes the experiments in the _combo_box_existing_models.
         """
