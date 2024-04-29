@@ -79,7 +79,8 @@ class TrainingService(Subscriber):
                 cyto_overrides_manager.get_training_overrides()
             )
             model.print_config()
-            asyncio.run(model.train(run_async=True))
+            model.train()
+            #asyncio.run(model.train(run_async=True))
 
     def _able_to_continue_training(self) -> bool:
         if self._experiments_model.get_experiment_name() is None:
