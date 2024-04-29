@@ -12,6 +12,7 @@ class MainModel(Publisher):
         super().__init__()
         # Current page of the UI
         self._current_view: AicsWidget = None
+        self._is_new_model: bool = False
 
     def get_current_view(self):
         """
