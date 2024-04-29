@@ -130,7 +130,9 @@ class ModelSelectionWidget(QWidget):
             self.experiment_info_widget.clear()
 
     def _handle_new_model_selection(self, _: Event = None) -> None:
-        self._radio_existing_model.setChecked(not self._main_model.is_new_model())
+        self._radio_existing_model.setChecked(
+            not self._main_model.is_new_model()
+        )
         self._radio_new_model.setChecked(self._main_model.is_new_model())
 
     def _handle_process_event(self, _: Event = None) -> None:
