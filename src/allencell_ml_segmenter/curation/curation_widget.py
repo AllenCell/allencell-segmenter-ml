@@ -9,7 +9,10 @@ from qtpy.QtWidgets import (
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.view import View
-from allencell_ml_segmenter.curation.curation_model import CurationModel, CurationView
+from allencell_ml_segmenter.curation.curation_model import (
+    CurationModel,
+    CurationView,
+)
 from allencell_ml_segmenter.curation.input_view import CurationInputView
 from allencell_ml_segmenter.curation.main_view import CurationMainView
 from allencell_ml_segmenter.curation.curation_service import CurationService
@@ -47,19 +50,26 @@ class CurationWidget(QStackedWidget, Subscriber, metaclass=CurationUiMeta):
         self.view_to_index: Dict[View, int] = dict()
         # TODO: make factories singletons
         self.curation_model: CurationModel = CurationModel(
-            experiments_model=experiments_model, img_loader_factory=CurationImageLoaderFactory()
+            experiments_model=experiments_model,
+            img_loader_factory=CurationImageLoaderFactory(),
         )
-        self.curation_service: CurationService = CurationService(self.curation_model)
+        self.curation_service: CurationService = CurationService(
+            self.curation_model
+        )
 
         # basic styling
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
 
-        self.curation_input_view: CurationInputView = CurationInputView(self.curation_model)
+        self.curation_input_view: CurationInputView = CurationInputView(
+            self.curation_model
+        )
         self.initialize_view(self.curation_input_view)
 
-        self.curation_main_view: CurationMainView = CurationMainView(self.curation_model, self.viewer)
+        self.curation_main_view: CurationMainView = CurationMainView(
+            self.curation_model, self.viewer
+        )
         self.initialize_view(self.curation_main_view)
 
         self.set_view(self.curation_input_view)
