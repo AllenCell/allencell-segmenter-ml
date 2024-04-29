@@ -79,6 +79,8 @@ class CytoDLOverridesManager:
             )
 
         # Filters/Model Size (required)
-        overrides_dict["model._aux.filters"] = self._training_model.get_model_size().value
+        overrides_dict["model._aux.filters"] = (
+            self._training_model.get_model_size().value
+        )
 
         return overrides_dict
