@@ -24,7 +24,7 @@ def main_widget(qtbot: QtBot) -> MainWidget:
     settings.set_user_experiments_path(Path())
     return MainWidget(viewer=FakeViewer(), settings=settings)
 
-def test_handle_action_new_model_event(
+def test_tabs_react_to_new_model_event(
     main_widget: MainWidget,
 ) -> None:
     """
@@ -41,7 +41,7 @@ def test_handle_action_new_model_event(
     assert main_widget._view_container.isTabEnabled(main_widget._view_to_index[main_widget._curation_view]) == True
     assert main_widget._view_container.isTabEnabled(main_widget._view_to_index[main_widget._training_view]) == True
 
-def test_handle_action_existing_model_event(
+def test_tabs_react_to_existing_model_event(
     main_widget: MainWidget,
 ) -> None:
     """
