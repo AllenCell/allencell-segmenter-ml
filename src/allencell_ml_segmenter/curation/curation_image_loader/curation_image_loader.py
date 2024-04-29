@@ -58,6 +58,7 @@ class CurationImageLoader(ICurationImageLoader):
         # if threads are currently running for prev, curr, next img data
         self._is_busy = [False, False, False]
 
+    def start(self) -> None:
         # start threads for first and next images
         self._set_curr_is_busy(True)
         curr_worker: FunctionWorker = self._start_extraction_threads(
@@ -73,7 +74,7 @@ class CurationImageLoader(ICurationImageLoader):
         next_worker.finished.connect(self._on_next_image_ready)
         next_worker.start()
 
-    def is_busy(self):
+    def is_busy(self) -> bool:
         return any(self._is_busy)
 
     def _on_first_image_ready(self):

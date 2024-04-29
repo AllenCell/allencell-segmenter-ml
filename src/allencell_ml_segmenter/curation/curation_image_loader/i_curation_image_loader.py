@@ -55,6 +55,13 @@ class ICurationImageLoader(QObject):
         return self._cursor
 
     @abstractmethod
+    def start(self) -> None:
+        """
+        Starts the image loader on at least the first set of images.
+        """
+        pass
+
+    @abstractmethod
     def is_busy(self) -> bool:
         pass
 
