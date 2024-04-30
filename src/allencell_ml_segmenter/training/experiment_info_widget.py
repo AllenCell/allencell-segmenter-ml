@@ -37,7 +37,7 @@ class ExperimentInfoWidget(QWidget):
         # self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
 
         self._experiment_name_input: QLineEdit = QLineEdit()
-
+        self._experiment_name_input.setPlaceholderText("Name your model")
         frame.layout().addWidget(self._experiment_name_input, 0, 0)
 
         self._experiment_name_input.textChanged.connect(
