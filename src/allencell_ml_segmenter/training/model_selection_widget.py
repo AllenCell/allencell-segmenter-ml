@@ -50,8 +50,6 @@ class ModelSelectionWidget(QWidget):
         self.layout().addWidget(frame)
 
         # model selection components
-        frame.layout().addWidget(LabelWithHint("Select a model:"))
-
         top_grid_layout: QGridLayout = QGridLayout()
 
         self._radio_new_model: QRadioButton = QRadioButton()
