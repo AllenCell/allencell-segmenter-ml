@@ -36,11 +36,9 @@ class ExperimentInfoWidget(QWidget):
 
         # self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
 
-        experiment_name_label: LabelWithHint = LabelWithHint("Experiment name")
         self._experiment_name_input: QLineEdit = QLineEdit()
 
-        frame.layout().addWidget(experiment_name_label, 0, 0)
-        frame.layout().addWidget(self._experiment_name_input, 0, 1)
+        frame.layout().addWidget(self._experiment_name_input, 0, 0)
 
         self._experiment_name_input.textChanged.connect(
             lambda text: self._model.set_experiment_name(text)
