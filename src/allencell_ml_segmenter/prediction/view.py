@@ -66,10 +66,11 @@ class PredictionView(View):
         )
         self._file_input_widget.setObjectName("fileInput")
 
-        self._model_input_widget: ModelInputWidget = ModelInputWidget(
-            self._prediction_model
-        )
-        self._model_input_widget.setObjectName("modelInput")
+        # Disabled for V1 chrishu 3/30/24 https://github.com/AllenCell/allencell-ml-segmenter/issues/274
+        # self._model_input_widget: ModelInputWidget = ModelInputWidget(
+        #     self._prediction_model
+        # )
+        # self._model_input_widget.setObjectName("modelInput")
 
         # Dummy divs allow for easy alignment
         top_container: QVBoxLayout = QVBoxLayout()
@@ -81,7 +82,9 @@ class PredictionView(View):
         top_dummy.setLayout(top_container)
         self.layout().addWidget(top_dummy)
 
-        bottom_container.addWidget(self._model_input_widget)
+        # Disabled for V1 chrishu 3/30/24 https://github.com/AllenCell/allencell-ml-segmenter/issues/274
+        # bottom_container.addWidget(self._model_input_widget)
+
         bottom_dummy.setLayout(bottom_container)
         self.layout().addWidget(bottom_dummy)
 
