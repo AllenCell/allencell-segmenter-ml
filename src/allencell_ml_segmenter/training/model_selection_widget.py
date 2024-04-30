@@ -56,7 +56,9 @@ class ModelSelectionWidget(QWidget):
 
         self._experiment_name_input: QLineEdit = QLineEdit()
         self._experiment_name_input.setPlaceholderText("Name your model")
-        self._experiment_name_input.textChanged.connect(self._experiment_name_input_handler)
+        self._experiment_name_input.textChanged.connect(
+            self._experiment_name_input_handler
+        )
 
         label_new_model: LabelWithHint = LabelWithHint("Start a new model")
         top_grid_layout.addWidget(label_new_model, 0, 1)
