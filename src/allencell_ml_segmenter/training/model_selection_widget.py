@@ -67,7 +67,7 @@ class ModelSelectionWidget(QWidget):
         self._radio_existing_model.toggled.connect(self._model_radio_handler)
         top_grid_layout.addWidget(self._radio_existing_model, 1, 0)
 
-        label_existing_model: LabelWithHint = LabelWithHint("Existing model")
+        label_existing_model: LabelWithHint = LabelWithHint("Select an existing model")
         top_grid_layout.addWidget(label_existing_model, 1, 1)
 
         self._combo_box_existing_models: QComboBox = QComboBox()
