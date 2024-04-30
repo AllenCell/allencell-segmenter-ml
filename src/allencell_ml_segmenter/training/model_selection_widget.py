@@ -6,13 +6,11 @@ from qtpy.QtWidgets import (
     QGridLayout,
     QComboBox,
     QRadioButton,
+    QLineEdit,
 )
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
-from allencell_ml_segmenter.training.experiment_info_widget import (
-    ExperimentInfoWidget,
-)
 
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 
@@ -56,18 +54,21 @@ class ModelSelectionWidget(QWidget):
         self._radio_new_model.toggled.connect(self._model_radio_handler)
         top_grid_layout.addWidget(self._radio_new_model, 0, 0)
 
-        self.experiment_info_widget = ExperimentInfoWidget(
-            self._experiments_model
-        )
+        self._experiment_name_input: QLineEdit = QLineEdit()
+        self._experiment_name_input.setPlaceholderText("Name your model")
+        self._experiment_name_input.textChanged.connect(self._experiment_name_input_handler)
+
         label_new_model: LabelWithHint = LabelWithHint("Start a new model")
         top_grid_layout.addWidget(label_new_model, 0, 1)
-        top_grid_layout.addWidget(self.experiment_info_widget, 0, 2)
+        top_grid_layout.addWidget(self._experiment_name_input, 0, 2)
 
         self._radio_existing_model: QRadioButton = QRadioButton()
         self._radio_existing_model.toggled.connect(self._model_radio_handler)
         top_grid_layout.addWidget(self._radio_existing_model, 1, 0)
 
-        label_existing_model: LabelWithHint = LabelWithHint("Select an existing model")
+        label_existing_model: LabelWithHint = LabelWithHint(
+            "Select an existing model"
+        )
         top_grid_layout.addWidget(label_existing_model, 1, 1)
 
         self._combo_box_existing_models: QComboBox = QComboBox()
@@ -87,7 +88,7 @@ class ModelSelectionWidget(QWidget):
         top_grid_layout.addWidget(self._combo_box_existing_models, 1, 2)
 
         self._combo_box_existing_models.setEnabled(False)
-        self.experiment_info_widget.set_enabled(False)
+        self._experiment_name_input.setEnabled(False)
 
         frame.layout().addLayout(top_grid_layout)
         main_model.subscribe(
@@ -104,6 +105,13 @@ class ModelSelectionWidget(QWidget):
         else:
             self._experiments_model.set_experiment_name(experiment_name)
 
+    def _experiment_name_input_handler(self, text: str) -> None:
+        """
+        Triggered when the user types in the _experiment_name_input.
+        Sets the model name in the model.
+        """
+        self._experiments_model.set_experiment_name(text)
+
     def _model_radio_handler(self) -> None:
         self._main_model.set_new_model(self._radio_new_model.isChecked())
         if self._radio_new_model.isChecked():
@@ -113,7 +121,7 @@ class ModelSelectionWidget(QWidget):
             """
             self._combo_box_existing_models.setCurrentIndex(-1)
             self._combo_box_existing_models.setEnabled(False)
-            self.experiment_info_widget.set_enabled(True)
+            self._experiment_name_input.setEnabled(True)
 
             self._experiments_model.set_experiment_name(None)
 
@@ -124,8 +132,8 @@ class ModelSelectionWidget(QWidget):
             """
             self._experiments_model.set_experiment_name(None)
             self._combo_box_existing_models.setEnabled(True)
-            self.experiment_info_widget.set_enabled(False)
-            self.experiment_info_widget.clear()
+            self._experiment_name_input.setEnabled(False)
+            self._experiment_name_input.clear()
 
     def _handle_new_model_selection(self, _: Event = None) -> None:
         self._radio_existing_model.setChecked(
