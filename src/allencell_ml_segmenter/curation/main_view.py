@@ -155,6 +155,7 @@ class CurationMainView(View):
             )
         )
         self.merging_delete_button: QPushButton = QPushButton("Delete")
+        self.merging_delete_button.clicked.connect(self.delete_merging_mask)
         self.merging_save_button: QPushButton = QPushButton("Save")
         self.merging_save_button.setEnabled(False)
         self.merging_save_button.setObjectName("small_blue_btn")
@@ -198,6 +199,7 @@ class CurationMainView(View):
 
         # TODO: connect the delete button to some functionality
         self.excluding_delete_button: QPushButton = QPushButton("Delete")
+        self.excluding_delete_button.clicked.connect(self.delete_excluding_mask)
         self.excluding_save_button: QPushButton = QPushButton("Save")
         self.excluding_save_button.setObjectName("small_blue_btn")
         self.excluding_save_button.clicked.connect(self.save_excluding_mask)
@@ -385,9 +387,6 @@ class CurationMainView(View):
         self.merging_mask_status.setText("Draw mask")
 
     def save_merging_mask(self) -> None:
-        """
-        Wrapper for curation_service.save_merging_mask() for ui interactivity
-        """
         if self._curation_model.get_base_image() is None:
             show_info("Please select a base image to merge with")
             return
@@ -407,6 +406,13 @@ class CurationMainView(View):
             deepcopy(np.asarray(merging_mask.data, dtype=object))
         )
         self.merging_mask_status.setText("Merging mask saved")
+
+    def delete_merging_mask(self) -> None:
+        merging_mask: Layer = self._get_layer_by_name(MERGING_MASK_LAYER_NAME)
+        if merging_mask is not None:
+            self._viewer.clear_mask_layers([merging_mask])
+        self._curation_model.set_merging_mask(None)
+        self.merging_mask_status.setText("Merging mask deleted")
 
     def _create_excluding_mask(self) -> None:
         excluding_mask: Layer = self._get_layer_by_name(
@@ -443,6 +449,13 @@ class CurationMainView(View):
             deepcopy(np.asarray(excluding_mask.data, dtype=object))
         )
         self.excluding_mask_status.setText("Excluding mask saved")
+
+    def delete_excluding_mask(self) -> None:
+        excluding_mask: Layer = self._get_layer_by_name(EXCLUDING_MASK_LAYER_NAME)
+        if excluding_mask is not None:
+            self._viewer.clear_mask_layers([excluding_mask])
+        self._curation_model.set_excluding_mask(None)
+        self.excluding_mask_status.setText("Excluding mask deleted")
 
     def disable_all_masks(self) -> None:
         self.disable_merging_mask_buttons()
