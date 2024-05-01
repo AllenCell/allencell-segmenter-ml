@@ -294,6 +294,4 @@ class TrainingModel(Publisher):
         self._model_size = ModelSize[model_size]
 
     def get_model_size(self) -> ModelSize:
-        if self._model_size is None:
-            raise ValueError("Model size not set")
         return self._model_size
