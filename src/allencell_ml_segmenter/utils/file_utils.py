@@ -1,5 +1,8 @@
 from pathlib import Path
 from typing import List, Generator
+import os
+import platform
+import subprocess
 
 
 class FileUtils:
@@ -27,3 +30,15 @@ class FileUtils:
         while str(image.name).startswith("."):
             image: Path = next(path_generator)
         return image.resolve()
+
+    @staticmethod
+    def open_directory_in_window(dir: Path) -> None:
+        # for Windows operating systems
+        if platform.system() == "Windows":
+            os.startfile(dir)
+        # for MacOS operating systems
+        elif platform.system() == "Darwin":
+            subprocess.Popen(["open", dir])
+        # for Linux
+        else:
+            subprocess.Popen(["xdg-open", dir])

@@ -9,7 +9,10 @@ import allencell_ml_segmenter
 from allencell_ml_segmenter._tests.fakes.fake_viewer import FakeViewer
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.main.main_model import MainModel
-from allencell_ml_segmenter.prediction.model import PredictionModel
+from allencell_ml_segmenter.prediction.model import (
+    PredictionModel,
+    PredictionInputMode,
+)
 from allencell_ml_segmenter.prediction.view import PredictionView
 
 
@@ -54,6 +57,9 @@ def test_show_results(main_model: MainModel) -> None:
         / "_tests"
         / "test_files"
         / "output_test_folder"
+    )
+    prediction_model.set_prediction_input_mode(
+        PredictionInputMode.FROM_NAPARI_LAYERS
     )
     fake_viewer: FakeViewer = FakeViewer()
 
