@@ -9,6 +9,7 @@ from qtpy.QtWidgets import (
     QLabel,
     QFrame,
     QHBoxLayout,
+    QGridLayout,
     QPushButton,
     QProgressBar,
     QRadioButton,
@@ -116,10 +117,7 @@ class CurationMainView(View):
         )
         use_image_frame.layout().addWidget(self.yes_radio)
         self.no_radio: QRadioButton = QRadioButton("No")
-        self.no_radio.clicked.connect(self.disable_all_masks)
-        self.no_radio.clicked.connect(
-            lambda: self._curation_model.set_use_image(False)
-        )
+        self.no_radio.clicked.connect(self._on_no_radio_clicked)
         use_image_frame.layout().addWidget(self.no_radio)
 
         self._use_img_stacked_spinner = StackedSpinner(use_image_frame)
@@ -127,6 +125,32 @@ class CurationMainView(View):
             self._use_img_stacked_spinner, alignment=Qt.AlignHCenter
         )
 
+        optional_text: QLabel = QLabel("OPTIONAL", self)
+        optional_text.setObjectName("title")
+        self.layout().addWidget(optional_text, alignment=Qt.AlignHCenter)
+
+        base_image_layout: QGridLayout = QGridLayout()
+        base_combo_label: LabelWithHint = LabelWithHint(
+            "Select a base segmentation"
+        )
+        self.merging_base_combo: QComboBox = QComboBox()
+        self.merging_base_combo.addItem("seg1")
+        self.merging_base_combo.addItem("seg2")
+        self.merging_base_combo.currentIndexChanged.connect(
+            lambda idx: self._curation_model.set_base_image(
+                self.merging_base_combo.currentText() if idx >= 0 else None
+            )
+        )
+        # trigger the change event above to set initial model state
+        self.merging_base_combo.setCurrentIndex(1)
+        self.merging_base_combo.setCurrentIndex(0)
+        # these empty QLabels are for spacing... unfortunately cannot apply styling
+        # to a QLayout directly, just QWidgets
+        base_image_layout.addWidget(QLabel(), 0, 0)
+        base_image_layout.addWidget(base_combo_label, 1, 0, 1, 2)
+        base_image_layout.addWidget(self.merging_base_combo, 1, 2, 1, 2)
+        base_image_layout.addWidget(QLabel(), 2, 0)
+        self.layout().addLayout(base_image_layout)
         # Label for Merging mask
         merging_mask_label_and_status: QHBoxLayout = QHBoxLayout()
         merging_mask_label: LabelWithHint = LabelWithHint("Merging mask")
@@ -145,15 +169,6 @@ class CurationMainView(View):
         self.merging_create_button: QPushButton = QPushButton("+ Create")
         self.merging_create_button.clicked.connect(self._create_merging_mask)
         self.merging_create_button.setObjectName("small_blue_btn")
-        self.merging_base_combo: QComboBox = QComboBox()
-        self.merging_base_combo.setPlaceholderText("Base Image:")
-        self.merging_base_combo.addItem("seg1")
-        self.merging_base_combo.addItem("seg2")
-        self.merging_base_combo.currentIndexChanged.connect(
-            lambda idx: self._curation_model.set_base_image(
-                self.merging_base_combo.currentText() if idx >= 0 else None
-            )
-        )
         self.merging_delete_button: QPushButton = QPushButton("Delete")
         self.merging_delete_button.clicked.connect(self.delete_merging_mask)
         self.merging_save_button: QPushButton = QPushButton("Save")
@@ -161,7 +176,6 @@ class CurationMainView(View):
         self.merging_save_button.setObjectName("small_blue_btn")
         self.merging_save_button.clicked.connect(self.save_merging_mask)
         merging_mask_buttons.addWidget(self.merging_create_button)
-        merging_mask_buttons.addWidget(self.merging_base_combo)
         merging_mask_buttons.addWidget(self.merging_delete_button)
         merging_mask_buttons.addWidget(self.merging_save_button)
 
@@ -301,7 +315,7 @@ class CurationMainView(View):
             self.next_button.setText("No more images")
 
         self.yes_radio.click()
-        self.merging_base_combo.setCurrentIndex(-1)
+        self.merging_base_combo.setCurrentIndex(0)
         self._update_progress_bar()
 
     def _on_save_curation_csv(self) -> None:
@@ -471,6 +485,11 @@ class CurationMainView(View):
         else:
             self.disable_merging_mask_buttons()
         self.enable_excluding_mask_buttons()
+
+    def _on_no_radio_clicked(self) -> None:
+        self.disable_all_masks()
+        self._curation_model.set_use_image(False)
+        self.merging_base_combo.setCurrentIndex(0)
 
     # TODO: encapsulate in viewer
     def _get_layer_by_name(self, name: str) -> Layer:
