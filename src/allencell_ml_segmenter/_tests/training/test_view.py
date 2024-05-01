@@ -6,6 +6,7 @@ from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.training.training_model import (
     PatchSize,
     TrainingModel,
+    ModelSize,
 )
 from allencell_ml_segmenter.training.view import TrainingView
 import pytest
@@ -138,3 +139,17 @@ def test_checkbox_slot(
 
     # ASSERT
     assert not training_view._max_time_in_minutes_input.isEnabled()
+
+
+def test_set_model_size(
+    training_view: TrainingView, training_model: TrainingModel
+) -> None:
+    """
+    Tests that using the associated combo box properly sets the model size field.
+    """
+    for idx, model_size in enumerate(ModelSize):
+        # ACT
+        training_view._model_size_combo_box.setCurrentIndex(idx)
+
+        # ASSERT
+        assert training_model.get_model_size() == model_size
