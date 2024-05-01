@@ -45,7 +45,7 @@ def training_model(experiments_model: ExperimentsModel) -> TrainingModel:
     model.set_config_dir("/path/to/configs")
     model.set_patch_size("small")
     model.set_num_epochs(100)
-    #model.set_model_size("medium")
+    model.set_model_size("medium")
     return model
 
 
