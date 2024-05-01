@@ -308,7 +308,6 @@ class CurationModel(QObject):
             (
                 self.get_base_image()
                 if self.get_base_image() is not None
-                and self.get_merging_mask() is not None
                 and self.get_seg2_image_data() is not None
                 else "seg1"
             ),

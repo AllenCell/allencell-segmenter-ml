@@ -26,3 +26,8 @@ QPushButton {
     margin-top: 12px;
     margin-bottom: 12px;
 }
+
+#title {
+    padding-top: 12px;
+    padding-bottom: 12px;
+}
