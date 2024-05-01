@@ -80,8 +80,7 @@ class TrainingService(Subscriber):
             )
             model.print_config()
             model.train()
-            # asyncio.run(model.train(run_async=True))
-
+            
     def _able_to_continue_training(self) -> bool:
         if self._experiments_model.get_experiment_name() is None:
             show_warning(
