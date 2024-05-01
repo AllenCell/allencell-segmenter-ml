@@ -34,12 +34,12 @@ class CytoDLOverridesManager:
 
         overrides_dict: Dict[str, Union[str, int, float, bool, Dict]] = dict()
 
-        # Hardware override
+        # Hardware override (required)
         overrides_dict["trainer.accelerator"] = "cpu"
         if self._training_model.get_hardware_type() == Hardware.GPU:
             overrides_dict["trainer.accelerator"] = "gpu"
 
-        # Spatial Dims
+        # Spatial Dims (required)
         overrides_dict["spatial_dims"] = (
             self._training_model.get_spatial_dims()
         )
@@ -58,17 +58,17 @@ class CytoDLOverridesManager:
                 "minutes": self._training_model.get_max_time()
             }
 
-        # Training input path
+        # Training input path (required)
         overrides_dict["data.path"] = str(
             self._training_model.get_images_directory()
         )
 
-        # Patch shape
+        # Patch shape (required)
         overrides_dict["data._aux.patch_shape"] = (
             self._training_model.get_patch_size().value
         )
 
-        # Checkpoint
+        # Checkpoint (optional)
         if self._experiments_model.get_checkpoint() is not None:
             # We are going to continue training on an existing model
             overrides_dict["ckpt_path"] = str(
@@ -77,5 +77,10 @@ class CytoDLOverridesManager:
                     self._experiments_model.get_checkpoint(),
                 )
             )
+
+        # Filters/Model Size (required)
+        overrides_dict["model._aux.filters"] = (
+            self._training_model.get_model_size().value
+        )
 
         return overrides_dict
