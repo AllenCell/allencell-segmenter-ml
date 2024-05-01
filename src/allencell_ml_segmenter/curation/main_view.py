@@ -190,7 +190,9 @@ class CurationMainView(View):
 
         # TODO: connect the delete button to some functionality
         self.excluding_delete_button: QPushButton = QPushButton("Delete")
-        self.excluding_delete_button.clicked.connect(self.delete_excluding_mask)
+        self.excluding_delete_button.clicked.connect(
+            self.delete_excluding_mask
+        )
         self.excluding_save_button: QPushButton = QPushButton("Save")
         self.excluding_save_button.setObjectName("small_blue_btn")
         self.excluding_save_button.clicked.connect(self.save_excluding_mask)
@@ -433,7 +435,9 @@ class CurationMainView(View):
         self.excluding_mask_status.setText("Excluding mask saved")
 
     def delete_excluding_mask(self) -> None:
-        excluding_mask: Layer = self._get_layer_by_name(EXCLUDING_MASK_LAYER_NAME)
+        excluding_mask: Layer = self._get_layer_by_name(
+            EXCLUDING_MASK_LAYER_NAME
+        )
         if excluding_mask is not None:
             self._viewer.clear_mask_layers([excluding_mask])
         self._curation_model.set_excluding_mask(None)
