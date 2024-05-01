@@ -80,7 +80,7 @@ class TrainingService(Subscriber):
             )
             model.print_config()
             model.train()
-            
+
     def _able_to_continue_training(self) -> bool:
         if self._experiments_model.get_experiment_name() is None:
             show_warning(
