@@ -51,6 +51,7 @@ class ModelSelectionWidget(QWidget):
         top_grid_layout: QGridLayout = QGridLayout()
 
         self._radio_new_model: QRadioButton = QRadioButton()
+        self._radio_new_model.setChecked(self._main_model.is_new_model())
         self._radio_new_model.toggled.connect(self._model_radio_handler)
         top_grid_layout.addWidget(self._radio_new_model, 0, 0)
 
@@ -65,6 +66,7 @@ class ModelSelectionWidget(QWidget):
         top_grid_layout.addWidget(self._experiment_name_input, 0, 2)
 
         self._radio_existing_model: QRadioButton = QRadioButton()
+        self._radio_existing_model.setChecked(not self._main_model.is_new_model())
         self._radio_existing_model.toggled.connect(self._model_radio_handler)
         top_grid_layout.addWidget(self._radio_existing_model, 1, 0)
 
@@ -93,9 +95,6 @@ class ModelSelectionWidget(QWidget):
         self._experiment_name_input.setEnabled(False)
 
         frame.layout().addLayout(top_grid_layout)
-        main_model.subscribe(
-            Event.ACTION_NEW_MODEL, self, self._handle_new_model_selection
-        )
 
     def _model_combo_handler(self, experiment_name: str) -> None:
         """
@@ -137,11 +136,6 @@ class ModelSelectionWidget(QWidget):
             self._experiment_name_input.setEnabled(False)
             self._experiment_name_input.clear()
 
-    def _handle_new_model_selection(self, _: Event = None) -> None:
-        self._radio_existing_model.setChecked(
-            not self._main_model.is_new_model()
-        )
-        self._radio_new_model.setChecked(self._main_model.is_new_model())
 
     def _handle_process_event(self, _: Event = None) -> None:
         """
