@@ -51,8 +51,8 @@ class ModelSelectionWidget(QWidget):
         top_grid_layout: QGridLayout = QGridLayout()
 
         self._radio_new_model: QRadioButton = QRadioButton()
-        self._radio_new_model.setChecked(self._main_model.is_new_model())
         self._radio_new_model.toggled.connect(self._model_radio_handler)
+        self._radio_new_model.setChecked(self._main_model.is_new_model())
         top_grid_layout.addWidget(self._radio_new_model, 0, 0)
 
         self._experiment_name_input: QLineEdit = QLineEdit()
@@ -66,10 +66,10 @@ class ModelSelectionWidget(QWidget):
         top_grid_layout.addWidget(self._experiment_name_input, 0, 2)
 
         self._radio_existing_model: QRadioButton = QRadioButton()
+        self._radio_existing_model.toggled.connect(self._model_radio_handler)
         self._radio_existing_model.setChecked(
             not self._main_model.is_new_model()
         )
-        self._radio_existing_model.toggled.connect(self._model_radio_handler)
         top_grid_layout.addWidget(self._radio_existing_model, 1, 0)
 
         label_existing_model: LabelWithHint = LabelWithHint(
@@ -97,6 +97,9 @@ class ModelSelectionWidget(QWidget):
         self._experiment_name_input.setEnabled(False)
 
         frame.layout().addLayout(top_grid_layout)
+
+        # initialize the rest of the UI to match the radio button's state
+        self._model_radio_handler()
 
     def _model_combo_handler(self, experiment_name: str) -> None:
         """
