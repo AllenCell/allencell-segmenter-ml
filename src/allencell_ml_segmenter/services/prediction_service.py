@@ -3,7 +3,6 @@ import csv
 
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.event import Event
-import sys
 
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.prediction.model import (
@@ -182,14 +181,15 @@ class PredictionService(Subscriber):
         """
         write csv for inputs and return the total number of images
         """
-        data_folder: Path = self._experiments_model.get_csv_path()
-        data_folder.mkdir(parents=False, exist_ok=True)
-        csv_path: Path = data_folder / "test_csv.csv"
-        with open(csv_path, "w") as file:
-            writer: csv.writer = csv.writer(file)
-            writer.writerow(["", "raw", "split"])
-            for i, path_of_image in enumerate(list_images):
-                writer.writerow([str(i), str(path_of_image), "test"])
+        if self._experiments_model.get_csv_path() is not None:
+            data_folder: Path = self._experiments_model.get_csv_path()
+            data_folder.mkdir(parents=False, exist_ok=True)
+            csv_path: Path = data_folder / "test_csv.csv"
+            with open(csv_path, "w") as file:
+                writer: csv.writer = csv.writer(file)
+                writer.writerow(["", "raw", "split"])
+                for i, path_of_image in enumerate(list_images):
+                    writer.writerow([str(i), str(path_of_image), "test"])
 
         self._prediction_model.set_input_image_path(csv_path)
 

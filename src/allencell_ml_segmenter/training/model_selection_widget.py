@@ -96,6 +96,13 @@ class ModelSelectionWidget(QWidget):
         self._apply_change_stacked_widget = QStackedWidget()
 
         apply_btn: QPushButton = QPushButton("Apply")
+        self._experiments_model.subscribe(
+            Event.ACTION_EXPERIMENT_SELECTED, 
+            self,
+            lambda e: apply_btn.setEnabled(
+                self._experiments_model.get_experiment_name() is not None
+            ),
+        )
         apply_btn.clicked.connect(self._handle_apply_model)
         apply_model_layout = QVBoxLayout()
         apply_model_layout.addLayout(top_grid_layout)
@@ -125,7 +132,9 @@ class ModelSelectionWidget(QWidget):
         self._model_radio_handler()
 
     def _handle_apply_model(self):
-        self._model_name_label.setText(self._experiments_model.get_experiment_name())
+        self._model_name_label.setText(
+            self._experiments_model.get_experiment_name()
+        )
         self._apply_change_stacked_widget.setCurrentIndex(1)
 
     def _handle_change_model(self):
