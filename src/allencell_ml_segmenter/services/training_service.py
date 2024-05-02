@@ -79,7 +79,7 @@ class TrainingService(Subscriber):
                 cyto_overrides_manager.get_training_overrides()
             )
             model.print_config()
-            asyncio.run(model.train(run_async=True))
+            model.train()
 
     def _able_to_continue_training(self) -> bool:
         if self._experiments_model.get_experiment_name() is None:
@@ -115,6 +115,9 @@ class TrainingService(Subscriber):
             show_warning(
                 "Your raw images have multiple channels, please select a channel to train on."
             )
+            return False
+        if self._training_model.get_model_size() is None:
+            show_warning("Please define model size.")
             return False
         return True
 
