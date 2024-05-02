@@ -2,9 +2,8 @@ from abc import ABC, abstractmethod
 from qtpy.QtCore import QObject
 from typing import List, Optional
 from pathlib import Path
-from allencell_ml_segmenter.core.q_runnable_manager import (
-    IQRunnableManager,
-)
+from allencell_ml_segmenter.core.task_executor import ITaskExecutor
+
 from allencell_ml_segmenter.core.image_data_extractor import (
     IImageDataExtractor,
     ImageData,
@@ -19,6 +18,7 @@ class ICurationImageLoader(QObject):
         seg1_images: List[Path],
         seg2_images: Optional[List[Path]],
         img_data_extractor: IImageDataExtractor,
+        task_executor: ITaskExecutor,
     ):
         super().__init__()
         self._raw_images: List[Path] = list(raw_images)
@@ -38,6 +38,7 @@ class ICurationImageLoader(QObject):
         self._num_images = len(self._raw_images)
 
         self._img_data_extractor: IImageDataExtractor = img_data_extractor
+        self._task_executor = task_executor
         self._cursor: int = 0
 
     def get_num_images(self) -> int:
