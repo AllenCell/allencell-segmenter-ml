@@ -61,8 +61,9 @@ class CurationImageLoader(ICurationImageLoader):
         self._set_curr_is_busy(True)
         self._start_extraction_threads(0, self._curr_img_data, self._on_first_image_ready)
 
-        self._set_next_is_busy(True)
-        self._start_extraction_threads(1, self._next_img_data, self._on_next_image_ready)
+        if self.has_next():
+            self._set_next_is_busy(True)
+            self._start_extraction_threads(1, self._next_img_data, self._on_next_image_ready)
 
     def is_busy(self) -> bool:
         return any(self._is_busy)
