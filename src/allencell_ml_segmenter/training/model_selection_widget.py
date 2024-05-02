@@ -47,11 +47,24 @@ class ModelSelectionWidget(QWidget):
         frame.setObjectName("frame")
         self.layout().addWidget(frame)
 
+        # existing model selection components must be initialized before the new/existing model radios
+        self._combo_box_existing_models: QComboBox = QComboBox()
+        self._combo_box_existing_models.setCurrentIndex(-1)
+        self._combo_box_existing_models.setPlaceholderText("Select an option")
+        self._combo_box_existing_models.setEnabled(False)
+        self._combo_box_existing_models.setMinimumWidth(306)
+
+        self._refresh_experiment_options()
+        self._combo_box_existing_models.currentTextChanged.connect(
+            self._model_combo_handler
+        )
+
         # model selection components
         top_grid_layout: QGridLayout = QGridLayout()
 
         self._radio_new_model: QRadioButton = QRadioButton()
         self._radio_new_model.toggled.connect(self._model_radio_handler)
+        # initialize the radio button and combos / tabs to match the model state
         self._radio_new_model.setChecked(self._main_model.is_new_model())
         top_grid_layout.addWidget(self._radio_new_model, 0, 0)
 
@@ -67,37 +80,20 @@ class ModelSelectionWidget(QWidget):
 
         self._radio_existing_model: QRadioButton = QRadioButton()
         self._radio_existing_model.toggled.connect(self._model_radio_handler)
+        # initialize the radio button and combos / tabs to match the model state
         self._radio_existing_model.setChecked(
             not self._main_model.is_new_model()
         )
         top_grid_layout.addWidget(self._radio_existing_model, 1, 0)
-
-        label_existing_model: LabelWithHint = LabelWithHint(
+        top_grid_layout.addWidget(LabelWithHint(
             "Select an existing model"
-        )
-        top_grid_layout.addWidget(label_existing_model, 1, 1)
+        ), 1, 1)
+        top_grid_layout.addWidget(self._combo_box_existing_models, 1, 2)
+        frame.layout().addLayout(top_grid_layout)
 
-        self._combo_box_existing_models: QComboBox = QComboBox()
-        self._combo_box_existing_models.setCurrentIndex(-1)
-        self._combo_box_existing_models.setPlaceholderText("Select an option")
-        self._combo_box_existing_models.setEnabled(False)
-        self._combo_box_existing_models.setMinimumWidth(306)
-
-        self._refresh_experiment_options()
-        self._combo_box_existing_models.currentTextChanged.connect(
-            self._model_combo_handler
-        )
         self._experiments_model.subscribe(
             Event.ACTION_REFRESH, self, self._handle_process_event
         )
-
-        top_grid_layout.addWidget(self._combo_box_existing_models, 1, 2)
-
-        self._combo_box_existing_models.setEnabled(False)
-        self._experiment_name_input.setEnabled(False)
-
-        frame.layout().addLayout(top_grid_layout)
-
         # initialize the rest of the UI to match the radio button's state
         self._model_radio_handler()
 
