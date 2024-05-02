@@ -85,9 +85,9 @@ class ModelSelectionWidget(QWidget):
             not self._main_model.is_new_model()
         )
         top_grid_layout.addWidget(self._radio_existing_model, 1, 0)
-        top_grid_layout.addWidget(LabelWithHint(
-            "Select an existing model"
-        ), 1, 1)
+        top_grid_layout.addWidget(
+            LabelWithHint("Select an existing model"), 1, 1
+        )
         top_grid_layout.addWidget(self._combo_box_existing_models, 1, 2)
         frame.layout().addLayout(top_grid_layout)
 
