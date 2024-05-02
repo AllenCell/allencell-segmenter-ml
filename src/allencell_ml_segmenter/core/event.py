@@ -20,6 +20,7 @@ class Event(Enum):
     # Action events. This signals a change in the UI. These are a direct result of a user action
     ACTION_REFRESH = "refresh"
     ACTION_CHANGE_VIEW = "change_view"
+    ACTION_NEW_MODEL = "new_model"
     # Training
     ACTION_START_TRAINING = "start_training"
     ACTION_TRAINING_MAX_NUMBER_CHANNELS_SET = "max_number_channel_set_training"

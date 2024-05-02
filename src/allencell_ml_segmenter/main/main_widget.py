@@ -52,7 +52,10 @@ class MainWidget(AicsWidget):
 
         self._model: MainModel = MainModel()
         self._model.subscribe(
-            Event.ACTION_CHANGE_VIEW, self, self.handle_change_view
+            Event.ACTION_CHANGE_VIEW, self, self._handle_change_view
+        )
+        self._model.subscribe(
+            Event.ACTION_NEW_MODEL, self, self._handle_new_model
         )
 
         if self.user_settings.get_user_experiments_path() is None:
@@ -81,28 +84,15 @@ class MainWidget(AicsWidget):
             experiments_model=self._experiments_model,
         )
 
-        # Model selection which applies to all views
-        model_selection_widget: ModelSelectionWidget = ModelSelectionWidget(
-            self._experiments_model
-        )
-        model_selection_widget.setObjectName("modelSelection")
-        self.layout().addWidget(model_selection_widget, Qt.AlignTop)
-
         # keep track of views
         self._view_container: QTabWidget = QTabWidget()
-        self.layout().addWidget(self._view_container, Qt.AlignCenter)
-        self.layout().addStretch(100)
-
         self._view_to_index: Dict[View, int] = dict()
 
         # initialize the tabs
-        self._prediction_view: PredictionView = PredictionView(
-            main_model=self._model,
-            prediction_model=self._prediction_model,
-            viewer=self.viewer,
+        self._curation_view: CurationWidget = CurationWidget(
+            self.viewer, self._model, self._experiments_model
         )
-        self._initialize_view(self._prediction_view, "Prediction")
-
+        self._initialize_view(self._curation_view, "Curation")
         self._training_view: TrainingView = TrainingView(
             main_model=self._model,
             viewer=self.viewer,
@@ -110,15 +100,40 @@ class MainWidget(AicsWidget):
             training_model=self._training_model,
         )
         self._initialize_view(self._training_view, "Training")
-
-        self._curation_view: CurationWidget = CurationWidget(
-            self.viewer, self._model, self._experiments_model
+        self._prediction_view: PredictionView = PredictionView(
+            main_model=self._model,
+            prediction_model=self._prediction_model,
+            viewer=self.viewer,
         )
-        self._initialize_view(self._curation_view, "Curation")
-
+        self._initialize_view(self._prediction_view, "Prediction")
         self._view_container.currentChanged.connect(self._tab_changed)
 
-    def handle_change_view(self, event: Event) -> None:
+        # Model selection which applies to all views
+        model_selection_widget: ModelSelectionWidget = ModelSelectionWidget(
+            self._model, self._experiments_model
+        )
+        model_selection_widget.setObjectName("modelSelection")
+
+        self.layout().addWidget(model_selection_widget, Qt.AlignTop)
+        self.layout().addWidget(self._view_container, Qt.AlignCenter)
+        self.layout().addStretch(100)
+
+    def _handle_new_model(self, _: Event) -> None:
+        """
+        Handle the new model radio button toggled event.
+
+        inputs:
+            is_new_model - bool
+        """
+        self._view_container.setTabEnabled(0, self._model.is_new_model())
+        self._view_container.setTabEnabled(1, self._model.is_new_model())
+        self._set_view(
+            self._curation_view
+            if self._model.is_new_model()
+            else self._prediction_view
+        )
+
+    def _handle_change_view(self, event: Event) -> None:
         """
         Handle event function for the main widget, which handles MainEvents.
 
