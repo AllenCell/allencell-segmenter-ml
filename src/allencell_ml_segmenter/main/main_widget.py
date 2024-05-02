@@ -113,7 +113,7 @@ class MainWidget(AicsWidget):
             self._model, self._experiments_model
         )
         model_selection_widget.setObjectName("modelSelection")
-        
+
         self.layout().addWidget(model_selection_widget, Qt.AlignTop)
         self.layout().addWidget(self._view_container, Qt.AlignCenter)
         self.layout().addStretch(100)
