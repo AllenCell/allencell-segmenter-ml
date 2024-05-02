@@ -66,7 +66,9 @@ class ModelSelectionWidget(QWidget):
         top_grid_layout.addWidget(self._experiment_name_input, 0, 2)
 
         self._radio_existing_model: QRadioButton = QRadioButton()
-        self._radio_existing_model.setChecked(not self._main_model.is_new_model())
+        self._radio_existing_model.setChecked(
+            not self._main_model.is_new_model()
+        )
         self._radio_existing_model.toggled.connect(self._model_radio_handler)
         top_grid_layout.addWidget(self._radio_existing_model, 1, 0)
 
@@ -135,7 +137,6 @@ class ModelSelectionWidget(QWidget):
             self._combo_box_existing_models.setEnabled(True)
             self._experiment_name_input.setEnabled(False)
             self._experiment_name_input.clear()
-
 
     def _handle_process_event(self, _: Event = None) -> None:
         """
