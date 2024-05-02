@@ -33,9 +33,7 @@ class ExperimentsModel(IExperimentsModel):
         name (str): name of cyto-dl experiment
         """
         self._experiment_name = name
-        if self._experiment_name:
-            # if a experiment name is set
-            self.dispatch(Event.ACTION_EXPERIMENT_SELECTED)
+        self.dispatch(Event.ACTION_EXPERIMENT_SELECTED)
 
     def get_checkpoint(self) -> Optional[str]:
         """
@@ -100,11 +98,13 @@ class ExperimentsModel(IExperimentsModel):
         )
 
     def get_csv_path(self) -> Path:
-        return (
-            self.get_user_experiments_path()
-            / self.get_experiment_name()
-            / "data"
-        )
+        if self.get_user_experiments_path() is not None and self.get_experiment_name() is not None:
+            return (
+                self.get_user_experiments_path()
+                / self.get_experiment_name()
+                / "data"
+            )
+        return None
 
     def get_metrics_csv_path(self) -> Path:
         return (
