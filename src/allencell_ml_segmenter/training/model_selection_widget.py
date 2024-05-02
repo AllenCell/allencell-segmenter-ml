@@ -7,6 +7,9 @@ from qtpy.QtWidgets import (
     QComboBox,
     QRadioButton,
     QLineEdit,
+    QPushButton,
+    QStackedWidget,
+    QLabel,
 )
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
@@ -89,13 +92,44 @@ class ModelSelectionWidget(QWidget):
             LabelWithHint("Select an existing model"), 1, 1
         )
         top_grid_layout.addWidget(self._combo_box_existing_models, 1, 2)
-        frame.layout().addLayout(top_grid_layout)
+
+        self._apply_change_stacked_widget = QStackedWidget()
+
+        apply_btn: QPushButton = QPushButton("Apply")
+        apply_btn.clicked.connect(self._handle_apply_model)
+        apply_model_layout = QVBoxLayout()
+        apply_model_layout.addLayout(top_grid_layout)
+        apply_model_layout.addWidget(apply_btn)
+        apply_model_widget = QWidget()
+        apply_model_widget.setLayout(apply_model_layout)
+        self._apply_change_stacked_widget.addWidget(apply_model_widget)
+
+        change_model_btn: QPushButton = QPushButton("Change model")
+        change_model_btn.clicked.connect(self._handle_change_model)
+        change_model_layout = QVBoxLayout()
+        self._model_name_label = QLabel("Model name")
+        change_model_layout.addWidget(self._model_name_label)
+        change_model_layout.addWidget(change_model_btn)
+        change_model_widget = QWidget()
+        change_model_widget.setLayout(change_model_layout)
+        self._apply_change_stacked_widget.addWidget(change_model_widget)
+
+        frameLayout = QVBoxLayout()
+        frameLayout.addWidget(self._apply_change_stacked_widget)
+        frame.layout().addLayout(frameLayout)
 
         self._experiments_model.subscribe(
             Event.ACTION_REFRESH, self, self._handle_process_event
         )
         # initialize the rest of the UI to match the radio button's state
         self._model_radio_handler()
+
+    def _handle_apply_model(self):
+        self._model_name_label.setText(self._experiments_model.get_experiment_name())
+        self._apply_change_stacked_widget.setCurrentIndex(1)
+
+    def _handle_change_model(self):
+        self._apply_change_stacked_widget.setCurrentIndex(0)
 
     def _model_combo_handler(self, experiment_name: str) -> None:
         """
