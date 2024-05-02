@@ -37,6 +37,24 @@ def test_get_current_view(main_model: MainModel) -> None:
     assert main_model.get_current_view() == mock_view
 
 
+def test_set_new_model(
+    main_model: MainModel, fake_subscriber: FakeSubscriber
+) -> None:
+    """
+    Tests that a new model can be set.
+    """
+    # ARRANGE
+    main_model.subscribe(
+        Event.ACTION_NEW_MODEL, fake_subscriber, fake_subscriber.handle
+    )
+
+    # ACT
+    main_model.set_new_model(True)
+
+    # ASSERT
+    assert fake_subscriber.was_handled(Event.ACTION_NEW_MODEL)
+
+
 def test_set_current_view(
     main_model: MainModel, fake_subscriber: FakeSubscriber
 ) -> None:

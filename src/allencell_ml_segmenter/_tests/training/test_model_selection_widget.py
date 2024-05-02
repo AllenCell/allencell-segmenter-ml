@@ -20,23 +20,34 @@ def experiment_model() -> IExperimentsModel:
 
 
 @pytest.fixture
-def training_model() -> TrainingModel:
+def main_model() -> MainModel:
+    """
+    Fixture for MainModel testing.
+    """
+    return MainModel()
+
+
+@pytest.fixture
+def training_model(main_model: MainModel) -> TrainingModel:
     """
     Fixture that creates an instance of TrainingModel for testing.
     """
     return TrainingModel(  # instead of this, how about i mock os.listdir ?
-        MainModel(), FakeExperimentsModel()
+        main_model, FakeExperimentsModel()
     )
 
 
 @pytest.fixture
 def model_selection_widget(
+    main_model: MainModel,
     experiment_model: IExperimentsModel,
 ) -> ModelSelectionWidget:
     """
     Fixture that creates an instance of ModelSelectionWidget for testing.
     """
-    return ModelSelectionWidget(experiments_model=experiment_model)
+    return ModelSelectionWidget(
+        main_model=main_model, experiments_model=experiment_model
+    )
 
 
 def test_radio_new_slot(
@@ -62,7 +73,9 @@ def test_radio_existing_slot(
     """
     Test the slot connected to the "existing model" radio button.
     """
-    # ARRANGE
+    # ARRANGE radios selected in the inverted condition that the action will set them to
+    model_selection_widget._radio_new_model.setChecked(True)
+    model_selection_widget._radio_existing_model.setChecked(False)
     model_selection_widget._combo_box_existing_models.setEnabled(False)
 
     # ACT (enable combo box)
@@ -80,8 +93,10 @@ def test_select_new_model_radio(
     model_selection_widget: ModelSelectionWidget,
     experiment_model: IExperimentsModel,
 ) -> None:
-    # ARRANGE
+    # ARRANGE radios selected in the inverted condition that the action will set them to
     experiment_model.set_experiment_name("dummy_experiment")
+    model_selection_widget._radio_new_model.setChecked(False)
+    model_selection_widget._radio_existing_model.setChecked(True)
 
     # ACT - press "start a new model" radio button, which should set model_path to None
     with qtbot.waitSignal(model_selection_widget._radio_new_model.toggled):
@@ -100,7 +115,8 @@ def test_select_existing_model_option(
     Tests that the slots connected to the "start a new model" radio button and the existing model QCombBox properly set the model path field.
     """
     # ARRANGE - add arbitrary model path options to the QComboBox, since it does not come with default choices
-    dummy_checkpoint = "dummy_checkpoint"
+    model_selection_widget._radio_new_model.setChecked(True)
+    model_selection_widget._radio_existing_model.setChecked(False)
     with qtbot.waitSignal(
         model_selection_widget._radio_existing_model.toggled
     ):

@@ -4,6 +4,9 @@ import csv
 from typing import List, Generator
 from napari.layers import Shapes
 from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
+import os
+import platform
+import subprocess
 
 
 # TODO: decide whether utils should be like this with staticmethods or singletons with
@@ -125,3 +128,15 @@ class FileUtils:
                     )
                     idx += 1
                 f.flush()
+
+    @staticmethod
+    def open_directory_in_window(dir: Path) -> None:
+        # for Windows operating systems
+        if platform.system() == "Windows":
+            os.startfile(dir)
+        # for MacOS operating systems
+        elif platform.system() == "Darwin":
+            subprocess.Popen(["open", dir])
+        # for Linux
+        else:
+            subprocess.Popen(["xdg-open", dir])
