@@ -24,7 +24,10 @@ from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.training.image_selection_widget import (
     ImageSelectionWidget,
 )
-from allencell_ml_segmenter.training.training_model import TrainingModel
+from allencell_ml_segmenter.training.training_model import (
+    TrainingModel,
+    ModelSize,
+)
 
 from aicsimageio import AICSImage
 from aicsimageio.readers import TiffReader
@@ -102,10 +105,25 @@ class TrainingView(View):
         )
         bottom_grid_layout.addWidget(self._patch_size_combo_box, 0, 1)
 
+        model_size_label: LabelWithHint = LabelWithHint("Model size")
+        bottom_grid_layout.addWidget(model_size_label, 1, 0)
+
+        self._model_size_combo_box: QComboBox = QComboBox()
+        self._model_size_combo_box.setObjectName("modelSizeComboBox")
+        self._model_size_combo_box.setCurrentIndex(-1)
+        self._model_size_combo_box.setPlaceholderText("Select an option")
+        self._model_size_combo_box.addItems(
+            [size.name.lower() for size in ModelSize]
+        )
+        self._model_size_combo_box.currentTextChanged.connect(
+            lambda model_size: self._training_model.set_model_size(model_size)
+        )
+        bottom_grid_layout.addWidget(self._model_size_combo_box, 1, 1)
+
         image_dimensions_label: LabelWithHint = LabelWithHint(
             "Image dimension"
         )
-        bottom_grid_layout.addWidget(image_dimensions_label, 1, 0)
+        bottom_grid_layout.addWidget(image_dimensions_label, 2, 0)
 
         dimension_choice_layout: QHBoxLayout = QHBoxLayout()
         dimension_choice_layout.setSpacing(0)
@@ -137,10 +155,10 @@ class TrainingView(View):
         )  # stops interference with other radio buttons
         dimension_choice_dummy.setLayout(dimension_choice_layout)
 
-        bottom_grid_layout.addWidget(dimension_choice_dummy, 1, 1)
+        bottom_grid_layout.addWidget(dimension_choice_dummy, 2, 1)
 
         num_epochs_label: LabelWithHint = LabelWithHint("Training steps")
-        bottom_grid_layout.addWidget(num_epochs_label, 2, 0)
+        bottom_grid_layout.addWidget(num_epochs_label, 3, 0)
 
         self._num_epochs_input: QLineEdit = QLineEdit()
         # allow only integers TODO [needs test coverage]
@@ -150,7 +168,7 @@ class TrainingView(View):
         self._num_epochs_input.textChanged.connect(
             self._num_epochs_field_handler
         )
-        bottom_grid_layout.addWidget(self._num_epochs_input, 2, 1)
+        bottom_grid_layout.addWidget(self._num_epochs_input, 3, 1)
 
         max_time_layout: QHBoxLayout = QHBoxLayout()
         max_time_layout.setSpacing(0)
@@ -179,7 +197,7 @@ class TrainingView(View):
         max_time_layout.addWidget(max_time_right_text, alignment=Qt.AlignLeft)
         max_time_layout.addStretch()
 
-        bottom_grid_layout.addLayout(max_time_layout, 3, 1)
+        bottom_grid_layout.addLayout(max_time_layout, 4, 1)
         bottom_grid_layout.setColumnStretch(1, 8)
         bottom_grid_layout.setColumnStretch(0, 3)
 
@@ -204,15 +222,10 @@ class TrainingView(View):
         """
         Starts training process
         """
-        current_epoch: Optional[int] = (
-            self._experiments_model.get_current_epoch()
-        )
-        min_epoch: int = current_epoch + 1 if current_epoch is not None else 0
         progress_tracker: MetricsCSVProgressTracker = (
             MetricsCSVProgressTracker(
                 self._experiments_model.get_metrics_csv_path(),
-                min_epoch,
-                min_epoch + self._training_model.get_num_epochs(),
+                self._training_model.get_num_epochs(),
                 self._experiments_model.get_latest_metrics_csv_version() + 1,
             )
         )
