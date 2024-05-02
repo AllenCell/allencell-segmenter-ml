@@ -177,7 +177,12 @@ def test_next_without_seg2():
         img_data_extractor=FakeImageDataExtractor.global_instance(),
         task_executor=SynchroTaskExecutor.global_instance(),
     )
+    on_next_ready_mock: Mock = Mock()
+    loader.next_image_ready.connect(on_next_ready_mock)
+    loader.start()
+
     assert loader.get_current_index() == 0
+    assert on_next_ready_mock.call_count == 1
     assert loader.get_raw_image_data().path == raw[0]
     assert loader.get_seg1_image_data().path == seg1[0]
     assert loader.get_seg2_image_data() is None
@@ -185,6 +190,7 @@ def test_next_without_seg2():
     assert loader.has_next()
     loader.next()
     assert loader.get_current_index() == 1
+    assert on_next_ready_mock.call_count == 2
     assert loader.get_raw_image_data().path == raw[1]
     assert loader.get_seg1_image_data().path == seg1[1]
     assert loader.get_seg2_image_data() is None
@@ -192,6 +198,7 @@ def test_next_without_seg2():
     assert loader.has_next()
     loader.next()
     assert loader.get_current_index() == 2
+    assert on_next_ready_mock.call_count == 2
     assert loader.get_raw_image_data().path == raw[2]
     assert loader.get_seg1_image_data().path == seg1[2]
     assert loader.get_seg2_image_data() is None
@@ -209,9 +216,14 @@ def test_prev_with_seg2():
         img_data_extractor=FakeImageDataExtractor.global_instance(),
         task_executor=SynchroTaskExecutor.global_instance(),
     )
+    on_prev_ready_mock: Mock = Mock()
+    loader.prev_image_ready.connect(on_prev_ready_mock)
+    loader.start()
     loader.next()
     loader.next()
+
     assert loader.get_current_index() == 2
+    assert on_prev_ready_mock.call_count == 0
     assert loader.get_raw_image_data().path == raw[2]
     assert loader.get_seg1_image_data().path == seg1[2]
     assert loader.get_seg2_image_data().path == seg2[2]
@@ -219,6 +231,7 @@ def test_prev_with_seg2():
     assert loader.has_prev()
     loader.prev()
     assert loader.get_current_index() == 1
+    assert on_prev_ready_mock.call_count == 1
     assert loader.get_raw_image_data().path == raw[1]
     assert loader.get_seg1_image_data().path == seg1[1]
     assert loader.get_seg2_image_data().path == seg2[1]
@@ -226,6 +239,7 @@ def test_prev_with_seg2():
     assert loader.has_prev()
     loader.prev()
     assert loader.get_current_index() == 0
+    assert on_prev_ready_mock.call_count == 1
     assert loader.get_raw_image_data().path == raw[0]
     assert loader.get_seg1_image_data().path == seg1[0]
     assert loader.get_seg2_image_data().path == seg2[0]
@@ -243,9 +257,14 @@ def test_prev_without_seg2():
         img_data_extractor=FakeImageDataExtractor.global_instance(),
         task_executor=SynchroTaskExecutor.global_instance(),
     )
+    on_prev_ready_mock: Mock = Mock()
+    loader.prev_image_ready.connect(on_prev_ready_mock)
+    loader.start()
     loader.next()
     loader.next()
+
     assert loader.get_current_index() == 2
+    assert on_prev_ready_mock.call_count == 0
     assert loader.get_raw_image_data().path == raw[2]
     assert loader.get_seg1_image_data().path == seg1[2]
     assert loader.get_seg2_image_data() is None
@@ -253,6 +272,7 @@ def test_prev_without_seg2():
     assert loader.has_prev()
     loader.prev()
     assert loader.get_current_index() == 1
+    assert on_prev_ready_mock.call_count == 1
     assert loader.get_raw_image_data().path == raw[1]
     assert loader.get_seg1_image_data().path == seg1[1]
     assert loader.get_seg2_image_data() is None
@@ -260,6 +280,7 @@ def test_prev_without_seg2():
     assert loader.has_prev()
     loader.prev()
     assert loader.get_current_index() == 0
+    assert on_prev_ready_mock.call_count == 1
     assert loader.get_raw_image_data().path == raw[0]
     assert loader.get_seg1_image_data().path == seg1[0]
     assert loader.get_seg2_image_data() is None
