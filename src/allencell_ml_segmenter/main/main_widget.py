@@ -84,18 +84,8 @@ class MainWidget(AicsWidget):
             experiments_model=self._experiments_model,
         )
 
-        # Model selection which applies to all views
-        model_selection_widget: ModelSelectionWidget = ModelSelectionWidget(
-            self._model, self._experiments_model
-        )
-        model_selection_widget.setObjectName("modelSelection")
-        self.layout().addWidget(model_selection_widget, Qt.AlignTop)
-
         # keep track of views
         self._view_container: QTabWidget = QTabWidget()
-        self.layout().addWidget(self._view_container, Qt.AlignCenter)
-        self.layout().addStretch(100)
-
         self._view_to_index: Dict[View, int] = dict()
 
         # initialize the tabs
@@ -117,7 +107,16 @@ class MainWidget(AicsWidget):
         )
         self._initialize_view(self._prediction_view, "Prediction")
         self._view_container.currentChanged.connect(self._tab_changed)
-        self._model.set_new_model(False)
+
+        # Model selection which applies to all views
+        model_selection_widget: ModelSelectionWidget = ModelSelectionWidget(
+            self._model, self._experiments_model
+        )
+        model_selection_widget.setObjectName("modelSelection")
+        
+        self.layout().addWidget(model_selection_widget, Qt.AlignTop)
+        self.layout().addWidget(self._view_container, Qt.AlignCenter)
+        self.layout().addStretch(100)
 
     def _handle_new_model(self, _: Event) -> None:
         """
