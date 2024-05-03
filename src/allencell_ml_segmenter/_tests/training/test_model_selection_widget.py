@@ -94,7 +94,7 @@ def test_select_new_model_radio(
     experiment_model: IExperimentsModel,
 ) -> None:
     # ARRANGE radios selected in the inverted condition that the action will set them to
-    experiment_model.set_experiment_name("dummy_experiment")
+    experiment_model.apply_experiment_name("dummy_experiment")
     model_selection_widget._radio_new_model.setChecked(False)
     model_selection_widget._radio_existing_model.setChecked(True)
 

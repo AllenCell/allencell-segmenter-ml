@@ -16,7 +16,7 @@ class FakeExperimentsModel(IExperimentsModel):
     def get_experiment_name(self) -> str:
         return self._experiment_name
 
-    def set_experiment_name(self, name: str) -> None:
+    def apply_experiment_name(self, name: str) -> None:
         self._experiment_name = name
 
     def get_checkpoint(self) -> str:

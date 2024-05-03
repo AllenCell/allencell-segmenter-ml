@@ -1,11 +1,13 @@
 # from pathlib import Path
 from pathlib import Path
 import pytest
+from allencell_ml_segmenter._tests.fakes.fake_subscriber import FakeSubscriber
 from allencell_ml_segmenter._tests.fakes.fake_user_settings import (
     FakeUserSettings,
 )
 from allencell_ml_segmenter.config.i_user_settings import IUserSettings
 
+from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 import allencell_ml_segmenter
 
@@ -23,7 +25,7 @@ def experiments_model() -> ExperimentsModel:
             cyto_dl_home_path=Path(), user_experiments_path=exp_path
         )
     )
-    experiments_model.set_experiment_name("2_exp")
+    experiments_model.apply_experiment_name("2_exp")
     return experiments_model
 
 
@@ -111,7 +113,7 @@ def test_get_csv_path() -> None:
         user_experiments_path=user_experiments_path,
     )
     model = ExperimentsModel(config)
-    model.set_experiment_name("0_exp")
+    model.apply_experiment_name("0_exp")
     expected = user_experiments_path / "0_exp" / "data"
 
     # Act / Assert
@@ -126,7 +128,7 @@ def test_get_metrics_csv_path() -> None:
         user_experiments_path=user_experiments_path,
     )
     model = ExperimentsModel(config)
-    model.set_experiment_name("0_exp")
+    model.apply_experiment_name("0_exp")
     expected = user_experiments_path / "0_exp" / "csv"
 
     # Act / Assert
@@ -141,7 +143,7 @@ def test_get_latest_metrics_csv_version_no_versions() -> None:
         user_experiments_path=user_experiments_path,
     )
     model = ExperimentsModel(config)
-    model.set_experiment_name("0_exp")
+    model.apply_experiment_name("0_exp")
 
     # Act / Assert
     assert model.get_latest_metrics_csv_version() == -1
@@ -155,7 +157,7 @@ def test_get_latest_metrics_csv_version_no_directory() -> None:
         user_experiments_path=user_experiments_path,
     )
     model = ExperimentsModel(config)
-    model.set_experiment_name("2_exp")
+    model.apply_experiment_name("2_exp")
 
     # Act / Assert
     assert model.get_latest_metrics_csv_version() == -1
@@ -169,7 +171,7 @@ def test_get_latest_metrics_csv_version_version_1() -> None:
         user_experiments_path=user_experiments_path,
     )
     model = ExperimentsModel(config)
-    model.set_experiment_name("1_exp")
+    model.apply_experiment_name("1_exp")
 
     # Act / Assert
     assert model.get_latest_metrics_csv_version() == 1
@@ -183,7 +185,7 @@ def test_get_current_epoch_with_ckpt() -> None:
         user_experiments_path=user_experiments_path,
     )
     model = ExperimentsModel(config)
-    model.set_experiment_name("one_ckpt_exp")
+    model.apply_experiment_name("one_ckpt_exp")
 
     # Act / Assert
     assert model.get_current_epoch() == 0
@@ -198,7 +200,49 @@ def test_get_current_epoch_no_ckpt() -> None:
     )
     model = ExperimentsModel(config)
     # this experiment has no checkpoints, so we expect current epoch to be undefined
-    model.set_experiment_name("0_exp")
+    model.apply_experiment_name("0_exp")
 
     # Act / Assert
     assert model.get_current_epoch() is None
+
+
+def test_apply_experiment_name() -> None:
+    # Arrange
+    user_experiments_path = Path(__file__).parent / "experiments_home"
+    config = FakeUserSettings(
+        cyto_dl_home_path=Path(__file__).parent / "cyto_dl_home",
+        user_experiments_path=user_experiments_path,
+    )
+    model = ExperimentsModel(config)
+    subscriber = FakeSubscriber()
+    model.subscribe(Event.ACTION_EXPERIMENT_APPLIED,
+                    subscriber, subscriber.handle)
+    expected = "test_experiment"
+
+    # Act
+    model.apply_experiment_name(expected)
+
+    # Assert
+    assert model.get_experiment_name() == expected
+    assert subscriber.was_handled(Event.ACTION_EXPERIMENT_APPLIED)
+
+
+def test_set_experiment_name_selection() -> None:
+    # Arrange
+    user_experiments_path = Path(__file__).parent / "experiments_home"
+    config = FakeUserSettings(
+        cyto_dl_home_path=Path(__file__).parent / "cyto_dl_home",
+        user_experiments_path=user_experiments_path,
+    )
+    model = ExperimentsModel(config)
+    subscriber = FakeSubscriber()
+    model.subscribe(Event.ACTION_EXPERIMENT_SELECTED,
+                    subscriber, subscriber.handle)
+    expected = "test_experiment"
+
+    # Act
+    model.select_experiment_name(expected)
+
+    # Assert
+    assert model.get_experiment_name_selection() == expected
+    assert subscriber.was_handled(Event.ACTION_EXPERIMENT_APPLIED)
