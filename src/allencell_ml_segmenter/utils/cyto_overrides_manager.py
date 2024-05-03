@@ -64,9 +64,7 @@ class CytoDLOverridesManager:
         )
 
         # Patch shape (required)
-        overrides_dict["data._aux.patch_shape"] = (
-            self._training_model.get_patch_size().value
-        )
+        overrides_dict["data._aux.patch_shape"] = [48, 128, 128]
 
         # Checkpoint (optional)
         if self._experiments_model.get_checkpoint() is not None:
@@ -79,8 +77,7 @@ class CytoDLOverridesManager:
             )
 
         # Filters/Model Size (required)
-        overrides_dict["model._aux.filters"] = (
-            self._training_model.get_model_size().value
-        )
+        overrides_dict["model._aux.filters"] = [8, 16, 32]
+        overrides_dict["data.num_workers"] = 16
 
         return overrides_dict
