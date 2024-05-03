@@ -17,27 +17,24 @@ class ExperimentsModel(IExperimentsModel):
         self.experiments = []
         self.refresh_experiments()
 
-        # state
-        self._experiment_name: Optional[str] = None
-
     def set_experiment_name_selection(self, name: Optional[str]) -> None:
         """
         Sets experiment name
         """
-        self._experiment_name_selection = name
+        IExperimentsModel.set_experiment_name_selection(self, name)
         self.dispatch(Event.ACTION_EXPERIMENT_SELECTED)
 
     def get_experiment_name_selection(self) -> Optional[str]:
         """
         Gets experiment name
         """
-        return self._experiment_name_selection
+        return IExperimentsModel.get_experiment_name_selection(self)
 
     def get_experiment_name(self) -> Optional[str]:
         """
         Gets experiment name
         """
-        return self._experiment_name
+        return IExperimentsModel.get_experiment_name(self)
 
     def set_experiment_name(self, name: Optional[str]) -> None:
         """
@@ -45,7 +42,7 @@ class ExperimentsModel(IExperimentsModel):
 
         name (str): name of cyto-dl experiment
         """
-        self._experiment_name = name
+        IExperimentsModel.set_experiment_name(self, name)
         self.dispatch(Event.ACTION_EXPERIMENT_APPLIED)
 
     def get_checkpoint(self) -> Optional[str]:
@@ -82,9 +79,9 @@ class ExperimentsModel(IExperimentsModel):
     def get_model_test_images_path(self, experiment_name: str) -> Path:
         return (
             self.get_user_settings().get_user_experiments_path()
-            / experiment_name
+            / self.get_experiment_name()
             / "test_images"
-            if experiment_name
+            if self.get_experiment_name()
             else None
         )
 
@@ -94,7 +91,7 @@ class ExperimentsModel(IExperimentsModel):
         """
         Gets checkpoints for model path
         """
-        if experiment_name is None:
+        if self.get_experiment_name() is None:
             raise ValueError(
                 "Experiment name cannot be None in order to get model_checkpoint_path"
             )
@@ -105,7 +102,7 @@ class ExperimentsModel(IExperimentsModel):
             )
         return (
             self.get_user_experiments_path()
-            / experiment_name
+            / self.get_experiment_name()
             / "checkpoints"
             / checkpoint
         )
@@ -153,9 +150,9 @@ class ExperimentsModel(IExperimentsModel):
     def get_train_config_path(self, experiment_name: str) -> Path:
         return (
             self.get_user_experiments_path()
-            / experiment_name
+            / self.get_experiment_name()
             / "train_config.yaml"
-            if experiment_name
+            if self.get_experiment_name()
             else None
         )
 
@@ -167,12 +164,12 @@ class ExperimentsModel(IExperimentsModel):
         return int(ckpt.split(".")[0].split("_")[-1])
 
     def _get_best_ckpt(self) -> Optional[str]:
-        if not self._experiment_name:
+        if not self.get_experiment_name():
             return None
 
         checkpoints_path = (
             Path(self.user_settings.get_user_experiments_path())
-            / self._experiment_name
+            / self.get_experiment_name()
             / "checkpoints"
         )
         if not checkpoints_path.exists():
