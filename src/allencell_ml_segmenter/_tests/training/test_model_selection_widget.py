@@ -129,3 +129,71 @@ def test_select_existing_model_option(
 
         # ASSERT
         assert experiment == experiment_model.get_experiment_name_selection()
+
+def test_apply_button_enabled(
+    model_selection_widget: ModelSelectionWidget,
+    experiment_model: IExperimentsModel,
+) -> None:
+    """
+    Test that the apply button is enabled when a model is selected.
+    """
+    # ARRANGE
+    assert not model_selection_widget._apply_btn.isEnabled()
+
+    # ACT
+    experiment_model.select_experiment_name("dummy_experiment")
+
+    # ASSERT
+    assert model_selection_widget._apply_btn.isEnabled()
+
+def test_text_input_enables_apply_button(
+    model_selection_widget: ModelSelectionWidget,
+) -> None:
+    """
+    Test that the apply button is disabled when a model is not selected.
+    """
+    # ARRANGE
+    assert not model_selection_widget._apply_btn.isEnabled()
+
+    # ACT
+    model_selection_widget._experiment_name_input.setText('dummy_experiment')
+
+    # ASSERT
+    assert model_selection_widget._apply_btn.isEnabled()
+
+def test_combo_input_enables_apply_button_new_radio_disables(
+    model_selection_widget: ModelSelectionWidget,
+    experiment_model: IExperimentsModel,
+    qtbot: QtBot,
+) -> None:
+    """
+    Test that the apply button Reacts to a model being selevted then deselected.
+    """
+    # ARRANGE
+    assert not model_selection_widget._apply_btn.isEnabled()
+    model_selection_widget._radio_new_model.setChecked(True)
+    model_selection_widget._radio_existing_model.setChecked(False)
+
+    # Initially no model is selected, so the apply button should NOT be enabled
+    assert not model_selection_widget._apply_btn.isEnabled()
+
+    # ACT - select a model
+    experiment_model.select_experiment_name("dummy_experiment")
+
+    # ASSERT - apply button SHOULD be enabled
+    assert model_selection_widget._apply_btn.isEnabled()
+
+    # ACT - select the "start a new model" radio button, clearing the model selection
+    with qtbot.waitSignal(
+        model_selection_widget._radio_existing_model.toggled
+    ):
+        model_selection_widget._radio_existing_model.click()  # enables the combo box
+
+    # ASSERT - apply button should NOT be enabled
+    assert not model_selection_widget._apply_btn.isEnabled()
+
+    # ACT - select an existing model
+    model_selection_widget._combo_box_existing_models.setCurrentIndex(1)
+
+    # ASSERT - apply button SHOULD be enabled
+    assert model_selection_widget._apply_btn.isEnabled()
