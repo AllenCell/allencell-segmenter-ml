@@ -36,7 +36,7 @@ def experiments_model() -> ExperimentsModel:
             cyto_dl_home_path=Path(), user_experiments_path=exp_path
         )
     )
-    experiments_model.set_experiment_name("2_exp")
+    experiments_model.apply_experiment_name("2_exp")
     return experiments_model
 
 
