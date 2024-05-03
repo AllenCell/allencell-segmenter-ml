@@ -14,6 +14,14 @@ class IExperimentsModel(Publisher):
         super().__init__()
 
     @abstractmethod
+    def set_experiment_name_selection(self, name: str) -> None:
+        pass
+
+    @abstractmethod
+    def get_experiment_name_selection(self) -> str:
+        pass
+
+    @abstractmethod
     def get_experiment_name(self) -> str:
         pass
 

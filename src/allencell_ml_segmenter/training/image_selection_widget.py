@@ -98,7 +98,7 @@ class ImageSelectionWidget(QWidget):
         frame.layout().addWidget(self._channel_combo_box, 2, 1)
 
         self._experiments_model.subscribe(
-            Event.ACTION_EXPERIMENT_SELECTED, self, self.set_inputs_csv
+            Event.ACTION_EXPERIMENT_APPLIED, self, self.set_inputs_csv
         )
 
         self._model.subscribe(

@@ -20,6 +20,19 @@ class ExperimentsModel(IExperimentsModel):
         # state
         self._experiment_name: Optional[str] = None
 
+    def set_experiment_name_selection(self, name: Optional[str]) -> None:
+        """
+        Sets experiment name
+        """
+        self._experiment_name_selection = name
+        self.dispatch(Event.ACTION_EXPERIMENT_SELECTED)
+
+    def get_experiment_name_selection(self) -> Optional[str]:
+        """
+        Gets experiment name
+        """
+        return self._experiment_name_selection
+
     def get_experiment_name(self) -> Optional[str]:
         """
         Gets experiment name
@@ -33,7 +46,7 @@ class ExperimentsModel(IExperimentsModel):
         name (str): name of cyto-dl experiment
         """
         self._experiment_name = name
-        self.dispatch(Event.ACTION_EXPERIMENT_SELECTED)
+        self.dispatch(Event.ACTION_EXPERIMENT_APPLIED)
 
     def get_checkpoint(self) -> Optional[str]:
         """
