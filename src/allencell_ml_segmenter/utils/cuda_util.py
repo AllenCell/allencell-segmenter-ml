@@ -1,3 +1,4 @@
+import multiprocessing
 import torch
 
 
@@ -10,3 +11,10 @@ class CUDAUtils:
         accelerate torch using a GPU
         """
         return torch.cuda.is_available()
+
+    @staticmethod
+    def get_num_cpu_cores() -> int:
+        """
+        Get the number of available cpu cores on this machine
+        """
+        return multiprocessing.cpu_count()
