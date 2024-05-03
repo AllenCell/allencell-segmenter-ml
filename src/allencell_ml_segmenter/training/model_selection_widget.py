@@ -130,7 +130,9 @@ class ModelSelectionWidget(QWidget):
         self._model_radio_handler()
 
     def _handle_experiment_selected(self, _: Event = None) -> None:
-        experiment_selected = self._experiments_model.get_experiment_name_selection() is not None
+        experiment_selected = (
+            self._experiments_model.get_experiment_name_selection() is not None
+        )
         self._apply_btn.setEnabled(experiment_selected)
 
     def _handle_apply_model(self):
@@ -155,7 +157,9 @@ class ModelSelectionWidget(QWidget):
         if experiment_name == "":
             self._experiments_model.set_experiment_name_selection(None)
         else:
-            self._experiments_model.set_experiment_name_selection(experiment_name)
+            self._experiments_model.set_experiment_name_selection(
+                experiment_name
+            )
 
     def _experiment_name_input_handler(self, text: str) -> None:
         """
