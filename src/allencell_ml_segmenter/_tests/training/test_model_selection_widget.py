@@ -128,4 +128,4 @@ def test_select_existing_model_option(
         model_selection_widget._combo_box_existing_models.setCurrentIndex(i)
 
         # ASSERT
-        assert experiment == experiment_model.get_experiment_name()
+        assert experiment == experiment_model.get_experiment_name_selection()
