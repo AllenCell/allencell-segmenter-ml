@@ -16,8 +16,7 @@ class IExperimentsModel(Publisher):
         # state
         self._experiment_name: Optional[str] = None
 
-
-    def set_experiment_name_selection(self, name: Optional[str]) -> None:
+    def select_experiment_name(self, name: Optional[str]) -> None:
         """
         Sets experiment name
         """
@@ -35,7 +34,7 @@ class IExperimentsModel(Publisher):
         """
         return self._experiment_name
 
-    def set_experiment_name(self, name: Optional[str]) -> None:
+    def apply_experiment_name(self, name: Optional[str]) -> None:
         """
         Sets experiment name
 
