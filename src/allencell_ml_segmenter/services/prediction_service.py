@@ -145,6 +145,14 @@ class PredictionService(Subscriber):
         overrides["data.columns"] = ["raw", "split"]
         overrides["data.split_column"] = "split"
 
+        # hacky overrides, review later
+        overrides['data.num_workers'] = 0
+
+        # Amil: you need to manually change these three to match what you did during training
+        overrides['model._aux.filters'] = [8, 16, 32]
+        overrides['spatial_dims'] = 3
+        overrides["data._aux.patch_shape"] = [8, 8, 8]
+
         # passing the experiment_name and checkpoint as params to this function ensures we have a model before
         # attempting to build the overrides dict for predictions
         overrides["ckpt_path"] = str(
