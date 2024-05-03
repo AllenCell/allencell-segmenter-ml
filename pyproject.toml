@@ -40,7 +40,8 @@ dependencies = [
     "aicsimageio",
     "tifffile>=2023.4.12",
     "watchdog",
-    "cyto-dl",
+    "cyto-dl>=0.1.6",
+    "bioio>=1.0.1", # should be specified in cyto-dl as well
     "pyqtspinner==2.0.0",
 ]
 
