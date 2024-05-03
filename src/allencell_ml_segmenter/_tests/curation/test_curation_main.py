@@ -4,13 +4,13 @@ from allencell_ml_segmenter._tests.fakes.fake_viewer import FakeViewer
 from allencell_ml_segmenter.main.i_viewer import IViewer
 from allencell_ml_segmenter.curation.curation_model import CurationModel
 from allencell_ml_segmenter.curation.curation_service import CurationService
-from allencell_ml_segmenter.curation.curation_image_loader import (
-    FakeCurationImageLoaderFactory,
-)
+from allencell_ml_segmenter._tests.fakes.fake_experiments_model import FakeExperimentsModel
+from allencell_ml_segmenter.curation.curation_image_loader import FakeCurationImageLoaderFactory
 import allencell_ml_segmenter
 
 from pytestqt.qtbot import QtBot
 from pathlib import Path
+import pytest
 
 IMG_DIR_PATH = (
     Path(allencell_ml_segmenter.__file__).parent
@@ -19,31 +19,26 @@ IMG_DIR_PATH = (
     / "img_folder"
 )
 
+IMG_DIR_FILES = [path for path in IMG_DIR_PATH.iterdir()]
+
 
 @dataclass
 class TestEnvironment:
     viewer: IViewer
     model: CurationModel
-    service: CurationService
     view: CurationMainView
 
+@pytest.fixture
+def test_environment_with_seg2() -> TestEnvironment:
+    curation_model: CurationModel = CurationModel(FakeExperimentsModel(), FakeCurationImageLoaderFactory())
 
-def get_test_environment(
-    include_seg_2: bool,
-) -> TestEnvironment:
-    curation_model: CurationModel = CurationModel()
-
-    curation_model.set_raw_directory(IMG_DIR_PATH)
-    curation_model.set_seg1_directory(IMG_DIR_PATH)
-    if include_seg_2:
-        curation_model.set_seg2_directory(IMG_DIR_PATH)
+    curation_model.set_raw_directory_paths(IMG_DIR_FILES)
+    curation_model.set_seg1_directory_paths(IMG_DIR_FILES)
+    curation_model.set_seg2_directory_paths(IMG_DIR_FILES)
 
     viewer: IViewer = FakeViewer()
-    curation_service: CurationService = CurationService(
-        curation_model, viewer, FakeCurationImageLoaderFactory()
-    )
     main_view: CurationMainView = CurationMainView(
-        curation_model, curation_service
+        curation_model, viewer
     )
     # Note: we assume that when CurationMainView is shown, curation_setup will be called
     main_view.curation_setup(first_setup=True)
