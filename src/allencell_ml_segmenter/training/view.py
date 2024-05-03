@@ -263,15 +263,15 @@ class TrainingView(View):
         self._training_model.dispatch_training()
         # TODO uncomment- testing default segmentation.yaml through API
         # This is broken and needs to be fixed- images now saved to experiment folder
-        result_images = self.read_result_images(
-            self._experiments_model.get_model_test_images_path(
-                self._experiments_model.get_experiment_name()
-            )
-        )
-        print("doWork - setting result images")
-        self._training_model.set_result_images(result_images)
-        print("doWork - done")
-        self._training_model.dispatch_refresh()
+        #result_images = self.read_result_images(
+        #    self._experiments_model.get_model_test_images_path(
+        #        self._experiments_model.get_experiment_name()
+        #    )
+        #)
+        #print("doWork - setting result images")
+        #self._training_model.set_result_images(result_images)
+        #print("doWork - done")
+        #self._training_model.dispatch_refresh()
 
     def getTypeOfWork(self) -> str:
         """
