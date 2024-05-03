@@ -1,14 +1,10 @@
 import numpy as np
 from pathlib import Path
-from typing import Tuple, List, Optional
+from typing import List, Optional
 from enum import Enum
 
-from napari.layers import Shapes
-from qtpy.QtWidgets import QWidget
 from qtpy.QtCore import Signal, QObject
 
-from allencell_ml_segmenter.core.event import Event
-from allencell_ml_segmenter.core.publisher import Publisher
 from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.curation.curation_image_loader import (
@@ -206,6 +202,8 @@ class CurationModel(QObject):
                 self._curation_record_saved_to_disk = False
                 self._merging_mask = None
                 self._excluding_mask = None
+                self._base_image = "seg1"
+                self._use_image = True
 
                 self._image_loader = self._img_loader_factory.create(
                     self._raw_directory_paths,
@@ -304,11 +302,10 @@ class CurationModel(QObject):
                 else None
             ),
             self.get_excluding_mask(),
-            self.get_merging_mask(),
+            self.get_merging_mask() if self.get_seg2_image_data() is not None else None,
             (
                 self.get_base_image()
                 if self.get_base_image() is not None
-                and self.get_merging_mask() is not None
                 and self.get_seg2_image_data() is not None
                 else "seg1"
             ),
@@ -330,6 +327,8 @@ class CurationModel(QObject):
         self._image_loader.next()
         self._merging_mask = None
         self._excluding_mask = None
+        self._base_image = "seg1"
+        self._use_image = True
 
     def is_image_data_ready(self) -> bool:
         return (
@@ -339,8 +338,12 @@ class CurationModel(QObject):
         )
 
     def set_curation_record_saved_to_disk(self, saved: bool) -> None:
+        self._curation_record_saved_to_disk = saved
         if saved:
             self.saved_to_disk.emit()
+    
+    def get_curation_record_saved_to_disk(self) -> bool:
+        return self._curation_record_saved_to_disk
 
     def save_curr_curation_record_to_disk(self) -> None:
         if not self._curation_record_saved_to_disk:
