@@ -95,18 +95,16 @@ class ModelSelectionWidget(QWidget):
 
         self._apply_change_stacked_widget = QStackedWidget()
 
-        apply_btn: QPushButton = QPushButton("Apply")
+        self._apply_btn: QPushButton = QPushButton("Apply")
         self._experiments_model.subscribe(
-            Event.ACTION_EXPERIMENT_SELECTED, 
+            Event.ACTION_EXPERIMENT_SELECTED,
             self,
-            lambda e: apply_btn.setEnabled(
-                self._experiments_model.get_experiment_name() is not None
-            ),
+            self._handle_experiment_selected,
         )
-        apply_btn.clicked.connect(self._handle_apply_model)
+        self._apply_btn.clicked.connect(self._handle_apply_model)
         apply_model_layout = QVBoxLayout()
         apply_model_layout.addLayout(top_grid_layout)
-        apply_model_layout.addWidget(apply_btn)
+        apply_model_layout.addWidget(self._apply_btn)
         apply_model_widget = QWidget()
         apply_model_widget.setLayout(apply_model_layout)
         self._apply_change_stacked_widget.addWidget(apply_model_widget)
@@ -131,13 +129,22 @@ class ModelSelectionWidget(QWidget):
         # initialize the rest of the UI to match the radio button's state
         self._model_radio_handler()
 
+    def _handle_experiment_selected(self, _: Event = None) -> None:
+        experiment_selected = self._experiments_model.get_experiment_name_selection() is not None
+        self._apply_btn.setEnabled(experiment_selected)
+
     def _handle_apply_model(self):
+        self._experiments_model.set_experiment_name(
+            self._experiments_model.get_experiment_name_selection()
+        )
         self._model_name_label.setText(
             self._experiments_model.get_experiment_name()
         )
         self._apply_change_stacked_widget.setCurrentIndex(1)
 
     def _handle_change_model(self):
+        self._experiments_model.set_experiment_name_selection(None)
+        self._experiments_model.set_experiment_name(None)
         self._apply_change_stacked_widget.setCurrentIndex(0)
 
     def _model_combo_handler(self, experiment_name: str) -> None:
@@ -146,16 +153,16 @@ class ModelSelectionWidget(QWidget):
         Sets the model path in the model.
         """
         if experiment_name == "":
-            self._experiments_model.set_experiment_name(None)
+            self._experiments_model.set_experiment_name_selection(None)
         else:
-            self._experiments_model.set_experiment_name(experiment_name)
+            self._experiments_model.set_experiment_name_selection(experiment_name)
 
     def _experiment_name_input_handler(self, text: str) -> None:
         """
         Triggered when the user types in the _experiment_name_input.
         Sets the model name in the model.
         """
-        self._experiments_model.set_experiment_name(text)
+        self._experiments_model.set_experiment_name_selection(text)
 
     def _model_radio_handler(self) -> None:
         self._main_model.set_new_model(self._radio_new_model.isChecked())
@@ -168,14 +175,14 @@ class ModelSelectionWidget(QWidget):
             self._combo_box_existing_models.setEnabled(False)
             self._experiment_name_input.setEnabled(True)
 
-            self._experiments_model.set_experiment_name(None)
+            self._experiments_model.set_experiment_name_selection(None)
 
         if self._radio_existing_model.isChecked():
             """
             Triggered when the user selects the "existing model" radio button.
             Enables and disables relevent controls.
             """
-            self._experiments_model.set_experiment_name(None)
+            self._experiments_model.set_experiment_name_selection(None)
             self._combo_box_existing_models.setEnabled(True)
             self._experiment_name_input.setEnabled(False)
             self._experiment_name_input.clear()
