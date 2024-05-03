@@ -111,7 +111,10 @@ class ExperimentsModel(IExperimentsModel):
         )
 
     def get_csv_path(self) -> Path:
-        if self.get_user_experiments_path() is not None and self.get_experiment_name() is not None:
+        if (
+            self.get_user_experiments_path() is not None
+            and self.get_experiment_name() is not None
+        ):
             return (
                 self.get_user_experiments_path()
                 / self.get_experiment_name()
