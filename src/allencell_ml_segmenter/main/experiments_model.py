@@ -17,11 +17,11 @@ class ExperimentsModel(IExperimentsModel):
         self.experiments = []
         self.refresh_experiments()
 
-    def set_experiment_name_selection(self, name: Optional[str]) -> None:
+    def select_experiment_name(self, name: Optional[str]) -> None:
         """
         Sets experiment name
         """
-        IExperimentsModel.set_experiment_name_selection(self, name)
+        IExperimentsModel.select_experiment_name(self, name)
         self.dispatch(Event.ACTION_EXPERIMENT_SELECTED)
 
     def get_experiment_name_selection(self) -> Optional[str]:
@@ -36,13 +36,13 @@ class ExperimentsModel(IExperimentsModel):
         """
         return IExperimentsModel.get_experiment_name(self)
 
-    def set_experiment_name(self, name: Optional[str]) -> None:
+    def apply_experiment_name(self, name: Optional[str]) -> None:
         """
         Sets experiment name
 
         name (str): name of cyto-dl experiment
         """
-        IExperimentsModel.set_experiment_name(self, name)
+        IExperimentsModel.apply_experiment_name(self, name)
         self.dispatch(Event.ACTION_EXPERIMENT_APPLIED)
 
     def get_checkpoint(self) -> Optional[str]:
