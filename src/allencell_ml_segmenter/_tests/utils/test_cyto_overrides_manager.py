@@ -52,7 +52,7 @@ def training_model(experiments_model: ExperimentsModel) -> TrainingModel:
 def test_get_training_overrides(
     experiments_model: ExperimentsModel, training_model: TrainingModel
 ):
-    experiments_model.set_experiment_name("one_ckpt_exp")
+    experiments_model.apply_experiment_name("one_ckpt_exp")
     cyto_overrides_manager: CytoDLOverridesManager = CytoDLOverridesManager(
         experiments_model, training_model
     )
@@ -103,7 +103,7 @@ def test_get_training_overrides(
 def test_max_epochs_no_existing_ckpt(
     experiments_model: ExperimentsModel, training_model: TrainingModel
 ):
-    experiments_model.set_experiment_name("0_exp")
+    experiments_model.apply_experiment_name("0_exp")
     cyto_overrides_manager: CytoDLOverridesManager = CytoDLOverridesManager(
         experiments_model, training_model
     )

@@ -136,7 +136,7 @@ class ModelSelectionWidget(QWidget):
         self._apply_btn.setEnabled(experiment_selected)
 
     def _handle_apply_model(self):
-        self._experiments_model.set_experiment_name(
+        self._experiments_model.apply_experiment_name(
             self._experiments_model.get_experiment_name_selection()
         )
         self._model_name_label.setText(
@@ -145,8 +145,8 @@ class ModelSelectionWidget(QWidget):
         self._apply_change_stacked_widget.setCurrentIndex(1)
 
     def _handle_change_model(self):
-        self._experiments_model.set_experiment_name_selection(None)
-        self._experiments_model.set_experiment_name(None)
+        self._experiments_model.select_experiment_name(None)
+        self._experiments_model.apply_experiment_name(None)
         self._apply_change_stacked_widget.setCurrentIndex(0)
 
     def _model_combo_handler(self, experiment_name: str) -> None:
@@ -155,9 +155,9 @@ class ModelSelectionWidget(QWidget):
         Sets the model path in the model.
         """
         if experiment_name == "":
-            self._experiments_model.set_experiment_name_selection(None)
+            self._experiments_model.select_experiment_name(None)
         else:
-            self._experiments_model.set_experiment_name_selection(
+            self._experiments_model.select_experiment_name(
                 experiment_name
             )
 
@@ -166,7 +166,7 @@ class ModelSelectionWidget(QWidget):
         Triggered when the user types in the _experiment_name_input.
         Sets the model name in the model.
         """
-        self._experiments_model.set_experiment_name_selection(text)
+        self._experiments_model.select_experiment_name(text)
 
     def _model_radio_handler(self) -> None:
         self._main_model.set_new_model(self._radio_new_model.isChecked())
@@ -179,14 +179,14 @@ class ModelSelectionWidget(QWidget):
             self._combo_box_existing_models.setEnabled(False)
             self._experiment_name_input.setEnabled(True)
 
-            self._experiments_model.set_experiment_name_selection(None)
+            self._experiments_model.select_experiment_name(None)
 
         if self._radio_existing_model.isChecked():
             """
             Triggered when the user selects the "existing model" radio button.
             Enables and disables relevent controls.
             """
-            self._experiments_model.set_experiment_name_selection(None)
+            self._experiments_model.select_experiment_name(None)
             self._combo_box_existing_models.setEnabled(True)
             self._experiment_name_input.setEnabled(False)
             self._experiment_name_input.clear()
