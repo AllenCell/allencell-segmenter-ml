@@ -16,34 +16,7 @@ class ExperimentsModel(IExperimentsModel):
         # options
         self.experiments = []
         self.refresh_experiments()
-
-    def select_experiment_name(self, name: Optional[str]) -> None:
-        """
-        Sets experiment name
-        """
-        IExperimentsModel.select_experiment_name(self, name)
-        self.dispatch(Event.ACTION_EXPERIMENT_SELECTED)
-
-    def get_experiment_name_selection(self) -> Optional[str]:
-        """
-        Gets experiment name
-        """
-        return IExperimentsModel.get_experiment_name_selection(self)
-
-    def get_experiment_name(self) -> Optional[str]:
-        """
-        Gets experiment name
-        """
-        return IExperimentsModel.get_experiment_name(self)
-
-    def apply_experiment_name(self, name: Optional[str]) -> None:
-        """
-        Sets experiment name
-
-        name (str): name of cyto-dl experiment
-        """
-        IExperimentsModel.apply_experiment_name(self, name)
-        self.dispatch(Event.ACTION_EXPERIMENT_APPLIED)
+        
 
     def get_checkpoint(self) -> Optional[str]:
         """
