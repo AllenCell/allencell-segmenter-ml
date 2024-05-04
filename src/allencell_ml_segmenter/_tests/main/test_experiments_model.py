@@ -215,8 +215,9 @@ def test_apply_experiment_name() -> None:
     )
     model = ExperimentsModel(config)
     subscriber = FakeSubscriber()
-    model.subscribe(Event.ACTION_EXPERIMENT_APPLIED,
-                    subscriber, subscriber.handle)
+    model.subscribe(
+        Event.ACTION_EXPERIMENT_APPLIED, subscriber, subscriber.handle
+    )
     expected = "test_experiment"
 
     # Act
@@ -236,8 +237,9 @@ def test_set_experiment_name_selection() -> None:
     )
     model = ExperimentsModel(config)
     subscriber = FakeSubscriber()
-    model.subscribe(Event.ACTION_EXPERIMENT_SELECTED,
-                    subscriber, subscriber.handle)
+    model.subscribe(
+        Event.ACTION_EXPERIMENT_SELECTED, subscriber, subscriber.handle
+    )
     expected = "test_experiment"
 
     # Act

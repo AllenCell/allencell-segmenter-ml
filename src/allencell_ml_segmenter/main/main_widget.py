@@ -89,7 +89,9 @@ class MainWidget(AicsWidget):
         self._view_to_index: Dict[View, int] = dict()
 
         self._experiments_model.subscribe(
-            Event.ACTION_EXPERIMENT_APPLIED, self, self._handle_experiment_applied
+            Event.ACTION_EXPERIMENT_APPLIED,
+            self,
+            self._handle_experiment_applied,
         )
 
         # initialize the tabs
@@ -126,7 +128,9 @@ class MainWidget(AicsWidget):
         """
         Handle the experiment applied event.
         """
-        self._view_container.setDisabled(self._experiments_model.get_experiment_name() is None)
+        self._view_container.setDisabled(
+            self._experiments_model.get_experiment_name() is None
+        )
 
     def _handle_new_model(self, _: Event) -> None:
         """
