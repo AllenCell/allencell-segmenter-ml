@@ -217,17 +217,24 @@ def test_click_apply_btn(
     # ASSERT
     assert experiment_model.get_experiment_name() == "dummy_experiment"
 
-def test_click_change_btn(
+def test_type_name_apply_change(
     model_selection_widget: ModelSelectionWidget,
     experiment_model: IExperimentsModel,
 ) -> None:
     """
     Test that the apply button updates model.
     """
-    # ARRANGE
-    experiment_model.apply_experiment_name("dummy_experiment")
+    # ACT
+    model_selection_widget._experiment_name_input.setText('dummy_experiment')
 
-    # Sanity check
+    # ASSERT note that the model name is selected but not applied until the apply button is clicked
+    assert experiment_model.get_experiment_name_selection() == "dummy_experiment"
+    assert experiment_model.get_experiment_name() is None
+    
+    # ACT
+    model_selection_widget._apply_btn.click()
+
+    #ASSERT
     assert experiment_model.get_experiment_name() == "dummy_experiment"
 
     # ACT
@@ -235,3 +242,31 @@ def test_click_change_btn(
 
     # ASSERT
     assert experiment_model.get_experiment_name() is None
+    assert model_selection_widget._experiment_name_input.text() == ""
+
+# def test_select_existing_combo_apply_click_change(
+#     model_selection_widget: ModelSelectionWidget,
+#     experiment_model: IExperimentsModel,
+# ) -> None:
+#     """
+#     Test that the apply button updates model.
+#     """
+#     # ACT
+#     model_selection_widget._combo_box_existing_models.setIndex(1)
+
+#     # ASSERT note that the model name is selected but not applied until the apply button is clicked
+#     assert experiment_model.get_experiment_name_selection() == "dummy_experiment"
+#     assert experiment_model.get_experiment_name() is None
+    
+#     # ACT
+#     model_selection_widget._apply_btn.click()
+
+#     #ASSERT
+#     assert experiment_model.get_experiment_name() == "dummy_experiment"
+
+#     # ACT
+#     model_selection_widget._change_model_btn.click()
+
+#     # ASSERT
+#     assert experiment_model.get_experiment_name() is None
+#     assert model_selection_widget._combo_box_existing_models.currentIndex() == -1
