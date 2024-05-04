@@ -197,3 +197,41 @@ def test_combo_input_enables_apply_button_new_radio_disables(
 
     # ASSERT - apply button SHOULD be enabled
     assert model_selection_widget._apply_btn.isEnabled()
+
+def test_click_apply_btn(
+    model_selection_widget: ModelSelectionWidget,
+    experiment_model: IExperimentsModel,
+) -> None:
+    """
+    Test that the apply button updates model.
+    """
+    # ARRANGE
+    experiment_model.select_experiment_name("dummy_experiment")
+
+    # Sanity check
+    assert experiment_model.get_experiment_name() is None
+
+    # ACT
+    model_selection_widget._apply_btn.click()
+
+    # ASSERT
+    assert experiment_model.get_experiment_name() == "dummy_experiment"
+
+def test_click_change_btn(
+    model_selection_widget: ModelSelectionWidget,
+    experiment_model: IExperimentsModel,
+) -> None:
+    """
+    Test that the apply button updates model.
+    """
+    # ARRANGE
+    experiment_model.apply_experiment_name("dummy_experiment")
+
+    # Sanity check
+    assert experiment_model.get_experiment_name() == "dummy_experiment"
+
+    # ACT
+    model_selection_widget._change_model_btn.click()
+
+    # ASSERT
+    assert experiment_model.get_experiment_name() is None
