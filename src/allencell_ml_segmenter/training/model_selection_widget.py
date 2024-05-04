@@ -159,9 +159,7 @@ class ModelSelectionWidget(QWidget):
         if experiment_name == "":
             self._experiments_model.select_experiment_name(None)
         else:
-            self._experiments_model.select_experiment_name(
-                experiment_name
-            )
+            self._experiments_model.select_experiment_name(experiment_name)
 
     def _experiment_name_input_handler(self, text: str) -> None:
         """
