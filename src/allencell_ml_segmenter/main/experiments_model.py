@@ -16,7 +16,6 @@ class ExperimentsModel(IExperimentsModel):
         # options
         self.experiments = []
         self.refresh_experiments()
-        
 
     def get_checkpoint(self) -> Optional[str]:
         """
