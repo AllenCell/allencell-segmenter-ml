@@ -145,6 +145,8 @@ class ModelSelectionWidget(QWidget):
         self._apply_change_stacked_widget.setCurrentIndex(1)
 
     def _handle_change_model(self):
+        self._combo_box_existing_models.setCurrentIndex(-1)
+        self._experiment_name_input.clear()
         self._experiments_model.select_experiment_name(None)
         self._experiments_model.apply_experiment_name(None)
         self._apply_change_stacked_widget.setCurrentIndex(0)
