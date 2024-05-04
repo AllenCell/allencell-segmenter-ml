@@ -130,6 +130,7 @@ def test_select_existing_model_option(
         # ASSERT
         assert experiment == experiment_model.get_experiment_name_selection()
 
+
 def test_apply_button_enabled(
     model_selection_widget: ModelSelectionWidget,
     experiment_model: IExperimentsModel,
@@ -146,6 +147,7 @@ def test_apply_button_enabled(
     # ASSERT
     assert model_selection_widget._apply_btn.isEnabled()
 
+
 def test_text_input_enables_apply_button(
     model_selection_widget: ModelSelectionWidget,
 ) -> None:
@@ -156,10 +158,11 @@ def test_text_input_enables_apply_button(
     assert not model_selection_widget._apply_btn.isEnabled()
 
     # ACT
-    model_selection_widget._experiment_name_input.setText('dummy_experiment')
+    model_selection_widget._experiment_name_input.setText("dummy_experiment")
 
     # ASSERT
     assert model_selection_widget._apply_btn.isEnabled()
+
 
 def test_combo_input_enables_apply_button_new_radio_disables(
     model_selection_widget: ModelSelectionWidget,
@@ -198,6 +201,7 @@ def test_combo_input_enables_apply_button_new_radio_disables(
     # ASSERT - apply button SHOULD be enabled
     assert model_selection_widget._apply_btn.isEnabled()
 
+
 def test_click_apply_btn(
     model_selection_widget: ModelSelectionWidget,
     experiment_model: IExperimentsModel,
@@ -217,6 +221,7 @@ def test_click_apply_btn(
     # ASSERT
     assert experiment_model.get_experiment_name() == "dummy_experiment"
 
+
 def test_type_name_apply_change(
     model_selection_widget: ModelSelectionWidget,
     experiment_model: IExperimentsModel,
@@ -225,16 +230,18 @@ def test_type_name_apply_change(
     Test that the apply button updates model.
     """
     # ACT
-    model_selection_widget._experiment_name_input.setText('dummy_experiment')
+    model_selection_widget._experiment_name_input.setText("dummy_experiment")
 
     # ASSERT note that the model name is selected but not applied until the apply button is clicked
-    assert experiment_model.get_experiment_name_selection() == "dummy_experiment"
+    assert (
+        experiment_model.get_experiment_name_selection() == "dummy_experiment"
+    )
     assert experiment_model.get_experiment_name() is None
-    
+
     # ACT
     model_selection_widget._apply_btn.click()
 
-    #ASSERT
+    # ASSERT
     assert experiment_model.get_experiment_name() == "dummy_experiment"
 
     # ACT
@@ -243,6 +250,7 @@ def test_type_name_apply_change(
     # ASSERT
     assert experiment_model.get_experiment_name() is None
     assert model_selection_widget._experiment_name_input.text() == ""
+
 
 # def test_select_existing_combo_apply_click_change(
 #     model_selection_widget: ModelSelectionWidget,
@@ -257,7 +265,7 @@ def test_type_name_apply_change(
 #     # ASSERT note that the model name is selected but not applied until the apply button is clicked
 #     assert experiment_model.get_experiment_name_selection() == "dummy_experiment"
 #     assert experiment_model.get_experiment_name() is None
-    
+
 #     # ACT
 #     model_selection_widget._apply_btn.click()
 
