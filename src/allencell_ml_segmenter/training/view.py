@@ -38,7 +38,7 @@ from allencell_ml_segmenter.training.training_model import PatchSize
 from allencell_ml_segmenter.training.metrics_csv_progress_tracker import (
     MetricsCSVProgressTracker,
 )
-from allencell_ml_segmenter.core.dialog_box import DialogBox
+from allencell_ml_segmenter.core.info_dialog_box import InfoDialogBox
 
 
 class TrainingView(View):
@@ -247,7 +247,7 @@ class TrainingView(View):
         return "Training"
 
     def showResults(self):
-        dialog_box = DialogBox("Training finished")
+        dialog_box = InfoDialogBox("Training finished")
         dialog_box.exec()
 
     def _num_epochs_field_handler(self, num_epochs: str) -> None:
