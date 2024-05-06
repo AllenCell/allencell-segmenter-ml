@@ -87,6 +87,6 @@ class CytoDLOverridesManager:
         # num_workers based on cpu cores available on machine
         # it is recommended to leave one or two logical cores free to work on other
         # system tasks will prevent starving the system of resources completely
-        overrides_dict["data.num_workers"] = CUDAUtils.get_num_cpu_cores() - 1
+        overrides_dict["data.num_workers"] = CUDAUtils.get_num_workers()
 
         return overrides_dict
