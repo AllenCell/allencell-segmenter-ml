@@ -1,5 +1,7 @@
 from pathlib import Path
 from typing import Optional
+
+from allencell_ml_segmenter.core.dialog_box import DialogBox
 from allencell_ml_segmenter.main.i_viewer import IViewer
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
@@ -280,8 +282,10 @@ class TrainingView(View):
         return "Training"
 
     def showResults(self):
-        for idx, image in enumerate(self._training_model.get_result_images()):
-            self.add_image_to_viewer(image.data, f"Segmentation {str(idx)}")
+        dialog_box = DialogBox(
+            f"Training finished"
+        )
+        dialog_box.exec()
 
     def _num_epochs_field_handler(self, num_epochs: str) -> None:
         self._training_model.set_num_epochs(int(num_epochs))
