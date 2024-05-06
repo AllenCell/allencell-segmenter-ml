@@ -2,6 +2,7 @@ import multiprocessing
 import torch
 import platform
 
+
 class CUDAUtils:
 
     @staticmethod
