@@ -95,26 +95,31 @@ class ModelSelectionWidget(QWidget):
 
         self._apply_change_stacked_widget = QStackedWidget()
 
-        self._apply_btn: QPushButton = QPushButton("Apply")
         self._experiments_model.subscribe(
             Event.ACTION_EXPERIMENT_SELECTED,
             self,
             self._handle_experiment_selected,
         )
-        self._apply_btn.clicked.connect(self._handle_apply_model)
         apply_model_layout = QVBoxLayout()
         apply_model_layout.addLayout(top_grid_layout)
-        apply_model_layout.addWidget(self._apply_btn)
+        
         apply_model_widget = QWidget()
         apply_model_widget.setLayout(apply_model_layout)
         self._apply_change_stacked_widget.addWidget(apply_model_widget)
 
-        self._change_model_btn: QPushButton = QPushButton("Change model")
-        self._change_model_btn.clicked.connect(self._handle_change_model)
         change_model_layout = QVBoxLayout()
         self._model_name_label = QLabel("Model name")
         change_model_layout.addWidget(self._model_name_label)
-        change_model_layout.addWidget(self._change_model_btn)
+
+        self._apply_btn: QPushButton = QPushButton("Apply")
+        self._apply_btn.clicked.connect(self._handle_apply_model)
+        apply_model_layout.addWidget(self._apply_btn)
+
+        # Disabled 4/6/24 - no needed for MVP V1 - chrishu
+        # self._change_model_btn: QPushButton = QPushButton("Change model")
+        # self._change_model_btn.clicked.connect(self._handle_change_model)
+        # change_model_layout.addWidget(self._change_model_btn)
+        
         change_model_widget = QWidget()
         change_model_widget.setLayout(change_model_layout)
         self._apply_change_stacked_widget.addWidget(change_model_widget)
