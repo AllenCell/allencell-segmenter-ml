@@ -17,11 +17,14 @@ class CUDAUtils:
         """
         Get the number of available cpu cores on this machine
         """
-        # on mac, we cannot set num_workers no matter what
-        if platform.system() == "Darwin":
+        # For MACOS or CPU runs:
+        # On MACOS we cannot set num_workers no matter what.
+        # On CPU, increasing num_workers will offer no performance increase
+        #   as dataloading is not the bottleneck
+        if platform.system() == "Darwin" or not use_gpu:
             return 0
-        # on windows/linux, we set num_workers to 1, memory limitations
-        # limit this, but num_workers=1 should be able to support most
-        # systems while providing a small speed benefit
+        # For Windows/Linux:
+        # We set num_workers to 1 for GPU runs
+        # num_workers=1 should be able to support most systems while providing a small speed benefit.
         else:
             return 1
