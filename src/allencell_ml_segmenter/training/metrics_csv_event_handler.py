@@ -28,10 +28,4 @@ class MetricsCSVEventHandler(FileSystemEventHandler):
         if self._target_path.exists() and self._target_path.samefile(
             event.src_path
         ):
-            # this is a consequence of a cyto-dl quirk: the test metrics are
-            # logged as the n+1'th epoch, even though it uses the n'th epoch's
-            # parameters. Test metrics are calculated at the end of training,
-            # so we want it to appear that training is complete once the metrics
-            # are calculated.
-            output: int = max(0, self._get_num_epochs() - 1)
-            self._progress_callback(output)
+            self._progress_callback(self._get_num_epochs())
