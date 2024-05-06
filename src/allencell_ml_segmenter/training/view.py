@@ -38,6 +38,7 @@ from allencell_ml_segmenter.training.training_model import PatchSize
 from allencell_ml_segmenter.training.metrics_csv_progress_tracker import (
     MetricsCSVProgressTracker,
 )
+from allencell_ml_segmenter.core.dialog_box import DialogBox
 
 
 class TrainingView(View):
@@ -231,29 +232,6 @@ class TrainingView(View):
         )
         self.startLongTaskWithProgressBar(progress_tracker)
 
-    def read_result_images(self, dir_to_grab: Path):
-        output_dir: Path = dir_to_grab
-        images = []
-        if output_dir is None:
-            raise ValueError("No output directory to grab images from.")
-        else:
-            files = [
-                Path(output_dir) / file for file in Path.iterdir(dir_to_grab)
-            ]
-            for file in files:
-                if Path.is_file(file) and file.name.lower().endswith(".tif"):
-                    try:
-                        images.append(AICSImage(str(file), reader=TiffReader))
-                    except Exception as e:
-                        print(e)
-                        print(
-                            f"Could not load image {str(file)} into napari viewer. Image cannot be opened by AICSImage"
-                        )
-        return images
-
-    def add_image_to_viewer(self, image: AICSImage, display_name: str):
-        self._viewer.add_image(image, name=display_name)
-
     # Abstract methods from View implementations #######################
 
     def doWork(self):
@@ -261,17 +239,6 @@ class TrainingView(View):
         Starts training process
         """
         self._training_model.dispatch_training()
-        # TODO uncomment- testing default segmentation.yaml through API
-        # This is broken and needs to be fixed- images now saved to experiment folder
-        result_images = self.read_result_images(
-            self._experiments_model.get_model_test_images_path(
-                self._experiments_model.get_experiment_name()
-            )
-        )
-        print("doWork - setting result images")
-        self._training_model.set_result_images(result_images)
-        print("doWork - done")
-        self._training_model.dispatch_refresh()
 
     def getTypeOfWork(self) -> str:
         """
@@ -280,8 +247,8 @@ class TrainingView(View):
         return "Training"
 
     def showResults(self):
-        for idx, image in enumerate(self._training_model.get_result_images()):
-            self.add_image_to_viewer(image.data, f"Segmentation {str(idx)}")
+        dialog_box = DialogBox("Training finished")
+        dialog_box.exec()
 
     def _num_epochs_field_handler(self, num_epochs: str) -> None:
         self._training_model.set_num_epochs(int(num_epochs))
