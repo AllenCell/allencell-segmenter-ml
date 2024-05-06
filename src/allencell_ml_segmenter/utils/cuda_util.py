@@ -13,14 +13,15 @@ class CUDAUtils:
         return torch.cuda.is_available()
 
     @staticmethod
-    def get_num_workers() -> int:
+    def get_num_workers(use_gpu: bool = False) -> int:
         """
         Get the number of available cpu cores on this machine
         """
-        # on mac, we cannot set num_workers
+        # on mac, we cannot set num_workers no matter what
         if platform.system() == "Darwin":
             return 0
-        # on windows/linux, we set num_workers to be number of cores - 1
-        # it is recommended to leave one core free
+        # on windows/linux, we set num_workers to 1, memory limitations
+        # limit this, but num_workers=1 should be able to support most
+        # systems while providing a small speed benefit
         else:
-            return multiprocessing.cpu_count() - 1
+            return 1
