@@ -32,7 +32,7 @@ class Hardware(Enum):
 class PatchSize(Enum):
     """
     Patch size for training, and their respective patch shapes.
-    TODO: get from benji
+    The 0th dimension is Z, which is not needed for 2d.
     """
 
     SMALL = [1, 3, 3]
