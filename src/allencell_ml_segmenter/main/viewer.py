@@ -48,7 +48,7 @@ class Viewer(IViewer):
         return None
 
     def get_all_shapes(self) -> List[ShapesLayer]:
-        return [ShapesLayer(l.name, l.data) for l in self.viewer.layers if type(l) == Shapes]
+        return [ShapesLayer(l.name, np.asarray(l.data, dtype=object)) for l in self.viewer.layers if type(l) == Shapes]
 
     def clear_layers(self) -> None:
         self.viewer.layers.clear()
@@ -59,6 +59,9 @@ class Viewer(IViewer):
             self.viewer.layers.remove(layer)
             return True
         return False
+    
+    def contains_layer(self, name: str) -> bool:
+        return self._get_layer_by_name() is not None
 
     def get_layers(self) -> List[Layer]:
         return [l for l in self.viewer.layers]

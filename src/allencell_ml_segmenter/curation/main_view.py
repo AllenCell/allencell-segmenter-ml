@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 import numpy as np
 
 from qtpy.QtWidgets import QComboBox
@@ -26,6 +26,8 @@ from allencell_ml_segmenter.curation.curation_service import (
 from allencell_ml_segmenter.core.image_data_extractor import ImageData
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 from allencell_ml_segmenter.curation.stacked_spinner import StackedSpinner
+from allencell_ml_segmenter.main.segmenter_layer import ShapesLayer
+
 
 from napari.utils.notifications import show_info
 from napari.layers import Layer
@@ -355,9 +357,9 @@ class CurationMainView(View):
         # set progress bar hint
         self.progress_bar_image_count.setText(f"{curr_val}/{num_images}")
 
-    def _discard_layer_prompt(self, layer: Layer) -> None:
+    def _discard_layer_prompt(self, layer: str) -> None:
         discard_layer_prompt = DialogBox(
-            f"There is already a '{layer.name}' layer in the viewer. Would you like to discard this layer?"
+            f"There is already a '{layer}' layer in the viewer. Would you like to discard this layer?"
         )
         discard_layer_prompt.exec()
         return discard_layer_prompt.selection
@@ -370,17 +372,14 @@ class CurationMainView(View):
         return replace_prompt.selection
 
     def _create_merging_mask(self) -> None:
-        merging_mask: Layer = self._get_layer_by_name(MERGING_MASK_LAYER_NAME)
-        if merging_mask is not None:
-            if not self._discard_layer_prompt(merging_mask):
+        if self._viewer.contains_layer(MERGING_MASK_LAYER_NAME):
+            if not self._discard_layer_prompt(MERGING_MASK_LAYER_NAME):
                 return
-            self._viewer.clear_mask_layers([merging_mask])
+            self._viewer.remove_layer(MERGING_MASK_LAYER_NAME)
 
-        merging_layer: Layer = self._viewer.add_shapes(
-            MERGING_MASK_LAYER_NAME, "royalblue"
+        self._viewer.add_shapes(
+            MERGING_MASK_LAYER_NAME, "royalblue", "add_polygon"
         )
-        # TODO: add as param to add_shapes?
-        merging_layer.mode = "add_polygon"
         self.merging_save_button.setEnabled(True)
         self.merging_mask_status.setText("Draw mask")
 
@@ -392,7 +391,7 @@ class CurationMainView(View):
             show_info("Please select a base image to merge with")
             return
 
-        merging_mask: Layer = self._get_layer_by_name(MERGING_MASK_LAYER_NAME)
+        merging_mask: Optional[ShapesLayer] = self._viewer.get_shapes(MERGING_MASK_LAYER_NAME)
         if merging_mask is None:
             show_info("Please create a merging mask layer")
             return
@@ -404,33 +403,25 @@ class CurationMainView(View):
         # deepcopy so that if a user adds more shapes to existing layer, they don't show up in model
         # could change this behavior based on UX input
         self._curation_model.set_merging_mask(
-            deepcopy(np.asarray(merging_mask.data, dtype=object))
+            deepcopy(merging_mask.data)
         )
         self.merging_mask_status.setText("Merging mask saved")
 
     def _create_excluding_mask(self) -> None:
-        excluding_mask: Layer = self._get_layer_by_name(
-            EXCLUDING_MASK_LAYER_NAME
-        )
+        excluding_mask: Optional[ShapesLayer] = self._viewer.get_shapes(EXCLUDING_MASK_LAYER_NAME)
         if excluding_mask is not None:
             if not self._discard_layer_prompt(excluding_mask):
                 return
-            self._viewer.clear_mask_layers([excluding_mask])
+            self._viewer.remove_layer(excluding_mask)
 
-        excluding_layer: Layer = self._viewer.add_shapes(
-            EXCLUDING_MASK_LAYER_NAME, "coral"
+        self._viewer.add_shapes(
+            EXCLUDING_MASK_LAYER_NAME, "coral", "add_polygon"
         )
-        excluding_layer.mode = "add_polygon"
         self.excluding_save_button.setEnabled(True)
         self.excluding_mask_status.setText("Draw mask")
 
     def save_excluding_mask(self) -> None:
-        """
-        Wrapper for curation_service.save_excluding_mask() for ui interactivity
-        """
-        excluding_mask: Layer = self._get_layer_by_name(
-            EXCLUDING_MASK_LAYER_NAME
-        )
+        excluding_mask: Optional[ShapesLayer] = self._viewer.get_shapes(EXCLUDING_MASK_LAYER_NAME)
         if excluding_mask is None:
             show_info("Please create an excluding mask layer")
             return
@@ -440,7 +431,7 @@ class CurationMainView(View):
                 return
 
         self._curation_model.set_excluding_mask(
-            deepcopy(np.asarray(excluding_mask.data, dtype=object))
+            deepcopy(excluding_mask.data)
         )
         self.excluding_mask_status.setText("Excluding mask saved")
 
@@ -454,12 +445,3 @@ class CurationMainView(View):
         else:
             self.disable_merging_mask_buttons()
         self.enable_excluding_mask_buttons()
-
-    # TODO: encapsulate in viewer
-    def _get_layer_by_name(self, name: str) -> Layer:
-        output_layer: Layer = None
-        for layer in self._viewer.get_layers():
-            if layer.name == name:
-                output_layer = layer
-                break
-        return output_layer
