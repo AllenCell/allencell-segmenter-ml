@@ -18,9 +18,10 @@ def test_get_all_files_in_dir() -> None:
     all_files = FileUtils.get_all_files_in_dir_ignore_hidden(folder)
 
     # assert
-    assert len(all_files) == 2
+    assert len(all_files) == 3
     assert all_files[0].name == "t1.tiff"
     assert all_files[1].name == "t2.tiff"
+    assert all_files[2].name == "t3.tiff"
 
 
 def test_get_all_files_in_dir_with_hidden_files() -> None:
