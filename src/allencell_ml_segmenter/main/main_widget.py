@@ -20,6 +20,7 @@ from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
+from allencell_ml_segmenter.main.i_viewer import IViewer
 from allencell_ml_segmenter.prediction.model import PredictionModel
 from allencell_ml_segmenter.prediction.view import PredictionView
 from allencell_ml_segmenter.services.prediction_service import (
@@ -38,12 +39,12 @@ class MainWidget(AicsWidget):
     Holds the pertinent view at the moment to be displayed to the user.
     """
 
-    def __init__(self, viewer: napari.Viewer, settings: IUserSettings = None):
+    def __init__(self, viewer: IViewer, settings: IUserSettings = None):
         super().__init__()
         self.user_settings: IUserSettings = settings
         if self.user_settings is None:
             self.user_settings = UserSettings()
-        self.viewer: Viewer = Viewer(viewer)
+        self.viewer: IViewer = viewer
 
         # basic styling
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
