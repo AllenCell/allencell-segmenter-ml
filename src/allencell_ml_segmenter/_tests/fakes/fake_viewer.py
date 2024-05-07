@@ -58,6 +58,9 @@ class FakeViewer(IViewer):
             self._on_layers_change()
         return removed
 
+    def contains_layer(self, name: str) -> bool:
+        return name in self._image_layers or name in self._shapes_layers
+
     # not supporting in the fake because we will move away from this fn in the near future
     def get_layers(self) -> List[Layer]:
         return []

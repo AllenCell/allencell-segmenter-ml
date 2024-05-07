@@ -43,6 +43,10 @@ class IViewer(ABC):
     def remove_layer(self, name: str) -> bool:
         pass
 
+    @abstractmethod
+    def contains_layer(self, name: str) -> bool:
+        pass
+
     # TODO: refactor prediction/file_input_widget.py to not use this and use get_all_images instead
     @abstractmethod
     def get_layers(self) -> List[Layer]:
