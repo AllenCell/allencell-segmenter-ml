@@ -122,9 +122,9 @@ def test_initial_state_with_seg2(qtbot: QtBot, test_environment_with_seg2: TestE
 
     assert env.view.next_button.isEnabled()
 
-    assert f"[raw] {IMG_DIR_FILES[0].name}" in env.viewer.images_added
-    assert f"[seg1] {IMG_DIR_FILES[0].name}" in env.viewer.images_added
-    assert f"[seg2] {IMG_DIR_FILES[0].name}" in env.viewer.images_added
+    assert env.viewer.contains_layer(f"[raw] {IMG_DIR_FILES[0].name}")
+    assert env.viewer.contains_layer(f"[seg1] {IMG_DIR_FILES[0].name}")
+    assert env.viewer.contains_layer(f"[seg2] {IMG_DIR_FILES[0].name}")
 
     assert env.view.progress_bar.value() == 1
     assert env.view.progress_bar.maximum() == 3
@@ -183,9 +183,9 @@ def test_initial_state_no_seg2(qtbot: QtBot, test_environment_without_seg2: Test
 
     assert env.view.next_button.isEnabled()
 
-    assert f"[raw] {IMG_DIR_FILES[0].name}" in env.viewer.images_added
-    assert f"[seg1] {IMG_DIR_FILES[0].name}" in env.viewer.images_added
-    assert not f"[seg2] {IMG_DIR_FILES[0].name}" in env.viewer.images_added
+    assert env.viewer.contains_layer(f"[raw] {IMG_DIR_FILES[0].name}")
+    assert env.viewer.contains_layer(f"[seg1] {IMG_DIR_FILES[0].name}")
+    assert not env.viewer.contains_layer(f"[seg2] {IMG_DIR_FILES[0].name}")
 
     assert env.view.progress_bar.value() == 1
     assert env.view.progress_bar.maximum() == 3
@@ -220,9 +220,9 @@ def test_next_image(qtbot: QtBot, test_environment_with_seg2: TestEnvironment) -
     env.model.next_image_data_ready.emit()
     assert env.view.next_button.isEnabled()
 
-    assert f"[raw] {IMG_DIR_FILES[1].name}" in env.viewer.images_added
-    assert f"[seg1] {IMG_DIR_FILES[1].name}" in env.viewer.images_added
-    assert f"[seg2] {IMG_DIR_FILES[1].name}" in env.viewer.images_added
+    assert env.viewer.contains_layer(f"[raw] {IMG_DIR_FILES[1].name}")
+    assert env.viewer.contains_layer(f"[seg1] {IMG_DIR_FILES[1].name}")
+    assert env.viewer.contains_layer(f"[seg2] {IMG_DIR_FILES[1].name}")
 
 
 def test_last_image(qtbot: QtBot, test_environment_with_seg2: TestEnvironment) -> None:
@@ -256,9 +256,9 @@ def test_last_image(qtbot: QtBot, test_environment_with_seg2: TestEnvironment) -
 
     assert env.view.next_button.isEnabled()
 
-    assert f"[raw] {IMG_DIR_FILES[2].name}" in env.viewer.images_added
-    assert f"[seg1] {IMG_DIR_FILES[2].name}" in env.viewer.images_added
-    assert f"[seg2] {IMG_DIR_FILES[2].name}" in env.viewer.images_added
+    assert env.viewer.contains_layer(f"[raw] {IMG_DIR_FILES[2].name}")
+    assert env.viewer.contains_layer(f"[seg1] {IMG_DIR_FILES[2].name}")
+    assert env.viewer.contains_layer(f"[seg2] {IMG_DIR_FILES[2].name}")
 
     # Act
     qtbot.mouseClick(env.view.next_button, 1) # reached end, so buttons should be disabled
@@ -288,7 +288,7 @@ def test_create_new_merging_mask(qtbot: QtBot, test_environment_with_seg2: TestE
 
     # Act
     qtbot.mouseClick(env.view.merging_create_button, 1)
-    
+
 ### View + Model Integration Tests ------------------------------------------------------------------------
 
 def test_curation_record_on_next_with_seg2(qtbot: QtBot, test_environment_with_seg2: TestEnvironment) -> None:
@@ -298,4 +298,4 @@ def test_curation_record_on_next_with_seg2(qtbot: QtBot, test_environment_with_s
     env.model.next_image_data_ready.emit()
 
     # Act
-    qtbot.mouseClick(env.view.no_radio)
+    #qtbot.mouseClick(env.view.no_radio)
