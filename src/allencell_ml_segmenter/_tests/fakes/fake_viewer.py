@@ -1,72 +1,70 @@
-from pathlib import Path
+import numpy as np
 
 from allencell_ml_segmenter.main.i_viewer import IViewer
+from allencell_ml_segmenter.main.segmenter_layer import ShapesLayer, ImageLayer
 
-import napari
-from typing import List, Callable
+
+from napari.utils.events import Event as NapariEvent
+from typing import List, Dict, Callable, Optional
 from napari.layers import Layer
-from unittest.mock import Mock
-from napari.layers.shapes.shapes import Shapes
-
-
-class FakeLayer:
-    def __init__(self, name=""):
-        self.removed: List[Layer] = []
-        self.connected: List[Callable] = []
-        self.name = name
-
-    def remove(self, layer_remove: Layer):
-        self.removed.append(layer_remove)
-
-    def is_removed(self, layer: Layer):
-        return layer in self.removed
-
-    def connect(self, callable: Callable):
-        self.connected.append(callable)
 
 
 class FakeNapariEvent:
-    def __init__(self):
-        self.layers_change: FakeLayer = FakeLayer()
-
+    pass
 
 class FakeViewer(IViewer):
     def __init__(self):
-        self._viewer = None
-        self.layers = FakeLayer()
-        self.layers_cleared_count = 0
-        self.images_added = dict()
-        self.shapes_layers_added = []
-        self.shapes_layers_removed = []
-        self.events = FakeNapariEvent()
+        self._image_layers: Dict[str, ImageLayer] = {}
+        self._shapes_layers: Dict[str, ShapesLayer] = {}
+        self._on_layers_change_fns: List[Callable] = []
 
-    def add_image(self, image, name=None):
-        self.images_added[name] = image
+    def add_image(self, image: np.ndarray, name: str):
+        self._image_layers[name] = ImageLayer(name, None)
+        self._on_layers_change()
+    
+    def get_image(self, name: str) -> Optional[ImageLayer]:
+        if name in self._image_layers:
+            return self._image_layers[name]
+        return None
+
+    def get_all_images(self) -> List[ImageLayer]:
+        return [v for k, v in self._image_layers.items()]
+
+    def add_shapes(self, name: str, face_color: str, mode: str) -> None:
+        self._shapes_layers[name] = ShapesLayer(name, np.asarray([[1, 2], [3, 4]]))
+        self._on_layers_change()
+
+    def get_shapes(self, name: str) -> Optional[ShapesLayer]:
+        if name in self._shapes_layers:
+            return self._shapes_layers[name]
+        return None
+
+    def get_all_shapes(self) -> List[ShapesLayer]:
+        return [v for k, v in self._shapes_layers.items()]
 
     def clear_layers(self) -> None:
-        self.layers_cleared_count = self.layers_cleared_count + 1
+        self._image_layers = {}
+        self._shapes_layers = {}
 
-    def add_shapes(self, name, face_color) -> Shapes:
-        self.shapes_layers_added.append(name)
-        mock_shapes_return = Mock(Shapes)
-        mock_shapes_return.name = name
-        return mock_shapes_return
+    def remove_layer(self, name: str) -> bool:
+        removed: bool = False
+        if name in self._image_layers:
+            del self._image_layers[name]
+            removed = True
+        if name in self._shapes_layers:
+            del self._shapes_layers[name]
+            removed = True
+        if removed:
+            self._on_layers_change()
+        return removed
 
-    def clear_mask_layers(self, layers_to_remove: List[Shapes]) -> None:
-        for layer in layers_to_remove:
-            self.layers.remove(layer)
+    # not supporting in the fake because we will move away from this fn in the near future
+    def get_layers(self) -> List[Layer]:
+        return []
 
-    def is_layer_removed(self, layer: Layer):
-        return self.layers.is_removed(layer)
+    def subscribe_layers_change_event(self, function: Callable[[NapariEvent], None]) -> None:
+        self._on_layers_change_fns.append(function)
 
-    def get_paths_of_image_layers(self) -> List:
-        return list(self.images_added.keys())
-
-    def subscribe_layers_change_event(self, function):
-        self.events.layers_change.connect(function)
-
-    def get_layers(self):
-        return self.images_added.keys()
-
-    def add_layer(self, name):
-        self.layer_list.append(FakeLayer(name))
+    def _on_layers_change(self):
+        for fn in self._on_layers_change_fns:
+            fn(FakeNapariEvent())
