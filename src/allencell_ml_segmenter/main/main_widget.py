@@ -32,6 +32,10 @@ from allencell_ml_segmenter.training.model_selection_widget import (
 )
 from allencell_ml_segmenter.training.training_model import TrainingModel
 from allencell_ml_segmenter.training.view import TrainingView
+from allencell_ml_segmenter.curation.curation_image_loader import (
+    CurationImageLoaderFactory,
+)
+from allencell_ml_segmenter.curation.curation_model import CurationModel
 
 
 class MainWidget(AicsWidget):
@@ -73,6 +77,7 @@ class MainWidget(AicsWidget):
         )
 
         self._prediction_model: PredictionModel = PredictionModel()
+        self._curation_model: CurationModel = CurationModel(self._experiments_model, CurationImageLoaderFactory())
 
         # init services
         self._training_service: TrainingService = TrainingService(
