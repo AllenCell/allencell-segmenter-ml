@@ -77,7 +77,7 @@ def test_show_results(main_model: MainModel) -> None:
         / "_tests"
         / "test_files"
         / "output_test_folder"
-        / "seg"
+        / "target"
         / "output_1.tiff"
     )
     assert array_equal(
