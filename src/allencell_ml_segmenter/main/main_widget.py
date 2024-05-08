@@ -77,7 +77,9 @@ class MainWidget(AicsWidget):
         )
 
         self._prediction_model: PredictionModel = PredictionModel()
-        self._curation_model: CurationModel = CurationModel(self._experiments_model, CurationImageLoaderFactory())
+        self._curation_model: CurationModel = CurationModel(
+            self._experiments_model, CurationImageLoaderFactory()
+        )
 
         # init services
         self._training_service: TrainingService = TrainingService(
