@@ -1,7 +1,7 @@
 from allencell_ml_segmenter.core.publisher import Publisher
 from allencell_ml_segmenter.core.event import Event
 from enum import Enum
-from typing import Union, Optional
+from typing import Union, Optional, List
 from pathlib import Path
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 
@@ -68,7 +68,7 @@ class TrainingModel(Publisher):
         self._model_path: Union[Path, None] = (
             None  # if None, start a new model
         )
-        self._patch_size: PatchSize = None
+        self._patch_size: List[int] = None
         self._spatial_dims: int = None
         self._num_epochs: int = None
         self._current_epoch: int = None
@@ -188,25 +188,19 @@ class TrainingModel(Publisher):
         """
         self._channel_index = index
 
-    def get_patch_size(self) -> PatchSize:
+    def get_patch_size(self) -> List[int]:
         """
         Gets patch size
         """
         return self._patch_size
 
-    def set_patch_size(self, patch_size: str) -> None:
+    def set_patch_size(self, z: int, y: int, x: int) -> None:
         """
         Sets patch size
 
         patch_size (str): patch size for training
         """
-        # convert string to enum
-        patch_size = patch_size.upper()
-        if patch_size not in [x.name for x in PatchSize]:
-            raise ValueError(
-                "No support for non small, medium, and large patch sizes."
-            )
-        self._patch_size = PatchSize[patch_size]
+        self._patch_size = [z, y, x]
 
     def get_max_time(self) -> int:
         """
