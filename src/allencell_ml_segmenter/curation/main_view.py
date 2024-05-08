@@ -92,14 +92,14 @@ class CurationMainView(View):
         )
         self.layout().addLayout(progress_bar_layout)
 
-        self._save_curation_csv_button: QPushButton = QPushButton(
+        self.save_csv_button: QPushButton = QPushButton(
             "Save Curation CSV"
         )
-        self._save_curation_csv_button.clicked.connect(
+        self.save_csv_button.clicked.connect(
             self._on_save_curation_csv
         )
-        self._save_curation_csv_button.setObjectName("save_csv_btn")
-        self.layout().addWidget(self._save_curation_csv_button)
+        self.save_csv_button.setObjectName("save_csv_btn")
+        self.layout().addWidget(self.save_csv_button)
 
         self.file_name: QLabel = QLabel()
         self.layout().addWidget(self.file_name, alignment=Qt.AlignHCenter)
@@ -305,10 +305,10 @@ class CurationMainView(View):
     def _on_save_curation_csv(self) -> None:
         self._curation_model.save_curr_curation_record()
         self._curation_model.save_curr_curation_record_to_disk()
-        self._save_curation_csv_button.setEnabled(False)
+        self.save_csv_button.setEnabled(False)
 
     def _on_saved_to_disk(self) -> None:
-        self._save_curation_csv_button.setEnabled(True)
+        self.save_csv_button.setEnabled(True)
         show_info("Current progress saved to CSV")
 
     def disable_merging_mask_buttons(self):
