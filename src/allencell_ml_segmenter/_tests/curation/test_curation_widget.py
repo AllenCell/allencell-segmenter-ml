@@ -38,7 +38,7 @@ class TestEnvironment:
 @pytest.fixture
 def test_env() -> TestEnvironment:
     model: CurationModel = CurationModel(FakeExperimentsModel(), FakeCurationImageLoaderFactory())
-    return TestEnvironment(model, CurationWidget(FakeViewer(None), model))
+    return TestEnvironment(model, CurationWidget(FakeViewer(), model))
 
 def test_view_change(qtbot: QtBot, test_env: TestEnvironment) -> None:
     # Arrange
