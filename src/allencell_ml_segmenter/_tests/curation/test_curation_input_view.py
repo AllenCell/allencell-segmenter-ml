@@ -23,7 +23,8 @@ def test_env() -> TestEnvironment:
     model: CurationModel = CurationModel(FakeExperimentsModel(), FakeCurationImageLoaderFactory())
     return TestEnvironment(model, CurationInputView(model))
 
-# TODO: figure out how to test the qfiledialog portion of this view
+# TODO: figure out how to test the qfiledialog portion of this view -> will also make
+# testing the start curation button possible
 
 ### UI State Tests ----------------------------------------------------------------------------------
 
