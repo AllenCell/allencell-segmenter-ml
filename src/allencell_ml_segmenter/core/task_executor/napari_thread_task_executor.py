@@ -25,7 +25,7 @@ class NapariThreadTaskExecutor(ITaskExecutor):
         if on_error is not None:
             worker.errored.connect(on_error)
         worker.start()
-    
+
     @classmethod
     def global_instance(cls):
         if cls._instance is None:

@@ -6,14 +6,23 @@ from unittest.mock import Mock
 import numpy as np
 
 from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
-from allencell_ml_segmenter.curation.curation_model import CurationModel, CurationView
-from allencell_ml_segmenter._tests.fakes.fake_experiments_model import FakeExperimentsModel
-from allencell_ml_segmenter.curation.curation_image_loader import FakeCurationImageLoaderFactory
+from allencell_ml_segmenter.curation.curation_model import (
+    CurationModel,
+    CurationView,
+)
+from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
+    FakeExperimentsModel,
+)
+from allencell_ml_segmenter.curation.curation_image_loader import (
+    FakeCurationImageLoaderFactory,
+)
 
 
 @pytest.fixture
 def curation_model() -> CurationModel:
-    return CurationModel(FakeExperimentsModel(), FakeCurationImageLoaderFactory())
+    return CurationModel(
+        FakeExperimentsModel(), FakeCurationImageLoaderFactory()
+    )
 
 
 def test_set_raw_directory(curation_model: CurationModel) -> None:
@@ -95,9 +104,15 @@ def test_set_current_view_to_main_view(curation_model: CurationModel) -> None:
     # Arrange
 
     # necessary for init of image loader
-    curation_model.set_raw_directory_paths([Path("r1"), Path("r2"), Path("r3")])
-    curation_model.set_seg1_directory_paths([Path("s11"), Path("s12"), Path("s13")])
-    curation_model.set_seg2_directory_paths([Path("s21"), Path("s22"), Path("s23")])
+    curation_model.set_raw_directory_paths(
+        [Path("r1"), Path("r2"), Path("r3")]
+    )
+    curation_model.set_seg1_directory_paths(
+        [Path("s11"), Path("s12"), Path("s13")]
+    )
+    curation_model.set_seg2_directory_paths(
+        [Path("s21"), Path("s22"), Path("s23")]
+    )
 
     view_changed_slot: Mock = Mock()
     curation_model.current_view_changed.connect(view_changed_slot)
@@ -116,7 +131,7 @@ def test_set_current_view_to_main_view(curation_model: CurationModel) -> None:
 
     view_changed_slot.assert_called_once()
     first_image_ready_slot.assert_called_once()
-    next_image_ready_slot.assert_called_once() # should be called since > 1 image in dirs
+    next_image_ready_slot.assert_called_once()  # should be called since > 1 image in dirs
 
     assert curation_model.get_raw_image_data().path == Path("r1")
     assert curation_model.get_seg1_image_data().path == Path("s11")
@@ -126,6 +141,7 @@ def test_set_current_view_to_main_view(curation_model: CurationModel) -> None:
 # TODO: if we end up needing to change back from main to input view, add tests for that
 # here
 
+
 def test_set_merging_mask(curation_model: CurationModel) -> None:
     # Arrange
     mask: np.ndarray = np.asarray([[1, 2], [3, 4]])
@@ -133,6 +149,7 @@ def test_set_merging_mask(curation_model: CurationModel) -> None:
     curation_model.set_merging_mask(mask)
     # Assert
     assert np.array_equal(curation_model.get_merging_mask(), mask)
+
 
 def test_set_excluding_mask(curation_model: CurationModel) -> None:
     # Arrange
@@ -142,6 +159,7 @@ def test_set_excluding_mask(curation_model: CurationModel) -> None:
     # Assert
     assert np.array_equal(curation_model.get_excluding_mask(), mask)
 
+
 def test_set_base_image(curation_model: CurationModel) -> None:
     # Act
     curation_model.set_base_image("seg2")
@@ -149,12 +167,14 @@ def test_set_base_image(curation_model: CurationModel) -> None:
     # Assert
     assert curation_model.get_base_image() == "seg2"
 
+
 def test_set_use_image(curation_model: CurationModel) -> None:
     # Act
     curation_model.set_use_image(False)
 
     # Assert
     assert not curation_model.get_use_image()
+
 
 def test_set_raw_image_channel_count(curation_model: CurationModel) -> None:
     # Arrange
@@ -168,6 +188,7 @@ def test_set_raw_image_channel_count(curation_model: CurationModel) -> None:
     assert curation_model.get_raw_image_channel_count() == 4
     channel_count_set_slot.assert_called_once()
 
+
 def test_set_seg1_image_channel_count(curation_model: CurationModel) -> None:
     # Arrange
     channel_count_set_slot: Mock = Mock()
@@ -180,6 +201,7 @@ def test_set_seg1_image_channel_count(curation_model: CurationModel) -> None:
     assert curation_model.get_seg1_image_channel_count() == 5
     channel_count_set_slot.assert_called_once()
 
+
 def test_set_seg2_image_channel_count(curation_model: CurationModel) -> None:
     # Arrange
     channel_count_set_slot: Mock = Mock()
@@ -191,6 +213,7 @@ def test_set_seg2_image_channel_count(curation_model: CurationModel) -> None:
     # Assert
     assert curation_model.get_seg2_image_channel_count() == 6
     channel_count_set_slot.assert_called_once()
+
 
 def test_set_curation_saved_to_disk(curation_model: CurationModel) -> None:
     saved_slot: Mock = Mock()
@@ -206,12 +229,19 @@ def test_set_curation_saved_to_disk(curation_model: CurationModel) -> None:
     assert curation_model.get_curation_record_saved_to_disk()
     saved_slot.assert_called_once()
 
+
 def test_save_curation_record_with_seg2(curation_model: CurationModel) -> None:
     # Arrange
     # necessary for init of image loader
-    curation_model.set_raw_directory_paths([Path("r1"), Path("r2"), Path("r3")])
-    curation_model.set_seg1_directory_paths([Path("s11"), Path("s12"), Path("s13")])
-    curation_model.set_seg2_directory_paths([Path("s21"), Path("s22"), Path("s23")])
+    curation_model.set_raw_directory_paths(
+        [Path("r1"), Path("r2"), Path("r3")]
+    )
+    curation_model.set_seg1_directory_paths(
+        [Path("s11"), Path("s12"), Path("s13")]
+    )
+    curation_model.set_seg2_directory_paths(
+        [Path("s21"), Path("s22"), Path("s23")]
+    )
     curation_model.set_current_view(CurationView.MAIN_VIEW)
 
     # Act
@@ -270,11 +300,18 @@ def test_save_curation_record_with_seg2(curation_model: CurationModel) -> None:
     assert record.merging_mask is None
     assert np.array_equal(record.excluding_mask, np.asarray([[5, 6], [7, 8]]))
 
-def test_save_curation_record_without_seg2(curation_model: CurationModel) -> None:
+
+def test_save_curation_record_without_seg2(
+    curation_model: CurationModel,
+) -> None:
     # Arrange
     # necessary for init of image loader
-    curation_model.set_raw_directory_paths([Path("r1"), Path("r2"), Path("r3")])
-    curation_model.set_seg1_directory_paths([Path("s11"), Path("s12"), Path("s13")])
+    curation_model.set_raw_directory_paths(
+        [Path("r1"), Path("r2"), Path("r3")]
+    )
+    curation_model.set_seg1_directory_paths(
+        [Path("s11"), Path("s12"), Path("s13")]
+    )
     curation_model.set_current_view(CurationView.MAIN_VIEW)
 
     # Act
@@ -312,8 +349,12 @@ def test_save_curation_record_without_seg2(curation_model: CurationModel) -> Non
 
     # Act
     curation_model.next_image()
-    curation_model.set_base_image("seg2") # no seg2 image -> expect default seg1
-    curation_model.set_merging_mask(np.asarray([[3, 4], [5, 6]])) # no seg2 image -> expect default None
+    curation_model.set_base_image(
+        "seg2"
+    )  # no seg2 image -> expect default seg1
+    curation_model.set_merging_mask(
+        np.asarray([[3, 4], [5, 6]])
+    )  # no seg2 image -> expect default None
     curation_model.set_excluding_mask(np.asarray([[5, 6], [7, 8]]))
     # curation_model.set_use_image(True) expect default True
     curation_model.save_curr_curation_record()
@@ -329,12 +370,19 @@ def test_save_curation_record_without_seg2(curation_model: CurationModel) -> Non
     assert record.merging_mask is None
     assert np.array_equal(record.excluding_mask, np.asarray([[5, 6], [7, 8]]))
 
+
 def test_state_resets_on_next(curation_model: CurationModel) -> None:
     # Arrange
     # necessary for init of image loader
-    curation_model.set_raw_directory_paths([Path("r1"), Path("r2"), Path("r3")])
-    curation_model.set_seg1_directory_paths([Path("s11"), Path("s12"), Path("s13")])
-    curation_model.set_seg2_directory_paths([Path("s21"), Path("s22"), Path("s23")])
+    curation_model.set_raw_directory_paths(
+        [Path("r1"), Path("r2"), Path("r3")]
+    )
+    curation_model.set_seg1_directory_paths(
+        [Path("s11"), Path("s12"), Path("s13")]
+    )
+    curation_model.set_seg2_directory_paths(
+        [Path("s21"), Path("s22"), Path("s23")]
+    )
     curation_model.set_current_view(CurationView.MAIN_VIEW)
 
     # Act
@@ -350,12 +398,19 @@ def test_state_resets_on_next(curation_model: CurationModel) -> None:
     assert curation_model.get_excluding_mask() == None
     assert curation_model.get_use_image() == True
 
+
 def test_save_curation_record_overwrite(curation_model: CurationModel) -> None:
     # Arrange
     # necessary for init of image loader
-    curation_model.set_raw_directory_paths([Path("r1"), Path("r2"), Path("r3")])
-    curation_model.set_seg1_directory_paths([Path("s11"), Path("s12"), Path("s13")])
-    curation_model.set_seg2_directory_paths([Path("s21"), Path("s22"), Path("s23")])
+    curation_model.set_raw_directory_paths(
+        [Path("r1"), Path("r2"), Path("r3")]
+    )
+    curation_model.set_seg1_directory_paths(
+        [Path("s11"), Path("s12"), Path("s13")]
+    )
+    curation_model.set_seg2_directory_paths(
+        [Path("s21"), Path("s22"), Path("s23")]
+    )
     curation_model.set_current_view(CurationView.MAIN_VIEW)
 
     # Act
@@ -383,6 +438,7 @@ def test_save_curation_record_overwrite(curation_model: CurationModel) -> None:
     assert np.array_equal(record.merging_mask, np.asarray([[3, 4], [5, 6]]))
     assert np.array_equal(record.excluding_mask, np.asarray([[4, 5], [6, 7]]))
 
+
 def test_save_curation_record_to_disk(curation_model: CurationModel) -> None:
     # Arrange
     save_requested_slot: Mock = Mock()
@@ -393,4 +449,3 @@ def test_save_curation_record_to_disk(curation_model: CurationModel) -> None:
 
     # Assert
     save_requested_slot.assert_called_once()
-
