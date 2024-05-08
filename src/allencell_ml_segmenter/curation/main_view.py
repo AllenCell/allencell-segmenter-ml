@@ -92,12 +92,8 @@ class CurationMainView(View):
         )
         self.layout().addLayout(progress_bar_layout)
 
-        self.save_csv_button: QPushButton = QPushButton(
-            "Save Curation CSV"
-        )
-        self.save_csv_button.clicked.connect(
-            self._on_save_curation_csv
-        )
+        self.save_csv_button: QPushButton = QPushButton("Save Curation CSV")
+        self.save_csv_button.clicked.connect(self._on_save_curation_csv)
         self.save_csv_button.setObjectName("save_csv_btn")
         self.layout().addWidget(self.save_csv_button)
 
@@ -391,7 +387,9 @@ class CurationMainView(View):
             show_info("Please select a base image to merge with")
             return
 
-        merging_mask: Optional[ShapesLayer] = self._viewer.get_shapes(MERGING_MASK_LAYER_NAME)
+        merging_mask: Optional[ShapesLayer] = self._viewer.get_shapes(
+            MERGING_MASK_LAYER_NAME
+        )
         if merging_mask is None:
             show_info("Please create a merging mask layer")
             return
@@ -402,13 +400,13 @@ class CurationMainView(View):
 
         # deepcopy so that if a user adds more shapes to existing layer, they don't show up in model
         # could change this behavior based on UX input
-        self._curation_model.set_merging_mask(
-            deepcopy(merging_mask.data)
-        )
+        self._curation_model.set_merging_mask(deepcopy(merging_mask.data))
         self.merging_mask_status.setText("Merging mask saved")
 
     def _create_excluding_mask(self) -> None:
-        excluding_mask: Optional[ShapesLayer] = self._viewer.get_shapes(EXCLUDING_MASK_LAYER_NAME)
+        excluding_mask: Optional[ShapesLayer] = self._viewer.get_shapes(
+            EXCLUDING_MASK_LAYER_NAME
+        )
         if excluding_mask is not None:
             if not self._discard_layer_prompt(excluding_mask):
                 return
@@ -421,7 +419,9 @@ class CurationMainView(View):
         self.excluding_mask_status.setText("Draw mask")
 
     def save_excluding_mask(self) -> None:
-        excluding_mask: Optional[ShapesLayer] = self._viewer.get_shapes(EXCLUDING_MASK_LAYER_NAME)
+        excluding_mask: Optional[ShapesLayer] = self._viewer.get_shapes(
+            EXCLUDING_MASK_LAYER_NAME
+        )
         if excluding_mask is None:
             show_info("Please create an excluding mask layer")
             return
@@ -430,9 +430,7 @@ class CurationMainView(View):
             if not self._replace_saved_mask_prompt("excluding"):
                 return
 
-        self._curation_model.set_excluding_mask(
-            deepcopy(excluding_mask.data)
-        )
+        self._curation_model.set_excluding_mask(deepcopy(excluding_mask.data))
         self.excluding_mask_status.setText("Excluding mask saved")
 
     def disable_all_masks(self) -> None:

@@ -6,7 +6,10 @@ from allencell_ml_segmenter.core.image_data_extractor import (
     IImageDataExtractor,
     AICSImageDataExtractor,
 )
-from allencell_ml_segmenter.core.task_executor import ITaskExecutor, NapariThreadTaskExecutor
+from allencell_ml_segmenter.core.task_executor import (
+    ITaskExecutor,
+    NapariThreadTaskExecutor,
+)
 from allencell_ml_segmenter.curation.curation_image_loader import (
     ICurationImageLoader,
 )
@@ -59,11 +62,15 @@ class CurationImageLoader(ICurationImageLoader):
     def start(self) -> None:
         # start threads for first and next images
         self._set_curr_is_busy(True)
-        self._start_extraction_threads(0, self._curr_img_data, self._on_first_image_ready)
+        self._start_extraction_threads(
+            0, self._curr_img_data, self._on_first_image_ready
+        )
 
         if self.has_next():
             self._set_next_is_busy(True)
-            self._start_extraction_threads(1, self._next_img_data, self._on_next_image_ready)
+            self._start_extraction_threads(
+                1, self._next_img_data, self._on_next_image_ready
+            )
 
     def is_busy(self) -> bool:
         return any(self._is_busy)
@@ -94,25 +101,38 @@ class CurationImageLoader(ICurationImageLoader):
             time.sleep(0.1)
 
     def _start_extraction_threads(
-        self, img_index: int, data_dict: Dict[str, ImageData], on_finish: Callable[[], None]
+        self,
+        img_index: int,
+        data_dict: Dict[str, ImageData],
+        on_finish: Callable[[], None],
     ) -> None:
         data_dict.clear()
         self._task_executor.exec(
-            lambda: self._img_data_extractor.extract_image_data(self._raw_images[img_index]),
+            lambda: self._img_data_extractor.extract_image_data(
+                self._raw_images[img_index]
+            ),
             on_return=lambda img_data: data_dict.update({"raw": img_data}),
         )
         self._task_executor.exec(
-            lambda: self._img_data_extractor.extract_image_data(self._seg1_images[img_index]),
+            lambda: self._img_data_extractor.extract_image_data(
+                self._seg1_images[img_index]
+            ),
             on_return=lambda img_data: data_dict.update({"seg1": img_data}),
         )
 
         if self._seg2_images:
             self._task_executor.exec(
-                lambda: self._img_data_extractor.extract_image_data(self._seg2_images[img_index]),
-                on_return=lambda img_data: data_dict.update({"seg2": img_data}),
+                lambda: self._img_data_extractor.extract_image_data(
+                    self._seg2_images[img_index]
+                ),
+                on_return=lambda img_data: data_dict.update(
+                    {"seg2": img_data}
+                ),
             )
 
-        self._task_executor.exec(lambda: self._wait_on_data_dict(data_dict), on_finish=on_finish)
+        self._task_executor.exec(
+            lambda: self._wait_on_data_dict(data_dict), on_finish=on_finish
+        )
 
     def get_raw_image_data(self) -> ImageData:
         """
@@ -155,7 +175,11 @@ class CurationImageLoader(ICurationImageLoader):
         self._cursor += 1
         if self.has_next():
             self._set_next_is_busy(True)
-            self._start_extraction_threads(self._cursor + 1, self._next_img_data, self._on_next_image_ready)
+            self._start_extraction_threads(
+                self._cursor + 1,
+                self._next_img_data,
+                self._on_next_image_ready,
+            )
 
     def prev(self) -> None:
         """
@@ -175,4 +199,8 @@ class CurationImageLoader(ICurationImageLoader):
         self._cursor -= 1
         if self.has_prev():
             self._set_prev_is_busy(True)
-            self._start_extraction_threads(self._cursor - 1, self._prev_img_data, self._on_prev_image_ready)
+            self._start_extraction_threads(
+                self._cursor - 1,
+                self._prev_img_data,
+                self._on_prev_image_ready,
+            )

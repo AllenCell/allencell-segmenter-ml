@@ -16,8 +16,10 @@ import napari
 
 # IMPORTANT NOTE: MainWidget is different from the other widgets since we do not directly
 # instantiate it in our code. So, it will always receive a napari.Viewer object in
-# production. Therefore, we cannot initialize with our FakeViewer. We could supply a
-# "viewer factory" to the MainWidget, but for now I'm just mocking it here.
+# production. We cannot initialize with our FakeViewer because our 'Viewer' is created during
+# initialization of MainWidget. We could supply a "viewer factory" to the MainWidget,
+# but for now I'm just mocking it here.
+
 
 @pytest.fixture
 def main_widget(qtbot: QtBot) -> MainWidget:

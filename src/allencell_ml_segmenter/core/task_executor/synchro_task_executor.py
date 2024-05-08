@@ -22,13 +22,12 @@ class SynchroTaskExecutor(ITaskExecutor):
         except Exception as e:
             on_error(e)
             return
-        
+
         if on_return is not None:
             on_return(output)
         if on_finish is not None:
             on_finish()
 
-    
     @classmethod
     def global_instance(cls):
         if cls._instance is None:

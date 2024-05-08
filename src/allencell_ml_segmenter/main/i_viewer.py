@@ -14,7 +14,7 @@ class IViewer(ABC):
     @abstractmethod
     def add_image(self, image: np.ndarray, name: str) -> None:
         pass
-    
+
     @abstractmethod
     def get_image(self, name: str) -> Optional[ImageLayer]:
         pass
@@ -26,7 +26,7 @@ class IViewer(ABC):
     @abstractmethod
     def add_shapes(self, name: str, face_color: str, mode: str) -> None:
         pass
-    
+
     @abstractmethod
     def get_shapes(self, name: str) -> Optional[ShapesLayer]:
         pass
@@ -53,5 +53,7 @@ class IViewer(ABC):
         pass
 
     @abstractmethod
-    def subscribe_layers_change_event(self, function: Callable[[NapariEvent], None]) -> None:
+    def subscribe_layers_change_event(
+        self, function: Callable[[NapariEvent], None]
+    ) -> None:
         pass

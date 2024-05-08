@@ -13,8 +13,9 @@ from napari.layers import Layer
 class FakeNapariEvent:
     pass
 
+
 class FakeViewer(IViewer):
-    def __init__(self, viewer: Optional[napari.Viewer]=None):
+    def __init__(self, viewer: Optional[napari.Viewer] = None):
         self._image_layers: Dict[str, ImageLayer] = {}
         self._shapes_layers: Dict[str, ShapesLayer] = {}
         self._on_layers_change_fns: List[Callable] = []
@@ -22,7 +23,7 @@ class FakeViewer(IViewer):
     def add_image(self, image: np.ndarray, name: str):
         self._image_layers[name] = ImageLayer(name, None)
         self._on_layers_change()
-    
+
     def get_image(self, name: str) -> Optional[ImageLayer]:
         if name in self._image_layers:
             return self._image_layers[name]
@@ -32,7 +33,9 @@ class FakeViewer(IViewer):
         return [v for k, v in self._image_layers.items()]
 
     def add_shapes(self, name: str, face_color: str, mode: str) -> None:
-        self._shapes_layers[name] = ShapesLayer(name, np.asarray([[1, 2], [3, 4]]))
+        self._shapes_layers[name] = ShapesLayer(
+            name, np.asarray([[1, 2], [3, 4]])
+        )
         self._on_layers_change()
 
     def get_shapes(self, name: str) -> Optional[ShapesLayer]:
@@ -66,7 +69,9 @@ class FakeViewer(IViewer):
     def get_layers(self) -> List[Layer]:
         return []
 
-    def subscribe_layers_change_event(self, function: Callable[[NapariEvent], None]) -> None:
+    def subscribe_layers_change_event(
+        self, function: Callable[[NapariEvent], None]
+    ) -> None:
         self._on_layers_change_fns.append(function)
 
     def _on_layers_change(self):

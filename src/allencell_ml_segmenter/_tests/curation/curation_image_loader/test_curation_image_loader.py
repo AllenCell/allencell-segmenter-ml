@@ -6,9 +6,7 @@ from allencell_ml_segmenter.curation.curation_image_loader import (
 from allencell_ml_segmenter.core.image_data_extractor import (
     FakeImageDataExtractor,
 )
-from allencell_ml_segmenter.core.task_executor import (
-    SynchroTaskExecutor
-)
+from allencell_ml_segmenter.core.task_executor import SynchroTaskExecutor
 import pytest
 from unittest.mock import Mock
 
@@ -78,6 +76,7 @@ def test_init_empty_lists():
             task_executor=SynchroTaskExecutor.global_instance(),
         )
 
+
 def test_start_with_seg2():
     # arrange
     loader: CurationImageLoader = CurationImageLoader(
@@ -130,6 +129,7 @@ def test_start_without_seg2():
     assert loader.get_seg1_image_data() is not None
     assert loader.get_seg2_image_data() is None
 
+
 def test_next_with_seg2():
     loader: CurationImageLoader = CurationImageLoader(
         raw,
@@ -159,7 +159,9 @@ def test_next_with_seg2():
     assert loader.has_next()
     loader.next()
     assert loader.get_current_index() == 2
-    assert on_next_ready_mock.call_count == 2 # there is no next to load, so the signal shouldn't be emitted
+    assert (
+        on_next_ready_mock.call_count == 2
+    )  # there is no next to load, so the signal shouldn't be emitted
     assert loader.get_raw_image_data().path == raw[2]
     assert loader.get_seg1_image_data().path == seg1[2]
     assert loader.get_seg2_image_data().path == seg2[2]
