@@ -408,9 +408,9 @@ class CurationMainView(View):
             EXCLUDING_MASK_LAYER_NAME
         )
         if excluding_mask is not None:
-            if not self._discard_layer_prompt(excluding_mask):
+            if not self._discard_layer_prompt(EXCLUDING_MASK_LAYER_NAME):
                 return
-            self._viewer.remove_layer(excluding_mask)
+            self._viewer.remove_layer(EXCLUDING_MASK_LAYER_NAME)
 
         self._viewer.add_shapes(
             EXCLUDING_MASK_LAYER_NAME, "coral", "add_polygon"
