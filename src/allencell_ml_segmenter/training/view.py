@@ -94,15 +94,22 @@ class TrainingView(View):
         bottom_grid_layout.addWidget(patch_size_label, 0, 0)
         patch_size_entry_layout: QHBoxLayout = QHBoxLayout()
 
+        # allow only integers for the linedits below
+        enforce_int: QIntValidator = QIntValidator()
+        enforce_int.setRange(0, 9)
+
         self._z_patch_size: QLineEdit = QLineEdit()
+        self._z_patch_size.setValidator(enforce_int)
         patch_size_entry_layout.addWidget(QLabel("Z:"))
         patch_size_entry_layout.addWidget(self._z_patch_size)
 
         self._y_patch_size: QLineEdit = QLineEdit()
+        self._y_patch_size.setValidator(enforce_int)
         patch_size_entry_layout.addWidget(QLabel("Y:"))
         patch_size_entry_layout.addWidget(self._y_patch_size)
 
         self._x_patch_size: QLineEdit = QLineEdit()
+        self._x_patch_size.setValidator(enforce_int)
         patch_size_entry_layout.addWidget(QLabel("X:"))
         patch_size_entry_layout.addWidget(self._x_patch_size)
 
@@ -240,6 +247,8 @@ class TrainingView(View):
         """
         Starts training process
         """
+        self._parse_patch_size()
+
         progress_tracker: MetricsCSVProgressTracker = (
             MetricsCSVProgressTracker(
                 self._experiments_model.get_metrics_csv_path(),
@@ -315,3 +324,11 @@ class TrainingView(View):
         else:
             self._max_time_in_minutes_input.setEnabled(False)
             self._training_model.set_use_max_time(False)
+
+    def _parse_patch_size(self) -> bool:
+        """
+        Gets patch sizes from the UI and sets it in the model.
+        Returns True if valid patch sizes were provided, false if not
+        """
+
+
