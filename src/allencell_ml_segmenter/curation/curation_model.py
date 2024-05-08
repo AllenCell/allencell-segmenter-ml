@@ -160,7 +160,7 @@ class CurationModel(QObject):
         """
         self._raw_image_channel = channel
 
-    def get_raw_channel(self) -> int:
+    def get_raw_channel(self) -> Optional[int]:
         """
         Get the raw image channel
         """
@@ -172,7 +172,7 @@ class CurationModel(QObject):
         """
         self._seg1_image_channel = channel
 
-    def get_seg1_channel(self) -> int:
+    def get_seg1_channel(self) -> Optional[int]:
         """
         get the seg1 image channel
         """
@@ -184,7 +184,7 @@ class CurationModel(QObject):
         """
         self._seg2_image_channel = channel
 
-    def get_seg2_channel(self) -> int:
+    def get_seg2_channel(self) -> Optional[int]:
         """
         Get the seg2 image channel
         """
