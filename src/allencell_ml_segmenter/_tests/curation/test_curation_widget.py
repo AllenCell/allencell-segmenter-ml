@@ -10,10 +10,17 @@ from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
 )
 from allencell_ml_segmenter.curation.curation_service import CurationService
 from allencell_ml_segmenter.main.main_model import MainModel
-from allencell_ml_segmenter.curation.curation_model import CurationModel, CurationView
+from allencell_ml_segmenter.curation.curation_model import (
+    CurationModel,
+    CurationView,
+)
 from allencell_ml_segmenter.curation.input_view import CurationInputView
-from allencell_ml_segmenter._tests.fakes.fake_experiments_model import FakeExperimentsModel
-from allencell_ml_segmenter.curation.curation_image_loader import FakeCurationImageLoaderFactory
+from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
+    FakeExperimentsModel,
+)
+from allencell_ml_segmenter.curation.curation_image_loader import (
+    FakeCurationImageLoaderFactory,
+)
 from allencell_ml_segmenter._tests.fakes.fake_viewer import FakeViewer
 from pytestqt.qtbot import QtBot
 
@@ -29,6 +36,7 @@ IMG_DIR_PATH = (
 
 IMG_DIR_FILES = [path for path in IMG_DIR_PATH.iterdir()]
 
+
 @dataclass
 class TestEnvironment:
     model: CurationModel
@@ -37,8 +45,11 @@ class TestEnvironment:
 
 @pytest.fixture
 def test_env() -> TestEnvironment:
-    model: CurationModel = CurationModel(FakeExperimentsModel(), FakeCurationImageLoaderFactory())
+    model: CurationModel = CurationModel(
+        FakeExperimentsModel(), FakeCurationImageLoaderFactory()
+    )
     return TestEnvironment(model, CurationWidget(FakeViewer(), model))
+
 
 def test_view_change(qtbot: QtBot, test_env: TestEnvironment) -> None:
     # Arrange
@@ -50,5 +61,3 @@ def test_view_change(qtbot: QtBot, test_env: TestEnvironment) -> None:
     assert test_env.widget.get_view() == CurationView.INPUT_VIEW
     test_env.model.set_current_view(CurationView.MAIN_VIEW)
     assert test_env.widget.get_view() == CurationView.MAIN_VIEW
-
-    

@@ -302,7 +302,11 @@ class CurationModel(QObject):
                 else None
             ),
             self.get_excluding_mask(),
-            self.get_merging_mask() if self.get_seg2_image_data() is not None else None,
+            (
+                self.get_merging_mask()
+                if self.get_seg2_image_data() is not None
+                else None
+            ),
             (
                 self.get_base_image()
                 if self.get_base_image() is not None
@@ -341,7 +345,7 @@ class CurationModel(QObject):
         self._curation_record_saved_to_disk = saved
         if saved:
             self.saved_to_disk.emit()
-    
+
     def get_curation_record_saved_to_disk(self) -> bool:
         return self._curation_record_saved_to_disk
 

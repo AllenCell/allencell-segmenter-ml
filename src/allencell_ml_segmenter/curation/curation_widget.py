@@ -74,7 +74,7 @@ class CurationWidget(QStackedWidget, Subscriber, metaclass=CurationUiMeta):
         Set the current views, must be initialized first
         """
         self.setCurrentIndex(self.view_to_index[view])
-    
+
     # NOTE: this is mostly just a testing convenience function
     def get_view(self) -> CurationView:
         if self.currentWidget() == self.curation_input_view:
