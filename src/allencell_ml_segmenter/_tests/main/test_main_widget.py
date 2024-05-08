@@ -12,7 +12,12 @@ from allencell_ml_segmenter.config.i_user_settings import IUserSettings
 from allencell_ml_segmenter.core.aics_widget import AicsWidget
 from allencell_ml_segmenter.main.main_widget import MainWidget
 from unittest.mock import Mock
+import napari
 
+# IMPORTANT NOTE: MainWidget is different from the other widgets since we do not directly
+# instantiate it in our code. So, it will always receive a napari.Viewer object in
+# production. Therefore, we cannot initialize with our FakeViewer. We could supply a
+# "viewer factory" to the MainWidget, but for now I'm just mocking it here.
 
 @pytest.fixture
 def main_widget(qtbot: QtBot) -> MainWidget:
@@ -22,7 +27,7 @@ def main_widget(qtbot: QtBot) -> MainWidget:
     settings: IUserSettings = FakeUserSettings()
     settings.set_cyto_dl_home_path(Path())
     settings.set_user_experiments_path(Path())
-    return MainWidget(viewer=FakeViewer(), settings=settings)
+    return MainWidget(viewer=Mock(spec=napari.Viewer), settings=settings)
 
 
 def test_tabs_react_to_new_model_event(
@@ -135,7 +140,7 @@ def test_experiments_home_initialized(qtbot: QtBot) -> None:
 
     # ACT
     MainWidget(
-        FakeViewer(), settings
+        Mock(spec=napari.Viewer), settings
     )  # If the users settings does not find an experiments home path, it will prompt the user for one and persist it.
 
     # ASSERT
