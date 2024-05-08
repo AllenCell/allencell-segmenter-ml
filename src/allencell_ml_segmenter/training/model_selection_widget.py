@@ -1,5 +1,6 @@
 from qtpy.QtWidgets import (
     QWidget,
+    QHBoxLayout,
     QVBoxLayout,
     QSizePolicy,
     QFrame,
@@ -11,6 +12,7 @@ from qtpy.QtWidgets import (
     QStackedWidget,
     QLabel,
 )
+from qtpy.QtCore import Qt
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
@@ -36,14 +38,30 @@ class ModelSelectionWidget(QWidget):
         self._experiments_model: IExperimentsModel = experiments_model
 
         # widget skeleton
-        self.setLayout(QVBoxLayout())
+        layout = QVBoxLayout()
+        self.setLayout(layout)
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
 
-        title: LabelWithHint = LabelWithHint(ModelSelectionWidget.TITLE_TEXT)
-        title.setObjectName("title")
+        self._title: LabelWithHint = LabelWithHint(
+            ModelSelectionWidget.TITLE_TEXT,
+        )
+        self._title.setObjectName("title")
+
+        self._model_name_label = QLabel()
+        self._model_name_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
+
+        # layout for model labels
+        label_widget_layout = QHBoxLayout()
+        layout.addLayout(label_widget_layout)
+        label_widget_layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        label_widget_layout.setSpacing(0)
+        label_widget_layout.addWidget(self._title)
+        label_widget_layout.addWidget(
+            self._model_name_label, alignment=Qt.AlignLeft
+        )
+        label_widget_layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
         # TODO: hints for widget titles?
-        self.layout().addWidget(title)
 
         frame: QFrame = QFrame()
         frame.setLayout(QVBoxLayout())
@@ -102,27 +120,26 @@ class ModelSelectionWidget(QWidget):
         )
         apply_model_layout = QVBoxLayout()
         apply_model_layout.addLayout(top_grid_layout)
-        
+
         apply_model_widget = QWidget()
         apply_model_widget.setLayout(apply_model_layout)
         self._apply_change_stacked_widget.addWidget(apply_model_widget)
-
-        change_model_layout = QVBoxLayout()
-        self._model_name_label = QLabel("Model name")
-        change_model_layout.addWidget(self._model_name_label)
-
         self._apply_btn: QPushButton = QPushButton("Apply")
         self._apply_btn.clicked.connect(self._handle_apply_model)
         apply_model_layout.addWidget(self._apply_btn)
 
         # Disabled 4/6/24 - no needed for MVP V1 - chrishu
+        # change_model_layout = QVBoxLayout()
+        # self._model_name_label = QLabel("Model name")
+        # change_model_layout.addWidget(self._model_name_label)
+
         # self._change_model_btn: QPushButton = QPushButton("Change model")
         # self._change_model_btn.clicked.connect(self._handle_change_model)
         # change_model_layout.addWidget(self._change_model_btn)
-        
-        change_model_widget = QWidget()
-        change_model_widget.setLayout(change_model_layout)
-        self._apply_change_stacked_widget.addWidget(change_model_widget)
+        #
+        # change_model_widget = QWidget()
+        # change_model_widget.setLayout(change_model_layout)
+        # self._apply_change_stacked_widget.addWidget(change_model_widget)
 
         frameLayout = QVBoxLayout()
         frameLayout.addWidget(self._apply_change_stacked_widget)
@@ -144,10 +161,13 @@ class ModelSelectionWidget(QWidget):
         self._experiments_model.apply_experiment_name(
             self._experiments_model.get_experiment_name_selection()
         )
-        self._model_name_label.setText(
-            self._experiments_model.get_experiment_name()
+        self._title.set_value_text(
+            '    ' + self._experiments_model.get_experiment_name()
         )
-        self._apply_change_stacked_widget.setCurrentIndex(1)
+        # Change button Disabled 4/6/24 - no needed for MVP V1 - chrishu
+        # This would be:
+        # self._apply_change_stacked_widget.setCurrentIndex(1)
+        self._apply_change_stacked_widget.setVisible(False)
 
     def _handle_change_model(self):
         self._combo_box_existing_models.setCurrentIndex(-1)
