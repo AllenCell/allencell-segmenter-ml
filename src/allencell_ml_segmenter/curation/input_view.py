@@ -65,29 +65,29 @@ class CurationInputView(View):
         raw_grid_layout.addWidget(
             QLabel("Directory"), 0, 1, alignment=Qt.AlignRight
         )
-        self._raw_directory_select: InputButton = InputButton(
+        self.raw_directory_select: InputButton = InputButton(
             self._curation_model,
             self._on_raw_dir_select,
             "Select directory...",
             FileInputMode.DIRECTORY,
         )
-        self._raw_dir_stacked_spinner = StackedSpinner(
-            self._raw_directory_select
+        self.raw_dir_stacked_spinner = StackedSpinner(
+            self.raw_directory_select
         )
         raw_grid_layout.addWidget(
-            self._raw_dir_stacked_spinner, 0, 2, alignment=Qt.AlignRight
+            self.raw_dir_stacked_spinner, 0, 2, alignment=Qt.AlignRight
         )
 
         # Second Row in Gridlayout
         raw_grid_layout.addWidget(
             QLabel("Image channel"), 1, 1, alignment=Qt.AlignRight
         )
-        self._raw_image_channel_combo: QComboBox = QComboBox()
-        self._raw_image_channel_combo.activated.connect(
+        self.raw_image_channel_combo: QComboBox = QComboBox()
+        self.raw_image_channel_combo.activated.connect(
             self.raw_channel_selected
         )
         raw_grid_layout.addWidget(
-            self._raw_image_channel_combo, 1, 2, alignment=Qt.AlignLeft
+            self.raw_image_channel_combo, 1, 2, alignment=Qt.AlignLeft
         )
 
         # add grid to frame
@@ -104,29 +104,29 @@ class CurationInputView(View):
             QLabel("Directory"), 0, 1, alignment=Qt.AlignRight
         )
         # TODO update model accordingly
-        self._seg1_directory_select: InputButton = InputButton(
+        self.seg1_directory_select: InputButton = InputButton(
             self._curation_model,
             self._on_seg1_dir_select,
             "Select directory...",
             FileInputMode.DIRECTORY,
         )
-        self._seg1_dir_stacked_spinner = StackedSpinner(
-            self._seg1_directory_select
+        self.seg1_dir_stacked_spinner = StackedSpinner(
+            self.seg1_directory_select
         )
         seg1_grid_layout.addWidget(
-            self._seg1_dir_stacked_spinner, 0, 2, alignment=Qt.AlignRight
+            self.seg1_dir_stacked_spinner, 0, 2, alignment=Qt.AlignRight
         )
 
         # Second Row in Gridlayout
         seg1_grid_layout.addWidget(
             QLabel("Image channel"), 1, 1, alignment=Qt.AlignRight
         )
-        self._seg1_image_channel_combo: QComboBox = QComboBox()
-        self._seg1_image_channel_combo.activated.connect(
+        self.seg1_image_channel_combo: QComboBox = QComboBox()
+        self.seg1_image_channel_combo.activated.connect(
             self.seg1_channel_selected
         )
         seg1_grid_layout.addWidget(
-            self._seg1_image_channel_combo, 1, 2, alignment=Qt.AlignLeft
+            self.seg1_image_channel_combo, 1, 2, alignment=Qt.AlignLeft
         )
 
         # add grid to frame
@@ -143,37 +143,37 @@ class CurationInputView(View):
             QLabel("Directory"), 0, 1, alignment=Qt.AlignRight
         )
         # TODO update model accordingly
-        self._seg2_directory_select: InputButton = InputButton(
+        self.seg2_directory_select: InputButton = InputButton(
             self._curation_model,
             self._on_seg2_dir_select,
             "Select directory...",
             FileInputMode.DIRECTORY,
         )
-        self._seg2_dir_stacked_spinner = StackedSpinner(
-            self._seg2_directory_select
+        self.seg2_dir_stacked_spinner = StackedSpinner(
+            self.seg2_directory_select
         )
         seg2_grid_layout.addWidget(
-            self._seg2_dir_stacked_spinner, 0, 2, alignment=Qt.AlignRight
+            self.seg2_dir_stacked_spinner, 0, 2, alignment=Qt.AlignRight
         )
 
         # Second Row in Gridlayout
         seg2_grid_layout.addWidget(
             QLabel("Image channel"), 1, 1, alignment=Qt.AlignRight
         )
-        self._seg2_image_channel_combo: QComboBox = QComboBox()
-        self._seg2_image_channel_combo.activated.connect(
+        self.seg2_image_channel_combo: QComboBox = QComboBox()
+        self.seg2_image_channel_combo.activated.connect(
             self.seg2_channel_selected
         )
         seg2_grid_layout.addWidget(
-            self._seg2_image_channel_combo, 1, 2, alignment=Qt.AlignLeft
+            self.seg2_image_channel_combo, 1, 2, alignment=Qt.AlignLeft
         )
 
         # add grid to frame
         frame.layout().addLayout(seg2_grid_layout)
 
-        self._start_btn: QPushButton = QPushButton("Start")
-        self._start_btn.clicked.connect(self._on_start)
-        frame.layout().addWidget(self._start_btn)
+        self.start_btn: QPushButton = QPushButton("Start")
+        self.start_btn.clicked.connect(self._on_start)
+        frame.layout().addWidget(self.start_btn)
 
         # subscribers
         self._curation_model.raw_image_channel_count_set.connect(
@@ -236,19 +236,19 @@ class CurationInputView(View):
 
     def _on_raw_dir_select(self, dir: Path) -> None:
         self._set_to_loading(
-            self._raw_image_channel_combo, self._raw_dir_stacked_spinner
+            self.raw_image_channel_combo, self.raw_dir_stacked_spinner
         )
         self._curation_model.set_raw_directory(dir)
 
     def _on_seg1_dir_select(self, dir: Path) -> None:
         self._set_to_loading(
-            self._seg1_image_channel_combo, self._seg1_dir_stacked_spinner
+            self.seg1_image_channel_combo, self.seg1_dir_stacked_spinner
         )
         self._curation_model.set_seg1_directory(dir)
 
     def _on_seg2_dir_select(self, dir: Path) -> None:
         self._set_to_loading(
-            self._seg2_image_channel_combo, self._seg2_dir_stacked_spinner
+            self.seg2_image_channel_combo, self.seg2_dir_stacked_spinner
         )
         self._curation_model.set_seg2_directory(dir)
 
@@ -278,9 +278,9 @@ class CurationInputView(View):
         Event handler when raw image directory is selected. Updates combobox to the correct number of channels in the
         images from the raw directory.
         """
-        self._raw_dir_stacked_spinner.stop()
+        self.raw_dir_stacked_spinner.stop()
         self._populate_channel_combo(
-            self._raw_image_channel_combo,
+            self.raw_image_channel_combo,
             self._curation_model.get_raw_image_channel_count(),
         )
         self._curation_model.set_raw_channel(0)
@@ -290,9 +290,9 @@ class CurationInputView(View):
         Event handler when seg1 image directory is selected. Updates combobox to the correct number of channels in the
         images from the seg1 directory.
         """
-        self._seg1_dir_stacked_spinner.stop()
+        self.seg1_dir_stacked_spinner.stop()
         self._populate_channel_combo(
-            self._seg1_image_channel_combo,
+            self.seg1_image_channel_combo,
             self._curation_model.get_seg1_image_channel_count(),
         )
         self._curation_model.set_seg1_channel(0)
@@ -302,9 +302,9 @@ class CurationInputView(View):
         Event handler when seg2 image directory is selected. Updates combobox to the correct number of channels in the
         images from the seg2 directory.
         """
-        self._seg2_dir_stacked_spinner.stop()
+        self.seg2_dir_stacked_spinner.stop()
         self._populate_channel_combo(
-            self._seg2_image_channel_combo,
+            self.seg2_image_channel_combo,
             self._curation_model.get_seg2_image_channel_count(),
         )
         self._curation_model.set_seg2_channel(0)
