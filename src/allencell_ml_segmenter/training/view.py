@@ -1,5 +1,8 @@
 from pathlib import Path
 from typing import Optional
+
+from napari.utils.notifications import show_warning
+
 from allencell_ml_segmenter.main.i_viewer import IViewer
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
@@ -38,7 +41,6 @@ from allencell_ml_segmenter.training.training_model import PatchSize
 from allencell_ml_segmenter.training.metrics_csv_progress_tracker import (
     MetricsCSVProgressTracker,
 )
-
 
 class TrainingView(View):
     """
@@ -330,5 +332,31 @@ class TrainingView(View):
         Gets patch sizes from the UI and sets it in the model.
         Returns True if valid patch sizes were provided, false if not
         """
+        missing_patches: list[str] = []
+
+        if not self._z_patch_size.text():
+            missing_patches.append("Z")
+
+        if not self._y_patch_size.text():
+            missing_patches.append("Y")
+
+        if not self._x_patch_size.text():
+            missing_patches.append("X")
+
+        if len(missing_patches) > 0:
+            show_warning(f"Please define {missing_patches} patches before continuing.")
+            return False
+
+        return True
+
+    def set_patch_size(self) -> None:
+        self._training_model.set_patch_size(
+            int(self._z_patch_size),
+            int(self._y_patch_size),
+            int(self._x_patch_size)
+        )
+
+
+
 
 
