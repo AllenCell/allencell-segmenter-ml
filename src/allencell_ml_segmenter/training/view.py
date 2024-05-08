@@ -327,9 +327,9 @@ class TrainingView(View):
             self._max_time_in_minutes_input.setEnabled(False)
             self._training_model.set_use_max_time(False)
 
-    def _parse_patch_size(self) -> bool:
+    def _check_patch_size_ok(self) -> bool:
         """
-        Gets patch sizes from the UI and sets it in the model.
+        Gets patch sizes from the UI, if invalid patches are set throws an error.
         Returns True if valid patch sizes were provided, false if not
         """
         missing_patches: list[str] = []
