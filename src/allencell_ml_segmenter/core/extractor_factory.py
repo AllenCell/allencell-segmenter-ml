@@ -11,8 +11,8 @@ from allencell_ml_segmenter.core.i_extractor_factory import IExtractorFactory
 
 class ExtractorFactory(IExtractorFactory):
 
-    def create(self, img_path: Path) -> ChannelExtractionThread:
-        return ChannelExtractionThread(img_path)
+    def create(self, img_path: Path, get_dims=False) -> ChannelExtractionThread:
+        return ChannelExtractionThread(img_path, get_dims=get_dims)
 
 
 class FakeExtractorFactory(IExtractorFactory):

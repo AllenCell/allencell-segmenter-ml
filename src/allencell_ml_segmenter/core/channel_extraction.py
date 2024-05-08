@@ -38,7 +38,7 @@ def get_img_path_from_csv(csv_path: Path) -> Path:
     return Path(img_path).resolve()
 
 
-class ImageDataExtractionThread(QThread):
+class ChannelExtractionThread(QThread):
     """
     A ChannelExtractionThread will extract the number of channels from
     the provided image. If the parent thread has not requested an interruption
@@ -52,13 +52,14 @@ class ImageDataExtractionThread(QThread):
     dimensions_ready: Signal = Signal(List[int])
     task_failed: Signal = Signal(Exception)
 
-    def __init__(self, img_path: Path, parent: QObject = None):
+    def __init__(self, img_path: Path, get_dims: bool = False, parent: QObject = None):
         """
         :param img_path: path to image (must exist, otherwise ValueError)
         :param id: id for this thread instance, provided by parent thread
         """
         super().__init__(parent)
         self._img_path: Path = img_path
+        self._get_dims: bool = get_dims
 
     # override
     def run(self):
@@ -79,6 +80,7 @@ class ImageDataExtractionThread(QThread):
         if not QThread.currentThread().isInterruptionRequested():
             self.channels_ready.emit(channels)
 
-        dims: List[int] = get_dims_from_image(image)
-        if not QThread.currentThread().isInterruptionRequested():
-            self.dimensions_ready.emit(dims)
+        if self._get_dims:
+            dims: List[int] = get_dims_from_image(image)
+            if not QThread.currentThread().isInterruptionRequested():
+                self.dimensions_ready.emit(dims)
