@@ -90,20 +90,38 @@ class TrainingView(View):
         # bottom half
         bottom_grid_layout = QGridLayout()
 
-        patch_size_label: LabelWithHint = LabelWithHint("Structure size")
+        patch_size_label: LabelWithHint = LabelWithHint("Patch size")
         bottom_grid_layout.addWidget(patch_size_label, 0, 0)
+        patch_size_entry_layout: QHBoxLayout = QHBoxLayout()
 
-        self._patch_size_combo_box: QComboBox = QComboBox()
-        self._patch_size_combo_box.setObjectName("structureSizeComboBox")
-        self._patch_size_combo_box.setCurrentIndex(-1)
-        self._patch_size_combo_box.setPlaceholderText("Select an option")
-        self._patch_size_combo_box.addItems(
-            [patch.name.lower() for patch in PatchSize]
-        )
-        self._patch_size_combo_box.currentTextChanged.connect(
-            lambda size: self._training_model.set_patch_size(size)
-        )
-        bottom_grid_layout.addWidget(self._patch_size_combo_box, 0, 1)
+        self._z_patch_size: QLineEdit = QLineEdit()
+        patch_size_entry_layout.addWidget(QLabel("Z:"))
+        patch_size_entry_layout.addWidget(self._z_patch_size)
+
+        self._y_patch_size: QLineEdit = QLineEdit()
+        patch_size_entry_layout.addWidget(QLabel("Y:"))
+        patch_size_entry_layout.addWidget(self._y_patch_size)
+
+        self._x_patch_size: QLineEdit = QLineEdit()
+        patch_size_entry_layout.addWidget(QLabel("X:"))
+        patch_size_entry_layout.addWidget(self._x_patch_size)
+
+        bottom_grid_layout.addLayout(patch_size_entry_layout, 0, 1)
+
+        # patch_size_label: LabelWithHint = LabelWithHint("Structure size")
+        # bottom_grid_layout.addWidget(patch_size_label, 0, 0)
+        #
+        # self._patch_size_combo_box: QComboBox = QComboBox()
+        # self._patch_size_combo_box.setObjectName("structureSizeComboBox")
+        # self._patch_size_combo_box.setCurrentIndex(-1)
+        # self._patch_size_combo_box.setPlaceholderText("Select an option")
+        # self._patch_size_combo_box.addItems(
+        #     [patch.name.lower() for patch in PatchSize]
+        # )
+        # self._patch_size_combo_box.currentTextChanged.connect(
+        #     lambda size: self._training_model.set_patch_size(size)
+        # )
+        # bottom_grid_layout.addWidget(self._patch_size_combo_box, 0, 1)
 
         model_size_label: LabelWithHint = LabelWithHint("Model size")
         bottom_grid_layout.addWidget(model_size_label, 1, 0)
