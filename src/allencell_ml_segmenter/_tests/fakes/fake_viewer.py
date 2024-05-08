@@ -5,6 +5,7 @@ from allencell_ml_segmenter.main.segmenter_layer import ShapesLayer, ImageLayer
 
 
 from napari.utils.events import Event as NapariEvent
+import napari
 from typing import List, Dict, Callable, Optional
 from napari.layers import Layer
 
@@ -13,7 +14,7 @@ class FakeNapariEvent:
     pass
 
 class FakeViewer(IViewer):
-    def __init__(self):
+    def __init__(self, viewer: napari.Viewer):
         self._image_layers: Dict[str, ImageLayer] = {}
         self._shapes_layers: Dict[str, ShapesLayer] = {}
         self._on_layers_change_fns: List[Callable] = []

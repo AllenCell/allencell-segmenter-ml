@@ -39,12 +39,12 @@ class MainWidget(AicsWidget):
     Holds the pertinent view at the moment to be displayed to the user.
     """
 
-    def __init__(self, viewer: IViewer, settings: IUserSettings = None):
+    def __init__(self, viewer: napari.Viewer, settings: IUserSettings = None):
         super().__init__()
         self.user_settings: IUserSettings = settings
         if self.user_settings is None:
             self.user_settings = UserSettings()
-        self.viewer: IViewer = viewer
+        self.viewer: IViewer = Viewer(viewer)
 
         # basic styling
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
