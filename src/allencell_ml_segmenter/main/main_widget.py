@@ -96,7 +96,7 @@ class MainWidget(AicsWidget):
 
         # initialize the tabs
         self._curation_view: CurationWidget = CurationWidget(
-            self.viewer, self._model, self._experiments_model
+            self.viewer, self._curation_model
         )
         self._initialize_view(self._curation_view, "Curation")
         self._training_view: TrainingView = TrainingView(

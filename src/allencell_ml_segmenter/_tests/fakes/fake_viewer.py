@@ -14,7 +14,7 @@ class FakeNapariEvent:
     pass
 
 class FakeViewer(IViewer):
-    def __init__(self, viewer: napari.Viewer):
+    def __init__(self, viewer: Optional[napari.Viewer]=None):
         self._image_layers: Dict[str, ImageLayer] = {}
         self._shapes_layers: Dict[str, ShapesLayer] = {}
         self._on_layers_change_fns: List[Callable] = []
