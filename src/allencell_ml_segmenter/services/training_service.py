@@ -125,7 +125,7 @@ class TrainingService(Subscriber):
         self, to_extract: Path, channel_callback: Callable
     ):
         self._channel_extraction_thread = self._extractor_factory.create(
-            get_img_path_from_csv(to_extract / "train.csv")
+            get_img_path_from_csv(to_extract / "train.csv"), get_dims=True
         )
         self._channel_extraction_thread.channels_ready.connect(
             channel_callback
