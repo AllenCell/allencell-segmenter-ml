@@ -68,7 +68,7 @@ class Viewer(IViewer):
         return False
 
     def contains_layer(self, name: str) -> bool:
-        return self._get_layer_by_name() is not None
+        return self._get_layer_by_name(name) is not None
 
     def get_layers(self) -> List[Layer]:
         return [l for l in self.viewer.layers]
