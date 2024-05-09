@@ -79,6 +79,7 @@ class TrainingModel(Publisher):
         self._use_max_time: bool = (
             False  # default is false. UI starts with max epoch defined rather than max time.
         )
+        self._selected_image_dimensions: List[int] = None
         self._model_size: Optional[ModelSize] = None
 
     def get_experiment_type(self) -> Optional[str]:
@@ -289,3 +290,9 @@ class TrainingModel(Publisher):
 
     def get_model_size(self) -> ModelSize:
         return self._model_size
+
+    def set_image_dimensions(self, dims: List[int]) -> None:
+        self._selected_image_dimensions = dims
+
+    def get_image_dimensions(self) -> List[int]:
+        return self._selected_image_dimensions

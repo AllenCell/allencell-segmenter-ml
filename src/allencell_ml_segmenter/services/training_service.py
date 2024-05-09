@@ -122,7 +122,7 @@ class TrainingService(Subscriber):
         return True
 
     def _start_channel_extraction(
-        self, to_extract: Path, channel_callback: Callable
+        self, to_extract: Path, channel_callback: Callable, dimensions_callback: Callable
     ):
         self._channel_extraction_thread = self._extractor_factory.create(
             get_img_path_from_csv(to_extract / "train.csv"), get_dims=True
@@ -130,6 +130,7 @@ class TrainingService(Subscriber):
         self._channel_extraction_thread.channels_ready.connect(
             channel_callback
         )
+        self._channel_extraction_thread.dimensions_ready.connect(dimensions_callback)
         self._channel_extraction_thread.start()
 
     def _stop_channel_extraction(self) -> None:
@@ -144,4 +145,5 @@ class TrainingService(Subscriber):
         self._start_channel_extraction(
             self._training_model.get_images_directory(),
             self._training_model.set_max_channel,
+            self._training_model.set_image_dimensions
         )
