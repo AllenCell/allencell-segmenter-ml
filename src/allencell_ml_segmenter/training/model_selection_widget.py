@@ -149,7 +149,7 @@ class ModelSelectionWidget(QWidget):
             self._experiments_model.get_experiment_name_selection()
         )
         self._title.set_value_text(
-            '    ' + self._experiments_model.get_experiment_name()
+            "    " + self._experiments_model.get_experiment_name()
         )
         self._apply_change_stacked_widget.setVisible(False)
 
