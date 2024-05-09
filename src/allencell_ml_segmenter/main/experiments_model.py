@@ -79,7 +79,7 @@ class ExperimentsModel(IExperimentsModel):
             / checkpoint
         )
 
-    def get_csv_path(self) -> Path:
+    def get_csv_path(self) -> Optional[Path]:
         if (
             self.get_user_experiments_path() is not None
             and self.get_experiment_name() is not None
