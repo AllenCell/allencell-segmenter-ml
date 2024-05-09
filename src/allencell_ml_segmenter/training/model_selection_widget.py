@@ -128,19 +128,6 @@ class ModelSelectionWidget(QWidget):
         self._apply_btn.clicked.connect(self._handle_apply_model)
         apply_model_layout.addWidget(self._apply_btn)
 
-        # Disabled 4/6/24 - no needed for MVP V1 - chrishu
-        # change_model_layout = QVBoxLayout()
-        # self._model_name_label = QLabel("Model name")
-        # change_model_layout.addWidget(self._model_name_label)
-
-        # self._change_model_btn: QPushButton = QPushButton("Change model")
-        # self._change_model_btn.clicked.connect(self._handle_change_model)
-        # change_model_layout.addWidget(self._change_model_btn)
-        #
-        # change_model_widget = QWidget()
-        # change_model_widget.setLayout(change_model_layout)
-        # self._apply_change_stacked_widget.addWidget(change_model_widget)
-
         frameLayout = QVBoxLayout()
         frameLayout.addWidget(self._apply_change_stacked_widget)
         frame.layout().addLayout(frameLayout)
@@ -164,17 +151,7 @@ class ModelSelectionWidget(QWidget):
         self._title.set_value_text(
             '    ' + self._experiments_model.get_experiment_name()
         )
-        # Change button Disabled 4/6/24 - no needed for MVP V1 - chrishu
-        # This would be:
-        # self._apply_change_stacked_widget.setCurrentIndex(1)
         self._apply_change_stacked_widget.setVisible(False)
-
-    def _handle_change_model(self):
-        self._combo_box_existing_models.setCurrentIndex(-1)
-        self._experiment_name_input.clear()
-        self._experiments_model.select_experiment_name(None)
-        self._experiments_model.apply_experiment_name(None)
-        self._apply_change_stacked_widget.setCurrentIndex(0)
 
     def _model_combo_handler(self, experiment_name: str) -> None:
         """
