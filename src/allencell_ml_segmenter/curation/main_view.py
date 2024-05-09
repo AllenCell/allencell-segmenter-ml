@@ -1,5 +1,4 @@
 from typing import List, Optional
-import numpy as np
 
 from qtpy.QtWidgets import QComboBox
 from qtpy.QtCore import Qt
@@ -15,14 +14,9 @@ from qtpy.QtWidgets import (
 )
 from allencell_ml_segmenter.core.dialog_box import DialogBox
 from allencell_ml_segmenter._style import Style
-from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.main.viewer import IViewer
-from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
 from allencell_ml_segmenter.curation.curation_model import CurationModel
-from allencell_ml_segmenter.curation.curation_service import (
-    CurationService,
-)
 from allencell_ml_segmenter.core.image_data_extractor import ImageData
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 from allencell_ml_segmenter.curation.stacked_spinner import StackedSpinner
@@ -30,7 +24,6 @@ from allencell_ml_segmenter.main.segmenter_layer import ShapesLayer
 
 
 from napari.utils.notifications import show_info
-from napari.layers import Layer
 from copy import deepcopy
 
 MERGING_MASK_LAYER_NAME: str = "Merging Mask"
