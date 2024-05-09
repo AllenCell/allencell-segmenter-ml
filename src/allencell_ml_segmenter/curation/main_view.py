@@ -251,20 +251,29 @@ class CurationMainView(View):
 
     def _add_curr_images_to_widget(self) -> None:
         raw_img_data: ImageData = self._curation_model.get_raw_image_data()
-        self._viewer.add_image(
+        raw_layer: Layer = self._viewer.add_image(
             raw_img_data.np_data, f"[raw] {raw_img_data.path.name}"
         )
+        raw_layer.blending = "additive"
+        raw_layer.colormap = "grey"
+
         seg1_img_data: ImageData = self._curation_model.get_seg1_image_data()
-        self._viewer.add_image(
+        seg1_layer: Layer = self._viewer.add_image(
             seg1_img_data.np_data, f"[seg1] {seg1_img_data.path.name}"
         )
+        seg1_layer.blending = "additive"
+        seg1_layer.colormap = "bop_orange"
+
+
         if self._curation_model.get_seg2_image_data() is not None:
             seg2_img_data: ImageData = (
                 self._curation_model.get_seg2_image_data()
             )
-            self._viewer.add_image(
+            seg2_layer: Layer = self._viewer.add_image(
                 seg2_img_data.np_data, f"[seg2] {seg2_img_data.path.name}"
             )
+            seg2_layer.blending = "additive"
+            seg2_layer.colormap = "blue"
 
         self.enable_valid_masks()
         self.file_name.setText(raw_img_data.path.name)
