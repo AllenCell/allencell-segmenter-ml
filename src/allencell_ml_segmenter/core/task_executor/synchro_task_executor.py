@@ -18,7 +18,7 @@ class SynchroTaskExecutor(ITaskExecutor):
             on_start()
 
         try:
-            output = task()
+            output: Any = task()
         except Exception as e:
             on_error(e)
             return
