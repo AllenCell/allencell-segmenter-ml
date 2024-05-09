@@ -17,9 +17,6 @@ from allencell_ml_segmenter.curation.main_view import CurationMainView
 from allencell_ml_segmenter.curation.curation_service import CurationService
 
 import napari
-from napari.utils.notifications import show_info
-
-from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 
 
 class CurationUiMeta(type(QStackedWidget), type(Subscriber)):
