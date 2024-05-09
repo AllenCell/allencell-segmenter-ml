@@ -247,4 +247,4 @@ def test_set_experiment_name_selection() -> None:
 
     # Assert
     assert model.get_experiment_name_selection() == expected
-    assert subscriber.was_handled(Event.ACTION_EXPERIMENT_APPLIED)
+    assert subscriber.was_handled(Event.ACTION_EXPERIMENT_SELECTED)
