@@ -191,7 +191,7 @@ class PredictionService(Subscriber):
                 for i, path_of_image in enumerate(list_images):
                     writer.writerow([str(i), str(path_of_image), "test"])
 
-        self._prediction_model.set_input_image_path(csv_path)
+            self._prediction_model.set_input_image_path(csv_path)
 
     def _setup_inputs_from_path(self) -> int:
         """
