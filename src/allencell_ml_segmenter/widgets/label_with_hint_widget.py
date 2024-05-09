@@ -32,8 +32,7 @@ class LabelWithHint(QWidget):
 
         self.layout().addWidget(self._question_mark)
 
-        self._label: QLabel = QLabel("")
-        self._label.setText(value_text)
+        self._label: QLabel = QLabel(value_text)
         self.layout().addWidget(self._label)
         self.layout().addStretch(6)
 
