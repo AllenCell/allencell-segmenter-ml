@@ -38,7 +38,7 @@ class ModelSelectionWidget(QWidget):
         self._experiments_model: IExperimentsModel = experiments_model
 
         # widget skeleton
-        layout = QVBoxLayout()
+        layout: QVBoxLayout = QVBoxLayout()
         self.setLayout(layout)
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
@@ -48,11 +48,11 @@ class ModelSelectionWidget(QWidget):
         )
         self._title.setObjectName("title")
 
-        self._model_name_label = QLabel()
+        self._model_name_label: QLabel = QLabel()
         self._model_name_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
 
         # layout for model labels
-        label_widget_layout = QHBoxLayout()
+        label_widget_layout: QHBoxLayout = QHBoxLayout()
         layout.addLayout(label_widget_layout)
         label_widget_layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
         label_widget_layout.setSpacing(0)
