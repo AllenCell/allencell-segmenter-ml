@@ -38,7 +38,7 @@ class ICurationImageLoader(QObject):
         self._num_images = len(self._raw_images)
 
         self._img_data_extractor: IImageDataExtractor = img_data_extractor
-        self._task_executor = task_executor
+        self._task_executor: ITaskExecutor = task_executor
         self._cursor: int = 0
 
     def get_num_images(self) -> int:
