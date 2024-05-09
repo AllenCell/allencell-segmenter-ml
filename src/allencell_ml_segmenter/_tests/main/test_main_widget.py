@@ -148,8 +148,6 @@ def test_tab_enabled(main_widget) -> None:
     """
     Tests that the main widget enables the correct tabs when the experiment is applied.
     """
-    # Sanity check
-    assert main_widget._view_container.isEnabled() == False
 
     # ARRANGE
     main_widget._experiments_model.apply_experiment_name("foo")
@@ -162,3 +160,9 @@ def test_tab_enabled(main_widget) -> None:
 
     # ASSERT
     assert main_widget._view_container.isEnabled() == False
+
+    # ACT
+    main_widget._experiments_model.apply_experiment_name("foo")
+
+    # Sanity check
+    assert main_widget._view_container.isEnabled() == True
