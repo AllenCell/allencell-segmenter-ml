@@ -186,13 +186,12 @@ def test_combo_input_enables_apply_button_new_radio_disables(
     assert model_selection_widget._apply_btn.isEnabled()
 
     # ACT - select the "start a new model" radio button, clearing the model selection
-    with qtbot.waitSignal(
-        model_selection_widget._radio_new_model.toggled
-    ):
+    with qtbot.waitSignal(model_selection_widget._radio_new_model.toggled):
         model_selection_widget._radio_new_model.click()  # enables the combo box
 
     # ASSERT - apply button should NOT be enabled
     assert not model_selection_widget._apply_btn.isEnabled()
+
 
 def test_new_model_enables_apply_button_new_radio_disables(
     model_selection_widget: ModelSelectionWidget,
@@ -225,7 +224,6 @@ def test_new_model_enables_apply_button_new_radio_disables(
     assert not model_selection_widget._apply_btn.isEnabled()
 
 
-
 def test_click_apply_btn(
     model_selection_widget: ModelSelectionWidget,
     experiment_model: IExperimentsModel,
@@ -244,6 +242,7 @@ def test_click_apply_btn(
 
     # ASSERT
     assert experiment_model.get_experiment_name() == "dummy_experiment"
+
 
 # Disabled while I figure out what is wrong with this test
 # def test_existing_experiment_apply(
@@ -267,6 +266,7 @@ def test_click_apply_btn(
 
 #     # ASSERT
 #     assert experiment_model.get_experiment_name() == "dummy_experiment"
+
 
 def test_new_experiment_apply(
     model_selection_widget: ModelSelectionWidget,
