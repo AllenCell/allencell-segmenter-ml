@@ -32,9 +32,9 @@ class Viewer(IViewer):
     def get_all_images(self) -> List[ImageLayer]:
         imgs: List[ImageLayer] = []
         for l in self.viewer.layers:
-            if type(l) == Image and l.source.path:
+            if isinstance(l, Image) and l.source.path:
                 imgs.append(ImageLayer(l.name, Path(l.source.path)))
-            elif type(l) == Image:
+            elif isinstance(l, Image):
                 imgs.append(ImageLayer(l.name, None))
         return imgs
 
@@ -54,7 +54,7 @@ class Viewer(IViewer):
         return [
             ShapesLayer(l.name, np.asarray(l.data, dtype=object))
             for l in self.viewer.layers
-            if type(l) == Shapes
+            if isinstance(l, Shapes)
         ]
 
     def clear_layers(self) -> None:
