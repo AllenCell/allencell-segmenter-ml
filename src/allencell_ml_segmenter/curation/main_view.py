@@ -398,9 +398,9 @@ class CurationMainView(View):
         self.merging_mask_status.setText("Merging mask saved")
 
     def delete_merging_mask(self) -> None:
-        merging_mask: Layer = self._get_layer_by_name(MERGING_MASK_LAYER_NAME)
+        merging_mask: Optional[ShapesLayer] = self._viewer.get_shapes(MERGING_MASK_LAYER_NAME)
         if merging_mask is not None:
-            self._viewer.clear_mask_layers([merging_mask])
+            self._viewer.remove_layer(MERGING_MASK_LAYER_NAME)
         self._curation_model.set_merging_mask(None)
         self.merging_mask_status.setText("Merging mask deleted")
 
@@ -435,11 +435,11 @@ class CurationMainView(View):
         self.excluding_mask_status.setText("Excluding mask saved")
 
     def delete_excluding_mask(self) -> None:
-        excluding_mask: Layer = self._get_layer_by_name(
+        excluding_mask: Optional[ShapesLayer] = self._viewer.get_shapes(
             EXCLUDING_MASK_LAYER_NAME
         )
         if excluding_mask is not None:
-            self._viewer.clear_mask_layers([excluding_mask])
+            self._viewer.remove_layer(EXCLUDING_MASK_LAYER_NAME)
         self._curation_model.set_excluding_mask(None)
         self.excluding_mask_status.setText("Excluding mask deleted")
 
