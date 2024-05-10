@@ -7,7 +7,6 @@ from qtpy.QtWidgets import (
 )
 
 from allencell_ml_segmenter.core.subscriber import Subscriber
-from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.curation.curation_model import (
     CurationModel,
@@ -16,15 +15,8 @@ from allencell_ml_segmenter.curation.curation_model import (
 from allencell_ml_segmenter.curation.input_view import CurationInputView
 from allencell_ml_segmenter.curation.main_view import CurationMainView
 from allencell_ml_segmenter.curation.curation_service import CurationService
-from allencell_ml_segmenter.curation.curation_image_loader import (
-    CurationImageLoaderFactory,
-)
 
 import napari
-from napari.utils.notifications import show_info
-
-from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
-from allencell_ml_segmenter.main.main_model import MainModel
 
 
 class CurationUiMeta(type(QStackedWidget), type(Subscriber)):
@@ -40,19 +32,12 @@ class CurationWidget(QStackedWidget, Subscriber, metaclass=CurationUiMeta):
     def __init__(
         self,
         viewer: napari.Viewer,
-        main_model: MainModel,
-        experiments_model: ExperimentsModel,
+        curation_model: CurationModel,
     ) -> None:
         super().__init__()
-        self.main_model: MainModel = main_model
         self.viewer: napari.Viewer = viewer
-        self.experiments_model: ExperimentsModel = experiments_model
         self.view_to_index: Dict[View, int] = dict()
-        # TODO: make factories singletons
-        self.curation_model: CurationModel = CurationModel(
-            experiments_model=experiments_model,
-            img_loader_factory=CurationImageLoaderFactory(),
-        )
+        self.curation_model: CurationModel = curation_model
         self.curation_service: CurationService = CurationService(
             self.curation_model
         )
@@ -86,6 +71,13 @@ class CurationWidget(QStackedWidget, Subscriber, metaclass=CurationUiMeta):
         Set the current views, must be initialized first
         """
         self.setCurrentIndex(self.view_to_index[view])
+
+    # NOTE: this is mostly just a testing convenience function
+    def get_view(self) -> CurationView:
+        if self.currentWidget() == self.curation_input_view:
+            return CurationView.INPUT_VIEW
+        else:
+            return CurationView.MAIN_VIEW
 
     def initialize_view(self, view: View) -> None:
         """
