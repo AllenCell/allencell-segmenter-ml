@@ -210,10 +210,10 @@ class CurationModel(QObject):
                     self._seg1_directory_paths,
                     self._seg2_directory_paths,
                 )
-                self._image_loader.first_image_ready.connect(
+                self._image_loader.signals.first_image_ready.connect(
                     lambda: self.first_image_data_ready.emit()
                 )
-                self._image_loader.next_image_ready.connect(
+                self._image_loader.signals.next_image_ready.connect(
                     lambda: self.next_image_data_ready.emit()
                 )
                 self._image_loader.start()

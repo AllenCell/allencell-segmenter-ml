@@ -88,9 +88,9 @@ def test_start_with_seg2():
     )
 
     on_first_ready_mock: Mock = Mock()
-    loader.first_image_ready.connect(on_first_ready_mock)
+    loader.signals.first_image_ready.connect(on_first_ready_mock)
     on_next_ready_mock: Mock = Mock()
-    loader.next_image_ready.connect(on_next_ready_mock)
+    loader.signals.next_image_ready.connect(on_next_ready_mock)
 
     # act
     loader.start()
@@ -114,9 +114,9 @@ def test_start_without_seg2():
     )
 
     on_first_ready_mock: Mock = Mock()
-    loader.first_image_ready.connect(on_first_ready_mock)
+    loader.signals.first_image_ready.connect(on_first_ready_mock)
     on_next_ready_mock: Mock = Mock()
-    loader.next_image_ready.connect(on_next_ready_mock)
+    loader.signals.next_image_ready.connect(on_next_ready_mock)
 
     # act
     loader.start()
@@ -139,7 +139,7 @@ def test_next_with_seg2():
         task_executor=SynchroTaskExecutor.global_instance(),
     )
     on_next_ready_mock: Mock = Mock()
-    loader.next_image_ready.connect(on_next_ready_mock)
+    loader.signals.next_image_ready.connect(on_next_ready_mock)
     loader.start()
 
     assert loader.get_current_index() == 0
@@ -180,7 +180,7 @@ def test_next_without_seg2():
         task_executor=SynchroTaskExecutor.global_instance(),
     )
     on_next_ready_mock: Mock = Mock()
-    loader.next_image_ready.connect(on_next_ready_mock)
+    loader.signals.next_image_ready.connect(on_next_ready_mock)
     loader.start()
 
     assert loader.get_current_index() == 0
@@ -219,7 +219,7 @@ def test_prev_with_seg2():
         task_executor=SynchroTaskExecutor.global_instance(),
     )
     on_prev_ready_mock: Mock = Mock()
-    loader.prev_image_ready.connect(on_prev_ready_mock)
+    loader.signals.prev_image_ready.connect(on_prev_ready_mock)
     loader.start()
     loader.next()
     loader.next()
@@ -260,7 +260,7 @@ def test_prev_without_seg2():
         task_executor=SynchroTaskExecutor.global_instance(),
     )
     on_prev_ready_mock: Mock = Mock()
-    loader.prev_image_ready.connect(on_prev_ready_mock)
+    loader.signals.prev_image_ready.connect(on_prev_ready_mock)
     loader.start()
     loader.next()
     loader.next()
