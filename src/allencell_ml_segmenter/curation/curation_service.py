@@ -1,4 +1,3 @@
-from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.image_data_extractor import ImageData
 from allencell_ml_segmenter.curation.curation_model import CurationModel
 from allencell_ml_segmenter.curation.curation_data_class import CurationRecord

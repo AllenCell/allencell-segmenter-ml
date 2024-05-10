@@ -6,15 +6,13 @@ from allencell_ml_segmenter.core.image_data_extractor import (
     IImageDataExtractor,
     AICSImageDataExtractor,
 )
-from allencell_ml_segmenter.core.q_runnable_manager import (
-    IQRunnableManager,
-    GlobalQRunnableManager,
+from allencell_ml_segmenter.core.task_executor import (
+    ITaskExecutor,
+    NapariThreadTaskExecutor,
 )
 from allencell_ml_segmenter.curation.curation_image_loader import (
     ICurationImageLoader,
 )
-from napari.qt.threading import thread_worker, FunctionWorker
-from qtpy.QtCore import Signal
 
 
 # TODO: worker creator/ worker manager interface to make testing code that uses thread worker easier
@@ -24,16 +22,13 @@ class CurationImageLoader(ICurationImageLoader):
     that the getter functions will never be blocking.
     """
 
-    next_image_ready: Signal = Signal()
-    prev_image_ready: Signal = Signal()
-    first_image_ready: Signal = Signal()
-
     def __init__(
         self,
         raw_images: List[Path],
         seg1_images: List[Path],
         seg2_images: Optional[List[Path]] = None,
         img_data_extractor: IImageDataExtractor = AICSImageDataExtractor.global_instance(),
+        task_executor: ITaskExecutor = NapariThreadTaskExecutor.global_instance(),
     ):
         """
         Raises ValueError if provided lists are unequal in size or empty.
@@ -46,6 +41,7 @@ class CurationImageLoader(ICurationImageLoader):
             seg1_images,
             seg2_images,
             img_data_extractor,
+            task_executor,
         )
 
         # private invariant: _next_img_data will only have < _num_data_dict_keys keys if there is
@@ -61,33 +57,30 @@ class CurationImageLoader(ICurationImageLoader):
     def start(self) -> None:
         # start threads for first and next images
         self._set_curr_is_busy(True)
-        curr_worker: FunctionWorker = self._start_extraction_threads(
-            0, self._curr_img_data
+        self._start_extraction_threads(
+            0, self._curr_img_data, self._on_first_image_ready
         )
-        curr_worker.finished.connect(self._on_first_image_ready)
-        curr_worker.start()
 
-        self._set_next_is_busy(True)
-        next_worker: FunctionWorker = self._start_extraction_threads(
-            1, self._next_img_data
-        )
-        next_worker.finished.connect(self._on_next_image_ready)
-        next_worker.start()
+        if self.has_next():
+            self._set_next_is_busy(True)
+            self._start_extraction_threads(
+                1, self._next_img_data, self._on_next_image_ready
+            )
 
     def is_busy(self) -> bool:
         return any(self._is_busy)
 
     def _on_first_image_ready(self):
         self._set_curr_is_busy(False)
-        self.first_image_ready.emit()
+        self.signals.first_image_ready.emit()
 
     def _on_next_image_ready(self):
         self._set_next_is_busy(False)
-        self.next_image_ready.emit()
+        self.signals.next_image_ready.emit()
 
     def _on_prev_image_ready(self):
         self._set_prev_is_busy(False)
-        self.prev_image_ready.emit()
+        self.signals.prev_image_ready.emit()
 
     def _set_curr_is_busy(self, busy: bool):
         self._is_busy[1] = busy
@@ -98,45 +91,43 @@ class CurationImageLoader(ICurationImageLoader):
     def _set_next_is_busy(self, busy: bool):
         self._is_busy[2] = busy
 
-    @thread_worker
-    def _start_img_data_extraction(self, img_path: Path) -> ImageData:
-        return self._img_data_extractor.extract_image_data(img_path)
-
-    @thread_worker
     def _wait_on_data_dict(self, data_dict: Dict[str, ImageData]) -> None:
         while len(data_dict) < self._num_data_dict_keys:
             time.sleep(0.1)
 
     def _start_extraction_threads(
-        self, img_index: int, data_dict: Dict[str, ImageData]
-    ) -> FunctionWorker:
+        self,
+        img_index: int,
+        data_dict: Dict[str, ImageData],
+        on_finish: Callable[[], None],
+    ) -> None:
         data_dict.clear()
-        raw_worker: FunctionWorker = self._start_img_data_extraction(
-            self._raw_images[img_index]
+        self._task_executor.exec(
+            lambda: self._img_data_extractor.extract_image_data(
+                self._raw_images[img_index]
+            ),
+            on_return=lambda img_data: data_dict.update({"raw": img_data}),
         )
-        raw_worker.returned.connect(
-            lambda img_data: data_dict.update({"raw": img_data})
+        self._task_executor.exec(
+            lambda: self._img_data_extractor.extract_image_data(
+                self._seg1_images[img_index]
+            ),
+            on_return=lambda img_data: data_dict.update({"seg1": img_data}),
         )
-        raw_worker.start()
-
-        seg1_worker: FunctionWorker = self._start_img_data_extraction(
-            self._seg1_images[img_index]
-        )
-        seg1_worker.returned.connect(
-            lambda img_data: data_dict.update({"seg1": img_data})
-        )
-        seg1_worker.start()
 
         if self._seg2_images:
-            seg2_worker: FunctionWorker = self._start_img_data_extraction(
-                self._seg2_images[img_index]
+            self._task_executor.exec(
+                lambda: self._img_data_extractor.extract_image_data(
+                    self._seg2_images[img_index]
+                ),
+                on_return=lambda img_data: data_dict.update(
+                    {"seg2": img_data}
+                ),
             )
-            seg2_worker.returned.connect(
-                lambda img_data: data_dict.update({"seg2": img_data})
-            )
-            seg2_worker.start()
 
-        return self._wait_on_data_dict(data_dict)
+        self._task_executor.exec(
+            lambda: self._wait_on_data_dict(data_dict), on_finish=on_finish
+        )
 
     def get_raw_image_data(self) -> ImageData:
         """
@@ -179,11 +170,11 @@ class CurationImageLoader(ICurationImageLoader):
         self._cursor += 1
         if self.has_next():
             self._set_next_is_busy(True)
-            next_worker: FunctionWorker = self._start_extraction_threads(
-                self._cursor + 1, self._next_img_data
+            self._start_extraction_threads(
+                self._cursor + 1,
+                self._next_img_data,
+                self._on_next_image_ready,
             )
-            next_worker.finished.connect(self._on_next_image_ready)
-            next_worker.start()
 
     def prev(self) -> None:
         """
@@ -203,8 +194,8 @@ class CurationImageLoader(ICurationImageLoader):
         self._cursor -= 1
         if self.has_prev():
             self._set_prev_is_busy(True)
-            prev_worker: FunctionWorker = self._start_extraction_threads(
-                self._cursor - 1, self._prev_img_data
+            self._start_extraction_threads(
+                self._cursor - 1,
+                self._prev_img_data,
+                self._on_prev_image_ready,
             )
-            prev_worker.finished.connect(self._on_prev_image_ready)
-            prev_worker.start()
