@@ -1,26 +1,32 @@
 from abc import ABC, abstractmethod
-from qtpy.QtCore import QObject
+from qtpy.QtCore import QObject, Signal
 from typing import List, Optional
 from pathlib import Path
-from allencell_ml_segmenter.core.q_runnable_manager import (
-    IQRunnableManager,
-)
+from allencell_ml_segmenter.core.task_executor import ITaskExecutor
+
 from allencell_ml_segmenter.core.image_data_extractor import (
     IImageDataExtractor,
     ImageData,
 )
 
 
-# TODO: how to specify abstract signals?
-class ICurationImageLoader(QObject):
+class CurationImageLoaderSignals(QObject):
+    next_image_ready: Signal = Signal()
+    prev_image_ready: Signal = Signal()
+    first_image_ready: Signal = Signal()
+
+
+class ICurationImageLoader(ABC):
     def __init__(
         self,
         raw_images: List[Path],
         seg1_images: List[Path],
         seg2_images: Optional[List[Path]],
         img_data_extractor: IImageDataExtractor,
+        task_executor: ITaskExecutor,
     ):
         super().__init__()
+        self.signals = CurationImageLoaderSignals()
         self._raw_images: List[Path] = list(raw_images)
         self._seg1_images: List[Path] = list(seg1_images)
         self._seg2_images: Optional[List[Path]] = (
@@ -38,6 +44,7 @@ class ICurationImageLoader(QObject):
         self._num_images = len(self._raw_images)
 
         self._img_data_extractor: IImageDataExtractor = img_data_extractor
+        self._task_executor: ITaskExecutor = task_executor
         self._cursor: int = 0
 
     def get_num_images(self) -> int:
