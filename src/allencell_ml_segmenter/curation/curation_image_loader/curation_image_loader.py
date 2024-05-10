@@ -13,7 +13,6 @@ from allencell_ml_segmenter.core.task_executor import (
 from allencell_ml_segmenter.curation.curation_image_loader import (
     ICurationImageLoader,
 )
-from qtpy.QtCore import Signal
 
 
 # TODO: worker creator/ worker manager interface to make testing code that uses thread worker easier
@@ -22,10 +21,6 @@ class CurationImageLoader(ICurationImageLoader):
     CurationImageLoader manages image data for curation with the invariant
     that the getter functions will never be blocking.
     """
-
-    next_image_ready: Signal = Signal()
-    prev_image_ready: Signal = Signal()
-    first_image_ready: Signal = Signal()
 
     def __init__(
         self,
@@ -77,15 +72,15 @@ class CurationImageLoader(ICurationImageLoader):
 
     def _on_first_image_ready(self):
         self._set_curr_is_busy(False)
-        self.first_image_ready.emit()
+        self.signals.first_image_ready.emit()
 
     def _on_next_image_ready(self):
         self._set_next_is_busy(False)
-        self.next_image_ready.emit()
+        self.signals.next_image_ready.emit()
 
     def _on_prev_image_ready(self):
         self._set_prev_is_busy(False)
-        self.prev_image_ready.emit()
+        self.signals.prev_image_ready.emit()
 
     def _set_curr_is_busy(self, busy: bool):
         self._is_busy[1] = busy

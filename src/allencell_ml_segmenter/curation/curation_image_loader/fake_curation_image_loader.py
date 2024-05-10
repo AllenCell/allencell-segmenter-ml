@@ -8,14 +8,9 @@ from allencell_ml_segmenter.core.image_data_extractor import (
     FakeImageDataExtractor,
     ImageData,
 )
-from qtpy.QtCore import Signal
 
 
 class FakeCurationImageLoader(ICurationImageLoader):
-
-    next_image_ready: Signal = Signal()
-    prev_image_ready: Signal = Signal()
-    first_image_ready: Signal = Signal()
 
     def __init__(
         self,
@@ -32,9 +27,9 @@ class FakeCurationImageLoader(ICurationImageLoader):
         )
 
     def start(self) -> None:
-        self.first_image_ready.emit()
+        self.signals.first_image_ready.emit()
         if self.has_next():
-            self.next_image_ready.emit()
+            self.signals.next_image_ready.emit()
 
     def is_busy(self) -> bool:
         return False
@@ -77,7 +72,7 @@ class FakeCurationImageLoader(ICurationImageLoader):
         if not self.has_next():
             raise RuntimeError()
         self._cursor += 1
-        self.next_image_ready.emit()
+        self.signals.next_image_ready.emit()
 
     def prev(self) -> None:
         """
@@ -86,4 +81,4 @@ class FakeCurationImageLoader(ICurationImageLoader):
         if not self.has_prev():
             raise RuntimeError()
         self._cursor -= 1
-        self.prev_image_ready.emit()
+        self.signals.prev_image_ready.emit()
