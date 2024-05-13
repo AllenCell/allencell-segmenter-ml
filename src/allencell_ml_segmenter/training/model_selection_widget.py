@@ -56,8 +56,12 @@ class ModelSelectionWidget(QWidget):
         help.setPlaceholderText("Help")
 
         plugin_title_widget_layout: QHBoxLayout = QHBoxLayout()
-        plugin_title_widget_layout.addWidget(QLabel("Allen Cell & Structure Segmentation"))
-        plugin_title_widget_layout.addWidget(help, alignment=Qt.AlignmentFlag.AlignRight)
+        plugin_title_widget_layout.addWidget(
+            QLabel("Allen Cell & Structure Segmentation")
+        )
+        plugin_title_widget_layout.addWidget(
+            help, alignment=Qt.AlignmentFlag.AlignRight
+        )
 
         layout.setContentsMargins(20, 20, 20, 20)
         layout.addLayout(plugin_title_widget_layout)
