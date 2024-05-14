@@ -158,37 +158,8 @@ class TrainingView(View):
         )
         bottom_grid_layout.addWidget(image_dimensions_label, 2, 0)
 
-        dimension_choice_layout: QHBoxLayout = QHBoxLayout()
-        dimension_choice_layout.setSpacing(0)
-
-        self._radio_3d: QRadioButton = QRadioButton()
-        self._radio_3d.setObjectName("3DRadio")
-        self._radio_3d.toggled.connect(
-            lambda: self._training_model.set_spatial_dims(3)
-        )
-        label_3d: LabelWithHint = LabelWithHint("3D")
-
-        self._radio_2d: QRadioButton = QRadioButton()
-        self._radio_2d.toggled.connect(
-            lambda: self._training_model.set_spatial_dims(2)
-        )
-        label_2d: LabelWithHint = LabelWithHint("2D")
-
-        dimension_choice_layout.addWidget(self._radio_3d)
-        dimension_choice_layout.addWidget(label_3d)
-        dimension_choice_layout.addWidget(
-            self._radio_2d, alignment=Qt.AlignLeft
-        )
-        dimension_choice_layout.addWidget(label_2d, alignment=Qt.AlignLeft)
-        dimension_choice_layout.addStretch(10)
-        dimension_choice_layout.setContentsMargins(0, 0, 0, 0)
-
-        dimension_choice_dummy: QWidget = (
-            QWidget()
-        )  # stops interference with other radio buttons
-        dimension_choice_dummy.setLayout(dimension_choice_layout)
-
-        bottom_grid_layout.addWidget(dimension_choice_dummy, 2, 1)
+        self._dimension_label: QLabel = QLabel("")
+        bottom_grid_layout.addWidget(self._dimension_label, 2, 1)
 
         num_epochs_label: LabelWithHint = LabelWithHint("Training steps")
         bottom_grid_layout.addWidget(num_epochs_label, 3, 0)
@@ -379,28 +350,24 @@ class TrainingView(View):
                 ]
             )
 
-
     def _handle_dimensions_available(self, _: Event) -> None:
         image_dims: List[int] = self._training_model.get_image_dimensions()
-        self._enable_patch_size(image_dims)
+        self._training_model.set_spatial_dims(len(image_dims))
         self._set_max_patch_size(image_dims)
-        self._toggle_spatial_dims_choice_based_on_input_image(image_dims)
+        self._enable_patch_size(len(image_dims))
+        self._update_dimension_label(len(image_dims))
 
-    def _toggle_spatial_dims_choice_based_on_input_image(self, image_dims: List[int]) -> None:
-        if len(image_dims) == 3:
-            self._radio_3d.toggle()
-        else:
-            self._radio_2d.toggle()
+    def _update_dimension_label(self, spatial_dims: int) -> None:
+        self._dimension_label.setText(f"{spatial_dims}D")
 
     def _set_max_patch_size(self, image_dims: List[int]) -> None:
         self._z_patch_size.setMaximum(image_dims[0])
         self._y_patch_size.setMaximum(image_dims[1])
         self._x_patch_size.setMaximum(image_dims[2])
-        self._enable_patch_size(image_dims)
 
-    def _enable_patch_size(self, image_dims: List[int]) -> None:
+    def _enable_patch_size(self, spatial_dims: int) -> None:
         # enable only for 3d
-        if len(image_dims) == 3:
+        if spatial_dims == 3:
             self._z_patch_size.setEnabled(True)
         self._y_patch_size.setEnabled(True)
         self._x_patch_size.setEnabled(True)
