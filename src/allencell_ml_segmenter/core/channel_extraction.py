@@ -6,6 +6,8 @@ from aicsimageio.exceptions import UnsupportedFileFormatError
 from qtpy.QtCore import QObject, QThread, Signal
 from aicsimageio import AICSImage
 
+from allencell_ml_segmenter.core.image_data_extractor import AICSImageDataExtractor, ImageData
+
 
 def extract_channels_from_image(img: AICSImage) -> int:
     """
@@ -60,6 +62,7 @@ class ChannelExtractionThread(QThread):
         super().__init__(parent)
         self._img_path: Path = img_path
         self._get_dims: bool = get_dims
+        self._image_extractor:AICSImageDataExtractor = AICSImageDataExtractor.global_instance()
 
     # override
     def run(self):
@@ -68,7 +71,7 @@ class ChannelExtractionThread(QThread):
             raise ValueError(f"{self._img_path} does not exist")
 
         try:
-            image: AICSImage = AICSImage(str(self._img_path))
+            image_data: ImageData = self._image_extractor.extract_image_data(self._img_path, dims=True, np_data=False)
         except UnsupportedFileFormatError as ex:
             self.task_failed.emit(ex)
             return  # return instead of reraise to surprss error message in napari console
@@ -76,11 +79,9 @@ class ChannelExtractionThread(QThread):
             self.task_failed.emit(ex)
             return
 
-        channels: int = extract_channels_from_image(image)
         if not QThread.currentThread().isInterruptionRequested():
-            self.channels_ready.emit(channels)
+            self.channels_ready.emit(image_data.channels)
 
         if self._get_dims:
-            dims: List[int] = get_dims_from_image(image)
             if not QThread.currentThread().isInterruptionRequested():
-                self.dimensions_ready.emit(dims)
+                self.dimensions_ready.emit([image_data.dim_z, image_data.dim_y, image_data.dim_x])
