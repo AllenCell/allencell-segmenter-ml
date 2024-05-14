@@ -288,8 +288,8 @@ def test_last_image(
     assert env.viewer.contains_layer(f"[seg2] {IMG_DIR_FILES[2].name}")
 
     # Act
-    env.view.next_button.click()  
-    
+    env.view.next_button.click()
+
     # reached end, so buttons should be disabled
     # Assert
     assert env.view.progress_bar.value() == 3
