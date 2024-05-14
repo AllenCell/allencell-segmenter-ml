@@ -8,14 +8,6 @@ from aicsimageio import AICSImage
 
 from allencell_ml_segmenter.core.image_data_extractor import AICSImageDataExtractor, ImageData
 
-
-def extract_channels_from_image(img: AICSImage) -> int:
-    """
-    Returns number of channels in the given img_path.
-    :param img_path: image to extract channels from
-    """
-    return img.dims.C
-
 def get_dims_from_image(img: AICSImage) -> List[int]:
     """
     Returns number of channels in the given img_path.
@@ -62,7 +54,7 @@ class ChannelExtractionThread(QThread):
         super().__init__(parent)
         self._img_path: Path = img_path
         self._get_image_data: bool = get_image_data
-        self._image_extractor:AICSImageDataExtractor = AICSImageDataExtractor.global_instance()
+        self._image_extractor: AICSImageDataExtractor = AICSImageDataExtractor.global_instance()
 
     # override
     def run(self):

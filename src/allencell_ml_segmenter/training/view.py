@@ -101,12 +101,14 @@ class TrainingView(View):
         self._z_patch_size: QSpinBox = QSpinBox()
         self._z_patch_size.setButtonSymbols(QAbstractSpinBox.NoButtons)
         self._z_patch_size.setMinimum(0)
+        self._z_patch_size.setMaximum(9999)
         patch_size_entry_layout.addWidget(QLabel("Z:"))
         patch_size_entry_layout.addWidget(self._z_patch_size)
 
         self._y_patch_size: QSpinBox = QSpinBox()
         self._y_patch_size.setButtonSymbols(QAbstractSpinBox.NoButtons)
         self._y_patch_size.setMinimum(0)
+        self._z_patch_size.setMaximum(9999)
 
         # self._y_patch_size_enforcer: QIntValidator = QIntValidator()
         # self._y_patch_size.setValidator(self._y_patch_size_enforcer)
@@ -116,6 +118,7 @@ class TrainingView(View):
         self._x_patch_size: QSpinBox = QSpinBox()
         self._x_patch_size.setButtonSymbols(QAbstractSpinBox.NoButtons)
         self._x_patch_size.setMinimum(0)
+        self._z_patch_size.setMaximum(9999)
         # self._x_patch_size_enforcer: QIntValidator = QIntValidator()
         # self._x_patch_size.setValidator(self._x_patch_size_enforcer)
         patch_size_entry_layout.addWidget(QLabel("X:"))
@@ -285,15 +288,15 @@ class TrainingView(View):
         Returns True if valid patch sizes were provided, false if not
         """
         missing_patches: list[str] = []
-
-        if not self._z_patch_size.value() == 0 and self._training_model.get_spatial_dims() == 3:
+        # patch size cannot be 0 for any dim
+        if self._z_patch_size.value() == 0 and self._training_model.get_spatial_dims() == 3:
             # 3d selected but z patch size missing
             missing_patches.append("Z")
 
-        if not self._y_patch_size.value() == 0:
+        if self._y_patch_size.value() == 0:
             missing_patches.append("Y")
 
-        if not self._x_patch_size.value() == 0:
+        if self._x_patch_size.value() == 0:
             missing_patches.append("X")
 
         if len(missing_patches) > 0:
@@ -319,12 +322,12 @@ class TrainingView(View):
 
     def _handle_dimensions_available(self, _: Event) -> None:
         image_dims: List[int] = self._training_model.get_image_dimensions()
-        self._training_model.set_spatial_dims(len(image_dims))
         self._set_max_patch_size(image_dims)
-        self._enable_patch_size(len(image_dims))
-        self._update_dimension_label(len(image_dims))
+        self._enable_patch_size_edit(len(image_dims))
+        self._update_spatial_dims(len(image_dims))
 
-    def _update_dimension_label(self, spatial_dims: int) -> None:
+    def _update_spatial_dims(self, spatial_dims: int) -> None:
+        self._training_model.set_spatial_dims(spatial_dims)
         self._dimension_label.setText(f"{spatial_dims}D")
 
     def _set_max_patch_size(self, image_dims: List[int]) -> None:
@@ -332,7 +335,7 @@ class TrainingView(View):
         self._y_patch_size.setMaximum(image_dims[1])
         self._x_patch_size.setMaximum(image_dims[2])
 
-    def _enable_patch_size(self, spatial_dims: int) -> None:
+    def _enable_patch_size_edit(self, spatial_dims: int) -> None:
         # enable only for 3d
         if spatial_dims == 3:
             self._z_patch_size.setEnabled(True)
