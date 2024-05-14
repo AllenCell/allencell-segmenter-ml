@@ -102,10 +102,8 @@ class CurationMainView(View):
         )
         self.yes_radio: QRadioButton = QRadioButton("Yes")
         self.yes_radio.setChecked(True)
-        self.yes_radio.clicked.connect(self.enable_valid_masks)
-        self.yes_radio.clicked.connect(
-            lambda: self._curation_model.set_use_image(True)
-        )
+        self.yes_radio.clicked.connect(self._on_yes_radio_clicked)
+
         use_image_frame.layout().addWidget(self.yes_radio)
         self.no_radio: QRadioButton = QRadioButton("No")
         self.no_radio.clicked.connect(self._on_no_radio_clicked)
@@ -150,7 +148,7 @@ class CurationMainView(View):
         merging_mask_label_and_status.addWidget(self.merging_mask_status)
         self.layout().addLayout(merging_mask_label_and_status)
         merging_mask_subtext: QLabel = QLabel(
-            "Without merging mask, Seg 1 will be used for training."
+            "Without merging mask, base image will be used for training."
         )
         merging_mask_subtext.setObjectName("subtext")
         self.layout().addWidget(merging_mask_subtext)
@@ -160,12 +158,14 @@ class CurationMainView(View):
         self.merging_create_button: QPushButton = QPushButton("+ Create")
         self.merging_create_button.clicked.connect(self._create_merging_mask)
         self.merging_create_button.setObjectName("small_blue_btn")
+
         self.merging_delete_button: QPushButton = QPushButton("Delete")
         self.merging_delete_button.clicked.connect(self.delete_merging_mask)
+
         self.merging_save_button: QPushButton = QPushButton("Save")
-        self.merging_save_button.setEnabled(False)
         self.merging_save_button.setObjectName("small_blue_btn")
         self.merging_save_button.clicked.connect(self.save_merging_mask)
+
         merging_mask_buttons.addWidget(self.merging_create_button)
         merging_mask_buttons.addWidget(self.merging_delete_button)
         merging_mask_buttons.addWidget(self.merging_save_button)
@@ -207,10 +207,10 @@ class CurationMainView(View):
         self.excluding_delete_button.clicked.connect(
             self.delete_excluding_mask
         )
+
         self.excluding_save_button: QPushButton = QPushButton("Save")
         self.excluding_save_button.setObjectName("small_blue_btn")
         self.excluding_save_button.clicked.connect(self.save_excluding_mask)
-        self.excluding_save_button.setEnabled(False)
 
         excluding_mask_buttons.addWidget(self.excluding_create_button)
         excluding_mask_buttons.addWidget(self.excluding_delete_button)
@@ -331,10 +331,12 @@ class CurationMainView(View):
         """
         Enable the buttons for merging mask in the UI
         """
-        # save button is off to start with
-        self.merging_save_button.setEnabled(False)
+        mask_exists: bool = self._viewer.contains_layer(
+            MERGING_MASK_LAYER_NAME
+        )
+        self.merging_save_button.setEnabled(mask_exists)
         self.merging_create_button.setEnabled(True)
-        self.merging_delete_button.setEnabled(True)
+        self.merging_delete_button.setEnabled(mask_exists)
         self.merging_base_combo.setEnabled(True)
 
     def disable_excluding_mask_buttons(self):
@@ -349,9 +351,12 @@ class CurationMainView(View):
         """
         Enable the buttons for excluding mask in the UI
         """
-        self.excluding_save_button.setEnabled(False)
+        mask_exists: bool = self._viewer.contains_layer(
+            EXCLUDING_MASK_LAYER_NAME
+        )
+        self.excluding_save_button.setEnabled(mask_exists)
         self.excluding_create_button.setEnabled(True)
-        self.excluding_delete_button.setEnabled(True)
+        self.excluding_delete_button.setEnabled(mask_exists)
 
     def _update_progress_bar(self) -> None:
         """
@@ -388,6 +393,7 @@ class CurationMainView(View):
             MERGING_MASK_LAYER_NAME, "royalblue", "add_polygon"
         )
         self.merging_save_button.setEnabled(True)
+        self.merging_delete_button.setEnabled(True)
         self.merging_mask_status.setText("Draw mask")
 
     def save_merging_mask(self) -> None:
@@ -419,6 +425,7 @@ class CurationMainView(View):
             self._viewer.remove_layer(MERGING_MASK_LAYER_NAME)
         self._curation_model.set_merging_mask(None)
         self.merging_save_button.setEnabled(False)
+        self.merging_delete_button.setEnabled(False)
         self.merging_mask_status.setText("Merging mask deleted")
 
     def _create_excluding_mask(self) -> None:
@@ -434,6 +441,7 @@ class CurationMainView(View):
             EXCLUDING_MASK_LAYER_NAME, "coral", "add_polygon"
         )
         self.excluding_save_button.setEnabled(True)
+        self.excluding_delete_button.setEnabled(True)
         self.excluding_mask_status.setText("Draw mask")
 
     def save_excluding_mask(self) -> None:
@@ -459,6 +467,7 @@ class CurationMainView(View):
             self._viewer.remove_layer(EXCLUDING_MASK_LAYER_NAME)
         self._curation_model.set_excluding_mask(None)
         self.excluding_save_button.setEnabled(False)
+        self.excluding_delete_button.setEnabled(False)
         self.excluding_mask_status.setText("Excluding mask deleted")
 
     def disable_all_masks(self) -> None:
@@ -475,4 +484,7 @@ class CurationMainView(View):
     def _on_no_radio_clicked(self) -> None:
         self.disable_all_masks()
         self._curation_model.set_use_image(False)
-        self.merging_base_combo.setCurrentIndex(0)
+
+    def _on_yes_radio_clicked(self) -> None:
+        self.enable_valid_masks()
+        self._curation_model.set_use_image(True)
