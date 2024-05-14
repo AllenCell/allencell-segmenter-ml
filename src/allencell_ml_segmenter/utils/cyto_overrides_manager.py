@@ -52,11 +52,7 @@ class CytoDLOverridesManager:
         overrides_dict["spatial_dims"] = dims
 
         # Patch shape (required)
-        patch_size: List[int] = self._training_model.get_patch_size()
-        # slice off Z-dim for 2d.
-        if dims == 2:
-            patch_size = patch_size[1:]
-        overrides_dict["data._aux.patch_shape"] = patch_size
+        overrides_dict["data._aux.patch_shape"] = self._training_model.get_patch_size()
 
         # Max Run
         # define max run (in epochs, required)
