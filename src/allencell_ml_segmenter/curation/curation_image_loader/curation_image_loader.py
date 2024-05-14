@@ -125,6 +125,7 @@ class CurationImageLoader(ICurationImageLoader):
                 ),
             )
 
+        # this is thread safe due to GIL: https://docs.python.org/3/glossary.html#term-global-interpreter-lock
         self._task_executor.exec(
             lambda: self._wait_on_data_dict(data_dict), on_finish=on_finish
         )
