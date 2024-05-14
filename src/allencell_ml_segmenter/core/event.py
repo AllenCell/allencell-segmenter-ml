@@ -24,6 +24,7 @@ class Event(Enum):
     # Training
     ACTION_START_TRAINING = "start_training"
     ACTION_TRAINING_MAX_NUMBER_CHANNELS_SET = "max_number_channel_set_training"
+    ACTION_TRAINING_DIMENSIONS_SET = "dimensions_set_training"
     ACTION_TRAINING_DATASET_SELECTED = "training_dataset_selected"
     # Prediction
     ACTION_PREDICTION_MODEL_FILE = "model_file"

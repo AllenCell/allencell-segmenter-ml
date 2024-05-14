@@ -1,6 +1,7 @@
 from pathlib import Path
-from typing import Optional
+from typing import Optional, List
 
+from PyQt5.QtWidgets import QSpinBox, QAbstractSpinBox
 from napari.utils.notifications import show_warning
 
 from allencell_ml_segmenter.main.i_viewer import IViewer
@@ -96,27 +97,32 @@ class TrainingView(View):
         bottom_grid_layout.addWidget(patch_size_label, 0, 0)
         patch_size_entry_layout: QHBoxLayout = QHBoxLayout()
 
-        # allow only integers for the linedits below
-        enforce_int: QIntValidator = QIntValidator()
-        enforce_int.setRange(0, 9)
-
-        self._z_patch_size: QLineEdit = QLineEdit()
-        self._z_patch_size.setValidator(enforce_int)
+        self._z_patch_size: QSpinBox = QSpinBox()
+        self._z_patch_size.setButtonSymbols(QAbstractSpinBox.NoButtons)
+        self._z_patch_size.setMinimum(0)
         patch_size_entry_layout.addWidget(QLabel("Z:"))
         patch_size_entry_layout.addWidget(self._z_patch_size)
 
-        self._y_patch_size: QLineEdit = QLineEdit()
-        self._y_patch_size.setValidator(enforce_int)
+        self._y_patch_size: QSpinBox = QSpinBox()
+        self._y_patch_size.setButtonSymbols(QAbstractSpinBox.NoButtons)
+        self._y_patch_size.setMinimum(0)
+
+        # self._y_patch_size_enforcer: QIntValidator = QIntValidator()
+        # self._y_patch_size.setValidator(self._y_patch_size_enforcer)
         patch_size_entry_layout.addWidget(QLabel("Y:"))
         patch_size_entry_layout.addWidget(self._y_patch_size)
 
-        self._x_patch_size: QLineEdit = QLineEdit()
-        self._x_patch_size.setValidator(enforce_int)
+        self._x_patch_size: QSpinBox = QSpinBox()
+        self._x_patch_size.setButtonSymbols(QAbstractSpinBox.NoButtons)
+        self._x_patch_size.setMinimum(0)
+        # self._x_patch_size_enforcer: QIntValidator = QIntValidator()
+        # self._x_patch_size.setValidator(self._x_patch_size_enforcer)
         patch_size_entry_layout.addWidget(QLabel("X:"))
         patch_size_entry_layout.addWidget(self._x_patch_size)
 
         bottom_grid_layout.addLayout(patch_size_entry_layout, 0, 1)
 
+        # Removed predefined patch sizes- leaving this in here in case we want it in the future
         # patch_size_label: LabelWithHint = LabelWithHint("Structure size")
         # bottom_grid_layout.addWidget(patch_size_label, 0, 0)
         #
@@ -242,6 +248,12 @@ class TrainingView(View):
             lambda e: self._main_model.set_current_view(self),
         )
 
+        self._training_model.subscribe(
+            Event.ACTION_TRAINING_DIMENSIONS_SET,
+            self,
+            self._handle_dimensions_available
+        )
+
         # apply styling
         self.setStyleSheet(Style.get_stylesheet("training_view.qss"))
 
@@ -249,16 +261,18 @@ class TrainingView(View):
         """
         Starts training process
         """
-        self._parse_patch_size()
+        # TODO: Refactor- move other checks for training here
+        if self._check_patch_size_ok():
+            self.set_patch_size()
 
-        progress_tracker: MetricsCSVProgressTracker = (
-            MetricsCSVProgressTracker(
-                self._experiments_model.get_metrics_csv_path(),
-                self._training_model.get_num_epochs(),
-                self._experiments_model.get_latest_metrics_csv_version() + 1,
+            progress_tracker: MetricsCSVProgressTracker = (
+                MetricsCSVProgressTracker(
+                    self._experiments_model.get_metrics_csv_path(),
+                    self._training_model.get_num_epochs(),
+                    self._experiments_model.get_latest_metrics_csv_version() + 1,
+                )
             )
-        )
-        self.startLongTaskWithProgressBar(progress_tracker)
+            self.startLongTaskWithProgressBar(progress_tracker)
 
     def read_result_images(self, dir_to_grab: Path):
         output_dir: Path = dir_to_grab
@@ -334,27 +348,63 @@ class TrainingView(View):
         """
         missing_patches: list[str] = []
 
-        if not self._z_patch_size.text():
+        if not self._z_patch_size.value() == 0 and self._training_model.get_spatial_dims() == 3:
+            # 3d selected but z patch size missing
             missing_patches.append("Z")
 
-        if not self._y_patch_size.text():
+        if not self._y_patch_size.value() == 0:
             missing_patches.append("Y")
 
-        if not self._x_patch_size.text():
+        if not self._x_patch_size.value() == 0:
             missing_patches.append("X")
 
         if len(missing_patches) > 0:
-            show_warning(f"Please define {missing_patches} patches before continuing.")
+            show_warning(f"Please define {missing_patches} patch sizes before continuing.")
             return False
 
         return True
 
     def set_patch_size(self) -> None:
-        self._training_model.set_patch_size(
-            int(self._z_patch_size),
-            int(self._y_patch_size),
-            int(self._x_patch_size)
-        )
+        if len(self._training_model.get_image_dimensions()) == 3:
+            self._training_model.set_patch_size([
+                self._z_patch_size.value(),
+                self._y_patch_size.value(),
+                self._x_patch_size.value()
+                ]
+            )
+        else:
+            self._training_model.set_patch_size([
+                self._y_patch_size.value(),
+                self._x_patch_size.value()
+                ]
+            )
+
+
+    def _handle_dimensions_available(self, _: Event) -> None:
+        image_dims: List[int] = self._training_model.get_image_dimensions()
+        self._enable_patch_size(image_dims)
+        self._set_max_patch_size(image_dims)
+        self._toggle_spatial_dims_choice_based_on_input_image(image_dims)
+
+    def _toggle_spatial_dims_choice_based_on_input_image(self, image_dims: List[int]) -> None:
+        if len(image_dims) == 3:
+            self._radio_3d.toggle()
+        else:
+            self._radio_2d.toggle()
+
+    def _set_max_patch_size(self, image_dims: List[int]) -> None:
+        self._z_patch_size.setMaximum(image_dims[0])
+        self._y_patch_size.setMaximum(image_dims[1])
+        self._x_patch_size.setMaximum(image_dims[2])
+        self._enable_patch_size(image_dims)
+
+    def _enable_patch_size(self, image_dims: List[int]) -> None:
+        # enable only for 3d
+        if len(image_dims) == 3:
+            self._z_patch_size.setEnabled(True)
+        self._y_patch_size.setEnabled(True)
+        self._x_patch_size.setEnabled(True)
+
 
 
 

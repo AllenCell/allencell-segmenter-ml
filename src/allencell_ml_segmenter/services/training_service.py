@@ -9,6 +9,7 @@ from allencell_ml_segmenter.core.channel_extraction import (
     get_img_path_from_csv,
 )
 from allencell_ml_segmenter.core.i_extractor_factory import IExtractorFactory
+from allencell_ml_segmenter.core.image_data_extractor import ImageData
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.event import Event
 
@@ -121,16 +122,13 @@ class TrainingService(Subscriber):
             return False
         return True
 
-    def _start_channel_extraction(
-        self, to_extract: Path, channel_callback: Callable, dimensions_callback: Callable
+    def _start_image_data_extraction(
+        self, to_extract: Path, image_data_callback: Callable
     ):
         self._channel_extraction_thread = self._extractor_factory.create(
-            get_img_path_from_csv(to_extract / "train.csv"), get_dims=True
+            get_img_path_from_csv(to_extract / "train.csv"), get_image_data=True
         )
-        self._channel_extraction_thread.channels_ready.connect(
-            channel_callback
-        )
-        self._channel_extraction_thread.dimensions_ready.connect(dimensions_callback)
+        self._channel_extraction_thread.image_data_ready.connect(image_data_callback)
         self._channel_extraction_thread.start()
 
     def _stop_channel_extraction(self) -> None:
@@ -142,8 +140,16 @@ class TrainingService(Subscriber):
             self._channel_extraction_thread.wait()
 
     def _training_image_directory_selected(self, _: Event) -> None:
-        self._start_channel_extraction(
+        self._start_image_data_extraction(
             self._training_model.get_images_directory(),
-            self._training_model.set_max_channel,
-            self._training_model.set_image_dimensions
+            self._handle_image_data
         )
+
+    def _handle_image_data(self, image_data: ImageData) -> None:
+        self._training_model.set_max_channel(image_data.channels)
+        if image_data.dim_z == 1:
+            # this is a 2d image
+            self._training_model.set_image_dimensions([image_data.dim_y, image_data.dim_x])
+        else:
+            self._training_model.set_image_dimensions([image_data.dim_z, image_data.dim_y, image_data.dim_x])
+

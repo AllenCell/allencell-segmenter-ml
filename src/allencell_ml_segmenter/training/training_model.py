@@ -195,13 +195,13 @@ class TrainingModel(Publisher):
         """
         return self._patch_size
 
-    def set_patch_size(self, z: int, y: int, x: int) -> None:
+    def set_patch_size(self, patch_size: List[int]) -> None:
         """
         Sets patch size
 
         patch_size (str): patch size for training
         """
-        self._patch_size = [z, y, x]
+        self._patch_size = patch_size
 
     def get_max_time(self) -> int:
         """
@@ -293,6 +293,7 @@ class TrainingModel(Publisher):
 
     def set_image_dimensions(self, dims: List[int]) -> None:
         self._selected_image_dimensions = dims
+        self.dispatch(Event.ACTION_TRAINING_DIMENSIONS_SET)
 
     def get_image_dimensions(self) -> List[int]:
         return self._selected_image_dimensions
