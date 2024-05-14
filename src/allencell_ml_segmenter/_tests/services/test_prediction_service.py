@@ -37,7 +37,7 @@ def test_predict_model() -> None:
             / "experiments_home",
         )
     )
-    experiments_model.set_experiment_name("0_exp")
+    experiments_model.apply_experiment_name("0_exp")
     experiments_model.set_checkpoint("1.ckpt")
     prediction_service: PredictionService = PredictionService(
         prediction_model, experiments_model
@@ -88,7 +88,7 @@ def test_predict_model_no_checkpoint_selected() -> None:
             / "experiments_home",
         )
     )
-    experiments_model.set_experiment_name("0_exp")
+    experiments_model.apply_experiment_name("0_exp")
     prediction_service: PredictionService = PredictionService(
         prediction_model, experiments_model
     )
@@ -112,7 +112,7 @@ def test_build_overrides() -> None:
             / "experiments_home",
         )
     )
-    experiments_model.set_experiment_name("one_ckpt_exp")
+    experiments_model.apply_experiment_name("one_ckpt_exp")
     prediction_service: PredictionService = PredictionService(
         prediction_model, experiments_model
     )
@@ -203,7 +203,7 @@ def test_build_overrides_checkpoint_none() -> None:
             / "experiments_home",
         )
     )
-    experiments_model.set_experiment_name("0_exp")
+    experiments_model.apply_experiment_name("0_exp")
     prediction_service: PredictionService = PredictionService(
         prediction_model, experiments_model
     )
@@ -236,7 +236,7 @@ def test_write_csv_for_inputs() -> None:
             / "experiments_home",
         )
     )
-    experiments_model.set_experiment_name("0_exp")
+    experiments_model.apply_experiment_name("0_exp")
     prediction_model: PredictionModel = PredictionModel()
     prediction_service: PredictionService = PredictionService(
         prediction_model, experiments_model

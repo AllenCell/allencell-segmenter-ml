@@ -17,26 +17,6 @@ class ExperimentsModel(IExperimentsModel):
         self.experiments = []
         self.refresh_experiments()
 
-        # state
-        self._experiment_name: Optional[str] = None
-
-    def get_experiment_name(self) -> Optional[str]:
-        """
-        Gets experiment name
-        """
-        return self._experiment_name
-
-    def set_experiment_name(self, name: Optional[str]) -> None:
-        """
-        Sets experiment name
-
-        name (str): name of cyto-dl experiment
-        """
-        self._experiment_name = name
-        if self._experiment_name:
-            # if a experiment name is set
-            self.dispatch(Event.ACTION_EXPERIMENT_SELECTED)
-
     def get_checkpoint(self) -> Optional[str]:
         """
         Gets checkpoint
@@ -99,12 +79,17 @@ class ExperimentsModel(IExperimentsModel):
             / checkpoint
         )
 
-    def get_csv_path(self) -> Path:
-        return (
-            self.get_user_experiments_path()
-            / self.get_experiment_name()
-            / "data"
-        )
+    def get_csv_path(self) -> Optional[Path]:
+        if (
+            self.get_user_experiments_path() is not None
+            and self.get_experiment_name() is not None
+        ):
+            return (
+                self.get_user_experiments_path()
+                / self.get_experiment_name()
+                / "data"
+            )
+        return None
 
     def get_metrics_csv_path(self) -> Path:
         return (
@@ -151,12 +136,12 @@ class ExperimentsModel(IExperimentsModel):
         return int(ckpt.split(".")[0].split("_")[-1])
 
     def _get_best_ckpt(self) -> Optional[str]:
-        if not self._experiment_name:
+        if not self.get_experiment_name():
             return None
 
         checkpoints_path = (
             Path(self.user_settings.get_user_experiments_path())
-            / self._experiment_name
+            / self.get_experiment_name()
             / "checkpoints"
         )
         if not checkpoints_path.exists():

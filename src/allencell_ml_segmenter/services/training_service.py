@@ -80,6 +80,11 @@ class TrainingService(Subscriber):
                 cyto_overrides_manager.get_training_overrides()
             )
             model.print_config()
+            model.save_config(
+                self._experiments_model.get_train_config_path(
+                    self._experiments_model.get_experiment_name()
+                )
+            )
             model.train()
 
     def _able_to_continue_training(self) -> bool:

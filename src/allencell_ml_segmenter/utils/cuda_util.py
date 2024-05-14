@@ -1,5 +1,8 @@
 import multiprocessing
 import torch
+import platform
+
+from allencell_ml_segmenter.training.training_model import Hardware
 
 
 class CUDAUtils:
@@ -13,8 +16,18 @@ class CUDAUtils:
         return torch.cuda.is_available()
 
     @staticmethod
-    def get_num_cpu_cores() -> int:
+    def get_num_workers(hardware_used: Hardware) -> int:
         """
         Get the number of available cpu cores on this machine
         """
-        return multiprocessing.cpu_count()
+        # For MACOS or CPU runs:
+        # On MACOS we cannot set num_workers no matter what.
+        # On CPU, increasing num_workers will offer no performance increase
+        #   as dataloading is not the bottleneck
+        if platform.system() == "Darwin" or hardware_used == Hardware.CPU:
+            return 0
+        # For Windows/Linux:
+        # We set num_workers to 1 for GPU runs
+        # num_workers=1 should be able to support most systems while providing a small speed benefit.
+        else:
+            return 1
