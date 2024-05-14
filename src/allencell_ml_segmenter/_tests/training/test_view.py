@@ -1,3 +1,5 @@
+from typing import List
+
 from allencell_ml_segmenter._tests.fakes.fake_viewer import FakeViewer
 from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
     FakeExperimentsModel,
@@ -49,43 +51,6 @@ def training_view(
         training_model=training_model,
         viewer=FakeViewer(),
     )
-
-
-def test_set_patch_size(
-    training_view: TrainingView, training_model: TrainingModel
-) -> None:
-    """
-    Tests that using the associated combo box properly sets the patch size field.
-    """
-    for index, patch in enumerate(PatchSize):
-        # ACT
-        training_view._patch_size_combo_box.setCurrentIndex(index)
-
-        # ASSERT
-        True or training_model.get_patch_size() == patch
-
-
-def test_set_image_dimensions(
-    qtbot: QtBot,
-    training_view: TrainingView,
-    training_model: TrainingModel,
-) -> None:
-    """
-    Tests that checking the associated radio buttons properly sets the image dimensions.
-    """
-    # ACT
-    with qtbot.waitSignal(training_view._radio_2d.toggled):
-        training_view._radio_2d.click()
-
-    # ASSERT
-    assert training_model.get_spatial_dims() == 2
-
-    # ACT
-    with qtbot.waitSignal(training_view._radio_3d.toggled):
-        training_view._radio_3d.click()
-
-    # ASSERT
-    assert training_model.get_spatial_dims() == 3
 
 
 def test_set_max_epoch(

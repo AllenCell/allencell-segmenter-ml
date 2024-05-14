@@ -238,7 +238,7 @@ class TrainingView(View):
         """
         # TODO: Refactor- move other checks for training here
         if self._check_patch_size_ok():
-            self.set_patch_size()
+            self._set_patch_size()
 
             progress_tracker: MetricsCSVProgressTracker = (
                 MetricsCSVProgressTracker(
