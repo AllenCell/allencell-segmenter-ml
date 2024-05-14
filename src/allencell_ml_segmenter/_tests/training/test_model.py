@@ -1,3 +1,5 @@
+from typing import List
+
 import pytest
 from pathlib import Path
 from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
@@ -216,30 +218,14 @@ def test_set_patch_size(training_model: TrainingModel) -> None:
     """
     Tests that set_patch_size sets the correct patch size.
     """
-    # ACT
-    training_model.set_patch_size("small")
-
-    # ASSERT
-    assert training_model._patch_size == PatchSize.SMALL
+    # ARRANGE
+    patch_size: List[int] = [1, 2, 3]
 
     # ACT
-    training_model.set_patch_size("SMaLL")
+    training_model.set_patch_size(patch_size)
 
     # ASSERT
-    assert training_model._patch_size == PatchSize.SMALL
-
-    # ACT
-    training_model.set_patch_size("MEDIUM")
-
-    # ASSERT
-    assert training_model._patch_size == PatchSize.MEDIUM
-
-    # ACT
-    training_model.set_patch_size("large")
-
-    # ASSERT
-    assert training_model._patch_size == PatchSize.LARGE
-
+    assert training_model._patch_size == patch_size
 
 def test_get_max_time(training_model: TrainingModel) -> None:
     """
