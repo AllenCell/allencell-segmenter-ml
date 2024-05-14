@@ -115,7 +115,7 @@ class CurationMainView(View):
         )
 
         optional_text: QLabel = QLabel("OPTIONAL", self)
-        optional_text.setObjectName("title")
+        optional_text.setObjectName("text_with_vert_padding")
         self.layout().addWidget(optional_text, alignment=Qt.AlignHCenter)
 
         base_image_layout: QGridLayout = QGridLayout()

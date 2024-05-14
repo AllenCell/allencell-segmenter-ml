@@ -27,7 +27,7 @@ QPushButton {
     margin-bottom: 12px;
 }
 
-#title {
+#text_with_vert_padding {
     padding-top: 12px;
     padding-bottom: 12px;
 }
