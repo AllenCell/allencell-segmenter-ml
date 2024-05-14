@@ -238,7 +238,7 @@ class TrainingView(View):
         """
         # TODO: Refactor- move other checks for training here
         if self._check_patch_size_ok():
-            self._set_patch_size()
+            self._update_model_with_patch_size()
 
             progress_tracker: MetricsCSVProgressTracker = (
                 MetricsCSVProgressTracker(
@@ -305,7 +305,7 @@ class TrainingView(View):
 
         return True
 
-    def set_patch_size(self) -> None:
+    def _update_model_with_patch_size(self) -> None:
         if len(self._training_model.get_image_dimensions()) == 3:
             self._training_model.set_patch_size([
                 self._z_patch_size.value(),

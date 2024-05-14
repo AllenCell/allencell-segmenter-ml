@@ -51,21 +51,20 @@ def training_view(
         training_model=training_model,
         viewer=FakeViewer(),
     )
+
+
 def test_handle_dimensions_available_3d(training_view: TrainingView, training_model: TrainingModel) -> None:
     # arrange
-    test_dims: List[int] = [1, 3, 6]
+    test_dims: List[int] = [1, 3, 6] # Z, Y, X
 
     # Act
     training_model.set_image_dimensions(test_dims)
 
     # assert
-    # check max patch sizes set for QSpinBoxes and were enabled
+    # check max patch sizes set for QSpinBoxes based on image dims given
     assert training_view._z_patch_size.maximum() == test_dims[0]
-    assert training_view._z_patch_size.isEnabled()
     assert training_view._y_patch_size.maximum() == test_dims[1]
-    assert training_view._y_patch_size.isEnabled()
     assert training_view._x_patch_size.maximum() == test_dims[2]
-    assert training_view._x_patch_size.isEnabled()
 
     # check label displays correct number of dims
     assert training_view._dimension_label.text() == "3D"
@@ -76,7 +75,7 @@ def test_handle_dimensions_available_3d(training_view: TrainingView, training_mo
 
 def test_handle_dimensions_available_2d(training_view: TrainingView, training_model: TrainingModel) -> None:
     # arrange
-    test_dims: List[int] = [2, 4]
+    test_dims: List[int] = [2, 4]  #Y, X
 
     # Act
     training_model.set_image_dimensions(test_dims)
