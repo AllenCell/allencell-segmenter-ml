@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict, Union
+from typing import Dict, Union, List
 
 import pytest
 from allencell_ml_segmenter._tests.fakes.fake_user_settings import (
@@ -44,7 +44,7 @@ def training_model(experiments_model: ExperimentsModel) -> TrainingModel:
     model.set_use_max_time(True)
     model.set_max_time(9992)
     model.set_config_dir("/path/to/configs")
-    model.set_patch_size([1,2])
+    model.set_patch_size([1,2,3])
     model.set_num_epochs(100)
     model.set_model_size("medium")
     return model
@@ -115,7 +115,8 @@ def test_get_training_overrides_2d_spatial_dims(experiments_model) -> None:
     model.set_model_size("medium")
 
     model.set_spatial_dims(2)
-    model.set_patch_size([1, 2])
+    patch_size: List[int] = [1,2]
+    model.set_patch_size(patch_size)
     cyto_overrides_manager: CytoDLOverridesManager = CytoDLOverridesManager(
         experiments_model, model
     )
@@ -129,7 +130,7 @@ def test_get_training_overrides_2d_spatial_dims(experiments_model) -> None:
     assert len(training_overrides["data._aux.patch_shape"]) == 2
     assert (
         training_overrides["data._aux.patch_shape"]
-        == PatchSize.SMALL.value[1:]
+        == patch_size
     )
 
 
