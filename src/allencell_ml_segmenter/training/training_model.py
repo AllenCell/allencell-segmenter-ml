@@ -199,7 +199,13 @@ class TrainingModel(Publisher):
         Sets patch size
 
         patch_size (str): patch size for training
+        If 3d, patch sizes are in [Z,Y,X] dimension order
+        if 2d, patch sizes are in [Y,X] dimension order
         """
+        if len(patch_size) > 3 or len(patch_size) < 2:
+            raise ValueError(
+                "Patch size must be of length 3 (for 3D) or 2 (for 2D)"
+            )
         self._patch_size = patch_size
 
     def get_max_time(self) -> int:

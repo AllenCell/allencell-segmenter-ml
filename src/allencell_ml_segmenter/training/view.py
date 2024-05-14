@@ -331,16 +331,21 @@ class TrainingView(View):
         self._dimension_label.setText(f"{spatial_dims}D")
 
     def _set_max_patch_size(self, image_dims: List[int]) -> None:
-        self._z_patch_size.setMaximum(image_dims[0])
-        self._y_patch_size.setMaximum(image_dims[1])
-        self._x_patch_size.setMaximum(image_dims[2])
+        if len(image_dims) == 3:
+            # 3d image
+            self._z_patch_size.setMaximum(image_dims[0])
+            self._y_patch_size.setMaximum(image_dims[1])
+            self._x_patch_size.setMaximum(image_dims[2])
+        else:
+            self._z_patch_size.setMaximum(0)
+            self._y_patch_size.setMaximum(image_dims[0])
+            self._x_patch_size.setMaximum(image_dims[1])
+
 
     def _enable_patch_size_edit(self, spatial_dims: int) -> None:
         # enable only for 3d
-        if spatial_dims == 3:
-            self._z_patch_size.setEnabled(True)
-        self._y_patch_size.setEnabled(True)
-        self._x_patch_size.setEnabled(True)
+        if spatial_dims == 2:
+            self._z_patch_size.setEnabled(False)
 
 
 

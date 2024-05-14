@@ -51,7 +51,51 @@ def training_view(
         training_model=training_model,
         viewer=FakeViewer(),
     )
+def test_handle_dimensions_available_3d(training_view: TrainingView, training_model: TrainingModel) -> None:
+    # arrange
+    test_dims: List[int] = [1, 3, 6]
 
+    # Act
+    training_model.set_image_dimensions(test_dims)
+
+    # assert
+    # check max patch sizes set for QSpinBoxes and were enabled
+    assert training_view._z_patch_size.maximum() == test_dims[0]
+    assert training_view._z_patch_size.isEnabled()
+    assert training_view._y_patch_size.maximum() == test_dims[1]
+    assert training_view._y_patch_size.isEnabled()
+    assert training_view._x_patch_size.maximum() == test_dims[2]
+    assert training_view._x_patch_size.isEnabled()
+
+    # check label displays correct number of dims
+    assert training_view._dimension_label.text() == "3D"
+
+    # check model updated with correct number of spatial dims
+    assert training_model.get_spatial_dims() == len(test_dims)
+
+
+def test_handle_dimensions_available_2d(training_view: TrainingView, training_model: TrainingModel) -> None:
+    # arrange
+    test_dims: List[int] = [2, 4]
+
+    # Act
+    training_model.set_image_dimensions(test_dims)
+
+    # assert
+    # 2d- so z still disabled
+    assert training_view._z_patch_size.maximum() == 0
+    assert not training_view._z_patch_size.isEnabled()
+    # check max patch sizes set for QSpinBoxes and were enabled
+    assert training_view._y_patch_size.maximum() == test_dims[0]
+    assert training_view._y_patch_size.isEnabled()
+    assert training_view._x_patch_size.maximum() == test_dims[1]
+    assert training_view._x_patch_size.isEnabled()
+
+    # check label displays correct number of dims
+    assert training_view._dimension_label.text() == "2D"
+
+    # check model updated with correct number of spatial dims
+    assert training_model.get_spatial_dims() == len(test_dims)
 
 def test_set_max_epoch(
     qtbot: QtBot, training_view: TrainingView, training_model: TrainingModel
