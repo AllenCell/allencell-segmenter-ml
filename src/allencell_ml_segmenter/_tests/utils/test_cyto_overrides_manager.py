@@ -115,7 +115,7 @@ def test_get_training_overrides_2d_spatial_dims(experiments_model) -> None:
     model.set_model_size("medium")
 
     model.set_spatial_dims(2)
-    model.set_patch_size("small")
+    model.set_patch_size([1, 2])
     cyto_overrides_manager: CytoDLOverridesManager = CytoDLOverridesManager(
         experiments_model, model
     )
