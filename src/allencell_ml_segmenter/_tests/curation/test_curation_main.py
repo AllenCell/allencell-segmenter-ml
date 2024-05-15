@@ -96,6 +96,7 @@ def test_initial_state_with_seg2(
     assert not env.view.merging_create_button.isEnabled()
     assert not env.view.merging_save_button.isEnabled()
     assert not env.view.merging_base_combo.isEnabled()
+    assert env.view.merging_base_combo.currentText() == "seg1"
     assert not env.view.merging_delete_button.isEnabled()
 
     assert not env.view.excluding_create_button.isEnabled()
@@ -113,10 +114,10 @@ def test_initial_state_with_seg2(
     assert env.view.merging_create_button.isEnabled()
     assert not env.view.merging_save_button.isEnabled()
     assert env.view.merging_base_combo.isEnabled()
-    assert env.view.merging_delete_button.isEnabled()
+    assert not env.view.merging_delete_button.isEnabled()
 
     assert env.view.excluding_create_button.isEnabled()
-    assert env.view.excluding_delete_button.isEnabled()
+    assert not env.view.excluding_delete_button.isEnabled()
     assert not env.view.excluding_save_button.isEnabled()
 
     assert env.view.yes_radio.isEnabled()
@@ -130,10 +131,10 @@ def test_initial_state_with_seg2(
     assert env.view.merging_create_button.isEnabled()
     assert not env.view.merging_save_button.isEnabled()
     assert env.view.merging_base_combo.isEnabled()
-    assert env.view.merging_delete_button.isEnabled()
+    assert not env.view.merging_delete_button.isEnabled()
 
     assert env.view.excluding_create_button.isEnabled()
-    assert env.view.excluding_delete_button.isEnabled()
+    assert not env.view.excluding_delete_button.isEnabled()
     assert not env.view.excluding_save_button.isEnabled()
 
     assert env.view.yes_radio.isEnabled()
@@ -141,6 +142,8 @@ def test_initial_state_with_seg2(
 
     assert env.view.next_button.isEnabled()
 
+    # TODO: these will fail if we change naming convention of added images...
+    # is there a better way to check?
     assert env.viewer.contains_layer(f"[raw] {IMG_DIR_FILES[0].name}")
     assert env.viewer.contains_layer(f"[seg1] {IMG_DIR_FILES[0].name}")
     assert env.viewer.contains_layer(f"[seg2] {IMG_DIR_FILES[0].name}")
@@ -159,6 +162,7 @@ def test_initial_state_no_seg2(
     assert not env.view.merging_create_button.isEnabled()
     assert not env.view.merging_save_button.isEnabled()
     assert not env.view.merging_base_combo.isEnabled()
+    assert env.view.merging_base_combo.currentText() == "seg1"
     assert not env.view.merging_delete_button.isEnabled()
 
     assert not env.view.excluding_create_button.isEnabled()
@@ -175,11 +179,11 @@ def test_initial_state_no_seg2(
     # Assert
     assert not env.view.merging_create_button.isEnabled()
     assert not env.view.merging_save_button.isEnabled()
-    # assert env.view.merging_base_combo.isEnabled() this change comes in later PR
+    assert not env.view.merging_base_combo.isEnabled()
     assert not env.view.merging_delete_button.isEnabled()
 
     assert env.view.excluding_create_button.isEnabled()
-    assert env.view.excluding_delete_button.isEnabled()
+    assert not env.view.excluding_delete_button.isEnabled()
     assert not env.view.excluding_save_button.isEnabled()
 
     assert env.view.yes_radio.isEnabled()
@@ -192,11 +196,11 @@ def test_initial_state_no_seg2(
     # Assert
     assert not env.view.merging_create_button.isEnabled()
     assert not env.view.merging_save_button.isEnabled()
-    # assert env.view.merging_base_combo.isEnabled() this change comes in later PR
+    assert not env.view.merging_base_combo.isEnabled()
     assert not env.view.merging_delete_button.isEnabled()
 
     assert env.view.excluding_create_button.isEnabled()
-    assert env.view.excluding_delete_button.isEnabled()
+    assert not env.view.excluding_delete_button.isEnabled()
     assert not env.view.excluding_save_button.isEnabled()
 
     assert env.view.yes_radio.isEnabled()
@@ -229,10 +233,10 @@ def test_next_image(
     assert env.view.merging_create_button.isEnabled()
     assert not env.view.merging_save_button.isEnabled()
     assert env.view.merging_base_combo.isEnabled()
-    assert env.view.merging_delete_button.isEnabled()
+    assert not env.view.merging_delete_button.isEnabled()
 
     assert env.view.excluding_create_button.isEnabled()
-    assert env.view.excluding_delete_button.isEnabled()
+    assert not env.view.excluding_delete_button.isEnabled()
     assert not env.view.excluding_save_button.isEnabled()
 
     assert env.view.yes_radio.isEnabled()
@@ -268,10 +272,10 @@ def test_last_image(
     assert env.view.merging_create_button.isEnabled()
     assert not env.view.merging_save_button.isEnabled()
     assert env.view.merging_base_combo.isEnabled()
-    assert env.view.merging_delete_button.isEnabled()
+    assert not env.view.merging_delete_button.isEnabled()
 
     assert env.view.excluding_create_button.isEnabled()
-    assert env.view.excluding_delete_button.isEnabled()
+    assert not env.view.excluding_delete_button.isEnabled()
     assert not env.view.excluding_save_button.isEnabled()
 
     assert env.view.yes_radio.isEnabled()
@@ -284,8 +288,9 @@ def test_last_image(
     assert env.viewer.contains_layer(f"[seg2] {IMG_DIR_FILES[2].name}")
 
     # Act
-    env.view.next_button.click()  # reached end, so buttons should be disabled
+    env.view.next_button.click()
 
+    # reached end, so buttons should be disabled
     # Assert
     assert env.view.progress_bar.value() == 3
 
@@ -321,6 +326,7 @@ def test_create_new_merging_mask(
     assert len(env.viewer.get_all_shapes()) == 1
     assert env.viewer.get_shapes(MERGING_MASK_LAYER_NAME) is not None
     assert env.view.merging_save_button.isEnabled()
+    assert env.view.merging_delete_button.isEnabled()
 
 
 def test_create_new_excluding_mask(
@@ -340,6 +346,7 @@ def test_create_new_excluding_mask(
     assert len(env.viewer.get_all_shapes()) == 1
     assert env.viewer.get_shapes(EXCLUDING_MASK_LAYER_NAME) is not None
     assert env.view.excluding_save_button.isEnabled()
+    assert env.view.excluding_delete_button.isEnabled()
 
 
 def test_save_csv(
@@ -361,7 +368,6 @@ def test_save_csv(
     assert env.view.save_csv_button.isEnabled()
 
 
-@pytest.mark.skip(reason="support in later PR")
 def test_delete_merging_mask(
     qtbot: QtBot, test_environment_with_seg2: TestEnvironment
 ):
@@ -377,9 +383,9 @@ def test_delete_merging_mask(
     # Assert
     assert len(env.viewer.get_all_shapes()) == 0
     assert env.viewer.get_shapes(MERGING_MASK_LAYER_NAME) is None
+    assert not env.view.merging_delete_button.isEnabled()
 
 
-@pytest.mark.skip(reason="support in later PR")
 def test_delete_excluding_mask(
     qtbot: QtBot, test_environment_with_seg2: TestEnvironment
 ):
@@ -395,6 +401,48 @@ def test_delete_excluding_mask(
     # Assert
     assert len(env.viewer.get_all_shapes()) == 0
     assert env.viewer.get_shapes(EXCLUDING_MASK_LAYER_NAME) is None
+    assert not env.view.excluding_delete_button.isEnabled()
+
+
+def test_use_image_radios(
+    qtbot: QtBot, test_environment_with_seg2: TestEnvironment
+) -> None:
+    # Arrange
+    env: TestEnvironment = test_environment_with_seg2
+    env.model.first_image_data_ready.emit()
+    env.model.next_image_data_ready.emit()
+
+    # Act / Assert
+    assert env.view.merging_create_button.isEnabled()
+    assert not env.view.merging_save_button.isEnabled()
+    assert env.view.merging_base_combo.isEnabled()
+    assert not env.view.merging_delete_button.isEnabled()
+
+    assert env.view.excluding_create_button.isEnabled()
+    assert not env.view.excluding_delete_button.isEnabled()
+    assert not env.view.excluding_save_button.isEnabled()
+
+    env.view.no_radio.click()
+
+    assert not env.view.merging_create_button.isEnabled()
+    assert not env.view.merging_save_button.isEnabled()
+    assert not env.view.merging_base_combo.isEnabled()
+    assert not env.view.merging_delete_button.isEnabled()
+
+    assert not env.view.excluding_create_button.isEnabled()
+    assert not env.view.excluding_delete_button.isEnabled()
+    assert not env.view.excluding_save_button.isEnabled()
+
+    env.view.yes_radio.click()
+
+    assert env.view.merging_create_button.isEnabled()
+    assert not env.view.merging_save_button.isEnabled()
+    assert env.view.merging_base_combo.isEnabled()
+    assert not env.view.merging_delete_button.isEnabled()
+
+    assert env.view.excluding_create_button.isEnabled()
+    assert not env.view.excluding_delete_button.isEnabled()
+    assert not env.view.excluding_save_button.isEnabled()
 
 
 ### View + Model Integration Tests ------------------------------------------------------------------------
@@ -428,11 +476,14 @@ def test_set_base_image(
     env.model.next_image_data_ready.emit()
 
     # Act / Assert
-    env.view.merging_base_combo.setCurrentIndex(0)
     assert (
         env.model.get_base_image() == env.view.merging_base_combo.currentText()
     )
     env.view.merging_base_combo.setCurrentIndex(1)
+    assert (
+        env.model.get_base_image() == env.view.merging_base_combo.currentText()
+    )
+    env.view.merging_base_combo.setCurrentIndex(0)
     assert (
         env.model.get_base_image() == env.view.merging_base_combo.currentText()
     )
@@ -451,8 +502,8 @@ def test_set_merging_mask(
     assert env.model.get_merging_mask() is None
     env.view.merging_save_button.click()
     assert env.model.get_merging_mask() is not None
-    # env.view.merging_delete_button.click() coming later PR
-    # assert env.model.get_merging_mask() is None
+    env.view.merging_delete_button.click()
+    assert env.model.get_merging_mask() is None
 
 
 def test_set_excluding_mask(
@@ -468,8 +519,8 @@ def test_set_excluding_mask(
     assert env.model.get_excluding_mask() is None
     env.view.excluding_save_button.click()
     assert env.model.get_excluding_mask() is not None
-    # env.view.excluding_delete_button.click() coming later PR
-    # assert env.model.get_excluding_mask() is None
+    env.view.excluding_delete_button.click()
+    assert env.model.get_excluding_mask() is None
 
 
 def test_curation_record_on_next(

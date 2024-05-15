@@ -8,6 +8,7 @@ from qtpy.QtWidgets import (
     QLabel,
     QFrame,
     QHBoxLayout,
+    QGridLayout,
     QPushButton,
     QProgressBar,
     QRadioButton,
@@ -101,16 +102,11 @@ class CurationMainView(View):
         )
         self.yes_radio: QRadioButton = QRadioButton("Yes")
         self.yes_radio.setChecked(True)
-        self.yes_radio.clicked.connect(self.enable_valid_masks)
-        self.yes_radio.clicked.connect(
-            lambda: self._curation_model.set_use_image(True)
-        )
+        self.yes_radio.clicked.connect(self._on_yes_radio_clicked)
+
         use_image_frame.layout().addWidget(self.yes_radio)
         self.no_radio: QRadioButton = QRadioButton("No")
-        self.no_radio.clicked.connect(self.disable_all_masks)
-        self.no_radio.clicked.connect(
-            lambda: self._curation_model.set_use_image(False)
-        )
+        self.no_radio.clicked.connect(self._on_no_radio_clicked)
         use_image_frame.layout().addWidget(self.no_radio)
 
         self._use_img_stacked_spinner = StackedSpinner(use_image_frame)
@@ -118,6 +114,32 @@ class CurationMainView(View):
             self._use_img_stacked_spinner, alignment=Qt.AlignHCenter
         )
 
+        optional_text: QLabel = QLabel("OPTIONAL", self)
+        optional_text.setObjectName("text_with_vert_padding")
+        self.layout().addWidget(optional_text, alignment=Qt.AlignHCenter)
+
+        base_image_layout: QGridLayout = QGridLayout()
+        base_combo_label: LabelWithHint = LabelWithHint(
+            "Select a base segmentation"
+        )
+        self.merging_base_combo: QComboBox = QComboBox()
+        self.merging_base_combo.addItem("seg1")
+        self.merging_base_combo.addItem("seg2")
+        self.merging_base_combo.currentIndexChanged.connect(
+            lambda idx: self._curation_model.set_base_image(
+                self.merging_base_combo.currentText() if idx >= 0 else None
+            )
+        )
+        # trigger the change event above to set initial model state
+        self.merging_base_combo.setCurrentIndex(1)
+        self.merging_base_combo.setCurrentIndex(0)
+        # these empty QLabels are for spacing... unfortunately cannot apply styling
+        # to a QLayout directly, just QWidgets
+        base_image_layout.addWidget(QLabel(), 0, 0)
+        base_image_layout.addWidget(base_combo_label, 1, 0, 1, 2)
+        base_image_layout.addWidget(self.merging_base_combo, 1, 2, 1, 2)
+        base_image_layout.addWidget(QLabel(), 2, 0)
+        self.layout().addLayout(base_image_layout)
         # Label for Merging mask
         merging_mask_label_and_status: QHBoxLayout = QHBoxLayout()
         merging_mask_label: LabelWithHint = LabelWithHint("Merging mask")
@@ -126,7 +148,7 @@ class CurationMainView(View):
         merging_mask_label_and_status.addWidget(self.merging_mask_status)
         self.layout().addLayout(merging_mask_label_and_status)
         merging_mask_subtext: QLabel = QLabel(
-            "Without merging mask, Seg 1 will be used for training."
+            "Without merging mask, base image will be used for training."
         )
         merging_mask_subtext.setObjectName("subtext")
         self.layout().addWidget(merging_mask_subtext)
@@ -136,22 +158,15 @@ class CurationMainView(View):
         self.merging_create_button: QPushButton = QPushButton("+ Create")
         self.merging_create_button.clicked.connect(self._create_merging_mask)
         self.merging_create_button.setObjectName("small_blue_btn")
-        self.merging_base_combo: QComboBox = QComboBox()
-        self.merging_base_combo.setPlaceholderText("Base Image:")
-        self.merging_base_combo.addItem("seg1")
-        self.merging_base_combo.addItem("seg2")
-        self.merging_base_combo.currentIndexChanged.connect(
-            lambda idx: self._curation_model.set_base_image(
-                self.merging_base_combo.currentText() if idx >= 0 else None
-            )
-        )
+
         self.merging_delete_button: QPushButton = QPushButton("Delete")
+        self.merging_delete_button.clicked.connect(self.delete_merging_mask)
+
         self.merging_save_button: QPushButton = QPushButton("Save")
-        self.merging_save_button.setEnabled(False)
         self.merging_save_button.setObjectName("small_blue_btn")
         self.merging_save_button.clicked.connect(self.save_merging_mask)
+
         merging_mask_buttons.addWidget(self.merging_create_button)
-        merging_mask_buttons.addWidget(self.merging_base_combo)
         merging_mask_buttons.addWidget(self.merging_delete_button)
         merging_mask_buttons.addWidget(self.merging_save_button)
 
@@ -189,10 +204,13 @@ class CurationMainView(View):
 
         # TODO: connect the delete button to some functionality
         self.excluding_delete_button: QPushButton = QPushButton("Delete")
+        self.excluding_delete_button.clicked.connect(
+            self.delete_excluding_mask
+        )
+
         self.excluding_save_button: QPushButton = QPushButton("Save")
         self.excluding_save_button.setObjectName("small_blue_btn")
         self.excluding_save_button.clicked.connect(self.save_excluding_mask)
-        self.excluding_save_button.setEnabled(False)
 
         excluding_mask_buttons.addWidget(self.excluding_create_button)
         excluding_mask_buttons.addWidget(self.excluding_delete_button)
@@ -291,7 +309,7 @@ class CurationMainView(View):
             self.next_button.setText("No more images")
 
         self.yes_radio.click()
-        self.merging_base_combo.setCurrentIndex(-1)
+        self.merging_base_combo.setCurrentIndex(0)
         self._update_progress_bar()
 
     def _on_save_curation_csv(self) -> None:
@@ -316,10 +334,12 @@ class CurationMainView(View):
         """
         Enable the buttons for merging mask in the UI
         """
-        # save button is off to start with
-        self.merging_save_button.setEnabled(False)
+        mask_exists: bool = self._viewer.contains_layer(
+            MERGING_MASK_LAYER_NAME
+        )
+        self.merging_save_button.setEnabled(mask_exists)
         self.merging_create_button.setEnabled(True)
-        self.merging_delete_button.setEnabled(True)
+        self.merging_delete_button.setEnabled(mask_exists)
         self.merging_base_combo.setEnabled(True)
 
     def disable_excluding_mask_buttons(self):
@@ -334,9 +354,12 @@ class CurationMainView(View):
         """
         Enable the buttons for excluding mask in the UI
         """
-        self.excluding_save_button.setEnabled(False)
+        mask_exists: bool = self._viewer.contains_layer(
+            EXCLUDING_MASK_LAYER_NAME
+        )
+        self.excluding_save_button.setEnabled(mask_exists)
         self.excluding_create_button.setEnabled(True)
-        self.excluding_delete_button.setEnabled(True)
+        self.excluding_delete_button.setEnabled(mask_exists)
 
     def _update_progress_bar(self) -> None:
         """
@@ -373,12 +396,10 @@ class CurationMainView(View):
             MERGING_MASK_LAYER_NAME, "royalblue", "add_polygon"
         )
         self.merging_save_button.setEnabled(True)
+        self.merging_delete_button.setEnabled(True)
         self.merging_mask_status.setText("Draw mask")
 
     def save_merging_mask(self) -> None:
-        """
-        Wrapper for curation_service.save_merging_mask() for ui interactivity
-        """
         if self._curation_model.get_base_image() is None:
             show_info("Please select a base image to merge with")
             return
@@ -399,6 +420,17 @@ class CurationMainView(View):
         self._curation_model.set_merging_mask(deepcopy(merging_mask.data))
         self.merging_mask_status.setText("Merging mask saved")
 
+    def delete_merging_mask(self) -> None:
+        merging_mask: Optional[ShapesLayer] = self._viewer.get_shapes(
+            MERGING_MASK_LAYER_NAME
+        )
+        if merging_mask is not None:
+            self._viewer.remove_layer(MERGING_MASK_LAYER_NAME)
+        self._curation_model.set_merging_mask(None)
+        self.merging_save_button.setEnabled(False)
+        self.merging_delete_button.setEnabled(False)
+        self.merging_mask_status.setText("Merging mask deleted")
+
     def _create_excluding_mask(self) -> None:
         excluding_mask: Optional[ShapesLayer] = self._viewer.get_shapes(
             EXCLUDING_MASK_LAYER_NAME
@@ -412,6 +444,7 @@ class CurationMainView(View):
             EXCLUDING_MASK_LAYER_NAME, "coral", "add_polygon"
         )
         self.excluding_save_button.setEnabled(True)
+        self.excluding_delete_button.setEnabled(True)
         self.excluding_mask_status.setText("Draw mask")
 
     def save_excluding_mask(self) -> None:
@@ -429,6 +462,17 @@ class CurationMainView(View):
         self._curation_model.set_excluding_mask(deepcopy(excluding_mask.data))
         self.excluding_mask_status.setText("Excluding mask saved")
 
+    def delete_excluding_mask(self) -> None:
+        excluding_mask: Optional[ShapesLayer] = self._viewer.get_shapes(
+            EXCLUDING_MASK_LAYER_NAME
+        )
+        if excluding_mask is not None:
+            self._viewer.remove_layer(EXCLUDING_MASK_LAYER_NAME)
+        self._curation_model.set_excluding_mask(None)
+        self.excluding_save_button.setEnabled(False)
+        self.excluding_delete_button.setEnabled(False)
+        self.excluding_mask_status.setText("Excluding mask deleted")
+
     def disable_all_masks(self) -> None:
         self.disable_merging_mask_buttons()
         self.disable_excluding_mask_buttons()
@@ -439,3 +483,11 @@ class CurationMainView(View):
         else:
             self.disable_merging_mask_buttons()
         self.enable_excluding_mask_buttons()
+
+    def _on_no_radio_clicked(self) -> None:
+        self.disable_all_masks()
+        self._curation_model.set_use_image(False)
+
+    def _on_yes_radio_clicked(self) -> None:
+        self.enable_valid_masks()
+        self._curation_model.set_use_image(True)
