@@ -38,11 +38,11 @@ from aicsimageio.readers import TiffReader
 
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 from qtpy.QtGui import QIntValidator
-from allencell_ml_segmenter.training.training_model import PatchSize
 from allencell_ml_segmenter.training.metrics_csv_progress_tracker import (
     MetricsCSVProgressTracker,
 )
 from allencell_ml_segmenter.core.info_dialog_box import InfoDialogBox
+
 
 class TrainingView(View):
     """
@@ -109,9 +109,6 @@ class TrainingView(View):
         self._y_patch_size.setButtonSymbols(QAbstractSpinBox.NoButtons)
         self._y_patch_size.setMinimum(0)
         self._z_patch_size.setMaximum(9999)
-
-        # self._y_patch_size_enforcer: QIntValidator = QIntValidator()
-        # self._y_patch_size.setValidator(self._y_patch_size_enforcer)
         patch_size_entry_layout.addWidget(QLabel("Y:"))
         patch_size_entry_layout.addWidget(self._y_patch_size)
 
@@ -119,29 +116,10 @@ class TrainingView(View):
         self._x_patch_size.setButtonSymbols(QAbstractSpinBox.NoButtons)
         self._x_patch_size.setMinimum(0)
         self._z_patch_size.setMaximum(9999)
-        # self._x_patch_size_enforcer: QIntValidator = QIntValidator()
-        # self._x_patch_size.setValidator(self._x_patch_size_enforcer)
         patch_size_entry_layout.addWidget(QLabel("X:"))
         patch_size_entry_layout.addWidget(self._x_patch_size)
 
         bottom_grid_layout.addLayout(patch_size_entry_layout, 0, 1)
-
-        # Removed predefined patch sizes- leaving this in here in case we want it in the future
-        # patch_size_label: LabelWithHint = LabelWithHint("Structure size")
-        # bottom_grid_layout.addWidget(patch_size_label, 0, 0)
-        #
-        # self._patch_size_combo_box: QComboBox = QComboBox()
-        # self._patch_size_combo_box.setObjectName("structureSizeComboBox")
-        # self._patch_size_combo_box.setCurrentIndex(-1)
-        # self._patch_size_combo_box.setPlaceholderText("Select an option")
-        # self._patch_size_combo_box.addItems(
-        #     [patch.name.lower() for patch in PatchSize]
-        # )
-        # self._patch_size_combo_box.currentTextChanged.connect(
-        #     lambda size: self._training_model.set_patch_size(size)
-        # )
-        # bottom_grid_layout.addWidget(self._patch_size_combo_box, 0, 1)
-
         model_size_label: LabelWithHint = LabelWithHint("Model size")
         bottom_grid_layout.addWidget(model_size_label, 1, 0)
 
@@ -226,7 +204,7 @@ class TrainingView(View):
         self._training_model.subscribe(
             Event.ACTION_TRAINING_DIMENSIONS_SET,
             self,
-            self._handle_dimensions_available
+            self._handle_dimensions_available,
         )
 
         # apply styling
@@ -244,7 +222,8 @@ class TrainingView(View):
                 MetricsCSVProgressTracker(
                     self._experiments_model.get_metrics_csv_path(),
                     self._training_model.get_num_epochs(),
-                    self._experiments_model.get_latest_metrics_csv_version() + 1,
+                    self._experiments_model.get_latest_metrics_csv_version()
+                    + 1,
                 )
             )
             self.startLongTaskWithProgressBar(progress_tracker)
@@ -289,7 +268,10 @@ class TrainingView(View):
         """
         missing_patches: list[str] = []
         # patch size cannot be 0 for any dim
-        if self._z_patch_size.value() == 0 and self._training_model.get_spatial_dims() == 3:
+        if (
+            self._z_patch_size.value() == 0
+            and self._training_model.get_spatial_dims() == 3
+        ):
             # 3d selected but z patch size missing
             missing_patches.append("Z")
 
@@ -300,24 +282,25 @@ class TrainingView(View):
             missing_patches.append("X")
 
         if len(missing_patches) > 0:
-            show_warning(f"Please define {missing_patches} patch sizes before continuing.")
+            show_warning(
+                f"Please define {missing_patches} patch sizes before continuing."
+            )
             return False
 
         return True
 
     def _update_model_with_patch_size(self) -> None:
         if len(self._training_model.get_image_dimensions()) == 3:
-            self._training_model.set_patch_size([
-                self._z_patch_size.value(),
-                self._y_patch_size.value(),
-                self._x_patch_size.value()
+            self._training_model.set_patch_size(
+                [
+                    self._z_patch_size.value(),
+                    self._y_patch_size.value(),
+                    self._x_patch_size.value(),
                 ]
             )
         else:
-            self._training_model.set_patch_size([
-                self._y_patch_size.value(),
-                self._x_patch_size.value()
-                ]
+            self._training_model.set_patch_size(
+                [self._y_patch_size.value(), self._x_patch_size.value()]
             )
 
     def _handle_dimensions_available(self, _: Event) -> None:
@@ -341,14 +324,7 @@ class TrainingView(View):
             self._y_patch_size.setMaximum(image_dims[0])
             self._x_patch_size.setMaximum(image_dims[1])
 
-
     def _enable_patch_size_edit(self, spatial_dims: int) -> None:
         # enable only for 3d
         if spatial_dims == 2:
             self._z_patch_size.setEnabled(False)
-
-
-
-
-
-

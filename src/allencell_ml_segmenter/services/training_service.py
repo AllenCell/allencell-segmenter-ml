@@ -47,9 +47,9 @@ class TrainingService(Subscriber):
             self._train_model_handler,
         )
         self._extractor_factory: IExtractorFactory = extractor_factory
-        self._channel_extraction_thread: Optional[ChannelExtractionThread] = (
-            None
-        )
+        self._image_data_extraction_thread: Optional[
+            ChannelExtractionThread
+        ] = None
 
         self._training_model.subscribe(
             Event.ACTION_TRAINING_DATASET_SELECTED,
@@ -130,31 +130,37 @@ class TrainingService(Subscriber):
     def _start_image_data_extraction(
         self, to_extract: Path, image_data_callback: Callable
     ):
-        self._channel_extraction_thread = self._extractor_factory.create(
-            get_img_path_from_csv(to_extract / "train.csv"), get_image_data=True
+        self._image_data_extraction_thread = self._extractor_factory.create(
+            get_img_path_from_csv(to_extract / "train.csv"),
+            get_image_data=True,
         )
-        self._channel_extraction_thread.image_data_ready.connect(image_data_callback)
-        self._channel_extraction_thread.start()
+        self._image_data_extraction_thread.image_data_ready.connect(
+            image_data_callback
+        )
+        self._image_data_extraction_thread.start()
 
     def _stop_channel_extraction(self) -> None:
         if (
-            self._channel_extraction_thread
-            and self._channel_extraction_thread.isRunning()
+            self._image_data_extraction_thread
+            and self._image_data_extraction_thread.isRunning()
         ):
-            self._channel_extraction_thread.requestInterruption()
-            self._channel_extraction_thread.wait()
+            self._image_data_extraction_thread.requestInterruption()
+            self._image_data_extraction_thread.wait()
 
     def _training_image_directory_selected(self, _: Event) -> None:
         self._start_image_data_extraction(
             self._training_model.get_images_directory(),
-            self._handle_image_data
+            self._handle_image_data,
         )
 
     def _handle_image_data(self, image_data: ImageData) -> None:
         self._training_model.set_max_channel(image_data.channels)
         if image_data.dim_z == 1:
             # this is a 2d image
-            self._training_model.set_image_dimensions([image_data.dim_y, image_data.dim_x])
+            self._training_model.set_image_dimensions(
+                [image_data.dim_y, image_data.dim_x]
+            )
         else:
-            self._training_model.set_image_dimensions([image_data.dim_z, image_data.dim_y, image_data.dim_x])
-
+            self._training_model.set_image_dimensions(
+                [image_data.dim_z, image_data.dim_y, image_data.dim_x]
+            )

@@ -6,19 +6,10 @@ from aicsimageio.exceptions import UnsupportedFileFormatError
 from qtpy.QtCore import QObject, QThread, Signal
 from aicsimageio import AICSImage
 
-from allencell_ml_segmenter.core.image_data_extractor import AICSImageDataExtractor, ImageData
-
-def get_dims_from_image(img: AICSImage) -> List[int]:
-    """
-    Returns number of channels in the given img_path.
-    :param img_path: image to extract channels from
-    """
-    # if there is a Z dimension- image is 3D
-    if img.dims.Z > 1:
-        return [img.dims.Z, img.dims.Y, img.dims.X]
-    else:
-        return [img.dims.Y, img.dims.X]
-
+from allencell_ml_segmenter.core.image_data_extractor import (
+    AICSImageDataExtractor,
+    ImageData,
+)
 
 
 def get_img_path_from_csv(csv_path: Path) -> Path:
@@ -46,7 +37,12 @@ class ChannelExtractionThread(QThread):
     image_data_ready: Signal = Signal(ImageData)
     task_failed: Signal = Signal(Exception)
 
-    def __init__(self, img_path: Path, get_image_data: bool = False, parent: QObject = None):
+    def __init__(
+        self,
+        img_path: Path,
+        get_image_data: bool = False,
+        parent: QObject = None,
+    ):
         """
         :param img_path: path to image (must exist, otherwise ValueError)
         :param id: id for this thread instance, provided by parent thread
@@ -54,7 +50,9 @@ class ChannelExtractionThread(QThread):
         super().__init__(parent)
         self._img_path: Path = img_path
         self._get_image_data: bool = get_image_data
-        self._image_extractor: AICSImageDataExtractor = AICSImageDataExtractor.global_instance()
+        self._image_extractor: AICSImageDataExtractor = (
+            AICSImageDataExtractor.global_instance()
+        )
 
     # override
     def run(self):
@@ -63,7 +61,9 @@ class ChannelExtractionThread(QThread):
             raise ValueError(f"{self._img_path} does not exist")
 
         try:
-            image_data: ImageData = self._image_extractor.extract_image_data(self._img_path, dims=True, np_data=False)
+            image_data: ImageData = self._image_extractor.extract_image_data(
+                self._img_path, dims=True, np_data=False
+            )
         except UnsupportedFileFormatError as ex:
             self.task_failed.emit(ex)
             return  # return instead of reraise to surprss error message in napari console

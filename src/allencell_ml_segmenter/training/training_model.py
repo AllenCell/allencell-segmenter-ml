@@ -29,17 +29,6 @@ class Hardware(Enum):
     GPU = "gpu"
 
 
-class PatchSize(Enum):
-    """
-    Patch size for training, and their respective patch shapes.
-    The 0th dimension is Z, which is not needed for 2d.
-    """
-
-    SMALL = [8, 8, 8]
-    MEDIUM = [16, 32, 32]
-    LARGE = [20, 40, 40]
-
-
 class ModelSize(Enum):
     """
     Model size for training, and their respective filters overrides

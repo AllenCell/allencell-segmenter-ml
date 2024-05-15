@@ -11,7 +11,6 @@ from allencell_ml_segmenter.training.training_model import (
     TrainingModel,
     TrainingType,
     Hardware,
-    PatchSize,
 )
 
 
@@ -208,10 +207,11 @@ def test_get_patch_size(training_model: TrainingModel) -> None:
     assert training_model.get_patch_size() is None
 
     # ARRANGE
-    training_model._patch_size = PatchSize.SMALL
+    patch_size: List[int] = [1, 2, 3]
+    training_model.set_patch_size(patch_size)
 
     # ACT/ASSERT
-    assert training_model.get_patch_size() == PatchSize.SMALL
+    assert training_model.get_patch_size() == patch_size
 
 
 def test_set_patch_size(training_model: TrainingModel) -> None:
@@ -226,6 +226,7 @@ def test_set_patch_size(training_model: TrainingModel) -> None:
 
     # ASSERT
     assert training_model._patch_size == patch_size
+
 
 def test_get_max_time(training_model: TrainingModel) -> None:
     """

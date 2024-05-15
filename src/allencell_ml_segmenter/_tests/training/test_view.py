@@ -6,7 +6,6 @@ from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
 )
 from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.training.training_model import (
-    PatchSize,
     TrainingModel,
     ModelSize,
 )
@@ -53,9 +52,11 @@ def training_view(
     )
 
 
-def test_handle_dimensions_available_3d(training_view: TrainingView, training_model: TrainingModel) -> None:
+def test_handle_dimensions_available_3d(
+    training_view: TrainingView, training_model: TrainingModel
+) -> None:
     # arrange
-    test_dims: List[int] = [1, 3, 6] # Z, Y, X
+    test_dims: List[int] = [1, 3, 6]  # Z, Y, X
 
     # Act
     training_model.set_image_dimensions(test_dims)
@@ -73,9 +74,11 @@ def test_handle_dimensions_available_3d(training_view: TrainingView, training_mo
     assert training_model.get_spatial_dims() == len(test_dims)
 
 
-def test_handle_dimensions_available_2d(training_view: TrainingView, training_model: TrainingModel) -> None:
+def test_handle_dimensions_available_2d(
+    training_view: TrainingView, training_model: TrainingModel
+) -> None:
     # arrange
-    test_dims: List[int] = [2, 4]  #Y, X
+    test_dims: List[int] = [2, 4]  # Y, X
 
     # Act
     training_model.set_image_dimensions(test_dims)
@@ -95,6 +98,7 @@ def test_handle_dimensions_available_2d(training_view: TrainingView, training_mo
 
     # check model updated with correct number of spatial dims
     assert training_model.get_spatial_dims() == len(test_dims)
+
 
 def test_set_max_epoch(
     qtbot: QtBot, training_view: TrainingView, training_model: TrainingModel
