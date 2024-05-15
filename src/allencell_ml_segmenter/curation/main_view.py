@@ -239,6 +239,10 @@ class CurationMainView(View):
     def _set_next_button_to_loading(self) -> None:
         self.next_button.setEnabled(False)
         self.next_button.setText("Loading next...")
+    
+    def _set_next_button_to_finish(self) -> None:
+        self.next_button.setEnabled(True)
+        self.next_button.setText("Finish ►")
 
     def _add_curr_images_to_widget(self) -> None:
         raw_img_data: ImageData = self._curation_model.get_raw_image_data()
@@ -276,8 +280,7 @@ class CurationMainView(View):
             if self._curation_model.has_next_image():
                 self._set_next_button_to_loading()
             else:
-                self.next_button.setEnabled(True)
-                self.next_button.setText("Finish ►")
+                self._set_next_button_to_finish()
         else:
             self._on_save_curation_csv()
             self.disable_all_masks()
