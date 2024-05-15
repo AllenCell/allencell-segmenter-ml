@@ -74,3 +74,12 @@ def test_show_results(main_model: MainModel) -> None:
     assert (
         len(fake_viewer.get_all_images()) == 2
     )  # num img files in output_test_folder
+    image: Path = (
+        Path(allencell_ml_segmenter.__file__).parent
+        / "_tests"
+        / "test_files"
+        / "output_test_folder"
+        / "target"
+        / "output_1.tiff"
+    )
+    assert fake_viewer.contains_layer(image.name)

@@ -94,7 +94,7 @@ def test_select_new_model_radio(
     experiment_model: IExperimentsModel,
 ) -> None:
     # ARRANGE radios selected in the inverted condition that the action will set them to
-    experiment_model.set_experiment_name("dummy_experiment")
+    experiment_model.apply_experiment_name("dummy_experiment")
     model_selection_widget._radio_new_model.setChecked(False)
     model_selection_widget._radio_existing_model.setChecked(True)
 
@@ -128,4 +128,164 @@ def test_select_existing_model_option(
         model_selection_widget._combo_box_existing_models.setCurrentIndex(i)
 
         # ASSERT
-        assert experiment == experiment_model.get_experiment_name()
+        assert experiment == experiment_model.get_experiment_name_selection()
+
+
+def test_apply_button_enabled(
+    model_selection_widget: ModelSelectionWidget,
+    experiment_model: IExperimentsModel,
+) -> None:
+    """
+    Test that the apply button is enabled when a model is selected.
+    """
+    # ARRANGE
+    assert not model_selection_widget._apply_btn.isEnabled()
+
+    # ACT
+    experiment_model.select_experiment_name("dummy_experiment")
+
+    # ASSERT
+    assert model_selection_widget._apply_btn.isEnabled()
+
+
+def test_text_input_enables_apply_button(
+    model_selection_widget: ModelSelectionWidget,
+) -> None:
+    """
+    Test that the apply button is disabled when a model is not selected.
+    """
+    # ARRANGE
+    assert not model_selection_widget._apply_btn.isEnabled()
+
+    # ACT
+    model_selection_widget._experiment_name_input.setText("dummy_experiment")
+
+    # ASSERT
+    assert model_selection_widget._apply_btn.isEnabled()
+
+
+def test_combo_input_enables_apply_button_new_radio_disables(
+    model_selection_widget: ModelSelectionWidget,
+    qtbot: QtBot,
+) -> None:
+    """
+    Test that the apply button Reacts to a model being selevted then deselected.
+    """
+    # ARRANGE
+    assert not model_selection_widget._apply_btn.isEnabled()
+    model_selection_widget._radio_new_model.setChecked(False)
+    model_selection_widget._radio_existing_model.setChecked(True)
+
+    # Initially no model is selected, so the apply button should NOT be enabled
+    assert not model_selection_widget._apply_btn.isEnabled()
+
+    # ACT - select a model
+    model_selection_widget._combo_box_existing_models.setCurrentIndex(1)
+
+    # ASSERT - apply button SHOULD be enabled
+    assert model_selection_widget._apply_btn.isEnabled()
+
+    # ACT - select the "start a new model" radio button, clearing the model selection
+    with qtbot.waitSignal(model_selection_widget._radio_new_model.toggled):
+        model_selection_widget._radio_new_model.click()  # enables the combo box
+
+    # ASSERT - apply button should NOT be enabled
+    assert not model_selection_widget._apply_btn.isEnabled()
+
+
+def test_new_model_enables_apply_button_new_radio_disables(
+    model_selection_widget: ModelSelectionWidget,
+    qtbot: QtBot,
+) -> None:
+    """
+    Test that the apply button Reacts to a model being selevted then deselected.
+    """
+    # ARRANGE
+    assert not model_selection_widget._apply_btn.isEnabled()
+    model_selection_widget._radio_new_model.setChecked(True)
+    model_selection_widget._radio_existing_model.setChecked(False)
+
+    # Initially no model is selected, so the apply button should NOT be enabled
+    assert not model_selection_widget._apply_btn.isEnabled()
+
+    # ACT - select a model
+    model_selection_widget._experiment_name_input.setText("dummy_experiment")
+
+    # ASSERT - apply button SHOULD be enabled
+    assert model_selection_widget._apply_btn.isEnabled()
+
+    # ACT - select the "start a new model" radio button, clearing the model selection
+    with qtbot.waitSignal(
+        model_selection_widget._radio_existing_model.toggled
+    ):
+        model_selection_widget._radio_existing_model.click()  # enables the combo box
+
+    # ASSERT - apply button should NOT be enabled
+    assert not model_selection_widget._apply_btn.isEnabled()
+
+
+def test_click_apply_btn(
+    model_selection_widget: ModelSelectionWidget,
+    experiment_model: IExperimentsModel,
+) -> None:
+    """
+    Test that the apply button updates model.
+    """
+    # ARRANGE
+    experiment_model.select_experiment_name("dummy_experiment")
+
+    # Sanity check
+    assert experiment_model.get_experiment_name() is None
+
+    # ACT
+    model_selection_widget._apply_btn.click()
+
+    # ASSERT
+    assert experiment_model.get_experiment_name() == "dummy_experiment"
+
+
+# Disabled while I figure out what is wrong with this test
+# def test_existing_experiment_apply(
+#     model_selection_widget: ModelSelectionWidget,
+#     experiment_model: IExperimentsModel,
+# ) -> None:
+#     """
+#     Test that the apply button updates model.
+#     """
+#     # ACT
+#     model_selection_widget._combo_box_existing_models.setIndex(1)
+
+#     # ASSERT note that the model name is selected but not applied until the apply button is clicked
+#     assert (
+#         experiment_model.get_experiment_name_selection() == "0_exp"
+#     )
+#     assert experiment_model.get_experiment_name() is None
+
+#     # ACT
+#     model_selection_widget._apply_btn.click()
+
+#     # ASSERT
+#     assert experiment_model.get_experiment_name() == "dummy_experiment"
+
+
+def test_new_experiment_apply(
+    model_selection_widget: ModelSelectionWidget,
+    experiment_model: IExperimentsModel,
+) -> None:
+    """
+    Test that the apply button updates model.
+    """
+    # ACT
+    model_selection_widget._experiment_name_input.setText("dummy_experiment")
+
+    # ASSERT note that the model name is selected but not applied until the apply button is clicked
+    assert (
+        experiment_model.get_experiment_name_selection() == "dummy_experiment"
+    )
+    assert experiment_model.get_experiment_name() is None
+
+    # ACT
+    model_selection_widget._apply_btn.click()
+
+    # ASSERT
+    assert experiment_model.get_experiment_name() == "dummy_experiment"
