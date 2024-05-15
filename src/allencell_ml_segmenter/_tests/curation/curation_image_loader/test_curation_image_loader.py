@@ -96,7 +96,9 @@ def test_start_with_seg2():
     loader.start()
 
     # assert
-    assert loader.get_num_images() == 3 # num paths in our file lists (raw, seg1, seg2)
+    assert (
+        loader.get_num_images() == 3
+    )  # num paths in our file lists (raw, seg1, seg2)
     on_first_ready_mock.assert_called_once()
     on_next_ready_mock.assert_called_once()
     assert loader.get_raw_image_data() is not None
@@ -122,7 +124,9 @@ def test_start_without_seg2():
     loader.start()
 
     # assert
-    assert loader.get_num_images() == 3 # num paths in our file lists (raw, seg1, seg2)
+    assert (
+        loader.get_num_images() == 3
+    )  # num paths in our file lists (raw, seg1, seg2)
     on_first_ready_mock.assert_called_once()
     on_next_ready_mock.assert_called_once()
     assert loader.get_raw_image_data() is not None
