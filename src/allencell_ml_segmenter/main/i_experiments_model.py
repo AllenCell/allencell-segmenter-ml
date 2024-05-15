@@ -1,7 +1,8 @@
 from abc import abstractmethod
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
+from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.publisher import Publisher
 
 
@@ -13,13 +14,36 @@ class IExperimentsModel(Publisher):
     def __init__(self):
         super().__init__()
 
-    @abstractmethod
-    def get_experiment_name(self) -> str:
-        pass
+        # state
+        self._experiment_name: Optional[str] = None
 
-    @abstractmethod
-    def set_experiment_name(self, name: str) -> None:
-        pass
+    def select_experiment_name(self, name: Optional[str]) -> None:
+        """
+        Sets experiment name
+        """
+        self._experiment_name_selection = name
+        self.dispatch(Event.ACTION_EXPERIMENT_SELECTED)
+
+    def get_experiment_name_selection(self) -> Optional[str]:
+        """
+        Gets experiment name
+        """
+        return self._experiment_name_selection
+
+    def get_experiment_name(self) -> Optional[str]:
+        """
+        Gets experiment name
+        """
+        return self._experiment_name
+
+    def apply_experiment_name(self, name: Optional[str]) -> None:
+        """
+        Sets experiment name
+
+        name (str): name of cyto-dl experiment
+        """
+        self._experiment_name = name
+        self.dispatch(Event.ACTION_EXPERIMENT_APPLIED)
 
     @abstractmethod
     def get_checkpoint(self) -> str:

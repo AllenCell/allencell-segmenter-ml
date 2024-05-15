@@ -1,5 +1,6 @@
 from qtpy.QtWidgets import (
     QWidget,
+    QHBoxLayout,
     QVBoxLayout,
     QSizePolicy,
     QFrame,
@@ -7,7 +8,11 @@ from qtpy.QtWidgets import (
     QComboBox,
     QRadioButton,
     QLineEdit,
+    QPushButton,
+    QStackedWidget,
+    QLabel,
 )
+from qtpy.QtCore import Qt
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
@@ -33,14 +38,46 @@ class ModelSelectionWidget(QWidget):
         self._experiments_model: IExperimentsModel = experiments_model
 
         # widget skeleton
-        self.setLayout(QVBoxLayout())
+        layout: QVBoxLayout = QVBoxLayout()
+        self.setLayout(layout)
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
 
-        title: LabelWithHint = LabelWithHint(ModelSelectionWidget.TITLE_TEXT)
-        title.setObjectName("title")
+        self._title: LabelWithHint = LabelWithHint(
+            ModelSelectionWidget.TITLE_TEXT,
+        )
+        self._title.setObjectName("title")
+
+        self._model_name_label: QLabel = QLabel()
+        self._model_name_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
+
+        help: QComboBox = QComboBox()
+        help.setFixedWidth(100)
+        help.setPlaceholderText("Help")
+
+        plugin_title_widget_layout: QHBoxLayout = QHBoxLayout()
+        plugin_title_widget_layout.addWidget(
+            QLabel("Allen Cell & Structure Segmentation")
+        )
+        plugin_title_widget_layout.addWidget(
+            help, alignment=Qt.AlignmentFlag.AlignRight
+        )
+
+        layout.setContentsMargins(20, 20, 20, 20)
+        layout.addLayout(plugin_title_widget_layout)
+        layout.addWidget(QLabel("DEEP LEARNING"))
+
+        # layout for model labels
+        label_widget_layout: QHBoxLayout = QHBoxLayout()
+        layout.addLayout(label_widget_layout)
+        label_widget_layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        label_widget_layout.setSpacing(0)
+        label_widget_layout.addWidget(self._title)
+        label_widget_layout.addWidget(
+            self._model_name_label, alignment=Qt.AlignLeft
+        )
+        label_widget_layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
         # TODO: hints for widget titles?
-        self.layout().addWidget(title)
 
         frame: QFrame = QFrame()
         frame.setLayout(QVBoxLayout())
@@ -89,7 +126,27 @@ class ModelSelectionWidget(QWidget):
             LabelWithHint("Select an existing model"), 1, 1
         )
         top_grid_layout.addWidget(self._combo_box_existing_models, 1, 2)
-        frame.layout().addLayout(top_grid_layout)
+
+        self._apply_change_stacked_widget = QStackedWidget()
+
+        self._experiments_model.subscribe(
+            Event.ACTION_EXPERIMENT_SELECTED,
+            self,
+            self._handle_experiment_selected,
+        )
+        apply_model_layout = QVBoxLayout()
+        apply_model_layout.addLayout(top_grid_layout)
+
+        apply_model_widget = QWidget()
+        apply_model_widget.setLayout(apply_model_layout)
+        self._apply_change_stacked_widget.addWidget(apply_model_widget)
+        self._apply_btn: QPushButton = QPushButton("Apply")
+        self._apply_btn.clicked.connect(self._handle_apply_model)
+        apply_model_layout.addWidget(self._apply_btn)
+
+        frameLayout = QVBoxLayout()
+        frameLayout.addWidget(self._apply_change_stacked_widget)
+        frame.layout().addLayout(frameLayout)
 
         self._experiments_model.subscribe(
             Event.ACTION_REFRESH, self, self._handle_process_event
@@ -97,22 +154,37 @@ class ModelSelectionWidget(QWidget):
         # initialize the rest of the UI to match the radio button's state
         self._model_radio_handler()
 
+    def _handle_experiment_selected(self, _: Event) -> None:
+        experiment_selected = (
+            self._experiments_model.get_experiment_name_selection() is not None
+        )
+        self._apply_btn.setEnabled(experiment_selected)
+
+    def _handle_apply_model(self):
+        self._experiments_model.apply_experiment_name(
+            self._experiments_model.get_experiment_name_selection()
+        )
+        self._title.set_value_text(
+            "    " + self._experiments_model.get_experiment_name()
+        )
+        self._apply_change_stacked_widget.setVisible(False)
+
     def _model_combo_handler(self, experiment_name: str) -> None:
         """
         Triggered when the user selects a model from the _combo_box_existing_models.
         Sets the model path in the model.
         """
         if experiment_name == "":
-            self._experiments_model.set_experiment_name(None)
+            self._experiments_model.select_experiment_name(None)
         else:
-            self._experiments_model.set_experiment_name(experiment_name)
+            self._experiments_model.select_experiment_name(experiment_name)
 
     def _experiment_name_input_handler(self, text: str) -> None:
         """
         Triggered when the user types in the _experiment_name_input.
         Sets the model name in the model.
         """
-        self._experiments_model.set_experiment_name(text)
+        self._experiments_model.select_experiment_name(text)
 
     def _model_radio_handler(self) -> None:
         self._main_model.set_new_model(self._radio_new_model.isChecked())
@@ -125,14 +197,14 @@ class ModelSelectionWidget(QWidget):
             self._combo_box_existing_models.setEnabled(False)
             self._experiment_name_input.setEnabled(True)
 
-            self._experiments_model.set_experiment_name(None)
+            self._experiments_model.select_experiment_name(None)
 
         if self._radio_existing_model.isChecked():
             """
             Triggered when the user selects the "existing model" radio button.
             Enables and disables relevent controls.
             """
-            self._experiments_model.set_experiment_name(None)
+            self._experiments_model.select_experiment_name(None)
             self._combo_box_existing_models.setEnabled(True)
             self._experiment_name_input.setEnabled(False)
             self._experiment_name_input.clear()
