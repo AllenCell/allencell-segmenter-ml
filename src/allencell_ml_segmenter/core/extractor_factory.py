@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Any
 
 from allencell_ml_segmenter._tests.fakes.fake_channel_extraction import (
     FakeChannelExtractionThread,
@@ -18,11 +19,11 @@ class ExtractorFactory(IExtractorFactory):
 
 
 class FakeExtractorFactory(IExtractorFactory):
-    def __init__(self, fake_value: int):
+    def __init__(self, fake_value: int = -1):
         super().__init__()
         self._fake_value = fake_value
 
     def create(
         self, img_path: Path, get_image_data: bool = False
     ) -> FakeChannelExtractionThread:
-        return FakeChannelExtractionThread(self._fake_value)
+        return FakeChannelExtractionThread(get_image_data, self._fake_value)

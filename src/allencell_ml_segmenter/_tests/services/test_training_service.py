@@ -10,6 +10,7 @@ from allencell_ml_segmenter._tests.fakes.fake_user_settings import (
 from allencell_ml_segmenter._tests.fakes.fake_channel_extraction import (
     FakeChannelExtractionThread,
 )
+from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.extractor_factory import FakeExtractorFactory
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
@@ -46,7 +47,11 @@ def training_model(experiments_model: ExperimentsModel) -> TrainingModel:
     model.set_experiment_type("segmentation")
     model.set_hardware_type("cpu")
     model.set_spatial_dims(2)
-    model.set_images_directory("/path/to/images")
+    model.set_images_directory(Path(allencell_ml_segmenter.__file__).parent
+        / "_tests"
+        / "test_files"
+        / "csv"
+    )
     model.set_channel_index(9)
     model.set_use_max_time(True)
     model.set_max_time(9992)
@@ -78,3 +83,26 @@ def test_init(training_service: TrainingService) -> None:
     assert training_service._training_model._events_to_subscriber_handlers[
         "training"
     ] == {training_service: training_service._train_model_handler}
+
+
+def test_training_image_directory_selected(training_model: TrainingModel, experiments_model: ExperimentsModel) -> None:
+    """
+    Tests to see if service starts image data extraction and handles
+    image data accordingly after a dataset is selected.
+    """
+    # arrange
+    service: TrainingService = TrainingService(
+        training_model=training_model,
+        experiments_model=experiments_model,
+        extractor_factory=FakeExtractorFactory(),
+    )
+
+    # act
+    training_model.dispatch(Event.ACTION_TRAINING_DATASET_SELECTED)
+
+    # assert
+    assert training_model.get_max_channel() == 4
+    assert training_model.get_image_dimensions() == [3, 2, 1]
+
+
+

@@ -10,7 +10,7 @@ def test_get_img_path_from_csv():
         / "_tests"
         / "test_files"
         / "csv"
-        / "test_csv.csv"
+        / "train.csv"
     )
     img_path: Path = (
         Path(allencell_ml_segmenter.__file__).parent
