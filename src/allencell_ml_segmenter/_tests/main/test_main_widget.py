@@ -149,3 +149,27 @@ def test_experiments_home_initialized(qtbot: QtBot) -> None:
     assert (
         settings.get_user_experiments_path() == EXPECTED_EXPERIMENTS_HOME
     )  # The path chosen by the user should have been persisted in settings.
+
+
+def test_tab_enabled(main_widget) -> None:
+    """
+    Tests that the main widget enables the correct tabs when the experiment is applied.
+    """
+
+    # ARRANGE
+    main_widget._experiments_model.apply_experiment_name("foo")
+
+    # Sanity check
+    assert main_widget._view_container.isEnabled() == True
+
+    # ACT
+    main_widget._experiments_model.apply_experiment_name(None)
+
+    # ASSERT
+    assert main_widget._view_container.isEnabled() == False
+
+    # ACT
+    main_widget._experiments_model.apply_experiment_name("foo")
+
+    # Sanity check
+    assert main_widget._view_container.isEnabled() == True
