@@ -239,7 +239,7 @@ class CurationMainView(View):
     def _set_next_button_to_loading(self) -> None:
         self.next_button.setEnabled(False)
         self.next_button.setText("Loading next...")
-    
+
     def _set_next_button_to_finish(self) -> None:
         self.next_button.setEnabled(True)
         self.next_button.setText("Finish ►")
