@@ -41,9 +41,12 @@ def test_raw_channel_set(qtbot: QtBot, test_env: TestEnvironment) -> None:
     # Arrange
     # Simulate the model's channel count being set
     count: int = 2
-    test_env.model.set_raw_image_channel_count(count)
     combo_box: QComboBox = test_env.view.raw_image_channel_combo
-    # Act / Assert
+
+    # Act
+    test_env.model.set_raw_image_channel_count(count)
+
+    # Assert
     expected_items = [str(x) for x in range(count)]
     assert combo_box.count() == len(expected_items)
     for i in range(combo_box.count()):
@@ -54,9 +57,12 @@ def test_seg1_channel_set(qtbot: QtBot, test_env: TestEnvironment) -> None:
     # Arrange
     # Simulate the model's channel count being set
     count: int = 3
-    test_env.model.set_seg1_image_channel_count(count)
     combo_box: QComboBox = test_env.view.seg1_image_channel_combo
-    # Act / Assert
+
+    # Act
+    test_env.model.set_seg1_image_channel_count(count)
+
+    # Assert
     expected_items = [str(x) for x in range(count)]
     assert combo_box.count() == len(expected_items)
     for i in range(combo_box.count()):
@@ -67,9 +73,12 @@ def test_seg2_channel_set(qtbot: QtBot, test_env: TestEnvironment) -> None:
     # Arrange
     # Simulate the model's channel count being set
     count: int = 4
-    test_env.model.set_seg2_image_channel_count(count)
     combo_box: QComboBox = test_env.view.seg2_image_channel_combo
-    # Act / Assert
+
+    # Act
+    test_env.model.set_seg2_image_channel_count(count)
+
+    # Assert
     expected_items = [str(x) for x in range(count)]
     assert combo_box.count() == len(expected_items)
     for i in range(combo_box.count()):
