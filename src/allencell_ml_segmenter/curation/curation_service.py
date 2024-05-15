@@ -13,10 +13,6 @@ from typing import List, Tuple
 from napari.qt.threading import thread_worker, FunctionWorker
 
 
-MERGING_MASK_LAYER_NAME: str = "Merging Mask"
-EXCLUDING_MASK_LAYER_NAME: str = "Excluding Mask"
-
-
 # Important note: we do not want to access the model in any of the threads because model state may change
 # while thread is executing. So, opt to copy/pass in all relevant model state to threads
 class CurationService(QObject):
@@ -29,7 +25,7 @@ class CurationService(QObject):
     ) -> None:
         super().__init__()
         self._curation_model: CurationModel = curation_model
-        self._img_data_extractor = img_data_extractor
+        self._img_data_extractor: IImageDataExtractor = img_data_extractor
 
         self._curation_model.raw_directory_set.connect(self._on_raw_dir_set)
         self._curation_model.seg1_directory_set.connect(self._on_seg1_dir_set)
