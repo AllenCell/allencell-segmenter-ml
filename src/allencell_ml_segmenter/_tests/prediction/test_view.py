@@ -71,4 +71,4 @@ def test_show_results(main_model: MainModel) -> None:
     prediction_view.showResults()
 
     # ASSERT
-    assert len(fake_viewer.get_all_images()) == 2  # correct number
+    assert len(fake_viewer.get_all_images()) == 2  # num img files in output_test_folder
