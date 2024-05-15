@@ -48,7 +48,7 @@ class CurationModel(QObject):
         super().__init__()
         # should always start at input view
 
-        self._experiments_model = experiments_model
+        self._experiments_model: ExperimentsModel = experiments_model
         self._img_loader_factory: ICurationImageLoaderFactory = (
             img_loader_factory
         )

@@ -92,6 +92,10 @@ class CurationImageLoader(ICurationImageLoader):
         self._is_busy[2] = busy
 
     def _wait_on_data_dict(self, data_dict: Dict[str, ImageData]) -> None:
+        """
+        This should never be called in the main/UI thread. It is used exclusively by the
+        monitor thread in _start_extraction_threads.
+        """
         while len(data_dict) < self._num_data_dict_keys:
             time.sleep(0.1)
 
