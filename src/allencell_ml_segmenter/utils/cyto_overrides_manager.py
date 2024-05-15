@@ -6,6 +6,7 @@ from allencell_ml_segmenter.training.training_model import (
     TrainingModel,
     Hardware,
 )
+from allencell_ml_segmenter.utils.cuda_util import CUDAUtils
 
 
 class CytoDLOverridesManager:
@@ -35,9 +36,14 @@ class CytoDLOverridesManager:
         overrides_dict: Dict[str, Union[str, int, float, bool, Dict]] = dict()
 
         # Hardware override (required)
+        hardware_used = self._training_model.get_hardware_type()
         overrides_dict["trainer.accelerator"] = "cpu"
-        if self._training_model.get_hardware_type() == Hardware.GPU:
+        if hardware_used == Hardware.GPU:
             overrides_dict["trainer.accelerator"] = "gpu"
+
+        overrides_dict["data.num_workers"] = CUDAUtils.get_num_workers(
+            hardware_used
+        )
 
         # Spatial Dims (required)
         overrides_dict["spatial_dims"] = (
