@@ -47,7 +47,8 @@ def training_model(experiments_model: ExperimentsModel) -> TrainingModel:
     model.set_experiment_type("segmentation")
     model.set_hardware_type("cpu")
     model.set_spatial_dims(2)
-    model.set_images_directory(Path(allencell_ml_segmenter.__file__).parent
+    model.set_images_directory(
+        Path(allencell_ml_segmenter.__file__).parent
         / "_tests"
         / "test_files"
         / "csv"
@@ -85,7 +86,9 @@ def test_init(training_service: TrainingService) -> None:
     ] == {training_service: training_service._train_model_handler}
 
 
-def test_training_image_directory_selected(training_model: TrainingModel, experiments_model: ExperimentsModel) -> None:
+def test_training_image_directory_selected(
+    training_model: TrainingModel, experiments_model: ExperimentsModel
+) -> None:
     """
     Tests to see if service starts image data extraction and handles
     image data accordingly after a dataset is selected.
@@ -103,6 +106,3 @@ def test_training_image_directory_selected(training_model: TrainingModel, experi
     # assert
     assert training_model.get_max_channel() == 4
     assert training_model.get_image_dimensions() == [3, 2, 1]
-
-
-

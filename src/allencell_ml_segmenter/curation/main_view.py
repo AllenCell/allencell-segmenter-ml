@@ -11,6 +11,7 @@ from qtpy.QtWidgets import (
     QPushButton,
     QProgressBar,
     QRadioButton,
+    QWidget,
 )
 from allencell_ml_segmenter._style import Style
 from allencell_ml_segmenter.core.event import Event
@@ -26,7 +27,7 @@ from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 from napari.utils.notifications import show_info
 
 
-class CurationMainView(View):
+class CurationMainView(QWidget):
     """
     View for Curation UI
     """
