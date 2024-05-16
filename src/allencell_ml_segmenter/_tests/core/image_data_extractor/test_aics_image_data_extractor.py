@@ -31,6 +31,7 @@ def test_extract_image_data_all() -> None:
     np.array_equal(image_data.np_data, expected_img_data)
     assert image_data.path == t1_path
 
+
 def test_extract_image_data_dims_only() -> None:
     # Arrange
     extractor = AICSImageDataExtractor.global_instance()

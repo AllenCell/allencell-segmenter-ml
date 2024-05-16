@@ -1,9 +1,4 @@
-import asyncio
 from pathlib import Path
-
-from allencell_ml_segmenter._tests.fakes.fake_channel_extraction import (
-    FakeChannelExtractionThread,
-)
 from allencell_ml_segmenter.core.channel_extraction import (
     ChannelExtractionThread,
     get_img_path_from_csv,
@@ -15,13 +10,9 @@ from allencell_ml_segmenter.core.event import Event
 
 from cyto_dl.api.model import CytoDLModel
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
-from allencell_ml_segmenter.training.training_model import (
-    Hardware,
-)
 from allencell_ml_segmenter.training.training_model import TrainingModel
-from typing import Dict, Union, Optional, List, Any, Callable
+from typing import Optional, Callable
 from napari.utils.notifications import show_warning
-from allencell_ml_segmenter.utils.cuda_util import CUDAUtils
 from allencell_ml_segmenter.utils.cyto_overrides_manager import (
     CytoDLOverridesManager,
 )
