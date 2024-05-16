@@ -15,7 +15,9 @@ class ExtractorFactory(IExtractorFactory):
     def create(
         self, img_path: Path, emit_image_data: bool = False
     ) -> ChannelExtractionThread:
-        return ChannelExtractionThread(img_path, emit_image_data=emit_image_data)
+        return ChannelExtractionThread(
+            img_path, emit_image_data=emit_image_data
+        )
 
 
 class FakeExtractorFactory(IExtractorFactory):
