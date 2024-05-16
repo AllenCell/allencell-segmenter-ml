@@ -64,8 +64,11 @@ def test_handle_dimensions_available_3d(
     # assert
     # check max patch sizes set for QSpinBoxes based on image dims given
     assert training_view.z_patch_size.maximum() == test_dims[0]
+    assert training_view.z_patch_size.isEnabled()
     assert training_view.y_patch_size.maximum() == test_dims[1]
+    assert training_view.y_patch_size.isEnabled()
     assert training_view.x_patch_size.maximum() == test_dims[2]
+    assert training_view.x_patch_size.isEnabled()
 
     # check label displays correct number of dims
     assert training_view.dimension_label.text() == "3D"
