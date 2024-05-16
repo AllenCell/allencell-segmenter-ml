@@ -305,13 +305,13 @@ class TrainingView(View):
 
     def _handle_dimensions_available(self, _: Event) -> None:
         image_dims: List[int] = self._training_model.get_image_dimensions()
+        self._training_model.set_spatial_dims(len(image_dims))
         self._set_max_patch_size(image_dims)
-        self._enable_patch_size_edit(len(image_dims))
-        self._update_spatial_dims(len(image_dims))
+        self._enable_patch_size_edit()
+        self._update_spatial_dims()
 
-    def _update_spatial_dims(self, spatial_dims: int) -> None:
-        self._training_model.set_spatial_dims(spatial_dims)
-        self.dimension_label.setText(f"{spatial_dims}D")
+    def _update_spatial_dims(self) -> None:
+        self.dimension_label.setText(f"{self._training_model.get_spatial_dims()}D")
 
     def _set_max_patch_size(self, image_dims: List[int]) -> None:
         if len(image_dims) == 3:
@@ -324,7 +324,7 @@ class TrainingView(View):
             self.y_patch_size.setMaximum(image_dims[0])
             self.x_patch_size.setMaximum(image_dims[1])
 
-    def _enable_patch_size_edit(self, spatial_dims: int) -> None:
+    def _enable_patch_size_edit(self) -> None:
         # enable only for 3d
-        if spatial_dims == 2:
+        if self._training_model.get_spatial_dims() == 2:
             self.z_patch_size.setEnabled(False)
