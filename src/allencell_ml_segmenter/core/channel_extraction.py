@@ -45,7 +45,9 @@ class ChannelExtractionThread(QThread):
     ):
         """
         :param img_path: path to image (must exist, otherwise ValueError)
-        :param id: id for this thread instance, provided by parent thread
+        :param get_image_data: True to return image_data (dimensions and channel) through image_data_ready singal
+                               False to return only num_channels through channels_ready signal
+        :param parent: (optional) parent QObject for this thread, if any.
         """
         super().__init__(parent)
         self._img_path: Path = img_path
