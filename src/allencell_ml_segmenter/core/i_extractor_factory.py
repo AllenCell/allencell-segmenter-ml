@@ -7,5 +7,5 @@ class IExtractorFactory(ABC):
         super().__init__()
 
     @abstractmethod
-    def create(self, img_path: Path, get_image_data: bool):
+    def create(self, img_path: Path, emit_image_data: bool):
         pass

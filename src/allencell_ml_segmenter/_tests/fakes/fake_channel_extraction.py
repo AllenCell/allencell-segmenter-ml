@@ -31,16 +31,16 @@ class FakeChannelExtractionThread:
     Fake of Channel Extraction Thread
     """
 
-    def __init__(self, get_image_data: bool, fake_return_value: int):
+    def __init__(self, emit_image_data: bool, fake_return_value: int):
         self.channels_ready = FakeChannelsReady()
         self.image_data_ready = FakeImageDataReady()
         self.started: bool = False
         self._fake_value = fake_return_value
-        self.get_image_data = get_image_data
+        self.emit_image_data = emit_image_data
 
     def start(self):
         self.started = True
-        if self.get_image_data:
+        if self.emit_image_data:
             fake_image_data_extractor: FakeImageDataExtractor = (
                 FakeImageDataExtractor.global_instance()
             )

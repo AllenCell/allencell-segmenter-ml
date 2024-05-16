@@ -40,18 +40,18 @@ class ChannelExtractionThread(QThread):
     def __init__(
         self,
         img_path: Path,
-        get_image_data: bool = False,
+        emit_image_data: bool = False,
         parent: QObject = None,
     ):
         """
         :param img_path: path to image (must exist, otherwise ValueError)
-        :param get_image_data: True to return image_data (dimensions and channel) through image_data_ready singal
+        :param emit_image_data: True to return image_data (dimensions and channel) through image_data_ready singal
                                False to return only num_channels through channels_ready signal
         :param parent: (optional) parent QObject for this thread, if any.
         """
         super().__init__(parent)
         self._img_path: Path = img_path
-        self._get_image_data: bool = get_image_data
+        self._emit_image_data: bool = emit_image_data
         self._image_extractor: AICSImageDataExtractor = (
             AICSImageDataExtractor.global_instance()
         )
@@ -74,7 +74,7 @@ class ChannelExtractionThread(QThread):
             return
 
         if not QThread.currentThread().isInterruptionRequested():
-            if self._get_image_data:
+            if self._emit_image_data:
                 self.image_data_ready.emit(image_data)
             else:
                 self.channels_ready.emit(image_data.channels)

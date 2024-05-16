@@ -311,7 +311,9 @@ class TrainingView(View):
         self._update_spatial_dims()
 
     def _update_spatial_dims(self) -> None:
-        self.dimension_label.setText(f"{self._training_model.get_spatial_dims()}D")
+        self.dimension_label.setText(
+            f"{self._training_model.get_spatial_dims()}D"
+        )
 
     def _set_max_patch_size(self, image_dims: List[int]) -> None:
         if len(image_dims) == 3:
