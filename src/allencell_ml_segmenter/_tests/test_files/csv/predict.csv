@@ -1,0 +1,4 @@
+,raw,split
+0,./src/allencell_ml_segmenter/_tests/test_files/images/test_3_channels.tiff,test
+1,./src/allencell_ml_segmenter/_tests/test_files/images/test_3_channels.tiff,test
+2,./src/allencell_ml_segmenter/_tests/test_files/images/test_3_channels.tiff,test
