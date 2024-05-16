@@ -1,10 +1,17 @@
+import numpy as np
 from pathlib import Path
+import csv
 from typing import List, Generator
+from napari.layers import Shapes
+from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
 import os
 import platform
 import subprocess
 
 
+# TODO: decide whether utils should be like this with staticmethods or singletons with
+# global instances... latter is easier to mock, could combine this with AICSImageData extractor
+# e.g.
 class FileUtils:
 
     @staticmethod
@@ -30,6 +37,97 @@ class FileUtils:
         while str(image.name).startswith("."):
             image: Path = next(path_generator)
         return image.resolve()
+
+    @staticmethod
+    def write_mask_data(mask: np.ndarray, path: Path):
+        """
+        Saves the numpy mask data in mask to path
+        :param mask: mask to save
+        :param path: path at which to save
+        """
+        path.parent.mkdir(parents=True, exist_ok=True)
+        np.save(path, mask)
+
+    @staticmethod
+    def write_curation_record(
+        curation_record: List[CurationRecord],
+        csv_path: Path,
+        mask_dir_path: Path,
+    ) -> None:
+        """
+        Saves the curation record as a csv at csv_path and associated masks under mask_dir_path
+        :param curation_record: record to save to csv
+        :param csv_path: path to save csv
+        :param mask_dir_path: directory in which to save masks (masks will be saved under excluding_masks or
+        merging_masks subdirs)
+        """
+        csv_path.parent.mkdir(parents=True, exist_ok=True)
+
+        with open(csv_path, "w") as f:
+            # need file header
+            writer: csv.writer = csv.writer(f, delimiter=",")
+            writer.writerow(
+                [
+                    "",
+                    "raw",
+                    "seg1",
+                    "seg2",
+                    "merge_mask",
+                    "exclude_mask",
+                    "base_image",
+                ]
+            )
+
+            get_excl_mask_path = (
+                lambda raw_path: mask_dir_path
+                / "excluding_masks"
+                / f"excluding_mask_{raw_path.stem}.npy"
+            )
+            get_merg_mask_path = (
+                lambda raw_path: mask_dir_path
+                / "merging_masks"
+                / f"merging_mask_{raw_path.stem}.npy"
+            )
+
+            idx = 0
+            for record in curation_record:
+                if record.to_use:
+                    if record.excluding_mask is not None:
+                        FileUtils.write_mask_data(
+                            record.excluding_mask,
+                            get_excl_mask_path(record.raw_file.resolve()),
+                        )
+                    if record.merging_mask is not None:
+                        FileUtils.write_mask_data(
+                            record.merging_mask,
+                            get_merg_mask_path(record.raw_file.resolve()),
+                        )
+
+                    writer.writerow(
+                        [
+                            str(idx),
+                            str(record.raw_file.resolve()),
+                            str(record.seg1.resolve()),
+                            (
+                                str(record.seg2.resolve())
+                                if record.seg2 is not None
+                                else ""
+                            ),
+                            (
+                                get_merg_mask_path(record.raw_file.resolve())
+                                if record.merging_mask is not None
+                                else ""
+                            ),
+                            (
+                                get_excl_mask_path(record.raw_file.resolve())
+                                if record.excluding_mask is not None
+                                else ""
+                            ),
+                            str(record.base_image_index),
+                        ]
+                    )
+                    idx += 1
+                f.flush()
 
     @staticmethod
     def open_directory_in_window(dir: Path) -> None:
