@@ -51,6 +51,22 @@ class ModelSelectionWidget(QWidget):
         self._model_name_label: QLabel = QLabel()
         self._model_name_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
 
+        help: QComboBox = QComboBox()
+        help.setFixedWidth(100)
+        help.setPlaceholderText("Help")
+
+        plugin_title_widget_layout: QHBoxLayout = QHBoxLayout()
+        plugin_title_widget_layout.addWidget(
+            QLabel("Allen Cell & Structure Segmentation")
+        )
+        plugin_title_widget_layout.addWidget(
+            help, alignment=Qt.AlignmentFlag.AlignRight
+        )
+
+        layout.setContentsMargins(20, 20, 20, 20)
+        layout.addLayout(plugin_title_widget_layout)
+        layout.addWidget(QLabel("DEEP LEARNING"))
+
         # layout for model labels
         label_widget_layout: QHBoxLayout = QHBoxLayout()
         layout.addLayout(label_widget_layout)
