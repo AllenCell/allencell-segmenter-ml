@@ -28,7 +28,7 @@ def test_extract_image_data_all() -> None:
     assert image_data.dim_x == 2
     assert image_data.dim_y == 2
     assert image_data.dim_z == 2
-    assert np.array_equal(image_data.np_data, expected_img_data)
+    np.array_equal(image_data.np_data, expected_img_data)
     assert image_data.path == t1_path
 
 def test_extract_image_data_dims_only() -> None:

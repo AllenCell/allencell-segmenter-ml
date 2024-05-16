@@ -12,18 +12,18 @@ from allencell_ml_segmenter.training.training_model import TrainingModel
 
 class FakeChannelsReady:
     def __init__(self):
-        self.connected: Callable = None
+        self.function_called_when_emitted: Callable = None
 
     def connect(self, connect: Callable):
-        self.connected = connect
+        self.function_called_when_emitted = connect
 
 
 class FakeImageDataReady:
     def __init__(self):
-        self.connected: Callable = None
+        self.function_called_when_emitted: Callable = None
 
     def connect(self, connect: Callable):
-        self.connected = connect
+        self.function_called_when_emitted = connect
 
 
 class FakeChannelExtractionThread:
@@ -44,8 +44,8 @@ class FakeChannelExtractionThread:
             fake_image_data_extractor: FakeImageDataExtractor = (
                 FakeImageDataExtractor.global_instance()
             )
-            self.image_data_ready.connected(
+            self.image_data_ready.function_called_when_emitted(
                 fake_image_data_extractor.extract_image_data(Path(""))
             )
         else:
-            self.channels_ready.connected(self._fake_value)
+            self.channels_ready.function_called_when_emitted(self._fake_value)
