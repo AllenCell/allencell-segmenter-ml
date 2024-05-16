@@ -6,6 +6,7 @@ from allencell_ml_segmenter.curation.main_view import (
 )
 from allencell_ml_segmenter._tests.fakes.fake_viewer import FakeViewer
 from allencell_ml_segmenter.main.i_viewer import IViewer
+from allencell_ml_segmenter.core.info_dialog_box import InfoDialogBox
 from allencell_ml_segmenter.curation.curation_model import (
     CurationModel,
     CurationView,
@@ -23,6 +24,7 @@ from pytestqt.qtbot import QtBot
 from unittest.mock import Mock
 from pathlib import Path
 import pytest
+from pytest import MonkeyPatch
 
 IMG_DIR_PATH = (
     Path(allencell_ml_segmenter.__file__).parent
@@ -252,9 +254,13 @@ def test_next_image(
 
 
 def test_last_image(
-    qtbot: QtBot, test_environment_with_seg2: TestEnvironment
+    qtbot: QtBot,
+    test_environment_with_seg2: TestEnvironment,
+    monkeypatch: MonkeyPatch,
 ) -> None:
     # Arrange
+    # standard way to deal with modal dialogs: https://pytest-qt.readthedocs.io/en/latest/note_dialogs.html
+    monkeypatch.setattr(InfoDialogBox, "exec", lambda *args: 0)
     env: TestEnvironment = test_environment_with_seg2
     env.model.first_image_data_ready.emit()
     env.model.next_image_data_ready.emit()
@@ -524,9 +530,13 @@ def test_set_excluding_mask(
 
 
 def test_curation_record_on_next(
-    qtbot: QtBot, test_environment_with_seg2: TestEnvironment
+    qtbot: QtBot,
+    test_environment_with_seg2: TestEnvironment,
+    monkeypatch: MonkeyPatch,
 ) -> None:
     # Arrange
+    # standard way to deal with modal dialogs: https://pytest-qt.readthedocs.io/en/latest/note_dialogs.html
+    monkeypatch.setattr(InfoDialogBox, "exec", lambda *args: 0)
     env: TestEnvironment = test_environment_with_seg2
     env.model.first_image_data_ready.emit()
     env.model.next_image_data_ready.emit()
