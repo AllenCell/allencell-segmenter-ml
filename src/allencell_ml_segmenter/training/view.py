@@ -260,7 +260,7 @@ class TrainingView(View):
 
     def _check_patch_size_ok(self) -> bool:
         """
-        Gets patch sizes from the UI, if invalid patches are set throws an error.
+        Gets patch sizes from the UI, if invalid patches display error message with napari's show_warning.
         Returns True if valid patch sizes were provided, false if not
         """
         missing_patches: list[str] = []
