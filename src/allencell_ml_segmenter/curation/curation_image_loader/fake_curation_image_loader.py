@@ -3,9 +3,7 @@ from allencell_ml_segmenter.curation.curation_image_loader import (
 )
 from typing import List, Optional
 from pathlib import Path
-from allencell_ml_segmenter.core.q_runnable_manager import (
-    SynchroQRunnableManager,
-)
+from allencell_ml_segmenter.core.task_executor import SynchroTaskExecutor
 from allencell_ml_segmenter.core.image_data_extractor import (
     FakeImageDataExtractor,
     ImageData,
@@ -13,6 +11,7 @@ from allencell_ml_segmenter.core.image_data_extractor import (
 
 
 class FakeCurationImageLoader(ICurationImageLoader):
+
     def __init__(
         self,
         raw_images: List[Path],
@@ -23,9 +22,17 @@ class FakeCurationImageLoader(ICurationImageLoader):
             raw_images,
             seg1_images,
             seg2_images,
-            SynchroQRunnableManager.global_instance(),
             FakeImageDataExtractor.global_instance(),
+            SynchroTaskExecutor.global_instance(),
         )
+
+    def start(self) -> None:
+        self.signals.first_image_ready.emit()
+        if self.has_next():
+            self.signals.next_image_ready.emit()
+
+    def is_busy(self) -> bool:
+        return False
 
     def get_raw_image_data(self) -> ImageData:
         """
@@ -65,6 +72,7 @@ class FakeCurationImageLoader(ICurationImageLoader):
         if not self.has_next():
             raise RuntimeError()
         self._cursor += 1
+        self.signals.next_image_ready.emit()
 
     def prev(self) -> None:
         """
@@ -73,3 +81,4 @@ class FakeCurationImageLoader(ICurationImageLoader):
         if not self.has_prev():
             raise RuntimeError()
         self._cursor -= 1
+        self.signals.prev_image_ready.emit()
