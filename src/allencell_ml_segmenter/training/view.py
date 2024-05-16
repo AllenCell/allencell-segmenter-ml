@@ -1,7 +1,4 @@
-from pathlib import Path
-from typing import Optional, List
-
-from PyQt5.QtWidgets import QSpinBox, QAbstractSpinBox
+from typing import List
 from napari.utils.notifications import show_warning
 
 from allencell_ml_segmenter.main.i_viewer import IViewer
@@ -12,13 +9,13 @@ from qtpy.QtWidgets import (
     QFrame,
     QVBoxLayout,
     QSizePolicy,
-    QWidget,
     QGridLayout,
     QComboBox,
     QHBoxLayout,
-    QRadioButton,
     QLineEdit,
     QCheckBox,
+    QSpinBox,
+    QAbstractSpinBox,
 )
 from allencell_ml_segmenter._style import Style
 from allencell_ml_segmenter.core.event import Event
