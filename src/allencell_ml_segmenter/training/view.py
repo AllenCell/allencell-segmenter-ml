@@ -98,50 +98,50 @@ class TrainingView(View):
         bottom_grid_layout.addWidget(patch_size_label, 0, 0)
         patch_size_entry_layout: QHBoxLayout = QHBoxLayout()
 
-        self._z_patch_size: QSpinBox = QSpinBox()
-        self._z_patch_size.setButtonSymbols(QAbstractSpinBox.NoButtons)
-        self._z_patch_size.setMinimum(0)
-        self._z_patch_size.setMaximum(9999)
+        self.z_patch_size: QSpinBox = QSpinBox()
+        self.z_patch_size.setButtonSymbols(QAbstractSpinBox.NoButtons)
+        self.z_patch_size.setMinimum(0)
+        self.z_patch_size.setMaximum(9999)
         patch_size_entry_layout.addWidget(QLabel("Z:"))
-        patch_size_entry_layout.addWidget(self._z_patch_size)
+        patch_size_entry_layout.addWidget(self.z_patch_size)
 
-        self._y_patch_size: QSpinBox = QSpinBox()
-        self._y_patch_size.setButtonSymbols(QAbstractSpinBox.NoButtons)
-        self._y_patch_size.setMinimum(0)
-        self._z_patch_size.setMaximum(9999)
+        self.y_patch_size: QSpinBox = QSpinBox()
+        self.y_patch_size.setButtonSymbols(QAbstractSpinBox.NoButtons)
+        self.y_patch_size.setMinimum(0)
+        self.z_patch_size.setMaximum(9999)
         patch_size_entry_layout.addWidget(QLabel("Y:"))
-        patch_size_entry_layout.addWidget(self._y_patch_size)
+        patch_size_entry_layout.addWidget(self.y_patch_size)
 
-        self._x_patch_size: QSpinBox = QSpinBox()
-        self._x_patch_size.setButtonSymbols(QAbstractSpinBox.NoButtons)
-        self._x_patch_size.setMinimum(0)
-        self._z_patch_size.setMaximum(9999)
+        self.x_patch_size: QSpinBox = QSpinBox()
+        self.x_patch_size.setButtonSymbols(QAbstractSpinBox.NoButtons)
+        self.x_patch_size.setMinimum(0)
+        self.z_patch_size.setMaximum(9999)
         patch_size_entry_layout.addWidget(QLabel("X:"))
-        patch_size_entry_layout.addWidget(self._x_patch_size)
+        patch_size_entry_layout.addWidget(self.x_patch_size)
 
         bottom_grid_layout.addLayout(patch_size_entry_layout, 0, 1)
         model_size_label: LabelWithHint = LabelWithHint("Model size")
         bottom_grid_layout.addWidget(model_size_label, 1, 0)
 
-        self._model_size_combo_box: QComboBox = QComboBox()
-        self._model_size_combo_box.setObjectName("modelSizeComboBox")
-        self._model_size_combo_box.setCurrentIndex(-1)
-        self._model_size_combo_box.setPlaceholderText("Select an option")
-        self._model_size_combo_box.addItems(
+        self.model_size_combo_box: QComboBox = QComboBox()
+        self.model_size_combo_box.setObjectName("modelSizeComboBox")
+        self.model_size_combo_box.setCurrentIndex(-1)
+        self.model_size_combo_box.setPlaceholderText("Select an option")
+        self.model_size_combo_box.addItems(
             [size.name.lower() for size in ModelSize]
         )
-        self._model_size_combo_box.currentTextChanged.connect(
+        self.model_size_combo_box.currentTextChanged.connect(
             lambda model_size: self._training_model.set_model_size(model_size)
         )
-        bottom_grid_layout.addWidget(self._model_size_combo_box, 1, 1)
+        bottom_grid_layout.addWidget(self.model_size_combo_box, 1, 1)
 
         image_dimensions_label: LabelWithHint = LabelWithHint(
             "Image dimension"
         )
         bottom_grid_layout.addWidget(image_dimensions_label, 2, 0)
 
-        self._dimension_label: QLabel = QLabel("")
-        bottom_grid_layout.addWidget(self._dimension_label, 2, 1)
+        self.dimension_label: QLabel = QLabel("")
+        bottom_grid_layout.addWidget(self.dimension_label, 2, 1)
 
         num_epochs_label: LabelWithHint = LabelWithHint("Training steps")
         bottom_grid_layout.addWidget(num_epochs_label, 3, 0)
@@ -159,25 +159,25 @@ class TrainingView(View):
         max_time_layout: QHBoxLayout = QHBoxLayout()
         max_time_layout.setSpacing(0)
 
-        self._max_time_checkbox: QCheckBox = QCheckBox()
-        self._max_time_checkbox.setObjectName("timeoutCheckbox")
-        self._max_time_checkbox.stateChanged.connect(
+        self.max_time_checkbox: QCheckBox = QCheckBox()
+        self.max_time_checkbox.setObjectName("timeoutCheckbox")
+        self.max_time_checkbox.stateChanged.connect(
             self._max_time_checkbox_slot
         )
-        max_time_layout.addWidget(self._max_time_checkbox)
+        max_time_layout.addWidget(self.max_time_checkbox)
 
         max_time_left_text: QLabel = QLabel("Time out after")
         max_time_layout.addWidget(max_time_left_text)
 
-        self._max_time_in_minutes_input: QLineEdit = QLineEdit()
-        self._max_time_in_minutes_input.setObjectName("timeoutMinuteInput")
-        self._max_time_in_minutes_input.setEnabled(False)
-        self._max_time_in_minutes_input.setMaximumWidth(30)
-        self._max_time_in_minutes_input.setPlaceholderText("30")
-        self._max_time_in_minutes_input.textChanged.connect(
+        self.max_time_in_minutes_input: QLineEdit = QLineEdit()
+        self.max_time_in_minutes_input.setObjectName("timeoutMinuteInput")
+        self.max_time_in_minutes_input.setEnabled(False)
+        self.max_time_in_minutes_input.setMaximumWidth(30)
+        self.max_time_in_minutes_input.setPlaceholderText("30")
+        self.max_time_in_minutes_input.textChanged.connect(
             lambda text: self._training_model.set_max_time(int(text))
         )
-        max_time_layout.addWidget(self._max_time_in_minutes_input)
+        max_time_layout.addWidget(self.max_time_in_minutes_input)
 
         max_time_right_text: LabelWithHint = LabelWithHint("minutes")
         max_time_layout.addWidget(max_time_right_text, alignment=Qt.AlignLeft)
@@ -255,10 +255,10 @@ class TrainingView(View):
         Enables/disables interaction with the neighboring hour input based on checkstate.
         """
         if checked == Qt.CheckState.Checked:
-            self._max_time_in_minutes_input.setEnabled(True)
+            self.max_time_in_minutes_input.setEnabled(True)
             self._training_model.set_use_max_time(True)
         else:
-            self._max_time_in_minutes_input.setEnabled(False)
+            self.max_time_in_minutes_input.setEnabled(False)
             self._training_model.set_use_max_time(False)
 
     def _check_patch_size_ok(self) -> bool:
@@ -269,16 +269,16 @@ class TrainingView(View):
         missing_patches: list[str] = []
         # patch size cannot be 0 for any dim
         if (
-            self._z_patch_size.value() == 0
+            self.z_patch_size.value() == 0
             and self._training_model.get_spatial_dims() == 3
         ):
             # 3d selected but z patch size missing
             missing_patches.append("Z")
 
-        if self._y_patch_size.value() == 0:
+        if self.y_patch_size.value() == 0:
             missing_patches.append("Y")
 
-        if self._x_patch_size.value() == 0:
+        if self.x_patch_size.value() == 0:
             missing_patches.append("X")
 
         if len(missing_patches) > 0:
@@ -293,14 +293,14 @@ class TrainingView(View):
         if len(self._training_model.get_image_dimensions()) == 3:
             self._training_model.set_patch_size(
                 [
-                    self._z_patch_size.value(),
-                    self._y_patch_size.value(),
-                    self._x_patch_size.value(),
+                    self.z_patch_size.value(),
+                    self.y_patch_size.value(),
+                    self.x_patch_size.value(),
                 ]
             )
         else:
             self._training_model.set_patch_size(
-                [self._y_patch_size.value(), self._x_patch_size.value()]
+                [self.y_patch_size.value(), self.x_patch_size.value()]
             )
 
     def _handle_dimensions_available(self, _: Event) -> None:
@@ -311,20 +311,20 @@ class TrainingView(View):
 
     def _update_spatial_dims(self, spatial_dims: int) -> None:
         self._training_model.set_spatial_dims(spatial_dims)
-        self._dimension_label.setText(f"{spatial_dims}D")
+        self.dimension_label.setText(f"{spatial_dims}D")
 
     def _set_max_patch_size(self, image_dims: List[int]) -> None:
         if len(image_dims) == 3:
             # 3d image
-            self._z_patch_size.setMaximum(image_dims[0])
-            self._y_patch_size.setMaximum(image_dims[1])
-            self._x_patch_size.setMaximum(image_dims[2])
+            self.z_patch_size.setMaximum(image_dims[0])
+            self.y_patch_size.setMaximum(image_dims[1])
+            self.x_patch_size.setMaximum(image_dims[2])
         else:
-            self._z_patch_size.setMaximum(0)
-            self._y_patch_size.setMaximum(image_dims[0])
-            self._x_patch_size.setMaximum(image_dims[1])
+            self.z_patch_size.setMaximum(0)
+            self.y_patch_size.setMaximum(image_dims[0])
+            self.x_patch_size.setMaximum(image_dims[1])
 
     def _enable_patch_size_edit(self, spatial_dims: int) -> None:
         # enable only for 3d
         if spatial_dims == 2:
-            self._z_patch_size.setEnabled(False)
+            self.z_patch_size.setEnabled(False)
