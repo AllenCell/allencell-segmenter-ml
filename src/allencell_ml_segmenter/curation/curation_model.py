@@ -216,7 +216,6 @@ class CurationModel(QObject):
                 self._image_loader.signals.next_image_ready.connect(
                     lambda: self.next_image_data_ready.emit()
                 )
-                self._image_loader.start()
             else:
                 self._image_loader = None
             self._current_view = view
@@ -322,6 +321,17 @@ class CurationModel(QObject):
 
         # here, I don't actually check that the record changed, seems unnecessary
         self._curation_record_saved_to_disk = False
+
+    def start_loading_images(self) -> None:
+        """
+        Must be called before attempting to get image data. 
+        Signals emitted:
+        first_image_data_ready (always)
+        next_image_data_ready (if there is > 1 image)
+        """
+        if self._image_loader is None:
+            raise RuntimeError("Image loader not initialized. Current view must be main view to load images.")
+        self._image_loader.start()
 
     def next_image(self) -> None:
         if self._image_loader.is_busy():
