@@ -1,10 +1,6 @@
 from pathlib import Path
-from typing import Callable
-from qtpy.QtCore import Signal
-
 from allencell_ml_segmenter.core.image_data_extractor import (
     FakeImageDataExtractor,
-    ImageData,
 )
 from allencell_ml_segmenter.core.channel_extraction import (
     ChannelExtractionThreadSignals,

@@ -1,10 +1,8 @@
 from pathlib import Path
-from typing import Generator, List
 import csv
 
 from aicsimageio.exceptions import UnsupportedFileFormatError
 from qtpy.QtCore import QObject, QThread, Signal
-from aicsimageio import AICSImage
 
 from allencell_ml_segmenter.core.image_data_extractor import (
     AICSImageDataExtractor,
