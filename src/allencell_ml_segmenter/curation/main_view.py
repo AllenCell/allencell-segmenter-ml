@@ -229,7 +229,7 @@ class CurationMainView(View):
         )
 
         self._curation_model.saved_to_disk.connect(self._on_saved_to_disk)
-
+        self._curation_model.start_loading_images()
         self._set_to_initial_state()
 
     def doWork(self) -> None:
