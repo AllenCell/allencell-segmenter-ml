@@ -125,7 +125,7 @@ class TrainingService(Subscriber):
             get_img_path_from_csv(to_extract / "train.csv"),
             emit_image_data=True,
         )
-        self._image_data_extraction_thread.image_data_ready.connect(
+        self._image_data_extraction_thread.signals.image_data_ready.connect(
             image_data_callback
         )
         self._image_data_extraction_thread.start()

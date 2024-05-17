@@ -22,6 +22,12 @@ def get_img_path_from_csv(csv_path: Path) -> Path:
         img_path: str = next(reader)["raw"]
     return Path(img_path).resolve()
 
+class ChannelExtractionThreadSignals(QObject):
+    channels_ready: Signal = Signal(int)  # num_channels
+    image_data_ready: Signal = Signal(ImageData)
+    task_failed: Signal = Signal(Exception)
+
+
 
 class ChannelExtractionThread(QThread):
     """
@@ -32,11 +38,6 @@ class ChannelExtractionThread(QThread):
     the thread will have no side effects.
 
     """
-
-    channels_ready: Signal = Signal(int)  # num_channels
-    image_data_ready: Signal = Signal(ImageData)
-    task_failed: Signal = Signal(Exception)
-
     def __init__(
         self,
         img_path: Path,
@@ -50,6 +51,7 @@ class ChannelExtractionThread(QThread):
         :param parent: (optional) parent QObject for this thread, if any.
         """
         super().__init__(parent)
+        self.signals: ChannelExtractionThreadSignals = ChannelExtractionThreadSignals()
         self._img_path: Path = img_path
         self._emit_image_data: bool = emit_image_data
         self._image_extractor: AICSImageDataExtractor = (
@@ -67,14 +69,14 @@ class ChannelExtractionThread(QThread):
                 self._img_path, dims=True, np_data=False
             )
         except UnsupportedFileFormatError as ex:
-            self.task_failed.emit(ex)
+            self.signals.task_failed.emit(ex)
             return  # return instead of reraise to surprss error message in napari console
         except FileNotFoundError as ex:
-            self.task_failed.emit(ex)
+            self.signals.task_failed.emit(ex)
             return
 
         if not QThread.currentThread().isInterruptionRequested():
             if self._emit_image_data:
-                self.image_data_ready.emit(image_data)
+                self.signals.image_data_ready.emit(image_data)
             else:
-                self.channels_ready.emit(image_data.channels)
+                self.signals.channels_ready.emit(image_data.channels)
