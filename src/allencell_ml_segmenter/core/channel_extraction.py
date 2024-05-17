@@ -24,8 +24,11 @@ def get_img_path_from_csv(csv_path: Path) -> Path:
 
 
 class ChannelExtractionThreadSignals(QObject):
+    # emitted when channels ready, with number of channels in image
     channels_ready: Signal = Signal(int)  # num_channels
+    # emitted when image data ready, with ImageData object
     image_data_ready: Signal = Signal(ImageData)
+    # emitted when error occurred during image data extraction
     task_failed: Signal = Signal(Exception)
 
 
