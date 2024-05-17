@@ -1,11 +1,14 @@
 from abc import ABC, abstractmethod
 from typing import Callable, Optional, Any
 
+from napari._qt.qthreading import FunctionWorker
+
 
 class ITaskExecutor(ABC):
     """
     A TaskExecutor will run the tasks provided to exec() at some point (may be sync or async).
     """
+    worker: Optional[FunctionWorker]
 
     def __init__(self):
         raise RuntimeError(
@@ -34,4 +37,12 @@ class ITaskExecutor(ABC):
     @classmethod
     @abstractmethod
     def global_instance(cls):
+        pass
+
+    @abstractmethod
+    def stop_thread(self):
+        pass
+
+    @abstractmethod
+    def is_worker_running(self) -> bool:
         pass

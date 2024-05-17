@@ -15,19 +15,28 @@ class NapariThreadTaskExecutor(ITaskExecutor):
         on_return: Optional[Callable[[Any], None]] = None,
         on_error: Optional[Callable[[Exception], None]] = None,
     ) -> None:
-        worker: FunctionWorker = create_worker(task)
+
+        self.worker: FunctionWorker = create_worker(task)
         if on_start is not None:
-            worker.started.connect(on_start)
+            self.worker.started.connect(on_start)
         if on_finish is not None:
-            worker.finished.connect(on_finish)
+            self.worker.finished.connect(on_finish)
         if on_return is not None:
-            worker.returned.connect(on_return)
+            self.worker.returned.connect(on_return)
         if on_error is not None:
-            worker.errored.connect(on_error)
-        worker.start()
+            self.worker.errored.connect(on_error)
+        self.worker.start()
 
     @classmethod
     def global_instance(cls):
         if cls._instance is None:
             cls._instance = super().__new__(cls)
         return cls._instance
+
+    def stop_thread(self) -> None:
+        # Ask all workers to quit, and wait for them to do so.
+        self.worker.await_workers()
+
+    def is_worker_running(self) -> bool:
+        return self.worker.is_running
+

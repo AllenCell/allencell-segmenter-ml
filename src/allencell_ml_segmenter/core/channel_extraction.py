@@ -1,5 +1,6 @@
 from pathlib import Path
 import csv
+from typing import Optional, Callable
 
 from aicsimageio.exceptions import UnsupportedFileFormatError
 from qtpy.QtCore import QObject, QThread, Signal
@@ -23,15 +24,6 @@ def get_img_path_from_csv(csv_path: Path) -> Path:
     return Path(img_path).resolve()
 
 
-class ChannelExtractionThreadSignals(QObject):
-    # emitted when channels ready, with number of channels in image
-    channels_ready: Signal = Signal(int)  # num_channels
-    # emitted when image data ready, with ImageData object
-    image_data_ready: Signal = Signal(ImageData)
-    # emitted when error occurred during image data extraction
-    task_failed: Signal = Signal(Exception)
-
-
 class ChannelExtractionThread(IChannelExtractionThread):
     """
     A ChannelExtractionThread will extract the number of channels from
@@ -45,9 +37,10 @@ class ChannelExtractionThread(IChannelExtractionThread):
     def __init__(
         self,
         img_path: Path,
+        on_finish: Optional[Callable] = None,
         emit_image_data: bool = False,
         image_extractor: IImageDataExtractor = AICSImageDataExtractor.global_instance(),
-        task_executor: ITaskExecutor = NapariThreadTaskExecutor.global_instance(),
+        task_executor: NapariThreadTaskExecutor = NapariThreadTaskExecutor.global_instance(),
         parent: QObject = None,
     ):
         """
@@ -57,6 +50,7 @@ class ChannelExtractionThread(IChannelExtractionThread):
         :param parent: (optional) parent QObject for this thread, if any.
         """
         super().__init__(image_extractor, task_executor, img_path, emit_image_data)
+        self._on_finish = on_finish
 
     # override
     def start(self):
@@ -67,18 +61,20 @@ class ChannelExtractionThread(IChannelExtractionThread):
         try:
 
             if self._emit_image_data:
-                self._task_executor.exec(
+                self.task_executor.exec(
                     lambda: self._image_extractor.extract_image_data(
                         self._img_path, dims=True, np_data=False
                     ),
-                    on_return=lambda data: self.signals.image_data_ready.emit(data)
+                    on_return=lambda data: self.signals.image_data_ready.emit(data),
+                    on_finish=self._on_finish
                 )
             else:
-                self._task_executor.exec(
+                self.task_executor.exec(
                     lambda: self._image_extractor.extract_image_data(
                         self._img_path, dims=True, np_data=False
                     ),
-                    on_return=lambda data: self.signals.channels_ready.emit(data.channels)
+                    on_return=lambda data: self.signals.channels_ready.emit(data.channels),
+                    on_finish=self._on_finish
             )
         except UnsupportedFileFormatError as ex:
             self.signals.task_failed.emit(ex)
@@ -86,3 +82,9 @@ class ChannelExtractionThread(IChannelExtractionThread):
         except FileNotFoundError as ex:
             self.signals.task_failed.emit(ex)
             return
+
+    def stop_thread(self) -> None:
+        self.task_executor.stop_thread()
+
+    def is_running(self) -> bool:
+        self.task_executor.is_worker_running()

@@ -4,9 +4,6 @@ from allencell_ml_segmenter.core.i_channel_extraction import IChannelExtractionT
 from allencell_ml_segmenter.core.image_data_extractor import (
     FakeImageDataExtractor,
 )
-from allencell_ml_segmenter.core.channel_extraction import (
-    ChannelExtractionThreadSignals,
-)
 from allencell_ml_segmenter.core.task_executor import SynchroTaskExecutor
 
 

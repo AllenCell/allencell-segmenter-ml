@@ -46,8 +46,8 @@ class ModelFileService(Subscriber):
         self._model.set_preprocessing_method("foo")
 
     def stop_channel_extraction(self) -> None:
-        if self._current_thread and self._current_thread.isRunning():
-            self._current_thread.requestInterruption()
+        if self._current_thread and self._current_thread.is_running():
+            self._current_thread.stop_thread()
 
     def _get_img_path_from_model(self) -> Path:
         """
@@ -80,15 +80,12 @@ class ModelFileService(Subscriber):
 
         self.stop_channel_extraction()
 
-        self._current_thread = ChannelExtractionThread(img_path)
+        self._current_thread = ChannelExtractionThread(img_path, on_finish=lambda: self._running_threads.pop(thread_id))
         thread_id: int = self._threads_created
         self._threads_created += 1
         self._running_threads[thread_id] = self._current_thread
 
         self._current_thread.signals.channels_ready.connect(
             self._model.set_max_channels
-        )
-        self._current_thread.finished.connect(
-            lambda: self._running_threads.pop(thread_id)
         )
         self._current_thread.start()

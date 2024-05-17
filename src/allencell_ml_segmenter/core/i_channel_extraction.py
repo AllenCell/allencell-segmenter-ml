@@ -16,6 +16,7 @@ class ChannelExtractionThreadSignals(QObject):
     # emitted when error occurred during image data extraction
     task_failed: Signal = Signal(Exception)
 
+
 class IChannelExtractionThread(ABC):
     def __init__(
             self,
@@ -30,7 +31,7 @@ class IChannelExtractionThread(ABC):
         self._img_path: Optional[Path] = img_path
         self._emit_image_data = emit_image_data
         self._image_extractor = img_data_extractor
-        self._task_executor = task_executor
+        self.task_executor = task_executor
 
     @abstractmethod
     def start(self):

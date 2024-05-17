@@ -130,13 +130,6 @@ class TrainingService(Subscriber):
         )
         self._image_data_extraction_thread.start()
 
-    def _stop_channel_extraction(self) -> None:
-        if (
-            self._image_data_extraction_thread
-            and self._image_data_extraction_thread.isRunning()
-        ):
-            self._image_data_extraction_thread.requestInterruption()
-            self._image_data_extraction_thread.wait()
 
     def _training_image_directory_selected(self, _: Event) -> None:
         self._start_image_data_extraction(
