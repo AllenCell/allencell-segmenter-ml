@@ -22,11 +22,11 @@ def get_img_path_from_csv(csv_path: Path) -> Path:
         img_path: str = next(reader)["raw"]
     return Path(img_path).resolve()
 
+
 class ChannelExtractionThreadSignals(QObject):
     channels_ready: Signal = Signal(int)  # num_channels
     image_data_ready: Signal = Signal(ImageData)
     task_failed: Signal = Signal(Exception)
-
 
 
 class ChannelExtractionThread(QThread):
@@ -38,6 +38,7 @@ class ChannelExtractionThread(QThread):
     the thread will have no side effects.
 
     """
+
     def __init__(
         self,
         img_path: Path,
@@ -51,7 +52,9 @@ class ChannelExtractionThread(QThread):
         :param parent: (optional) parent QObject for this thread, if any.
         """
         super().__init__(parent)
-        self.signals: ChannelExtractionThreadSignals = ChannelExtractionThreadSignals()
+        self.signals: ChannelExtractionThreadSignals = (
+            ChannelExtractionThreadSignals()
+        )
         self._img_path: Path = img_path
         self._emit_image_data: bool = emit_image_data
         self._image_extractor: AICSImageDataExtractor = (

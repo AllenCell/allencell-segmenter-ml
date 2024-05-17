@@ -3,16 +3,23 @@ from typing import Callable
 from qtpy.QtCore import Signal
 
 from allencell_ml_segmenter.core.image_data_extractor import (
-    FakeImageDataExtractor, ImageData
+    FakeImageDataExtractor,
+    ImageData,
 )
-from allencell_ml_segmenter.core.channel_extraction import ChannelExtractionThreadSignals
+from allencell_ml_segmenter.core.channel_extraction import (
+    ChannelExtractionThreadSignals,
+)
+
 
 class FakeChannelExtractionThread:
     """
     Fake of Channel Extraction Thread
     """
+
     def __init__(self, emit_image_data: bool, fake_return_value: int):
-        self.signals: ChannelExtractionThreadSignals = ChannelExtractionThreadSignals()
+        self.signals: ChannelExtractionThreadSignals = (
+            ChannelExtractionThreadSignals()
+        )
         self.started: bool = False
         self._fake_value = fake_return_value
         self.emit_image_data = emit_image_data

@@ -85,7 +85,7 @@ class ModelFileService(Subscriber):
         self._threads_created += 1
         self._running_threads[thread_id] = self._current_thread
 
-        self._current_thread.channels_ready.connect(
+        self._current_thread.signals.channels_ready.connect(
             self._model.set_max_channels
         )
         self._current_thread.finished.connect(
