@@ -11,12 +11,8 @@ from allencell_ml_segmenter.core.image_data_extractor import (
 
 
 class CurationImageLoaderSignals(QObject):
-    # emitted after a call to next or start, when the loading for 'new next' is done
-    next_image_ready: Signal = Signal()
-    # emitted after a call to prev, when the loading for 'new prev' is done
-    prev_image_ready: Signal = Signal()
-    # emitted after a call to start, when the loading for 'curr' is done
-    first_image_ready: Signal = Signal()
+    # emitted when all currently loading images are completely loaded
+    images_ready: Signal = Signal()
 
 
 class ICurationImageLoader(ABC):
