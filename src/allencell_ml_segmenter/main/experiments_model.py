@@ -34,6 +34,7 @@ class ExperimentsModel(IExperimentsModel):
                 and not experiment.name.startswith(".")
             ):
                 self.experiments.append(experiment.name)
+        self.experiments.sort()
 
     """
     Returns a defensive copy of Experiments list.
