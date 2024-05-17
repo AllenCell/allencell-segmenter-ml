@@ -30,11 +30,10 @@ def experiments_model() -> ExperimentsModel:
 
 
 def test_refresh_experiments(experiments_model: ExperimentsModel) -> None:
-    expected = ["0_exp", "1_exp", "2_exp", "one_ckpt_exp"]
+    expected_sorted = ["0_exp", "1_exp", "2_exp", "a_exp", "m_exp", "one_ckpt_exp", "z_exp"] 
     experiments_model.refresh_experiments()
-    assert len(experiments_model.get_experiments()) == len(expected)
-    for e in experiments_model.get_experiments():
-        assert e in expected
+    assert len(experiments_model.get_experiments()) == len(expected_sorted)
+    assert experiments_model.get_experiments() == expected_sorted
 
 
 def test_get_cyto_dl_config() -> None:
