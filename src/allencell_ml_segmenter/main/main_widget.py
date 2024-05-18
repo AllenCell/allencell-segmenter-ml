@@ -94,6 +94,7 @@ class MainWidget(AicsWidget):
 
         # keep track of views
         self._view_container: QTabWidget = QTabWidget()
+        self._view_container.setDisabled(True)
         self._view_to_index: Dict[View, int] = dict()
 
         self._experiments_model.subscribe(
