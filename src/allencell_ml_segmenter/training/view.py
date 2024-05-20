@@ -1,5 +1,6 @@
-from pathlib import Path
-from typing import Optional
+from napari.utils.notifications import show_warning
+
+from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
 from allencell_ml_segmenter.main.i_viewer import IViewer
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
@@ -19,7 +20,6 @@ from qtpy.QtWidgets import (
 from allencell_ml_segmenter._style import Style
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.view import View
-from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.training.image_selection_widget import (
     ImageSelectionWidget,
@@ -28,13 +28,8 @@ from allencell_ml_segmenter.training.training_model import (
     TrainingModel,
     ModelSize,
 )
-
-from aicsimageio import AICSImage
-from aicsimageio.readers import TiffReader
-
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 from qtpy.QtGui import QIntValidator
-from allencell_ml_segmenter.training.training_model import PatchSize
 from allencell_ml_segmenter.training.metrics_csv_progress_tracker import (
     MetricsCSVProgressTracker,
 )
@@ -49,7 +44,7 @@ class TrainingView(View):
     def __init__(
         self,
         main_model: MainModel,
-        experiments_model: ExperimentsModel,
+        experiments_model: IExperimentsModel,
         training_model: TrainingModel,
         viewer: IViewer,
     ):
@@ -58,7 +53,7 @@ class TrainingView(View):
         self._viewer: IViewer = viewer
 
         self._main_model: MainModel = main_model
-        self._experiments_model: ExperimentsModel = experiments_model
+        self._experiments_model: IExperimentsModel = experiments_model
         self._training_model: TrainingModel = training_model
 
         self.setLayout(QVBoxLayout())
@@ -91,20 +86,30 @@ class TrainingView(View):
         # bottom half
         bottom_grid_layout = QGridLayout()
 
-        patch_size_label: LabelWithHint = LabelWithHint("Structure size")
+        patch_size_label: LabelWithHint = LabelWithHint("Patch size")
         bottom_grid_layout.addWidget(patch_size_label, 0, 0)
+        patch_size_entry_layout: QHBoxLayout = QHBoxLayout()
 
-        self._patch_size_combo_box: QComboBox = QComboBox()
-        self._patch_size_combo_box.setObjectName("structureSizeComboBox")
-        self._patch_size_combo_box.setCurrentIndex(-1)
-        self._patch_size_combo_box.setPlaceholderText("Select an option")
-        self._patch_size_combo_box.addItems(
-            [patch.name.lower() for patch in PatchSize]
-        )
-        self._patch_size_combo_box.currentTextChanged.connect(
-            lambda size: self._training_model.set_patch_size(size)
-        )
-        bottom_grid_layout.addWidget(self._patch_size_combo_box, 0, 1)
+        # allow only integers for the linedits below
+        enforce_int: QIntValidator = QIntValidator()
+        enforce_int.setBottom(1)
+
+        self.z_patch_size: QLineEdit = QLineEdit()
+        self.z_patch_size.setValidator(enforce_int)
+        patch_size_entry_layout.addWidget(QLabel("Z:"))
+        patch_size_entry_layout.addWidget(self.z_patch_size)
+
+        self.y_patch_size: QLineEdit = QLineEdit()
+        self.y_patch_size.setValidator(enforce_int)
+        patch_size_entry_layout.addWidget(QLabel("Y:"))
+        patch_size_entry_layout.addWidget(self.y_patch_size)
+
+        self.x_patch_size: QLineEdit = QLineEdit()
+        self.x_patch_size.setValidator(enforce_int)
+        patch_size_entry_layout.addWidget(QLabel("X:"))
+        patch_size_entry_layout.addWidget(self.x_patch_size)
+
+        bottom_grid_layout.addLayout(patch_size_entry_layout, 0, 1)
 
         model_size_label: LabelWithHint = LabelWithHint("Model size")
         bottom_grid_layout.addWidget(model_size_label, 1, 0)
@@ -223,14 +228,18 @@ class TrainingView(View):
         """
         Starts training process
         """
-        progress_tracker: MetricsCSVProgressTracker = (
-            MetricsCSVProgressTracker(
-                self._experiments_model.get_metrics_csv_path(),
-                self._training_model.get_num_epochs(),
-                self._experiments_model.get_latest_metrics_csv_version() + 1,
+        if self._patch_size_ok():
+            self.set_patch_size()
+
+            progress_tracker: MetricsCSVProgressTracker = (
+                MetricsCSVProgressTracker(
+                    self._experiments_model.get_metrics_csv_path(),
+                    self._training_model.get_num_epochs(),
+                    self._experiments_model.get_latest_metrics_csv_version()
+                    + 1,
+                )
             )
-        )
-        self.startLongTaskWithProgressBar(progress_tracker)
+            self.startLongTaskWithProgressBar(progress_tracker)
 
     # Abstract methods from View implementations #######################
 
@@ -264,3 +273,39 @@ class TrainingView(View):
         else:
             self._max_time_in_minutes_input.setEnabled(False)
             self._training_model.set_use_max_time(False)
+
+    def _patch_size_ok(self) -> bool:
+        """
+        Validates that user has defined all needed patch sizes in the UI
+        Returns True if all needed patch sizes were provided, False if not (and will show napari error message)
+        """
+        missing_patches: list[str] = []
+
+        if (
+            not self.z_patch_size.text()
+            and self._training_model.get_spatial_dims() == 3
+        ):
+            missing_patches.append("Z")
+
+        if not self.y_patch_size.text():
+            missing_patches.append("Y")
+
+        if not self.x_patch_size.text():
+            missing_patches.append("X")
+
+        if len(missing_patches) > 0:
+            show_warning(
+                f"Please define {missing_patches} patches before continuing."
+            )
+            return False
+
+        return True
+
+    def set_patch_size(self) -> None:
+        self._training_model.set_patch_size(
+            [
+                int(self.z_patch_size.text()),
+                int(self.y_patch_size.text()),
+                int(self.x_patch_size.text()),
+            ]
+        )
