@@ -46,9 +46,15 @@ class CurationImageLoader(ICurationImageLoader):
         # private invariant: _next_img_data will only have < _num_data_dict_keys keys if
         # a thread is currently updating _next_img_data. Same goes for prev and curr
         self._num_data_dict_keys: int = 3 if self._seg2_images else 2
-        self._curr_img_data: Dict[str, Optional[ImageData]] = self._get_placeholder_dict()
-        self._next_img_data: Dict[str, Optional[ImageData]] = self._get_placeholder_dict()
-        self._prev_img_data: Dict[str, Optional[ImageData]] = self._get_placeholder_dict()
+        self._curr_img_data: Dict[str, Optional[ImageData]] = (
+            self._get_placeholder_dict()
+        )
+        self._next_img_data: Dict[str, Optional[ImageData]] = (
+            self._get_placeholder_dict()
+        )
+        self._prev_img_data: Dict[str, Optional[ImageData]] = (
+            self._get_placeholder_dict()
+        )
 
         # threads are currently running for extraction
         self._is_busy: bool = False
@@ -64,8 +70,12 @@ class CurationImageLoader(ICurationImageLoader):
         return self._is_busy
 
     def _get_placeholder_dict(self) -> Dict[str, Optional[ImageData]]:
-        return {"raw": None, "seg1": None} if self._num_data_dict_keys == 2 else {"raw": None, "seg1": None, "seg2": None}
-    
+        return (
+            {"raw": None, "seg1": None}
+            if self._num_data_dict_keys == 2
+            else {"raw": None, "seg1": None, "seg2": None}
+        )
+
     def _wait_on_data_dicts(self) -> None:
         """
         This should never be called in the main/UI thread. It is used exclusively by the
@@ -82,24 +92,33 @@ class CurationImageLoader(ICurationImageLoader):
         self._is_busy = False
         self.signals.is_idle.emit()
 
-    def _extract_image_data(self, prev: bool=False, curr: bool=False, next: bool=False) -> None:
+    def _extract_image_data(
+        self, prev: bool = False, curr: bool = False, next: bool = False
+    ) -> None:
         """
         Begins image data extraction for previous images (based on current _cursor location) iff :param prev:.
         Same pattern applies for current and next images. Emits images_ready signal when all extractions are
         completed.
         """
         if prev:
-            self._start_extraction_threads(self._cursor - 1, self._prev_img_data)
+            self._start_extraction_threads(
+                self._cursor - 1, self._prev_img_data
+            )
         if curr:
             self._start_extraction_threads(self._cursor, self._curr_img_data)
         if next:
-            self._start_extraction_threads(self._cursor + 1, self._next_img_data)
-        
+            self._start_extraction_threads(
+                self._cursor + 1, self._next_img_data
+            )
+
         if any([prev, curr, next]):
             self._is_busy = True
             # this is thread safe due to GIL: https://docs.python.org/3/glossary.html#term-global-interpreter-lock
-            self._task_executor.exec(self._wait_on_data_dicts, on_finish=self._on_extraction_finished)
-        
+            self._task_executor.exec(
+                self._wait_on_data_dicts,
+                on_finish=self._on_extraction_finished,
+            )
+
     def _start_extraction_threads(
         self,
         img_index: int,
