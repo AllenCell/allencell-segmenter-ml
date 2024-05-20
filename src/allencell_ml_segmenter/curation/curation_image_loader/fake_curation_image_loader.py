@@ -27,7 +27,7 @@ class FakeCurationImageLoader(ICurationImageLoader):
         )
 
     def start(self) -> None:
-        self.signals.images_ready.emit()
+        self.signals.is_idle.emit()
 
     def is_busy(self) -> bool:
         return False
@@ -70,7 +70,7 @@ class FakeCurationImageLoader(ICurationImageLoader):
         if not self.has_next():
             raise RuntimeError()
         self._cursor += 1
-        self.signals.images_ready.emit()
+        self.signals.is_idle.emit()
 
     def prev(self) -> None:
         """
@@ -79,4 +79,4 @@ class FakeCurationImageLoader(ICurationImageLoader):
         if not self.has_prev():
             raise RuntimeError()
         self._cursor -= 1
-        self.signals.images_ready.emit()
+        self.signals.is_idle.emit()
