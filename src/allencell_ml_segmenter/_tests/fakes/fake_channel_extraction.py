@@ -1,6 +1,8 @@
 from pathlib import Path
 
-from allencell_ml_segmenter.core.i_channel_extraction import IChannelExtractionThread
+from allencell_ml_segmenter.core.i_channel_extraction import (
+    IChannelExtractionThread,
+)
 from allencell_ml_segmenter.core.image_data_extractor import (
     FakeImageDataExtractor,
 )
@@ -17,7 +19,7 @@ class FakeChannelExtractionThread(IChannelExtractionThread):
             FakeImageDataExtractor.global_instance(),
             SynchroTaskExecutor.global_instance(),
             None,
-            emit_image_data
+            emit_image_data,
         )
         self.started: bool = False
         self._fake_value = fake_return_value

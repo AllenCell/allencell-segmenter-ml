@@ -39,4 +39,3 @@ class NapariThreadTaskExecutor(ITaskExecutor):
 
     def is_worker_running(self) -> bool:
         return self.worker.is_running
-

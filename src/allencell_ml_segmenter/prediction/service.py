@@ -80,7 +80,9 @@ class ModelFileService(Subscriber):
 
         self.stop_channel_extraction()
 
-        self._current_thread = ChannelExtractionThread(img_path, on_finish=lambda: self._running_threads.pop(thread_id))
+        self._current_thread = ChannelExtractionThread(
+            img_path, on_finish=lambda: self._running_threads.pop(thread_id)
+        )
         thread_id: int = self._threads_created
         self._threads_created += 1
         self._running_threads[thread_id] = self._current_thread

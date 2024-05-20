@@ -5,10 +5,13 @@ from typing import Optional, Callable
 from aicsimageio.exceptions import UnsupportedFileFormatError
 from qtpy.QtCore import QObject
 
-from allencell_ml_segmenter.core.i_channel_extraction import IChannelExtractionThread
+from allencell_ml_segmenter.core.i_channel_extraction import (
+    IChannelExtractionThread,
+)
 from allencell_ml_segmenter.core.image_data_extractor import (
     AICSImageDataExtractor,
-    ImageData, IImageDataExtractor,
+    ImageData,
+    IImageDataExtractor,
 )
 from allencell_ml_segmenter.core.task_executor import NapariThreadTaskExecutor
 
@@ -49,7 +52,9 @@ class ChannelExtractionThread(IChannelExtractionThread):
                                False to return only num_channels through channels_ready signal
         :param parent: (optional) parent QObject for this thread, if any.
         """
-        super().__init__(image_extractor, task_executor, img_path, emit_image_data)
+        super().__init__(
+            image_extractor, task_executor, img_path, emit_image_data
+        )
         self._on_finish = on_finish
 
     # override
@@ -65,17 +70,21 @@ class ChannelExtractionThread(IChannelExtractionThread):
                     lambda: self._image_extractor.extract_image_data(
                         self._img_path, dims=True, np_data=False
                     ),
-                    on_return=lambda data: self.signals.image_data_ready.emit(data),
-                    on_finish=self._on_finish
+                    on_return=lambda data: self.signals.image_data_ready.emit(
+                        data
+                    ),
+                    on_finish=self._on_finish,
                 )
             else:
                 self.task_executor.exec(
                     lambda: self._image_extractor.extract_image_data(
                         self._img_path, dims=True, np_data=False
                     ),
-                    on_return=lambda data: self.signals.channels_ready.emit(data.channels),
-                    on_finish=self._on_finish
-            )
+                    on_return=lambda data: self.signals.channels_ready.emit(
+                        data.channels
+                    ),
+                    on_finish=self._on_finish,
+                )
         except UnsupportedFileFormatError as ex:
             self.signals.task_failed.emit(ex)
             return  # return instead of reraise to surpress error message in napari console

@@ -130,7 +130,6 @@ class TrainingService(Subscriber):
         )
         self._image_data_extraction_thread.start()
 
-
     def _training_image_directory_selected(self, _: Event) -> None:
         self._start_image_data_extraction(
             self._training_model.get_images_directory(),

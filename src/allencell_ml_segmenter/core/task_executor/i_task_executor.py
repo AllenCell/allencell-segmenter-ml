@@ -8,6 +8,7 @@ class ITaskExecutor(ABC):
     """
     A TaskExecutor will run the tasks provided to exec() at some point (may be sync or async).
     """
+
     worker: Optional[FunctionWorker]
 
     def __init__(self):
