@@ -1,5 +1,4 @@
 import pytest
-from pathlib import Path
 import allencell_ml_segmenter
 from allencell_ml_segmenter.core.channel_extraction import *
 

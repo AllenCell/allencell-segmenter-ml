@@ -1,6 +1,4 @@
 from pathlib import Path
-from typing import Any
-
 from allencell_ml_segmenter._tests.fakes.fake_channel_extraction import (
     FakeChannelExtractionThread,
 )
