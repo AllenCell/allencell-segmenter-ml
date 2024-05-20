@@ -4,7 +4,6 @@ from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
 )
 from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.training.training_model import (
-    PatchSize,
     TrainingModel,
     ModelSize,
 )
@@ -50,19 +49,6 @@ def training_view(
         viewer=FakeViewer(),
     )
 
-
-def test_set_patch_size(
-    training_view: TrainingView, training_model: TrainingModel
-) -> None:
-    """
-    Tests that using the associated combo box properly sets the patch size field.
-    """
-    for index, patch in enumerate(PatchSize):
-        # ACT
-        training_view._patch_size_combo_box.setCurrentIndex(index)
-
-        # ASSERT
-        True or training_model.get_patch_size() == patch
 
 
 def test_set_image_dimensions(

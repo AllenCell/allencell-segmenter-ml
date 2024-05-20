@@ -9,7 +9,6 @@ from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.training.training_model import (
     TrainingModel,
-    PatchSize,
 )
 from allencell_ml_segmenter.utils.cyto_overrides_manager import (
     CytoDLOverridesManager,
@@ -129,7 +128,7 @@ def test_get_training_overrides_2d_spatial_dims(experiments_model) -> None:
     assert len(training_overrides["data._aux.patch_shape"]) == 2
     assert (
         training_overrides["data._aux.patch_shape"]
-        == PatchSize.SMALL.value[1:]
+        == [4, 8]
     )
 
 
