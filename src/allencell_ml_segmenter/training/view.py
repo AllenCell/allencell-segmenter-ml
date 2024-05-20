@@ -1,5 +1,6 @@
 from napari.utils.notifications import show_warning
 
+from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
 from allencell_ml_segmenter.main.i_viewer import IViewer
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
@@ -43,7 +44,7 @@ class TrainingView(View):
     def __init__(
         self,
         main_model: MainModel,
-        experiments_model: ExperimentsModel,
+        experiments_model: IExperimentsModel,
         training_model: TrainingModel,
         viewer: IViewer,
     ):
@@ -52,7 +53,7 @@ class TrainingView(View):
         self._viewer: IViewer = viewer
 
         self._main_model: MainModel = main_model
-        self._experiments_model: ExperimentsModel = experiments_model
+        self._experiments_model: IExperimentsModel = experiments_model
         self._training_model: TrainingModel = training_model
 
         self.setLayout(QVBoxLayout())
@@ -93,20 +94,20 @@ class TrainingView(View):
         enforce_int: QIntValidator = QIntValidator()
         enforce_int.setBottom(1)
 
-        self._z_patch_size: QLineEdit = QLineEdit()
-        self._z_patch_size.setValidator(enforce_int)
+        self.z_patch_size: QLineEdit = QLineEdit()
+        self.z_patch_size.setValidator(enforce_int)
         patch_size_entry_layout.addWidget(QLabel("Z:"))
-        patch_size_entry_layout.addWidget(self._z_patch_size)
+        patch_size_entry_layout.addWidget(self.z_patch_size)
 
-        self._y_patch_size: QLineEdit = QLineEdit()
-        self._y_patch_size.setValidator(enforce_int)
+        self.y_patch_size: QLineEdit = QLineEdit()
+        self.y_patch_size.setValidator(enforce_int)
         patch_size_entry_layout.addWidget(QLabel("Y:"))
-        patch_size_entry_layout.addWidget(self._y_patch_size)
+        patch_size_entry_layout.addWidget(self.y_patch_size)
 
-        self._x_patch_size: QLineEdit = QLineEdit()
-        self._x_patch_size.setValidator(enforce_int)
+        self.x_patch_size: QLineEdit = QLineEdit()
+        self.x_patch_size.setValidator(enforce_int)
         patch_size_entry_layout.addWidget(QLabel("X:"))
-        patch_size_entry_layout.addWidget(self._x_patch_size)
+        patch_size_entry_layout.addWidget(self.x_patch_size)
 
         bottom_grid_layout.addLayout(patch_size_entry_layout, 0, 1)
 
@@ -294,13 +295,13 @@ class TrainingView(View):
         """
         missing_patches: list[str] = []
 
-        if not self._z_patch_size.text() and self._training_model.get_spatial_dims() == 3:
+        if not self.z_patch_size.text() and self._training_model.get_spatial_dims() == 3:
             missing_patches.append("Z")
 
-        if not self._y_patch_size.text():
+        if not self.y_patch_size.text():
             missing_patches.append("Y")
 
-        if not self._x_patch_size.text():
+        if not self.x_patch_size.text():
             missing_patches.append("X")
 
         if len(missing_patches) > 0:
@@ -309,11 +310,11 @@ class TrainingView(View):
 
         return True
 
-    def _set_patch_size(self) -> None:
+    def set_patch_size(self) -> None:
         self._training_model.set_patch_size(
-            [int(self._z_patch_size.text()),
-             int(self._y_patch_size.text()),
-             int(self._x_patch_size.text())]
+            [int(self.z_patch_size.text()),
+             int(self.y_patch_size.text()),
+             int(self.x_patch_size.text())]
         )
 
 
