@@ -34,8 +34,7 @@ class CurationModel(QObject):
     seg1_image_channel_count_set: Signal = Signal()
     seg2_image_channel_count_set: Signal = Signal()
 
-    first_image_data_ready: Signal = Signal()
-    next_image_data_ready: Signal = Signal()
+    image_loading_finished: Signal = Signal()
 
     save_to_disk_requested: Signal = Signal()
     saved_to_disk: Signal = Signal()
@@ -210,11 +209,8 @@ class CurationModel(QObject):
                     self._seg1_directory_paths,
                     self._seg2_directory_paths,
                 )
-                self._image_loader.signals.first_image_ready.connect(
+                self._image_loader.signals.is_idle.connect(
                     lambda: self.first_image_data_ready.emit()
-                )
-                self._image_loader.signals.next_image_ready.connect(
-                    lambda: self.next_image_data_ready.emit()
                 )
             else:
                 self._image_loader = None
@@ -343,13 +339,6 @@ class CurationModel(QObject):
         self._excluding_mask = None
         self._base_image = "seg1"
         self._use_image = True
-
-    def is_image_data_ready(self) -> bool:
-        return (
-            not self._image_loader.is_busy()
-            if self._image_loader is not None
-            else False
-        )
 
     def set_curation_record_saved_to_disk(self, saved: bool) -> None:
         self._curation_record_saved_to_disk = saved
