@@ -90,7 +90,7 @@ def test_get_training_overrides(
 
     assert (
         training_overrides["data._aux.patch_shape"]
-        == training_model.get_patch_size().value
+        == training_model.get_patch_size()
     )
 
     assert training_overrides["ckpt_path"] == str(

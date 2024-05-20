@@ -99,7 +99,7 @@ class TrainingView(View):
 
         # allow only integers for the linedits below
         enforce_int: QIntValidator = QIntValidator()
-        enforce_int.setRange(0, 9)
+        enforce_int.setBottom(1)
 
         self._z_patch_size: QLineEdit = QLineEdit()
         self._z_patch_size.setValidator(enforce_int)
@@ -250,16 +250,17 @@ class TrainingView(View):
         """
         Starts training process
         """
-        self._parse_patch_size()
+        if self._patch_size_ok():
+            self._set_patch_size()
 
-        progress_tracker: MetricsCSVProgressTracker = (
-            MetricsCSVProgressTracker(
-                self._experiments_model.get_metrics_csv_path(),
-                self._training_model.get_num_epochs(),
-                self._experiments_model.get_latest_metrics_csv_version() + 1,
+            progress_tracker: MetricsCSVProgressTracker = (
+                MetricsCSVProgressTracker(
+                    self._experiments_model.get_metrics_csv_path(),
+                    self._training_model.get_num_epochs(),
+                    self._experiments_model.get_latest_metrics_csv_version() + 1,
+                )
             )
-        )
-        self.startLongTaskWithProgressBar(progress_tracker)
+            self.startLongTaskWithProgressBar(progress_tracker)
 
     # Abstract methods from View implementations #######################
 
@@ -294,14 +295,14 @@ class TrainingView(View):
             self._max_time_in_minutes_input.setEnabled(False)
             self._training_model.set_use_max_time(False)
 
-    def _parse_patch_size(self) -> bool:
+    def _patch_size_ok(self) -> bool:
         """
         Gets patch sizes from the UI and sets it in the model.
         Returns True if valid patch sizes were provided, false if not
         """
         missing_patches: list[str] = []
 
-        if not self._z_patch_size.text():
+        if not self._z_patch_size.text() and self._training_model.get_spatial_dims() == 3:
             missing_patches.append("Z")
 
         if not self._y_patch_size.text():
@@ -316,11 +317,11 @@ class TrainingView(View):
 
         return True
 
-    def set_patch_size(self) -> None:
+    def _set_patch_size(self) -> None:
         self._training_model.set_patch_size(
-            int(self._z_patch_size),
-            int(self._y_patch_size),
-            int(self._x_patch_size)
+            int(self._z_patch_size.text()),
+            int(self._y_patch_size.text()),
+            int(self._x_patch_size.text())
         )
 
 
