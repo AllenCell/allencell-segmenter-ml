@@ -37,7 +37,9 @@ class FakeExperimentsModel(IExperimentsModel):
     def get_user_experiments_path(self) -> Path:
         return Path()
 
-    def get_model_checkpoints_path(self, experiment_name: str, checkpoint: str) -> Path:
+    def get_model_checkpoints_path(
+        self, experiment_name: str, checkpoint: str
+    ) -> Path:
         return Path()
 
     def get_metrics_csv_path(self) -> Path:
