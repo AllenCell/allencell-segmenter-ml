@@ -320,13 +320,15 @@ class CurationModel(QObject):
 
     def start_loading_images(self) -> None:
         """
-        Must be called before attempting to get image data. 
+        Must be called before attempting to get image data.
         Signals emitted:
         first_image_data_ready (always)
         next_image_data_ready (if there is > 1 image)
         """
         if self._image_loader is None:
-            raise RuntimeError("Image loader not initialized. Current view must be main view to load images.")
+            raise RuntimeError(
+                "Image loader not initialized. Current view must be main view to load images."
+            )
         self._image_loader.start()
 
     def next_image(self) -> None:
