@@ -249,8 +249,12 @@ class CurationMainView(View):
         self._update_progress_bar()
         self._add_curr_images_to_widget()
         self._enable_next_button()
-        self._curation_model.image_loading_finished.disconnect(self._on_first_image_loading_finished)
-        self._curation_model.image_loading_finished.connect(self._on_image_loading_finished)
+        self._curation_model.image_loading_finished.disconnect(
+            self._on_first_image_loading_finished
+        )
+        self._curation_model.image_loading_finished.connect(
+            self._on_image_loading_finished
+        )
 
     def _enable_next_button(self) -> None:
         self.next_button.setEnabled(True)
