@@ -218,18 +218,11 @@ class CurationMainView(View):
         excluding_mask_buttons.addWidget(self.excluding_save_button)
         self.layout().addLayout(excluding_mask_buttons)
 
-        # NOTE: this is prone to a small bug: if the next image is ready first and the user quickly
-        # clicks next, a runtime error from the image loader will show up as a popup. Since this is
-        # unlikely and would take some work to fix, I'm leaving it for now
-        self._curation_model.first_image_data_ready.connect(
-            self._on_first_image_data_ready
-        )
-        self._curation_model.next_image_data_ready.connect(
-            self._enable_next_button
+        self._curation_model.image_loading_finished.connect(
+            self._on_first_image_loading_finished
         )
 
         self._curation_model.saved_to_disk.connect(self._on_saved_to_disk)
-        self._curation_model.start_loading_images()
         self._set_to_initial_state()
 
     def doWork(self) -> None:
@@ -246,22 +239,29 @@ class CurationMainView(View):
         self.disable_all_masks()
         self._use_img_stacked_spinner.start()
 
-    def _on_first_image_data_ready(self) -> None:
+    def _on_image_loading_finished(self) -> None:
+        print("img loading finished")
+        self._enable_next_button()
+
+    def _on_first_image_loading_finished(self) -> None:
+        print("first img loading finished")
         self._use_img_stacked_spinner.stop()
         self._update_progress_bar()
         self._add_curr_images_to_widget()
+        self._enable_next_button()
+        self._curation_model.image_loading_finished.disconnect(self._on_first_image_loading_finished)
+        self._curation_model.image_loading_finished.connect(self._on_image_loading_finished)
 
     def _enable_next_button(self) -> None:
         self.next_button.setEnabled(True)
-        self.next_button.setText("Next ►")
+        if self._curation_model.has_next_image():
+            self.next_button.setText("Next ►")
+        else:
+            self.next_button.setText("Finish ►")
 
     def _set_next_button_to_loading(self) -> None:
         self.next_button.setEnabled(False)
         self.next_button.setText("Loading next...")
-
-    def _set_next_button_to_finish(self) -> None:
-        self.next_button.setEnabled(True)
-        self.next_button.setText("Finish ►")
 
     def _add_curr_images_to_widget(self) -> None:
         raw_img_data: ImageData = self._curation_model.get_raw_image_data()
@@ -294,12 +294,9 @@ class CurationMainView(View):
 
         # NOTE: this logic is kinda complicated, maybe worth a rethink when there's more time
         if self._curation_model.has_next_image():
+            self._set_next_button_to_loading()
             self._curation_model.next_image()
             self._add_curr_images_to_widget()
-            if self._curation_model.has_next_image():
-                self._set_next_button_to_loading()
-            else:
-                self._set_next_button_to_finish()
         else:
             self._on_save_curation_csv()
             self.disable_all_masks()
