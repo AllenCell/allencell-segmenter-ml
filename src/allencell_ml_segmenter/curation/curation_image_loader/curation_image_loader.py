@@ -80,7 +80,7 @@ class CurationImageLoader(ICurationImageLoader):
 
     def _on_extraction_finished(self) -> None:
         self._is_busy = False
-        self.signals.images_ready.emit()
+        self.signals.is_idle.emit()
 
     def _extract_image_data(self, prev: bool=False, curr: bool=False, next: bool=False) -> None:
         """
@@ -174,6 +174,8 @@ class CurationImageLoader(ICurationImageLoader):
         self._cursor += 1
         if self.has_next():
             self._extract_image_data(next=True)
+        else:
+            self.signals.is_idle.emit()
 
     def prev(self) -> None:
         """
@@ -193,3 +195,5 @@ class CurationImageLoader(ICurationImageLoader):
         self._cursor -= 1
         if self.has_prev():
             self._extract_image_data(prev=True)
+        else:
+            self.signals.is_idle.emit()
