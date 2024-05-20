@@ -126,10 +126,7 @@ def test_get_training_overrides_2d_spatial_dims(experiments_model) -> None:
 
     # Assert
     assert len(training_overrides["data._aux.patch_shape"]) == 2
-    assert (
-        training_overrides["data._aux.patch_shape"]
-        == [4, 8]
-    )
+    assert training_overrides["data._aux.patch_shape"] == [4, 8]
 
 
 def test_max_epochs_no_existing_ckpt(

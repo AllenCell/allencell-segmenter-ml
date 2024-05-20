@@ -28,6 +28,7 @@ class Hardware(Enum):
     CPU = "cpu"
     GPU = "gpu"
 
+
 class ModelSize(Enum):
     """
     Model size for training, and their respective filters overrides
@@ -188,7 +189,9 @@ class TrainingModel(Publisher):
         patch_size (str): patch size for training
         """
         if len(patch_size) not in [2, 3]:
-            raise ValueError("Patch sizes need to be 2 or 3 dimension based on input image.")
+            raise ValueError(
+                "Patch sizes need to be 2 or 3 dimension based on input image."
+            )
         self._patch_size = patch_size
 
     def get_max_time(self) -> int:

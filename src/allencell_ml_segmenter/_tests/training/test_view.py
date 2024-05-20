@@ -50,7 +50,6 @@ def training_view(
     )
 
 
-
 def test_set_image_dimensions(
     qtbot: QtBot,
     training_view: TrainingView,
@@ -140,8 +139,12 @@ def test_set_model_size(
         # ASSERT
         assert training_model.get_model_size() == model_size
 
+
 def test_set_patch_size(
-        qtbot: QtBot, main_model: MainModel, experiments_model: FakeExperimentsModel, training_model: TrainingModel
+    qtbot: QtBot,
+    main_model: MainModel,
+    experiments_model: FakeExperimentsModel,
+    training_model: TrainingModel,
 ) -> None:
     # ARRANGE
     view: TrainingView = TrainingView(
@@ -159,5 +162,3 @@ def test_set_patch_size(
 
     # ASSERT
     assert training_model.get_patch_size() == [1, 4, 12]
-
-

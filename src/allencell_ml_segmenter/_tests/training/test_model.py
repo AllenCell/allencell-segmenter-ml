@@ -104,6 +104,7 @@ def test_get_image_dims(training_model: TrainingModel) -> None:
     # ACT/ASSERT
     assert training_model.get_spatial_dims() == 3
 
+
 def test_get_num_epochs(training_model: TrainingModel) -> None:
     """
     Tests that get_max_epoch returns the correct max epoch.
@@ -236,6 +237,7 @@ def test_set_patch_size_invalid(training_model: TrainingModel) -> None:
 
     with pytest.raises(TypeError):
         training_model.set_patch_size(None)
+
 
 def test_get_max_time(training_model: TrainingModel) -> None:
     """

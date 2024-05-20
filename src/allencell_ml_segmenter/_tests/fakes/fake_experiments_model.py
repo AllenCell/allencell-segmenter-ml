@@ -45,4 +45,3 @@ class FakeExperimentsModel(IExperimentsModel):
 
     def get_latest_metrics_csv_version(self) -> int:
         pass
-
