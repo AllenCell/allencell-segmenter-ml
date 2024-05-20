@@ -66,3 +66,15 @@ class IExperimentsModel(Publisher):
         self, experiment_name: str, checkpoint: str
     ) -> Path:
         pass
+
+    @abstractmethod
+    def get_metrics_csv_path(self) -> Path:
+        pass
+
+    @abstractmethod
+    def get_latest_metrics_csv_version(self) -> int:
+        pass
+
+    @abstractmethod
+    def get_csv_path(self) -> Path:
+        pass

@@ -37,13 +37,13 @@ def training_model(experiments_model: ExperimentsModel) -> TrainingModel:
     model: TrainingModel = TrainingModel(MainModel(), experiments_model)
     model.set_experiment_type("segmentation")
     model.set_hardware_type("cpu")
-    model.set_spatial_dims(2)
+    model.set_spatial_dims(3)
     model.set_images_directory("/path/to/images")
     model.set_channel_index(9)
     model.set_use_max_time(True)
     model.set_max_time(9992)
     model.set_config_dir("/path/to/configs")
-    model.set_patch_size("small")
+    model.set_patch_size([1, 2, 4])
     model.set_num_epochs(100)
     model.set_model_size("medium")
     return model
@@ -89,7 +89,7 @@ def test_get_training_overrides(
 
     assert (
         training_overrides["data._aux.patch_shape"]
-        == training_model.get_patch_size().value
+        == training_model.get_patch_size()
     )
 
     assert training_overrides["ckpt_path"] == str(
@@ -98,6 +98,35 @@ def test_get_training_overrides(
             experiments_model.get_checkpoint(),
         )
     )
+
+
+def test_get_training_overrides_2d_spatial_dims(experiments_model) -> None:
+    # Arrange
+    model: TrainingModel = TrainingModel(MainModel(), experiments_model)
+    model.set_experiment_type("segmentation")
+    model.set_hardware_type("cpu")
+    model.set_images_directory("/path/to/images")
+    model.set_channel_index(9)
+    model.set_use_max_time(True)
+    model.set_max_time(9992)
+    model.set_config_dir("/path/to/configs")
+    model.set_num_epochs(100)
+    model.set_model_size("medium")
+
+    model.set_spatial_dims(2)
+    model.set_patch_size([4, 8])
+    cyto_overrides_manager: CytoDLOverridesManager = CytoDLOverridesManager(
+        experiments_model, model
+    )
+
+    # Act
+    training_overrides: Dict[str, Union[str, int, float, bool, Dict]] = (
+        cyto_overrides_manager.get_training_overrides()
+    )
+
+    # Assert
+    assert len(training_overrides["data._aux.patch_shape"]) == 2
+    assert training_overrides["data._aux.patch_shape"] == [4, 8]
 
 
 def test_max_epochs_no_existing_ckpt(
