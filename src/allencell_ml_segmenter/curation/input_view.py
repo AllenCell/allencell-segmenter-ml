@@ -209,6 +209,7 @@ class CurationInputView(View):
             return
 
         self._curation_model.set_current_view(CurationView.MAIN_VIEW)
+        self._curation_model.start_loading_images()
 
     def _set_to_loading(
         self, combobox: QComboBox, stacked_spinner: StackedSpinner
