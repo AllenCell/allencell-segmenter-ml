@@ -1,14 +1,7 @@
 from pathlib import Path
-from typing import List
-from unittest.mock import patch
 import pytest
-
-import allencell_ml_segmenter
 from allencell_ml_segmenter._tests.fakes.fake_user_settings import (
     FakeUserSettings,
-)
-from allencell_ml_segmenter._tests.fakes.fake_channel_extraction import (
-    FakeChannelExtractionThread,
 )
 from allencell_ml_segmenter.core.extractor_factory import FakeExtractorFactory
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
@@ -51,7 +44,7 @@ def training_model(experiments_model: ExperimentsModel) -> TrainingModel:
     model.set_use_max_time(True)
     model.set_max_time(9992)
     model.set_config_dir("/path/to/configs")
-    model.set_patch_size("small")
+    model.set_patch_size([4, 8])
     model.set_num_epochs(100)
     return model
 

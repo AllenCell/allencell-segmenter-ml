@@ -1,7 +1,6 @@
-from typing import Dict, Union, Optional
+from typing import Dict, Union, Optional, List
 
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
-from allencell_ml_segmenter.prediction.model import PredictionModel
 from allencell_ml_segmenter.training.training_model import (
     TrainingModel,
     Hardware,
@@ -26,14 +25,16 @@ class CytoDLOverridesManager:
 
     def get_training_overrides(
         self,
-    ) -> Dict[str, Union[str, int, float, bool, Dict]]:
+    ) -> Dict[str, Union[str, int, float, bool, Dict, List]]:
         # check to see if CytoOverridesManager was constructed with a training model
         if self._training_model is None:
             raise ValueError(
                 "CytoOverridesManager must be constructed with a training model in order to get training overrides."
             )
 
-        overrides_dict: Dict[str, Union[str, int, float, bool, Dict]] = dict()
+        overrides_dict: Dict[str, Union[str, int, float, bool, Dict, List]] = (
+            dict()
+        )
 
         # Hardware override (required)
         hardware_used = self._training_model.get_hardware_type()
@@ -46,9 +47,12 @@ class CytoDLOverridesManager:
         )
 
         # Spatial Dims (required)
-        overrides_dict["spatial_dims"] = (
-            self._training_model.get_spatial_dims()
-        )
+        dims: int = self._training_model.get_spatial_dims()
+        overrides_dict["spatial_dims"] = dims
+
+        # Patch shape (required)
+        patch_size: List[int] = self._training_model.get_patch_size()
+        overrides_dict["data._aux.patch_shape"] = patch_size
 
         # Max Run
         # define max run (in epochs, required)
@@ -67,11 +71,6 @@ class CytoDLOverridesManager:
         # Training input path (required)
         overrides_dict["data.path"] = str(
             self._training_model.get_images_directory()
-        )
-
-        # Patch shape (required)
-        overrides_dict["data._aux.patch_shape"] = (
-            self._training_model.get_patch_size().value
         )
 
         # Checkpoint (optional)

@@ -9,7 +9,6 @@ from allencell_ml_segmenter.training.training_model import (
     TrainingModel,
     TrainingType,
     Hardware,
-    PatchSize,
 )
 
 
@@ -106,19 +105,6 @@ def test_get_image_dims(training_model: TrainingModel) -> None:
     assert training_model.get_spatial_dims() == 3
 
 
-def test_set_invalid_image_dims(training_model: TrainingModel) -> None:
-    """
-    Tests that set_image_dims raises a ValueError when given an invalid image dimension (not 2 or 3).
-    """
-    # ACT
-    with pytest.raises(ValueError):
-        training_model.set_spatial_dims(1)
-
-    # ACT
-    with pytest.raises(ValueError):
-        training_model.set_spatial_dims(4)
-
-
 def test_get_num_epochs(training_model: TrainingModel) -> None:
     """
     Tests that get_max_epoch returns the correct max epoch.
@@ -204,41 +190,53 @@ def test_get_patch_size(training_model: TrainingModel) -> None:
     """
     # ASSERT
     assert training_model.get_patch_size() is None
+    expected_patch = [4, 8]
 
     # ARRANGE
-    training_model._patch_size = PatchSize.SMALL
+    training_model._patch_size = expected_patch
 
     # ACT/ASSERT
-    assert training_model.get_patch_size() == PatchSize.SMALL
+    assert training_model.get_patch_size() == expected_patch
 
 
 def test_set_patch_size(training_model: TrainingModel) -> None:
     """
     Tests that set_patch_size sets the correct patch size.
     """
-    # ACT
-    training_model.set_patch_size("small")
-
-    # ASSERT
-    assert training_model._patch_size == PatchSize.SMALL
+    # expected
+    patch_2d = [4, 8]
+    patch_3d = [1, 2, 3]
 
     # ACT
-    training_model.set_patch_size("SMaLL")
+    training_model.set_patch_size(patch_2d)
 
     # ASSERT
-    assert training_model._patch_size == PatchSize.SMALL
+    assert training_model._patch_size == patch_2d
 
     # ACT
-    training_model.set_patch_size("MEDIUM")
+    training_model.set_patch_size(patch_3d)
 
     # ASSERT
-    assert training_model._patch_size == PatchSize.MEDIUM
+    assert training_model._patch_size == patch_3d
 
-    # ACT
-    training_model.set_patch_size("large")
 
-    # ASSERT
-    assert training_model._patch_size == PatchSize.LARGE
+def test_set_patch_size_invalid(training_model: TrainingModel) -> None:
+    """
+    Tests that set_patch_size throws an error if an invalid patch size is provided
+    """
+
+    # ACT/ASSERT
+    with pytest.raises(ValueError):
+        training_model.set_patch_size([1])
+
+    with pytest.raises(ValueError):
+        training_model.set_patch_size([1, 2, 3, 4])
+
+    with pytest.raises(TypeError):
+        training_model.set_patch_size(2)
+
+    with pytest.raises(TypeError):
+        training_model.set_patch_size(None)
 
 
 def test_get_max_time(training_model: TrainingModel) -> None:
