@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Union, Optional, Dict
+from typing import List, Optional, Dict
 
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.subscriber import Subscriber

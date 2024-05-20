@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Optional
 
 from qtpy.QtWidgets import QComboBox
 from qtpy.QtCore import Qt

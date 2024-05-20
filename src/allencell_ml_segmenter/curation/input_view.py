@@ -1,5 +1,3 @@
-from allencell_ml_segmenter.curation.curation_service import CurationService
-from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.curation.stacked_spinner import StackedSpinner
 from allencell_ml_segmenter.widgets.input_button_widget import (
     InputButton,

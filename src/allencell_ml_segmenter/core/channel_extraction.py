@@ -3,14 +3,14 @@ import csv
 from typing import Optional, Callable
 
 from aicsimageio.exceptions import UnsupportedFileFormatError
-from qtpy.QtCore import QObject, QThread, Signal
+from qtpy.QtCore import QObject
 
 from allencell_ml_segmenter.core.i_channel_extraction import IChannelExtractionThread
 from allencell_ml_segmenter.core.image_data_extractor import (
     AICSImageDataExtractor,
     ImageData, IImageDataExtractor,
 )
-from allencell_ml_segmenter.core.task_executor import ITaskExecutor, NapariThreadTaskExecutor
+from allencell_ml_segmenter.core.task_executor import NapariThreadTaskExecutor
 
 
 def get_img_path_from_csv(csv_path: Path) -> Path:
