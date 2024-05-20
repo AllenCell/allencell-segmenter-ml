@@ -1,13 +1,22 @@
 from abc import ABC, abstractmethod
+from qtpy.QtCore import QObject, Signal
 from typing import List, Optional
 from pathlib import Path
-from allencell_ml_segmenter.core.q_runnable_manager import (
-    IQRunnableManager,
-)
+from allencell_ml_segmenter.core.task_executor import ITaskExecutor
+
 from allencell_ml_segmenter.core.image_data_extractor import (
     IImageDataExtractor,
     ImageData,
 )
+
+
+class CurationImageLoaderSignals(QObject):
+    # emitted after a call to next or start, when the loading for 'new next' is done
+    next_image_ready: Signal = Signal()
+    # emitted after a call to prev, when the loading for 'new prev' is done
+    prev_image_ready: Signal = Signal()
+    # emitted after a call to start, when the loading for 'curr' is done
+    first_image_ready: Signal = Signal()
 
 
 class ICurationImageLoader(ABC):
@@ -16,9 +25,11 @@ class ICurationImageLoader(ABC):
         raw_images: List[Path],
         seg1_images: List[Path],
         seg2_images: Optional[List[Path]],
-        qr_manager: IQRunnableManager,
         img_data_extractor: IImageDataExtractor,
+        task_executor: ITaskExecutor,
     ):
+        super().__init__()
+        self.signals = CurationImageLoaderSignals()
         self._raw_images: List[Path] = list(raw_images)
         self._seg1_images: List[Path] = list(seg1_images)
         self._seg2_images: Optional[List[Path]] = (
@@ -35,8 +46,8 @@ class ICurationImageLoader(ABC):
 
         self._num_images = len(self._raw_images)
 
-        self._qr_manager: IQRunnableManager = qr_manager
         self._img_data_extractor: IImageDataExtractor = img_data_extractor
+        self._task_executor: ITaskExecutor = task_executor
         self._cursor: int = 0
 
     def get_num_images(self) -> int:
@@ -52,6 +63,17 @@ class ICurationImageLoader(ABC):
         num images)
         """
         return self._cursor
+
+    @abstractmethod
+    def start(self) -> None:
+        """
+        Starts the image loader on at least the first set of images.
+        """
+        pass
+
+    @abstractmethod
+    def is_busy(self) -> bool:
+        pass
 
     @abstractmethod
     def get_raw_image_data(self) -> ImageData:

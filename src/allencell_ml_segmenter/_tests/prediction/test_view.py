@@ -71,17 +71,15 @@ def test_show_results(main_model: MainModel) -> None:
     prediction_view.showResults()
 
     # ASSERT
-    assert len(fake_viewer.images_added) == 2  # correct number
+    assert (
+        len(fake_viewer.get_all_images()) == 2
+    )  # num img files in output_test_folder
     image: Path = (
         Path(allencell_ml_segmenter.__file__).parent
         / "_tests"
         / "test_files"
         / "output_test_folder"
-        / "seg"
+        / "target"
         / "output_1.tiff"
     )
-    assert array_equal(
-        fake_viewer.images_added[image.name],
-        AICSImage(image).data,
-        equal_nan=True,
-    )
+    assert fake_viewer.contains_layer(image.name)

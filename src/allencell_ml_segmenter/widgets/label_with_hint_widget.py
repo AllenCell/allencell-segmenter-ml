@@ -9,7 +9,7 @@ class LabelWithHint(QWidget):
     Compound widget with text label and question mark icon for clear access to tool tips.
     """
 
-    def __init__(self, label_text: str = ""):
+    def __init__(self, label_text: str = "", value_text: str = ""):
         super().__init__()
 
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
@@ -31,6 +31,9 @@ class LabelWithHint(QWidget):
         self._question_mark.setObjectName("questionMark")
 
         self.layout().addWidget(self._question_mark)
+
+        self._label: QLabel = QLabel(value_text)
+        self.layout().addWidget(self._label)
         self.layout().addStretch(6)
 
     def set_label_text(self, text: str) -> None:
@@ -38,6 +41,12 @@ class LabelWithHint(QWidget):
         Sets the text of the label.
         """
         self._label.setText(text)
+
+    def set_value_text(self, value_text: str) -> None:
+        """
+        Sets the text of the value.
+        """
+        self._label.setText(value_text)
 
     def set_hint(self, hint: str) -> None:
         """
