@@ -38,9 +38,14 @@ class CytoDLOverridesManager:
         )
 
         # Hardware override (required)
+        hardware_used = self._training_model.get_hardware_type()
         overrides_dict["trainer.accelerator"] = "cpu"
-        if self._training_model.get_hardware_type() == Hardware.GPU:
+        if hardware_used == Hardware.GPU:
             overrides_dict["trainer.accelerator"] = "gpu"
+
+        overrides_dict["data.num_workers"] = CUDAUtils.get_num_workers(
+            hardware_used
+        )
 
         # Spatial Dims (required)
         dims: int = self._training_model.get_spatial_dims()
@@ -86,10 +91,5 @@ class CytoDLOverridesManager:
         overrides_dict["model._aux.filters"] = (
             self._training_model.get_model_size().value
         )
-
-        # num_workers based on cpu cores available on machine
-        # it is recommended to leave one or two logical cores free to work on other
-        # system tasks will prevent starving the system of resources completely
-        overrides_dict["data.num_workers"] = CUDAUtils.get_num_cpu_cores() - 1
 
         return overrides_dict

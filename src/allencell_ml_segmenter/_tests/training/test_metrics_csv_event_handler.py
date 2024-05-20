@@ -6,7 +6,7 @@ from allencell_ml_segmenter.training.metrics_csv_event_handler import (
 from unittest.mock import Mock
 
 
-def test_csv_2_epochs():
+def test_csv_3_epochs():
     callback_mock: Mock = Mock()
     test_csv_path: Path = (
         Path(allencell_ml_segmenter.__file__).parent
@@ -16,15 +16,14 @@ def test_csv_2_epochs():
         / "1_exp"
         / "csv"
         / "version_1"
-        / "test_metrics_csv_2_epochs.csv"
+        / "test_metrics_csv_3_epochs.csv"
     )
     handler: MetricsCSVEventHandler = MetricsCSVEventHandler(
         test_csv_path, callback_mock
     )
     fs_event_mock: Mock = Mock(src_path=test_csv_path)
     handler.on_any_event(fs_event_mock)
-    # test_metrics_csv_2_epochs.csv greatest epoch is 2
-    callback_mock.assert_called_with(2)
+    callback_mock.assert_called_with(3)
 
 
 def test_empty_csv():
