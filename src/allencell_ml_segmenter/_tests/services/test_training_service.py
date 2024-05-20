@@ -1,14 +1,7 @@
 from pathlib import Path
-from typing import List
-from unittest.mock import patch
 import pytest
-
-import allencell_ml_segmenter
 from allencell_ml_segmenter._tests.fakes.fake_user_settings import (
     FakeUserSettings,
-)
-from allencell_ml_segmenter._tests.fakes.fake_channel_extraction import (
-    FakeChannelExtractionThread,
 )
 from allencell_ml_segmenter.core.extractor_factory import FakeExtractorFactory
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
