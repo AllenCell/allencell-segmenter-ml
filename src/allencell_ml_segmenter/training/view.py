@@ -35,6 +35,7 @@ from allencell_ml_segmenter.training.metrics_csv_progress_tracker import (
 )
 from allencell_ml_segmenter.core.info_dialog_box import InfoDialogBox
 
+
 class TrainingView(View):
     """
     Holds widgets pertinent to training processes - ImageSelectionWidget & ModelSelectionWidget.
@@ -249,7 +250,8 @@ class TrainingView(View):
                 MetricsCSVProgressTracker(
                     self._experiments_model.get_metrics_csv_path(),
                     self._training_model.get_num_epochs(),
-                    self._experiments_model.get_latest_metrics_csv_version() + 1,
+                    self._experiments_model.get_latest_metrics_csv_version()
+                    + 1,
                 )
             )
             self.startLongTaskWithProgressBar(progress_tracker)
@@ -294,7 +296,10 @@ class TrainingView(View):
         """
         missing_patches: list[str] = []
 
-        if not self.z_patch_size.text() and self._training_model.get_spatial_dims() == 3:
+        if (
+            not self.z_patch_size.text()
+            and self._training_model.get_spatial_dims() == 3
+        ):
             missing_patches.append("Z")
 
         if not self.y_patch_size.text():
@@ -304,19 +309,18 @@ class TrainingView(View):
             missing_patches.append("X")
 
         if len(missing_patches) > 0:
-            show_warning(f"Please define {missing_patches} patches before continuing.")
+            show_warning(
+                f"Please define {missing_patches} patches before continuing."
+            )
             return False
 
         return True
 
     def set_patch_size(self) -> None:
         self._training_model.set_patch_size(
-            [int(self.z_patch_size.text()),
-             int(self.y_patch_size.text()),
-             int(self.x_patch_size.text())]
+            [
+                int(self.z_patch_size.text()),
+                int(self.y_patch_size.text()),
+                int(self.x_patch_size.text()),
+            ]
         )
-
-
-
-
-
