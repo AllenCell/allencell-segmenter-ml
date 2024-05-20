@@ -13,7 +13,7 @@ from qtpy.QtWidgets import (
 
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.curation.stacked_spinner import StackedSpinner
-from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
+from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
 from allencell_ml_segmenter.training.training_model import TrainingModel
 from allencell_ml_segmenter.widgets.input_button_widget import (
     InputButton,
@@ -30,12 +30,12 @@ class ImageSelectionWidget(QWidget):
     TITLE_TEXT: str = "Training images"
 
     def __init__(
-        self, model: TrainingModel, experiments_model: ExperimentsModel
+        self, model: TrainingModel, experiments_model: IExperimentsModel
     ):
         super().__init__()
 
         self._model: TrainingModel = model
-        self._experiments_model: ExperimentsModel = experiments_model
+        self._experiments_model: IExperimentsModel = experiments_model
 
         # widget skeleton
         self.setLayout(QVBoxLayout())
