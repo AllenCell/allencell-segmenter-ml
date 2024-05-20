@@ -193,13 +193,15 @@ class TrainingModel(Publisher):
         """
         return self._patch_size
 
-    def set_patch_size(self, z: int, y: int, x: int) -> None:
+    def set_patch_size(self, patch_size: List[int]) -> None:
         """
         Sets patch size
 
         patch_size (str): patch size for training
         """
-        self._patch_size = [z, y, x]
+        if len(patch_size) not in [2, 3]:
+            raise ValueError("Patch sizes need to be 2 or 3 dimension based on input image.")
+        self._patch_size = patch_size
 
     def get_max_time(self) -> int:
         """
