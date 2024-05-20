@@ -60,8 +60,17 @@ class ModelSelectionWidget(QWidget):
         self.help_combo_box: QComboBox = QComboBox()
         self.help_combo_box.setFixedWidth(100)
         self.help_combo_box.setPlaceholderText("Help")
-        self.help_combo_box.addItems([ModelSelectionWidget.TUTORIAL_TEXT, ModelSelectionWidget.GITHUB_TEXT, ModelSelectionWidget.FORUM_TEXT, ModelSelectionWidget.WEBSITE_TEXT])
-        self.help_combo_box.currentTextChanged.connect(self._help_combo_handler)
+        self.help_combo_box.addItems(
+            [
+                ModelSelectionWidget.TUTORIAL_TEXT,
+                ModelSelectionWidget.GITHUB_TEXT,
+                ModelSelectionWidget.FORUM_TEXT,
+                ModelSelectionWidget.WEBSITE_TEXT,
+            ]
+        )
+        self.help_combo_box.currentTextChanged.connect(
+            self._help_combo_handler
+        )
 
         plugin_title_widget_layout: QHBoxLayout = QHBoxLayout()
         plugin_title_widget_layout.addWidget(
