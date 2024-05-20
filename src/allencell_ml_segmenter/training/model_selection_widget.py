@@ -1,3 +1,4 @@
+import webbrowser
 from qtpy.QtWidgets import (
     QWidget,
     QHBoxLayout,
@@ -26,6 +27,10 @@ class ModelSelectionWidget(QWidget):
     """
 
     TITLE_TEXT: str = "Segmentation model"
+    TUTORIAL_TEXT: str = "Tutorial"
+    GITHUB_TEXT: str = "GitHub"
+    FORUM_TEXT: str = "Forum"
+    WEBSITE_TEXT: str = "Website"
 
     def __init__(
         self,
@@ -51,17 +56,19 @@ class ModelSelectionWidget(QWidget):
         self._model_name_label: QLabel = QLabel()
         self._model_name_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
 
-        help_combo_box: QComboBox = QComboBox()
-        help_combo_box.setFixedWidth(100)
-        help_combo_box.setPlaceholderText("Help")
-        help_combo_box.addItems(["Tutorials", "Github", "Forum", "Website"])
+        # Help menu, implemented using a combo box to conform to mockup
+        self.help_combo_box: QComboBox = QComboBox()
+        self.help_combo_box.setFixedWidth(100)
+        self.help_combo_box.setPlaceholderText("Help")
+        self.help_combo_box.addItems([ModelSelectionWidget.TUTORIAL_TEXT, ModelSelectionWidget.GITHUB_TEXT, ModelSelectionWidget.FORUM_TEXT, ModelSelectionWidget.WEBSITE_TEXT])
+        self.help_combo_box.currentTextChanged.connect(self._help_combo_handler)
 
         plugin_title_widget_layout: QHBoxLayout = QHBoxLayout()
         plugin_title_widget_layout.addWidget(
             QLabel("Allen Cell & Structure Segmentation")
         )
         plugin_title_widget_layout.addWidget(
-            help_combo_box, alignment=Qt.AlignmentFlag.AlignRight
+            self.help_combo_box, alignment=Qt.AlignmentFlag.AlignRight
         )
 
         layout.setContentsMargins(20, 20, 20, 20)
@@ -186,6 +193,26 @@ class ModelSelectionWidget(QWidget):
         Sets the model name in the model.
         """
         self._experiments_model.select_experiment_name(text)
+
+    def _help_combo_handler(self, text: str) -> None:
+        """
+        Triggered when the user selects an option from the help combo box.
+        Opens the selected help page.
+        """
+        if text == ModelSelectionWidget.TUTORIAL_TEXT:
+            webbrowser.open(
+                "https://www.allencell.org/allencell-segmenter-ml-tutorials.html"
+            )
+        elif text == ModelSelectionWidget.GITHUB_TEXT:
+            webbrowser.open(
+                "https://github.com/AllenCell/allencell-ml-segmenter"
+            )
+        elif text == ModelSelectionWidget.FORUM_TEXT:
+            webbrowser.open("https://forum.image.sc/tag/segmenter")
+        elif text == ModelSelectionWidget.WEBSITE_TEXT:
+            webbrowser.open("https://www.allencell.org/segmenter.html")
+        # reset the combo box, so that it bahaves more like a menu
+        self.help_combo_box.setCurrentIndex(-1)
 
     def _model_radio_handler(self) -> None:
         self._main_model.set_new_model(self._radio_new_model.isChecked())
