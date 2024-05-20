@@ -20,6 +20,7 @@ from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
+from allencell_ml_segmenter.main.i_viewer import IViewer
 from allencell_ml_segmenter.prediction.model import PredictionModel
 from allencell_ml_segmenter.prediction.view import PredictionView
 from allencell_ml_segmenter.services.prediction_service import (
@@ -31,6 +32,10 @@ from allencell_ml_segmenter.training.model_selection_widget import (
 )
 from allencell_ml_segmenter.training.training_model import TrainingModel
 from allencell_ml_segmenter.training.view import TrainingView
+from allencell_ml_segmenter.curation.curation_image_loader import (
+    CurationImageLoaderFactory,
+)
+from allencell_ml_segmenter.curation.curation_model import CurationModel
 
 
 class MainWidget(AicsWidget):
@@ -43,7 +48,7 @@ class MainWidget(AicsWidget):
         self.user_settings: IUserSettings = settings
         if self.user_settings is None:
             self.user_settings = UserSettings()
-        self.viewer: Viewer = Viewer(viewer)
+        self.viewer: IViewer = Viewer(viewer)
 
         # basic styling
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
@@ -72,6 +77,9 @@ class MainWidget(AicsWidget):
         )
 
         self._prediction_model: PredictionModel = PredictionModel()
+        self._curation_model: CurationModel = CurationModel(
+            self._experiments_model, CurationImageLoaderFactory()
+        )
 
         # init services
         self._training_service: TrainingService = TrainingService(
@@ -88,9 +96,15 @@ class MainWidget(AicsWidget):
         self._view_container: QTabWidget = QTabWidget()
         self._view_to_index: Dict[View, int] = dict()
 
+        self._experiments_model.subscribe(
+            Event.ACTION_EXPERIMENT_APPLIED,
+            self,
+            self._handle_experiment_applied,
+        )
+
         # initialize the tabs
         self._curation_view: CurationWidget = CurationWidget(
-            self.viewer, self._model, self._experiments_model
+            self.viewer, self._curation_model
         )
         self._initialize_view(self._curation_view, "Curation")
         self._training_view: TrainingView = TrainingView(
@@ -117,6 +131,14 @@ class MainWidget(AicsWidget):
         self.layout().addWidget(model_selection_widget, Qt.AlignTop)
         self.layout().addWidget(self._view_container, Qt.AlignCenter)
         self.layout().addStretch(100)
+
+    def _handle_experiment_applied(self, _: Event) -> None:
+        """
+        Handle the experiment applied event.
+        """
+        self._view_container.setDisabled(
+            self._experiments_model.get_experiment_name() is None
+        )
 
     def _handle_new_model(self, _: Event) -> None:
         """

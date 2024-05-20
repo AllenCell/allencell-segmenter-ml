@@ -12,6 +12,13 @@ from allencell_ml_segmenter.config.i_user_settings import IUserSettings
 from allencell_ml_segmenter.core.aics_widget import AicsWidget
 from allencell_ml_segmenter.main.main_widget import MainWidget
 from unittest.mock import Mock
+import napari
+
+# IMPORTANT NOTE: MainWidget is different from the other widgets since we do not directly
+# instantiate it in our code. So, it will always receive a napari.Viewer object in
+# production. We cannot initialize with our FakeViewer because our 'Viewer' is created during
+# initialization of MainWidget. We could supply a "viewer factory" to the MainWidget,
+# but for now I'm just mocking it here.
 
 
 @pytest.fixture
@@ -22,7 +29,7 @@ def main_widget(qtbot: QtBot) -> MainWidget:
     settings: IUserSettings = FakeUserSettings()
     settings.set_cyto_dl_home_path(Path())
     settings.set_user_experiments_path(Path())
-    return MainWidget(viewer=FakeViewer(), settings=settings)
+    return MainWidget(viewer=Mock(spec=napari.Viewer), settings=settings)
 
 
 def test_tabs_react_to_new_model_event(
@@ -135,10 +142,34 @@ def test_experiments_home_initialized(qtbot: QtBot) -> None:
 
     # ACT
     MainWidget(
-        FakeViewer(), settings
+        Mock(spec=napari.Viewer), settings
     )  # If the users settings does not find an experiments home path, it will prompt the user for one and persist it.
 
     # ASSERT
     assert (
         settings.get_user_experiments_path() == EXPECTED_EXPERIMENTS_HOME
     )  # The path chosen by the user should have been persisted in settings.
+
+
+def test_tab_enabled(main_widget) -> None:
+    """
+    Tests that the main widget enables the correct tabs when the experiment is applied.
+    """
+
+    # ARRANGE
+    main_widget._experiments_model.apply_experiment_name("foo")
+
+    # Sanity check
+    assert main_widget._view_container.isEnabled() == True
+
+    # ACT
+    main_widget._experiments_model.apply_experiment_name(None)
+
+    # ASSERT
+    assert main_widget._view_container.isEnabled() == False
+
+    # ACT
+    main_widget._experiments_model.apply_experiment_name("foo")
+
+    # Sanity check
+    assert main_widget._view_container.isEnabled() == True

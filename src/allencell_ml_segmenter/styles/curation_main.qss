@@ -19,6 +19,15 @@ QPushButton {
 
 #subtext {
     font-size: 10px;
+}
 
+#save_csv_btn {
+    background: #007ACC;
+    margin-top: 12px;
+    margin-bottom: 12px;
+}
 
+#text_with_vert_padding {
+    padding-top: 12px;
+    padding-bottom: 12px;
 }
