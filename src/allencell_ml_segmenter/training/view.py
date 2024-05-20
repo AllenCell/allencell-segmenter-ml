@@ -289,8 +289,8 @@ class TrainingView(View):
 
     def _patch_size_ok(self) -> bool:
         """
-        Gets patch sizes from the UI and sets it in the model.
-        Returns True if valid patch sizes were provided, false if not
+        Validates that user has defined all needed patch sizes in the UI
+        Returns True if all needed patch sizes were provided, False if not (and will show napari error message)
         """
         missing_patches: list[str] = []
 
