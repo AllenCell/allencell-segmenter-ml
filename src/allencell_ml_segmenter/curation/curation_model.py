@@ -210,7 +210,7 @@ class CurationModel(QObject):
                     self._seg2_directory_paths,
                 )
                 self._image_loader.signals.is_idle.connect(
-                    lambda: self.first_image_data_ready.emit()
+                    lambda: self.image_loading_finished.emit()
                 )
             else:
                 self._image_loader = None
