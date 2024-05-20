@@ -39,3 +39,10 @@ class FakeExperimentsModel(IExperimentsModel):
 
     def get_model_checkpoints_path(self) -> Path:
         return Path()
+
+    def get_metrics_csv_path(self) -> Path:
+        return Path()
+
+    def get_latest_metrics_csv_version(self) -> int:
+        pass
+
