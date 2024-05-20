@@ -319,9 +319,9 @@ class TrainingView(View):
 
     def _set_patch_size(self) -> None:
         self._training_model.set_patch_size(
-            int(self._z_patch_size.text()),
-            int(self._y_patch_size.text()),
-            int(self._x_patch_size.text())
+            [int(self._z_patch_size.text()),
+             int(self._y_patch_size.text()),
+             int(self._x_patch_size.text())]
         )
 
 
