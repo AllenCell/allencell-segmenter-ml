@@ -39,6 +39,7 @@ class SynchroTaskExecutor(ITaskExecutor):
         return cls._instance
 
     def stop_thread(self):
+        self.running = False
         self.on_finish()
 
     def is_worker_running(self) -> bool:
