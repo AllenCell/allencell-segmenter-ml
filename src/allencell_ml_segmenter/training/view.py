@@ -229,7 +229,7 @@ class TrainingView(View):
         Starts training process
         """
         if self._patch_size_ok():
-            self._set_patch_size()
+            self.set_patch_size()
 
             progress_tracker: MetricsCSVProgressTracker = (
                 MetricsCSVProgressTracker(
