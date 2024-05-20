@@ -1,7 +1,6 @@
 from typing import Dict, Union, Optional, List
 
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
-from allencell_ml_segmenter.prediction.model import PredictionModel
 from allencell_ml_segmenter.training.training_model import (
     TrainingModel,
     Hardware,
