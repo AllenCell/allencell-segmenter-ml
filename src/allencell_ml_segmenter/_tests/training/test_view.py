@@ -139,3 +139,25 @@ def test_set_model_size(
 
         # ASSERT
         assert training_model.get_model_size() == model_size
+
+def test_set_patch_size(
+        qtbot: QtBot, main_model: MainModel, experiments_model: FakeExperimentsModel, training_model: TrainingModel
+) -> None:
+    # ARRANGE
+    view: TrainingView = TrainingView(
+        main_model=main_model,
+        experiments_model=FakeExperimentsModel(),
+        training_model=training_model,
+        viewer=FakeViewer(),
+    )
+    view.z_patch_size.setText("1")
+    view.y_patch_size.setText("4")
+    view.x_patch_size.setText("12")
+
+    # ACT
+    view.set_patch_size()
+
+    # ASSERT
+    assert training_model.get_patch_size() == [1, 4, 12]
+
+
