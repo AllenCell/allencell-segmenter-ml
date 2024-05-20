@@ -35,7 +35,7 @@ class PatchSize(Enum):
     The 0th dimension is Z, which is not needed for 2d.
     """
 
-    SMALL = [1, 3, 3]
+    SMALL = [8, 8, 8]
     MEDIUM = [16, 32, 32]
     LARGE = [20, 40, 40]
 
@@ -74,7 +74,6 @@ class TrainingModel(Publisher):
         self._current_epoch: int = None
         self._max_time: int = None  # in minutes
         self._config_dir: Path = None
-        self.result_images = []
         self._max_channel = None
         self._use_max_time: bool = (
             False  # default is false. UI starts with max epoch defined rather than max time.
@@ -235,23 +234,6 @@ class TrainingModel(Publisher):
         Dispatches even to start training
         """
         self.dispatch(Event.PROCESS_TRAINING)
-
-    def dispatch_refresh(self) -> None:
-        self.experiments_model.dispatch(Event.ACTION_REFRESH)
-
-    def get_result_images(self) -> list:
-        """
-        Gets result images
-        """
-        return self.result_images
-
-    def set_result_images(self, images: list) -> None:
-        """
-        Sets result images
-
-        images (list): list of images to display
-        """
-        self.result_images = images
 
     def set_max_channel(self, max: int) -> None:
         """

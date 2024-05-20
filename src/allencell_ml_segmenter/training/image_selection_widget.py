@@ -98,7 +98,7 @@ class ImageSelectionWidget(QWidget):
         frame.layout().addWidget(self._channel_combo_box, 2, 1)
 
         self._experiments_model.subscribe(
-            Event.ACTION_EXPERIMENT_SELECTED, self, self.set_inputs_csv
+            Event.ACTION_EXPERIMENT_APPLIED, self, self.set_inputs_csv
         )
 
         self._model.subscribe(
@@ -108,19 +108,20 @@ class ImageSelectionWidget(QWidget):
         )
 
     def set_inputs_csv(self, event: Event):
-        csv_path = self._experiments_model.get_csv_path() / "train.csv"
-        if csv_path.is_file():
-            # if the csv exists
-            self._images_directory_input_button._text_display.setText(
-                str(self._experiments_model.get_csv_path())
-            )
-            # This also dispatches channel extraction
-            self._model.set_images_directory(
-                self._experiments_model.get_csv_path()
-            )
-        else:
-            self._images_directory_input_button._text_display.setText("")
-            self._model.set_images_directory(None)
+        if self._experiments_model.get_csv_path() is not None:
+            csv_path = self._experiments_model.get_csv_path() / "train.csv"
+            if csv_path.is_file():
+                # if the csv exists
+                self._images_directory_input_button._text_display.setText(
+                    str(self._experiments_model.get_csv_path())
+                )
+                # This also dispatches channel extraction
+                self._model.set_images_directory(
+                    self._experiments_model.get_csv_path()
+                )
+            else:
+                self._images_directory_input_button._text_display.setText("")
+                self._model.set_images_directory(None)
 
     def _on_input_images_select(self, dir: Path) -> None:
         self._set_to_loading(

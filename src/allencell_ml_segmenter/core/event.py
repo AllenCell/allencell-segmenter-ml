@@ -48,6 +48,7 @@ class Event(Enum):
     ACTION_CURATION_SEG2_CHANNELS_SET = "curation_seg2_channels_set"
     # Experiment related
     ACTION_EXPERIMENT_SELECTED = "experiment_selected"
+    ACTION_EXPERIMENT_APPLIED = "experiment_applied"
     ACTION_CURATION_DRAW_EXCLUDING = "curation_draw_excluding"
     ACTION_CURATION_FINISHED_DRAW_EXCLUDING = (
         "curation_finished_draw_excluding"
