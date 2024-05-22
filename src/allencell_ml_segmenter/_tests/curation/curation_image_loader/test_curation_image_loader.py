@@ -221,6 +221,7 @@ def test_prev_with_seg2():
     loader.next()
 
     assert loader.get_current_index() == 2
+    # calls to start and next (3 of these above) should each result in an is_idle event being emitted
     assert on_ready_mock.call_count == 3
     assert loader.get_raw_image_data().path == raw[2]
     assert loader.get_seg1_image_data().path == seg1[2]
@@ -229,6 +230,7 @@ def test_prev_with_seg2():
     assert loader.has_prev()
     loader.prev()
     assert loader.get_current_index() == 1
+    # calls to prev should also result in an is_idle event being emitted
     assert on_ready_mock.call_count == 4
     assert loader.get_raw_image_data().path == raw[1]
     assert loader.get_seg1_image_data().path == seg1[1]
@@ -262,6 +264,7 @@ def test_prev_without_seg2():
     loader.next()
 
     assert loader.get_current_index() == 2
+    # calls to start and next (3 of these above) should each result in an is_idle event being emitted
     assert on_ready_mock.call_count == 3
     assert loader.get_raw_image_data().path == raw[2]
     assert loader.get_seg1_image_data().path == seg1[2]
@@ -270,6 +273,7 @@ def test_prev_without_seg2():
     assert loader.has_prev()
     loader.prev()
     assert loader.get_current_index() == 1
+    # calls to prev should also result in an is_idle event being emitted
     assert on_ready_mock.call_count == 4
     assert loader.get_raw_image_data().path == raw[1]
     assert loader.get_seg1_image_data().path == seg1[1]
