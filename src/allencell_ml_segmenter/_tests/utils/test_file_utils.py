@@ -174,6 +174,10 @@ def test_write_curation_record_writes_to_disk(open_mock: MagicMock):
 def _get_curation_lists_from_mock_calls(
     mock_calls,
 ) -> Tuple[List[CurationRecord], List[CurationRecord], List[CurationRecord]]:
+    """
+    Given a list of the calls made to a mock of FileUtils._write_curation_csv, returns
+    the list of records provided for train.csv, test.csv, and val.csv respectively.
+    """
     train: List[CurationRecord] = None
     test: List[CurationRecord] = None
     val: List[CurationRecord] = None
@@ -190,6 +194,11 @@ def _get_curation_lists_from_mock_calls(
 
 
 def _append_default_record(cr: List[CurationRecord], to_use=True) -> None:
+    """
+    Given a list of records, appends a new record with file names determined
+    by the length of the existing curation record. :param to_use: controls
+    the to_use flag for the record.
+    """
     cr.append(
         CurationRecord(
             Path(f"raw_{len(cr)}"),
@@ -204,6 +213,10 @@ def _append_default_record(cr: List[CurationRecord], to_use=True) -> None:
 
 
 def test_write_curation_record_split_sizes():
+    """
+    Test that the split sizes are as expected for curation records
+    of different lengths.
+    """
     fake_csv_path: Path = Path("fakecsv")
     fake_mask_path: Path = Path("fakemask")
 
@@ -283,12 +296,18 @@ def test_write_curation_record_split_sizes():
 
 
 def test_write_curation_record_includes_only_selected_images():
+    """
+    Test that images marked as not to_use are not included in the records
+    to be written.
+    """
     fake_csv_path: Path = Path("fakecsv")
     fake_mask_path: Path = Path("fakemask")
 
     fake_curation_record: List[CurationRecord] = []
     for _ in range(20):
         _append_default_record(fake_curation_record)
+    # expect that these additional 10 images will not add to the total number of images
+    # since they are marked as not to_use
     for _ in range(10):
         _append_default_record(fake_curation_record, to_use=False)
 
@@ -307,6 +326,10 @@ def test_write_curation_record_includes_only_selected_images():
 
 
 def test_write_curation_record_does_not_include_duplicates():
+    """
+    Test that the records in train and val are mutually exclusive. And that there
+    are no duplicates within train or val. Uses raw image path as an id for records.
+    """
     fake_csv_path: Path = Path("fakecsv")
     fake_mask_path: Path = Path("fakemask")
 
@@ -333,6 +356,10 @@ def test_write_curation_record_does_not_include_duplicates():
 
 
 def test_write_curation_record_test_val_same():
+    """
+    Test that the records in val and test are the same.
+    Uses raw image path as an id for records.
+    """
     fake_csv_path: Path = Path("fakecsv")
     fake_mask_path: Path = Path("fakemask")
 
