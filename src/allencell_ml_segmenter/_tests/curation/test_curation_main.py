@@ -210,6 +210,8 @@ def test_next_image(
     env.view.next_button.click()
 
     # Assert
+    # one finished signal should be emitted after 'start_loading_images', the other should be emitted
+    # after clicking the next button
     assert loading_finished_mock.call_count == 2
     assert env.view.progress_bar.value() == 2
 
@@ -252,6 +254,8 @@ def test_last_image(
     env.view.next_button.click()
 
     # Assert
+    # one finished signal should be emitted after 'start_loading_images', and one
+    # should be emitted after clicking the next button (which we do twice)
     assert loading_finished_mock.call_count == 3
     assert env.view.progress_bar.value() == 3
 
