@@ -71,7 +71,7 @@ class CurationImageLoader(ICurationImageLoader):
 
     def _get_placeholder_dict(self) -> Dict[str, Optional[ImageData]]:
         """
-        Returns placeholder image data dict with keys mapped to None. Necessary to use 
+        Returns placeholder image data dict with keys mapped to None. Necessary to use
         placeholders instead of empty dicts so that calls to _wait_on_data_dicts will not
         hang infinitely when there is no next or no prev.
         """
