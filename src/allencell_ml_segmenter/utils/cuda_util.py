@@ -2,8 +2,6 @@ import multiprocessing
 import torch
 import platform
 
-from allencell_ml_segmenter.training.training_model import Hardware
-
 
 class CUDAUtils:
 
