@@ -322,8 +322,7 @@ class CurationModel(QObject):
         """
         Must be called before attempting to get image data.
         Signals emitted:
-        first_image_data_ready (always)
-        next_image_data_ready (if there is > 1 image)
+        image_loading_finished
         """
         if self._image_loader is None:
             raise RuntimeError(
@@ -332,6 +331,11 @@ class CurationModel(QObject):
         self._image_loader.start()
 
     def next_image(self) -> None:
+        """
+        Move to the next image for curation.
+        Signals emitted:
+        image_loading_finished
+        """
         if self._image_loader.is_busy():
             raise RuntimeError(
                 "Image loader is busy. Please see image_data_ready signal."
