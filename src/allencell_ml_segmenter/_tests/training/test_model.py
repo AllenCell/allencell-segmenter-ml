@@ -8,7 +8,6 @@ from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.training.training_model import (
     TrainingModel,
     TrainingType,
-    Hardware,
 )
 
 
@@ -57,32 +56,6 @@ def test_set_experiment_type_invalid_experiment(
     # ACT
     with pytest.raises(ValueError):
         training_model.set_experiment_type("invalid_experiment")
-
-
-def test_get_hardware_type(training_model: TrainingModel) -> None:
-    """
-    Tests that get_hardware_type returns the correct hardware type.
-    """
-    # ASSERT
-    assert training_model.get_hardware_type() is None
-
-    # ARRANGE
-    hardware: Hardware = Hardware("cpu")
-    training_model._hardware_type = hardware
-
-    # ACT/ASSERT
-    assert training_model.get_hardware_type() == hardware
-
-
-def test_set_hardware_type(training_model: TrainingModel) -> None:
-    """
-    Tests that set_hardware_type sets the correct hardware type.
-    """
-    # ACT
-    training_model.set_hardware_type("gpu")
-
-    # ASSERT
-    assert training_model._hardware_type == Hardware("gpu")
 
 
 def test_get_image_dims(training_model: TrainingModel) -> None:

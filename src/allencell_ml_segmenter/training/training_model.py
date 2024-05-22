@@ -20,15 +20,6 @@ class TrainingType(Enum):
     SKOOTS = "skoots"
 
 
-class Hardware(Enum):
-    """
-    Hardware, "cpu" or "gpu"
-    """
-
-    CPU = "cpu"
-    GPU = "gpu"
-
-
 class ModelSize(Enum):
     """
     Model size for training, and their respective filters overrides
@@ -51,7 +42,6 @@ class TrainingModel(Publisher):
         self._main_model = main_model
         self.experiments_model = experiments_model
         self._experiment_type: TrainingType = None
-        self._hardware_type: Hardware = None
         self._images_directory: Path = None
         self._channel_index: Union[int, None] = None
         self._model_path: Union[Path, None] = (
@@ -85,21 +75,6 @@ class TrainingModel(Publisher):
         """
         # convert string to enum
         self._experiment_type = TrainingType(training_type)
-
-    def get_hardware_type(self) -> Hardware:
-        """
-        Gets hardware type
-        """
-        return self._hardware_type
-
-    def set_hardware_type(self, hardware_type: str) -> None:
-        """
-        Sets hardware type
-
-        hardware_type (Path): what hardware to train on, "cpu" or "gpu"
-        """
-        # convert string to enum
-        self._hardware_type = Hardware(hardware_type.lower())
 
     def get_spatial_dims(self) -> int:
         """

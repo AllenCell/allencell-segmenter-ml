@@ -36,7 +36,6 @@ def experiments_model() -> ExperimentsModel:
 def training_model(experiments_model: ExperimentsModel) -> TrainingModel:
     model: TrainingModel = TrainingModel(MainModel(), experiments_model)
     model.set_experiment_type("segmentation")
-    model.set_hardware_type("cpu")
     model.set_spatial_dims(3)
     model.set_images_directory("/path/to/images")
     model.set_channel_index(9)
@@ -59,12 +58,6 @@ def test_get_training_overrides(
 
     training_overrides: Dict[str, Union[str, int, float, bool, Dict]] = (
         cyto_overrides_manager.get_training_overrides()
-    )
-
-    # ASSERT
-    assert (
-        training_overrides["trainer.accelerator"]
-        == training_model.get_hardware_type().value
     )
 
     assert (
@@ -104,7 +97,6 @@ def test_get_training_overrides_2d_spatial_dims(experiments_model) -> None:
     # Arrange
     model: TrainingModel = TrainingModel(MainModel(), experiments_model)
     model.set_experiment_type("segmentation")
-    model.set_hardware_type("cpu")
     model.set_images_directory("/path/to/images")
     model.set_channel_index(9)
     model.set_use_max_time(True)

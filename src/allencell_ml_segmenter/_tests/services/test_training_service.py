@@ -37,7 +37,6 @@ def experiments_model() -> ExperimentsModel:
 def training_model(experiments_model: ExperimentsModel) -> TrainingModel:
     model: TrainingModel = TrainingModel(MainModel(), experiments_model)
     model.set_experiment_type("segmentation")
-    model.set_hardware_type("cpu")
     model.set_spatial_dims(2)
     model.set_images_directory("/path/to/images")
     model.set_channel_index(9)
