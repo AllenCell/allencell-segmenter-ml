@@ -16,7 +16,7 @@ class CUDAUtils:
         return torch.cuda.is_available()
 
     @staticmethod
-    def get_num_workers(hardware_used: Hardware) -> int:
+    def get_num_workers() -> int:
         """
         Get the number of available cpu cores on this machine
         """
@@ -24,7 +24,7 @@ class CUDAUtils:
         # On MACOS we cannot set num_workers no matter what.
         # On CPU, increasing num_workers will offer no performance increase
         #   as dataloading is not the bottleneck
-        if platform.system() == "Darwin" or hardware_used == Hardware.CPU:
+        if platform.system() == "Darwin" or not CUDAUtils.cuda_available():
             return 0
         # For Windows/Linux:
         # We set num_workers to 1 for GPU runs

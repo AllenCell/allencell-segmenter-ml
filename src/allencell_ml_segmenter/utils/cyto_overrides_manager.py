@@ -37,14 +37,12 @@ class CytoDLOverridesManager:
         )
 
         # Hardware override (required)
-        hardware_used = self._training_model.get_hardware_type()
-        overrides_dict["trainer.accelerator"] = "cpu"
-        if hardware_used == Hardware.GPU:
+        if CUDAUtils.cuda_available():
             overrides_dict["trainer.accelerator"] = "gpu"
+        else:
+            overrides_dict["trainer.accelerator"] = "cpu"
 
-        overrides_dict["data.num_workers"] = CUDAUtils.get_num_workers(
-            hardware_used
-        )
+        overrides_dict["data.num_workers"] = CUDAUtils.get_num_workers()
 
         # Spatial Dims (required)
         dims: int = self._training_model.get_spatial_dims()
