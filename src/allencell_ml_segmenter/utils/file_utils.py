@@ -69,7 +69,7 @@ class FileUtils:
             test, csv_dir_path / "test.csv", mask_dir_path
         )
         FileUtils._write_curation_csv(
-            test, csv_dir_path / "valid.csv", mask_dir_path
+            test, csv_dir_path / "val.csv", mask_dir_path
         )
 
     @staticmethod
