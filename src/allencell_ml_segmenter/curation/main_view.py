@@ -240,11 +240,9 @@ class CurationMainView(View):
         self._use_img_stacked_spinner.start()
 
     def _on_image_loading_finished(self) -> None:
-        print("img loading finished")
         self._enable_next_button()
 
     def _on_first_image_loading_finished(self) -> None:
-        print("first img loading finished")
         self._use_img_stacked_spinner.stop()
         self._update_progress_bar()
         self._add_curr_images_to_widget()
