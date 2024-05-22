@@ -70,6 +70,11 @@ class CurationImageLoader(ICurationImageLoader):
         return self._is_busy
 
     def _get_placeholder_dict(self) -> Dict[str, Optional[ImageData]]:
+        """
+        Returns placeholder image data dict with keys mapped to None. Necessary to use 
+        placeholders instead of empty dicts so that calls to _wait_on_data_dicts will not
+        hang infinitely when there is no next or no prev.
+        """
         return (
             {"raw": None, "seg1": None}
             if self._num_data_dict_keys == 2
