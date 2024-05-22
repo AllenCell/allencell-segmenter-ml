@@ -105,6 +105,7 @@ class CurationImageLoader(ICurationImageLoader):
         Same pattern applies for current and next images. Emits images_ready signal when all extractions are
         completed.
         """
+        # start extraction for individual images here
         if prev:
             self._start_extraction_threads(
                 self._cursor - 1, self._prev_img_data
@@ -116,6 +117,7 @@ class CurationImageLoader(ICurationImageLoader):
                 self._cursor + 1, self._next_img_data
             )
 
+        # start monitor thread here
         if any([prev, curr, next]):
             self._is_busy = True
             # this is thread safe due to GIL: https://docs.python.org/3/glossary.html#term-global-interpreter-lock
