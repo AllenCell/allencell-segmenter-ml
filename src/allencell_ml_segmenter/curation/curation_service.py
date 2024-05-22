@@ -103,6 +103,10 @@ class CurationService(QObject):
             on_error=self._on_seg2_dir_errored,
         )
 
+    def _on_save_to_disk_error(self, err: Exception) -> None:
+        self._curation_model.set_curation_record_saved_to_disk(False)
+        raise err
+
     def _on_save_to_disk(self) -> None:
         record: List[CurationRecord] = deepcopy(
             self._curation_model.get_curation_record()
@@ -116,4 +120,5 @@ class CurationService(QObject):
             on_finish=lambda: self._curation_model.set_curation_record_saved_to_disk(
                 True
             ),
+            on_error=self._on_save_to_disk_error,
         )
