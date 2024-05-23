@@ -85,6 +85,11 @@ def test_get_training_overrides(
         == training_model.get_patch_size()
     )
 
+    assert (
+        training_overrides["input_channel"]
+        == training_model.get_channel_index()
+    )
+
 
 def test_get_training_overrides_2d_spatial_dims(experiments_model) -> None:
     # Arrange
