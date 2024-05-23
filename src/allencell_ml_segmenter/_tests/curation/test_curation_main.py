@@ -532,7 +532,7 @@ def test_curation_record_on_next(
     assert record.seg1 == IMG_DIR_FILES[0]
     assert record.seg2 == IMG_DIR_FILES[0]
     assert record.raw_file == IMG_DIR_FILES[0]
-    assert record.base_image_index == merging_base
+    assert record.base_image == merging_base
 
     # Act
     env.view.no_radio.click()
@@ -547,7 +547,7 @@ def test_curation_record_on_next(
     assert record.seg1 == IMG_DIR_FILES[1]
     assert record.seg2 == IMG_DIR_FILES[1]
     assert record.raw_file == IMG_DIR_FILES[1]
-    assert record.base_image_index == "seg1"  # should default to seg1
+    assert record.base_image == "seg1"  # should default to seg1
 
     # Act
     env.view.yes_radio.click()
@@ -566,7 +566,7 @@ def test_curation_record_on_next(
     assert record.seg1 == IMG_DIR_FILES[2]
     assert record.seg2 == IMG_DIR_FILES[2]
     assert record.raw_file == IMG_DIR_FILES[2]
-    assert record.base_image_index == merging_base
+    assert record.base_image == merging_base
 
 
 def test_curation_record_on_save(
@@ -594,7 +594,7 @@ def test_curation_record_on_save(
     assert record.seg1 == IMG_DIR_FILES[0]
     assert record.seg2 == IMG_DIR_FILES[0]
     assert record.raw_file == IMG_DIR_FILES[0]
-    assert record.base_image_index == env.view.merging_base_combo.currentText()
+    assert record.base_image == env.view.merging_base_combo.currentText()
 
     # Act
     env.model.saved_to_disk.emit()  # necessary in order to re-enable save csv button
@@ -610,4 +610,4 @@ def test_curation_record_on_save(
     assert record.seg1 == IMG_DIR_FILES[0]
     assert record.seg2 == IMG_DIR_FILES[0]
     assert record.raw_file == IMG_DIR_FILES[0]
-    assert record.base_image_index == env.view.merging_base_combo.currentText()
+    assert record.base_image == env.view.merging_base_combo.currentText()
