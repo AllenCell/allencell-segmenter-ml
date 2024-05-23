@@ -85,11 +85,9 @@ def test_get_training_overrides(
         == training_model.get_patch_size()
     )
 
-    assert training_overrides["ckpt_path"] == str(
-        experiments_model.get_model_checkpoints_path(
-            experiments_model.get_experiment_name(),
-            experiments_model.get_checkpoint(),
-        )
+    assert (
+        training_overrides["input_channel"]
+        == training_model.get_channel_index()
     )
 
 
@@ -98,8 +96,8 @@ def test_get_training_overrides_2d_spatial_dims(experiments_model) -> None:
     model: TrainingModel = TrainingModel(MainModel(), experiments_model)
     model.set_experiment_type("segmentation")
     model.set_images_directory("/path/to/images")
-    model.set_channel_index(9)
     model.set_use_max_time(True)
+    model.set_channel_index(0)  # set to 0 if 2d image loaded
     model.set_max_time(9992)
     model.set_config_dir("/path/to/configs")
     model.set_num_epochs(100)
@@ -119,6 +117,7 @@ def test_get_training_overrides_2d_spatial_dims(experiments_model) -> None:
     # Assert
     assert len(training_overrides["data._aux.patch_shape"]) == 2
     assert training_overrides["data._aux.patch_shape"] == [4, 8]
+    assert training_overrides["input_channel"] == 0
 
 
 def test_max_epochs_no_existing_ckpt(
