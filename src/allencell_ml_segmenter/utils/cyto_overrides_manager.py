@@ -70,19 +70,26 @@ class CytoDLOverridesManager:
             self._training_model.get_images_directory()
         )
 
-        # Checkpoint (optional)
-        if self._experiments_model.get_checkpoint() is not None:
-            # We are going to continue training on an existing model
-            overrides_dict["ckpt_path"] = str(
-                self._experiments_model.get_model_checkpoints_path(
-                    self._experiments_model.get_experiment_name(),
-                    self._experiments_model.get_checkpoint(),
-                )
-            )
+        # Commented out 5/23 brian.kim
+        # We no longer support training from a old checkpoint- leaving this in if we want to re-enable this in the
+        # future to continue training from an existing checkpoint.
+        # if self._experiments_model.get_checkpoint() is not None:
+        #     # We are going to continue training on an existing model
+        #     overrides_dict["ckpt_path"] = str(
+        #         self._experiments_model.get_model_checkpoints_path(
+        #             self._experiments_model.get_experiment_name(),
+        #             self._experiments_model.get_checkpoint(),
+        #         )
+        #     )
 
         # Filters/Model Size (required)
         overrides_dict["model._aux.filters"] = (
             self._training_model.get_model_size().value
+        )
+
+        # Channel Override
+        overrides_dict["input_channel"] = (
+            self._training_model.get_channel_index()
         )
 
         return overrides_dict
