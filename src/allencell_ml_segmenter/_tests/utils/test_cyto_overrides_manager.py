@@ -97,7 +97,7 @@ def test_get_training_overrides_2d_spatial_dims(experiments_model) -> None:
     model.set_experiment_type("segmentation")
     model.set_images_directory("/path/to/images")
     model.set_use_max_time(True)
-    model.set_channel_index(0) # set to 0 if 2d image loaded
+    model.set_channel_index(0)  # set to 0 if 2d image loaded
     model.set_max_time(9992)
     model.set_config_dir("/path/to/configs")
     model.set_num_epochs(100)
