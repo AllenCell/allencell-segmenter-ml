@@ -85,4 +85,7 @@ class CytoDLOverridesManager:
             self._training_model.get_model_size().value
         )
 
+        # Channel Override
+        overrides_dict["input_channel"] = self._training_model.get_channel_index()
+
         return overrides_dict
