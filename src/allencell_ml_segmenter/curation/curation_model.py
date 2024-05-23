@@ -7,10 +7,6 @@ from qtpy.QtCore import Signal, QObject
 
 from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
-from allencell_ml_segmenter.curation.curation_image_loader import (
-    ICurationImageLoader,
-    ICurationImageLoaderFactory,
-)
 from allencell_ml_segmenter.core.image_data_extractor import ImageData
 
 
@@ -126,6 +122,8 @@ class CurationModel(QObject):
                 self._curation_record_saved_to_disk = False
             else:
                 self._curation_record = None
+                self._curr_img_data = None
+                self._next_img_data = None
             self._current_view = view
             self.current_view_changed.emit()
 
@@ -177,12 +175,15 @@ class CurationModel(QObject):
 
     def has_next_image(self) -> bool:
         return self._cursor + 1 < self.get_num_images()
-
+    
+    def is_loading_curr_images(self) -> bool:
+        return len(self._curr_img_data) != self._get_num_data_dict_keys()
+    
+    def is_loading_next_images(self) -> bool:
+        return len(self._next_img_data) != self._get_num_data_dict_keys()
+    
     def is_loading_images(self) -> bool:
-        return (
-            len(self._curr_img_data) != self._get_num_data_dict_keys()
-            or len(self._next_img_data) != self._get_num_data_dict_keys()
-        )
+        return self.is_loading_curr_images() or self.is_loading_next_images()
 
     def start_loading_images(self) -> None:
         """
