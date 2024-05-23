@@ -9,6 +9,7 @@ from unittest.mock import patch, mock_open, MagicMock
 import builtins
 from typing import List, Set, Tuple
 import numpy as np
+import platform
 
 
 def test_get_all_files_in_dir() -> None:
@@ -163,12 +164,23 @@ def test_write_curation_record_writes_to_disk(open_mock: MagicMock):
     open_mock.assert_any_call(fake_csv_path / "val.csv", "w")
 
     # for some reason, np.save(path: Path) ends up calling open with a str instead of a path
-    open_mock.assert_any_call(
-        f"{str(fake_mask_path)}/excluding_masks/excluding_mask_raw_1.npy", "wb"
-    )
-    open_mock.assert_any_call(
-        f"{str(fake_mask_path)}/merging_masks/merging_mask_raw_5.npy", "wb"
-    )
+    # this means we need to account for backslash vs forward slash in file names
+    if platform.system() == "Windows":
+        open_mock.assert_any_call(
+            f"{str(fake_mask_path)}\excluding_masks\excluding_mask_raw_1.npy",
+            "wb",
+        )
+        open_mock.assert_any_call(
+            f"{str(fake_mask_path)}\merging_masks\merging_mask_raw_5.npy", "wb"
+        )
+    else:
+        open_mock.assert_any_call(
+            f"{str(fake_mask_path)}/excluding_masks/excluding_mask_raw_1.npy",
+            "wb",
+        )
+        open_mock.assert_any_call(
+            f"{str(fake_mask_path)}/merging_masks/merging_mask_raw_5.npy", "wb"
+        )
 
 
 def _get_curation_lists_from_mock_calls(
