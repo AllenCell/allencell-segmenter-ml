@@ -249,7 +249,7 @@ def test_save_curation_record_with_seg2(curation_model: CurationModel) -> None:
     assert record.raw_file == Path("r1")
     assert record.seg1 == Path("s11")
     assert record.seg2 == Path("s21")
-    assert record.base_image_index == "seg1"
+    assert record.base_image == "seg1"
     assert record.to_use
     assert np.array_equal(record.merging_mask, np.asarray([[1, 2], [3, 4]]))
     assert np.array_equal(record.excluding_mask, np.asarray([[2, 3], [4, 5]]))
@@ -268,7 +268,7 @@ def test_save_curation_record_with_seg2(curation_model: CurationModel) -> None:
     assert record.raw_file == Path("r2")
     assert record.seg1 == Path("s12")
     assert record.seg2 == Path("s22")
-    assert record.base_image_index == "seg2"
+    assert record.base_image == "seg2"
     assert not record.to_use
     assert np.array_equal(record.merging_mask, np.asarray([[3, 4], [5, 6]]))
     assert np.array_equal(record.excluding_mask, np.asarray([[4, 5], [6, 7]]))
@@ -287,7 +287,7 @@ def test_save_curation_record_with_seg2(curation_model: CurationModel) -> None:
     assert record.raw_file == Path("r3")
     assert record.seg1 == Path("s13")
     assert record.seg2 == Path("s23")
-    assert record.base_image_index == "seg1"
+    assert record.base_image == "seg1"
     assert record.to_use
     assert record.merging_mask is None
     assert np.array_equal(record.excluding_mask, np.asarray([[5, 6], [7, 8]]))
@@ -317,7 +317,7 @@ def test_save_curation_record_without_seg2(
     assert record.raw_file == Path("r1")
     assert record.seg1 == Path("s11")
     assert record.seg2 is None
-    assert record.base_image_index == "seg1"
+    assert record.base_image == "seg1"
     assert record.to_use
     assert record.merging_mask is None
     assert np.array_equal(record.excluding_mask, np.asarray([[2, 3], [4, 5]]))
@@ -334,7 +334,7 @@ def test_save_curation_record_without_seg2(
     assert record.raw_file == Path("r2")
     assert record.seg1 == Path("s12")
     assert record.seg2 is None
-    assert record.base_image_index == "seg1"
+    assert record.base_image == "seg1"
     assert not record.to_use
     assert record.merging_mask is None
     assert np.array_equal(record.excluding_mask, np.asarray([[4, 5], [6, 7]]))
@@ -357,7 +357,7 @@ def test_save_curation_record_without_seg2(
     assert record.raw_file == Path("r3")
     assert record.seg1 == Path("s13")
     assert record.seg2 is None
-    assert record.base_image_index == "seg1"
+    assert record.base_image == "seg1"
     assert record.to_use
     assert record.merging_mask is None
     assert np.array_equal(record.excluding_mask, np.asarray([[5, 6], [7, 8]]))
@@ -425,7 +425,7 @@ def test_save_curation_record_overwrite(curation_model: CurationModel) -> None:
     assert record.raw_file == Path("r1")
     assert record.seg1 == Path("s11")
     assert record.seg2 == Path("s21")
-    assert record.base_image_index == "seg2"
+    assert record.base_image == "seg2"
     assert not record.to_use
     assert np.array_equal(record.merging_mask, np.asarray([[3, 4], [5, 6]]))
     assert np.array_equal(record.excluding_mask, np.asarray([[4, 5], [6, 7]]))
