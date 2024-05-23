@@ -17,7 +17,7 @@ from allencell_ml_segmenter.core.dialog_box import DialogBox
 from allencell_ml_segmenter._style import Style
 from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.main.viewer import IViewer
-from allencell_ml_segmenter.curation.curation_model import CurationModel
+from allencell_ml_segmenter.curation.curation_model import CurationModel, CurationImageType
 from allencell_ml_segmenter.core.image_data_extractor import ImageData
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 from allencell_ml_segmenter.curation.stacked_spinner import StackedSpinner
@@ -266,17 +266,17 @@ class CurationMainView(View):
         self.next_button.setText("Loading next...")
 
     def _add_curr_images_to_widget(self) -> None:
-        raw_img_data: ImageData = self._curation_model.get_raw_image_data()
+        raw_img_data: ImageData = self._curation_model.get_curr_image_data(CurationImageType.RAW)
         self._viewer.add_image(
             raw_img_data.np_data, f"[raw] {raw_img_data.path.name}"
         )
-        seg1_img_data: ImageData = self._curation_model.get_seg1_image_data()
+        seg1_img_data: ImageData = self._curation_model.get_curr_image_data(CurationImageType.SEG1)
         self._viewer.add_image(
             seg1_img_data.np_data, f"[seg1] {seg1_img_data.path.name}"
         )
-        if self._curation_model.get_seg2_image_data() is not None:
+        if self._curation_model.has_seg2_data():
             seg2_img_data: ImageData = (
-                self._curation_model.get_seg2_image_data()
+                self._curation_model.get_curr_image_data(CurationImageType.SEG2)
             )
             self._viewer.add_image(
                 seg2_img_data.np_data, f"[seg2] {seg2_img_data.path.name}"
@@ -292,7 +292,6 @@ class CurationMainView(View):
         Advance to next image set.
         """
         self._viewer.clear_layers()
-        self._curation_model.save_curr_curation_record()
 
         # NOTE: this logic is kinda complicated, maybe worth a rethink when there's more time
         if self._curation_model.has_next_image():
@@ -316,7 +315,6 @@ class CurationMainView(View):
         self._update_progress_bar()
 
     def _on_save_curation_csv(self) -> None:
-        self._curation_model.save_curr_curation_record()
         self._curation_model.save_curr_curation_record_to_disk()
         self.save_csv_button.setEnabled(False)
 
@@ -481,7 +479,7 @@ class CurationMainView(View):
         self.disable_excluding_mask_buttons()
 
     def enable_valid_masks(self) -> None:
-        if self._curation_model.get_seg2_image_data() is not None:
+        if self._curation_model.has_seg2_data():
             self.enable_merging_mask_buttons()
         else:
             self.disable_merging_mask_buttons()
