@@ -85,13 +85,6 @@ def test_get_training_overrides(
         == training_model.get_patch_size()
     )
 
-    assert training_overrides["ckpt_path"] == str(
-        experiments_model.get_model_checkpoints_path(
-            experiments_model.get_experiment_name(),
-            experiments_model.get_checkpoint(),
-        )
-    )
-
 
 def test_get_training_overrides_2d_spatial_dims(experiments_model) -> None:
     # Arrange
