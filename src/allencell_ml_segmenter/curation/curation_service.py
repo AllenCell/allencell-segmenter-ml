@@ -50,7 +50,7 @@ class CurationService(QObject):
 
     def _on_dir_data_extracted(self, img_type: CurationImageType, dir_data: Tuple[List[Path], int]) -> None:
         self._curation_model.set_image_directory_paths(img_type, dir_data[0])
-        self._curation_model.set_channel_count(dir_data[1])
+        self._curation_model.set_channel_count(img_type, dir_data[1])
     
     def _on_dir_data_errored(self, img_type: CurationImageType, e: Exception) -> None:
         self._curation_model.set_channel_count(img_type, 0)

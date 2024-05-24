@@ -25,7 +25,7 @@ from allencell_ml_segmenter.main.segmenter_layer import ShapesLayer
 from allencell_ml_segmenter.core.info_dialog_box import InfoDialogBox
 
 
-from napari.utils.notifications import show_info
+from napari.utils.notifications import show_info, show_warning
 from copy import deepcopy
 
 MERGING_MASK_LAYER_NAME: str = "Merging Mask"
@@ -293,7 +293,6 @@ class CurationMainView(View):
         """
         self._viewer.clear_layers()
 
-        # NOTE: this logic is kinda complicated, maybe worth a rethink when there's more time
         if self._curation_model.has_next_image():
             self._set_next_button_to_loading()
             self._curation_model.next_image()
@@ -318,9 +317,12 @@ class CurationMainView(View):
         self._curation_model.save_curr_curation_record_to_disk()
         self.save_csv_button.setEnabled(False)
 
-    def _on_saved_to_disk(self) -> None:
+    def _on_saved_to_disk(self, save_successful: bool) -> None:
         self.save_csv_button.setEnabled(True)
-        show_info("Current progress saved to CSV")
+        if save_successful:
+            show_info("Current progress saved to CSV")
+        else:
+            show_warning("Failed to save current progress to CSV")
 
     def disable_merging_mask_buttons(self):
         """
