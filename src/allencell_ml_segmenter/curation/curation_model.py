@@ -42,7 +42,6 @@ class CurationModel(QObject):
     ) -> None:
         super().__init__()
         # should always start at input view
-
         self._experiments_model: ExperimentsModel = experiments_model
         self._current_view: CurationView = CurationView.INPUT_VIEW
 
@@ -57,7 +56,6 @@ class CurationModel(QObject):
         self._curation_record: Optional[List[CurationRecord]] = None
         # None until start_image_loading is called
         self._cursor: Optional[int] = None
-        self._curation_record_saved_to_disk: bool = False
 
         # private invariant: _next_img_data will only have < self._get_num_data_dict_keys() keys if
         # a thread is currently updating _next_img_data. Same goes for curr
@@ -162,7 +160,7 @@ class CurationModel(QObject):
         if not self.is_loading_images():
             self.image_loading_finished.emit()
     
-    # note: I don't see a reason why the client would need to get the next image data instead of
+    # note: I don't see a reason why we would need to get the next image data instead of
     # calling next_image, so leaving that out
     def has_seg2_data(self) -> bool:
         return self._img_dir_paths[CurationImageType.SEG2] is not None
@@ -189,7 +187,8 @@ class CurationModel(QObject):
         """
         Must be called before attempting to get image data.
         Signals emitted:
-        cursor_moved
+        immediate: cursor_moved
+        at some point: image_loading_finished
         """
         self._cursor = 0
         # need to set use image to true since we want this to be the default
@@ -203,29 +202,28 @@ class CurationModel(QObject):
         """
         Move to the next image for curation.
         Signals emitted:
-        cursor_moved
+        immediate: cursor_moved
+        at some point: image_loading_finished
         """
         if self.is_loading_images():
             raise RuntimeError(
                 "Image loader is busy. Please see image_loading_finished signal."
             )
         self._curr_img_data = self._next_img_data
-        self._next_img_data = {}
         self._cursor += 1
+        self._next_img_data = {} if self.has_next_image() else self._get_placeholder_dict(incl_seg2=self.has_seg2_data())
         # need to set use image to true since we want this to be the default
         self.set_use_image(True)
         self.cursor_moved.emit()
+        # client expects that calling next will eventually result in a image_loading_finished signal
+        if not self.has_next_image():
+            self.image_loading_finished.emit()
 
     def set_curation_record_saved_to_disk(self, saved: bool) -> None:
-        self._curation_record_saved_to_disk = saved
         self.saved_to_disk.emit(saved)
 
-    def get_curation_record_saved_to_disk(self) -> bool:
-        return self._curation_record_saved_to_disk
-
     def save_curr_curation_record_to_disk(self) -> None:
-        if not self._curation_record_saved_to_disk:
-            self.save_to_disk_requested.emit()
+        self.save_to_disk_requested.emit()
 
     def get_csv_path(self) -> Path:
         return (
@@ -236,6 +234,10 @@ class CurationModel(QObject):
         )
 
     def _generate_new_curation_record(self) -> List[CurationRecord]:
+        """
+        Returns a list of curation records populated with the file paths in self._img_dir_paths. See
+        CurationRecord constructor below for the default values.
+        """
         raw_paths: List[Path] = self._img_dir_paths[CurationImageType.RAW]
         seg1_paths: List[Path] = self._img_dir_paths[CurationImageType.SEG1]
         seg2_paths: Optional[List[Path]] = self._img_dir_paths[CurationImageType.SEG2]
