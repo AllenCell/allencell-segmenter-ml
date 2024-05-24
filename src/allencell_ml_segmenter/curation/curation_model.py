@@ -209,6 +209,9 @@ class CurationModel(QObject):
             raise RuntimeError(
                 "Image loader is busy. Please see image_loading_finished signal."
             )
+        if not self.has_next_image():
+            raise RuntimeError("No next image available")
+        
         self._curr_img_data = self._next_img_data
         self._cursor += 1
         self._next_img_data = {} if self.has_next_image() else self._get_placeholder_dict(incl_seg2=self.has_seg2_data())
