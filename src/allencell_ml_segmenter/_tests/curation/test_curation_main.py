@@ -11,13 +11,12 @@ from allencell_ml_segmenter.curation.curation_model import (
     CurationModel,
     CurationView,
     CurationRecord,
+    CurationImageType,
 )
 from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
     FakeExperimentsModel,
 )
-from allencell_ml_segmenter.curation.curation_image_loader import (
-    FakeCurationImageLoaderFactory,
-)
+from allencell_ml_segmenter.core.image_data_extractor import ImageData
 import allencell_ml_segmenter
 
 from pytestqt.qtbot import QtBot
@@ -34,6 +33,7 @@ IMG_DIR_PATH = (
 )
 
 IMG_DIR_FILES = [path for path in IMG_DIR_PATH.iterdir()]
+FAKE_IMG_DATA = [ImageData(28, 28, 28, 4, None, path) for path in IMG_DIR_FILES]
 
 
 @dataclass
@@ -45,14 +45,13 @@ class TestEnvironment:
 
 @pytest.fixture
 def test_environment_with_seg2() -> TestEnvironment:
-    curation_model: CurationModel = CurationModel(
-        FakeExperimentsModel(), FakeCurationImageLoaderFactory()
-    )
+    curation_model: CurationModel = CurationModel(FakeExperimentsModel())
 
-    curation_model.set_raw_directory_paths(IMG_DIR_FILES)
-    curation_model.set_seg1_directory_paths(IMG_DIR_FILES)
-    curation_model.set_seg2_directory_paths(IMG_DIR_FILES)
+    curation_model.set_image_directory_paths(CurationImageType.RAW, IMG_DIR_FILES)
+    curation_model.set_image_directory_paths(CurationImageType.SEG1, IMG_DIR_FILES)
+    curation_model.set_image_directory_paths(CurationImageType.SEG2, IMG_DIR_FILES)
     curation_model.set_current_view(CurationView.MAIN_VIEW)
+    curation_model.start_loading_images()
 
     viewer: IViewer = FakeViewer()
     main_view: CurationMainView = CurationMainView(curation_model, viewer)
@@ -63,16 +62,26 @@ def test_environment_with_seg2() -> TestEnvironment:
         main_view,
     )
 
+@pytest.fixture
+def test_environment_first_images_ready(test_environment_with_seg2: TestEnvironment) -> TestEnvironment:
+    env: TestEnvironment = test_environment_with_seg2
+    env.model.set_curr_image_data(CurationImageType.RAW, FAKE_IMG_DATA[0])
+    env.model.set_curr_image_data(CurationImageType.SEG1, FAKE_IMG_DATA[0])
+    env.model.set_curr_image_data(CurationImageType.SEG2, FAKE_IMG_DATA[0])
+
+    env.model.set_next_image_data(CurationImageType.RAW, FAKE_IMG_DATA[1])
+    env.model.set_next_image_data(CurationImageType.SEG1, FAKE_IMG_DATA[1])
+    env.model.set_next_image_data(CurationImageType.SEG2, FAKE_IMG_DATA[1])
+    return env
 
 @pytest.fixture
 def test_environment_without_seg2() -> TestEnvironment:
-    curation_model: CurationModel = CurationModel(
-        FakeExperimentsModel(), FakeCurationImageLoaderFactory()
-    )
+    curation_model: CurationModel = CurationModel(FakeExperimentsModel())
 
-    curation_model.set_raw_directory_paths(IMG_DIR_FILES)
-    curation_model.set_seg1_directory_paths(IMG_DIR_FILES)
+    curation_model.set_image_directory_paths(CurationImageType.RAW, IMG_DIR_FILES)
+    curation_model.set_image_directory_paths(CurationImageType.SEG1, IMG_DIR_FILES)
     curation_model.set_current_view(CurationView.MAIN_VIEW)
+    curation_model.start_loading_images()
 
     viewer: IViewer = FakeViewer()
     main_view: CurationMainView = CurationMainView(curation_model, viewer)
@@ -113,11 +122,19 @@ def test_initial_state_with_seg2(
 
     assert not env.view.next_button.isEnabled()
 
-    # Act
-    # Note: start_loadig_images would be called when the view change occurs in production
-    env.model.start_loading_images()
+    # Act (pretend to be service)
+    env.model.set_curr_image_data(CurationImageType.RAW, FAKE_IMG_DATA[0])
+    env.model.set_curr_image_data(CurationImageType.SEG1, FAKE_IMG_DATA[0])
+    env.model.set_curr_image_data(CurationImageType.SEG2, FAKE_IMG_DATA[0])
+
+    env.model.set_next_image_data(CurationImageType.RAW, FAKE_IMG_DATA[1])
+    env.model.set_next_image_data(CurationImageType.SEG1, FAKE_IMG_DATA[1])
+    env.model.set_next_image_data(CurationImageType.SEG2, FAKE_IMG_DATA[1])
+
 
     # Assert
+    # this behavior is already tested in the model tests, so if this fails, then you haven't
+    # set all the required image data
     loading_finished_mock.assert_called_once()
 
     assert env.view.merging_create_button.isEnabled()
@@ -169,8 +186,12 @@ def test_initial_state_no_seg2(
 
     assert not env.view.next_button.isEnabled()
 
-    # Act
-    env.model.start_loading_images()
+    # Act (pretend to be service)
+    env.model.set_curr_image_data(CurationImageType.RAW, FAKE_IMG_DATA[0])
+    env.model.set_curr_image_data(CurationImageType.SEG1, FAKE_IMG_DATA[0])
+
+    env.model.set_next_image_data(CurationImageType.RAW, FAKE_IMG_DATA[1])
+    env.model.set_next_image_data(CurationImageType.SEG1, FAKE_IMG_DATA[1])
 
     # Assert
     loading_finished_mock.assert_called_once()
@@ -204,15 +225,20 @@ def test_next_image(
     env: TestEnvironment = test_environment_with_seg2
     loading_finished_mock: Mock = Mock()
     env.model.image_loading_finished.connect(loading_finished_mock)
+    # finish 'loading' the first set of images
+    env.model.set_curr_image_data(CurationImageType.RAW, FAKE_IMG_DATA[0])
+    env.model.set_curr_image_data(CurationImageType.SEG1, FAKE_IMG_DATA[0])
+    env.model.set_curr_image_data(CurationImageType.SEG2, FAKE_IMG_DATA[0])
+
+    env.model.set_next_image_data(CurationImageType.RAW, FAKE_IMG_DATA[1])
+    env.model.set_next_image_data(CurationImageType.SEG1, FAKE_IMG_DATA[1])
+    env.model.set_next_image_data(CurationImageType.SEG2, FAKE_IMG_DATA[1])
 
     # Act
-    env.model.start_loading_images()
     env.view.next_button.click()
 
     # Assert
-    # one finished signal should be emitted after 'start_loading_images', the other should be emitted
-    # after clicking the next button
-    assert loading_finished_mock.call_count == 2
+    assert loading_finished_mock.call_count == 1
     assert env.view.progress_bar.value() == 2
 
     assert env.view.merging_create_button.isEnabled()
@@ -227,13 +253,20 @@ def test_next_image(
     assert env.view.yes_radio.isEnabled()
     assert env.view.no_radio.isEnabled()
 
-    # TODO: figure out how to test that next button is disabled until the loading finished
-    # signal is emitted; currently that signal is emitted as soon as we click the next button
-    assert env.view.next_button.isEnabled()
+    assert not env.view.next_button.isEnabled()
 
     assert env.viewer.contains_layer(f"[raw] {IMG_DIR_FILES[1].name}")
     assert env.viewer.contains_layer(f"[seg1] {IMG_DIR_FILES[1].name}")
     assert env.viewer.contains_layer(f"[seg2] {IMG_DIR_FILES[1].name}")
+
+    # Act
+    env.model.set_next_image_data(CurationImageType.RAW, FAKE_IMG_DATA[2])
+    env.model.set_next_image_data(CurationImageType.SEG1, FAKE_IMG_DATA[2])
+    env.model.set_next_image_data(CurationImageType.SEG2, FAKE_IMG_DATA[2])
+
+    # Assert
+    assert loading_finished_mock.call_count == 2
+    assert env.view.next_button.isEnabled()
 
 
 def test_last_image(
@@ -247,10 +280,20 @@ def test_last_image(
     env: TestEnvironment = test_environment_with_seg2
     loading_finished_mock: Mock = Mock()
     env.model.image_loading_finished.connect(loading_finished_mock)
+    # finish 'loading' the first set of images
+    env.model.set_curr_image_data(CurationImageType.RAW, FAKE_IMG_DATA[0])
+    env.model.set_curr_image_data(CurationImageType.SEG1, FAKE_IMG_DATA[0])
+    env.model.set_curr_image_data(CurationImageType.SEG2, FAKE_IMG_DATA[0])
+
+    env.model.set_next_image_data(CurationImageType.RAW, FAKE_IMG_DATA[1])
+    env.model.set_next_image_data(CurationImageType.SEG1, FAKE_IMG_DATA[1])
+    env.model.set_next_image_data(CurationImageType.SEG2, FAKE_IMG_DATA[1])
 
     # Act
-    env.model.start_loading_images()
     env.view.next_button.click()
+    env.model.set_next_image_data(CurationImageType.RAW, FAKE_IMG_DATA[2])
+    env.model.set_next_image_data(CurationImageType.SEG1, FAKE_IMG_DATA[2])
+    env.model.set_next_image_data(CurationImageType.SEG2, FAKE_IMG_DATA[2])
     env.view.next_button.click()
 
     # Assert
@@ -301,11 +344,11 @@ def test_last_image(
 
 
 def test_create_new_merging_mask(
-    qtbot: QtBot, test_environment_with_seg2: TestEnvironment
+    qtbot: QtBot, test_environment_first_images_ready: TestEnvironment
 ) -> None:
     # Arrange
-    env: TestEnvironment = test_environment_with_seg2
-    env.model.start_loading_images()
+    env: TestEnvironment = test_environment_first_images_ready
+    
 
     assert len(env.viewer.get_all_shapes()) == 0
 
@@ -320,11 +363,11 @@ def test_create_new_merging_mask(
 
 
 def test_create_new_excluding_mask(
-    qtbot: QtBot, test_environment_with_seg2: TestEnvironment
+    qtbot: QtBot, test_environment_first_images_ready: TestEnvironment
 ) -> None:
     # Arrange
-    env: TestEnvironment = test_environment_with_seg2
-    env.model.start_loading_images()
+    env: TestEnvironment = test_environment_first_images_ready
+    
 
     assert len(env.viewer.get_all_shapes()) == 0
 
@@ -339,11 +382,11 @@ def test_create_new_excluding_mask(
 
 
 def test_save_csv(
-    qtbot: QtBot, test_environment_with_seg2: TestEnvironment
+    qtbot: QtBot, test_environment_first_images_ready: TestEnvironment
 ) -> None:
     # Arrange
-    env: TestEnvironment = test_environment_with_seg2
-    env.model.start_loading_images()
+    env: TestEnvironment = test_environment_first_images_ready
+    
     save_requested_slot: Mock = Mock()
     env.model.save_to_disk_requested.connect(save_requested_slot)
 
@@ -352,16 +395,16 @@ def test_save_csv(
     assert not env.view.save_csv_button.isEnabled()
     save_requested_slot.assert_called_once()
 
-    env.model.saved_to_disk.emit()  # should re-enable the button
+    env.model.set_curation_record_saved_to_disk(True)  # should re-enable the button
     assert env.view.save_csv_button.isEnabled()
 
 
 def test_delete_merging_mask(
-    qtbot: QtBot, test_environment_with_seg2: TestEnvironment
+    qtbot: QtBot, test_environment_first_images_ready: TestEnvironment
 ):
     # Arrange
-    env: TestEnvironment = test_environment_with_seg2
-    env.model.start_loading_images()
+    env: TestEnvironment = test_environment_first_images_ready
+    
 
     # Act
     env.view.merging_create_button.click()
@@ -374,11 +417,11 @@ def test_delete_merging_mask(
 
 
 def test_delete_excluding_mask(
-    qtbot: QtBot, test_environment_with_seg2: TestEnvironment
+    qtbot: QtBot, test_environment_first_images_ready: TestEnvironment
 ):
     # Arrange
-    env: TestEnvironment = test_environment_with_seg2
-    env.model.start_loading_images()
+    env: TestEnvironment = test_environment_first_images_ready
+    
 
     # Act
     env.view.excluding_create_button.click()
@@ -391,11 +434,11 @@ def test_delete_excluding_mask(
 
 
 def test_use_image_radios(
-    qtbot: QtBot, test_environment_with_seg2: TestEnvironment
+    qtbot: QtBot, test_environment_first_images_ready: TestEnvironment
 ) -> None:
     # Arrange
-    env: TestEnvironment = test_environment_with_seg2
-    env.model.start_loading_images()
+    env: TestEnvironment = test_environment_first_images_ready
+    
 
     # Act / Assert
     assert env.view.merging_create_button.isEnabled()
@@ -434,11 +477,11 @@ def test_use_image_radios(
 
 
 def test_set_use_image(
-    qtbot: QtBot, test_environment_with_seg2: TestEnvironment
+    qtbot: QtBot, test_environment_first_images_ready: TestEnvironment
 ):
     # Arrange
-    env: TestEnvironment = test_environment_with_seg2
-    env.model.start_loading_images()
+    env: TestEnvironment = test_environment_first_images_ready
+    
 
     # Act / Assert
     assert env.view.yes_radio.isChecked()
@@ -452,11 +495,11 @@ def test_set_use_image(
 
 
 def test_set_base_image(
-    qtbot: QtBot, test_environment_with_seg2: TestEnvironment
+    qtbot: QtBot, test_environment_first_images_ready: TestEnvironment
 ):
     # Arrange
-    env: TestEnvironment = test_environment_with_seg2
-    env.model.start_loading_images()
+    env: TestEnvironment = test_environment_first_images_ready
+    
 
     # Act / Assert
     assert (
@@ -473,11 +516,11 @@ def test_set_base_image(
 
 
 def test_set_merging_mask(
-    qtbot: QtBot, test_environment_with_seg2: TestEnvironment
+    qtbot: QtBot, test_environment_first_images_ready: TestEnvironment
 ):
     # Arrange
-    env: TestEnvironment = test_environment_with_seg2
-    env.model.start_loading_images()
+    env: TestEnvironment = test_environment_first_images_ready
+    
 
     # Act / Assert
     env.view.merging_create_button.click()
@@ -489,11 +532,11 @@ def test_set_merging_mask(
 
 
 def test_set_excluding_mask(
-    qtbot: QtBot, test_environment_with_seg2: TestEnvironment
+    qtbot: QtBot, test_environment_first_images_ready: TestEnvironment
 ):
     # Arrange
-    env: TestEnvironment = test_environment_with_seg2
-    env.model.start_loading_images()
+    env: TestEnvironment = test_environment_first_images_ready
+    
 
     # Act / Assert
     env.view.excluding_create_button.click()
@@ -506,14 +549,14 @@ def test_set_excluding_mask(
 
 def test_curation_record_on_next(
     qtbot: QtBot,
-    test_environment_with_seg2: TestEnvironment,
+    test_environment_first_images_ready: TestEnvironment,
     monkeypatch: MonkeyPatch,
 ) -> None:
     # Arrange
     # standard way to deal with modal dialogs: https://pytest-qt.readthedocs.io/en/latest/note_dialogs.html
     monkeypatch.setattr(InfoDialogBox, "exec", lambda *args: 0)
-    env: TestEnvironment = test_environment_with_seg2
-    env.model.start_loading_images()
+    env: TestEnvironment = test_environment_first_images_ready
+    
 
     # Act
     env.view.yes_radio.click()
@@ -522,10 +565,12 @@ def test_curation_record_on_next(
     env.view.merging_base_combo.setCurrentIndex(0)
     merging_base: str = env.view.merging_base_combo.currentText()
     env.view.next_button.click()
+    env.model.set_next_image_data(CurationImageType.RAW, FAKE_IMG_DATA[2])
+    env.model.set_next_image_data(CurationImageType.SEG1, FAKE_IMG_DATA[2])
+    env.model.set_next_image_data(CurationImageType.SEG2, FAKE_IMG_DATA[2])
 
     # Assert
-    assert len(env.model.get_curation_record()) == 1
-    record: CurationRecord = env.model.get_curation_record()[-1]
+    record: CurationRecord = env.model.get_curation_record()[0]
     assert record.to_use
     assert record.excluding_mask is None
     assert record.merging_mask is not None
@@ -539,8 +584,7 @@ def test_curation_record_on_next(
     env.view.next_button.click()
 
     # Assert
-    assert len(env.model.get_curation_record()) == 2
-    record: CurationRecord = env.model.get_curation_record()[-1]
+    record: CurationRecord = env.model.get_curation_record()[1]
     assert not record.to_use
     assert record.excluding_mask is None
     assert record.merging_mask is None
@@ -558,8 +602,7 @@ def test_curation_record_on_next(
     env.view.next_button.click()
 
     # Assert
-    assert len(env.model.get_curation_record()) == 3
-    record: CurationRecord = env.model.get_curation_record()[-1]
+    record: CurationRecord = env.model.get_curation_record()[2]
     assert record.to_use
     assert record.excluding_mask is not None
     assert record.merging_mask is None
@@ -567,47 +610,3 @@ def test_curation_record_on_next(
     assert record.seg2 == IMG_DIR_FILES[2]
     assert record.raw_file == IMG_DIR_FILES[2]
     assert record.base_image == merging_base
-
-
-def test_curation_record_on_save(
-    qtbot: QtBot, test_environment_with_seg2: TestEnvironment
-) -> None:
-    # Arrange
-    env: TestEnvironment = test_environment_with_seg2
-    env.model.start_loading_images()
-
-    # Act
-    env.view.yes_radio.click()
-    env.view.merging_create_button.click()
-    env.view.merging_save_button.click()
-    env.view.merging_base_combo.setCurrentIndex(0)
-    env.view.excluding_create_button.click()
-    env.view.excluding_save_button.click()
-    env.view.save_csv_button.click()
-
-    # Assert
-    assert len(env.model.get_curation_record()) == 1
-    record: CurationRecord = env.model.get_curation_record()[-1]
-    assert record.to_use
-    assert record.excluding_mask is not None
-    assert record.merging_mask is not None
-    assert record.seg1 == IMG_DIR_FILES[0]
-    assert record.seg2 == IMG_DIR_FILES[0]
-    assert record.raw_file == IMG_DIR_FILES[0]
-    assert record.base_image == env.view.merging_base_combo.currentText()
-
-    # Act
-    env.model.saved_to_disk.emit()  # necessary in order to re-enable save csv button
-    env.view.merging_base_combo.setCurrentIndex(1)
-    env.view.save_csv_button.click()
-
-    # Assert
-    assert len(env.model.get_curation_record()) == 1
-    record: CurationRecord = env.model.get_curation_record()[-1]
-    assert record.to_use
-    assert record.excluding_mask is not None
-    assert record.merging_mask is not None
-    assert record.seg1 == IMG_DIR_FILES[0]
-    assert record.seg2 == IMG_DIR_FILES[0]
-    assert record.raw_file == IMG_DIR_FILES[0]
-    assert record.base_image == env.view.merging_base_combo.currentText()
