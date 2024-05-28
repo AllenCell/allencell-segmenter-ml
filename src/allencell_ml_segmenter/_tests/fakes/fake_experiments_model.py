@@ -6,7 +6,8 @@ from allencell_ml_segmenter.core.event import Event
 
 
 class FakeExperimentsModel(IExperimentsModel):
-    def __init__(self):
+    def __init__(self, experiments: List[str] = ["0_exp", "1_exp", "2_exp"]):
+        self._experiments = experiments
         self._experiment_name = None
         self._checkpoint = None
         self._events_to_subscriber_handlers: Dict[
@@ -26,7 +27,7 @@ class FakeExperimentsModel(IExperimentsModel):
         self._checkpoint = checkpoint
 
     def get_experiments(self) -> List[str]:
-        return ["0_exp", "1_exp", "2_exp"]
+        return self._experiments
 
     def refresh_experiments(self):
         pass
