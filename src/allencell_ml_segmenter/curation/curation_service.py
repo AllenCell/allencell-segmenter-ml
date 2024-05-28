@@ -45,7 +45,9 @@ class CurationService(QObject):
         )
 
     def _get_dir_data(self, dir: Path) -> Tuple[List[Path], int]:
-        files: List[Path] = self._file_utils.get_all_files_in_dir_ignore_hidden(dir)
+        files: List[Path] = (
+            self._file_utils.get_all_files_in_dir_ignore_hidden(dir)
+        )
         img_data: ImageData = self._img_data_extractor.extract_image_data(
             files[0], np_data=False
         )

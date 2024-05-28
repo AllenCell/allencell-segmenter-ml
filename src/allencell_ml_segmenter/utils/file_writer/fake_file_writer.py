@@ -12,6 +12,7 @@ class FakeFileWriter(IFileWriter):
 
     # {path: {"open": T/F, "rows": [[header1, header2...], [col1, col2...]]}}
     csv_state: Dict[Path, Dict[str, Any]] = {}
+
     def np_save(self, path: Path, arr: np.ndarray) -> None:
         """
         Saves :param arr: to :param path:
@@ -26,7 +27,7 @@ class FakeFileWriter(IFileWriter):
         """
         path = path.resolve()
         if path in self.csv_state and self.csv_state[path]["open"]:
-                raise RuntimeError(f"{path} already open")
+            raise RuntimeError(f"{path} already open")
         self.csv_state[path] = {"open": True, "rows": []}
 
     def csv_write_row(self, path: Path, row: List[str]) -> None:
@@ -35,9 +36,11 @@ class FakeFileWriter(IFileWriter):
         """
         path = path.resolve()
         if path not in self.csv_state or not self.csv_state[path]["open"]:
-            raise RuntimeError(f"{path} must be opened with csv_open_write_mode before writing")
+            raise RuntimeError(
+                f"{path} must be opened with csv_open_write_mode before writing"
+            )
         self.csv_state[path]["rows"].append(row)
-    
+
     def csv_close(self, path: Path) -> None:
         """
         Closes the open CSV at :param path:
@@ -45,9 +48,9 @@ class FakeFileWriter(IFileWriter):
         path = path.resolve()
         if path in self.csv_state:
             self.csv_state[path]["open"] = False
-    
+
     @classmethod
     def global_instance(cls):
         if cls._instance is None:
             cls._instance = super().__new__(cls)
-        return cls._instance 
+        return cls._instance
