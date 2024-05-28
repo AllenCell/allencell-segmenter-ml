@@ -1,6 +1,4 @@
-import numpy as np
 from pathlib import Path
-import csv
 from typing import List, Generator, Tuple
 from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
 from allencell_ml_segmenter.utils.file_writer import IFileWriter
@@ -14,14 +12,16 @@ class FileUtils:
     def __init__(self, file_writer: IFileWriter):
         self._file_writer = file_writer
     
-    def get_all_files_in_dir_ignore_hidden(self, dir_path: Path) -> List[Path]:
+    @staticmethod
+    def get_all_files_in_dir_ignore_hidden(dir_path: Path) -> List[Path]:
         # sort alphabetically- default sorting behavior for glob
         all_files: List[Path] = list(sorted(dir_path.glob("*.*")))
         # Ignore hidden files (such as .DS_Store on mac)
         # There's no way to do this with Path.glob filtering or methods so using list comprehension
         return [file for file in all_files if not file.name.startswith(".")]
 
-    def get_img_path_from_folder(self, folder: Path) -> Path:
+    @staticmethod
+    def get_img_path_from_folder(folder: Path) -> Path:
         """
         Returns path of an image in the folder.
         :param folder: path to a folder containing images
@@ -151,7 +151,8 @@ class FileUtils:
                 )
                 idx += 1
 
-    def open_directory_in_window(self, dir: Path) -> None:
+    @staticmethod
+    def open_directory_in_window(dir: Path) -> None:
         # for Windows operating systems
         if platform.system() == "Windows":
             os.startfile(dir)
