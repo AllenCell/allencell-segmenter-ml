@@ -2,14 +2,18 @@ from pathlib import Path
 
 import allencell_ml_segmenter
 from allencell_ml_segmenter.utils.file_utils import FileUtils
-from allencell_ml_segmenter.utils.file_writer import IFileWriter, FakeFileWriter
+from allencell_ml_segmenter.utils.file_writer import (
+    IFileWriter,
+    FakeFileWriter,
+)
 from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
 
 from unittest.mock import patch, mock_open, MagicMock
 from typing import List, Set, Tuple
 import numpy as np
 import platform
-    
+
+
 def test_get_all_files_in_dir() -> None:
     # arrange
     folder: Path = (
@@ -102,7 +106,10 @@ EXP_TRAIN_PATH: Path = FAKE_CSV_PATH / "train.csv"
 EXP_TEST_PATH: Path = FAKE_CSV_PATH / "test.csv"
 EXP_VAL_PATH: Path = FAKE_CSV_PATH / "val.csv"
 
-def _append_default_record(cr: List[CurationRecord], e_mask=None, m_mask=None, to_use=True) -> None:
+
+def _append_default_record(
+    cr: List[CurationRecord], e_mask=None, m_mask=None, to_use=True
+) -> None:
     """
     Given a list of records, appends a new record with file names determined
     by the length of the existing curation record. :param to_use: controls
@@ -120,6 +127,7 @@ def _append_default_record(cr: List[CurationRecord], e_mask=None, m_mask=None, t
         )
     )
 
+
 def test_write_curation_record_closes_files():
     fake_writer: IFileWriter = FakeFileWriter.global_instance()
     f_utils: FileUtils = FileUtils(fake_writer)
@@ -127,12 +135,15 @@ def test_write_curation_record_closes_files():
     for _ in range(10):
         _append_default_record(fake_curation_record)
 
-    f_utils.write_curation_record(fake_curation_record, FAKE_CSV_PATH, FAKE_MASK_PATH)
+    f_utils.write_curation_record(
+        fake_curation_record, FAKE_CSV_PATH, FAKE_MASK_PATH
+    )
 
     assert not fake_writer.csv_state[EXP_TRAIN_PATH]["open"]
     assert not fake_writer.csv_state[EXP_TEST_PATH]["open"]
     assert not fake_writer.csv_state[EXP_VAL_PATH]["open"]
-    
+
+
 def test_write_curation_record_writes_mask_to_disk():
     """
     Verify that a call to the public write_curation_record will result in excluding/merging masks being written to disk
@@ -140,29 +151,56 @@ def test_write_curation_record_writes_mask_to_disk():
     fake_writer: IFileWriter = FakeFileWriter.global_instance()
     f_utils: FileUtils = FileUtils(fake_writer)
     fake_curation_record: List[CurationRecord] = []
-    _append_default_record(fake_curation_record, e_mask=np.asarray([[[1, 2], [3, 4], [5, 7]]]))
-    _append_default_record(fake_curation_record, m_mask=np.asarray([[[1, 2], [3, 4], [5, 6]]]))
-    _append_default_record(fake_curation_record, e_mask=np.asarray([[[8, 2], [3, 4], [5, 6]]]), m_mask=np.asarray([[[9, 2], [3, 4], [5, 6]]]))
-    
+    _append_default_record(
+        fake_curation_record, e_mask=np.asarray([[[1, 2], [3, 4], [5, 7]]])
+    )
+    _append_default_record(
+        fake_curation_record, m_mask=np.asarray([[[1, 2], [3, 4], [5, 6]]])
+    )
+    _append_default_record(
+        fake_curation_record,
+        e_mask=np.asarray([[[8, 2], [3, 4], [5, 6]]]),
+        m_mask=np.asarray([[[9, 2], [3, 4], [5, 6]]]),
+    )
+
     f_utils.write_curation_record(
         fake_curation_record, FAKE_CSV_PATH, FAKE_MASK_PATH
     )
 
     assert len(fake_writer.np_save_state) == 4
-    exp_excl_path: Path = FAKE_MASK_PATH / "excluding_masks" / "excluding_mask_raw_0.npy"
+    exp_excl_path: Path = (
+        FAKE_MASK_PATH / "excluding_masks" / "excluding_mask_raw_0.npy"
+    )
     assert exp_excl_path in fake_writer.np_save_state
-    assert np.array_equal(np.asarray([[[1, 2], [3, 4], [5, 7]]]), fake_writer.np_save_state[exp_excl_path])
+    assert np.array_equal(
+        np.asarray([[[1, 2], [3, 4], [5, 7]]]),
+        fake_writer.np_save_state[exp_excl_path],
+    )
 
-    exp_merg_path: Path = FAKE_MASK_PATH / "merging_masks" / "merging_mask_raw_1.npy"
+    exp_merg_path: Path = (
+        FAKE_MASK_PATH / "merging_masks" / "merging_mask_raw_1.npy"
+    )
     assert exp_merg_path in fake_writer.np_save_state
-    assert np.array_equal(np.asarray([[[1, 2], [3, 4], [5, 6]]]), fake_writer.np_save_state[exp_merg_path])
+    assert np.array_equal(
+        np.asarray([[[1, 2], [3, 4], [5, 6]]]),
+        fake_writer.np_save_state[exp_merg_path],
+    )
 
-    exp_excl_path = FAKE_MASK_PATH / "excluding_masks" / "excluding_mask_raw_2.npy"
+    exp_excl_path = (
+        FAKE_MASK_PATH / "excluding_masks" / "excluding_mask_raw_2.npy"
+    )
     exp_merg_path = FAKE_MASK_PATH / "merging_masks" / "merging_mask_raw_2.npy"
     assert exp_excl_path in fake_writer.np_save_state
-    assert np.array_equal(np.asarray([[[8, 2], [3, 4], [5, 6]]]), fake_writer.np_save_state[exp_excl_path])
+    assert np.array_equal(
+        np.asarray([[[8, 2], [3, 4], [5, 6]]]),
+        fake_writer.np_save_state[exp_excl_path],
+    )
     assert exp_merg_path in fake_writer.np_save_state
-    assert np.array_equal(np.asarray([[[9, 2], [3, 4], [5, 6]]]), fake_writer.np_save_state[exp_merg_path])
+    assert np.array_equal(
+        np.asarray([[[9, 2], [3, 4], [5, 6]]]),
+        fake_writer.np_save_state[exp_merg_path],
+    )
+
 
 def test_write_curation_record_split_sizes():
     """
@@ -178,28 +216,28 @@ def test_write_curation_record_split_sizes():
     f_utils.write_curation_record(
         fake_curation_record, FAKE_CSV_PATH, FAKE_MASK_PATH
     )
-    
+
     # one header row, one content row
-    assert len(fake_writer.csv_state[EXP_TRAIN_PATH]["rows"]) == 2 
+    assert len(fake_writer.csv_state[EXP_TRAIN_PATH]["rows"]) == 2
     # one header row
     assert len(fake_writer.csv_state[EXP_TEST_PATH]["rows"]) == 1
     # one header row
-    assert len(fake_writer.csv_state[EXP_VAL_PATH]["rows"]) == 1 
+    assert len(fake_writer.csv_state[EXP_VAL_PATH]["rows"]) == 1
 
     _append_default_record(fake_curation_record)
     f_utils.write_curation_record(
         fake_curation_record, FAKE_CSV_PATH, FAKE_MASK_PATH
     )
-    
+
     assert len(fake_writer.csv_state[EXP_TRAIN_PATH]["rows"]) == 3
     assert len(fake_writer.csv_state[EXP_TEST_PATH]["rows"]) == 1
-    assert len(fake_writer.csv_state[EXP_VAL_PATH]["rows"]) == 1 
+    assert len(fake_writer.csv_state[EXP_VAL_PATH]["rows"]) == 1
 
     _append_default_record(fake_curation_record)
     f_utils.write_curation_record(
         fake_curation_record, FAKE_CSV_PATH, FAKE_MASK_PATH
     )
-    
+
     assert len(fake_writer.csv_state[EXP_TRAIN_PATH]["rows"]) == 2
     assert len(fake_writer.csv_state[EXP_TEST_PATH]["rows"]) == 3
     assert len(fake_writer.csv_state[EXP_VAL_PATH]["rows"]) == 3
@@ -209,7 +247,7 @@ def test_write_curation_record_split_sizes():
     f_utils.write_curation_record(
         fake_curation_record, FAKE_CSV_PATH, FAKE_MASK_PATH
     )
-    
+
     assert len(fake_writer.csv_state[EXP_TRAIN_PATH]["rows"]) == 91
     assert len(fake_writer.csv_state[EXP_TEST_PATH]["rows"]) == 11
     assert len(fake_writer.csv_state[EXP_VAL_PATH]["rows"]) == 11
@@ -219,7 +257,7 @@ def test_write_curation_record_split_sizes():
     f_utils.write_curation_record(
         fake_curation_record, FAKE_CSV_PATH, FAKE_MASK_PATH
     )
-    
+
     assert len(fake_writer.csv_state[EXP_TRAIN_PATH]["rows"]) == 1201
     assert len(fake_writer.csv_state[EXP_TEST_PATH]["rows"]) == 101
     assert len(fake_writer.csv_state[EXP_VAL_PATH]["rows"]) == 101

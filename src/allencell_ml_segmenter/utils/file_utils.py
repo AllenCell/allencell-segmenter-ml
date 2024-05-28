@@ -13,9 +13,10 @@ class FileUtils:
     FileUtils handles file reading/writing tasks. In order to use the instance methods (write methods),
     please initialize a FileUtils instance with an IFileWriter object.
     """
+
     def __init__(self, file_writer: IFileWriter):
         self._file_writer = file_writer
-    
+
     @staticmethod
     def get_all_files_in_dir_ignore_hidden(dir_path: Path) -> List[Path]:
         # sort alphabetically- default sorting behavior for glob
@@ -60,9 +61,7 @@ class FileUtils:
         self._write_curation_csv(
             test, csv_dir_path / "test.csv", mask_dir_path
         )
-        self._write_curation_csv(
-            test, csv_dir_path / "val.csv", mask_dir_path
-        )
+        self._write_curation_csv(test, csv_dir_path / "val.csv", mask_dir_path)
 
     def _train_test_split(
         self,
@@ -98,7 +97,7 @@ class FileUtils:
         """
         self._file_writer.csv_open_write_mode(csv_path)
         self._file_writer.csv_write_row(
-            csv_path, 
+            csv_path,
             [
                 "",
                 "raw",
@@ -107,7 +106,7 @@ class FileUtils:
                 "merge_mask",
                 "exclude_mask",
                 "base_image",
-            ]
+            ],
         )
 
         get_excl_mask_path = (
@@ -125,9 +124,15 @@ class FileUtils:
         for record in curation_record:
             if record.to_use:
                 if record.excluding_mask is not None:
-                    self._file_writer.np_save(get_excl_mask_path(record.raw_file.resolve()), record.excluding_mask)
+                    self._file_writer.np_save(
+                        get_excl_mask_path(record.raw_file.resolve()),
+                        record.excluding_mask,
+                    )
                 if record.merging_mask is not None:
-                    self._file_writer.np_save(get_merg_mask_path(record.raw_file.resolve()), record.merging_mask)
+                    self._file_writer.np_save(
+                        get_merg_mask_path(record.raw_file.resolve()),
+                        record.merging_mask,
+                    )
 
                 self._file_writer.csv_write_row(
                     csv_path,
@@ -151,7 +156,7 @@ class FileUtils:
                             else ""
                         ),
                         str(record.base_image_index),
-                    ]
+                    ],
                 )
                 idx += 1
         self._file_writer.csv_close(csv_path)
