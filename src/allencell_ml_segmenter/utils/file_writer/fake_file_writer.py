@@ -1,0 +1,53 @@
+from .i_file_writer import IFileWriter
+import numpy as np
+from pathlib import Path
+from typing import List, Tuple, Dict, Any
+
+
+class FakeFileWriter(IFileWriter):
+    _instance = None
+
+    # for inspection during testing
+    np_save_calls: List[Tuple[Path, np.ndarray]] = []
+
+    # {path: {"open": T/F, "rows": [[header1, header2...], [col1, col2...]]}}
+    csv_state: Dict[Path, Dict[str, Any]] = {}
+    def np_save(self, path: Path, arr: np.ndarray) -> None:
+        """
+        Saves :param arr: to :param path:
+        """
+        self.np_save_calls.append((path, arr))
+
+    def csv_open_write_mode(self, path: Path) -> None:
+        """
+        Opens a CSV at :param path: in write mode. Can only call csv_write_row
+        on the path after running this method. Must call csv_close with the same
+        path at some point after calling this method.
+        """
+        path = path.resolve()
+        if path in self.csv_state and self.csv_state[path]["open"]:
+                raise RuntimeError(f"{path} already open")
+        self.csv_state[path] = {"open": True, "rows": []}
+
+    def csv_write_row(self, path: Path, row: List[str]) -> None:
+        """
+        Appends :param row: to the open CSV at :param path:
+        """
+        path = path.resolve()
+        if path not in self.csv_state or not self.csv_state[path]["open"]:
+            raise RuntimeError(f"{path} must be opened with csv_open_write_mode before writing")
+        self.csv_state[path]["rows"].append(row)
+    
+    def csv_close(self, path: Path) -> None:
+        """
+        Closes the open CSV at :param path:
+        """
+        path = path.resolve()
+        if path in self.csv_state:
+            self.csv_state[path]["open"] = False
+    
+    @classmethod
+    def global_instance(cls):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+        return cls._instance 

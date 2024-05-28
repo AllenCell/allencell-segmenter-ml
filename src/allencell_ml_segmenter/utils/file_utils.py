@@ -3,27 +3,25 @@ from pathlib import Path
 import csv
 from typing import List, Generator, Tuple
 from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
+from allencell_ml_segmenter.utils.file_writer import IFileWriter
 import os
 import platform
 import subprocess
 import random
 
 
-# TODO: decide whether utils should be like this with staticmethods or singletons with
-# global instances... latter is easier to mock, could combine this with AICSImageData extractor
-# e.g.
 class FileUtils:
-
-    @staticmethod
-    def get_all_files_in_dir_ignore_hidden(dir_path: Path) -> List[Path]:
+    def __init__(self, file_writer: IFileWriter):
+        self._file_writer = file_writer
+    
+    def get_all_files_in_dir_ignore_hidden(self, dir_path: Path) -> List[Path]:
         # sort alphabetically- default sorting behavior for glob
         all_files: List[Path] = list(sorted(dir_path.glob("*.*")))
         # Ignore hidden files (such as .DS_Store on mac)
         # There's no way to do this with Path.glob filtering or methods so using list comprehension
         return [file for file in all_files if not file.name.startswith(".")]
 
-    @staticmethod
-    def get_img_path_from_folder(folder: Path) -> Path:
+    def get_img_path_from_folder(self, folder: Path) -> Path:
         """
         Returns path of an image in the folder.
         :param folder: path to a folder containing images
@@ -38,18 +36,8 @@ class FileUtils:
             image: Path = next(path_generator)
         return image.resolve()
 
-    @staticmethod
-    def write_mask_data(mask: np.ndarray, path: Path):
-        """
-        Saves the numpy mask data in mask to path
-        :param mask: mask to save
-        :param path: path at which to save
-        """
-        path.parent.mkdir(parents=True, exist_ok=True)
-        np.save(path, mask)
-
-    @staticmethod
     def write_curation_record(
+        self,
         curation_record: List[CurationRecord],
         csv_dir_path: Path,
         mask_dir_path: Path,
@@ -61,19 +49,19 @@ class FileUtils:
         :param mask_dir_path: directory in which to save masks (masks will be saved under excluding_masks or
         merging_masks subdirs)
         """
-        train, test = FileUtils._train_test_split(curation_record)
-        FileUtils._write_curation_csv(
+        train, test = self._train_test_split(curation_record)
+        self._write_curation_csv(
             train, csv_dir_path / "train.csv", mask_dir_path
         )
-        FileUtils._write_curation_csv(
+        self._write_curation_csv(
             test, csv_dir_path / "test.csv", mask_dir_path
         )
-        FileUtils._write_curation_csv(
+        self._write_curation_csv(
             test, csv_dir_path / "val.csv", mask_dir_path
         )
 
-    @staticmethod
     def _train_test_split(
+        self,
         curation_record: List[CurationRecord],
     ) -> Tuple[List[CurationRecord], List[CurationRecord]]:
         """
@@ -91,8 +79,8 @@ class FileUtils:
         random.shuffle(curation_record)
         return curation_record[test_len:], curation_record[:test_len]
 
-    @staticmethod
     def _write_curation_csv(
+        self,
         curation_record: List[CurationRecord],
         csv_path: Path,
         mask_dir_path: Path,
@@ -104,76 +92,66 @@ class FileUtils:
         :param mask_dir_path: directory in which to save masks (masks will be saved under excluding_masks or
         merging_masks subdirs)
         """
-        csv_path.parent.mkdir(parents=True, exist_ok=True)
+        self._file_writer.csv_open_write_mode(csv_path)
+        self._file_writer.csv_write_row(
+            csv_path, 
+            [
+                "",
+                "raw",
+                "seg1",
+                "seg2",
+                "merge_mask",
+                "exclude_mask",
+                "base_image",
+            ]
+        )
 
-        with open(csv_path, "w") as f:
-            # need file header
-            writer: csv.writer = csv.writer(f, delimiter=",")
-            writer.writerow(
-                [
-                    "",
-                    "raw",
-                    "seg1",
-                    "seg2",
-                    "merge_mask",
-                    "exclude_mask",
-                    "base_image",
-                ]
-            )
+        get_excl_mask_path = (
+            lambda raw_path: mask_dir_path
+            / "excluding_masks"
+            / f"excluding_mask_{raw_path.stem}.npy"
+        )
+        get_merg_mask_path = (
+            lambda raw_path: mask_dir_path
+            / "merging_masks"
+            / f"merging_mask_{raw_path.stem}.npy"
+        )
 
-            get_excl_mask_path = (
-                lambda raw_path: mask_dir_path
-                / "excluding_masks"
-                / f"excluding_mask_{raw_path.stem}.npy"
-            )
-            get_merg_mask_path = (
-                lambda raw_path: mask_dir_path
-                / "merging_masks"
-                / f"merging_mask_{raw_path.stem}.npy"
-            )
+        idx = 0
+        for record in curation_record:
+            if record.to_use:
+                if record.excluding_mask is not None:
+                    self._file_writer.np_save(get_excl_mask_path(record.raw_file.resolve()), record.excluding_mask)
+                if record.merging_mask is not None:
+                    self._file_writer.np_save(get_merg_mask_path(record.raw_file.resolve()), record.merging_mask)
 
-            idx = 0
-            for record in curation_record:
-                if record.to_use:
-                    if record.excluding_mask is not None:
-                        FileUtils.write_mask_data(
-                            record.excluding_mask,
-                            get_excl_mask_path(record.raw_file.resolve()),
-                        )
-                    if record.merging_mask is not None:
-                        FileUtils.write_mask_data(
-                            record.merging_mask,
-                            get_merg_mask_path(record.raw_file.resolve()),
-                        )
+                self._file_writer.csv_write_row(
+                    csv_path,
+                    [
+                        str(idx),
+                        str(record.raw_file.resolve()),
+                        str(record.seg1.resolve()),
+                        (
+                            str(record.seg2.resolve())
+                            if record.seg2 is not None
+                            else ""
+                        ),
+                        (
+                            get_merg_mask_path(record.raw_file.resolve())
+                            if record.merging_mask is not None
+                            else ""
+                        ),
+                        (
+                            get_excl_mask_path(record.raw_file.resolve())
+                            if record.excluding_mask is not None
+                            else ""
+                        ),
+                        str(record.base_image_index),
+                    ]
+                )
+                idx += 1
 
-                    writer.writerow(
-                        [
-                            str(idx),
-                            str(record.raw_file.resolve()),
-                            str(record.seg1.resolve()),
-                            (
-                                str(record.seg2.resolve())
-                                if record.seg2 is not None
-                                else ""
-                            ),
-                            (
-                                get_merg_mask_path(record.raw_file.resolve())
-                                if record.merging_mask is not None
-                                else ""
-                            ),
-                            (
-                                get_excl_mask_path(record.raw_file.resolve())
-                                if record.excluding_mask is not None
-                                else ""
-                            ),
-                            str(record.base_image_index),
-                        ]
-                    )
-                    idx += 1
-                f.flush()
-
-    @staticmethod
-    def open_directory_in_window(dir: Path) -> None:
+    def open_directory_in_window(self, dir: Path) -> None:
         # for Windows operating systems
         if platform.system() == "Windows":
             os.startfile(dir)
