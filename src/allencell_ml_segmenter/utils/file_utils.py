@@ -9,6 +9,10 @@ import random
 
 
 class FileUtils:
+    """
+    FileUtils handles file reading/writing tasks. In order to use the instance methods (write methods),
+    please initialize a FileUtils instance with an IFileWriter object.
+    """
     def __init__(self, file_writer: IFileWriter):
         self._file_writer = file_writer
     
@@ -150,6 +154,7 @@ class FileUtils:
                     ]
                 )
                 idx += 1
+        self._file_writer.csv_close(csv_path)
 
     @staticmethod
     def open_directory_in_window(dir: Path) -> None:
