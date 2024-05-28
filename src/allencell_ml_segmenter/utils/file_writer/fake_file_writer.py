@@ -1,14 +1,14 @@
 from .i_file_writer import IFileWriter
 import numpy as np
 from pathlib import Path
-from typing import List, Tuple, Dict, Any
+from typing import List, Dict, Any
 
 
 class FakeFileWriter(IFileWriter):
     _instance = None
 
-    # for inspection during testing
-    np_save_calls: List[Tuple[Path, np.ndarray]] = []
+    # {path: saved_array}
+    np_save_state: Dict[Path, np.ndarray] = {}
 
     # {path: {"open": T/F, "rows": [[header1, header2...], [col1, col2...]]}}
     csv_state: Dict[Path, Dict[str, Any]] = {}
@@ -16,7 +16,7 @@ class FakeFileWriter(IFileWriter):
         """
         Saves :param arr: to :param path:
         """
-        self.np_save_calls.append((path, arr))
+        self.np_save_state[path.resolve()] = arr
 
     def csv_open_write_mode(self, path: Path) -> None:
         """
