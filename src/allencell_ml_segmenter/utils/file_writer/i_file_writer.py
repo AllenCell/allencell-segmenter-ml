@@ -3,12 +3,13 @@ import numpy as np
 from pathlib import Path
 from typing import List
 
+
 class IFileWriter(ABC):
     def __init__(self):
         raise RuntimeError(
             "Cannot initialize new singleton, please use .global_instance() instead"
         )
-    
+
     @abstractmethod
     def np_save(self, path: Path, arr: np.ndarray) -> None:
         """
@@ -31,7 +32,7 @@ class IFileWriter(ABC):
         Appends :param row: to the open CSV at :param path:
         """
         pass
-    
+
     @abstractmethod
     def csv_close(self, path: Path) -> None:
         """

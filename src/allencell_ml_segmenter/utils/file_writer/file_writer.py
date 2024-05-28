@@ -5,6 +5,7 @@ import csv
 from io import TextIOBase
 from typing import List, Dict, Tuple
 
+
 class FileWriter(IFileWriter):
     _instance = None
 
@@ -38,9 +39,11 @@ class FileWriter(IFileWriter):
         """
         path = path.resolve()
         if path not in self._open_files:
-            raise RuntimeError(f"{path} must be opened with csv_open_write_mode before writing")
+            raise RuntimeError(
+                f"{path} must be opened with csv_open_write_mode before writing"
+            )
         self._open_files[path][1].writerow(row)
-    
+
     def csv_close(self, path: Path) -> None:
         """
         Closes the open CSV at :param path:
@@ -49,9 +52,9 @@ class FileWriter(IFileWriter):
         if path in self._open_files:
             self._open_files[path][0].close()
             del self._open_files[path]
-    
+
     @classmethod
     def global_instance(cls):
         if cls._instance is None:
             cls._instance = super().__new__(cls)
-        return cls._instance 
+        return cls._instance
