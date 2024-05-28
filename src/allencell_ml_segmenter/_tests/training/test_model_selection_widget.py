@@ -73,10 +73,6 @@ def test_radio_existing_slot(
     """
     Test the slot connected to the "existing model" radio button.
     """
-    # ARRANGE radios selected in the inverted condition that the action will set them to
-    model_selection_widget._radio_new_model.setChecked(True)
-    model_selection_widget._radio_existing_model.setChecked(False)
-    model_selection_widget._combo_box_existing_models.setEnabled(False)
 
     # ACT (enable combo box)
     with qtbot.waitSignal(
@@ -139,6 +135,9 @@ def test_apply_button_enabled(
     Test that the apply button is enabled when a model is selected.
     """
     # ARRANGE
+    model_selection_widget._radio_existing_model.setChecked(True)
+
+    # SANITY CHECK
     assert not model_selection_widget._apply_btn.isEnabled()
 
     # ACT
@@ -154,7 +153,7 @@ def test_text_input_enables_apply_button(
     """
     Test that the apply button is disabled when a model is not selected.
     """
-    # ARRANGE
+    # SANITY CHECK
     assert not model_selection_widget._apply_btn.isEnabled()
 
     # ACT
@@ -172,11 +171,9 @@ def test_combo_input_enables_apply_button_new_radio_disables(
     Test that the apply button Reacts to a model being selevted then deselected.
     """
     # ARRANGE
-    assert not model_selection_widget._apply_btn.isEnabled()
-    model_selection_widget._radio_new_model.setChecked(False)
     model_selection_widget._radio_existing_model.setChecked(True)
 
-    # Initially no model is selected, so the apply button should NOT be enabled
+    # SANITY CHECK (Initially no model is selected, so the apply button should NOT be enabled)
     assert not model_selection_widget._apply_btn.isEnabled()
 
     # ACT - select a model
@@ -201,11 +198,9 @@ def test_new_model_enables_apply_button_new_radio_disables(
     Test that the apply button Reacts to a model being selevted then deselected.
     """
     # ARRANGE
-    assert not model_selection_widget._apply_btn.isEnabled()
     model_selection_widget._radio_new_model.setChecked(True)
-    model_selection_widget._radio_existing_model.setChecked(False)
 
-    # Initially no model is selected, so the apply button should NOT be enabled
+    # SANITY CHECK Initially no model is selected, so the apply button should NOT be enabled
     assert not model_selection_widget._apply_btn.isEnabled()
 
     # ACT - select a model
