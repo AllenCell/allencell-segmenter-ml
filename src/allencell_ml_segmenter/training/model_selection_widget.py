@@ -154,6 +154,7 @@ class ModelSelectionWidget(QWidget):
         apply_model_widget.setLayout(apply_model_layout)
         self._apply_change_stacked_widget.addWidget(apply_model_widget)
         self._apply_btn: QPushButton = QPushButton("Apply")
+        self._apply_btn.setEnabled(False)
         self._apply_btn.clicked.connect(self._handle_apply_model)
         apply_model_layout.addWidget(self._apply_btn)
 
