@@ -2,16 +2,14 @@ from pathlib import Path
 
 import allencell_ml_segmenter
 from allencell_ml_segmenter.utils.file_utils import FileUtils
+from allencell_ml_segmenter.utils.file_writer import IFileWriter, FakeFileWriter
 from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
 
-import pytest
 from unittest.mock import patch, mock_open, MagicMock
-import builtins
 from typing import List, Set, Tuple
 import numpy as np
 import platform
-
-
+    
 def test_get_all_files_in_dir() -> None:
     # arrange
     folder: Path = (
@@ -98,114 +96,13 @@ def test_get_img_path_from_folder_hidden_files():
     assert img.samefile(t1)
 
 
-@patch("builtins.open", new_callable=mock_open)
-def test_write_curation_record_writes_to_disk(open_mock: MagicMock):
-    """
-    Verify that a call to the public write_curation_record will result in train, test, val csvs
-    being written to disk, and excluding/merging masks being written to disk
-    """
-    fake_curation_record: List[CurationRecord] = [
-        CurationRecord(
-            Path("raw_1"),
-            Path("seg1_1"),
-            Path("seg2_1"),
-            np.asarray([[[1, 2], [3, 4], [5, 6]]]),
-            None,
-            "seg1",
-            True,
-        ),
-        CurationRecord(
-            Path("raw_2"),
-            Path("seg1_2"),
-            Path("seg2_2"),
-            None,
-            None,
-            "seg1",
-            True,
-        ),
-        CurationRecord(
-            Path("raw_3"),
-            Path("seg1_3"),
-            Path("seg2_3"),
-            None,
-            None,
-            "seg1",
-            True,
-        ),
-        CurationRecord(
-            Path("raw_4"),
-            Path("seg1_4"),
-            Path("seg2_4"),
-            None,
-            None,
-            "seg1",
-            False,
-        ),
-        CurationRecord(
-            Path("raw_5"),
-            Path("seg1_5"),
-            Path("seg2_5"),
-            None,
-            np.asarray([[[1, 2], [3, 4], [5, 6]]]),
-            "seg1",
-            True,
-        ),
-    ]
-    fake_csv_path: Path = Path("fakecsv")
-    fake_mask_path: Path = Path("fakemask")
-    FileUtils.write_curation_record(
-        fake_curation_record, fake_csv_path, fake_mask_path
-    )
-    print(open_mock.mock_calls)
+FAKE_CSV_PATH: Path = Path("fakecsv").resolve()
+FAKE_MASK_PATH: Path = Path("fakemask").resolve()
+EXP_TRAIN_PATH: Path = FAKE_CSV_PATH / "train.csv"
+EXP_TEST_PATH: Path = FAKE_CSV_PATH / "test.csv"
+EXP_VAL_PATH: Path = FAKE_CSV_PATH / "val.csv"
 
-    # Note: these assertions rely on naming conventions, somewhat brittle
-    open_mock.assert_any_call(fake_csv_path / "train.csv", "w")
-    open_mock.assert_any_call(fake_csv_path / "test.csv", "w")
-    open_mock.assert_any_call(fake_csv_path / "val.csv", "w")
-
-    # for some reason, np.save(path: Path) ends up calling open with a str instead of a path
-    # this means we need to account for backslash vs forward slash in file names
-    if platform.system() == "Windows":
-        open_mock.assert_any_call(
-            f"{str(fake_mask_path)}\excluding_masks\excluding_mask_raw_1.npy",
-            "wb",
-        )
-        open_mock.assert_any_call(
-            f"{str(fake_mask_path)}\merging_masks\merging_mask_raw_5.npy", "wb"
-        )
-    else:
-        open_mock.assert_any_call(
-            f"{str(fake_mask_path)}/excluding_masks/excluding_mask_raw_1.npy",
-            "wb",
-        )
-        open_mock.assert_any_call(
-            f"{str(fake_mask_path)}/merging_masks/merging_mask_raw_5.npy", "wb"
-        )
-
-
-def _get_curation_lists_from_mock_calls(
-    mock_calls,
-) -> Tuple[List[CurationRecord], List[CurationRecord], List[CurationRecord]]:
-    """
-    Given a list of the calls made to a mock of FileUtils._write_curation_csv, returns
-    the list of records provided for train.csv, test.csv, and val.csv respectively.
-    """
-    train: List[CurationRecord] = None
-    test: List[CurationRecord] = None
-    val: List[CurationRecord] = None
-
-    for c in mock_calls:
-        if "train.csv" in str(c.args[1]):
-            train = c.args[0]
-        elif "test.csv" in str(c.args[1]):
-            test = c.args[0]
-        elif "val.csv" in str(c.args[1]):
-            val = c.args[0]
-
-    return train, test, val
-
-
-def _append_default_record(cr: List[CurationRecord], to_use=True) -> None:
+def _append_default_record(cr: List[CurationRecord], e_mask=None, m_mask=None, to_use=True) -> None:
     """
     Given a list of records, appends a new record with file names determined
     by the length of the existing curation record. :param to_use: controls
@@ -216,95 +113,116 @@ def _append_default_record(cr: List[CurationRecord], to_use=True) -> None:
             Path(f"raw_{len(cr)}"),
             Path(f"seg1_{len(cr)}"),
             Path(f"seg2_{len(cr)}"),
-            None,
-            None,
+            e_mask,
+            m_mask,
             "seg1",
             to_use,
         )
     )
 
+def test_write_curation_record_closes_files():
+    fake_writer: IFileWriter = FakeFileWriter.global_instance()
+    f_utils: FileUtils = FileUtils(fake_writer)
+    fake_curation_record: List[CurationRecord] = []
+    for _ in range(10):
+        _append_default_record(fake_curation_record)
+
+    f_utils.write_curation_record(fake_curation_record, FAKE_CSV_PATH, FAKE_MASK_PATH)
+
+    assert not fake_writer.csv_state[EXP_TRAIN_PATH]["open"]
+    assert not fake_writer.csv_state[EXP_TEST_PATH]["open"]
+    assert not fake_writer.csv_state[EXP_VAL_PATH]["open"]
+    
+def test_write_curation_record_writes_mask_to_disk():
+    """
+    Verify that a call to the public write_curation_record will result in excluding/merging masks being written to disk
+    """
+    fake_writer: IFileWriter = FakeFileWriter.global_instance()
+    f_utils: FileUtils = FileUtils(fake_writer)
+    fake_curation_record: List[CurationRecord] = []
+    _append_default_record(fake_curation_record, e_mask=np.asarray([[[1, 2], [3, 4], [5, 7]]]))
+    _append_default_record(fake_curation_record, m_mask=np.asarray([[[1, 2], [3, 4], [5, 6]]]))
+    _append_default_record(fake_curation_record, e_mask=np.asarray([[[8, 2], [3, 4], [5, 6]]]), m_mask=np.asarray([[[9, 2], [3, 4], [5, 6]]]))
+    
+    f_utils.write_curation_record(
+        fake_curation_record, FAKE_CSV_PATH, FAKE_MASK_PATH
+    )
+
+    assert len(fake_writer.np_save_state) == 4
+    exp_excl_path: Path = FAKE_MASK_PATH / "excluding_masks" / "excluding_mask_raw_0.npy"
+    assert exp_excl_path in fake_writer.np_save_state
+    assert np.array_equal(np.asarray([[[1, 2], [3, 4], [5, 7]]]), fake_writer.np_save_state[exp_excl_path])
+
+    exp_merg_path: Path = FAKE_MASK_PATH / "merging_masks" / "merging_mask_raw_1.npy"
+    assert exp_merg_path in fake_writer.np_save_state
+    assert np.array_equal(np.asarray([[[1, 2], [3, 4], [5, 6]]]), fake_writer.np_save_state[exp_merg_path])
+
+    exp_excl_path = FAKE_MASK_PATH / "excluding_masks" / "excluding_mask_raw_2.npy"
+    exp_merg_path = FAKE_MASK_PATH / "merging_masks" / "merging_mask_raw_2.npy"
+    assert exp_excl_path in fake_writer.np_save_state
+    assert np.array_equal(np.asarray([[[8, 2], [3, 4], [5, 6]]]), fake_writer.np_save_state[exp_excl_path])
+    assert exp_merg_path in fake_writer.np_save_state
+    assert np.array_equal(np.asarray([[[9, 2], [3, 4], [5, 6]]]), fake_writer.np_save_state[exp_merg_path])
 
 def test_write_curation_record_split_sizes():
     """
     Test that the split sizes are as expected for curation records
     of different lengths.
     """
-    fake_csv_path: Path = Path("fakecsv")
-    fake_mask_path: Path = Path("fakemask")
+    fake_writer: IFileWriter = FakeFileWriter.global_instance()
+    f_utils: FileUtils = FileUtils(fake_writer)
 
     fake_curation_record: List[CurationRecord] = []
     _append_default_record(fake_curation_record)
 
-    with patch(
-        "allencell_ml_segmenter.utils.file_utils.FileUtils._write_curation_csv"
-    ) as write_csv_mock:
-        FileUtils.write_curation_record(
-            fake_curation_record, fake_csv_path, fake_mask_path
-        )
-        train, test, val = _get_curation_lists_from_mock_calls(
-            write_csv_mock.mock_calls
-        )
-        assert len(train) == 1
-        assert len(test) == 0
-        assert len(val) == 0
+    f_utils.write_curation_record(
+        fake_curation_record, FAKE_CSV_PATH, FAKE_MASK_PATH
+    )
+    
+    # one header row, one content row
+    assert len(fake_writer.csv_state[EXP_TRAIN_PATH]["rows"]) == 2 
+    # one header row
+    assert len(fake_writer.csv_state[EXP_TEST_PATH]["rows"]) == 1
+    # one header row
+    assert len(fake_writer.csv_state[EXP_VAL_PATH]["rows"]) == 1 
 
     _append_default_record(fake_curation_record)
-    with patch(
-        "allencell_ml_segmenter.utils.file_utils.FileUtils._write_curation_csv"
-    ) as write_csv_mock:
-        FileUtils.write_curation_record(
-            fake_curation_record, fake_csv_path, fake_mask_path
-        )
-        train, test, val = _get_curation_lists_from_mock_calls(
-            write_csv_mock.mock_calls
-        )
-        assert len(train) == 2
-        assert len(test) == 0
-        assert len(val) == 0
+    f_utils.write_curation_record(
+        fake_curation_record, FAKE_CSV_PATH, FAKE_MASK_PATH
+    )
+    
+    assert len(fake_writer.csv_state[EXP_TRAIN_PATH]["rows"]) == 3
+    assert len(fake_writer.csv_state[EXP_TEST_PATH]["rows"]) == 1
+    assert len(fake_writer.csv_state[EXP_VAL_PATH]["rows"]) == 1 
 
     _append_default_record(fake_curation_record)
-    with patch(
-        "allencell_ml_segmenter.utils.file_utils.FileUtils._write_curation_csv"
-    ) as write_csv_mock:
-        FileUtils.write_curation_record(
-            fake_curation_record, fake_csv_path, fake_mask_path
-        )
-        train, test, val = _get_curation_lists_from_mock_calls(
-            write_csv_mock.mock_calls
-        )
-        assert len(train) == 1
-        assert len(test) == 2
-        assert len(val) == 2
+    f_utils.write_curation_record(
+        fake_curation_record, FAKE_CSV_PATH, FAKE_MASK_PATH
+    )
+    
+    assert len(fake_writer.csv_state[EXP_TRAIN_PATH]["rows"]) == 2
+    assert len(fake_writer.csv_state[EXP_TEST_PATH]["rows"]) == 3
+    assert len(fake_writer.csv_state[EXP_VAL_PATH]["rows"]) == 3
 
     for _ in range(97):
         _append_default_record(fake_curation_record)
-    with patch(
-        "allencell_ml_segmenter.utils.file_utils.FileUtils._write_curation_csv"
-    ) as write_csv_mock:
-        FileUtils.write_curation_record(
-            fake_curation_record, fake_csv_path, fake_mask_path
-        )
-        train, test, val = _get_curation_lists_from_mock_calls(
-            write_csv_mock.mock_calls
-        )
-        assert len(train) == 90
-        assert len(test) == 10
-        assert len(val) == 10
+    f_utils.write_curation_record(
+        fake_curation_record, FAKE_CSV_PATH, FAKE_MASK_PATH
+    )
+    
+    assert len(fake_writer.csv_state[EXP_TRAIN_PATH]["rows"]) == 91
+    assert len(fake_writer.csv_state[EXP_TEST_PATH]["rows"]) == 11
+    assert len(fake_writer.csv_state[EXP_VAL_PATH]["rows"]) == 11
 
     for _ in range(1200):
         _append_default_record(fake_curation_record)
-    with patch(
-        "allencell_ml_segmenter.utils.file_utils.FileUtils._write_curation_csv"
-    ) as write_csv_mock:
-        FileUtils.write_curation_record(
-            fake_curation_record, fake_csv_path, fake_mask_path
-        )
-        train, test, val = _get_curation_lists_from_mock_calls(
-            write_csv_mock.mock_calls
-        )
-        assert len(train) == 1200
-        assert len(test) == 100
-        assert len(val) == 100
+    f_utils.write_curation_record(
+        fake_curation_record, FAKE_CSV_PATH, FAKE_MASK_PATH
+    )
+    
+    assert len(fake_writer.csv_state[EXP_TRAIN_PATH]["rows"]) == 1201
+    assert len(fake_writer.csv_state[EXP_TEST_PATH]["rows"]) == 101
+    assert len(fake_writer.csv_state[EXP_VAL_PATH]["rows"]) == 101
 
 
 def test_write_curation_record_includes_only_selected_images():
@@ -312,8 +230,8 @@ def test_write_curation_record_includes_only_selected_images():
     Test that images marked as not to_use are not included in the records
     to be written.
     """
-    fake_csv_path: Path = Path("fakecsv")
-    fake_mask_path: Path = Path("fakemask")
+    fake_writer: IFileWriter = FakeFileWriter.global_instance()
+    f_utils: FileUtils = FileUtils(fake_writer)
 
     fake_curation_record: List[CurationRecord] = []
     for _ in range(20):
@@ -323,18 +241,13 @@ def test_write_curation_record_includes_only_selected_images():
     for _ in range(10):
         _append_default_record(fake_curation_record, to_use=False)
 
-    with patch(
-        "allencell_ml_segmenter.utils.file_utils.FileUtils._write_curation_csv"
-    ) as write_csv_mock:
-        FileUtils.write_curation_record(
-            fake_curation_record, fake_csv_path, fake_mask_path
-        )
-        train, test, val = _get_curation_lists_from_mock_calls(
-            write_csv_mock.mock_calls
-        )
-        assert len(train) == 18
-        assert len(test) == 2
-        assert len(val) == 2
+    f_utils.write_curation_record(
+        fake_curation_record, FAKE_CSV_PATH, FAKE_MASK_PATH
+    )
+
+    assert len(fake_writer.csv_state[EXP_TRAIN_PATH]["rows"]) == 19
+    assert len(fake_writer.csv_state[EXP_TEST_PATH]["rows"]) == 3
+    assert len(fake_writer.csv_state[EXP_VAL_PATH]["rows"]) == 3
 
 
 def test_write_curation_record_does_not_include_duplicates():
@@ -342,29 +255,25 @@ def test_write_curation_record_does_not_include_duplicates():
     Test that the records in train and val are mutually exclusive. And that there
     are no duplicates within train or val. Uses raw image path as an id for records.
     """
-    fake_csv_path: Path = Path("fakecsv")
-    fake_mask_path: Path = Path("fakemask")
+    fake_writer: IFileWriter = FakeFileWriter.global_instance()
+    f_utils: FileUtils = FileUtils(fake_writer)
 
     fake_curation_record: List[CurationRecord] = []
     for _ in range(20):
         _append_default_record(fake_curation_record)
 
-    with patch(
-        "allencell_ml_segmenter.utils.file_utils.FileUtils._write_curation_csv"
-    ) as write_csv_mock:
-        FileUtils.write_curation_record(
-            fake_curation_record, fake_csv_path, fake_mask_path
-        )
-        train, test, val = _get_curation_lists_from_mock_calls(
-            write_csv_mock.mock_calls
-        )
-        unique_paths: Set[Path] = set()
-        for record in train:
-            assert record.raw_file not in unique_paths
-            unique_paths.add(record.raw_file)
-        for record in val:
-            assert record.raw_file not in unique_paths
-            unique_paths.add(record.raw_file)
+    f_utils.write_curation_record(
+        fake_curation_record, FAKE_CSV_PATH, FAKE_MASK_PATH
+    )
+    unique_rows: Set[str] = set()
+    for row in fake_writer.csv_state[EXP_TRAIN_PATH]["rows"][1:]:
+        row_minus_index: str = ",".join(row[1:])
+        assert row_minus_index not in unique_rows
+        unique_rows.add(row_minus_index)
+    for row in fake_writer.csv_state[EXP_VAL_PATH]["rows"][1:]:
+        row_minus_index: str = ",".join(row[1:])
+        assert row_minus_index not in unique_rows
+        unique_rows.add(row_minus_index)
 
 
 def test_write_curation_record_test_val_same():
@@ -372,24 +281,20 @@ def test_write_curation_record_test_val_same():
     Test that the records in val and test are the same.
     Uses raw image path as an id for records.
     """
-    fake_csv_path: Path = Path("fakecsv")
-    fake_mask_path: Path = Path("fakemask")
+    fake_writer: IFileWriter = FakeFileWriter.global_instance()
+    f_utils: FileUtils = FileUtils(fake_writer)
 
     fake_curation_record: List[CurationRecord] = []
     for _ in range(20):
         _append_default_record(fake_curation_record)
 
-    with patch(
-        "allencell_ml_segmenter.utils.file_utils.FileUtils._write_curation_csv"
-    ) as write_csv_mock:
-        FileUtils.write_curation_record(
-            fake_curation_record, fake_csv_path, fake_mask_path
-        )
-        train, test, val = _get_curation_lists_from_mock_calls(
-            write_csv_mock.mock_calls
-        )
-        unique_paths: Set[Path] = set()
-        for record in test:
-            unique_paths.add(record.raw_file)
-        for record in val:
-            assert record.raw_file in unique_paths
+    f_utils.write_curation_record(
+        fake_curation_record, FAKE_CSV_PATH, FAKE_MASK_PATH
+    )
+    unique_rows: Set[str] = set()
+    for row in fake_writer.csv_state[EXP_TEST_PATH]["rows"][1:]:
+        row_minus_index: str = ",".join(row[1:])
+        unique_rows.add(row_minus_index)
+    for row in fake_writer.csv_state[EXP_VAL_PATH]["rows"][1:]:
+        row_minus_index: str = ",".join(row[1:])
+        assert row_minus_index in unique_rows
