@@ -237,7 +237,9 @@ class ModelSelectionWidget(QWidget):
             Enables and disables relevent controls.
             """
             self._experiments_model.select_experiment_name(None)
-            self._combo_box_existing_models.setEnabled(self._experiments_model.get_experiments() != [])
+            self._combo_box_existing_models.setEnabled(
+                self._experiments_model.get_experiments() != []
+            )
             self._experiment_name_input.setEnabled(False)
             self._experiment_name_input.clear()
 

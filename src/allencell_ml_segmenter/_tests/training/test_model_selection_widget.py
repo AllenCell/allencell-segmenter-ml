@@ -75,17 +75,24 @@ def test_radio_existing_slot_has_existing_experiments(
     # ASSERT
     assert model_selection_widget._combo_box_existing_models.isEnabled()
 
+
 def test_radio_existing_slot_has_no_existing_experiments(qtbot: QtBot) -> None:
-    experiment_model_has_no_experiments: IExperimentsModel = FakeExperimentsModel([])
+    experiment_model_has_no_experiments: IExperimentsModel = (
+        FakeExperimentsModel([])
+    )
     model_selection_widget: ModelSelectionWidget = ModelSelectionWidget(
-        main_model=MainModel(), experiments_model=experiment_model_has_no_experiments
+        main_model=MainModel(),
+        experiments_model=experiment_model_has_no_experiments,
     )
     setup_radio_existing_slot(qtbot, model_selection_widget)
 
     # ASSERT
     assert not model_selection_widget._combo_box_existing_models.isEnabled()
 
-def setup_radio_existing_slot(qtbot: QtBot, model_selection_widget: ModelSelectionWidget):
+
+def setup_radio_existing_slot(
+    qtbot: QtBot, model_selection_widget: ModelSelectionWidget
+):
     """
     Test the slot connected to the "existing model" radio button.
     """
