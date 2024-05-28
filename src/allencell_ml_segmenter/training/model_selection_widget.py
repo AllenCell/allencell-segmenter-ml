@@ -119,7 +119,6 @@ class ModelSelectionWidget(QWidget):
         self._radio_new_model: QRadioButton = QRadioButton()
         self._radio_new_model.toggled.connect(self._model_radio_handler)
         # initialize the radio button and combos / tabs to match the model state
-        self._radio_new_model.setChecked(self._main_model.is_new_model())
         top_grid_layout.addWidget(self._radio_new_model, 0, 0)
 
         self._experiment_name_input: QLineEdit = QLineEdit()
@@ -135,9 +134,6 @@ class ModelSelectionWidget(QWidget):
         self._radio_existing_model: QRadioButton = QRadioButton()
         self._radio_existing_model.toggled.connect(self._model_radio_handler)
         # initialize the radio button and combos / tabs to match the model state
-        self._radio_existing_model.setChecked(
-            not self._main_model.is_new_model()
-        )
         top_grid_layout.addWidget(self._radio_existing_model, 1, 0)
         top_grid_layout.addWidget(
             LabelWithHint("Select an existing model"), 1, 1
@@ -169,7 +165,6 @@ class ModelSelectionWidget(QWidget):
             Event.ACTION_REFRESH, self, self._handle_process_event
         )
         # initialize the rest of the UI to match the radio button's state
-        self._model_radio_handler()
 
     def _handle_experiment_selected(self, _: Event) -> None:
         experiment_selected = (
