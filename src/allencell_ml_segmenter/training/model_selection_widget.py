@@ -102,9 +102,10 @@ class ModelSelectionWidget(QWidget):
         self.layout().addWidget(frame)
 
         # existing model selection components must be initialized before the new/existing model radios
+        placeholder_text_combo_box_existing_models: str = "No existing models" if self._experiments_model.get_experiments() == [] else "Select an existing model"
         self._combo_box_existing_models: QComboBox = QComboBox()
         self._combo_box_existing_models.setCurrentIndex(-1)
-        self._combo_box_existing_models.setPlaceholderText("Select an option")
+        self._combo_box_existing_models.setPlaceholderText(placeholder_text_combo_box_existing_models)
         self._combo_box_existing_models.setEnabled(False)
         self._combo_box_existing_models.setMinimumWidth(306)
 
