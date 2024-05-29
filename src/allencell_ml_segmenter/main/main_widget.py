@@ -32,9 +32,6 @@ from allencell_ml_segmenter.training.model_selection_widget import (
 )
 from allencell_ml_segmenter.training.training_model import TrainingModel
 from allencell_ml_segmenter.training.view import TrainingView
-from allencell_ml_segmenter.curation.curation_image_loader import (
-    CurationImageLoaderFactory,
-)
 from allencell_ml_segmenter.curation.curation_model import CurationModel
 
 
