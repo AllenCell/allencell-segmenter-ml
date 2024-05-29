@@ -172,7 +172,7 @@ def test_write_curation_record_writes_mask_to_disk():
     )
 
     # Assert
-    assert len(fake_writer.np_save_state) == 4
+    assert len(fake_writer.np_save_state) == len(expected_save_paths)
     # verify that the expected mask was saved to the expected save path
     for mask, save_path in zip(masks, expected_save_paths):
         assert save_path in fake_writer.np_save_state
