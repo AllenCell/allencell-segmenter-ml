@@ -43,7 +43,7 @@ class FileUtils:
 
     def write_curation_record(
         self,
-        curation_record: List[CurationRecord],
+        curation_records: List[CurationRecord],
         csv_dir_path: Path,
         mask_dir_path: Path,
     ) -> None:
@@ -54,7 +54,7 @@ class FileUtils:
         :param mask_dir_path: directory in which to save masks (masks will be saved under excluding_masks or
         merging_masks subdirs)
         """
-        train, test = self._train_test_split(curation_record)
+        train, test = self._train_test_split(curation_records)
         self._write_curation_csv(
             train, csv_dir_path / "train.csv", mask_dir_path
         )
@@ -65,7 +65,7 @@ class FileUtils:
 
     def _train_test_split(
         self,
-        curation_record: List[CurationRecord],
+        curation_records: List[CurationRecord],
     ) -> Tuple[List[CurationRecord], List[CurationRecord]]:
         """
         Returns (train_split, test_split) of the items marked to_use in the provided curation record.
@@ -74,17 +74,22 @@ class FileUtils:
         split will be provided.
         :param curation_record: record to split
         """
-        curation_record = [r for r in curation_record if r.to_use]
-        if len(curation_record) <= 2:
-            return curation_record, []
+        curation_records_to_use: List[CurationRecord] = [
+            r for r in curation_records if r.to_use
+        ]
+        if len(curation_records_to_use) <= 2:
+            return curation_records_to_use, []
 
-        test_len: int = max(2, min(100, len(curation_record) // 10))
-        random.shuffle(curation_record)
-        return curation_record[test_len:], curation_record[:test_len]
+        test_len: int = max(2, min(100, len(curation_records_to_use) // 10))
+        random.shuffle(curation_records_to_use)
+        return (
+            curation_records_to_use[test_len:],
+            curation_records_to_use[:test_len],
+        )
 
     def _write_curation_csv(
         self,
-        curation_record: List[CurationRecord],
+        curation_records: List[CurationRecord],
         csv_path: Path,
         mask_dir_path: Path,
     ) -> None:
@@ -121,7 +126,7 @@ class FileUtils:
         )
 
         idx = 0
-        for record in curation_record:
+        for record in curation_records:
             if record.to_use:
                 if record.excluding_mask is not None:
                     self._file_writer.np_save(
