@@ -8,7 +8,7 @@ from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 from allencell_ml_segmenter.curation.curation_model import (
     CurationModel,
     CurationView,
-    CurationImageType
+    CurationImageType,
 )
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
@@ -183,10 +183,18 @@ class CurationInputView(QWidget):
             [
                 value is None
                 for value in [
-                    self._curation_model.get_image_directory(CurationImageType.RAW),
-                    self._curation_model.get_selected_channel(CurationImageType.RAW),
-                    self._curation_model.get_image_directory(CurationImageType.SEG1),
-                    self._curation_model.get_selected_channel(CurationImageType.SEG2),
+                    self._curation_model.get_image_directory(
+                        CurationImageType.RAW
+                    ),
+                    self._curation_model.get_selected_channel(
+                        CurationImageType.RAW
+                    ),
+                    self._curation_model.get_image_directory(
+                        CurationImageType.SEG1
+                    ),
+                    self._curation_model.get_selected_channel(
+                        CurationImageType.SEG2
+                    ),
                 ]
             ]
         ):
@@ -196,8 +204,12 @@ class CurationInputView(QWidget):
             return
 
         if (
-            self._curation_model.get_image_directory(CurationImageType.SEG2) is not None
-            and self._curation_model.get_selected_channel(CurationImageType.SEG2) is None
+            self._curation_model.get_image_directory(CurationImageType.SEG2)
+            is not None
+            and self._curation_model.get_selected_channel(
+                CurationImageType.SEG2
+            )
+            is None
         ):
             show_info("Please select a channel for seg2.")
             return
@@ -311,10 +323,14 @@ class CurationInputView(QWidget):
         """
         Event handler when combobox channel selection is made. Sets the seg1 channel index in the model.
         """
-        self._curation_model.set_selected_channel(CurationImageType.SEG1, index)
+        self._curation_model.set_selected_channel(
+            CurationImageType.SEG1, index
+        )
 
     def seg2_channel_selected(self, index) -> None:
         """
         Event handler when combobox channel selection is made. Sets the seg2 channel index in the model.
         """
-        self._curation_model.set_selected_channel(CurationImageType.SEG2, index)
+        self._curation_model.set_selected_channel(
+            CurationImageType.SEG2, index
+        )

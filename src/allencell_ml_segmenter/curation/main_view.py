@@ -17,7 +17,10 @@ from allencell_ml_segmenter.core.dialog_box import DialogBox
 from allencell_ml_segmenter._style import Style
 from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.main.viewer import IViewer
-from allencell_ml_segmenter.curation.curation_model import CurationModel, CurationImageType
+from allencell_ml_segmenter.curation.curation_model import (
+    CurationModel,
+    CurationImageType,
+)
 from allencell_ml_segmenter.core.image_data_extractor import ImageData
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 from allencell_ml_segmenter.curation.stacked_spinner import StackedSpinner
@@ -131,9 +134,7 @@ class CurationMainView(View):
                 self.merging_base_combo.currentText() if idx >= 0 else None
             )
         )
-        # trigger the change event above to set initial model state
-        self.merging_base_combo.setCurrentIndex(1)
-        self.merging_base_combo.setCurrentIndex(0)
+
         # these empty QLabels are for spacing... unfortunately cannot apply styling
         # to a QLayout directly, just QWidgets
         base_image_layout.addWidget(QLabel(), 0, 0)
@@ -266,17 +267,23 @@ class CurationMainView(View):
         self.next_button.setText("Loading next...")
 
     def _add_curr_images_to_widget(self) -> None:
-        raw_img_data: ImageData = self._curation_model.get_curr_image_data(CurationImageType.RAW)
+        raw_img_data: ImageData = self._curation_model.get_curr_image_data(
+            CurationImageType.RAW
+        )
         self._viewer.add_image(
             raw_img_data.np_data, f"[raw] {raw_img_data.path.name}"
         )
-        seg1_img_data: ImageData = self._curation_model.get_curr_image_data(CurationImageType.SEG1)
+        seg1_img_data: ImageData = self._curation_model.get_curr_image_data(
+            CurationImageType.SEG1
+        )
         self._viewer.add_image(
             seg1_img_data.np_data, f"[seg1] {seg1_img_data.path.name}"
         )
         if self._curation_model.has_seg2_data():
             seg2_img_data: ImageData = (
-                self._curation_model.get_curr_image_data(CurationImageType.SEG2)
+                self._curation_model.get_curr_image_data(
+                    CurationImageType.SEG2
+                )
             )
             self._viewer.add_image(
                 seg2_img_data.np_data, f"[seg2] {seg2_img_data.path.name}"
