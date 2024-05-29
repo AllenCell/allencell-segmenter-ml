@@ -297,6 +297,10 @@ class CurationMainView(View):
             self._set_next_button_to_loading()
             self._curation_model.next_image()
             self._add_curr_images_to_widget()
+            # these lines will update UI and model state, must go after
+            # a call to next image
+            self.yes_radio.click()
+            self.merging_base_combo.setCurrentIndex(0)
         else:
             self._on_save_curation_csv()
             self.disable_all_masks()
@@ -309,8 +313,6 @@ class CurationMainView(View):
                 "You have reached the end of the dataset, and your curation CSV has been saved.\nPlease switch to the Training tab to start training a model."
             ).exec()
 
-        self.yes_radio.click()
-        self.merging_base_combo.setCurrentIndex(0)
         self._update_progress_bar()
 
     def _on_save_curation_csv(self) -> None:
