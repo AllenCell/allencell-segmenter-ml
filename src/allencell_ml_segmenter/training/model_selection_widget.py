@@ -165,7 +165,6 @@ class ModelSelectionWidget(QWidget):
         self._experiments_model.subscribe(
             Event.ACTION_REFRESH, self, self._handle_process_event
         )
-        # initialize the rest of the UI to match the radio button's state
 
     def _handle_experiment_selected(self, _: Event) -> None:
         experiment_selected = (
