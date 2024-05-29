@@ -104,6 +104,7 @@ EXP_TRAIN_PATH: Path = FAKE_CSV_PATH / "train.csv"
 EXP_TEST_PATH: Path = FAKE_CSV_PATH / "test.csv"
 EXP_VAL_PATH: Path = FAKE_CSV_PATH / "val.csv"
 
+
 def _generate_default_records(num_records: int) -> List[CurationRecord]:
     cr: List[CurationRecord] = []
     for i in range(num_records):
@@ -252,15 +253,13 @@ def test_write_curation_record_includes_only_selected_images():
     f_utils: FileUtils = FileUtils(fake_writer)
 
     fake_records: List[CurationRecord] = _generate_default_records(40)
-    
+
     # mark half of the records as not to use
     for i in range(0, len(fake_records), 2):
         fake_records[i].to_use = False
 
     # Act
-    f_utils.write_curation_record(
-        fake_records, FAKE_CSV_PATH, FAKE_MASK_PATH
-    )
+    f_utils.write_curation_record(fake_records, FAKE_CSV_PATH, FAKE_MASK_PATH)
 
     # Assert
     # there are 20 records to use, so we expect 18 for training 2 shared between test/val (plus header rows)
@@ -286,7 +285,7 @@ def test_write_curation_record_does_not_include_duplicates():
     )
 
     # Assert
-    # expect that the rows in the training and val csv are mutually exclusive 
+    # expect that the rows in the training and val csv are mutually exclusive
     row_minus_index = lambda row: ",".join(row[1:])
     unique_rows: Set[str] = set()
     for row in fake_writer.csv_state[EXP_TRAIN_PATH]["rows"][1:]:
