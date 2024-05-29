@@ -8,10 +8,8 @@ from allencell_ml_segmenter.utils.file_writer import (
 )
 from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
 
-from unittest.mock import patch, mock_open, MagicMock
-from typing import List, Set, Tuple
+from typing import List, Set
 import numpy as np
-import platform
 
 
 def test_get_all_files_in_dir() -> None:
