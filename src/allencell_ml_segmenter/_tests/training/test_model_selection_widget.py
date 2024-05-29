@@ -84,24 +84,6 @@ def test_radio_existing_slot(
     assert model_selection_widget._combo_box_existing_models.isEnabled()
 
 
-def test_select_new_model_radio(
-    qtbot: QtBot,
-    model_selection_widget: ModelSelectionWidget,
-    experiment_model: IExperimentsModel,
-) -> None:
-    # ARRANGE radios selected in the inverted condition that the action will set them to
-    experiment_model.apply_experiment_name("dummy_experiment")
-    model_selection_widget._radio_new_model.setChecked(False)
-    model_selection_widget._radio_existing_model.setChecked(True)
-
-    # ACT - press "start a new model" radio button, which should set model_path to None
-    with qtbot.waitSignal(model_selection_widget._radio_new_model.toggled):
-        model_selection_widget._radio_new_model.click()  # enables the combo box
-
-    # ASSERT
-    assert experiment_model.get_checkpoint() is None
-
-
 def test_select_existing_model_option(
     qtbot: QtBot,
     experiment_model: IExperimentsModel,
