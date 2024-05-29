@@ -45,13 +45,21 @@ class CurationModel(QObject):
         self._experiments_model: ExperimentsModel = experiments_model
         self._current_view: CurationView = CurationView.INPUT_VIEW
 
-        self._img_dirs: Dict[CurationImageType, Optional[Path]] = self._get_placeholder_dict()
-        self._img_dir_paths: Dict[CurationImageType, Optional[List[Path]]] = self._get_placeholder_dict()
+        self._img_dirs: Dict[CurationImageType, Optional[Path]] = (
+            self._get_placeholder_dict()
+        )
+        self._img_dir_paths: Dict[CurationImageType, Optional[List[Path]]] = (
+            self._get_placeholder_dict()
+        )
 
         # These are what the user has selected in the input view
-        self._selected_channels: Dict[CurationImageType, Optional[int]] = self._get_placeholder_dict()
+        self._selected_channels: Dict[CurationImageType, Optional[int]] = (
+            self._get_placeholder_dict()
+        )
         # these are the total number of channels for the images in the folder
-        self._channel_counts: Dict[CurationImageType, Optional[int]] = self._get_placeholder_dict()
+        self._channel_counts: Dict[CurationImageType, Optional[int]] = (
+            self._get_placeholder_dict()
+        )
 
         self._curation_record: Optional[List[CurationRecord]] = None
         # None until start_image_loading is called
@@ -86,23 +94,35 @@ class CurationModel(QObject):
     def set_use_image(self, use: bool) -> None:
         self._curation_record[self._cursor].to_use = use
 
-    def set_image_directory(self, img_type: CurationImageType, dir: Path) -> None:
+    def set_image_directory(
+        self, img_type: CurationImageType, dir: Path
+    ) -> None:
         self._img_dirs[img_type] = dir
         self.image_directory_set.emit(img_type)
-    
-    def get_image_directory(self, img_type: CurationImageType) -> Optional[Path]:
+
+    def get_image_directory(
+        self, img_type: CurationImageType
+    ) -> Optional[Path]:
         return self._img_dirs[img_type]
-    
-    def set_image_directory_paths(self, img_type: CurationImageType, paths: List[Path]) -> None:
+
+    def set_image_directory_paths(
+        self, img_type: CurationImageType, paths: List[Path]
+    ) -> None:
         self._img_dir_paths[img_type] = paths
 
-    def get_image_directory_paths(self, img_type: CurationImageType) -> Optional[List[Path]]:
+    def get_image_directory_paths(
+        self, img_type: CurationImageType
+    ) -> Optional[List[Path]]:
         return self._img_dir_paths[img_type]
 
-    def set_selected_channel(self, img_type: CurationImageType, channel: int) -> None:
+    def set_selected_channel(
+        self, img_type: CurationImageType, channel: int
+    ) -> None:
         self._selected_channels[img_type] = channel
-    
-    def get_selected_channel(self, img_type: CurationImageType) -> Optional[int]:
+
+    def get_selected_channel(
+        self, img_type: CurationImageType
+    ) -> Optional[int]:
         return self._selected_channels[img_type]
 
     def set_current_view(self, view: CurationView) -> None:
@@ -114,9 +134,15 @@ class CurationModel(QObject):
         if view != self._current_view:
             if view == CurationView.MAIN_VIEW:
                 self._curation_record = self._generate_new_curation_record()
-                seg2_exists: bool = self._img_dir_paths[CurationImageType.SEG2] is not None
-                self._curr_img_data = self._get_placeholder_dict(incl_seg2=seg2_exists)
-                self._next_img_data = self._get_placeholder_dict(incl_seg2=seg2_exists)
+                seg2_exists: bool = (
+                    self._img_dir_paths[CurationImageType.SEG2] is not None
+                )
+                self._curr_img_data = self._get_placeholder_dict(
+                    incl_seg2=seg2_exists
+                )
+                self._next_img_data = self._get_placeholder_dict(
+                    incl_seg2=seg2_exists
+                )
                 self._curation_record_saved_to_disk = False
             else:
                 self._curation_record = None
@@ -131,7 +157,9 @@ class CurationModel(QObject):
         """
         return self._current_view
 
-    def set_channel_count(self, img_type: CurationImageType, count: int) -> None:
+    def set_channel_count(
+        self, img_type: CurationImageType, count: int
+    ) -> None:
         self._channel_counts[img_type] = count
         self.channel_count_set.emit(img_type)
 
@@ -147,19 +175,25 @@ class CurationModel(QObject):
     def get_curation_record(self) -> List[CurationRecord]:
         return self._curation_record
 
-    def set_curr_image_data(self, img_type: CurationImageType, img_data: ImageData) -> None:
+    def set_curr_image_data(
+        self, img_type: CurationImageType, img_data: ImageData
+    ) -> None:
         self._curr_img_data[img_type] = img_data
         if not self.is_loading_images():
             self.image_loading_finished.emit()
-    
-    def get_curr_image_data(self, img_type: CurationImageType) -> Optional[ImageData]:
+
+    def get_curr_image_data(
+        self, img_type: CurationImageType
+    ) -> Optional[ImageData]:
         return self._curr_img_data[img_type]
 
-    def set_next_image_data(self, img_type: CurationImageType, img_data: ImageData) -> None:
+    def set_next_image_data(
+        self, img_type: CurationImageType, img_data: ImageData
+    ) -> None:
         self._next_img_data[img_type] = img_data
         if not self.is_loading_images():
             self.image_loading_finished.emit()
-    
+
     # note: I don't see a reason why we would need to get the next image data instead of
     # calling next_image, so leaving that out
     def has_seg2_data(self) -> bool:
@@ -173,13 +207,13 @@ class CurationModel(QObject):
 
     def has_next_image(self) -> bool:
         return self._cursor + 1 < self.get_num_images()
-    
+
     def is_loading_curr_images(self) -> bool:
         return len(self._curr_img_data) != self._get_num_data_dict_keys()
-    
+
     def is_loading_next_images(self) -> bool:
         return len(self._next_img_data) != self._get_num_data_dict_keys()
-    
+
     def is_loading_images(self) -> bool:
         return self.is_loading_curr_images() or self.is_loading_next_images()
 
@@ -211,10 +245,14 @@ class CurationModel(QObject):
             )
         if not self.has_next_image():
             raise RuntimeError("No next image available")
-        
+
         self._curr_img_data = self._next_img_data
         self._cursor += 1
-        self._next_img_data = {} if self.has_next_image() else self._get_placeholder_dict(incl_seg2=self.has_seg2_data())
+        self._next_img_data = (
+            {}
+            if self.has_next_image()
+            else self._get_placeholder_dict(incl_seg2=self.has_seg2_data())
+        )
         # need to set use image to true since we want this to be the default
         self.set_use_image(True)
         self.cursor_moved.emit()
@@ -243,13 +281,11 @@ class CurationModel(QObject):
         """
         raw_paths: List[Path] = self._img_dir_paths[CurationImageType.RAW]
         seg1_paths: List[Path] = self._img_dir_paths[CurationImageType.SEG1]
-        seg2_paths: Optional[List[Path]] = self._img_dir_paths[CurationImageType.SEG2]
-        if len(raw_paths) != len(
-            seg1_paths
-        ) or (
-            seg2_paths is not None
-            and len(seg1_paths)
-            != len(seg2_paths)
+        seg2_paths: Optional[List[Path]] = self._img_dir_paths[
+            CurationImageType.SEG2
+        ]
+        if len(raw_paths) != len(seg1_paths) or (
+            seg2_paths is not None and len(seg1_paths) != len(seg2_paths)
         ):
             raise ValueError("provided image dirs must be of same length")
         elif len(raw_paths) < 1:
@@ -259,11 +295,7 @@ class CurationModel(QObject):
             CurationRecord(
                 raw_paths[i],
                 seg1_paths[i],
-                (
-                    seg2_paths[i]
-                    if seg2_paths is not None
-                    else None
-                ),
+                (seg2_paths[i] if seg2_paths is not None else None),
                 None,
                 None,
                 "seg1",
@@ -279,12 +311,17 @@ class CurationModel(QObject):
         """
         return 3 if self.has_seg2_data() else 2
 
-    def _get_placeholder_dict(self, incl_seg2: bool=True) -> Dict[CurationImageType, Optional[Any]]:
+    def _get_placeholder_dict(
+        self, incl_seg2: bool = True
+    ) -> Dict[CurationImageType, Optional[Any]]:
         """
         Returns placeholder image data dict with keys mapped to None. Only includes a SEG2 key if
         :param incl_seg2: is True.
         """
-        output: Dict[CurationImageType, Optional[Any]] = {CurationImageType.RAW: None, CurationImageType.SEG1: None}
+        output: Dict[CurationImageType, Optional[Any]] = {
+            CurationImageType.RAW: None,
+            CurationImageType.SEG1: None,
+        }
         if incl_seg2:
             output[CurationImageType.SEG2] = None
         return output

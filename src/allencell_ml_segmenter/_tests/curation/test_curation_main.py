@@ -33,7 +33,9 @@ IMG_DIR_PATH = (
 )
 
 IMG_DIR_FILES = [path for path in IMG_DIR_PATH.iterdir()]
-FAKE_IMG_DATA = [ImageData(28, 28, 28, 4, None, path) for path in IMG_DIR_FILES]
+FAKE_IMG_DATA = [
+    ImageData(28, 28, 28, 4, None, path) for path in IMG_DIR_FILES
+]
 
 
 @dataclass
@@ -47,9 +49,15 @@ class TestEnvironment:
 def test_environment_with_seg2() -> TestEnvironment:
     curation_model: CurationModel = CurationModel(FakeExperimentsModel())
 
-    curation_model.set_image_directory_paths(CurationImageType.RAW, IMG_DIR_FILES)
-    curation_model.set_image_directory_paths(CurationImageType.SEG1, IMG_DIR_FILES)
-    curation_model.set_image_directory_paths(CurationImageType.SEG2, IMG_DIR_FILES)
+    curation_model.set_image_directory_paths(
+        CurationImageType.RAW, IMG_DIR_FILES
+    )
+    curation_model.set_image_directory_paths(
+        CurationImageType.SEG1, IMG_DIR_FILES
+    )
+    curation_model.set_image_directory_paths(
+        CurationImageType.SEG2, IMG_DIR_FILES
+    )
     curation_model.set_current_view(CurationView.MAIN_VIEW)
     curation_model.start_loading_images()
 
@@ -62,8 +70,11 @@ def test_environment_with_seg2() -> TestEnvironment:
         main_view,
     )
 
+
 @pytest.fixture
-def test_environment_first_images_ready(test_environment_with_seg2: TestEnvironment) -> TestEnvironment:
+def test_environment_first_images_ready(
+    test_environment_with_seg2: TestEnvironment,
+) -> TestEnvironment:
     env: TestEnvironment = test_environment_with_seg2
     env.model.set_curr_image_data(CurationImageType.RAW, FAKE_IMG_DATA[0])
     env.model.set_curr_image_data(CurationImageType.SEG1, FAKE_IMG_DATA[0])
@@ -74,12 +85,17 @@ def test_environment_first_images_ready(test_environment_with_seg2: TestEnvironm
     env.model.set_next_image_data(CurationImageType.SEG2, FAKE_IMG_DATA[1])
     return env
 
+
 @pytest.fixture
 def test_environment_without_seg2() -> TestEnvironment:
     curation_model: CurationModel = CurationModel(FakeExperimentsModel())
 
-    curation_model.set_image_directory_paths(CurationImageType.RAW, IMG_DIR_FILES)
-    curation_model.set_image_directory_paths(CurationImageType.SEG1, IMG_DIR_FILES)
+    curation_model.set_image_directory_paths(
+        CurationImageType.RAW, IMG_DIR_FILES
+    )
+    curation_model.set_image_directory_paths(
+        CurationImageType.SEG1, IMG_DIR_FILES
+    )
     curation_model.set_current_view(CurationView.MAIN_VIEW)
     curation_model.start_loading_images()
 
@@ -130,7 +146,6 @@ def test_initial_state_with_seg2(
     env.model.set_next_image_data(CurationImageType.RAW, FAKE_IMG_DATA[1])
     env.model.set_next_image_data(CurationImageType.SEG1, FAKE_IMG_DATA[1])
     env.model.set_next_image_data(CurationImageType.SEG2, FAKE_IMG_DATA[1])
-
 
     # Assert
     # this behavior is already tested in the model tests, so if this fails, then you haven't
@@ -348,7 +363,6 @@ def test_create_new_merging_mask(
 ) -> None:
     # Arrange
     env: TestEnvironment = test_environment_first_images_ready
-    
 
     assert len(env.viewer.get_all_shapes()) == 0
 
@@ -367,7 +381,6 @@ def test_create_new_excluding_mask(
 ) -> None:
     # Arrange
     env: TestEnvironment = test_environment_first_images_ready
-    
 
     assert len(env.viewer.get_all_shapes()) == 0
 
@@ -386,7 +399,7 @@ def test_save_csv(
 ) -> None:
     # Arrange
     env: TestEnvironment = test_environment_first_images_ready
-    
+
     save_requested_slot: Mock = Mock()
     env.model.save_to_disk_requested.connect(save_requested_slot)
 
@@ -395,7 +408,9 @@ def test_save_csv(
     assert not env.view.save_csv_button.isEnabled()
     save_requested_slot.assert_called_once()
 
-    env.model.set_curation_record_saved_to_disk(True)  # should re-enable the button
+    env.model.set_curation_record_saved_to_disk(
+        True
+    )  # should re-enable the button
     assert env.view.save_csv_button.isEnabled()
 
 
@@ -404,7 +419,6 @@ def test_delete_merging_mask(
 ):
     # Arrange
     env: TestEnvironment = test_environment_first_images_ready
-    
 
     # Act
     env.view.merging_create_button.click()
@@ -421,7 +435,6 @@ def test_delete_excluding_mask(
 ):
     # Arrange
     env: TestEnvironment = test_environment_first_images_ready
-    
 
     # Act
     env.view.excluding_create_button.click()
@@ -438,7 +451,6 @@ def test_use_image_radios(
 ) -> None:
     # Arrange
     env: TestEnvironment = test_environment_first_images_ready
-    
 
     # Act / Assert
     assert env.view.merging_create_button.isEnabled()
@@ -481,7 +493,6 @@ def test_set_use_image(
 ):
     # Arrange
     env: TestEnvironment = test_environment_first_images_ready
-    
 
     # Act / Assert
     assert env.view.yes_radio.isChecked()
@@ -499,7 +510,6 @@ def test_set_base_image(
 ):
     # Arrange
     env: TestEnvironment = test_environment_first_images_ready
-    
 
     # Act / Assert
     assert (
@@ -520,7 +530,6 @@ def test_set_merging_mask(
 ):
     # Arrange
     env: TestEnvironment = test_environment_first_images_ready
-    
 
     # Act / Assert
     env.view.merging_create_button.click()
@@ -536,7 +545,6 @@ def test_set_excluding_mask(
 ):
     # Arrange
     env: TestEnvironment = test_environment_first_images_ready
-    
 
     # Act / Assert
     env.view.excluding_create_button.click()
@@ -556,7 +564,6 @@ def test_curation_record_on_next(
     # standard way to deal with modal dialogs: https://pytest-qt.readthedocs.io/en/latest/note_dialogs.html
     monkeypatch.setattr(InfoDialogBox, "exec", lambda *args: 0)
     env: TestEnvironment = test_environment_first_images_ready
-    
 
     # Act
     env.view.yes_radio.click()
