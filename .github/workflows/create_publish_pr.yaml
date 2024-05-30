@@ -27,8 +27,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-        #with:
-        #  ref: main
+        with:
+          ref: main
 
       - name: Set up Python 3.10
         uses: actions/setup-python@v5
@@ -51,7 +51,7 @@ jobs:
         uses: peter-evans/create-pull-request@v6
         with:
           branch: workflow-release
-          #base: main
+          base: main
           title: Bump version and publish
           body: See commit message or diff for new version number
       
