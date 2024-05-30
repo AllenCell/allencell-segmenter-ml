@@ -48,7 +48,7 @@ jobs:
       - name: Create pull request
         uses: peter-evans/create-pull-request@v6
         with:
-          branch: release
+          branch: workflow-release
           base: main
 
       
