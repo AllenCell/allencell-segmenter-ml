@@ -53,5 +53,11 @@ jobs:
         with:
           branch: workflow-release
           base: main
+      
+      - name: Tag version
+        run: |
+          git checkout workflow-release
+          python tag_with_current_version.py
+          git push origin --tags
 
       
