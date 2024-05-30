@@ -117,12 +117,6 @@ def test_set_current_view_to_main_view(curation_model: CurationModel) -> None:
     view_changed_slot: Mock = Mock()
     curation_model.current_view_changed.connect(view_changed_slot)
 
-    first_image_ready_slot: Mock = Mock()
-    curation_model.first_image_data_ready.connect(first_image_ready_slot)
-
-    next_image_ready_slot: Mock = Mock()
-    curation_model.next_image_data_ready.connect(next_image_ready_slot)
-
     # Act
     curation_model.set_current_view(CurationView.MAIN_VIEW)
 
@@ -130,8 +124,6 @@ def test_set_current_view_to_main_view(curation_model: CurationModel) -> None:
     assert curation_model.get_current_view() == CurationView.MAIN_VIEW
 
     view_changed_slot.assert_called_once()
-    first_image_ready_slot.assert_called_once()
-    next_image_ready_slot.assert_called_once()  # should be called since > 1 image in dirs
 
     assert curation_model.get_raw_image_data().path == Path("r1")
     assert curation_model.get_seg1_image_data().path == Path("s11")

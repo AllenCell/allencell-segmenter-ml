@@ -87,10 +87,8 @@ def test_start_with_seg2():
         task_executor=SynchroTaskExecutor.global_instance(),
     )
 
-    on_first_ready_mock: Mock = Mock()
-    loader.signals.first_image_ready.connect(on_first_ready_mock)
-    on_next_ready_mock: Mock = Mock()
-    loader.signals.next_image_ready.connect(on_next_ready_mock)
+    on_ready_mock: Mock = Mock()
+    loader.signals.is_idle.connect(on_ready_mock)
 
     # act
     loader.start()
@@ -99,8 +97,7 @@ def test_start_with_seg2():
     assert (
         loader.get_num_images() == 3
     )  # num paths in our file lists (raw, seg1, seg2)
-    on_first_ready_mock.assert_called_once()
-    on_next_ready_mock.assert_called_once()
+    on_ready_mock.assert_called_once()
     assert loader.get_raw_image_data() is not None
     assert loader.get_seg1_image_data() is not None
     assert loader.get_seg2_image_data() is not None
@@ -115,10 +112,8 @@ def test_start_without_seg2():
         task_executor=SynchroTaskExecutor.global_instance(),
     )
 
-    on_first_ready_mock: Mock = Mock()
-    loader.signals.first_image_ready.connect(on_first_ready_mock)
-    on_next_ready_mock: Mock = Mock()
-    loader.signals.next_image_ready.connect(on_next_ready_mock)
+    on_ready_mock: Mock = Mock()
+    loader.signals.is_idle.connect(on_ready_mock)
 
     # act
     loader.start()
@@ -127,8 +122,7 @@ def test_start_without_seg2():
     assert (
         loader.get_num_images() == 3
     )  # num paths in our file lists (raw, seg1, seg2)
-    on_first_ready_mock.assert_called_once()
-    on_next_ready_mock.assert_called_once()
+    on_ready_mock.assert_called_once()
     assert loader.get_raw_image_data() is not None
     assert loader.get_seg1_image_data() is not None
     assert loader.get_seg2_image_data() is None
@@ -142,12 +136,12 @@ def test_next_with_seg2():
         img_data_extractor=FakeImageDataExtractor.global_instance(),
         task_executor=SynchroTaskExecutor.global_instance(),
     )
-    on_next_ready_mock: Mock = Mock()
-    loader.signals.next_image_ready.connect(on_next_ready_mock)
+    on_ready_mock: Mock = Mock()
+    loader.signals.is_idle.connect(on_ready_mock)
     loader.start()
 
     assert loader.get_current_index() == 0
-    assert on_next_ready_mock.call_count == 1
+    assert on_ready_mock.call_count == 1
     assert loader.get_raw_image_data().path == raw[0]
     assert loader.get_seg1_image_data().path == seg1[0]
     assert loader.get_seg2_image_data().path == seg2[0]
@@ -155,7 +149,7 @@ def test_next_with_seg2():
     assert loader.has_next()
     loader.next()
     assert loader.get_current_index() == 1
-    assert on_next_ready_mock.call_count == 2
+    assert on_ready_mock.call_count == 2
     assert loader.get_raw_image_data().path == raw[1]
     assert loader.get_seg1_image_data().path == seg1[1]
     assert loader.get_seg2_image_data().path == seg2[1]
@@ -163,9 +157,7 @@ def test_next_with_seg2():
     assert loader.has_next()
     loader.next()
     assert loader.get_current_index() == 2
-    assert (
-        on_next_ready_mock.call_count == 2
-    )  # there is no next to load, so the signal shouldn't be emitted
+    assert on_ready_mock.call_count == 3
     assert loader.get_raw_image_data().path == raw[2]
     assert loader.get_seg1_image_data().path == seg1[2]
     assert loader.get_seg2_image_data().path == seg2[2]
@@ -183,12 +175,12 @@ def test_next_without_seg2():
         img_data_extractor=FakeImageDataExtractor.global_instance(),
         task_executor=SynchroTaskExecutor.global_instance(),
     )
-    on_next_ready_mock: Mock = Mock()
-    loader.signals.next_image_ready.connect(on_next_ready_mock)
+    on_ready_mock: Mock = Mock()
+    loader.signals.is_idle.connect(on_ready_mock)
     loader.start()
 
     assert loader.get_current_index() == 0
-    assert on_next_ready_mock.call_count == 1
+    assert on_ready_mock.call_count == 1
     assert loader.get_raw_image_data().path == raw[0]
     assert loader.get_seg1_image_data().path == seg1[0]
     assert loader.get_seg2_image_data() is None
@@ -196,7 +188,7 @@ def test_next_without_seg2():
     assert loader.has_next()
     loader.next()
     assert loader.get_current_index() == 1
-    assert on_next_ready_mock.call_count == 2
+    assert on_ready_mock.call_count == 2
     assert loader.get_raw_image_data().path == raw[1]
     assert loader.get_seg1_image_data().path == seg1[1]
     assert loader.get_seg2_image_data() is None
@@ -204,7 +196,7 @@ def test_next_without_seg2():
     assert loader.has_next()
     loader.next()
     assert loader.get_current_index() == 2
-    assert on_next_ready_mock.call_count == 2
+    assert on_ready_mock.call_count == 3
     assert loader.get_raw_image_data().path == raw[2]
     assert loader.get_seg1_image_data().path == seg1[2]
     assert loader.get_seg2_image_data() is None
@@ -222,14 +214,15 @@ def test_prev_with_seg2():
         img_data_extractor=FakeImageDataExtractor.global_instance(),
         task_executor=SynchroTaskExecutor.global_instance(),
     )
-    on_prev_ready_mock: Mock = Mock()
-    loader.signals.prev_image_ready.connect(on_prev_ready_mock)
+    on_ready_mock: Mock = Mock()
+    loader.signals.is_idle.connect(on_ready_mock)
     loader.start()
     loader.next()
     loader.next()
 
     assert loader.get_current_index() == 2
-    assert on_prev_ready_mock.call_count == 0
+    # calls to start and next (3 of these above) should each result in an is_idle event being emitted
+    assert on_ready_mock.call_count == 3
     assert loader.get_raw_image_data().path == raw[2]
     assert loader.get_seg1_image_data().path == seg1[2]
     assert loader.get_seg2_image_data().path == seg2[2]
@@ -237,7 +230,8 @@ def test_prev_with_seg2():
     assert loader.has_prev()
     loader.prev()
     assert loader.get_current_index() == 1
-    assert on_prev_ready_mock.call_count == 1
+    # calls to prev should also result in an is_idle event being emitted
+    assert on_ready_mock.call_count == 4
     assert loader.get_raw_image_data().path == raw[1]
     assert loader.get_seg1_image_data().path == seg1[1]
     assert loader.get_seg2_image_data().path == seg2[1]
@@ -245,7 +239,7 @@ def test_prev_with_seg2():
     assert loader.has_prev()
     loader.prev()
     assert loader.get_current_index() == 0
-    assert on_prev_ready_mock.call_count == 1
+    assert on_ready_mock.call_count == 5
     assert loader.get_raw_image_data().path == raw[0]
     assert loader.get_seg1_image_data().path == seg1[0]
     assert loader.get_seg2_image_data().path == seg2[0]
@@ -263,14 +257,15 @@ def test_prev_without_seg2():
         img_data_extractor=FakeImageDataExtractor.global_instance(),
         task_executor=SynchroTaskExecutor.global_instance(),
     )
-    on_prev_ready_mock: Mock = Mock()
-    loader.signals.prev_image_ready.connect(on_prev_ready_mock)
+    on_ready_mock: Mock = Mock()
+    loader.signals.is_idle.connect(on_ready_mock)
     loader.start()
     loader.next()
     loader.next()
 
     assert loader.get_current_index() == 2
-    assert on_prev_ready_mock.call_count == 0
+    # calls to start and next (3 of these above) should each result in an is_idle event being emitted
+    assert on_ready_mock.call_count == 3
     assert loader.get_raw_image_data().path == raw[2]
     assert loader.get_seg1_image_data().path == seg1[2]
     assert loader.get_seg2_image_data() is None
@@ -278,7 +273,8 @@ def test_prev_without_seg2():
     assert loader.has_prev()
     loader.prev()
     assert loader.get_current_index() == 1
-    assert on_prev_ready_mock.call_count == 1
+    # calls to prev should also result in an is_idle event being emitted
+    assert on_ready_mock.call_count == 4
     assert loader.get_raw_image_data().path == raw[1]
     assert loader.get_seg1_image_data().path == seg1[1]
     assert loader.get_seg2_image_data() is None
@@ -286,7 +282,7 @@ def test_prev_without_seg2():
     assert loader.has_prev()
     loader.prev()
     assert loader.get_current_index() == 0
-    assert on_prev_ready_mock.call_count == 1
+    assert on_ready_mock.call_count == 5
     assert loader.get_raw_image_data().path == raw[0]
     assert loader.get_seg1_image_data().path == seg1[0]
     assert loader.get_seg2_image_data() is None
