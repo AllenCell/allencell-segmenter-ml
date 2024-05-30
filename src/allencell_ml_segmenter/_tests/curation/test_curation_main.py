@@ -92,6 +92,9 @@ def test_initial_state_with_seg2(
     qtbot: QtBot, test_environment_with_seg2: TestEnvironment
 ) -> None:
     env: TestEnvironment = test_environment_with_seg2
+    # Arrange
+    loading_finished_mock: Mock = Mock()
+    env.model.image_loading_finished.connect(loading_finished_mock)
 
     # everything should be disabled until signals from model fire
     # Assert
@@ -111,25 +114,12 @@ def test_initial_state_with_seg2(
     assert not env.view.next_button.isEnabled()
 
     # Act
-    env.model.first_image_data_ready.emit()
+    # Note: start_loadig_images would be called when the view change occurs in production
+    env.model.start_loading_images()
+
     # Assert
-    assert env.view.merging_create_button.isEnabled()
-    assert not env.view.merging_save_button.isEnabled()
-    assert env.view.merging_base_combo.isEnabled()
-    assert not env.view.merging_delete_button.isEnabled()
+    loading_finished_mock.assert_called_once()
 
-    assert env.view.excluding_create_button.isEnabled()
-    assert not env.view.excluding_delete_button.isEnabled()
-    assert not env.view.excluding_save_button.isEnabled()
-
-    assert env.view.yes_radio.isEnabled()
-    assert env.view.no_radio.isEnabled()
-
-    assert not env.view.next_button.isEnabled()
-
-    # Act
-    env.model.next_image_data_ready.emit()
-    # Assert
     assert env.view.merging_create_button.isEnabled()
     assert not env.view.merging_save_button.isEnabled()
     assert env.view.merging_base_combo.isEnabled()
@@ -158,6 +148,9 @@ def test_initial_state_no_seg2(
     qtbot: QtBot, test_environment_without_seg2: TestEnvironment
 ) -> None:
     env: TestEnvironment = test_environment_without_seg2
+    # Arrange
+    loading_finished_mock: Mock = Mock()
+    env.model.image_loading_finished.connect(loading_finished_mock)
 
     # everything should be disabled until signals from model fire
     # Assert
@@ -177,25 +170,11 @@ def test_initial_state_no_seg2(
     assert not env.view.next_button.isEnabled()
 
     # Act
-    env.model.first_image_data_ready.emit()
+    env.model.start_loading_images()
+
     # Assert
-    assert not env.view.merging_create_button.isEnabled()
-    assert not env.view.merging_save_button.isEnabled()
-    assert not env.view.merging_base_combo.isEnabled()
-    assert not env.view.merging_delete_button.isEnabled()
+    loading_finished_mock.assert_called_once()
 
-    assert env.view.excluding_create_button.isEnabled()
-    assert not env.view.excluding_delete_button.isEnabled()
-    assert not env.view.excluding_save_button.isEnabled()
-
-    assert env.view.yes_radio.isEnabled()
-    assert env.view.no_radio.isEnabled()
-
-    assert not env.view.next_button.isEnabled()
-
-    # Act
-    env.model.next_image_data_ready.emit()
-    # Assert
     assert not env.view.merging_create_button.isEnabled()
     assert not env.view.merging_save_button.isEnabled()
     assert not env.view.merging_base_combo.isEnabled()
@@ -223,13 +202,17 @@ def test_next_image(
 ) -> None:
     # Arrange
     env: TestEnvironment = test_environment_with_seg2
-    env.model.first_image_data_ready.emit()
-    env.model.next_image_data_ready.emit()
+    loading_finished_mock: Mock = Mock()
+    env.model.image_loading_finished.connect(loading_finished_mock)
 
     # Act
+    env.model.start_loading_images()
     env.view.next_button.click()
 
     # Assert
+    # one finished signal should be emitted after 'start_loading_images', the other should be emitted
+    # after clicking the next button
+    assert loading_finished_mock.call_count == 2
     assert env.view.progress_bar.value() == 2
 
     assert env.view.merging_create_button.isEnabled()
@@ -244,8 +227,8 @@ def test_next_image(
     assert env.view.yes_radio.isEnabled()
     assert env.view.no_radio.isEnabled()
 
-    assert not env.view.next_button.isEnabled()
-    env.model.next_image_data_ready.emit()
+    # TODO: figure out how to test that next button is disabled until the loading finished
+    # signal is emitted; currently that signal is emitted as soon as we click the next button
     assert env.view.next_button.isEnabled()
 
     assert env.viewer.contains_layer(f"[raw] {IMG_DIR_FILES[1].name}")
@@ -262,17 +245,18 @@ def test_last_image(
     # standard way to deal with modal dialogs: https://pytest-qt.readthedocs.io/en/latest/note_dialogs.html
     monkeypatch.setattr(InfoDialogBox, "exec", lambda *args: 0)
     env: TestEnvironment = test_environment_with_seg2
-    env.model.first_image_data_ready.emit()
-    env.model.next_image_data_ready.emit()
+    loading_finished_mock: Mock = Mock()
+    env.model.image_loading_finished.connect(loading_finished_mock)
 
     # Act
+    env.model.start_loading_images()
     env.view.next_button.click()
-    env.model.next_image_data_ready.emit()
-
     env.view.next_button.click()
-    # since there is no next image after this click, we do not expect next_image_data_ready signal
 
     # Assert
+    # one finished signal should be emitted after 'start_loading_images', and one
+    # should be emitted after clicking the next button (which we do twice)
+    assert loading_finished_mock.call_count == 3
     assert env.view.progress_bar.value() == 3
 
     assert env.view.merging_create_button.isEnabled()
@@ -298,6 +282,7 @@ def test_last_image(
 
     # reached end, so buttons should be disabled
     # Assert
+    assert loading_finished_mock.call_count == 3
     assert env.view.progress_bar.value() == 3
 
     assert not env.view.merging_create_button.isEnabled()
@@ -320,8 +305,7 @@ def test_create_new_merging_mask(
 ) -> None:
     # Arrange
     env: TestEnvironment = test_environment_with_seg2
-    env.model.first_image_data_ready.emit()
-    env.model.next_image_data_ready.emit()
+    env.model.start_loading_images()
 
     assert len(env.viewer.get_all_shapes()) == 0
 
@@ -340,8 +324,7 @@ def test_create_new_excluding_mask(
 ) -> None:
     # Arrange
     env: TestEnvironment = test_environment_with_seg2
-    env.model.first_image_data_ready.emit()
-    env.model.next_image_data_ready.emit()
+    env.model.start_loading_images()
 
     assert len(env.viewer.get_all_shapes()) == 0
 
@@ -360,8 +343,7 @@ def test_save_csv(
 ) -> None:
     # Arrange
     env: TestEnvironment = test_environment_with_seg2
-    env.model.first_image_data_ready.emit()
-    env.model.next_image_data_ready.emit()
+    env.model.start_loading_images()
     save_requested_slot: Mock = Mock()
     env.model.save_to_disk_requested.connect(save_requested_slot)
 
@@ -379,8 +361,7 @@ def test_delete_merging_mask(
 ):
     # Arrange
     env: TestEnvironment = test_environment_with_seg2
-    env.model.first_image_data_ready.emit()
-    env.model.next_image_data_ready.emit()
+    env.model.start_loading_images()
 
     # Act
     env.view.merging_create_button.click()
@@ -397,8 +378,7 @@ def test_delete_excluding_mask(
 ):
     # Arrange
     env: TestEnvironment = test_environment_with_seg2
-    env.model.first_image_data_ready.emit()
-    env.model.next_image_data_ready.emit()
+    env.model.start_loading_images()
 
     # Act
     env.view.excluding_create_button.click()
@@ -415,8 +395,7 @@ def test_use_image_radios(
 ) -> None:
     # Arrange
     env: TestEnvironment = test_environment_with_seg2
-    env.model.first_image_data_ready.emit()
-    env.model.next_image_data_ready.emit()
+    env.model.start_loading_images()
 
     # Act / Assert
     assert env.view.merging_create_button.isEnabled()
@@ -451,7 +430,7 @@ def test_use_image_radios(
     assert not env.view.excluding_save_button.isEnabled()
 
 
-### View + Model Integration Tests ------------------------------------------------------------------------
+### Model State Tests ------------------------------------------------------------------------
 
 
 def test_set_use_image(
@@ -459,8 +438,7 @@ def test_set_use_image(
 ):
     # Arrange
     env: TestEnvironment = test_environment_with_seg2
-    env.model.first_image_data_ready.emit()
-    env.model.next_image_data_ready.emit()
+    env.model.start_loading_images()
 
     # Act / Assert
     assert env.view.yes_radio.isChecked()
@@ -478,8 +456,7 @@ def test_set_base_image(
 ):
     # Arrange
     env: TestEnvironment = test_environment_with_seg2
-    env.model.first_image_data_ready.emit()
-    env.model.next_image_data_ready.emit()
+    env.model.start_loading_images()
 
     # Act / Assert
     assert (
@@ -500,8 +477,7 @@ def test_set_merging_mask(
 ):
     # Arrange
     env: TestEnvironment = test_environment_with_seg2
-    env.model.first_image_data_ready.emit()
-    env.model.next_image_data_ready.emit()
+    env.model.start_loading_images()
 
     # Act / Assert
     env.view.merging_create_button.click()
@@ -517,8 +493,7 @@ def test_set_excluding_mask(
 ):
     # Arrange
     env: TestEnvironment = test_environment_with_seg2
-    env.model.first_image_data_ready.emit()
-    env.model.next_image_data_ready.emit()
+    env.model.start_loading_images()
 
     # Act / Assert
     env.view.excluding_create_button.click()
@@ -538,8 +513,7 @@ def test_curation_record_on_next(
     # standard way to deal with modal dialogs: https://pytest-qt.readthedocs.io/en/latest/note_dialogs.html
     monkeypatch.setattr(InfoDialogBox, "exec", lambda *args: 0)
     env: TestEnvironment = test_environment_with_seg2
-    env.model.first_image_data_ready.emit()
-    env.model.next_image_data_ready.emit()
+    env.model.start_loading_images()
 
     # Act
     env.view.yes_radio.click()
@@ -561,7 +535,6 @@ def test_curation_record_on_next(
     assert record.base_image_index == merging_base
 
     # Act
-    env.model.next_image_data_ready.emit()
     env.view.no_radio.click()
     env.view.next_button.click()
 
@@ -601,8 +574,7 @@ def test_curation_record_on_save(
 ) -> None:
     # Arrange
     env: TestEnvironment = test_environment_with_seg2
-    env.model.first_image_data_ready.emit()
-    env.model.next_image_data_ready.emit()
+    env.model.start_loading_images()
 
     # Act
     env.view.yes_radio.click()
