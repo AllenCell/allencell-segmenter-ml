@@ -27,8 +27,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: main
+        #with:
+        #  ref: main
 
       - name: Set up Python 3.10
         uses: actions/setup-python@v5
@@ -42,7 +42,6 @@ jobs:
 
       - name: Bump version
         run: |
-          git checkout main
           git config --global user.name 'aicsgithub'
           git config --global user.email 'aicsgithub@alleninstitute.org'
           python publish_bumpver_handler.py ${{ inputs.semver_component }}
@@ -52,7 +51,7 @@ jobs:
         uses: peter-evans/create-pull-request@v6
         with:
           branch: workflow-release
-          base: main
+          #base: main
           title: Bump version and publish
           body: See diff for new version number
       
