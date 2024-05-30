@@ -15,7 +15,6 @@ from allencell_ml_segmenter.curation.curation_image_loader import (
 )
 
 
-# TODO: worker creator/ worker manager interface to make testing code that uses thread worker easier
 class CurationImageLoader(ICurationImageLoader):
     """
     CurationImageLoader manages image data for curation with the invariant
@@ -44,67 +43,98 @@ class CurationImageLoader(ICurationImageLoader):
             task_executor,
         )
 
-        # private invariant: _next_img_data will only have < _num_data_dict_keys keys if there is
-        # no next image or a thread is currently updating _next_img_data. Same goes for _prev_img_data
+        # private invariant: _next_img_data will only have < _num_data_dict_keys keys if
+        # a thread is currently updating _next_img_data. Same goes for prev and curr
         self._num_data_dict_keys: int = 3 if self._seg2_images else 2
-        self._curr_img_data: Dict[str, ImageData] = {}
-        self._next_img_data: Dict[str, ImageData] = {}
-        self._prev_img_data: Dict[str, ImageData] = {}
+        self._curr_img_data: Dict[str, Optional[ImageData]] = (
+            self._get_placeholder_dict()
+        )
+        self._next_img_data: Dict[str, Optional[ImageData]] = (
+            self._get_placeholder_dict()
+        )
+        self._prev_img_data: Dict[str, Optional[ImageData]] = (
+            self._get_placeholder_dict()
+        )
 
-        # if threads are currently running for prev, curr, next img data
-        self._is_busy = [False, False, False]
+        # threads are currently running for extraction
+        self._is_busy: bool = False
 
     def start(self) -> None:
         # start threads for first and next images
-        self._set_curr_is_busy(True)
-        self._start_extraction_threads(
-            0, self._curr_img_data, self._on_first_image_ready
-        )
-
         if self.has_next():
-            self._set_next_is_busy(True)
-            self._start_extraction_threads(
-                1, self._next_img_data, self._on_next_image_ready
-            )
+            self._extract_image_data(curr=True, next=True)
+        else:
+            self._extract_image_data(curr=True)
 
     def is_busy(self) -> bool:
-        return any(self._is_busy)
+        return self._is_busy
 
-    def _on_first_image_ready(self):
-        self._set_curr_is_busy(False)
-        self.signals.first_image_ready.emit()
+    def _get_placeholder_dict(self) -> Dict[str, Optional[ImageData]]:
+        """
+        Returns placeholder image data dict with keys mapped to None. Necessary to use
+        placeholders instead of empty dicts so that calls to _wait_on_data_dicts will not
+        hang infinitely when there is no next or no prev.
+        """
+        return (
+            {"raw": None, "seg1": None}
+            if self._num_data_dict_keys == 2
+            else {"raw": None, "seg1": None, "seg2": None}
+        )
 
-    def _on_next_image_ready(self):
-        self._set_next_is_busy(False)
-        self.signals.next_image_ready.emit()
-
-    def _on_prev_image_ready(self):
-        self._set_prev_is_busy(False)
-        self.signals.prev_image_ready.emit()
-
-    def _set_curr_is_busy(self, busy: bool):
-        self._is_busy[1] = busy
-
-    def _set_prev_is_busy(self, busy: bool):
-        self._is_busy[0] = busy
-
-    def _set_next_is_busy(self, busy: bool):
-        self._is_busy[2] = busy
-
-    def _wait_on_data_dict(self, data_dict: Dict[str, ImageData]) -> None:
+    def _wait_on_data_dicts(self) -> None:
         """
         This should never be called in the main/UI thread. It is used exclusively by the
-        monitor thread in _start_extraction_threads.
+        monitor thread in _extract_image_data.
         """
-        while len(data_dict) < self._num_data_dict_keys:
+        while len(self._prev_img_data) < self._num_data_dict_keys:
             time.sleep(0.1)
+        while len(self._curr_img_data) < self._num_data_dict_keys:
+            time.sleep(0.1)
+        while len(self._next_img_data) < self._num_data_dict_keys:
+            time.sleep(0.1)
+
+    def _on_extraction_finished(self) -> None:
+        self._is_busy = False
+        self.signals.is_idle.emit()
+
+    def _extract_image_data(
+        self, prev: bool = False, curr: bool = False, next: bool = False
+    ) -> None:
+        """
+        Begins image data extraction for previous images (based on current _cursor location) iff :param prev:.
+        Same pattern applies for current and next images. Emits images_ready signal when all extractions are
+        completed.
+        """
+        # start extraction for individual images here
+        if prev:
+            self._start_extraction_threads(
+                self._cursor - 1, self._prev_img_data
+            )
+        if curr:
+            self._start_extraction_threads(self._cursor, self._curr_img_data)
+        if next:
+            self._start_extraction_threads(
+                self._cursor + 1, self._next_img_data
+            )
+
+        # start monitor thread here
+        if any([prev, curr, next]):
+            self._is_busy = True
+            # this is thread safe due to GIL: https://docs.python.org/3/glossary.html#term-global-interpreter-lock
+            self._task_executor.exec(
+                self._wait_on_data_dicts,
+                on_finish=self._on_extraction_finished,
+            )
 
     def _start_extraction_threads(
         self,
         img_index: int,
         data_dict: Dict[str, ImageData],
-        on_finish: Callable[[], None],
     ) -> None:
+        """
+        Clears :param data_dict:, begins extraction of image data from raw, seg1, and seg2 (if applicable) at
+        :param img_index:. Extracted data will be added to :param data_dict: as it becomes available.
+        """
         data_dict.clear()
         self._task_executor.exec(
             lambda: self._img_data_extractor.extract_image_data(
@@ -128,11 +158,6 @@ class CurationImageLoader(ICurationImageLoader):
                     {"seg2": img_data}
                 ),
             )
-
-        # this is thread safe due to GIL: https://docs.python.org/3/glossary.html#term-global-interpreter-lock
-        self._task_executor.exec(
-            lambda: self._wait_on_data_dict(data_dict), on_finish=on_finish
-        )
 
     def get_raw_image_data(self) -> ImageData:
         """
@@ -171,15 +196,12 @@ class CurationImageLoader(ICurationImageLoader):
 
         self._prev_img_data = self._curr_img_data
         self._curr_img_data = self._next_img_data
-        self._next_img_data = {}
+        self._next_img_data = self._get_placeholder_dict()
         self._cursor += 1
         if self.has_next():
-            self._set_next_is_busy(True)
-            self._start_extraction_threads(
-                self._cursor + 1,
-                self._next_img_data,
-                self._on_next_image_ready,
-            )
+            self._extract_image_data(next=True)
+        else:
+            self.signals.is_idle.emit()
 
     def prev(self) -> None:
         """
@@ -195,12 +217,9 @@ class CurationImageLoader(ICurationImageLoader):
 
         self._next_img_data = self._curr_img_data
         self._curr_img_data = self._prev_img_data
-        self._prev_img_data = {}
+        self._prev_img_data = self._get_placeholder_dict()
         self._cursor -= 1
         if self.has_prev():
-            self._set_prev_is_busy(True)
-            self._start_extraction_threads(
-                self._cursor - 1,
-                self._prev_img_data,
-                self._on_prev_image_ready,
-            )
+            self._extract_image_data(prev=True)
+        else:
+            self.signals.is_idle.emit()
