@@ -53,7 +53,7 @@ jobs:
           branch: workflow-release
           #base: main
           title: Bump version and publish
-          body: See diff for new version number
+          body: See commit message or diff for new version number
       
       - name: Tag version
         run: |
