@@ -23,9 +23,12 @@ jobs:
     permissions:
       id-token: write
       contents: write
+      pull-requests: write
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
 
       - name: Set up Python 3.10
         uses: actions/setup-python@v5
@@ -39,7 +42,6 @@ jobs:
 
       - name: Bump version
         run: |
-          git checkout main
           git config --global user.name 'aicsgithub'
           git config --global user.email 'aicsgithub@alleninstitute.org'
           python publish_bumpver_handler.py ${{ inputs.semver_component }}
@@ -48,7 +50,15 @@ jobs:
       - name: Create pull request
         uses: peter-evans/create-pull-request@v6
         with:
-          branch: release
+          branch: workflow-release
           base: main
+          title: Bump version and publish
+          body: See commit message or diff for new version number
+      
+      - name: Tag version
+        run: |
+          git checkout workflow-release
+          python tag_with_current_version.py
+          git push origin --tags
 
       

@@ -99,9 +99,8 @@ where = ["src"]
 current_version = "0.0.9"
 version_pattern = "MAJOR.MINOR.PATCH[.PYTAGNUM]"
 commit_message  = "Bump version {old_version} -> {new_version}"
-tag_message = "v{new_version}"
 commit          = true
-tag             = true
+tag             = false # no longer useful to tag here, must happen in create_publish_pr.yaml
 push            = false
 
 [tool.bumpver.file_patterns]
