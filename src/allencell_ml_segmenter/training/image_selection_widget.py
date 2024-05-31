@@ -54,7 +54,9 @@ class ImageSelectionWidget(QWidget):
         self.layout().addWidget(frame)
 
         # grid contents
-        directory_label: LabelWithHint = LabelWithHint("Image directory")
+        directory_label: LabelWithHint = LabelWithHint(
+            "Curated image data CSV"
+        )
         self._images_directory_input_button: InputButton = InputButton(
             self._model,
             lambda dir: self._on_input_images_select(dir),
@@ -70,7 +72,7 @@ class ImageSelectionWidget(QWidget):
 
         guide_text: QLabel = QLabel()
         guide_text.setText(
-            "Accepts CSV files, <a href='https://www.allencell.org/segmenter.html'>see instructions</a>"
+            "<a href='https://www.allencell.org/segmenter.html'>See instructions</a> for CSV file"
         )
         guide_text.setObjectName("guideText")
         guide_text.setTextFormat(Qt.RichText)

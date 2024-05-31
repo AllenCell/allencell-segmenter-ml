@@ -8,7 +8,7 @@ build-backend = "setuptools.build_meta"
 # https://peps.python.org/pep-0621/
 [project]
 name = "allencell-ml-segmenter"
-version = "0.0.9"
+version = "0.0.10"
 description = "A plugin to leverage ML segmentation in napari"
 readme = "README.md"
 requires-python = "~=3.10"
@@ -96,16 +96,16 @@ where = ["src"]
 
 # https://pypi.org/project/bumpver
 [tool.bumpver]
-current_version = "0.0.9"
+current_version = "0.0.10"
 version_pattern = "MAJOR.MINOR.PATCH[.PYTAGNUM]"
 commit_message  = "Bump version {old_version} -> {new_version}"
-tag_message = "v{new_version}"
 commit          = true
-tag             = true
+tag             = false # no longer useful to tag here, must happen in create_publish_pr.yaml
 push            = false
 
 [tool.bumpver.file_patterns]
 "pyproject.toml" = ['current_version = "{version}"', 'version = "{version}"']
+"version.toml" = ['version = "{version}"']
 "src/allencell_ml_segmenter/__init__.py" = ['__version__ = "{version}"']
 # ".github/workflows/publish_to_pypi.yaml" = ["Current version: {version}"]
 
