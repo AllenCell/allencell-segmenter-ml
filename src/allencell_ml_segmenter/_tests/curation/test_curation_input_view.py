@@ -28,6 +28,14 @@ def test_env() -> TestEnvironment:
 
 # TODO: figure out how to test the qfiledialog portion of this view -> will also make
 # testing the start curation button possible
+"""
+@patch.multiple(
+    QFileDialog,
+    exec_=Mock(return_value=QFileDialog.Accepted),
+    selectedFiles=Mock(return_value=[MOCK_PATH]),
+    getExistingDirectory=Mock(return_value=MOCK_PATH),
+)
+"""
 
 ### UI State Tests ----------------------------------------------------------------------------------
 
