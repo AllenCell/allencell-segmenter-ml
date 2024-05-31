@@ -101,7 +101,7 @@ class CurationService(QObject):
             )
         )
 
-        if self._curation_model.is_loading_curr_images():
+        if self._curation_model.is_waiting_for_curr_images():
             # start extraction tasks for curr images (paths at cursor)
             self._task_executor.exec(
                 lambda: self._img_data_extractor.extract_image_data(
@@ -138,7 +138,7 @@ class CurationService(QObject):
                     ),
                 )
 
-        if self._curation_model.is_loading_next_images():
+        if self._curation_model.is_waiting_for_next_images():
             # start extraction tasks for next images (paths at cursor + 1)
             self._task_executor.exec(
                 lambda: self._img_data_extractor.extract_image_data(
