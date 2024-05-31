@@ -17,8 +17,12 @@ from allencell_ml_segmenter.utils.file_writer import IFileWriter, FileWriter
 
 from pathlib import Path
 from qtpy.QtCore import QObject
-from typing import List, Tuple, Optional
+from typing import List, Optional
 from copy import deepcopy
+from collections import namedtuple
+
+
+DirectoryData = namedtuple("DirectoryData", ["fpaths", "channels"])
 
 
 # Important note: we do not want to access the model in any of the threads because model state may change
@@ -46,20 +50,22 @@ class CurationService(QObject):
             self._on_save_to_disk
         )
 
-    def _get_dir_data(self, dir: Path) -> Tuple[List[Path], int]:
+    def _get_dir_data(self, dir: Path) -> DirectoryData:
         files: List[Path] = (
             self._file_utils.get_all_files_in_dir_ignore_hidden(dir)
         )
         img_data: ImageData = self._img_data_extractor.extract_image_data(
             files[0], np_data=False
         )
-        return files, img_data.channels
+        return DirectoryData(files, img_data.channels)
 
     def _on_dir_data_extracted(
-        self, img_type: CurationImageType, dir_data: Tuple[List[Path], int]
+        self, img_type: CurationImageType, dir_data: DirectoryData
     ) -> None:
-        self._curation_model.set_image_directory_paths(img_type, dir_data[0])
-        self._curation_model.set_channel_count(img_type, dir_data[1])
+        self._curation_model.set_image_directory_paths(
+            img_type, dir_data.fpaths
+        )
+        self._curation_model.set_channel_count(img_type, dir_data.channels)
 
     def _on_dir_data_errored(
         self, img_type: CurationImageType, e: Exception

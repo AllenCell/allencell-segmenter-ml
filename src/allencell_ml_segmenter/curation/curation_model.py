@@ -215,7 +215,10 @@ class CurationModel(QObject):
         return len(self._next_img_data) != self._get_num_data_dict_keys()
 
     def is_waiting_for_images(self) -> bool:
-        return self.is_waiting_for_curr_images() or self.is_waiting_for_next_images()
+        return (
+            self.is_waiting_for_curr_images()
+            or self.is_waiting_for_next_images()
+        )
 
     def start_loading_images(self) -> None:
         """
