@@ -8,7 +8,7 @@ build-backend = "setuptools.build_meta"
 # https://peps.python.org/pep-0621/
 [project]
 name = "allencell-ml-segmenter"
-version = "0.0.9"
+version = "0.0.10"
 description = "A plugin to leverage ML segmentation in napari"
 readme = "README.md"
 requires-python = "~=3.10"
@@ -96,7 +96,7 @@ where = ["src"]
 
 # https://pypi.org/project/bumpver
 [tool.bumpver]
-current_version = "0.0.9"
+current_version = "0.0.10"
 version_pattern = "MAJOR.MINOR.PATCH[.PYTAGNUM]"
 commit_message  = "Bump version {old_version} -> {new_version}"
 commit          = true
