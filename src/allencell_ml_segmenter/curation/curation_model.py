@@ -179,7 +179,7 @@ class CurationModel(QObject):
         self, img_type: CurationImageType, img_data: ImageData
     ) -> None:
         self._curr_img_data[img_type] = img_data
-        if not self.is_loading_images():
+        if not self.is_waiting_for_images():
             self.image_loading_finished.emit()
 
     def get_curr_image_data(
@@ -191,7 +191,7 @@ class CurationModel(QObject):
         self, img_type: CurationImageType, img_data: ImageData
     ) -> None:
         self._next_img_data[img_type] = img_data
-        if not self.is_loading_images():
+        if not self.is_waiting_for_images():
             self.image_loading_finished.emit()
 
     # note: I don't see a reason why we would need to get the next image data instead of
@@ -208,14 +208,14 @@ class CurationModel(QObject):
     def has_next_image(self) -> bool:
         return self._cursor + 1 < self.get_num_images()
 
-    def is_loading_curr_images(self) -> bool:
+    def is_waiting_for_curr_images(self) -> bool:
         return len(self._curr_img_data) != self._get_num_data_dict_keys()
 
-    def is_loading_next_images(self) -> bool:
+    def is_waiting_for_next_images(self) -> bool:
         return len(self._next_img_data) != self._get_num_data_dict_keys()
 
-    def is_loading_images(self) -> bool:
-        return self.is_loading_curr_images() or self.is_loading_next_images()
+    def is_waiting_for_images(self) -> bool:
+        return self.is_waiting_for_curr_images() or self.is_waiting_for_next_images()
 
     def start_loading_images(self) -> None:
         """
@@ -239,7 +239,7 @@ class CurationModel(QObject):
         immediate: cursor_moved
         at some point: image_loading_finished
         """
-        if self.is_loading_images():
+        if self.is_waiting_for_images():
             raise RuntimeError(
                 "Image loader is busy. Please see image_loading_finished signal."
             )
