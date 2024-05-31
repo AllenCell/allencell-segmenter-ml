@@ -363,5 +363,4 @@ class CurationModel(QObject):
             self._experiments_model.get_user_experiments_path()
             / self._experiments_model.get_experiment_name()
             / "data"
-            / "train.csv"
         )

@@ -12,6 +12,7 @@ from allencell_ml_segmenter.core.task_executor import (
     NapariThreadTaskExecutor,
 )
 from allencell_ml_segmenter.utils.file_utils import FileUtils
+from allencell_ml_segmenter.utils.file_writer import IFileWriter, FileWriter
 
 from pathlib import Path
 from qtpy.QtCore import QObject
@@ -28,11 +29,13 @@ class CurationService(QObject):
         curation_model: CurationModel,
         img_data_extractor: IImageDataExtractor = AICSImageDataExtractor.global_instance(),
         task_executor: ITaskExecutor = NapariThreadTaskExecutor.global_instance(),
+        file_writer: IFileWriter = FileWriter.global_instance(),
     ) -> None:
         super().__init__()
         self._curation_model: CurationModel = curation_model
         self._img_data_extractor: IImageDataExtractor = img_data_extractor
-        self._task_executor = task_executor
+        self._task_executor: ITaskExecutor = task_executor
+        self._file_utils: FileUtils = FileUtils(file_writer)
 
         self._curation_model.raw_directory_set.connect(self._on_raw_dir_set)
         self._curation_model.seg1_directory_set.connect(self._on_seg1_dir_set)
@@ -42,7 +45,9 @@ class CurationService(QObject):
         )
 
     def _get_dir_data(self, dir: Path) -> Tuple[List[Path], int]:
-        files: List[Path] = FileUtils.get_all_files_in_dir_ignore_hidden(dir)
+        files: List[Path] = (
+            self._file_utils.get_all_files_in_dir_ignore_hidden(dir)
+        )
         img_data: ImageData = self._img_data_extractor.extract_image_data(
             files[0], np_data=False
         )
@@ -114,7 +119,7 @@ class CurationService(QObject):
         csv_path: Path = self._curation_model.get_csv_path()
         save_path: Path = self._curation_model.get_save_masks_path()
         self._task_executor.exec(
-            lambda: FileUtils.write_curation_record(
+            lambda: self._file_utils.write_curation_record(
                 record, csv_path, save_path
             ),
             on_finish=lambda: self._curation_model.set_curation_record_saved_to_disk(
