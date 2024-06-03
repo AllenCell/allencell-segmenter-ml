@@ -276,6 +276,8 @@ class CurationInputView(QWidget):
             self.update_seg1_channels()
         elif img_type == CurationImageType.SEG2:
             self.update_seg2_channels()
+        else:
+            raise RuntimeError("Unrecognized curation image type")
 
     def update_raw_channels(self) -> None:
         """
