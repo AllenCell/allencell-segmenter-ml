@@ -175,6 +175,7 @@ class CurationModel(QObject):
     def get_curation_record(self) -> List[CurationRecord]:
         return self._curation_record
 
+    # WARNING: methods that access data dicts must only be called from the main thread
     def set_curr_image_data(
         self, img_type: CurationImageType, img_data: ImageData
     ) -> None:
