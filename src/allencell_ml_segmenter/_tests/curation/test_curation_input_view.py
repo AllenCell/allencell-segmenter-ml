@@ -31,13 +31,16 @@ MOCK_STR_PATH: str = "mock_path"
 
 ### UI State Tests ----------------------------------------------------------------------------------
 
+
 @patch.multiple(
     QFileDialog,
     exec_=Mock(return_value=QFileDialog.Accepted),
     getExistingDirectory=Mock(return_value=MOCK_STR_PATH),
 )
 class TestsWithStubbedFileDialog:
-    def test_raw_dir_selected(self, qtbot: QtBot, test_env: TestEnvironment) -> None:
+    def test_raw_dir_selected(
+        self, qtbot: QtBot, test_env: TestEnvironment
+    ) -> None:
         # Assert sanity check
         assert not test_env.view.raw_dir_stacked_spinner.spinner.is_spinning
         # Act
@@ -45,15 +48,19 @@ class TestsWithStubbedFileDialog:
         # Assert
         assert test_env.view.raw_dir_stacked_spinner.spinner.is_spinning
 
-    def test_seg1_dir_selected(self, qtbot: QtBot, test_env: TestEnvironment) -> None:
+    def test_seg1_dir_selected(
+        self, qtbot: QtBot, test_env: TestEnvironment
+    ) -> None:
         # Assert sanity check
         assert not test_env.view.seg1_dir_stacked_spinner.spinner.is_spinning
         # Act
         test_env.view.seg1_directory_select.button.click()
         # Assert
         assert test_env.view.seg1_dir_stacked_spinner.spinner.is_spinning
-    
-    def test_seg2_dir_selected(self, qtbot: QtBot, test_env: TestEnvironment) -> None:
+
+    def test_seg2_dir_selected(
+        self, qtbot: QtBot, test_env: TestEnvironment
+    ) -> None:
         # Assert sanity check
         assert not test_env.view.seg2_dir_stacked_spinner.spinner.is_spinning
         # Act
@@ -61,7 +68,9 @@ class TestsWithStubbedFileDialog:
         # Assert
         assert test_env.view.seg2_dir_stacked_spinner.spinner.is_spinning
 
-    def test_raw_channel_count_set(self, qtbot: QtBot, test_env: TestEnvironment) -> None:
+    def test_raw_channel_count_set(
+        self, qtbot: QtBot, test_env: TestEnvironment
+    ) -> None:
         # Arrange
         test_env.view.raw_directory_select.button.click()
         # Simulate the model's channel count being set
@@ -78,8 +87,9 @@ class TestsWithStubbedFileDialog:
         for i in range(combo_box.count()):
             assert combo_box.itemText(i) == expected_items[i]
 
-
-    def test_seg1_channel_count_set(self, qtbot: QtBot, test_env: TestEnvironment) -> None:
+    def test_seg1_channel_count_set(
+        self, qtbot: QtBot, test_env: TestEnvironment
+    ) -> None:
         # Arrange
         test_env.view.seg1_directory_select.button.click()
         # Simulate the model's channel count being set
@@ -96,8 +106,9 @@ class TestsWithStubbedFileDialog:
         for i in range(combo_box.count()):
             assert combo_box.itemText(i) == expected_items[i]
 
-
-    def test_seg2_channel_count_set(self, qtbot: QtBot, test_env: TestEnvironment) -> None:
+    def test_seg2_channel_count_set(
+        self, qtbot: QtBot, test_env: TestEnvironment
+    ) -> None:
         # Arrange
         test_env.view.seg2_directory_select.button.click()
         # Simulate the model's channel count being set
