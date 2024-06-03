@@ -17,7 +17,10 @@ from allencell_ml_segmenter.core.dialog_box import DialogBox
 from allencell_ml_segmenter._style import Style
 from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.main.viewer import IViewer
-from allencell_ml_segmenter.curation.curation_model import CurationModel
+from allencell_ml_segmenter.curation.curation_model import (
+    CurationModel,
+    CurationImageType,
+)
 from allencell_ml_segmenter.core.image_data_extractor import ImageData
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 from allencell_ml_segmenter.curation.stacked_spinner import StackedSpinner
@@ -25,7 +28,7 @@ from allencell_ml_segmenter.main.segmenter_layer import ShapesLayer
 from allencell_ml_segmenter.core.info_dialog_box import InfoDialogBox
 
 
-from napari.utils.notifications import show_info
+from napari.utils.notifications import show_info, show_warning
 from copy import deepcopy
 
 MERGING_MASK_LAYER_NAME: str = "Merging Mask"
@@ -131,9 +134,7 @@ class CurationMainView(View):
                 self.merging_base_combo.currentText() if idx >= 0 else None
             )
         )
-        # trigger the change event above to set initial model state
-        self.merging_base_combo.setCurrentIndex(1)
-        self.merging_base_combo.setCurrentIndex(0)
+
         # these empty QLabels are for spacing... unfortunately cannot apply styling
         # to a QLayout directly, just QWidgets
         base_image_layout.addWidget(QLabel(), 0, 0)
@@ -266,17 +267,23 @@ class CurationMainView(View):
         self.next_button.setText("Loading next...")
 
     def _add_curr_images_to_widget(self) -> None:
-        raw_img_data: ImageData = self._curation_model.get_raw_image_data()
+        raw_img_data: ImageData = self._curation_model.get_curr_image_data(
+            CurationImageType.RAW
+        )
         self._viewer.add_image(
             raw_img_data.np_data, f"[raw] {raw_img_data.path.name}"
         )
-        seg1_img_data: ImageData = self._curation_model.get_seg1_image_data()
+        seg1_img_data: ImageData = self._curation_model.get_curr_image_data(
+            CurationImageType.SEG1
+        )
         self._viewer.add_image(
             seg1_img_data.np_data, f"[seg1] {seg1_img_data.path.name}"
         )
-        if self._curation_model.get_seg2_image_data() is not None:
+        if self._curation_model.has_seg2_data():
             seg2_img_data: ImageData = (
-                self._curation_model.get_seg2_image_data()
+                self._curation_model.get_curr_image_data(
+                    CurationImageType.SEG2
+                )
             )
             self._viewer.add_image(
                 seg2_img_data.np_data, f"[seg2] {seg2_img_data.path.name}"
@@ -292,13 +299,15 @@ class CurationMainView(View):
         Advance to next image set.
         """
         self._viewer.clear_layers()
-        self._curation_model.save_curr_curation_record()
 
-        # NOTE: this logic is kinda complicated, maybe worth a rethink when there's more time
         if self._curation_model.has_next_image():
             self._set_next_button_to_loading()
             self._curation_model.next_image()
             self._add_curr_images_to_widget()
+            # these lines will update UI and model state, must go after
+            # a call to next image
+            self.yes_radio.click()
+            self.merging_base_combo.setCurrentIndex(0)
         else:
             self._on_save_curation_csv()
             self.disable_all_masks()
@@ -311,18 +320,18 @@ class CurationMainView(View):
                 "You have reached the end of the dataset, and your curation CSV has been saved.\nPlease switch to the Training tab to start training a model."
             ).exec()
 
-        self.yes_radio.click()
-        self.merging_base_combo.setCurrentIndex(0)
         self._update_progress_bar()
 
     def _on_save_curation_csv(self) -> None:
-        self._curation_model.save_curr_curation_record()
         self._curation_model.save_curr_curation_record_to_disk()
         self.save_csv_button.setEnabled(False)
 
-    def _on_saved_to_disk(self) -> None:
+    def _on_saved_to_disk(self, save_successful: bool) -> None:
         self.save_csv_button.setEnabled(True)
-        show_info("Current progress saved to CSV")
+        if save_successful:
+            show_info("Current progress saved to CSV")
+        else:
+            show_warning("Failed to save current progress to CSV")
 
     def disable_merging_mask_buttons(self):
         """
@@ -481,7 +490,7 @@ class CurationMainView(View):
         self.disable_excluding_mask_buttons()
 
     def enable_valid_masks(self) -> None:
-        if self._curation_model.get_seg2_image_data() is not None:
+        if self._curation_model.has_seg2_data():
             self.enable_merging_mask_buttons()
         else:
             self.disable_merging_mask_buttons()
