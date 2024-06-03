@@ -64,7 +64,7 @@ def test_set_images_directory(
     """
     # ACT
     qtbot.mouseClick(
-        image_selection_widget._images_directory_input_button._button,
+        image_selection_widget._images_directory_input_button.button,
         Qt.LeftButton,
     )
 
