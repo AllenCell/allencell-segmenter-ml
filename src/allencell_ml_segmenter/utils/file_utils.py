@@ -160,7 +160,7 @@ class FileUtils:
                             if record.excluding_mask is not None
                             else ""
                         ),
-                        str(record.base_image_index),
+                        str(record.base_image),
                     ],
                 )
                 idx += 1

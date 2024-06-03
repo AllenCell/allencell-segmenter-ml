@@ -14,10 +14,6 @@ from allencell_ml_segmenter.curation.curation_model import CurationModel
 from allencell_ml_segmenter.curation.curation_service import (
     CurationService,
 )
-from allencell_ml_segmenter.curation.curation_image_loader import (
-    FakeCurationImageLoader,
-    FakeCurationImageLoaderFactory,
-)
 from allencell_ml_segmenter.core.image_data_extractor import ImageData
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.main.viewer import Viewer
