@@ -1,19 +1,16 @@
-from typing import List
-from unittest.mock import Mock
 from dataclasses import dataclass
 
 import pytest
 from qtpy.QtWidgets import QComboBox
 from pytestqt.qtbot import QtBot
 
-from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.curation.input_view import CurationInputView
-from allencell_ml_segmenter.curation.curation_model import CurationModel
+from allencell_ml_segmenter.curation.curation_model import (
+    CurationModel,
+    CurationImageType,
+)
 from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
     FakeExperimentsModel,
-)
-from allencell_ml_segmenter.curation.curation_image_loader import (
-    FakeCurationImageLoaderFactory,
 )
 
 
@@ -25,9 +22,7 @@ class TestEnvironment:
 
 @pytest.fixture
 def test_env() -> TestEnvironment:
-    model: CurationModel = CurationModel(
-        FakeExperimentsModel(), FakeCurationImageLoaderFactory()
-    )
+    model: CurationModel = CurationModel(FakeExperimentsModel())
     return TestEnvironment(model, CurationInputView(model))
 
 
@@ -52,7 +47,7 @@ def test_raw_channel_set(qtbot: QtBot, test_env: TestEnvironment) -> None:
     combo_box: QComboBox = test_env.view.raw_image_channel_combo
 
     # Act
-    test_env.model.set_raw_image_channel_count(count)
+    test_env.model.set_channel_count(CurationImageType.RAW, count)
 
     # Assert
     expected_items = [str(x) for x in range(count)]
@@ -68,7 +63,7 @@ def test_seg1_channel_set(qtbot: QtBot, test_env: TestEnvironment) -> None:
     combo_box: QComboBox = test_env.view.seg1_image_channel_combo
 
     # Act
-    test_env.model.set_seg1_image_channel_count(count)
+    test_env.model.set_channel_count(CurationImageType.SEG1, count)
 
     # Assert
     expected_items = [str(x) for x in range(count)]
@@ -84,7 +79,7 @@ def test_seg2_channel_set(qtbot: QtBot, test_env: TestEnvironment) -> None:
     combo_box: QComboBox = test_env.view.seg2_image_channel_combo
 
     # Act
-    test_env.model.set_seg2_image_channel_count(count)
+    test_env.model.set_channel_count(CurationImageType.SEG2, count)
 
     # Assert
     expected_items = [str(x) for x in range(count)]
@@ -98,45 +93,45 @@ def test_seg2_channel_set(qtbot: QtBot, test_env: TestEnvironment) -> None:
 
 def test_raw_channel_selected(qtbot: QtBot, test_env: TestEnvironment) -> None:
     # Arrange
-    test_env.model.set_raw_image_channel_count(3)
+    test_env.model.set_channel_count(CurationImageType.RAW, 3)
     combo_box: QComboBox = test_env.view.raw_image_channel_combo
     # Act / Assert
-    assert test_env.model.get_raw_channel() == 0
+    assert test_env.model.get_selected_channel(CurationImageType.RAW) == 0
     combo_box.setCurrentIndex(0)
-    assert test_env.model.get_raw_channel() == 0
+    assert test_env.model.get_selected_channel(CurationImageType.RAW) == 0
     combo_box.setCurrentIndex(1)
-    assert test_env.model.get_raw_channel() == 1
+    assert test_env.model.get_selected_channel(CurationImageType.RAW) == 1
     combo_box.setCurrentIndex(2)
-    assert test_env.model.get_raw_channel() == 2
+    assert test_env.model.get_selected_channel(CurationImageType.RAW) == 2
 
 
 def test_seg1_channel_selected(
     qtbot: QtBot, test_env: TestEnvironment
 ) -> None:
     # Arrange
-    test_env.model.set_seg1_image_channel_count(3)
+    test_env.model.set_channel_count(CurationImageType.SEG1, 3)
     combo_box: QComboBox = test_env.view.seg1_image_channel_combo
     # Act / Assert
-    assert test_env.model.get_seg1_channel() == 0
+    assert test_env.model.get_selected_channel(CurationImageType.SEG1) == 0
     combo_box.setCurrentIndex(0)
-    assert test_env.model.get_seg1_channel() == 0
+    assert test_env.model.get_selected_channel(CurationImageType.SEG1) == 0
     combo_box.setCurrentIndex(1)
-    assert test_env.model.get_seg1_channel() == 1
+    assert test_env.model.get_selected_channel(CurationImageType.SEG1) == 1
     combo_box.setCurrentIndex(2)
-    assert test_env.model.get_seg1_channel() == 2
+    assert test_env.model.get_selected_channel(CurationImageType.SEG1) == 2
 
 
 def test_seg2_channel_selected(
     qtbot: QtBot, test_env: TestEnvironment
 ) -> None:
     # Arrange
-    test_env.model.set_seg2_image_channel_count(3)
+    test_env.model.set_channel_count(CurationImageType.SEG2, 3)
     combo_box: QComboBox = test_env.view.seg2_image_channel_combo
     # Act / Assert
-    assert test_env.model.get_seg2_channel() == 0
+    assert test_env.model.get_selected_channel(CurationImageType.SEG2) == 0
     combo_box.setCurrentIndex(0)
-    assert test_env.model.get_seg2_channel() == 0
+    assert test_env.model.get_selected_channel(CurationImageType.SEG2) == 0
     combo_box.setCurrentIndex(1)
-    assert test_env.model.get_seg2_channel() == 1
+    assert test_env.model.get_selected_channel(CurationImageType.SEG2) == 1
     combo_box.setCurrentIndex(2)
-    assert test_env.model.get_seg2_channel() == 2
+    assert test_env.model.get_selected_channel(CurationImageType.SEG2) == 2
