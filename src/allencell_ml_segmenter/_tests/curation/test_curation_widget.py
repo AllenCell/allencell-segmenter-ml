@@ -3,23 +3,17 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import pytest
-import napari
 
 from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
     FakeExperimentsModel,
 )
-from allencell_ml_segmenter.curation.curation_service import CurationService
-from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.curation.curation_model import (
     CurationModel,
     CurationView,
+    CurationImageType,
 )
-from allencell_ml_segmenter.curation.input_view import CurationInputView
 from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
     FakeExperimentsModel,
-)
-from allencell_ml_segmenter.curation.curation_image_loader import (
-    FakeCurationImageLoaderFactory,
 )
 from allencell_ml_segmenter._tests.fakes.fake_viewer import FakeViewer
 from pytestqt.qtbot import QtBot
@@ -45,17 +39,21 @@ class TestEnvironment:
 
 @pytest.fixture
 def test_env() -> TestEnvironment:
-    model: CurationModel = CurationModel(
-        FakeExperimentsModel(), FakeCurationImageLoaderFactory()
-    )
+    model: CurationModel = CurationModel(FakeExperimentsModel())
     return TestEnvironment(model, CurationWidget(FakeViewer(), model))
 
 
 def test_view_change(qtbot: QtBot, test_env: TestEnvironment) -> None:
     # Arrange
-    test_env.model.set_raw_directory_paths(IMG_DIR_FILES)
-    test_env.model.set_seg1_directory_paths(IMG_DIR_FILES)
-    test_env.model.set_seg2_directory_paths(IMG_DIR_FILES)
+    test_env.model.set_image_directory_paths(
+        CurationImageType.RAW, IMG_DIR_FILES
+    )
+    test_env.model.set_image_directory_paths(
+        CurationImageType.SEG1, IMG_DIR_FILES
+    )
+    test_env.model.set_image_directory_paths(
+        CurationImageType.SEG2, IMG_DIR_FILES
+    )
 
     # Act / Assert
     assert test_env.widget.get_view() == CurationView.INPUT_VIEW
