@@ -154,7 +154,7 @@ def test_build_overrides() -> None:
         / "0_exp"
         / "prediction_output_test"
     )
-    assert overrides["data.transforms.predict.transforms[0].reader[0].C"] == 3
+    assert overrides["data.transforms.predict.transforms[1].reader[0].C"] == 3
     assert overrides["data.columns"] == ["raw", "split"]
     assert overrides["data.split_column"] == "split"
 
