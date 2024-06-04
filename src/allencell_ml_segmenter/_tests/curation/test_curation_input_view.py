@@ -32,6 +32,19 @@ MOCK_STR_PATH: str = "mock_path"
 ### UI State Tests ----------------------------------------------------------------------------------
 
 
+def assert_combo_box_matches_channel_count(
+    combo_box: QComboBox, count: int
+) -> None:
+    """
+    Assert that the given combo box contains options 0 through count - 1 inclusive
+    in ascending order.
+    """
+    expected_items = [str(x) for x in range(count)]
+    assert combo_box.count() == len(expected_items)
+    for i in range(combo_box.count()):
+        assert combo_box.itemText(i) == expected_items[i]
+
+
 @patch.multiple(
     QFileDialog,
     exec_=Mock(return_value=QFileDialog.Accepted),
@@ -82,10 +95,7 @@ class TestsWithStubbedFileDialog:
 
         # Assert
         assert not test_env.view.raw_dir_stacked_spinner.spinner.is_spinning
-        expected_items = [str(x) for x in range(count)]
-        assert combo_box.count() == len(expected_items)
-        for i in range(combo_box.count()):
-            assert combo_box.itemText(i) == expected_items[i]
+        assert_combo_box_matches_channel_count(combo_box, count)
 
     def test_seg1_channel_count_set(
         self, qtbot: QtBot, test_env: TestEnvironment
@@ -101,10 +111,7 @@ class TestsWithStubbedFileDialog:
 
         # Assert
         assert not test_env.view.seg1_dir_stacked_spinner.spinner.is_spinning
-        expected_items = [str(x) for x in range(count)]
-        assert combo_box.count() == len(expected_items)
-        for i in range(combo_box.count()):
-            assert combo_box.itemText(i) == expected_items[i]
+        assert_combo_box_matches_channel_count(combo_box, count)
 
     def test_seg2_channel_count_set(
         self, qtbot: QtBot, test_env: TestEnvironment
@@ -120,10 +127,7 @@ class TestsWithStubbedFileDialog:
 
         # Assert
         assert not test_env.view.seg2_dir_stacked_spinner.spinner.is_spinning
-        expected_items = [str(x) for x in range(count)]
-        assert combo_box.count() == len(expected_items)
-        for i in range(combo_box.count()):
-            assert combo_box.itemText(i) == expected_items[i]
+        assert_combo_box_matches_channel_count(combo_box, count)
 
 
 ### View + Model Integration Tests ------------------------------------------------------------------------
