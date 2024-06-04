@@ -164,7 +164,7 @@ class PredictionService(Subscriber):
         # if channel is not set, will default to same channel used to train
         channel: int = self._prediction_model.get_image_input_channel_index()
         if channel:
-            overrides["data.transforms.predict.transforms[0].reader[0].C"] = (
+            overrides["data.transforms.predict.transforms[1].reader[0].C"] = (
                 channel
             )
 
