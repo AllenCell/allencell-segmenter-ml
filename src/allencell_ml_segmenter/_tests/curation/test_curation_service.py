@@ -44,22 +44,16 @@ def test_env_input_view() -> TestEnvironment:
 
 
 @pytest.fixture
-def test_env_main_view() -> TestEnvironment:
-    exp_mod: FakeExperimentsModel = FakeExperimentsModel()
-    exp_mod.apply_experiment_name("0_exp")
-    model: CurationModel = CurationModel(exp_mod)
+def test_env_main_view(
+    test_env_input_view: TestEnvironment,
+) -> TestEnvironment:
+    model: CurationModel = test_env_input_view.model
     model.set_image_directory_paths(CurationImageType.RAW, IMG_DIR_FILES)
     model.set_image_directory_paths(CurationImageType.SEG1, IMG_DIR_FILES)
     model.set_image_directory_paths(CurationImageType.SEG2, IMG_DIR_FILES)
     model.set_current_view(CurationView.MAIN_VIEW)
 
-    writer: FakeFileWriter = FakeFileWriter.global_instance()
-    service: CurationService = CurationService(
-        model,
-        img_data_extractor=FakeImageDataExtractor.global_instance(),
-        file_writer=writer,
-    )
-    return TestEnvironment(model, service, writer)
+    return test_env_input_view
 
 
 IMG_DIR_PATH = (
