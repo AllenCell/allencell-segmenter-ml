@@ -16,7 +16,6 @@ from allencell_ml_segmenter.curation.curation_model import (
 from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
     FakeExperimentsModel,
 )
-from napari.utils.notifications import show_info
 
 
 @dataclass
