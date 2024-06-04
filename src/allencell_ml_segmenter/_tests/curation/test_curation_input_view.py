@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 from unittest.mock import Mock, patch
+from typing import List
+from pathlib import Path
 
 import pytest
 from qtpy.QtWidgets import QComboBox, QFileDialog
@@ -9,10 +11,12 @@ from allencell_ml_segmenter.curation.input_view import CurationInputView
 from allencell_ml_segmenter.curation.curation_model import (
     CurationModel,
     CurationImageType,
+    CurationView,
 )
 from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
     FakeExperimentsModel,
 )
+from napari.utils.notifications import show_info
 
 
 @dataclass
@@ -28,6 +32,7 @@ def test_env() -> TestEnvironment:
 
 
 MOCK_STR_PATH: str = "mock_path"
+MOCK_DIR_PATHS: List[Path] = [Path("p1"), Path("p2")]
 
 ### UI State Tests ----------------------------------------------------------------------------------
 
@@ -128,6 +133,87 @@ class TestsWithStubbedFileDialog:
         # Assert
         assert not test_env.view.seg2_dir_stacked_spinner.spinner.is_spinning
         assert_combo_box_matches_channel_count(combo_box, count)
+
+    def test_start_raw_selected(
+        self, qtbot: QtBot, test_env: TestEnvironment
+    ) -> None:
+        # Arrange
+        test_env.view.raw_directory_select.button.click()
+        test_env.model.set_channel_count(CurationImageType.RAW, 5)
+        test_env.view.raw_image_channel_combo.setCurrentIndex(1)
+
+        # Assert (sanity check)
+        assert test_env.model.get_current_view() == CurationView.INPUT_VIEW
+
+        # Act
+        test_env.view.start_btn.click()
+
+        # Assert
+        # we expect the start button to fail since we haven't selected seg1 -- should still be input view
+        assert test_env.model.get_current_view() == CurationView.INPUT_VIEW
+
+    def test_start_raw_seg1_selected(
+        self, qtbot: QtBot, test_env: TestEnvironment
+    ) -> None:
+        # Arrange
+        test_env.view.raw_directory_select.button.click()
+        test_env.model.set_channel_count(CurationImageType.RAW, 5)
+        test_env.model.set_image_directory_paths(
+            CurationImageType.RAW, MOCK_DIR_PATHS
+        )
+        test_env.view.raw_image_channel_combo.setCurrentIndex(1)
+
+        test_env.view.seg1_directory_select.button.click()
+        test_env.model.set_channel_count(CurationImageType.SEG1, 5)
+        test_env.model.set_image_directory_paths(
+            CurationImageType.SEG1, MOCK_DIR_PATHS
+        )
+        test_env.view.seg1_image_channel_combo.setCurrentIndex(2)
+
+        # Assert (sanity check)
+        assert test_env.model.get_current_view() == CurationView.INPUT_VIEW
+
+        # Act
+        test_env.view.start_btn.click()
+
+        # Assert
+        # we expect the start button to work since we have at least raw and seg1
+        assert test_env.model.get_current_view() == CurationView.MAIN_VIEW
+
+    def test_start_all_selected(
+        self, qtbot: QtBot, test_env: TestEnvironment
+    ) -> None:
+        # Arrange
+        test_env.view.raw_directory_select.button.click()
+        test_env.model.set_channel_count(CurationImageType.RAW, 5)
+        test_env.model.set_image_directory_paths(
+            CurationImageType.RAW, MOCK_DIR_PATHS
+        )
+        test_env.view.raw_image_channel_combo.setCurrentIndex(1)
+
+        test_env.view.seg1_directory_select.button.click()
+        test_env.model.set_channel_count(CurationImageType.SEG1, 5)
+        test_env.model.set_image_directory_paths(
+            CurationImageType.SEG1, MOCK_DIR_PATHS
+        )
+        test_env.view.seg1_image_channel_combo.setCurrentIndex(2)
+
+        test_env.view.seg2_directory_select.button.click()
+        test_env.model.set_channel_count(CurationImageType.SEG2, 5)
+        test_env.model.set_image_directory_paths(
+            CurationImageType.SEG2, MOCK_DIR_PATHS
+        )
+        test_env.view.seg2_image_channel_combo.setCurrentIndex(3)
+
+        # Assert (sanity check)
+        assert test_env.model.get_current_view() == CurationView.INPUT_VIEW
+
+        # Act
+        test_env.view.start_btn.click()
+
+        # Assert
+        # we expect the start button to work since we have all selected
+        assert test_env.model.get_current_view() == CurationView.MAIN_VIEW
 
 
 ### View + Model Integration Tests ------------------------------------------------------------------------
