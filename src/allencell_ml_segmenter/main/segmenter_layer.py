@@ -17,3 +17,7 @@ class ShapesLayer(SegmenterLayer):
 @dataclass
 class ImageLayer(SegmenterLayer):
     path: Optional[Path]
+
+@dataclass
+class LabelsLayer(SegmenterLayer):
+    pass
