@@ -1,6 +1,10 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional, Callable
-from allencell_ml_segmenter.main.segmenter_layer import ShapesLayer, ImageLayer, LabelsLayer
+from allencell_ml_segmenter.main.segmenter_layer import (
+    ShapesLayer,
+    ImageLayer,
+    LabelsLayer,
+)
 import numpy as np
 from napari.layers import Layer
 from napari.utils.events import Event as NapariEvent
