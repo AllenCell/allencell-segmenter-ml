@@ -276,7 +276,7 @@ class CurationMainView(View):
         seg1_img_data: ImageData = self._curation_model.get_curr_image_data(
             CurationImageType.SEG1
         )
-        self._viewer.add_image(
+        self._viewer.add_labels(
             seg1_img_data.np_data, f"[seg1] {seg1_img_data.path.name}"
         )
         if self._curation_model.has_seg2_data():
@@ -285,7 +285,7 @@ class CurationMainView(View):
                     CurationImageType.SEG2
                 )
             )
-            self._viewer.add_image(
+            self._viewer.add_labels(
                 seg2_img_data.np_data, f"[seg2] {seg2_img_data.path.name}"
             )
 
