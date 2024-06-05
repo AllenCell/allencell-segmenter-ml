@@ -11,7 +11,7 @@ class IImageDataExtractor(ABC):
 
     @abstractmethod
     def extract_image_data(
-        self, img_path: Path, dims: bool = True, np_data: bool = True
+        self, img_path: Path, channel: int = 0, dims: bool = True, np_data: bool = True
     ) -> ImageData:
         pass
 
