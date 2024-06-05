@@ -5,7 +5,11 @@ from napari.layers.shapes.shapes import Mode
 from napari.utils.events import Event as NapariEvent
 
 from allencell_ml_segmenter.main.i_viewer import IViewer
-from allencell_ml_segmenter.main.segmenter_layer import ShapesLayer, ImageLayer, LabelsLayer
+from allencell_ml_segmenter.main.segmenter_layer import (
+    ShapesLayer,
+    ImageLayer,
+    LabelsLayer,
+)
 import napari
 from typing import List, Callable, Optional
 import numpy as np
@@ -55,7 +59,7 @@ class Viewer(IViewer):
             for l in self.viewer.layers
             if isinstance(l, Shapes)
         ]
-    
+
     def add_labels(self, data: np.ndarray, name: str) -> None:
         self.viewer.add_labels(data, name=name)
 
@@ -71,7 +75,7 @@ class Viewer(IViewer):
             for l in self.viewer.layers
             if isinstance(l, Labels)
         ]
-    
+
     def clear_layers(self) -> None:
         self.viewer.layers.clear()
 

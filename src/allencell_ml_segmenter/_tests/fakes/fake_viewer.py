@@ -1,7 +1,11 @@
 import numpy as np
 
 from allencell_ml_segmenter.main.i_viewer import IViewer
-from allencell_ml_segmenter.main.segmenter_layer import ShapesLayer, ImageLayer, LabelsLayer
+from allencell_ml_segmenter.main.segmenter_layer import (
+    ShapesLayer,
+    ImageLayer,
+    LabelsLayer,
+)
 
 
 from napari.utils.events import Event as NapariEvent
@@ -58,7 +62,7 @@ class FakeViewer(IViewer):
 
     def get_all_labels(self) -> List[LabelsLayer]:
         return [v for k, v in self._labels_layers.items()]
-    
+
     def clear_layers(self) -> None:
         self._image_layers = {}
         self._shapes_layers = {}
