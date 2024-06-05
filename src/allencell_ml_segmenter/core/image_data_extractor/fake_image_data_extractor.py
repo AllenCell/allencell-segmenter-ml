@@ -14,7 +14,7 @@ class FakeImageDataExtractor(IImageDataExtractor):
     _instance = None
 
     def extract_image_data(
-        self, img_path: Path, dims: bool = True, np_data: bool = True
+        self, img_path: Path, channel: int = 0, dims: bool = True, np_data: bool = True
     ) -> ImageData:
         return ImageData(
             1 if dims else None,
