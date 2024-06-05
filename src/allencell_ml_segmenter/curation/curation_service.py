@@ -17,7 +17,7 @@ from allencell_ml_segmenter.utils.file_writer import IFileWriter, FileWriter
 
 from pathlib import Path
 from qtpy.QtCore import QObject
-from typing import List, Optional
+from typing import List, Optional, Callable
 from copy import deepcopy
 from collections import namedtuple
 
@@ -84,15 +84,17 @@ class CurationService(QObject):
             on_error=lambda e: self._on_dir_data_errored(img_type, e),
         )
 
-    def _on_cursor_moved_error(
-        self, img_type: CurationImageType, curr_or_next: str, e: Exception
+    def _extract_images(
+        self,
+        img_idx: int,
+        setter_fn: Callable[[CurationImageType, ImageData], None],
+        err_str: str,
     ) -> None:
-        raise RuntimeError(
-            f"There was a problem loading {img_type} for the {curr_or_next} images"
-        )
-
-    def _on_cursor_moved(self) -> None:
-        cursor: int = self._curation_model.get_curr_image_index()
+        """
+        Uses TaskExecutor to extract data for images at :param img_idx:, saves extracted data using
+        :param setter_fn: to set model state. Provides :param err_str: ('curr' or 'next') to the error
+        handler for additional debugging info.
+        """
         raw_paths: List[Path] = self._curation_model.get_image_directory_paths(
             CurationImageType.RAW
         )
@@ -113,89 +115,69 @@ class CurationService(QObject):
         seg1_channel: int = self._curation_model.get_selected_channel(
             CurationImageType.SEG1
         )
-        seg2_channel: int = self._curation_model.get_selected_channel(
-            CurationImageType.SEG2
+        seg2_channel: Optional[int] = (
+            self._curation_model.get_selected_channel(CurationImageType.SEG2)
         )
+
+        self._task_executor.exec(
+            lambda: self._img_data_extractor.extract_image_data(
+                raw_paths[img_idx],
+                channel=raw_channel,
+            ),
+            on_return=lambda img_data: setter_fn(
+                CurationImageType.RAW, img_data
+            ),
+            on_error=lambda e: self._on_cursor_moved_error(
+                CurationImageType.RAW, err_str, e
+            ),
+        )
+        self._task_executor.exec(
+            lambda: self._img_data_extractor.extract_image_data(
+                seg1_paths[img_idx],
+                channel=seg1_channel,
+            ),
+            on_return=lambda img_data: setter_fn(
+                CurationImageType.SEG1, img_data
+            ),
+            on_error=lambda e: self._on_cursor_moved_error(
+                CurationImageType.SEG1, err_str, e
+            ),
+        )
+        if seg2_paths is not None:
+            self._task_executor.exec(
+                lambda: self._img_data_extractor.extract_image_data(
+                    seg2_paths[img_idx],
+                    channel=seg2_channel,
+                ),
+                on_return=lambda img_data: setter_fn(
+                    CurationImageType.SEG2, img_data
+                ),
+                on_error=lambda e: self._on_cursor_moved_error(
+                    CurationImageType.SEG2, err_str, e
+                ),
+            )
+
+    def _on_cursor_moved_error(
+        self, img_type: CurationImageType, curr_or_next: str, e: Exception
+    ) -> None:
+        raise RuntimeError(
+            f"There was a problem loading {img_type} for the {curr_or_next} images"
+        )
+
+    def _on_cursor_moved(self) -> None:
+        cursor: int = self._curation_model.get_curr_image_index()
 
         if self._curation_model.is_waiting_for_curr_images():
             # start extraction tasks for curr images (paths at cursor)
-            self._task_executor.exec(
-                lambda: self._img_data_extractor.extract_image_data(
-                    raw_paths[cursor],
-                    channel=raw_channel,
-                ),
-                on_return=lambda img_data: self._curation_model.set_curr_image_data(
-                    CurationImageType.RAW, img_data
-                ),
-                on_error=lambda e: self._on_cursor_moved_error(
-                    CurationImageType.RAW, "curr", e
-                ),
+            self._extract_images(
+                cursor, self._curation_model.set_curr_image_data, "curr"
             )
-            self._task_executor.exec(
-                lambda: self._img_data_extractor.extract_image_data(
-                    seg1_paths[cursor],
-                    channel=seg1_channel,
-                ),
-                on_return=lambda img_data: self._curation_model.set_curr_image_data(
-                    CurationImageType.SEG1, img_data
-                ),
-                on_error=lambda e: self._on_cursor_moved_error(
-                    CurationImageType.SEG1, "curr", e
-                ),
-            )
-            if seg2_paths is not None:
-                self._task_executor.exec(
-                    lambda: self._img_data_extractor.extract_image_data(
-                        seg2_paths[cursor],
-                        channel=seg2_channel,
-                    ),
-                    on_return=lambda img_data: self._curation_model.set_curr_image_data(
-                        CurationImageType.SEG2, img_data
-                    ),
-                    on_error=lambda e: self._on_cursor_moved_error(
-                        CurationImageType.SEG2, "curr", e
-                    ),
-                )
 
         if self._curation_model.is_waiting_for_next_images():
             # start extraction tasks for next images (paths at cursor + 1)
-            self._task_executor.exec(
-                lambda: self._img_data_extractor.extract_image_data(
-                    raw_paths[cursor + 1],
-                    channel=raw_channel,
-                ),
-                on_return=lambda img_data: self._curation_model.set_next_image_data(
-                    CurationImageType.RAW, img_data
-                ),
-                on_error=lambda e: self._on_cursor_moved_error(
-                    CurationImageType.RAW, "next", e
-                ),
+            self._extract_images(
+                cursor + 1, self._curation_model.set_next_image_data, "next"
             )
-            self._task_executor.exec(
-                lambda: self._img_data_extractor.extract_image_data(
-                    seg1_paths[cursor + 1],
-                    channel=seg1_channel,
-                ),
-                on_return=lambda img_data: self._curation_model.set_next_image_data(
-                    CurationImageType.SEG1, img_data
-                ),
-                on_error=lambda e: self._on_cursor_moved_error(
-                    CurationImageType.SEG1, "next", e
-                ),
-            )
-            if seg2_paths is not None:
-                self._task_executor.exec(
-                    lambda: self._img_data_extractor.extract_image_data(
-                        seg2_paths[cursor + 1],
-                        channel=seg2_channel,
-                    ),
-                    on_return=lambda img_data: self._curation_model.set_next_image_data(
-                        CurationImageType.SEG2, img_data
-                    ),
-                    on_error=lambda e: self._on_cursor_moved_error(
-                        CurationImageType.SEG2, "next", e
-                    ),
-                )
 
     def _on_save_to_disk_error(self, err: Exception) -> None:
         self._curation_model.set_curation_record_saved_to_disk(False)
