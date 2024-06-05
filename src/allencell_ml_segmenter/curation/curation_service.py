@@ -107,11 +107,22 @@ class CurationService(QObject):
             )
         )
 
+        raw_channel: int = self._curation_model.get_selected_channel(
+            CurationImageType.RAW
+        )
+        seg1_channel: int = self._curation_model.get_selected_channel(
+            CurationImageType.SEG1
+        )
+        seg2_channel: int = self._curation_model.get_selected_channel(
+            CurationImageType.SEG2
+        )
+
         if self._curation_model.is_waiting_for_curr_images():
             # start extraction tasks for curr images (paths at cursor)
             self._task_executor.exec(
                 lambda: self._img_data_extractor.extract_image_data(
-                    raw_paths[cursor]
+                    raw_paths[cursor],
+                    channel=raw_channel,
                 ),
                 on_return=lambda img_data: self._curation_model.set_curr_image_data(
                     CurationImageType.RAW, img_data
@@ -122,7 +133,8 @@ class CurationService(QObject):
             )
             self._task_executor.exec(
                 lambda: self._img_data_extractor.extract_image_data(
-                    seg1_paths[cursor]
+                    seg1_paths[cursor],
+                    channel=seg1_channel,
                 ),
                 on_return=lambda img_data: self._curation_model.set_curr_image_data(
                     CurationImageType.SEG1, img_data
@@ -134,7 +146,8 @@ class CurationService(QObject):
             if seg2_paths is not None:
                 self._task_executor.exec(
                     lambda: self._img_data_extractor.extract_image_data(
-                        seg2_paths[cursor]
+                        seg2_paths[cursor],
+                        channel=seg2_channel,
                     ),
                     on_return=lambda img_data: self._curation_model.set_curr_image_data(
                         CurationImageType.SEG2, img_data
@@ -148,7 +161,8 @@ class CurationService(QObject):
             # start extraction tasks for next images (paths at cursor + 1)
             self._task_executor.exec(
                 lambda: self._img_data_extractor.extract_image_data(
-                    raw_paths[cursor + 1]
+                    raw_paths[cursor + 1],
+                    channel=raw_channel,
                 ),
                 on_return=lambda img_data: self._curation_model.set_next_image_data(
                     CurationImageType.RAW, img_data
@@ -159,7 +173,8 @@ class CurationService(QObject):
             )
             self._task_executor.exec(
                 lambda: self._img_data_extractor.extract_image_data(
-                    seg1_paths[cursor + 1]
+                    seg1_paths[cursor + 1],
+                    channel=seg1_channel,
                 ),
                 on_return=lambda img_data: self._curation_model.set_next_image_data(
                     CurationImageType.SEG1, img_data
@@ -171,7 +186,8 @@ class CurationService(QObject):
             if seg2_paths is not None:
                 self._task_executor.exec(
                     lambda: self._img_data_extractor.extract_image_data(
-                        seg2_paths[cursor + 1]
+                        seg2_paths[cursor + 1],
+                        channel=seg2_channel,
                     ),
                     on_return=lambda img_data: self._curation_model.set_next_image_data(
                         CurationImageType.SEG2, img_data

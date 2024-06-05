@@ -14,7 +14,11 @@ class AICSImageDataExtractor(IImageDataExtractor):
     _instance = None
 
     def extract_image_data(
-        self, img_path: Path, channel: int = 0, dims: bool = True, np_data: bool = True
+        self,
+        img_path: Path,
+        channel: int = 0,
+        dims: bool = True,
+        np_data: bool = True,
     ) -> ImageData:
         aics_img: AICSImage = AICSImage(img_path)
         return ImageData(
@@ -22,7 +26,11 @@ class AICSImageDataExtractor(IImageDataExtractor):
             aics_img.dims.Y if dims else None,
             aics_img.dims.Z if dims else None,
             aics_img.dims.C if dims else None,
-            aics_img.get_image_dask_data("TZYX", C=channel) if np_data else None,
+            (
+                aics_img.get_image_dask_data("TZYX", C=channel)
+                if np_data
+                else None
+            ),
             img_path,
         )
 
