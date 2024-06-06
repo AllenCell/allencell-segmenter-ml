@@ -101,14 +101,14 @@ def test_preprocessing_method(
     """
 
     # ACT 1
-    qtbot.mouseClick(file_input_widget._browse_dir_edit._button, Qt.LeftButton)
+    qtbot.mouseClick(file_input_widget._browse_dir_edit.button, Qt.LeftButton)
 
     # ASSERT 1
     assert file_input_widget._model.get_preprocessing_method() is None
 
     # ACT 2
     qtbot.mouseClick(
-        file_input_widget._browse_output_edit._button, Qt.LeftButton
+        file_input_widget._browse_output_edit.button, Qt.LeftButton
     )
 
     # ASSERT 2
