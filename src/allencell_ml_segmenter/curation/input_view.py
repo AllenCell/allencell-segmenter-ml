@@ -193,7 +193,7 @@ class CurationInputView(QWidget):
                         CurationImageType.SEG1
                     ),
                     self._curation_model.get_selected_channel(
-                        CurationImageType.SEG2
+                        CurationImageType.SEG1
                     ),
                 ]
             ]
