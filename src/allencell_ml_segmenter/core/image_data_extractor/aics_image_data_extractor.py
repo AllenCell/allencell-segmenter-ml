@@ -27,7 +27,7 @@ class AICSImageDataExtractor(IImageDataExtractor):
             aics_img.dims.Z if dims else None,
             aics_img.dims.C if dims else None,
             (
-                aics_img.get_image_dask_data("TZYX", C=channel)
+                aics_img.get_image_dask_data("ZYX", C=channel).compute()
                 if np_data
                 else None
             ),
