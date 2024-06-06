@@ -42,7 +42,7 @@ def test_set_text(
         QFileDialog, "getOpenFileName", return_value=(mock_path, "")
     ):
         # ACT
-        qtbot.mouseClick(input_button._button, Qt.LeftButton)
+        qtbot.mouseClick(input_button.button, Qt.LeftButton)
 
         # ASSERT
         assert input_button._text_display.text() == mock_path

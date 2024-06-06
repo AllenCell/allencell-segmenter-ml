@@ -58,15 +58,15 @@ class InputButton(QWidget):
         self._text_display.setReadOnly(True)
 
         # button to open file explorer
-        self._button: QPushButton = QPushButton("Browse")
-        self._button.setObjectName("button")
+        self.button: QPushButton = QPushButton("Browse")
+        self.button.setObjectName("button")
 
         # add widgets to layout
         self.layout().addWidget(self._text_display, alignment=Qt.AlignLeft)
-        self.layout().addWidget(self._button, alignment=Qt.AlignLeft)
+        self.layout().addWidget(self.button, alignment=Qt.AlignLeft)
 
         # connect to slot
-        self._button.clicked.connect(self._select_path)
+        self.button.clicked.connect(self._select_path)
         # connect to stylesheet
         self.setStyleSheet(Style.get_stylesheet("input_button_widget.qss"))
 
