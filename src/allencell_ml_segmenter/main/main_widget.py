@@ -61,9 +61,7 @@ class MainWidget(AicsWidget):
         )
 
         if self.user_settings.get_user_experiments_path() is None:
-            self.user_settings.prompt_for_user_experiments_home(
-                parent=self
-            )
+            self.user_settings.prompt_for_user_experiments_home(parent=self)
 
         # init models
         self._experiments_model = ExperimentsModel(self.user_settings)
