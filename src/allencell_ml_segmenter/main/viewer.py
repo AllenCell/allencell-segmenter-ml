@@ -70,6 +70,8 @@ class Viewer(IViewer):
         return None
 
     def get_all_labels(self) -> List[LabelsLayer]:
+        # all items in self.viewer.layers inherit from napari.layers.Layer
+        # possible types outlined in https://napari.org/stable/api/napari.layers.html
         return [
             LabelsLayer(l.name)
             for l in self.viewer.layers
