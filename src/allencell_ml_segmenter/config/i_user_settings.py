@@ -20,5 +20,9 @@ class IUserSettings(ABC):
         pass
 
     @abstractmethod
-    def prompt_for_user_experiments_home(self, parent: QWidget) -> Path:
+    def prompt_for_user_experiments_home(self, parent: QWidget):
+        pass
+
+    @abstractmethod
+    def display_change_user_experiments_home(self, parent: QWidget):
         pass
