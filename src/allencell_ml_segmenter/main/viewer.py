@@ -1,15 +1,18 @@
 from pathlib import Path
 
-from napari.layers import Layer, Shapes, Image
+from napari.layers import Layer, Shapes, Image, Labels
 from napari.layers.shapes.shapes import Mode
 from napari.utils.events import Event as NapariEvent
 
 from allencell_ml_segmenter.main.i_viewer import IViewer
-from allencell_ml_segmenter.main.segmenter_layer import ShapesLayer, ImageLayer
+from allencell_ml_segmenter.main.segmenter_layer import (
+    ShapesLayer,
+    ImageLayer,
+    LabelsLayer,
+)
 import napari
 from typing import List, Callable, Optional
 import numpy as np
-from napari.components import LayerList
 
 
 class Viewer(IViewer):
@@ -45,9 +48,9 @@ class Viewer(IViewer):
         shapes.mode = mode
 
     def get_shapes(self, name: str) -> Optional[ShapesLayer]:
-        for img in self.get_all_shapes():
-            if img.name == name:
-                return img
+        for shapes in self.get_all_shapes():
+            if shapes.name == name:
+                return shapes
         return None
 
     def get_all_shapes(self) -> List[ShapesLayer]:
@@ -55,6 +58,24 @@ class Viewer(IViewer):
             ShapesLayer(l.name, np.asarray(l.data, dtype=object))
             for l in self.viewer.layers
             if isinstance(l, Shapes)
+        ]
+
+    def add_labels(self, data: np.ndarray, name: str) -> None:
+        self.viewer.add_labels(data, name=name)
+
+    def get_labels(self, name: str) -> Optional[LabelsLayer]:
+        for labels in self.get_all_labels():
+            if labels.name == name:
+                return labels
+        return None
+
+    def get_all_labels(self) -> List[LabelsLayer]:
+        # all items in self.viewer.layers inherit from napari.layers.Layer
+        # possible types outlined in https://napari.org/stable/api/napari.layers.html
+        return [
+            LabelsLayer(l.name)
+            for l in self.viewer.layers
+            if isinstance(l, Labels)
         ]
 
     def clear_layers(self) -> None:
