@@ -228,7 +228,9 @@ class ModelSelectionWidget(QWidget):
         elif text == ModelSelectionWidget.WEBSITE_TEXT:
             webbrowser.open("https://www.allencell.org/segmenter.html")
         elif text == ModelSelectionWidget.EXPERIMENTS_HOME_TEXT:
-            self._user_settings.display_change_user_experiments_home(parent=self)
+            self._user_settings.display_change_user_experiments_home(
+                parent=self
+            )
         # reset the combo box, so that it bahaves more like a menu
         self.help_combo_box.setCurrentIndex(-1)
 
