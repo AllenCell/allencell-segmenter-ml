@@ -28,6 +28,6 @@ class FakeUserSettings(IUserSettings):
 
     def prompt_for_user_experiments_home(self, parent: QWidget):
         self.set_user_experiments_path(Path(self.prompt_response))
-    
+
     def display_change_user_experiments_home(self, parent: QWidget):
         pass
