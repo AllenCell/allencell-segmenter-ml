@@ -61,10 +61,9 @@ class MainWidget(AicsWidget):
         )
 
         if self.user_settings.get_user_experiments_path() is None:
-            path = self.user_settings.prompt_for_user_experiments_home(
+            self.user_settings.prompt_for_user_experiments_home(
                 parent=self
             )
-            self.user_settings.set_user_experiments_path(path)
 
         # init models
         self._experiments_model = ExperimentsModel(self.user_settings)
@@ -122,7 +121,7 @@ class MainWidget(AicsWidget):
 
         # Model selection which applies to all views
         model_selection_widget: ModelSelectionWidget = ModelSelectionWidget(
-            self._model, self._experiments_model
+            self._model, self._experiments_model, self.user_settings
         )
         model_selection_widget.setObjectName("modelSelection")
 
