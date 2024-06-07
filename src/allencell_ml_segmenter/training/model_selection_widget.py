@@ -14,6 +14,7 @@ from qtpy.QtWidgets import (
     QLabel,
 )
 from qtpy.QtCore import Qt
+from allencell_ml_segmenter.config.i_user_settings import IUserSettings
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
@@ -31,16 +32,19 @@ class ModelSelectionWidget(QWidget):
     GITHUB_TEXT: str = "GitHub"
     FORUM_TEXT: str = "Forum"
     WEBSITE_TEXT: str = "Website"
+    EXPERIMENTS_HOME_TEXT: str = "Experiments Home"
 
     def __init__(
         self,
         main_model: MainModel,
         experiments_model: IExperimentsModel,
+        user_settings: IUserSettings,
     ):
         super().__init__()
 
         self._main_model: MainModel = main_model
         self._experiments_model: IExperimentsModel = experiments_model
+        self._user_settings: IUserSettings = user_settings
 
         # widget skeleton
         layout: QVBoxLayout = QVBoxLayout()
@@ -66,6 +70,7 @@ class ModelSelectionWidget(QWidget):
                 ModelSelectionWidget.GITHUB_TEXT,
                 ModelSelectionWidget.FORUM_TEXT,
                 ModelSelectionWidget.WEBSITE_TEXT,
+                ModelSelectionWidget.EXPERIMENTS_HOME_TEXT,
             ]
         )
         self.help_combo_box.currentTextChanged.connect(
@@ -222,6 +227,8 @@ class ModelSelectionWidget(QWidget):
             webbrowser.open("https://forum.image.sc/tag/segmenter")
         elif text == ModelSelectionWidget.WEBSITE_TEXT:
             webbrowser.open("https://www.allencell.org/segmenter.html")
+        elif text == ModelSelectionWidget.EXPERIMENTS_HOME_TEXT:
+            self._user_settings.display_change_user_experiments_home(parent=self)
         # reset the combo box, so that it bahaves more like a menu
         self.help_combo_box.setCurrentIndex(-1)
 
