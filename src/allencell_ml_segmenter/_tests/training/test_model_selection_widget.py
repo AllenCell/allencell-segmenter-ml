@@ -3,6 +3,7 @@ from pytestqt.qtbot import QtBot
 from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
     FakeExperimentsModel,
 )
+from allencell_ml_segmenter._tests.fakes.fake_user_settings import FakeUserSettings
 from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
 
@@ -46,7 +47,7 @@ def model_selection_widget(
     Fixture that creates an instance of ModelSelectionWidget for testing.
     """
     return ModelSelectionWidget(
-        main_model=main_model, experiments_model=experiment_model
+        main_model=main_model, experiments_model=experiment_model, user_settings=FakeUserSettings()
     )
 
 
@@ -83,6 +84,7 @@ def test_radio_existing_slot_has_no_existing_experiments(qtbot: QtBot) -> None:
     model_selection_widget: ModelSelectionWidget = ModelSelectionWidget(
         main_model=MainModel(),
         experiments_model=experiment_model_has_no_experiments,
+        user_settings=FakeUserSettings()
     )
     setup_radio_existing_slot(qtbot, model_selection_widget)
 
