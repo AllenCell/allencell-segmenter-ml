@@ -40,15 +40,20 @@ class UserSettings(IUserSettings):
         directory_dialog = QFileDialog(parent=parent)
         directory_dialog.setFileMode(QFileDialog.Directory)
         self.set_user_experiments_path(directory_dialog.getExistingDirectory())
-    
+
     def display_change_user_experiments_home(self, parent: QWidget) -> Path:
         buttonReply = QMessageBox.question(
-            parent, 
-            "Experiments Home", 
-            "Experiments Home: " + str(self.get_user_experiments_path()) + "\n\n Would you like to change the Experiments Home?", 
-            QMessageBox.Yes | QMessageBox.No, 
-            QMessageBox.No)
+            parent,
+            "Experiments Home",
+            "Experiments Home: "
+            + str(self.get_user_experiments_path())
+            + "\n\n Would you like to change the Experiments Home?",
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.No,
+        )
         if buttonReply == QMessageBox.Yes:
             directory_dialog = QFileDialog(parent=parent)
             directory_dialog.setFileMode(QFileDialog.Directory)
-            self.set_user_experiments_path(Path(directory_dialog.getExistingDirectory()))
+            self.set_user_experiments_path(
+                Path(directory_dialog.getExistingDirectory())
+            )
