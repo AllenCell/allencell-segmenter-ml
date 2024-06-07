@@ -142,7 +142,7 @@ class PredictionView(View):
                 FileUtils.get_all_files_in_dir_ignore_hidden(output_path)
             )
             for output_img in images_list:
-                self._viewer.add_image(
+                self._viewer.add_labels(
                     AICSImage(output_img).data, name=output_img.name
                 )
         # Display popup with saved images path if prediction inputs are from a directory
