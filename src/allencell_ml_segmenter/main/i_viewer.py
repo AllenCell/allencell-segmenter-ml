@@ -1,9 +1,12 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional, Callable
-from allencell_ml_segmenter.main.segmenter_layer import ShapesLayer, ImageLayer
+from allencell_ml_segmenter.main.segmenter_layer import (
+    ShapesLayer,
+    ImageLayer,
+    LabelsLayer,
+)
 import numpy as np
-from napari.layers import Layer, Shapes
-from napari.layers.shapes.shapes import Mode
+from napari.layers import Layer
 from napari.utils.events import Event as NapariEvent
 
 
@@ -33,6 +36,18 @@ class IViewer(ABC):
 
     @abstractmethod
     def get_all_shapes(self) -> List[ShapesLayer]:
+        pass
+
+    @abstractmethod
+    def add_labels(self, data: np.ndarray, name: str) -> None:
+        pass
+
+    @abstractmethod
+    def get_labels(self, name: str) -> Optional[LabelsLayer]:
+        pass
+
+    @abstractmethod
+    def get_all_labels(self) -> List[LabelsLayer]:
         pass
 
     @abstractmethod

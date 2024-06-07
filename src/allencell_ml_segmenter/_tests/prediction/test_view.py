@@ -72,7 +72,7 @@ def test_show_results(main_model: MainModel) -> None:
 
     # ASSERT
     assert (
-        len(fake_viewer.get_all_images()) == 2
+        len(fake_viewer.get_all_labels()) == 2
     )  # num img files in output_test_folder
     image: Path = (
         Path(allencell_ml_segmenter.__file__).parent
