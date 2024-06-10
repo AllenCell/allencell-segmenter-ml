@@ -53,7 +53,8 @@ class CurationInputView(QWidget):
 
         input_images_label: QLabel = QLabel("Input images")
         frame.layout().addWidget(input_images_label)
-
+        frame.layout().setSpacing(20)
+        
         raw_grid_layout: QGridLayout = QGridLayout()
 
         # First Row in Gridlayout
