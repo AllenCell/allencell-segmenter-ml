@@ -30,7 +30,9 @@ class ExperimentsModel(IExperimentsModel):
             experiment
         ) in self.user_settings.get_user_experiments_path().iterdir():
             if (
-                experiment not in self.experiments
+                experiment.is_dir() 
+                and Path(experiment / "checkpoints").exists() # Heuristic for checking if dir is a cyto-dl experiment
+                and experiment not in self.experiments
                 and not experiment.name.startswith(".")
             ):
                 self.experiments.append(experiment.name)
