@@ -37,14 +37,8 @@ class UserSettings(IUserSettings):
             text="Please select a location to store your Segmenter ML data.",
         )
         message_dialog.exec()
-        file_path: str = QFileDialog.getExistingDirectory(
-            parent,
-            "Select a directory",
-            options=QFileDialog.Option.DontUseNativeDialog
-            | QFileDialog.Option.DontUseCustomDirectoryIcons
-            | QFileDialog.ShowDirsOnly,
-        )
-        self.set_user_experiments_path(Path(file_path))
+        path: Path = self.prompt_for_directory(parent)
+        self.set_user_experiments_path(path)
 
     def display_change_user_experiments_home(self, parent: QWidget) -> Path:
         buttonReply = QMessageBox.question(
@@ -57,13 +51,17 @@ class UserSettings(IUserSettings):
             QMessageBox.No,
         )
         if buttonReply == QMessageBox.Yes:
-            directory_dialog = QFileDialog(parent=parent)
-            directory_dialog.setFileMode(QFileDialog.Directory)
-            file_path: str = QFileDialog.getExistingDirectory(
-                parent,
-                "Select a directory",
-                options=QFileDialog.Option.DontUseNativeDialog
-                | QFileDialog.Option.DontUseCustomDirectoryIcons
-                | QFileDialog.ShowDirsOnly,
-            )
-            self.set_user_experiments_path(Path(file_path))
+            path: Path = self.prompt_for_directory(parent)
+            self.set_user_experiments_path(path)
+
+    def prompt_for_directory(self, parent: QWidget) -> Path:
+        directory_dialog = QFileDialog(parent=parent)
+        directory_dialog.setFileMode(QFileDialog.Directory)
+        file_path: str = QFileDialog.getExistingDirectory(
+            parent,
+            "Select a directory",
+            options=QFileDialog.Option.DontUseNativeDialog
+            | QFileDialog.Option.DontUseCustomDirectoryIcons
+            | QFileDialog.ShowDirsOnly,
+        )
+        return Path(file_path)
