@@ -35,4 +35,3 @@ class FakeUserSettings(IUserSettings):
     def display_change_user_experiments_home(self, parent: QWidget):
         if self.change_prompt_response:
             self.set_user_experiments_path(Path(self.prompt_response))
-
