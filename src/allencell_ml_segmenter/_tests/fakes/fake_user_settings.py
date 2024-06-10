@@ -8,11 +8,13 @@ class FakeUserSettings(IUserSettings):
         self,
         cyto_dl_home_path=None,
         user_experiments_path=None,
-        prompt_response: Path = None,
+        init_prompt_response: Path = None,
+        change_prompt_response: Path = None,
     ):
         self.cyto_dl_home_path = cyto_dl_home_path
         self.user_experiments_path = user_experiments_path
-        self.prompt_response: Path = prompt_response
+        self.prompt_response: Path = init_prompt_response
+        self.change_prompt_response: Path = change_prompt_response
 
     def get_cyto_dl_home_path(self) -> Path:
         return self.cyto_dl_home_path
@@ -27,7 +29,10 @@ class FakeUserSettings(IUserSettings):
         self.user_experiments_path = path
 
     def prompt_for_user_experiments_home(self, parent: QWidget):
-        self.set_user_experiments_path(Path(self.prompt_response))
+        if self.prompt_response:
+            self.set_user_experiments_path(Path(self.prompt_response))
 
     def display_change_user_experiments_home(self, parent: QWidget):
-        pass
+        if self.change_prompt_response:
+            self.set_user_experiments_path(Path(self.prompt_response))
+

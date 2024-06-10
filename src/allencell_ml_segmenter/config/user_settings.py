@@ -37,9 +37,14 @@ class UserSettings(IUserSettings):
             text="Please select a location to store your Segmenter ML data.",
         )
         message_dialog.exec()
-        directory_dialog = QFileDialog(parent=parent)
-        directory_dialog.setFileMode(QFileDialog.Directory)
-        self.set_user_experiments_path(directory_dialog.getExistingDirectory())
+        file_path: str = QFileDialog.getExistingDirectory(
+            parent,
+            "Select a directory",
+            options=QFileDialog.Option.DontUseNativeDialog
+            | QFileDialog.Option.DontUseCustomDirectoryIcons
+            | QFileDialog.ShowDirsOnly,
+        )
+        self.set_user_experiments_path(Path(file_path))
 
     def display_change_user_experiments_home(self, parent: QWidget) -> Path:
         buttonReply = QMessageBox.question(
@@ -54,6 +59,11 @@ class UserSettings(IUserSettings):
         if buttonReply == QMessageBox.Yes:
             directory_dialog = QFileDialog(parent=parent)
             directory_dialog.setFileMode(QFileDialog.Directory)
-            self.set_user_experiments_path(
-                Path(directory_dialog.getExistingDirectory())
+            file_path: str = QFileDialog.getExistingDirectory(
+                parent,
+                "Select a directory",
+                options=QFileDialog.Option.DontUseNativeDialog
+                | QFileDialog.Option.DontUseCustomDirectoryIcons
+                | QFileDialog.ShowDirsOnly,
             )
+            self.set_user_experiments_path(Path(file_path))
