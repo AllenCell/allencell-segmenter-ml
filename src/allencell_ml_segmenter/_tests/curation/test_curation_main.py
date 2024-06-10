@@ -123,6 +123,7 @@ def test_initial_state_with_seg2(
 
     # everything should be disabled until signals from model fire
     # Assert
+    assert not env.view.save_csv_button.isEnabled()
     assert not env.view.merging_create_button.isEnabled()
     assert not env.view.merging_save_button.isEnabled()
     assert not env.view.merging_base_combo.isEnabled()
@@ -186,6 +187,7 @@ def test_initial_state_no_seg2(
 
     # everything should be disabled until signals from model fire
     # Assert
+    assert not env.view.save_csv_button.isEnabled()
     assert not env.view.merging_create_button.isEnabled()
     assert not env.view.merging_save_button.isEnabled()
     assert not env.view.merging_base_combo.isEnabled()
