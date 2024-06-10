@@ -133,7 +133,7 @@ def test_experiments_home_initialized(qtbot: QtBot) -> None:
         __file__
     ).parent  # simulates (in the fake settings) the location chosed by user
     settings = FakeUserSettings(
-        prompt_response=EXPECTED_EXPERIMENTS_HOME,
+        init_prompt_response=EXPECTED_EXPERIMENTS_HOME,
         cyto_dl_home_path=Path("foo/cyto/path"),
     )
     settings.set_user_experiments_path(
