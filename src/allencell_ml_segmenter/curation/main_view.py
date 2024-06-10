@@ -236,6 +236,7 @@ class CurationMainView(View):
         print("show result")
 
     def _set_to_initial_state(self):
+        self.save_csv_button.setEnabled(False)
         self._set_next_button_to_loading()
         self.disable_all_masks()
         self._use_img_stacked_spinner.start()
@@ -245,6 +246,7 @@ class CurationMainView(View):
 
     def _on_first_image_loading_finished(self) -> None:
         self._use_img_stacked_spinner.stop()
+        self.save_csv_button.setEnabled(True)
         self._update_progress_bar()
         self._add_curr_images_to_widget()
         self._enable_next_button()
