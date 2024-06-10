@@ -33,6 +33,7 @@ class StackedSpinner(QStackedWidget):
         min_dim: int = min(self.spinner.width(), self.spinner.height())
         padding: int = 2  # necessary to make sure the gif isn't cut off
         size: QSize = QSize(min_dim - padding, min_dim - padding)
+        # resizing on start in case window size has changed
         self.movie.setScaledSize(size)
         self.movie.start()
         self._is_spinning = True
