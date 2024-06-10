@@ -113,9 +113,9 @@ class CurationMainView(View):
         self.no_radio.clicked.connect(self._on_no_radio_clicked)
         use_image_frame.layout().addWidget(self.no_radio)
 
-        self._use_img_stacked_spinner = StackedSpinner(use_image_frame)
+        self.use_img_stacked_spinner = StackedSpinner(use_image_frame)
         self.layout().addWidget(
-            self._use_img_stacked_spinner, alignment=Qt.AlignHCenter
+            self.use_img_stacked_spinner, alignment=Qt.AlignHCenter
         )
 
         optional_text: QLabel = QLabel("OPTIONAL", self)
@@ -238,13 +238,13 @@ class CurationMainView(View):
     def _set_to_initial_state(self):
         self._set_next_button_to_loading()
         self.disable_all_masks()
-        self._use_img_stacked_spinner.start()
+        self.use_img_stacked_spinner.start()
 
     def _on_image_loading_finished(self) -> None:
         self._enable_next_button()
 
     def _on_first_image_loading_finished(self) -> None:
-        self._use_img_stacked_spinner.stop()
+        self.use_img_stacked_spinner.stop()
         self._update_progress_bar()
         self._add_curr_images_to_widget()
         self._enable_next_button()
