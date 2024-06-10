@@ -53,7 +53,7 @@ class CurationInputView(QWidget):
 
         input_images_label: QLabel = QLabel("Input images")
         frame.layout().addWidget(input_images_label)
-        frame.layout().setSpacing(20)
+        frame.layout().setSpacing(30)
         
         raw_grid_layout: QGridLayout = QGridLayout()
         raw_grid_layout.setVerticalSpacing(10)
@@ -138,7 +138,7 @@ class CurationInputView(QWidget):
 
         seg2_grid_layout: QGridLayout = QGridLayout()
         seg2_grid_layout.setVerticalSpacing(10)
-        
+
         # First Row in Gridlayout
         seg2_image_label: LabelWithHint = LabelWithHint("Seg 2")
         # TODO set hint
