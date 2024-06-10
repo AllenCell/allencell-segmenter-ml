@@ -41,6 +41,6 @@ class StackedSpinner(QStackedWidget):
         self.setCurrentWidget(self.input_button)
         self.movie.stop()
         self._is_spinning = False
-    
+
     def is_spinning(self) -> bool:
         return self._is_spinning
