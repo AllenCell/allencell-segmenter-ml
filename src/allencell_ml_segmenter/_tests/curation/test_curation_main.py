@@ -134,6 +134,8 @@ def test_initial_state_with_seg2(
     assert not env.view.excluding_save_button.isEnabled()
 
     assert env.view.use_img_stacked_spinner.is_spinning()
+    assert not env.view.yes_radio.isEnabled()
+    assert not env.view.no_radio.isEnabled()
 
     assert not env.view.next_button.isEnabled()
 
@@ -197,6 +199,8 @@ def test_initial_state_no_seg2(
     assert not env.view.excluding_save_button.isEnabled()
 
     assert env.view.use_img_stacked_spinner.is_spinning()
+    assert not env.view.yes_radio.isEnabled()
+    assert not env.view.no_radio.isEnabled()
 
     assert not env.view.next_button.isEnabled()
 
