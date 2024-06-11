@@ -9,7 +9,12 @@ class ProgressTracker:
     for example. It also maintains a label for the progress.
     """
 
-    def __init__(self, progress_minimum: int = 0, progress_maximum: int = 0, label_text: str = "Progress"):
+    def __init__(
+        self,
+        progress_minimum: int = 0,
+        progress_maximum: int = 0,
+        label_text: str = "Progress",
+    ):
         self._progress_minimum: int = progress_minimum
         self._progress_maximum: int = progress_maximum
         self._progress: int = progress_minimum
@@ -43,10 +48,10 @@ class ProgressTracker:
 
     def get_label_text(self) -> str:
         return self._label_text
-    
+
     def set_label_text(self, label_text: str) -> None:
         self._label_text = label_text
-    
+
     @abstractmethod
     def start_tracker(self) -> None:
         """

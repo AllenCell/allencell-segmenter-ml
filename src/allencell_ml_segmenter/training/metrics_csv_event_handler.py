@@ -11,7 +11,12 @@ class MetricsCSVEventHandler(FileSystemEventHandler):
     CSV to the callback.
     """
 
-    def __init__(self, target_path: Path, progress_callback: Callable, label_text_callback: Callable):
+    def __init__(
+        self,
+        target_path: Path,
+        progress_callback: Callable,
+        label_text_callback: Callable,
+    ):
         super().__init__()
         self._target_path: Path = target_path
         self._progress_callback: Callable = progress_callback
@@ -35,7 +40,7 @@ class MetricsCSVEventHandler(FileSystemEventHandler):
                         pass
 
         return len(epochs), latest_loss
-    
+
     # override
     def on_any_event(self, event: FileSystemEvent) -> None:
         if self._target_path.exists() and self._target_path.samefile(
@@ -43,4 +48,6 @@ class MetricsCSVEventHandler(FileSystemEventHandler):
         ):
             epochs, loss = self._get_csv_data()
             self._progress_callback(epochs)
-            self._label_text_callback(f"Current loss: {'N/A' if loss is None else loss}")
+            self._label_text_callback(
+                f"Current loss: {'  N/A' if loss is None else '{:.3f}'.format(loss)}"
+            )

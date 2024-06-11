@@ -97,7 +97,7 @@ class View(QWidget, Subscriber, metaclass=ViewMeta):
 
     def updateProgress(self, value: int) -> None:
         self.progressDialog.setValue(value)
-    
+
     def updateLabelText(self, value: str) -> None:
         self.progressDialog.setLabelText(value)
 
