@@ -59,31 +59,31 @@ class TestsWithStubbedFileDialog:
         self, qtbot: QtBot, test_env: TestEnvironment
     ) -> None:
         # Assert sanity check
-        assert not test_env.view.raw_dir_stacked_spinner.spinner.is_spinning
+        assert not test_env.view.raw_dir_stacked_spinner.is_spinning()
         # Act
         test_env.view.raw_directory_select.button.click()
         # Assert
-        assert test_env.view.raw_dir_stacked_spinner.spinner.is_spinning
+        assert test_env.view.raw_dir_stacked_spinner.is_spinning()
 
     def test_seg1_dir_selected(
         self, qtbot: QtBot, test_env: TestEnvironment
     ) -> None:
         # Assert sanity check
-        assert not test_env.view.seg1_dir_stacked_spinner.spinner.is_spinning
+        assert not test_env.view.seg1_dir_stacked_spinner.is_spinning()
         # Act
         test_env.view.seg1_directory_select.button.click()
         # Assert
-        assert test_env.view.seg1_dir_stacked_spinner.spinner.is_spinning
+        assert test_env.view.seg1_dir_stacked_spinner.is_spinning()
 
     def test_seg2_dir_selected(
         self, qtbot: QtBot, test_env: TestEnvironment
     ) -> None:
         # Assert sanity check
-        assert not test_env.view.seg2_dir_stacked_spinner.spinner.is_spinning
+        assert not test_env.view.seg2_dir_stacked_spinner.is_spinning()
         # Act
         test_env.view.seg2_directory_select.button.click()
         # Assert
-        assert test_env.view.seg2_dir_stacked_spinner.spinner.is_spinning
+        assert test_env.view.seg2_dir_stacked_spinner.is_spinning()
 
     def test_raw_channel_count_set(
         self, qtbot: QtBot, test_env: TestEnvironment
@@ -98,7 +98,7 @@ class TestsWithStubbedFileDialog:
         test_env.model.set_channel_count(CurationImageType.RAW, count)
 
         # Assert
-        assert not test_env.view.raw_dir_stacked_spinner.spinner.is_spinning
+        assert not test_env.view.raw_dir_stacked_spinner.is_spinning()
         assert_combo_box_matches_channel_count(combo_box, count)
 
     def test_seg1_channel_count_set(
@@ -114,7 +114,7 @@ class TestsWithStubbedFileDialog:
         test_env.model.set_channel_count(CurationImageType.SEG1, count)
 
         # Assert
-        assert not test_env.view.seg1_dir_stacked_spinner.spinner.is_spinning
+        assert not test_env.view.seg1_dir_stacked_spinner.is_spinning()
         assert_combo_box_matches_channel_count(combo_box, count)
 
     def test_seg2_channel_count_set(
@@ -130,7 +130,7 @@ class TestsWithStubbedFileDialog:
         test_env.model.set_channel_count(CurationImageType.SEG2, count)
 
         # Assert
-        assert not test_env.view.seg2_dir_stacked_spinner.spinner.is_spinning
+        assert not test_env.view.seg2_dir_stacked_spinner.is_spinning()
         assert_combo_box_matches_channel_count(combo_box, count)
 
     def test_start_raw_selected(

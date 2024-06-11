@@ -133,6 +133,7 @@ def test_initial_state_with_seg2(
     assert not env.view.excluding_delete_button.isEnabled()
     assert not env.view.excluding_save_button.isEnabled()
 
+    assert env.view.use_img_stacked_spinner.is_spinning()
     assert not env.view.yes_radio.isEnabled()
     assert not env.view.no_radio.isEnabled()
 
@@ -161,6 +162,7 @@ def test_initial_state_with_seg2(
     assert not env.view.excluding_delete_button.isEnabled()
     assert not env.view.excluding_save_button.isEnabled()
 
+    assert not env.view.use_img_stacked_spinner.is_spinning()
     assert env.view.yes_radio.isEnabled()
     assert env.view.no_radio.isEnabled()
 
@@ -196,6 +198,7 @@ def test_initial_state_no_seg2(
     assert not env.view.excluding_delete_button.isEnabled()
     assert not env.view.excluding_save_button.isEnabled()
 
+    assert env.view.use_img_stacked_spinner.is_spinning()
     assert not env.view.yes_radio.isEnabled()
     assert not env.view.no_radio.isEnabled()
 
@@ -220,6 +223,7 @@ def test_initial_state_no_seg2(
     assert not env.view.excluding_delete_button.isEnabled()
     assert not env.view.excluding_save_button.isEnabled()
 
+    assert not env.view.use_img_stacked_spinner.is_spinning()
     assert env.view.yes_radio.isEnabled()
     assert env.view.no_radio.isEnabled()
 
