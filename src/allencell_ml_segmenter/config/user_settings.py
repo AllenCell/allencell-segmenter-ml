@@ -31,7 +31,7 @@ class UserSettings(IUserSettings):
     def set_user_experiments_path(self, path: Path):
         self.settings.setValue(EXPERIMENTS_HOME_KEY, path)
 
-    def prompt_for_user_experiments_home(self, parent: QWidget) -> Path:
+    def prompt_for_user_experiments_home(self, parent: QWidget):
         message_dialog = QMessageBox(
             parent=parent,
             text="Please select a location to store your Segmenter ML data.",
@@ -40,7 +40,7 @@ class UserSettings(IUserSettings):
         path: Path = self._prompt_for_directory(parent)
         self.set_user_experiments_path(path)
 
-    def display_change_user_experiments_home(self, parent: QWidget) -> Path:
+    def display_change_user_experiments_home(self, parent: QWidget):
         buttonReply = QMessageBox.question(
             parent,
             "Experiments Home",
