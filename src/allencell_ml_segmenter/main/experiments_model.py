@@ -46,7 +46,7 @@ class ExperimentsModel(IExperimentsModel):
         csv_path = experiment / "data" / "train.csv"
         checkpoints_path = experiment / "checkpoints"
         return checkpoints_path.exists() or csv_path.exists()
-    
+
     def get_experiments(self) -> List[str]:
         return copy.deepcopy(self.experiments)
 
