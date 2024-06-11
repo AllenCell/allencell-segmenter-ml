@@ -1,34 +1,192 @@
 from pathlib import Path
-from typing import List
-from unittest.mock import Mock, mock_open, patch, call
+from dataclasses import dataclass
 
-import numpy as np
 import pytest
-from napari.layers import Shapes
+from pytestqt.qtbot import QtBot
 
-from allencell_ml_segmenter._tests.fakes.fake_subscriber import FakeSubscriber
-from allencell_ml_segmenter._tests.fakes.fake_viewer import FakeViewer
-from allencell_ml_segmenter.core.event import Event
-from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
-from allencell_ml_segmenter.curation.curation_model import CurationModel
+from allencell_ml_segmenter.curation.curation_model import (
+    CurationModel,
+    CurationImageType,
+    CurationView,
+)
 from allencell_ml_segmenter.curation.curation_service import (
     CurationService,
 )
-from allencell_ml_segmenter.core.image_data_extractor import ImageData
-from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
-from allencell_ml_segmenter.main.viewer import Viewer
+from allencell_ml_segmenter.core.image_data_extractor import (
+    FakeImageDataExtractor,
+)
+from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
+    FakeExperimentsModel,
+)
+from allencell_ml_segmenter.utils.file_writer import FakeFileWriter
 import allencell_ml_segmenter
 
 
-"""
-Getting the curation service tests to work will require some significant changes, which will impact
-modules outside of curation. I think it's wise to defer that to a later PR. Here are the important
-changes that need to happen to unit test curation service.
+@dataclass
+class TestEnvironment:
+    model: CurationModel
+    service: CurationService
+    file_writer: FakeFileWriter
 
-1. have curation service use TaskExecutor instead of @thread_worker annotations
-    - this is a change that will not impact things outside of curation
-2. change FileUtils so that it is a singleton with a global instance instead of a class with
-static methods. This will allow us to use dependency injection for testing.
-3. create a fake for FileUtils that saves things to RAM instead of disk (similar to our fake
-viewer)
-"""
+
+@pytest.fixture
+def test_env_input_view() -> TestEnvironment:
+    exp_mod: FakeExperimentsModel = FakeExperimentsModel()
+    exp_mod.apply_experiment_name("0_exp")
+    model: CurationModel = CurationModel(exp_mod)
+    writer: FakeFileWriter = FakeFileWriter.global_instance()
+    service: CurationService = CurationService(
+        model,
+        img_data_extractor=FakeImageDataExtractor.global_instance(),
+        file_writer=writer,
+    )
+    return TestEnvironment(model, service, writer)
+
+
+@pytest.fixture
+def test_env_main_view(
+    test_env_input_view: TestEnvironment,
+) -> TestEnvironment:
+    model: CurationModel = test_env_input_view.model
+    model.set_image_directory_paths(CurationImageType.RAW, IMG_DIR_FILES)
+    model.set_image_directory_paths(CurationImageType.SEG1, IMG_DIR_FILES)
+    model.set_image_directory_paths(CurationImageType.SEG2, IMG_DIR_FILES)
+    model.set_current_view(CurationView.MAIN_VIEW)
+
+    return test_env_input_view
+
+
+IMG_DIR_PATH = (
+    Path(allencell_ml_segmenter.__file__).parent
+    / "_tests"
+    / "test_files"
+    / "img_folder"
+)
+
+IMG_DIR_FILES = [path for path in IMG_DIR_PATH.iterdir()]
+
+# NOTE: the service tests follow this general format:
+# 1. act on the model to trigger a signal which service should be connected to
+# 2. wait for signal indicating that service work triggered by 1 is complete
+# 3. verify that expected side effects (most likely to model state) of completed work in 2
+#    are present
+
+
+def test_service_reacts_to_set_raw_dir(
+    qtbot: QtBot, test_env_input_view: TestEnvironment
+) -> None:
+    test_env: TestEnvironment = test_env_input_view
+    # Assert (sanity check)
+    assert test_env.model.get_channel_count(CurationImageType.RAW) is None
+    assert (
+        test_env.model.get_image_directory_paths(CurationImageType.RAW) is None
+    )
+
+    # Act
+    with qtbot.waitSignal(test_env.model.channel_count_set):
+        test_env.model.set_image_directory(CurationImageType.RAW, IMG_DIR_PATH)
+
+    # Assert
+    # we expect that when the raw directory is set, CurationService will extract the paths
+    # and the number of channels from that directory
+    assert test_env.model.get_channel_count(CurationImageType.RAW) is not None
+    for file in test_env.model.get_image_directory_paths(
+        CurationImageType.RAW
+    ):
+        assert file in IMG_DIR_FILES
+
+
+def test_service_reacts_to_set_seg1_dir(
+    qtbot: QtBot, test_env_input_view: TestEnvironment
+) -> None:
+    test_env: TestEnvironment = test_env_input_view
+    # Assert (sanity check)
+    assert test_env.model.get_channel_count(CurationImageType.SEG1) is None
+    assert (
+        test_env.model.get_image_directory_paths(CurationImageType.SEG1)
+        is None
+    )
+
+    # Act
+    with qtbot.waitSignal(test_env.model.channel_count_set):
+        test_env.model.set_image_directory(
+            CurationImageType.SEG1, IMG_DIR_PATH
+        )
+
+    # Assert
+    assert test_env.model.get_channel_count(CurationImageType.SEG1) is not None
+    for file in test_env.model.get_image_directory_paths(
+        CurationImageType.SEG1
+    ):
+        assert file in IMG_DIR_FILES
+
+
+def test_service_reacts_to_set_seg2_dir(
+    qtbot: QtBot, test_env_input_view: TestEnvironment
+) -> None:
+    test_env: TestEnvironment = test_env_input_view
+    # Assert (sanity check)
+    assert test_env.model.get_channel_count(CurationImageType.SEG2) is None
+    assert (
+        test_env.model.get_image_directory_paths(CurationImageType.SEG2)
+        is None
+    )
+
+    # Act
+    with qtbot.waitSignal(test_env.model.channel_count_set):
+        test_env.model.set_image_directory(
+            CurationImageType.SEG2, IMG_DIR_PATH
+        )
+
+    # Assert
+    assert test_env.model.get_channel_count(CurationImageType.SEG2) is not None
+    for file in test_env.model.get_image_directory_paths(
+        CurationImageType.SEG2
+    ):
+        assert file in IMG_DIR_FILES
+
+
+def test_service_reacts_to_cursor_moved(
+    qtbot: QtBot, test_env_main_view: TestEnvironment
+) -> None:
+    test_env: TestEnvironment = test_env_main_view
+    # Assert (sanity check)
+    assert test_env.model.get_curr_image_data(CurationImageType.RAW) is None
+    assert test_env.model.get_curr_image_data(CurationImageType.SEG1) is None
+    assert test_env.model.get_curr_image_data(CurationImageType.SEG2) is None
+
+    # Act
+    with qtbot.waitSignal(test_env.model.image_loading_finished):
+        test_env.model.start_loading_images()
+
+    # Assert
+    assert not test_env.model.is_waiting_for_images()
+    assert (
+        test_env.model.get_curr_image_data(CurationImageType.RAW) is not None
+    )
+    assert (
+        test_env.model.get_curr_image_data(CurationImageType.SEG1) is not None
+    )
+    assert (
+        test_env.model.get_curr_image_data(CurationImageType.SEG2) is not None
+    )
+
+
+def test_service_reacts_to_save_csv(
+    qtbot: QtBot, test_env_main_view: TestEnvironment
+) -> None:
+    test_env: TestEnvironment = test_env_main_view
+
+    # Arrange
+    with qtbot.waitSignal(test_env.model.image_loading_finished):
+        test_env.model.start_loading_images()
+
+    # Assert (sanity check)
+    assert len(test_env.file_writer.csv_state) == 0
+
+    # Act
+    with qtbot.waitSignal(test_env.model.saved_to_disk):
+        test_env.model.save_curr_curation_record_to_disk()
+
+    # Assert
+    assert len(test_env.file_writer.csv_state) > 0
