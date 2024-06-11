@@ -20,7 +20,7 @@ class PredictionFolderProgressTracker(ProgressTracker):
         :param progress_folder_path: path to the output directory for predictions
         :param num_preds: total number of new pred files expected to be written to the folder
         """
-        super().__init__(progress_minimum=0, progress_maximum=num_preds)
+        super().__init__(progress_minimum=0, progress_maximum=num_preds, label_text="Prediction progress")
 
         if not prediction_folder_path.exists():
             prediction_folder_path.mkdir(parents=True)
