@@ -4,7 +4,6 @@ from allencell_ml_segmenter.config.i_user_settings import IUserSettings
 
 import copy
 
-from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
 
 
@@ -31,9 +30,7 @@ class ExperimentsModel(IExperimentsModel):
         ) in self.user_settings.get_user_experiments_path().iterdir():
             if (
                 experiment.is_dir()
-                and Path(
-                    experiment / "checkpoints"
-                ).exists()  # Heuristic for checking if dir is a cyto-dl experiment
+                and self._is_cyto_dl_experiment(experiment)
                 and experiment not in self.experiments
                 and not experiment.name.startswith(".")
             ):
@@ -44,6 +41,12 @@ class ExperimentsModel(IExperimentsModel):
     Returns a defensive copy of Experiments list.
     """
 
+    def _is_cyto_dl_experiment(self, experiment: Path) -> bool:
+        # Heuristic for checking if dir is a cyto-dl experiment
+        csv_path = experiment / "data" / "train.csv"
+        checkpoints_path = experiment / "checkpoints"
+        return checkpoints_path.exists() or csv_path.exists()
+    
     def get_experiments(self) -> List[str]:
         return copy.deepcopy(self.experiments)
 
