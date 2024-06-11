@@ -113,9 +113,9 @@ class CurationMainView(View):
         self.no_radio.clicked.connect(self._on_no_radio_clicked)
         use_image_frame.layout().addWidget(self.no_radio)
 
-        self._use_img_stacked_spinner = StackedSpinner(use_image_frame)
+        self.use_img_stacked_spinner = StackedSpinner(use_image_frame)
         self.layout().addWidget(
-            self._use_img_stacked_spinner, alignment=Qt.AlignHCenter
+            self.use_img_stacked_spinner, alignment=Qt.AlignHCenter
         )
 
         optional_text: QLabel = QLabel("OPTIONAL", self)
@@ -238,16 +238,18 @@ class CurationMainView(View):
     def _set_to_initial_state(self):
         self._set_next_button_to_loading()
         self.disable_all_masks()
-        self._use_img_stacked_spinner.start()
+        self.disable_radio_buttons()
+        self.use_img_stacked_spinner.start()
 
     def _on_image_loading_finished(self) -> None:
         self._enable_next_button()
 
     def _on_first_image_loading_finished(self) -> None:
-        self._use_img_stacked_spinner.stop()
+        self.use_img_stacked_spinner.stop()
         self._update_progress_bar()
         self._add_curr_images_to_widget()
         self._enable_next_button()
+        self.enable_radio_buttons()
         self._curation_model.image_loading_finished.disconnect(
             self._on_first_image_loading_finished
         )
@@ -311,8 +313,7 @@ class CurationMainView(View):
         else:
             self._on_save_curation_csv()
             self.disable_all_masks()
-            self.yes_radio.setEnabled(False)
-            self.no_radio.setEnabled(False)
+            self.disable_radio_buttons()
             self.file_name.setText("None")
             self.next_button.setEnabled(False)
             self.next_button.setText("No more images")
@@ -372,6 +373,14 @@ class CurationMainView(View):
         self.excluding_save_button.setEnabled(mask_exists)
         self.excluding_create_button.setEnabled(True)
         self.excluding_delete_button.setEnabled(mask_exists)
+
+    def disable_radio_buttons(self):
+        self.yes_radio.setEnabled(False)
+        self.no_radio.setEnabled(False)
+
+    def enable_radio_buttons(self):
+        self.yes_radio.setEnabled(True)
+        self.no_radio.setEnabled(True)
 
     def _update_progress_bar(self) -> None:
         """
