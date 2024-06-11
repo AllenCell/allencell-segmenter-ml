@@ -1,32 +1,47 @@
+from allencell_ml_segmenter.core.directories import Directories
 from allencell_ml_segmenter.widgets.input_button_widget import (
     InputButton,
 )
-from qtpy.QtWidgets import QStackedWidget
-from pyqtspinner import WaitingSpinner
-from qtpy.QtGui import QColor
+from pathlib import Path
+from qtpy.QtWidgets import QStackedWidget, QLabel
+from qtpy.QtGui import QMovie
+from qtpy.QtCore import QSize, Qt
 
 
 class StackedSpinner(QStackedWidget):
     def __init__(self, input_button: InputButton = None):
         super().__init__()
-        self.setMaximumSize(260, 50)
-        self.spinner = WaitingSpinner(
-            parent=self,
-            center_on_parent=True,
-            disable_parent_when_spinning=True,
-            color=QColor(244, 244, 244),
-        )
+        if input_button is not None:
+            self.setSizePolicy(input_button.width(), input_button.height())
+        else:
+            self.setSizePolicy(260, 50)
+
+        self.spinner = QLabel(self)
+        self.spinner.setAlignment(Qt.AlignCenter)
+        gif_path: Path = Directories.get_assets_dir() / "loading.gif"
+        self.movie = QMovie(str(gif_path.resolve()))
+        self.spinner.setMovie(self.movie)
+
         self.input_button = input_button
         self.addWidget(self.spinner)
         self.addWidget(self.input_button)
         self.setCurrentWidget(self.input_button)
+        self._is_spinning = False
 
     def start(self):
-        print()
         self.setCurrentWidget(self.spinner)
-        self.spinner.start()
+        min_dim: int = min(self.spinner.width(), self.spinner.height())
+        padding: int = 2  # necessary to make sure the gif isn't cut off
+        size: QSize = QSize(min_dim - padding, min_dim - padding)
+        # resizing on start in case window size has changed
+        self.movie.setScaledSize(size)
+        self.movie.start()
+        self._is_spinning = True
 
     def stop(self):
-        print()
         self.setCurrentWidget(self.input_button)
-        self.spinner.stop()
+        self.movie.stop()
+        self._is_spinning = False
+
+    def is_spinning(self) -> bool:
+        return self._is_spinning
