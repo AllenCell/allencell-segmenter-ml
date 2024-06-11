@@ -42,7 +42,7 @@ class MetricsCSVProgressTracker(ProgressTracker):
         self.stop_tracker()
         self._observer = Observer()
         event_handler: MetricsCSVEventHandler = MetricsCSVEventHandler(
-            self._target_path, self.set_progress
+            self._target_path, self.set_progress, self.set_label_text
         )
         self._observer.schedule(
             event_handler, path=self._csv_path, recursive=True
