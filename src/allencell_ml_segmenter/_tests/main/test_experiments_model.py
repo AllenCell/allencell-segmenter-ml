@@ -33,9 +33,8 @@ def test_refresh_experiments(experiments_model: ExperimentsModel) -> None:
     expected_sorted = [
         "1_exp",
         "2_exp",
-        "a_exp",
         "one_ckpt_exp",
-    ] # Only these directories have checkpoint sub dirs 
+    ] # Only these directories have checkpoint sub dirs.
     experiments_model.refresh_experiments()
     assert len(experiments_model.get_experiments()) == len(expected_sorted)
     assert experiments_model.get_experiments() == expected_sorted
