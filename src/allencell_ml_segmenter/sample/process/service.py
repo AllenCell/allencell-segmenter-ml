@@ -30,6 +30,5 @@ class SampleProcessService:
         else:
             self._sample_model.set_process_running(True)
             for file in self._sample_model.get_training_input_files():
-                # await asyncio.sleep(1)
                 self._sample_model.append_training_output_files([file])
             self._sample_model.set_process_running(False)
