@@ -1,9 +1,5 @@
-import asyncio
 from pathlib import Path
 
-from allencell_ml_segmenter._tests.fakes.fake_channel_extraction import (
-    FakeChannelExtractionThread,
-)
 from allencell_ml_segmenter.core.channel_extraction import (
     ChannelExtractionThread,
     get_img_path_from_csv,

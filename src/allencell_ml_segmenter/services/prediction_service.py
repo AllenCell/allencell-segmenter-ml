@@ -1,4 +1,3 @@
-import asyncio
 import csv
 
 from allencell_ml_segmenter.core.subscriber import Subscriber
@@ -65,7 +64,7 @@ class PredictionService(Subscriber):
                 self._experiments_model.get_checkpoint(),
             )
         )
-        asyncio.run(cyto_api.predict(run_async=True))
+        cyto_api.predict()
 
     def _prediction_setup(self, _: Event):
         if self._able_to_continue_prediction():
