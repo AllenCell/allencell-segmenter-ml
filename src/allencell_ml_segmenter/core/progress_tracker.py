@@ -6,13 +6,20 @@ class ProgressTracker:
     Base class for all ProgressTrackers to inherit from. A ProgressTracker
     maintains an integer measure of progress between progress_minimum and
     progress_maximum. The progress value can be used by PyQt progress bars
-    for example.
+    for example. It also maintains a string which can be used as a label for
+    the progress.
     """
 
-    def __init__(self, progress_minimum: int = 0, progress_maximum: int = 0):
+    def __init__(
+        self,
+        progress_minimum: int = 0,
+        progress_maximum: int = 0,
+        label_text: str = "Progress",
+    ):
         self._progress_minimum: int = progress_minimum
         self._progress_maximum: int = progress_maximum
         self._progress: int = progress_minimum
+        self._label_text: str = label_text
 
     def get_progress_minimum(self) -> int:
         return self._progress_minimum
@@ -39,6 +46,12 @@ class ProgressTracker:
             )
 
         self._progress = progress
+
+    def get_label_text(self) -> str:
+        return self._label_text
+
+    def set_label_text(self, label_text: str) -> None:
+        self._label_text = label_text
 
     @abstractmethod
     def start_tracker(self) -> None:
