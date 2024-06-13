@@ -26,7 +26,11 @@ class MetricsCSVProgressTracker(ProgressTracker):
         :param num_epochs: number of epochs that will be recorded in the csv
         :param version_number: experiment version to track
         """
-        super().__init__(progress_minimum=0, progress_maximum=num_epochs)
+        super().__init__(
+            progress_minimum=0,
+            progress_maximum=num_epochs,
+            label_text="Training progress",
+        )
 
         self._csv_path: Path = csv_path
         if not csv_path.exists():
@@ -42,7 +46,7 @@ class MetricsCSVProgressTracker(ProgressTracker):
         self.stop_tracker()
         self._observer = Observer()
         event_handler: MetricsCSVEventHandler = MetricsCSVEventHandler(
-            self._target_path, self.set_progress
+            self._target_path, self.set_progress, self.set_label_text
         )
         self._observer.schedule(
             event_handler, path=self._csv_path, recursive=True

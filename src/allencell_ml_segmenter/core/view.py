@@ -25,6 +25,7 @@ class ProgressThread(QThread):
     # pyqtSignal must be class attribute
     # https://www.riverbankcomputing.com/static/Docs/PyQt5/signals_slots.html#defining-new-signals-with-pyqtsignal
     task_progress: Signal = Signal(int)
+    label_text: Signal = Signal(str)
 
     def __init__(self, progress_tracker: ProgressTracker, parent=None):
         super().__init__(parent)
@@ -37,6 +38,7 @@ class ProgressThread(QThread):
             < self._progress_tracker.get_progress_maximum()
         ):
             self.task_progress.emit(self._progress_tracker.get_progress())
+            self.label_text.emit(self._progress_tracker.get_label_text())
             self.msleep(100)
 
 
@@ -79,6 +81,7 @@ class View(QWidget, Subscriber, metaclass=ViewMeta):
 
         # progressThread's task_progress.emit now calls updateProgress
         self.progressThread.task_progress.connect(self.updateProgress)
+        self.progressThread.label_text.connect(self.updateLabelText)
         # if the longTaskThread or the progressThread finishes, we no longer
         # need to update progress, so we should stop the progress tracker
         self.progressThread.finished.connect(progress_tracker.stop_tracker)
@@ -88,31 +91,15 @@ class View(QWidget, Subscriber, metaclass=ViewMeta):
         self.progressThread.start()
         self.longTaskThread.start()
 
-    # will remove once prediction is also ported to progress bar
-    def startLongTask(self) -> None:
-        self.longTaskThread = LongTaskThread(do_work=self.doWork)
-        self.progressDialog = QProgressDialog(
-            f"{self.getTypeOfWork()} in Progress", "Cancel", 0, 0, self
-        )
-        self.progressDialog.setWindowTitle(f"{self.getTypeOfWork()} Progress")
-        self.progressDialog.setWindowModality(Qt.ApplicationModal)
-        self.progressDialog.canceled.connect(self.longTaskThread.terminate)
-        self.progressDialog.show()
-
-        # self.longTaskThread.taskProgress.connect(self.updateProgress)
-        self.longTaskThread.finished.connect(self.progressDialog.reset)
-        self.longTaskThread.finished.connect(self.longTaskThread.deleteLater)
-        self.longTaskThread.finished.connect(self.progressDialog.close)
-        self.longTaskThread.finished.connect(self.showResults)
-
-        self.longTaskThread.start()
-
     @abstractmethod
     def showResults(self):
         pass
 
     def updateProgress(self, value: int) -> None:
         self.progressDialog.setValue(value)
+
+    def updateLabelText(self, value: str) -> None:
+        self.progressDialog.setLabelText(value)
 
     @abstractmethod
     def doWork(self):
