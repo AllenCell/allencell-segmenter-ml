@@ -11,6 +11,7 @@ from allencell_ml_segmenter.core.channel_extraction import (
 from allencell_ml_segmenter.utils.file_utils import FileUtils
 from napari.utils.notifications import show_error
 
+
 class ModelFileService(Subscriber):
     """
     Parses the chosen model file to extract the preprocessing method.

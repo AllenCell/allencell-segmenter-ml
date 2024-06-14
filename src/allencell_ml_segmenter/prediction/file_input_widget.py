@@ -141,7 +141,9 @@ class PredictionFileInput(QWidget):
             "Select directory...",
             FileInputMode.DIRECTORY,
         )
-        self.input_image_spinner: StackedSpinner = StackedSpinner(input_button=self._browse_dir_edit)
+        self.input_image_spinner: StackedSpinner = StackedSpinner(
+            input_button=self._browse_dir_edit
+        )
         self._browse_dir_edit.setEnabled(False)
         horiz_layout.addWidget(self.input_image_spinner)
         frame.layout().addLayout(horiz_layout)
