@@ -262,6 +262,7 @@ class ModelSelectionWidget(QWidget):
         self._combo_box_existing_models.addItems(
             self._experiments_model.get_experiments()
         )
+        self._combo_box_existing_models.setCurrentIndex(-1)
         self._combo_box_existing_models.setPlaceholderText(
             "No existing models"
             if self._experiments_model.get_experiments() == []
