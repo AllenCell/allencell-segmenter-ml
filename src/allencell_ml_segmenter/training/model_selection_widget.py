@@ -228,28 +228,26 @@ class ModelSelectionWidget(QWidget):
 
     def _model_radio_handler(self) -> None:
         self._main_model.set_new_model(self._radio_new_model.isChecked())
+        self._combo_box_existing_models.setCurrentIndex(-1)
+        self._experiment_name_input.clear()
+        self._experiments_model.select_experiment_name(None)
         if self._radio_new_model.isChecked():
             """
             Triggered when the user selects the "start a new model" radio button.
             Enables and disables relevent controls.
             """
-            self._combo_box_existing_models.setCurrentIndex(-1)
             self._combo_box_existing_models.setEnabled(False)
             self._experiment_name_input.setEnabled(True)
-
-            self._experiments_model.select_experiment_name(None)
 
         if self._radio_existing_model.isChecked():
             """
             Triggered when the user selects the "existing model" radio button.
             Enables and disables relevent controls.
             """
-            self._experiments_model.select_experiment_name(None)
             self._combo_box_existing_models.setEnabled(
                 self._experiments_model.get_experiments() != []
             )
             self._experiment_name_input.setEnabled(False)
-            self._experiment_name_input.clear()
 
     def _handle_process_event(self, _: Event = None) -> None:
         """
