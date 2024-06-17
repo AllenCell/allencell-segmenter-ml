@@ -119,7 +119,7 @@ class PredictionFileInput(QWidget):
 
         guide_text: QLabel = QLabel()
         guide_text.setText(
-            "Accepts CSV files, <a href='https://www.allencell.org/segmenter.html'>see instructions</a>"
+            "Accepts directories, <a href='https://www.allencell.org/segmenter.html'>see instructions</a>"
         )
         guide_text.setObjectName("guideText")
         guide_text.setTextFormat(Qt.RichText)
@@ -138,7 +138,7 @@ class PredictionFileInput(QWidget):
                 Path(dir), extract_channels=True
             ),
             "Select directory...",
-            FileInputMode.DIRECTORY_OR_CSV,
+            FileInputMode.DIRECTORY,
         )
         self._browse_dir_edit.setEnabled(False)
         horiz_layout.addWidget(self._browse_dir_edit)
