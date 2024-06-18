@@ -69,8 +69,8 @@ class TrainingView(View):
         )
 
         # initialize constituent widgets
-        self._image_selection_widget: ImageSelectionWidget = ImageSelectionWidget(
-            self._training_model, self._experiments_model
+        self._image_selection_widget: ImageSelectionWidget = (
+            ImageSelectionWidget(self._training_model, self._experiments_model)
         )
         self._image_selection_widget.setObjectName("imageSelection")
 
@@ -309,8 +309,7 @@ class TrainingView(View):
                 int(self.x_patch_size.text()),
             ]
         )
-        
+
     def focus_changed(self) -> None:
         # add code here to clear viewer when entering training(from curation, if there is any)
         self._image_selection_widget.set_inputs_csv()
-        
