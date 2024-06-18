@@ -116,5 +116,3 @@ class MainView(View, ABC):
     @abstractmethod
     def focus_changed(self) -> None:
         pass
-
-
