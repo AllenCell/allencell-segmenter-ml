@@ -110,7 +110,8 @@ class View(QWidget, Subscriber, metaclass=ViewMeta):
         pass
 
 
-class MainView(View, ABC):
+class MainWindow(ABC):
+    # this is an ABC that defines a main window in the app, currently this is Training, Prediction, and Curation
     super().__init__()
 
     @abstractmethod

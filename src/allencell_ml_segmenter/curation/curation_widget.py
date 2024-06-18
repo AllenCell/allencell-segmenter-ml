@@ -7,7 +7,7 @@ from qtpy.QtWidgets import (
 )
 
 from allencell_ml_segmenter.core.subscriber import Subscriber
-from allencell_ml_segmenter.core.view import View
+from allencell_ml_segmenter.core.view import View, MainWindow
 from allencell_ml_segmenter.curation.curation_model import (
     CurationModel,
     CurationView,
@@ -28,7 +28,9 @@ class CurationUiMeta(type(QStackedWidget), type(Subscriber)):
     pass
 
 
-class CurationWidget(QStackedWidget, Subscriber, metaclass=CurationUiMeta):
+class CurationWidget(
+    MainWindow, QStackedWidget, Subscriber, metaclass=CurationUiMeta
+):
     def __init__(
         self,
         viewer: napari.Viewer,
