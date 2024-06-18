@@ -111,8 +111,9 @@ class View(QWidget, Subscriber, metaclass=ViewMeta):
 
 
 class MainWindow(ABC):
-    # this is an ABC that defines a main window in the app, currently this is Training, Prediction, and Curation
-    super().__init__()
+    def __init__(self):
+        # this is an ABC that defines a main window in the app, currently this is Training, Prediction, and Curation
+        super().__init__()
 
     @abstractmethod
     def focus_changed(self) -> None:
