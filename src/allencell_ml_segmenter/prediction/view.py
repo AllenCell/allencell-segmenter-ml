@@ -16,7 +16,7 @@ from allencell_ml_segmenter.prediction.model import (
     PredictionInputMode,
 )
 from allencell_ml_segmenter.prediction.service import ModelFileService
-from allencell_ml_segmenter.core.view import View, MainView
+from allencell_ml_segmenter.core.view import View, MainWindow
 from allencell_ml_segmenter.prediction.model_input_widget import (
     ModelInputWidget,
 )
@@ -34,7 +34,7 @@ from qtpy.QtWidgets import (
 from napari.viewer import Viewer
 
 
-class PredictionView(MainView):
+class PredictionView(View, MainWindow):
     """
     Holds the image and model input widgets for prediction.
     """
