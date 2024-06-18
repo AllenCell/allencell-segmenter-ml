@@ -153,3 +153,7 @@ class PredictionView(View):
             dialog_box.exec()
             if dialog_box.get_selection():
                 FileUtils.open_directory_in_window(output_path)
+
+    def focus_changed(self):
+        # put code here to clear viewer when entering prediction
+        pass

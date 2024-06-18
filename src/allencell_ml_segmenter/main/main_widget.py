@@ -183,3 +183,7 @@ class MainWidget(AicsWidget):
                 self._view_container.widget(i).setSizePolicy(
                     QSizePolicy.Ignored, QSizePolicy.Ignored
                 )
+
+                # call the focus_changed method of the view that we are switching to
+        list(self._view_to_index.keys())[index].focus_changed()
+
