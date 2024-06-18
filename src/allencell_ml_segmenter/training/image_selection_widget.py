@@ -109,7 +109,7 @@ class ImageSelectionWidget(QWidget):
             self._update_channels,
         )
 
-    def set_inputs_csv(self, event: Event):
+    def set_inputs_csv(self, event: Event = None):
         if self._experiments_model.get_csv_path() is not None:
             csv_path = self._experiments_model.get_csv_path() / "train.csv"
             if csv_path.is_file():
