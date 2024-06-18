@@ -22,7 +22,6 @@ class Viewer(IViewer):
     ):
         super().__init__()
         self.viewer: napari.Viewer = viewer
-        self.data_1 = None
 
     def add_image(self, image: np.ndarray, name: str) -> None:
         self.viewer.add_image(image, name=name)
