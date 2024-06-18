@@ -108,3 +108,7 @@ class View(QWidget, Subscriber, metaclass=ViewMeta):
     @abstractmethod
     def getTypeOfWork(self):
         pass
+
+    @abstractmethod
+    def focus_changed(self):
+        pass

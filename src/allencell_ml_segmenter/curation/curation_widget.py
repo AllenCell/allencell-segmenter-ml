@@ -86,3 +86,8 @@ class CurationWidget(QStackedWidget, Subscriber, metaclass=CurationUiMeta):
         # QStackedWidget count method keeps track of how many child widgets have been added
         self.view_to_index[view] = self.count()
         self.addWidget(view)
+
+    def focus_changed(self):
+        # TODO: put code to load curation images again when we change tabs back into curation after
+        #  previously leaving it
+        pass
