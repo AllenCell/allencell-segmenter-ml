@@ -1,4 +1,4 @@
-from abc import abstractmethod
+from abc import abstractmethod, ABC
 from qtpy.QtWidgets import QWidget, QProgressDialog
 from qtpy.QtCore import Qt, QThread, Signal
 
@@ -108,3 +108,13 @@ class View(QWidget, Subscriber, metaclass=ViewMeta):
     @abstractmethod
     def getTypeOfWork(self):
         pass
+
+
+class MainView(View, ABC):
+    super().__init__()
+
+    @abstractmethod
+    def focus_changed(self) -> None:
+        pass
+
+
