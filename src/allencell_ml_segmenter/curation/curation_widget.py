@@ -93,7 +93,6 @@ class CurationWidget(
         # if we haven't finished curation, then reload current images
         if (
             self.currentWidget() == self.curation_main_view
-            and self.curation_model.get_curr_image_index()
-            < self.curation_model.get_num_images()
+            and not self.curation_model.get_image_loading_stopped()
         ):
             self.curation_main_view.add_curr_images_to_widget()

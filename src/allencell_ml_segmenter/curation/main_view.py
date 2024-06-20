@@ -319,6 +319,7 @@ class CurationMainView(View):
             self.file_name.setText("None")
             self.next_button.setEnabled(False)
             self.next_button.setText("No more images")
+            self._curation_model.stop_loading_images()
             InfoDialogBox(
                 "You have reached the end of the dataset, and your curation CSV has been saved.\nPlease switch to the Training tab to start training a model."
             ).exec()
