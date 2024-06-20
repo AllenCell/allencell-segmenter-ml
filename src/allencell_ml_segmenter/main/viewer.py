@@ -14,8 +14,6 @@ import napari
 from typing import List, Callable, Optional
 import numpy as np
 
-from allencell_ml_segmenter.utils.image_processing import ImageProcessing
-
 
 class Viewer(IViewer):
     def __init__(
