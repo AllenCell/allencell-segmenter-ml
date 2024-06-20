@@ -36,7 +36,7 @@ MERGING_MASK_LAYER_NAME: str = "Merging Mask"
 EXCLUDING_MASK_LAYER_NAME: str = "Excluding Mask"
 
 
-class CurationMainView(View):
+class CurationMainView(QWidget):
     """
     View for Curation UI
     """
