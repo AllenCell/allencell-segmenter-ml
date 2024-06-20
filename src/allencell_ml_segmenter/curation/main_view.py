@@ -22,6 +22,7 @@ from allencell_ml_segmenter.curation.curation_model import (
     CurationImageType,
 )
 from allencell_ml_segmenter.core.image_data_extractor import ImageData
+from allencell_ml_segmenter.utils.image_processing import ImageProcessing
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 from allencell_ml_segmenter.curation.stacked_spinner import StackedSpinner
 from allencell_ml_segmenter.main.segmenter_layer import ShapesLayer
@@ -280,8 +281,10 @@ class CurationMainView(View):
         seg1_img_data: ImageData = self._curation_model.get_curr_image_data(
             CurationImageType.SEG1
         )
-        self._viewer.add_labels(
-            seg1_img_data.np_data, f"[seg1] {seg1_img_data.path.name}"
+
+        # first segmentation will be 1 label in napari, set all values to 1
+        ImageProcessing.set_all_nonzero_values_to(seg1_img_data.np_data, 1)
+        self._viewer.add_labels(seg1_img_data.np_data, f"[seg1] {seg1_img_data.path.name}"
         )
         if self._curation_model.has_seg2_data():
             seg2_img_data: ImageData = (
@@ -289,6 +292,9 @@ class CurationMainView(View):
                     CurationImageType.SEG2
                 )
             )
+
+            # second segmentation will be 2 label in napari, set all values to 2
+            ImageProcessing.set_all_nonzero_values_to(seg2_img_data.np_data, 2)
             self._viewer.add_labels(
                 seg2_img_data.np_data, f"[seg2] {seg2_img_data.path.name}"
             )
