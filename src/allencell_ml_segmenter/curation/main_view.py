@@ -249,7 +249,7 @@ class CurationMainView(View):
         self.use_img_stacked_spinner.stop()
         self.save_csv_button.setEnabled(True)
         self._update_progress_bar()
-        self._add_curr_images_to_widget()
+        self.add_curr_images_to_widget()
         self._enable_next_button()
         self.enable_radio_buttons()
         self._curation_model.image_loading_finished.disconnect(
@@ -270,7 +270,7 @@ class CurationMainView(View):
         self.next_button.setEnabled(False)
         self.next_button.setText("Loading next...")
 
-    def _add_curr_images_to_widget(self) -> None:
+    def add_curr_images_to_widget(self) -> None:
         raw_img_data: ImageData = self._curation_model.get_curr_image_data(
             CurationImageType.RAW
         )
@@ -307,7 +307,7 @@ class CurationMainView(View):
         if self._curation_model.has_next_image():
             self._set_next_button_to_loading()
             self._curation_model.next_image()
-            self._add_curr_images_to_widget()
+            self.add_curr_images_to_widget()
             # these lines will update UI and model state, must go after
             # a call to next image
             self.yes_radio.click()
