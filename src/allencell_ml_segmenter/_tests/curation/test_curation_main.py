@@ -1,4 +1,7 @@
 from dataclasses import dataclass
+
+import numpy as np
+
 from allencell_ml_segmenter.curation.main_view import (
     CurationMainView,
     MERGING_MASK_LAYER_NAME,
@@ -34,7 +37,7 @@ IMG_DIR_PATH = (
 
 IMG_DIR_FILES = [path for path in IMG_DIR_PATH.iterdir()]
 FAKE_IMG_DATA = [
-    ImageData(28, 28, 28, 4, None, path) for path in IMG_DIR_FILES
+    ImageData(28, 28, 28, 4, np.zeros([2,2]), path) for path in IMG_DIR_FILES
 ]
 
 
