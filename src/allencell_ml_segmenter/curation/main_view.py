@@ -284,7 +284,8 @@ class CurationMainView(View):
 
         # first segmentation will be 1 label in napari, set all values to 1
         ImageProcessing.set_all_nonzero_values_to(seg1_img_data.np_data, 1)
-        self._viewer.add_labels(seg1_img_data.np_data, f"[seg1] {seg1_img_data.path.name}"
+        self._viewer.add_labels(
+            seg1_img_data.np_data, f"[seg1] {seg1_img_data.path.name}"
         )
         if self._curation_model.has_seg2_data():
             seg2_img_data: ImageData = (
