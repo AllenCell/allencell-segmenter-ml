@@ -9,6 +9,7 @@ from allencell_ml_segmenter.core.channel_extraction import (
     get_img_path_from_csv,
 )
 from allencell_ml_segmenter.utils.file_utils import FileUtils
+from napari.utils.notifications import show_error
 
 
 class ModelFileService(Subscriber):
@@ -88,7 +89,16 @@ class ModelFileService(Subscriber):
         self._current_thread.channels_ready.connect(
             self._model.set_max_channels
         )
+        self._current_thread.task_failed.connect(
+            self._on_channel_extraction_failed
+        )
         self._current_thread.finished.connect(
             lambda: self._running_threads.pop(thread_id)
         )
         self._current_thread.start()
+
+    def _on_channel_extraction_failed(self, err: Exception) -> None:
+        # setting max channels to none will result in the spinner stopping
+        # but no channel selection being available
+        self._model.set_max_channels(None)
+        show_error(f"Channel extraction failed: {err}")
