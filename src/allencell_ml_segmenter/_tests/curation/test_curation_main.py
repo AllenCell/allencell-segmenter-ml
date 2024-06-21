@@ -37,7 +37,8 @@ IMG_DIR_PATH = (
 
 IMG_DIR_FILES = [path for path in IMG_DIR_PATH.iterdir()]
 FAKE_IMG_DATA = [
-    ImageData(28, 28, 28, 4, np.zeros([28, 28, 28, 4]), path) for path in IMG_DIR_FILES
+    ImageData(28, 28, 28, 4, np.zeros([28, 28, 28, 4]), path)
+    for path in IMG_DIR_FILES
 ]
 
 
