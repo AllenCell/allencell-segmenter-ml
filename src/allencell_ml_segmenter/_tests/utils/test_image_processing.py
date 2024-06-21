@@ -38,7 +38,7 @@ def test_set_all_nonzero_values_to_zero_array():
     assert array.shape == (3, 3, 3)
     assert (
         array.sum() == 0
-    )  # we set three non-zero values to 2, so we expect 6
+    )  # all values in starting array are 0, so nothing should change
 
 
 def test_set_all_nonzero_values_to_ones_array():
