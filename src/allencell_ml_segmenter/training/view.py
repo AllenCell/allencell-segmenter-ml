@@ -234,7 +234,9 @@ class TrainingView(View):
             progress_tracker: MetricsCSVProgressTracker = (
                 MetricsCSVProgressTracker(
                     self._experiments_model.get_metrics_csv_path(),
+                    self._experiments_model.get_cache_dir(),
                     self._training_model.get_num_epochs(),
+                    4,
                     self._experiments_model.get_latest_metrics_csv_version()
                     + 1,
                 )
