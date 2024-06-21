@@ -7,7 +7,9 @@ from allencell_ml_segmenter.core.image_data_extractor import (
 )
 from aicsimageio.aics_image import AICSImage
 
-from allencell_ml_segmenter.utils.image_processing import set_all_nonzero_values_to
+from allencell_ml_segmenter.utils.image_processing import (
+    set_all_nonzero_values_to,
+)
 
 
 class AICSImageDataExtractor(IImageDataExtractor):
