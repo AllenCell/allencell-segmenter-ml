@@ -78,3 +78,7 @@ class IExperimentsModel(Publisher):
     @abstractmethod
     def get_csv_path(self) -> Path:
         pass
+
+    @abstractmethod
+    def get_cache_dir(self) -> Path:
+        pass
