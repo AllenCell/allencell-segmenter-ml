@@ -272,9 +272,6 @@ class CurationMainView(QWidget):
         seg1_img_data: ImageData = self._curation_model.get_curr_image_data(
             CurationImageType.SEG1
         )
-
-        # first segmentation will be 1 label in napari, set all values to 1
-        ImageProcessing.set_all_nonzero_values_to(seg1_img_data.np_data, 1)
         self._viewer.add_labels(
             seg1_img_data.np_data, f"[seg1] {seg1_img_data.path.name}"
         )
@@ -284,9 +281,6 @@ class CurationMainView(QWidget):
                     CurationImageType.SEG2
                 )
             )
-
-            # second segmentation will be 2 label in napari, set all values to 2
-            ImageProcessing.set_all_nonzero_values_to(seg2_img_data.np_data, 2)
             self._viewer.add_labels(
                 seg2_img_data.np_data, f"[seg2] {seg2_img_data.path.name}"
             )

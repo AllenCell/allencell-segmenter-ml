@@ -23,22 +23,23 @@ class AICSImageDataExtractor(IImageDataExtractor):
         channel: int = 0,
         dims: bool = True,
         np_data: bool = True,
-        seg: Optional[int] = None) -> ImageData:
+        seg: Optional[int] = None,
+    ) -> ImageData:
 
         aics_img: AICSImage = AICSImage(img_path)
 
-        numpy_data = None
+        img_data = None
         if np_data:
-            numpy_data = aics_img.get_image_dask_data("ZYX", C=channel).compute()
+            img_data = aics_img.get_image_dask_data("ZYX", C=channel).compute()
             if seg:
-                set_all_nonzero_values_to(numpy_data, seg)
+                set_all_nonzero_values_to(img_data, seg)
 
         return ImageData(
             aics_img.dims.X if dims else None,
             aics_img.dims.Y if dims else None,
             aics_img.dims.Z if dims else None,
             aics_img.dims.C if dims else None,
-            numpy_data,
+            img_data,
             img_path,
         )
 
