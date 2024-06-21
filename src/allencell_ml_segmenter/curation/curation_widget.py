@@ -46,7 +46,7 @@ class CurationWidget(
 
         # basic styling
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
-        self.setLayout(ÏQVBoxLayout())
+        self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
 
         self.curation_input_view: CurationInputView = CurationInputView(
