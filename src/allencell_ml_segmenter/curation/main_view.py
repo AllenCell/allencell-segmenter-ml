@@ -22,7 +22,6 @@ from allencell_ml_segmenter.curation.curation_model import (
     CurationImageType,
 )
 from allencell_ml_segmenter.core.image_data_extractor import ImageData
-from allencell_ml_segmenter.utils.image_processing import ImageProcessing
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 from allencell_ml_segmenter.curation.stacked_spinner import StackedSpinner
 from allencell_ml_segmenter.main.segmenter_layer import ShapesLayer

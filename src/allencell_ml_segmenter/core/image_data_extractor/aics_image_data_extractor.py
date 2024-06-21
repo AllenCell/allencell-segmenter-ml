@@ -32,6 +32,8 @@ class AICSImageDataExtractor(IImageDataExtractor):
         if np_data:
             img_data = aics_img.get_image_dask_data("ZYX", C=channel).compute()
             if seg:
+                # if this image is a segmentation, replace all values in image with 1 or 2,
+                # so it renders correctly as a napari labels layer.
                 set_all_nonzero_values_to(img_data, seg)
 
         return ImageData(
