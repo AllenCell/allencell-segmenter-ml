@@ -69,17 +69,16 @@ class TrainingView(View, MainWindow):
         )
 
         # initialize constituent widgets
-        self._image_selection_widget: ImageSelectionWidget = (
+        self.image_selection_widget: ImageSelectionWidget = (
             ImageSelectionWidget(self._training_model, self._experiments_model)
         )
-        self._image_selection_widget.setObjectName("imageSelection")
+        self.image_selection_widget.setObjectName("imageSelection")
 
         # Dummy divs allow for easy alignment
         top_container: QVBoxLayout = QVBoxLayout()
         top_dummy: QFrame = QFrame()
         bottom_dummy: QFrame = QFrame()
-
-        top_container.addWidget(self._image_selection_widget)
+        top_container.addWidget(self.image_selection_widget)
         top_dummy.setLayout(top_container)
         self.layout().addWidget(top_dummy)
 
@@ -311,5 +310,5 @@ class TrainingView(View, MainWindow):
         )
 
     def focus_changed(self) -> None:
-        self._image_selection_widget.set_inputs_csv()
+        self.image_selection_widget.set_inputs_csv()
         self._viewer.clear_layers()
