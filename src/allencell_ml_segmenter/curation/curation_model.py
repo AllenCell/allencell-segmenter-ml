@@ -64,6 +64,7 @@ class CurationModel(QObject):
         self._curation_record: Optional[List[CurationRecord]] = None
         # None until start_image_loading is called
         self._cursor: Optional[int] = None
+        # True when images have been dropped from memory
         self._image_loading_stopped: bool = False
         # private invariant: _next_img_data will only have < self._get_num_data_dict_keys() keys if
         # a thread is currently updating _next_img_data. Same goes for curr
