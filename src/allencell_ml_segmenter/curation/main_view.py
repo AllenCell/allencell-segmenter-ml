@@ -1,8 +1,9 @@
-from typing import List, Optional
+from typing import Optional
 
 from qtpy.QtWidgets import QComboBox
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
+    QWidget,
     QVBoxLayout,
     QSizePolicy,
     QLabel,
@@ -15,7 +16,6 @@ from qtpy.QtWidgets import (
 )
 from allencell_ml_segmenter.core.dialog_box import DialogBox
 from allencell_ml_segmenter._style import Style
-from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.main.viewer import IViewer
 from allencell_ml_segmenter.curation.curation_model import (
     CurationModel,
