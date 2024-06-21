@@ -17,7 +17,7 @@ from allencell_ml_segmenter.config.user_settings import UserSettings
 from allencell_ml_segmenter.core.aics_widget import AicsWidget
 
 from allencell_ml_segmenter.core.event import Event
-from allencell_ml_segmenter.core.view import View
+from allencell_ml_segmenter.core.view import MainWindow
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.main.i_viewer import IViewer
@@ -86,10 +86,10 @@ class MainWidget(AicsWidget):
             experiments_model=self._experiments_model,
         )
 
-        # keep track of views
-        self._view_container: QTabWidget = QTabWidget()
-        self._view_container.setDisabled(True)
-        self._view_to_index: Dict[View, int] = dict()
+        # keep track of windows
+        self._window_container: QTabWidget = QTabWidget()
+        self._window_container.setDisabled(True)
+        self._window_to_index: Dict[MainWindow, int] = dict()
 
         self._experiments_model.subscribe(
             Event.ACTION_EXPERIMENT_APPLIED,
@@ -101,21 +101,21 @@ class MainWidget(AicsWidget):
         self._curation_view: CurationWidget = CurationWidget(
             self.viewer, self._curation_model
         )
-        self._initialize_view(self._curation_view, "Curation")
+        self._initialize_window(self._curation_view, "Curation")
         self._training_view: TrainingView = TrainingView(
             main_model=self._model,
             viewer=self.viewer,
             experiments_model=self._experiments_model,
             training_model=self._training_model,
         )
-        self._initialize_view(self._training_view, "Training")
+        self._initialize_window(self._training_view, "Training")
         self._prediction_view: PredictionView = PredictionView(
             main_model=self._model,
             prediction_model=self._prediction_model,
             viewer=self.viewer,
         )
-        self._initialize_view(self._prediction_view, "Prediction")
-        self._view_container.currentChanged.connect(self._tab_changed)
+        self._initialize_window(self._prediction_view, "Prediction")
+        self._window_container.currentChanged.connect(self._tab_changed)
 
         # Model selection which applies to all views
         model_selection_widget: ModelSelectionWidget = ModelSelectionWidget(
@@ -124,14 +124,14 @@ class MainWidget(AicsWidget):
         model_selection_widget.setObjectName("modelSelection")
 
         self.layout().addWidget(model_selection_widget, Qt.AlignTop)
-        self.layout().addWidget(self._view_container, Qt.AlignCenter)
+        self.layout().addWidget(self._window_container, Qt.AlignCenter)
         self.layout().addStretch(100)
 
     def _handle_experiment_applied(self, _: Event) -> None:
         """
         Handle the experiment applied event.
         """
-        self._view_container.setDisabled(
+        self._window_container.setDisabled(
             self._experiments_model.get_experiment_name() is None
         )
 
@@ -142,9 +142,9 @@ class MainWidget(AicsWidget):
         inputs:
             is_new_model - bool
         """
-        self._view_container.setTabEnabled(0, self._model.is_new_model())
-        self._view_container.setTabEnabled(1, self._model.is_new_model())
-        self._set_view(
+        self._window_container.setTabEnabled(0, self._model.is_new_model())
+        self._window_container.setTabEnabled(1, self._model.is_new_model())
+        self._set_window(
             self._curation_view
             if self._model.is_new_model()
             else self._prediction_view
@@ -157,32 +157,32 @@ class MainWidget(AicsWidget):
         inputs:
             event - MainEvent
         """
-        self._set_view(self._model.get_current_view())
+        self._set_window(self._model.get_current_view())
 
-    def _set_view(self, view: View) -> None:
+    def _set_window(self, window: MainWindow) -> None:
         """
-        Set the current views, must be initialized first
+        Set the current Window (prediction/training/curation), must be initialized first
         """
-        self._view_container.setCurrentIndex(self._view_to_index[view])
+        self._window_container.setCurrentIndex(self._window_to_index[window])
 
-    def _initialize_view(self, view: View, title: str) -> None:
+    def _initialize_window(self, window: MainWindow, title: str) -> None:
         # QTabWidget count method keeps track of how many child widgets have been added
-        self._view_to_index[view] = self._view_container.count()
-        self._view_container.addTab(view, title)
+        self._window_to_index[window] = self._window_container.count()
+        self._window_container.addTab(window, title)
 
     def _tab_changed(self, index: int) -> None:
         """
         Resize bottom edge of QTabWidget to fit the current view.
         """
-        for i in range(self._view_container.count()):
+        for i in range(self._window_container.count()):
             if i == index:
-                self._view_container.widget(i).setSizePolicy(
+                self._window_container.widget(i).setSizePolicy(
                     QSizePolicy.Preferred, QSizePolicy.Maximum
                 )
             else:
-                self._view_container.widget(i).setSizePolicy(
+                self._window_container.widget(i).setSizePolicy(
                     QSizePolicy.Ignored, QSizePolicy.Ignored
                 )
 
                 # call the focus_changed method of the view that we are switching to
-        list(self._view_to_index.keys())[index].focus_changed()
+        list(self._window_to_index.keys())[index].focus_changed()

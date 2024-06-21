@@ -144,9 +144,17 @@ class ImageSelectionWidget(QWidget):
     def _update_channels(self, _: Event) -> None:
         self._training_data_stacked_spinner.stop()
         self._channel_combo_box.clear()
-        self._channel_combo_box.addItems(
-            [str(x) for x in range(self._model.get_max_channel())]
-        )
-        self._channel_combo_box.setCurrentIndex(0)
-        self._channel_combo_box.setEnabled(True)
-        self._model.set_channel_index(0)
+        if (
+            self._model.get_max_channel() is not None
+            and self._model.get_max_channel() > 0
+        ):
+            self._channel_combo_box.addItems(
+                [str(x) for x in range(self._model.get_max_channel())]
+            )
+            self._channel_combo_box.setCurrentIndex(0)
+            self._channel_combo_box.setEnabled(True)
+            self._model.set_channel_index(0)
+        else:
+            self._channel_combo_box.setPlaceholderText("")
+            self._channel_combo_box.setCurrentIndex(-1)
+            self._channel_combo_box.setEnabled(False)

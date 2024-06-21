@@ -17,6 +17,7 @@ from allencell_ml_segmenter.utils.cuda_util import CUDAUtils
 from allencell_ml_segmenter.utils.cyto_overrides_manager import (
     CytoDLOverridesManager,
 )
+from napari.utils.notifications import show_error
 
 
 class TrainingService(Subscriber):
@@ -122,13 +123,26 @@ class TrainingService(Subscriber):
     def _start_channel_extraction(
         self, to_extract: Path, channel_callback: Callable
     ):
+        try:
+            img_path: Path = get_img_path_from_csv(to_extract / "train.csv")
+        except Exception as e:
+            self._on_channel_extraction_failed(e)
+            return
+
         self._channel_extraction_thread = self._extractor_factory.create(
-            get_img_path_from_csv(to_extract / "train.csv")
+            img_path
         )
         self._channel_extraction_thread.channels_ready.connect(
             channel_callback
         )
+        self._channel_extraction_thread.task_failed.connect(
+            self._on_channel_extraction_failed
+        )
         self._channel_extraction_thread.start()
+
+    def _on_channel_extraction_failed(self, err: Exception) -> None:
+        show_error(f"Channel extraction failed: {err}")
+        self._training_model.set_max_channel(None)
 
     def _stop_channel_extraction(self) -> None:
         if (
