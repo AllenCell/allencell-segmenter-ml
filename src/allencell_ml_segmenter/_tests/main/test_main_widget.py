@@ -44,25 +44,25 @@ def test_tabs_react_to_new_model_event(
 
     # ASSERT: check that the main widget's current view (after setting) is curation
     assert (
-        main_widget._view_container.currentIndex()
-        == main_widget._view_to_index[main_widget._curation_view]
+        main_widget._window_container.currentIndex()
+        == main_widget._window_to_index[main_widget._curation_view]
     )
     # ASSERT: check that the correct tabs are enabled
     assert (
-        main_widget._view_container.isTabEnabled(
-            main_widget._view_to_index[main_widget._prediction_view]
+        main_widget._window_container.isTabEnabled(
+            main_widget._window_to_index[main_widget._prediction_view]
         )
         == True
     )
     assert (
-        main_widget._view_container.isTabEnabled(
-            main_widget._view_to_index[main_widget._curation_view]
+        main_widget._window_container.isTabEnabled(
+            main_widget._window_to_index[main_widget._curation_view]
         )
         == True
     )
     assert (
-        main_widget._view_container.isTabEnabled(
-            main_widget._view_to_index[main_widget._training_view]
+        main_widget._window_container.isTabEnabled(
+            main_widget._window_to_index[main_widget._training_view]
         )
         == True
     )
@@ -80,25 +80,25 @@ def test_tabs_react_to_existing_model_event(
 
     # ASSERT: check that the main widget's current view (after setting) is prediction
     assert (
-        main_widget._view_container.currentIndex()
-        == main_widget._view_to_index[main_widget._prediction_view]
+        main_widget._window_container.currentIndex()
+        == main_widget._window_to_index[main_widget._prediction_view]
     )
     # ASSERT: check that the correct tabs are enabled
     assert (
-        main_widget._view_container.isTabEnabled(
-            main_widget._view_to_index[main_widget._prediction_view]
+        main_widget._window_container.isTabEnabled(
+            main_widget._window_to_index[main_widget._prediction_view]
         )
         == True
     )
     assert (
-        main_widget._view_container.isTabEnabled(
-            main_widget._view_to_index[main_widget._curation_view]
+        main_widget._window_container.isTabEnabled(
+            main_widget._window_to_index[main_widget._curation_view]
         )
         == False
     )
     assert (
-        main_widget._view_container.isTabEnabled(
-            main_widget._view_to_index[main_widget._training_view]
+        main_widget._window_container.isTabEnabled(
+            main_widget._window_to_index[main_widget._training_view]
         )
         == False
     )
@@ -111,7 +111,7 @@ def test_handle_action_change_view_event(
     Tests that the main widget handles the action change view event correctly.
     """
     # ARRANGE
-    views: Set[AicsWidget] = main_widget._view_to_index.keys()
+    views: Set[AicsWidget] = main_widget._window_to_index.keys()
 
     for view in views:
         # ACT: have the model dispatch the action change view event
@@ -119,8 +119,8 @@ def test_handle_action_change_view_event(
 
         # ASSERT: check that the main widget's current view (after setting) is same as the model's current view
         assert (
-            main_widget._view_container.currentIndex()
-            == main_widget._view_to_index[view]
+            main_widget._window_container.currentIndex()
+            == main_widget._window_to_index[view]
         )
 
 
@@ -160,16 +160,16 @@ def test_tab_enabled(main_widget) -> None:
     main_widget._experiments_model.apply_experiment_name("foo")
 
     # Sanity check
-    assert main_widget._view_container.isEnabled() == True
+    assert main_widget._window_container.isEnabled() == True
 
     # ACT
     main_widget._experiments_model.apply_experiment_name(None)
 
     # ASSERT
-    assert main_widget._view_container.isEnabled() == False
+    assert main_widget._window_container.isEnabled() == False
 
     # ACT
     main_widget._experiments_model.apply_experiment_name("foo")
 
     # Sanity check
-    assert main_widget._view_container.isEnabled() == True
+    assert main_widget._window_container.isEnabled() == True
