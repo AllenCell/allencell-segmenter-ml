@@ -6,6 +6,7 @@ import os
 import platform
 import subprocess
 import random
+from csv import DictReader
 
 
 class FileUtils:
@@ -40,6 +41,22 @@ class FileUtils:
         while str(image.name).startswith("."):
             image: Path = next(path_generator)
         return image.resolve()
+    
+    @staticmethod
+    def count_images_in_csv_folder(folder: Path) -> int:
+        """
+        Given a :param folder: containing train/test/val csvs, returns the
+        number of unique images contained in all of the csvs.
+        """
+        path_generator: Generator[Path] = folder.glob("*.csv")
+        images: set[str] = set()
+        for p in path_generator:
+            with open(p, newline='') as fr:
+                reader: DictReader = DictReader(fr)
+                for row in reader:
+                    if "raw" in row:
+                        images.add(str(Path(row["raw"]).resolve()))
+        return len(images)
 
     def write_curation_record(
         self,

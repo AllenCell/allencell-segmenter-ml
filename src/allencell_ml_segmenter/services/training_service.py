@@ -17,6 +17,7 @@ from allencell_ml_segmenter.utils.cuda_util import CUDAUtils
 from allencell_ml_segmenter.utils.cyto_overrides_manager import (
     CytoDLOverridesManager,
 )
+from allencell_ml_segmenter.utils.file_utils import FileUtils
 from napari.utils.notifications import show_error
 
 
@@ -153,6 +154,8 @@ class TrainingService(Subscriber):
             self._channel_extraction_thread.wait()
 
     def _training_image_directory_selected(self, _: Event) -> None:
+        num_imgs: int = FileUtils.count_images_in_csv_folder(self._training_model.get_images_directory())
+        self._training_model.set_total_num_images(num_imgs)
         self._start_channel_extraction(
             self._training_model.get_images_directory(),
             self._training_model.set_max_channel,
