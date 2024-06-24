@@ -20,6 +20,7 @@ from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
 
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
+from allencell_ml_segmenter.widgets.model_download_dialog import ModelDownloadDialog
 
 
 class ModelSelectionWidget(QWidget):
@@ -33,6 +34,7 @@ class ModelSelectionWidget(QWidget):
     FORUM_TEXT: str = "Forum"
     WEBSITE_TEXT: str = "Website"
     EXPERIMENTS_HOME_TEXT: str = "Experiments Home"
+    DOWNLOAD_EXPERIMENTS_TEXT: str = "Download Models"
 
     def __init__(
         self,
@@ -71,6 +73,7 @@ class ModelSelectionWidget(QWidget):
                 ModelSelectionWidget.FORUM_TEXT,
                 ModelSelectionWidget.WEBSITE_TEXT,
                 ModelSelectionWidget.EXPERIMENTS_HOME_TEXT,
+                ModelSelectionWidget.DOWNLOAD_EXPERIMENTS_TEXT,
             ]
         )
         self.help_combo_box.currentTextChanged.connect(
@@ -223,6 +226,10 @@ class ModelSelectionWidget(QWidget):
                 parent=self
             )
             self._refresh_experiment_options()
+        elif text == ModelSelectionWidget.DOWNLOAD_EXPERIMENTS_TEXT:
+            dialog = ModelDownloadDialog(self, self._experiments_model)
+            dialog.show()
+
         # reset the combo box, so that it bahaves more like a menu
         self.help_combo_box.setCurrentIndex(-1)
 
