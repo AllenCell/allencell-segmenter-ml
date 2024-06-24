@@ -1,4 +1,4 @@
-from abc import abstractmethod
+from abc import abstractmethod, ABC
 from qtpy.QtWidgets import QWidget, QProgressDialog
 from qtpy.QtCore import Qt, QThread, Signal
 
@@ -107,4 +107,15 @@ class View(QWidget, Subscriber, metaclass=ViewMeta):
 
     @abstractmethod
     def getTypeOfWork(self):
+        pass
+
+
+class MainWindow(ABC):
+    # this is an ABC that defines a main window in the app, currently this is TrainingView, PredictionView,
+    # and CurationMainWidget
+    def __init__(self):
+        super().__init__()
+
+    @abstractmethod
+    def focus_changed(self) -> None:
         pass

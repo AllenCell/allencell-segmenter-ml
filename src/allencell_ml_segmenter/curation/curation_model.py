@@ -64,7 +64,8 @@ class CurationModel(QObject):
         self._curation_record: Optional[List[CurationRecord]] = None
         # None until start_image_loading is called
         self._cursor: Optional[int] = None
-
+        # True when images have been dropped from memory
+        self._image_loading_stopped: bool = False
         # private invariant: _next_img_data will only have < self._get_num_data_dict_keys() keys if
         # a thread is currently updating _next_img_data. Same goes for curr
         self._curr_img_data: Optional[Dict[str, Optional[ImageData]]] = None
@@ -221,6 +222,9 @@ class CurationModel(QObject):
             or self.is_waiting_for_next_images()
         )
 
+    def get_image_loading_stopped(self) -> bool:
+        return self._image_loading_stopped
+
     def start_loading_images(self) -> None:
         """
         Must be called before attempting to get image data.
@@ -236,6 +240,15 @@ class CurationModel(QObject):
             self._next_img_data.clear()
         self.cursor_moved.emit()
 
+    def stop_loading_images(self) -> None:
+        """
+        Drops pre-loaded images from memory and prevents further
+        image loading from occurring in curation.
+        """
+        self._image_loading_stopped = True
+        self._curr_img_data.clear()
+        self._next_img_data.clear()
+
     def next_image(self) -> None:
         """
         Move to the next image for curation.
@@ -243,6 +256,8 @@ class CurationModel(QObject):
         immediate: cursor_moved
         at some point: image_loading_finished
         """
+        if self.get_image_loading_stopped():
+            raise RuntimeError("Image loader is stopped.")
         if self.is_waiting_for_images():
             raise RuntimeError(
                 "Image loader is busy. Please see image_loading_finished signal."
