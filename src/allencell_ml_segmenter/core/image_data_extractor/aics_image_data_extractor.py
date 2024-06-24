@@ -36,7 +36,7 @@ class AICSImageDataExtractor(IImageDataExtractor):
             if seg:
                 # if this image is a segmentation, replace all values in image with 1 or 2,
                 # so it renders correctly as a napari labels layer.
-                set_all_nonzero_values_to(img_data, seg)
+                img_data = set_all_nonzero_values_to(img_data, seg)
 
         return ImageData(
             aics_img.dims.X if dims else None,
