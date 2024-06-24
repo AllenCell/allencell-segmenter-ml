@@ -16,7 +16,7 @@ from allencell_ml_segmenter.prediction.model import (
     PredictionInputMode,
 )
 from allencell_ml_segmenter.prediction.service import ModelFileService
-from allencell_ml_segmenter.core.view import View
+from allencell_ml_segmenter.core.view import View, MainWindow
 from allencell_ml_segmenter.prediction.model_input_widget import (
     ModelInputWidget,
 )
@@ -31,10 +31,10 @@ from qtpy.QtWidgets import (
     QFrame,
     QLabel,
 )
-from napari.viewer import Viewer
+from allencell_ml_segmenter.main.i_viewer import IViewer
 
 
-class PredictionView(View):
+class PredictionView(View, MainWindow):
     """
     Holds the image and model input widgets for prediction.
     """
@@ -43,12 +43,12 @@ class PredictionView(View):
         self,
         main_model: MainModel,
         prediction_model: PredictionModel,
-        viewer: Viewer,
+        viewer: IViewer,
     ):
         super().__init__()
         self._main_model: MainModel = main_model
         self._prediction_model: PredictionModel = prediction_model
-        self._viewer: Viewer = viewer
+        self._viewer: IViewer = viewer
 
         self._service: ModelFileService = ModelFileService(
             self._prediction_model
@@ -153,3 +153,6 @@ class PredictionView(View):
             dialog_box.exec()
             if dialog_box.get_selection():
                 FileUtils.open_directory_in_window(output_path)
+
+    def focus_changed(self):
+        self._viewer.clear_layers()
