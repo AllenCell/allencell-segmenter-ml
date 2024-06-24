@@ -231,7 +231,7 @@ class ModelSelectionWidget(QWidget):
         elif text == ModelSelectionWidget.DOWNLOAD_EXPERIMENTS_TEXT:
             dialog = ModelDownloadDialog(self, self._experiments_model)
             dialog.exec()
-            self._refresh_experiment_options() # once all models are downloaded, one final refresh to load them into existing models dropdown
+            self._refresh_experiment_options()  # once all models are downloaded, one final refresh to load them into existing models dropdown
 
         # reset the combo box, so that it bahaves more like a menu
         self.help_combo_box.setCurrentIndex(-1)
