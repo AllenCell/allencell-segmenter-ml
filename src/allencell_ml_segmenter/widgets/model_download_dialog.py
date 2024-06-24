@@ -17,7 +17,9 @@ class ModelDownloadDialog(QDialog):
 
         self._model_select_dropdown: QComboBox = QComboBox()
         self._model_select_dropdown.setCurrentIndex(-1)
-        self._model_select_dropdown.addItems(self._model_downloader.get_available_models())
+        self._model_select_dropdown.addItems(
+            self._model_downloader.get_available_models()
+        )
         self.layout().addWidget(self._model_select_dropdown)
 
         self._download_button: QPushButton = QPushButton("Download")
@@ -25,18 +27,25 @@ class ModelDownloadDialog(QDialog):
         self.layout().addWidget(self._download_button)
 
     def _download_button_handler(self) -> None:
-        selected_model_name: str = str(self._model_select_dropdown.currentText())
+        selected_model_name: str = str(
+            self._model_select_dropdown.currentText()
+        )
+        continue_download: bool = True
+        # check if the model already exists in experiments home
         if selected_model_name in self._experiments_model.get_experiments():
-            overwrite_dialog = DialogBox(f"{selected_model_name} is already in your experiments folder. Overwrite?")
+            overwrite_dialog = DialogBox(
+                f"{selected_model_name} is already in your experiments folder. Overwrite?"
+            )
             overwrite_dialog.exec()
-            if overwrite_dialog.get_selection():
-                self._model_downloader.download_model_to(selected_model_name,
-                                                         self._experiments_model.get_user_experiments_path())
-                download_complete_message = InfoDialogBox(f"Downloadaded {selected_model_name} to {self._experiments_model.get_user_experiments_path() / selected_model_name}")
-                download_complete_message.exec()
+            continue_download = overwrite_dialog.get_selection()
 
-
-
-
-
-
+        if continue_download:
+            self._model_downloader.download_model_to(
+                selected_model_name,
+                self._experiments_model.get_user_experiments_path(),
+            )
+            download_complete_message = InfoDialogBox(
+                f"Downloadaded {selected_model_name} to {self._experiments_model.get_user_experiments_path() / selected_model_name}"
+            )
+            download_complete_message.exec()
+            self._experiments_model.refresh_experiments()
