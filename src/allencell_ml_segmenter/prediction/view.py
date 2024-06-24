@@ -31,7 +31,7 @@ from qtpy.QtWidgets import (
     QFrame,
     QLabel,
 )
-from napari.viewer import Viewer
+from allencell_ml_segmenter.main.i_viewer import IViewer
 
 
 class PredictionView(View, MainWindow):
@@ -43,12 +43,12 @@ class PredictionView(View, MainWindow):
         self,
         main_model: MainModel,
         prediction_model: PredictionModel,
-        viewer: Viewer,
+        viewer: IViewer,
     ):
         super().__init__()
         self._main_model: MainModel = main_model
         self._prediction_model: PredictionModel = prediction_model
-        self._viewer: Viewer = viewer
+        self._viewer: IViewer = viewer
 
         self._service: ModelFileService = ModelFileService(
             self._prediction_model
@@ -155,5 +155,4 @@ class PredictionView(View, MainWindow):
                 FileUtils.open_directory_in_window(output_path)
 
     def focus_changed(self):
-        # put code here to clear viewer when entering prediction
-        pass
+        self._viewer.clear_layers()
