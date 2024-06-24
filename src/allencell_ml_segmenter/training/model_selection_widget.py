@@ -20,7 +20,9 @@ from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
 
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
-from allencell_ml_segmenter.widgets.model_download_dialog import ModelDownloadDialog
+from allencell_ml_segmenter.widgets.model_download_dialog import (
+    ModelDownloadDialog,
+)
 
 
 class ModelSelectionWidget(QWidget):
