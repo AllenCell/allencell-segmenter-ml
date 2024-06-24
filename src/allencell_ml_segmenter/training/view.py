@@ -19,7 +19,7 @@ from qtpy.QtWidgets import (
 )
 from allencell_ml_segmenter._style import Style
 from allencell_ml_segmenter.core.event import Event
-from allencell_ml_segmenter.core.view import View
+from allencell_ml_segmenter.core.view import View, MainWindow
 from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.training.image_selection_widget import (
     ImageSelectionWidget,
@@ -36,7 +36,7 @@ from allencell_ml_segmenter.training.metrics_csv_progress_tracker import (
 from allencell_ml_segmenter.core.info_dialog_box import InfoDialogBox
 
 
-class TrainingView(View):
+class TrainingView(View, MainWindow):
     """
     Holds widgets pertinent to training processes - ImageSelectionWidget & ModelSelectionWidget.
     """
@@ -78,7 +78,6 @@ class TrainingView(View):
         top_container: QVBoxLayout = QVBoxLayout()
         top_dummy: QFrame = QFrame()
         bottom_dummy: QFrame = QFrame()
-
         top_container.addWidget(self.image_selection_widget)
         top_dummy.setLayout(top_container)
         self.layout().addWidget(top_dummy)
@@ -309,3 +308,7 @@ class TrainingView(View):
                 int(self.x_patch_size.text()),
             ]
         )
+
+    def focus_changed(self) -> None:
+        self.image_selection_widget.set_inputs_csv()
+        self._viewer.clear_layers()
