@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import QPushButton
 from qtpy.QtWidgets import QDialog, QWidget, QComboBox, QVBoxLayout
 from typing import Optional
 
+from allencell_ml_segmenter.core.dialog_box import DialogBox
 from allencell_ml_segmenter.core.info_dialog_box import InfoDialogBox
 from allencell_ml_segmenter.main.experiments_model import IExperimentsModel
 from allencell_ml_segmenter.utils.s3_model_downloader import S3ModelDownloader
@@ -25,10 +26,14 @@ class ModelDownloadDialog(QDialog):
 
     def _download_button_handler(self) -> None:
         selected_model_name: str = str(self._model_select_dropdown.currentText())
-        self._model_downloader.download_model_to(selected_model_name,
-                                                 self._experiments_model.get_user_experiments_path())
-        download_complete_message = InfoDialogBox(f"Downloadaded {selected_model_name} to {self._experiments_model.get_user_experiments_path() / selected_model_name}")
-        download_complete_message.exec()
+        if selected_model_name in self._experiments_model.get_experiments():
+            overwrite_dialog = DialogBox(f"{selected_model_name} is already in your experiments folder. Overwrite?")
+            overwrite_dialog.exec()
+            if overwrite_dialog.get_selection():
+                self._model_downloader.download_model_to(selected_model_name,
+                                                         self._experiments_model.get_user_experiments_path())
+                download_complete_message = InfoDialogBox(f"Downloadaded {selected_model_name} to {self._experiments_model.get_user_experiments_path() / selected_model_name}")
+                download_complete_message.exec()
 
 
 
