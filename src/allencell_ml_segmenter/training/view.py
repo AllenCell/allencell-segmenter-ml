@@ -310,5 +310,5 @@ class TrainingView(View, MainWindow):
         )
 
     def focus_changed(self) -> None:
-        # add code here to clear viewer when entering training(from curation, if there is any)
         self.image_selection_widget.set_inputs_csv()
+        self._viewer.clear_layers()

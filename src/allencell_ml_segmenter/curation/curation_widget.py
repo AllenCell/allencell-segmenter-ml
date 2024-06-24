@@ -90,6 +90,9 @@ class CurationWidget(
         self.addWidget(view)
 
     def focus_changed(self):
-        # TODO: put code to load curation images again when we change tabs back into curation after
-        #  previously leaving it
-        pass
+        # if we haven't finished curation, then reload current images
+        if (
+            self.currentWidget() == self.curation_main_view
+            and not self.curation_model.get_image_loading_stopped()
+        ):
+            self.curation_main_view.add_curr_images_to_widget()
