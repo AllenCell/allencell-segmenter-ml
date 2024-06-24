@@ -48,4 +48,4 @@ class ModelDownloadDialog(QDialog):
                 f"Downloadaded {selected_model_name} to {self._experiments_model.get_user_experiments_path() / selected_model_name}"
             )
             download_complete_message.exec()
-            self._experiments_model.refresh_experiments()# prevents repeat downloads of model before exiting download dialog
+            self._experiments_model.refresh_experiments()  # prevents repeat downloads of model before exiting download dialog
