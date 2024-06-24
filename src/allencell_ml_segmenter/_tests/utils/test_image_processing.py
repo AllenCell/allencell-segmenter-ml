@@ -13,7 +13,7 @@ def test_set_all_nonzero_values_to():
     array[0, 1, 1] = 230
 
     # ACT
-    set_all_nonzero_values_to(array, 2)
+    array = set_all_nonzero_values_to(array, 2)
 
     # ASSERT
     assert array.max() == 2
@@ -31,7 +31,7 @@ def test_set_all_nonzero_values_to_zero_array():
     array: ndarray = zeros([3, 3, 3])
 
     # ACT
-    set_all_nonzero_values_to(array, 1)
+    array = set_all_nonzero_values_to(array, 1)
 
     # ASSERT
     assert array.max() == 0
@@ -46,7 +46,7 @@ def test_set_all_nonzero_values_to_ones_array():
     array: ndarray = ones([3, 3, 3])
 
     # ACT
-    set_all_nonzero_values_to(array, 2)
+    array = set_all_nonzero_values_to(array, 2)
 
     # ASSERT
     assert array.max() == 2
