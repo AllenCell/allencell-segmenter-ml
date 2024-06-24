@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
+from typing import Optional
+
 from allencell_ml_segmenter.core.image_data_extractor import ImageData
 
 
@@ -16,6 +18,7 @@ class IImageDataExtractor(ABC):
         channel: int = 0,
         dims: bool = True,
         np_data: bool = True,
+        seg: Optional[int] = None,
     ) -> ImageData:
         pass
 
