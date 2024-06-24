@@ -35,8 +35,18 @@ jobs:
       - name: Build Package
         run: |
           python -m build
-    
-      - name: Publish to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          repository-url: https://test.pypi.org/legacy/
+
+# disabling publish to pypi, replacing with artifactory for now
+# replace this when we want to publish to pypi instead
+#      - name: Publish to PyPI
+#        uses: pypa/gh-action-pypi-publish@release/v1
+#        with:
+#          repository-url: https://test.pypi.org/legacy/
+
+      - name: Publish to Artifactory
+        env:
+          TWINE_USERNAME: ${{ secrets.ARTIFACTORY_USER }}
+          TWINE_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
+          TWINE_NON_INTERACTIVE: true
+        run: twine upload --verbose --repository-url='https://artifactory.corp.alleninstitute.org/artifactory/api/pypi/pypi-release-local' dist/*
+
