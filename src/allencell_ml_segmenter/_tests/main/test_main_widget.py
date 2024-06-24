@@ -29,7 +29,7 @@ def main_widget(qtbot: QtBot) -> MainWidget:
     settings: IUserSettings = FakeUserSettings()
     settings.set_cyto_dl_home_path(Path())
     settings.set_user_experiments_path(Path())
-    return MainWidget(viewer=Mock(spec=napari.Viewer), settings=settings)
+    return MainWidget(viewer=Mock(), settings=settings)
 
 
 def test_tabs_react_to_new_model_event(
