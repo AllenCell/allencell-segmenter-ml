@@ -230,7 +230,8 @@ class ModelSelectionWidget(QWidget):
             self._refresh_experiment_options()
         elif text == ModelSelectionWidget.DOWNLOAD_EXPERIMENTS_TEXT:
             dialog = ModelDownloadDialog(self, self._experiments_model)
-            dialog.show()
+            dialog.exec()
+            self._refresh_experiment_options()
 
         # reset the combo box, so that it bahaves more like a menu
         self.help_combo_box.setCurrentIndex(-1)
