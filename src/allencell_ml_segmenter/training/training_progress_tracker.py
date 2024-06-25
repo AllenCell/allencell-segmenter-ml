@@ -60,7 +60,7 @@ class TrainingProgressTracker(ProgressTracker):
         if self.get_progress_maximum() != self._num_epochs:
             self.set_progress_maximum(self._num_epochs)
         self.set_progress(progress)
-    
+
     # override
     def start_tracker(self) -> None:
         self.stop_tracker()
