@@ -319,3 +319,33 @@ def test_write_curation_record_test_val_same():
         unique_rows.add(row_minus_index(row))
     for row in fake_writer.csv_state[EXP_VAL_PATH]["rows"][1:]:
         assert row_minus_index(row) in unique_rows
+
+
+def test_count_images_in_csv_folder_one_csv() -> None:
+    # Arrange
+    folder: Path = (
+        Path(allencell_ml_segmenter.__file__).parent
+        / "_tests"
+        / "test_files"
+        / "csv"
+    )
+
+    # Act / Assert
+    # expect one since there is only one unique raw file in this directory
+    assert FileUtils.count_images_in_csv_folder(folder) == 1
+
+def test_count_images_in_csv_folder_multiple_csv() -> None:
+    """
+    A more realistic test of the count function on a folder with a train, test, and val csv
+    """
+    # Arrange
+    folder: Path = (
+        Path(allencell_ml_segmenter.__file__).parent
+        / "_tests"
+        / "test_files"
+        / "multiple_csv"
+    )
+
+    # Act / Assert
+    # expect 6 since train has 3 unique, test has 3 unique, val is a copy of test
+    assert FileUtils.count_images_in_csv_folder(folder) == 6
