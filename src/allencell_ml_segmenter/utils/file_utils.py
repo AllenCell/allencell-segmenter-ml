@@ -41,7 +41,7 @@ class FileUtils:
         while str(image.name).startswith("."):
             image: Path = next(path_generator)
         return image.resolve()
-    
+
     @staticmethod
     def count_images_in_csv_folder(folder: Path) -> int:
         """
@@ -51,7 +51,7 @@ class FileUtils:
         path_generator: Generator[Path] = folder.glob("*.csv")
         images: set[str] = set()
         for p in path_generator:
-            with open(p, newline='') as fr:
+            with open(p, newline="") as fr:
                 reader: DictReader = DictReader(fr)
                 for row in reader:
                     if "raw" in row:
