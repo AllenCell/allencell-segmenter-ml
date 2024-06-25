@@ -20,7 +20,7 @@ on:
 jobs:
   publish:
     name: Bump and publish
-    runs-on: [self-hosted, build]
+    runs-on: ubuntu-latest
     environment: release
     permissions:
       id-token: write
