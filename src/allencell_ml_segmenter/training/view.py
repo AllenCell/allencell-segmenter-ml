@@ -30,8 +30,8 @@ from allencell_ml_segmenter.training.training_model import (
 )
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 from qtpy.QtGui import QIntValidator
-from allencell_ml_segmenter.training.metrics_csv_progress_tracker import (
-    MetricsCSVProgressTracker,
+from allencell_ml_segmenter.training.training_progress_tracker import (
+    TrainingProgressTracker,
 )
 from allencell_ml_segmenter.core.info_dialog_box import InfoDialogBox
 
@@ -231,8 +231,8 @@ class TrainingView(View):
         if self._patch_size_ok():
             self.set_patch_size()
 
-            progress_tracker: MetricsCSVProgressTracker = (
-                MetricsCSVProgressTracker(
+            progress_tracker: TrainingProgressTracker = (
+                TrainingProgressTracker(
                     self._experiments_model.get_metrics_csv_path(),
                     self._experiments_model.get_cache_dir(),
                     self._training_model.get_num_epochs(),
