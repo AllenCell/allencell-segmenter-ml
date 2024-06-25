@@ -9,7 +9,7 @@ from allencell_ml_segmenter.training.cache_dir_event_handler import CacheDirEven
 from typing import Optional
 
 
-class MetricsCSVProgressTracker(ProgressTracker):
+class TrainingProgressTracker(ProgressTracker):
     """
     A MetricsCSVProgressTracker measures progress by observing a metrics CSV file
     produced by cyto-dl and using the number of epochs written to it as a
