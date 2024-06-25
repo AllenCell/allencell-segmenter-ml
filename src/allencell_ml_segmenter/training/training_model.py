@@ -241,10 +241,9 @@ class TrainingModel(Publisher):
 
     def get_model_size(self) -> ModelSize:
         return self._model_size
-    
+
     def set_total_num_images(self, num_images: int) -> None:
         self._total_num_images = num_images
-    
+
     def get_total_num_images(self) -> int:
         return self._total_num_images
-

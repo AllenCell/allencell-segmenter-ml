@@ -5,7 +5,9 @@ from allencell_ml_segmenter.core.progress_tracker import ProgressTracker
 from allencell_ml_segmenter.training.metrics_csv_event_handler import (
     MetricsCSVEventHandler,
 )
-from allencell_ml_segmenter.training.cache_dir_event_handler import CacheDirEventHandler
+from allencell_ml_segmenter.training.cache_dir_event_handler import (
+    CacheDirEventHandler,
+)
 from typing import Optional
 
 
@@ -61,7 +63,9 @@ class TrainingProgressTracker(ProgressTracker):
         self._observer.schedule(
             csv_handler, path=self._csv_path, recursive=True
         )
-        cache_handler: CacheDirEventHandler = CacheDirEventHandler(self._set_cache_progress_text)
+        cache_handler: CacheDirEventHandler = CacheDirEventHandler(
+            self._set_cache_progress_text
+        )
         self._observer.schedule(
             cache_handler, path=self._cache_path, recursive=True
         )
@@ -71,6 +75,8 @@ class TrainingProgressTracker(ProgressTracker):
     def stop_tracker(self) -> None:
         if self._observer:
             self._observer.stop()
-    
+
     def _set_cache_progress_text(self, num_cached: int) -> None:
-        self.set_label_text(f"Files cached: {num_cached} / {self._total_files}")
+        self.set_label_text(
+            f"Files cached: {num_cached} / {self._total_files}"
+        )
