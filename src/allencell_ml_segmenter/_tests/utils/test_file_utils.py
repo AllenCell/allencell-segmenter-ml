@@ -334,6 +334,7 @@ def test_count_images_in_csv_folder_one_csv() -> None:
     # expect one since there is only one unique raw file in this directory
     assert FileUtils.count_images_in_csv_folder(folder) == 1
 
+
 def test_count_images_in_csv_folder_multiple_csv() -> None:
     """
     A more realistic test of the count function on a folder with a train, test, and val csv
