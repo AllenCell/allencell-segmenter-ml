@@ -8,6 +8,11 @@ on:
     paths:
       - version.toml
 
+# need to grab org secrets for artifactory publish
+env:
+  ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
+  ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
+
 jobs:
   publish:
     name: Publish

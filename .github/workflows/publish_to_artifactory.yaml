@@ -11,6 +11,7 @@ on:
         required: true
 
 # needed to grab org secrets for artifactory publish
+# remove when switching to pypi
 env:
   ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
   ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
