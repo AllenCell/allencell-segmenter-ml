@@ -1,10 +1,12 @@
 from abc import abstractmethod
 from qtpy.QtCore import QObject, Signal
 
+
 class ProgressTrackerSignals(QObject):
     progress_changed: Signal = Signal(int)
     label_text_changed: Signal = Signal(str)
     progress_max_changed: Signal = Signal(int)
+
 
 class ProgressTracker:
     """

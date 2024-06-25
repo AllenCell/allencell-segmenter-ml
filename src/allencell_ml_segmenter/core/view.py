@@ -20,6 +20,7 @@ class LongTaskThread(QThread):
         print("running")
         self._do_work()
 
+
 class View(QWidget, Subscriber, metaclass=ViewMeta):
     """
     Base class for all Views to inherit from
@@ -42,7 +43,7 @@ class View(QWidget, Subscriber, metaclass=ViewMeta):
             progress_tracker.get_progress_maximum(),
             self,
         )
-        self.updateProgress(progress_tracker.get_progress())
+        self.progressDialog.setValue(progress_tracker.get_progress())
         self.progressDialog.setWindowTitle(f"{self.getTypeOfWork()} Progress")
         self.progressDialog.setWindowModality(Qt.ApplicationModal)
         self.progressDialog.canceled.connect(self.longTaskThread.terminate)
@@ -56,10 +57,14 @@ class View(QWidget, Subscriber, metaclass=ViewMeta):
         self.longTaskThread.finished.connect(self.progressDialog.close)
         self.longTaskThread.finished.connect(self.showResults)
 
-        # progressThread's task_progress.emit now calls updateProgress
+        # connect signals from progress tracker to modify the qprogressdialog
         progress_tracker.signals.progress_changed.connect(self.updateProgress)
-        progress_tracker.signals.label_text_changed.connect(self.updateLabelText)
-        progress_tracker.signals.progress_max_changed.connect(self.setProgressMax)
+        progress_tracker.signals.label_text_changed.connect(
+            self.updateLabelText
+        )
+        progress_tracker.signals.progress_max_changed.connect(
+            self.setProgressMax
+        )
         # if the longTaskThread or the progressThread finishes, we no longer
         # need to update progress, so we should stop the progress tracker
         self.longTaskThread.finished.connect(progress_tracker.stop_tracker)
@@ -76,7 +81,7 @@ class View(QWidget, Subscriber, metaclass=ViewMeta):
 
     def updateLabelText(self, value: str) -> None:
         self.progressDialog.setLabelText(value)
-    
+
     def setProgressMax(self, maximum: int) -> None:
         self.progressDialog.setMaximum(maximum)
 
