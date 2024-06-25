@@ -94,6 +94,11 @@ class View(QWidget, Subscriber, metaclass=ViewMeta):
     @abstractmethod
     def showResults(self):
         pass
+    
+    def updateProgressMinMax(self, min_val: int, max_val: int) -> None:
+        # 0, 0 will set the progress bar to indeterminate spinning
+        self.progressDialog.setMinimum(min_val)
+        self.progressDialog.setMaximum(max_val)
 
     def updateProgress(self, value: int) -> None:
         self.progressDialog.setValue(value)
