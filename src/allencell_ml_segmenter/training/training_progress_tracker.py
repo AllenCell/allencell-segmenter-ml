@@ -33,11 +33,13 @@ class TrainingProgressTracker(ProgressTracker):
         :param total_files: total number of unique files used for training
         :param version_number: experiment version to track
         """
+        # set to 0, 0 to initially have a spinning progress bar
         super().__init__(
             progress_minimum=0,
-            progress_maximum=num_epochs,
+            progress_maximum=0,
             label_text=f"Files cached: 0 / {total_files}",
         )
+        self._num_epochs = num_epochs
 
         self._csv_path: Path = csv_path
         if not csv_path.exists():
@@ -53,12 +55,18 @@ class TrainingProgressTracker(ProgressTracker):
         self._observer: Optional[BaseObserver] = None
         self._total_files: int = total_files
 
+    def _set_progress(self, progress: int) -> None:
+        # only want to set progress maximum on the first call to _set_progress
+        if self.get_progress_maximum() != self._num_epochs:
+            self.set_progress_maximum(self._num_epochs)
+        self.set_progress(progress)
+    
     # override
     def start_tracker(self) -> None:
         self.stop_tracker()
         self._observer = Observer()
         csv_handler: MetricsCSVEventHandler = MetricsCSVEventHandler(
-            self._target_path, self.set_progress, self.set_label_text
+            self._target_path, self._set_progress, self.set_label_text
         )
         self._observer.schedule(
             csv_handler, path=self._csv_path, recursive=True
