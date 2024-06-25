@@ -16,6 +16,7 @@ env:
 jobs:
   publish:
     name: Publish
+# run artifactory releases on self-hosted runner, change when using pypi
     runs-on: [self-hosted, build]
     environment: release
     permissions:
