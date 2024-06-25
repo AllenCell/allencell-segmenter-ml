@@ -38,6 +38,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install build twine
+# importlib 8.0.0 is broken, we should be able to un-pin this once 8.0.1 is released
           pip install importlib_metadata==7.2.1
     
       - name: Build Package
