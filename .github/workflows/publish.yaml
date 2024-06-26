@@ -1,5 +1,5 @@
 # Publishes to PyPI when a commit tagged with v** is pushed to main
-name: Publish to PyPI 
+name: Publish to Artifactory
 
 on:
   push:
@@ -13,10 +13,10 @@ env:
   ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
   ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
 
+# run artifactory releases on self-hosted runner, change when using pypi
 jobs:
   publish:
     name: Publish
-# run artifactory releases on self-hosted runner, change when using pypi
     runs-on: [self-hosted, build]
     environment: release
     permissions:
@@ -34,11 +34,11 @@ jobs:
           python-version: "3.10"
 
 # We need twine as a dependency below for artifactory releases, remove when using pypi
+# importlib 8.0.0 is broken, we should be able to un-pin this once 8.0.1 is released
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install build twine
-# importlib 8.0.0 is broken, we should be able to un-pin this once 8.0.1 is released
           pip install importlib_metadata==7.2.1
     
       - name: Build Package
