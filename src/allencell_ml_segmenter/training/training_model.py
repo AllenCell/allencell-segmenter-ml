@@ -57,7 +57,6 @@ class TrainingModel(Publisher, QObject):
         self._patch_size: List[int] = None
         self._spatial_dims: int = None
         self._num_epochs: int = None
-        self._current_epoch: int = None
         self._max_time: int = None  # in minutes
         self._config_dir: Path = None
         self._max_channel = None
@@ -114,21 +113,6 @@ class TrainingModel(Publisher, QObject):
         num_epochs (int): number of additional epochs to train for
         """
         self._num_epochs = num_epochs
-
-    def get_current_epoch(self) -> int:
-        """
-        Gets current epoch
-        """
-        return self._current_epoch
-
-    def set_current_epoch(self, current: int) -> None:
-        """
-        Sets current epoch
-
-        current_epoch (int): current epoch number
-        """
-        self._current_epoch = current
-        self.dispatch(Event.PROCESS_TRAINING_PROGRESS)
 
     def get_images_directory(self) -> Path:
         """
