@@ -133,9 +133,11 @@ class TrainingService(Subscriber):
 
     def _on_training_dir_data_extracted(self, dir_data: DirectoryData) -> None:
         self._training_model.set_total_num_images(dir_data.num_images)
-        self._training_model.set_num_channels(TrainingImageType.RAW, dir_data.raw_channels)
-        self._training_model.set_num_channels(TrainingImageType.SEG1, dir_data.seg1_channels)
-        self._training_model.set_num_channels(TrainingImageType.SEG2, dir_data.seg2_channels)
+        self._training_model.set_all_num_channels({
+            TrainingImageType.RAW: dir_data.raw_channels,
+            TrainingImageType.SEG1: dir_data.seg1_channels,
+            TrainingImageType.SEG2: dir_data.seg2_channels,
+        })
     
     def _on_training_dir_data_error(self, e: Exception) -> None:
         self._training_model.set_total_num_images(None)
