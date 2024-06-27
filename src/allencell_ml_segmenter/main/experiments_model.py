@@ -106,6 +106,13 @@ class ExperimentsModel(IExperimentsModel):
             / "csv"
         )
 
+    def get_cache_dir(self) -> Path:
+        return (
+            self.get_user_experiments_path()
+            / self.get_experiment_name()
+            / "cache"
+        )
+
     def get_latest_metrics_csv_version(self) -> int:
         """
         Returns version number of the most recent version directory within
