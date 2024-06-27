@@ -50,7 +50,7 @@ class TrainingService(Subscriber):
             self._train_model_handler,
         )
         self._img_data_extractor: IImageDataExtractor = img_data_extractor
-        self._training_model.images_directory_set.connect(self._training_image_directory_selected)
+        self._training_model.signals.images_directory_set.connect(self._training_image_directory_selected)
 
     def _train_model_handler(self, _: Event) -> None:
         """
@@ -141,15 +141,18 @@ class TrainingService(Subscriber):
     
     def _on_training_dir_data_error(self, e: Exception) -> None:
         self._training_model.set_total_num_images(None)
-        self._training_model.set_num_channels(TrainingImageType.RAW, None)
-        self._training_model.set_num_channels(TrainingImageType.SEG1, None)
-        self._training_model.set_num_channels(TrainingImageType.SEG2, None)
+        self._training_model.set_all_num_channels({
+            TrainingImageType.RAW: None,
+            TrainingImageType.SEG1: None,
+            TrainingImageType.SEG2: None,
+        })
         show_error(f"Failed to get data from training directory: {e}")
 
-    def _training_image_directory_selected(self, _: Event) -> None:
-        training_dir: Path = self._training_model.get_images_directory()
-        self._task_executor.exec(
-            lambda: self._extract_data_from_training_dir(training_dir), 
-            on_return=self._on_training_dir_data_extracted,
-            on_error=self._on_training_dir_data_error,
-        )
+    def _training_image_directory_selected(self) -> None:
+        training_dir: Optional[Path] = self._training_model.get_images_directory()
+        if training_dir is not None:
+            self._task_executor.exec(
+                lambda: self._extract_data_from_training_dir(training_dir), 
+                on_return=self._on_training_dir_data_extracted,
+                on_error=self._on_training_dir_data_error,
+            )
