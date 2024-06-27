@@ -34,12 +34,16 @@ class TrainingImageType(Enum):
     SEG1 = "seg1"
     SEG2 = "seg2"
 
-class TrainingModel(Publisher, QObject):
+# TODO: move these signals directly into TrainingModel once we deprecate
+# 'Publisher' in a refactor
+class TrainingModelSignals(QObject):
+    num_channels_set: Signal = Signal()
+    images_directory_set: Signal = Signal()
+
+class TrainingModel(Publisher):
     """
     Stores state relevant to training processes.
     """
-    num_channels_set: Signal = Signal()
-    images_directory_set: Signal = Signal()
     
     def __init__(
         self, main_model: MainModel, experiments_model: ExperimentsModel
@@ -47,8 +51,9 @@ class TrainingModel(Publisher, QObject):
         super().__init__()
         self._main_model = main_model
         self.experiments_model = experiments_model
+        self.signals: TrainingModelSignals = TrainingModelSignals()
         self._experiment_type: TrainingType = None
-        self._images_directory: Path = None
+        self._images_directory: Optional[Path] = None
         self._selected_channel: dict[TrainingImageType, Optional[int]] = {t: None for t in TrainingImageType}
         self._num_channels: dict[TrainingImageType, Optional[int]] = {t: None for t in TrainingImageType}
         self._model_path: Union[Path, None] = (
@@ -114,20 +119,20 @@ class TrainingModel(Publisher, QObject):
         """
         self._num_epochs = num_epochs
 
-    def get_images_directory(self) -> Path:
+    def get_images_directory(self) -> Optional[Path]:
         """
         Gets images directory
         """
         return self._images_directory
 
-    def set_images_directory(self, images_path: Path) -> None:
+    def set_images_directory(self, images_path: Optional[Path]) -> None:
         """
         Sets images directory, and dispatches channel extraction
 
         images_path (Path): path to images directory
         """
         self._images_directory = images_path
-        self.images_directory_set.emit()
+        self.signals.images_directory_set.emit()
 
     def get_channel_index(self) -> Union[int, None]:
         """
@@ -148,7 +153,7 @@ class TrainingModel(Publisher, QObject):
     
     def set_all_num_channels(self, num_channels: dict[TrainingImageType, Optional[int]]) -> None:
         self._num_channels = num_channels
-        self.num_channels_set.emit()
+        self.signals.num_channels_set.emit()
     
     def get_selected_channel(self, image_type: TrainingImageType) -> Optional[int]:
         return self._selected_channel[image_type]
