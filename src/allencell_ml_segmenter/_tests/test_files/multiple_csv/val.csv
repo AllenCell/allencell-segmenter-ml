@@ -1,0 +1,4 @@
+,raw,split
+0,./src/allencell_ml_segmenter/_tests/test_files/images/fake1.tiff,test
+1,./src/allencell_ml_segmenter/_tests/test_files/images/fake2.tiff,test
+2,./src/allencell_ml_segmenter/_tests/test_files/images/fake3.tiff,test
