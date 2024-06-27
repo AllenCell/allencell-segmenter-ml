@@ -114,8 +114,8 @@ class ImageSelectionWidget(QWidget):
         self._experiments_model.subscribe(
             Event.ACTION_EXPERIMENT_APPLIED, self, self.set_inputs_csv
         )
-        
-        self._model.num_channels_set.connect(self._update_channels)
+
+        self._model.signals.num_channels_set.connect(self._update_channels)
 
     def set_inputs_csv(self, event: Event = None):
         if self._experiments_model.get_csv_path() is not None:
