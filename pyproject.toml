@@ -41,6 +41,7 @@ dependencies = [
     "tifffile>=2023.4.12",
     "watchdog",
     "cyto-dl>=0.1.7",
+    "scikit-image!=0.23.0",
 ]
 
 [project.urls]
