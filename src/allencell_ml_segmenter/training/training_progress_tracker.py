@@ -40,6 +40,8 @@ class TrainingProgressTracker(ProgressTracker):
         )
 
         self._csv_path: Path = csv_path
+        # these paths will be created by cyto-dl anyways, but we need to make
+        # sure they exist before we try to set an observer on them
         if not csv_path.exists():
             csv_path.mkdir(parents=True)
 
