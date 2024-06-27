@@ -7,7 +7,7 @@ from qtpy.QtWidgets import (
 )
 
 from allencell_ml_segmenter.core.subscriber import Subscriber
-from allencell_ml_segmenter.core.view import View
+from allencell_ml_segmenter.core.view import View, MainWindow
 from allencell_ml_segmenter.curation.curation_model import (
     CurationModel,
     CurationView,
@@ -28,7 +28,9 @@ class CurationUiMeta(type(QStackedWidget), type(Subscriber)):
     pass
 
 
-class CurationWidget(QStackedWidget, Subscriber, metaclass=CurationUiMeta):
+class CurationWidget(
+    MainWindow, QStackedWidget, Subscriber, metaclass=CurationUiMeta
+):
     def __init__(
         self,
         viewer: napari.Viewer,
@@ -86,3 +88,11 @@ class CurationWidget(QStackedWidget, Subscriber, metaclass=CurationUiMeta):
         # QStackedWidget count method keeps track of how many child widgets have been added
         self.view_to_index[view] = self.count()
         self.addWidget(view)
+
+    def focus_changed(self):
+        # if we haven't finished curation, then reload current images
+        if (
+            self.currentWidget() == self.curation_main_view
+            and not self.curation_model.get_image_loading_stopped()
+        ):
+            self.curation_main_view.add_curr_images_to_widget()
