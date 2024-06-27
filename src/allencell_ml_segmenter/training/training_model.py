@@ -38,7 +38,7 @@ class TrainingModel(Publisher, QObject):
     """
     Stores state relevant to training processes.
     """
-    num_channels_set: Signal = Signal(TrainingImageType)
+    num_channels_set: Signal = Signal()
     images_directory_set: Signal = Signal()
     
     def __init__(
@@ -127,8 +127,7 @@ class TrainingModel(Publisher, QObject):
         images_path (Path): path to images directory
         """
         self._images_directory = images_path
-        if images_path is not None:
-            self.dispatch(Event.ACTION_TRAINING_DATASET_SELECTED)
+        self.images_directory_set.emit()
 
     def get_channel_index(self) -> Union[int, None]:
         """
@@ -147,8 +146,9 @@ class TrainingModel(Publisher, QObject):
     def get_num_channels(self, image_type: TrainingImageType) -> Optional[int]:
         return self._num_channels[image_type]
     
-    def set_num_channels(self, image_type: TrainingImageType, channel: int) -> None:
-        self._num_channels[image_type] = channel
+    def set_all_num_channels(self, num_channels: dict[TrainingImageType, Optional[int]]) -> None:
+        self._num_channels = num_channels
+        self.num_channels_set.emit()
     
     def get_selected_channel(self, image_type: TrainingImageType) -> Optional[int]:
         return self._selected_channel[image_type]

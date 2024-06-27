@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Optional
 
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
@@ -14,7 +15,7 @@ from qtpy.QtWidgets import (
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.curation.stacked_spinner import StackedSpinner
 from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
-from allencell_ml_segmenter.training.training_model import TrainingModel
+from allencell_ml_segmenter.training.training_model import TrainingModel, TrainingImageType
 from allencell_ml_segmenter.widgets.input_button_widget import (
     InputButton,
     FileInputMode,
@@ -83,31 +84,38 @@ class ImageSelectionWidget(QWidget):
         )
         frame.layout().addWidget(guide_text, 1, 1, Qt.AlignTop)
 
-        channel_label: LabelWithHint = LabelWithHint("Image channel")
-
-        self._channel_combo_box: QComboBox = QComboBox()
-        self._channel_combo_box.setCurrentIndex(
-            -1
-        )  # need to set this to see placeholdertext
-        self._channel_combo_box.setMinimumWidth(306)
-        self._channel_combo_box.setPlaceholderText("Select an option")
-
-        self._channel_combo_box.currentTextChanged.connect(
-            lambda idx: self._model.set_channel_index(int(idx))
+        self._raw_channel_combo_box: QComboBox = QComboBox()
+        self._raw_channel_combo_box.setMinimumWidth(306)
+        self._reset_combo_box(self._raw_channel_combo_box, None)
+        self._raw_channel_combo_box.currentIndexChanged.connect(
+            lambda idx: self._handle_idx_change(idx, TrainingImageType.RAW)
         )
+        frame.layout().addWidget(LabelWithHint("Raw image channel"), 2, 0)
+        frame.layout().addWidget(self._raw_channel_combo_box, 2, 1)
 
-        frame.layout().addWidget(channel_label, 2, 0)
-        frame.layout().addWidget(self._channel_combo_box, 2, 1)
+        self._seg1_channel_combo_box: QComboBox = QComboBox()
+        self._seg1_channel_combo_box.setMinimumWidth(306)
+        self._reset_combo_box(self._seg1_channel_combo_box, None)
+        self._seg1_channel_combo_box.currentIndexChanged.connect(
+            lambda idx: self._handle_idx_change(idx, TrainingImageType.SEG1)
+        )
+        frame.layout().addWidget(LabelWithHint("Seg1 image channel"), 3, 0)
+        frame.layout().addWidget(self._seg1_channel_combo_box, 3, 1)
+
+        self._seg2_channel_combo_box: QComboBox = QComboBox()
+        self._seg2_channel_combo_box.setMinimumWidth(306)
+        self._reset_combo_box(self._seg2_channel_combo_box, None)
+        self._seg2_channel_combo_box.currentIndexChanged.connect(
+            lambda idx: self._handle_idx_change(idx, TrainingImageType.SEG2)
+        )
+        frame.layout().addWidget(LabelWithHint("Seg2 image channel"), 4, 0)
+        frame.layout().addWidget(self._seg2_channel_combo_box, 4, 1)
 
         self._experiments_model.subscribe(
             Event.ACTION_EXPERIMENT_APPLIED, self, self.set_inputs_csv
         )
-
-        self._model.subscribe(
-            Event.ACTION_TRAINING_MAX_NUMBER_CHANNELS_SET,
-            self,
-            self._update_channels,
-        )
+        
+        self._model.num_channels_set.connect(self._update_channels)
 
     def set_inputs_csv(self, event: Event = None):
         if self._experiments_model.get_csv_path() is not None:
@@ -126,35 +134,35 @@ class ImageSelectionWidget(QWidget):
                 self._model.set_images_directory(None)
 
     def _on_input_images_select(self, dir: Path) -> None:
-        self._set_to_loading(
-            self._channel_combo_box, self._training_data_stacked_spinner
-        )
+        self._set_to_loading()
         # This also dispatches channel extraction
         self._model.set_images_directory(dir)
 
-    def _set_to_loading(
-        self, combobox: QComboBox, stacked_spinner: StackedSpinner
-    ) -> None:
-        stacked_spinner.start()
-        combobox.clear()
-        combobox.setPlaceholderText("loading channels...")
-        combobox.setCurrentIndex(-1)
-        combobox.setEnabled(False)
+    def _set_to_loading(self) -> None:
+        self._training_data_stacked_spinner.start()
+        self._reset_combo_box(self._raw_channel_combo_box, None)
+        self._reset_combo_box(self._seg1_channel_combo_box, None)
+        self._reset_combo_box(self._seg2_channel_combo_box, None)
 
-    def _update_channels(self, _: Event) -> None:
-        self._training_data_stacked_spinner.stop()
-        self._channel_combo_box.clear()
-        if (
-            self._model.get_max_channel() is not None
-            and self._model.get_max_channel() > 0
-        ):
-            self._channel_combo_box.addItems(
-                [str(x) for x in range(self._model.get_max_channel())]
+    def _handle_idx_change(self, idx: int, img_type: TrainingImageType) -> None:
+        self._model.set_selected_channel(img_type, idx if idx >= 0 else None)
+
+    def _reset_combo_box(self, combo_box: QComboBox, num_channels: Optional[int]) -> None:
+        combo_box.clear()
+        if num_channels is not None:
+            combo_box.addItems(
+                [str(x) for x in range(num_channels)]
             )
-            self._channel_combo_box.setCurrentIndex(0)
-            self._channel_combo_box.setEnabled(True)
-            self._model.set_channel_index(0)
+            combo_box.setCurrentIndex(0)
+            combo_box.setEnabled(True)
         else:
-            self._channel_combo_box.setPlaceholderText("")
-            self._channel_combo_box.setCurrentIndex(-1)
-            self._channel_combo_box.setEnabled(False)
+            combo_box.setPlaceholderText("")
+            combo_box.setCurrentIndex(-1)
+            combo_box.setEnabled(False)
+
+    def _update_channels(self) -> None:
+        self._training_data_stacked_spinner.stop()
+        self._reset_combo_box(self._raw_channel_combo_box, self._model.get_num_channels(TrainingImageType.RAW))
+        self._reset_combo_box(self._seg1_channel_combo_box, self._model.get_num_channels(TrainingImageType.SEG1))
+        self._reset_combo_box(self._seg2_channel_combo_box, self._model.get_num_channels(TrainingImageType.SEG2))
+        
