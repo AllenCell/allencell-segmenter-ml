@@ -1,8 +1,9 @@
-from typing import List, Optional
+from typing import Optional
 
 from qtpy.QtWidgets import QComboBox
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
+    QWidget,
     QVBoxLayout,
     QSizePolicy,
     QLabel,
@@ -15,7 +16,6 @@ from qtpy.QtWidgets import (
 )
 from allencell_ml_segmenter.core.dialog_box import DialogBox
 from allencell_ml_segmenter._style import Style
-from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.main.viewer import IViewer
 from allencell_ml_segmenter.curation.curation_model import (
     CurationModel,
@@ -35,7 +35,7 @@ MERGING_MASK_LAYER_NAME: str = "Merging Mask"
 EXCLUDING_MASK_LAYER_NAME: str = "Excluding Mask"
 
 
-class CurationMainView(View):
+class CurationMainView(QWidget):
     """
     View for Curation UI
     """
@@ -226,15 +226,6 @@ class CurationMainView(View):
         self._curation_model.saved_to_disk.connect(self._on_saved_to_disk)
         self._set_to_initial_state()
 
-    def doWork(self) -> None:
-        print("work")
-
-    def getTypeOfWork(self) -> None:
-        print("getwork")
-
-    def showResults(self) -> None:
-        print("show result")
-
     def _set_to_initial_state(self):
         self.save_csv_button.setEnabled(False)
         self._set_next_button_to_loading()
@@ -249,7 +240,7 @@ class CurationMainView(View):
         self.use_img_stacked_spinner.stop()
         self.save_csv_button.setEnabled(True)
         self._update_progress_bar()
-        self._add_curr_images_to_widget()
+        self.add_curr_images_to_widget()
         self._enable_next_button()
         self.enable_radio_buttons()
         self._curation_model.image_loading_finished.disconnect(
@@ -270,7 +261,7 @@ class CurationMainView(View):
         self.next_button.setEnabled(False)
         self.next_button.setText("Loading next...")
 
-    def _add_curr_images_to_widget(self) -> None:
+    def add_curr_images_to_widget(self) -> None:
         raw_img_data: ImageData = self._curation_model.get_curr_image_data(
             CurationImageType.RAW
         )
@@ -307,7 +298,7 @@ class CurationMainView(View):
         if self._curation_model.has_next_image():
             self._set_next_button_to_loading()
             self._curation_model.next_image()
-            self._add_curr_images_to_widget()
+            self.add_curr_images_to_widget()
             # these lines will update UI and model state, must go after
             # a call to next image
             self.yes_radio.click()
@@ -319,6 +310,7 @@ class CurationMainView(View):
             self.file_name.setText("None")
             self.next_button.setEnabled(False)
             self.next_button.setText("No more images")
+            self._curation_model.stop_loading_images()
             InfoDialogBox(
                 "You have reached the end of the dataset, and your curation CSV has been saved.\nPlease switch to the Training tab to start training a model."
             ).exec()

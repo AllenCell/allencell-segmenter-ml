@@ -133,8 +133,7 @@ class CurationService(QObject):
         )
         self._task_executor.exec(
             lambda: self._img_data_extractor.extract_image_data(
-                seg1_paths[img_idx],
-                channel=seg1_channel,
+                seg1_paths[img_idx], channel=seg1_channel, seg=1
             ),
             on_return=lambda img_data: setter_fn(
                 CurationImageType.SEG1, img_data
@@ -146,8 +145,7 @@ class CurationService(QObject):
         if seg2_paths is not None:
             self._task_executor.exec(
                 lambda: self._img_data_extractor.extract_image_data(
-                    seg2_paths[img_idx],
-                    channel=seg2_channel,
+                    seg2_paths[img_idx], channel=seg2_channel, seg=2
                 ),
                 on_return=lambda img_data: setter_fn(
                     CurationImageType.SEG2, img_data

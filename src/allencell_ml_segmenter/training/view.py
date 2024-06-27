@@ -19,7 +19,7 @@ from qtpy.QtWidgets import (
 )
 from allencell_ml_segmenter._style import Style
 from allencell_ml_segmenter.core.event import Event
-from allencell_ml_segmenter.core.view import View
+from allencell_ml_segmenter.core.view import View, MainWindow
 from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.training.image_selection_widget import (
     ImageSelectionWidget,
@@ -30,13 +30,13 @@ from allencell_ml_segmenter.training.training_model import (
 )
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 from qtpy.QtGui import QIntValidator
-from allencell_ml_segmenter.training.metrics_csv_progress_tracker import (
-    MetricsCSVProgressTracker,
+from allencell_ml_segmenter.training.training_progress_tracker import (
+    TrainingProgressTracker,
 )
 from allencell_ml_segmenter.core.info_dialog_box import InfoDialogBox
 
 
-class TrainingView(View):
+class TrainingView(View, MainWindow):
     """
     Holds widgets pertinent to training processes - ImageSelectionWidget & ModelSelectionWidget.
     """
@@ -78,7 +78,6 @@ class TrainingView(View):
         top_container: QVBoxLayout = QVBoxLayout()
         top_dummy: QFrame = QFrame()
         bottom_dummy: QFrame = QFrame()
-
         top_container.addWidget(self.image_selection_widget)
         top_dummy.setLayout(top_container)
         self.layout().addWidget(top_dummy)
@@ -231,10 +230,12 @@ class TrainingView(View):
         if self._patch_size_ok():
             self.set_patch_size()
 
-            progress_tracker: MetricsCSVProgressTracker = (
-                MetricsCSVProgressTracker(
+            progress_tracker: TrainingProgressTracker = (
+                TrainingProgressTracker(
                     self._experiments_model.get_metrics_csv_path(),
+                    self._experiments_model.get_cache_dir(),
                     self._training_model.get_num_epochs(),
+                    self._training_model.get_total_num_images(),
                     self._experiments_model.get_latest_metrics_csv_version()
                     + 1,
                 )
@@ -309,3 +310,7 @@ class TrainingView(View):
                 int(self.x_patch_size.text()),
             ]
         )
+
+    def focus_changed(self) -> None:
+        self.image_selection_widget.set_inputs_csv()
+        self._viewer.clear_layers()
