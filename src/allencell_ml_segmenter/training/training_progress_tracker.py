@@ -56,7 +56,9 @@ class TrainingProgressTracker(ProgressTracker):
         self._total_files: int = total_files
 
     def _set_progress(self, progress: int) -> None:
-        # only want to set progress maximum on the first call to _set_progress
+        # on the first call to _set_progress, we expect the progress bar to
+        # be in a spinning state (max = 0), we want to change that to the real max
+        # to show deterministic progress here
         if self.get_progress_maximum() != self._num_epochs:
             self.set_progress_maximum(self._num_epochs)
         self.set_progress(progress)
