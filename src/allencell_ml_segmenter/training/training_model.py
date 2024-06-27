@@ -4,8 +4,8 @@ from enum import Enum
 from typing import Union, Optional, List
 from pathlib import Path
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
-
 from allencell_ml_segmenter.main.main_model import MainModel
+from qtpy.QtCore import QObject, Signal
 
 
 class TrainingType(Enum):
@@ -29,12 +29,18 @@ class ModelSize(Enum):
     MEDIUM = [16, 32, 64]
     LARGE = [32, 64, 128]
 
+class TrainingImageType(Enum):
+    RAW = "raw"
+    SEG1 = "seg1"
+    SEG2 = "seg2"
 
-class TrainingModel(Publisher):
+class TrainingModel(Publisher, QObject):
     """
     Stores state relevant to training processes.
     """
-
+    num_channels_set: Signal = Signal(TrainingImageType)
+    images_directory_set: Signal = Signal()
+    
     def __init__(
         self, main_model: MainModel, experiments_model: ExperimentsModel
     ):
@@ -43,7 +49,8 @@ class TrainingModel(Publisher):
         self.experiments_model = experiments_model
         self._experiment_type: TrainingType = None
         self._images_directory: Path = None
-        self._channel_index: Union[int, None] = None
+        self._selected_channel: dict[TrainingImageType, Optional[int]] = {t: None for t in TrainingImageType}
+        self._num_channels: dict[TrainingImageType, Optional[int]] = {t: None for t in TrainingImageType}
         self._model_path: Union[Path, None] = (
             None  # if None, start a new model
         )
@@ -153,6 +160,18 @@ class TrainingModel(Publisher):
         """
         self._channel_index = index
 
+    def get_num_channels(self, image_type: TrainingImageType) -> Optional[int]:
+        return self._num_channels[image_type]
+    
+    def set_num_channels(self, image_type: TrainingImageType, channel: int) -> None:
+        self._num_channels[image_type] = channel
+    
+    def get_selected_channel(self, image_type: TrainingImageType) -> Optional[int]:
+        return self._selected_channel[image_type]
+    
+    def set_selected_channel(self, image_type: TrainingImageType, channel: int) -> None:
+        self._selected_channel[image_type] = channel
+    
     def get_patch_size(self) -> List[int]:
         """
         Gets patch size

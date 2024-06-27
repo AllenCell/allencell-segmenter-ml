@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Generator
+from typing import Optional
 import csv
 
 from aicsimageio.exceptions import UnsupportedFileFormatError
@@ -15,15 +15,15 @@ def extract_channels_from_image(img_path: Path) -> int:
     return AICSImage(str(img_path)).dims.C
 
 
-def get_img_path_from_csv(csv_path: Path) -> Path:
+def get_img_path_from_csv(csv_path: Path, column: str="raw") -> Optional[Path]:
     """
-    Returns path of an image in the 'raw' column of the csv.
+    Returns path of an image in the specified column of the csv or None if there is no data in that column.
     :param csv_path: path to a csv with a 'raw' column
     """
     with open(csv_path) as csv_file:
         reader: csv.reader = csv.DictReader(csv_file)
-        img_path: str = next(reader)["raw"]
-    return Path(img_path).resolve()
+        img_path: str = next(reader)[column]
+    return Path(img_path).resolve() if img_path else None
 
 
 class ChannelExtractionThread(QThread):

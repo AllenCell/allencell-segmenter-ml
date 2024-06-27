@@ -4,13 +4,13 @@ from allencell_ml_segmenter.core.channel_extraction import (
     ChannelExtractionThread,
     get_img_path_from_csv,
 )
-from allencell_ml_segmenter.core.i_extractor_factory import IExtractorFactory
+from allencell_ml_segmenter.core.image_data_extractor import IImageDataExtractor, AICSImageDataExtractor, ImageData
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.event import Event
 
 from cyto_dl.api.model import CytoDLModel
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
-from allencell_ml_segmenter.training.training_model import TrainingModel
+from allencell_ml_segmenter.training.training_model import TrainingModel, TrainingImageType
 from typing import Dict, Union, Optional, List, Any, Callable
 from napari.utils.notifications import show_warning
 from allencell_ml_segmenter.utils.cuda_util import CUDAUtils
@@ -19,7 +19,14 @@ from allencell_ml_segmenter.utils.cyto_overrides_manager import (
 )
 from allencell_ml_segmenter.utils.file_utils import FileUtils
 from napari.utils.notifications import show_error
+from allencell_ml_segmenter.core.task_executor import (
+    ITaskExecutor,
+    NapariThreadTaskExecutor,
+)
+from collections import namedtuple
 
+
+DirectoryData = namedtuple("DirectoryData", ["num_images", "raw_channels", "seg1_channels", "seg2_channels"])
 
 class TrainingService(Subscriber):
     """
@@ -30,26 +37,20 @@ class TrainingService(Subscriber):
         self,
         training_model: TrainingModel,
         experiments_model: ExperimentsModel,
-        extractor_factory: IExtractorFactory,
+        img_data_extractor: IImageDataExtractor = AICSImageDataExtractor.global_instance(),
+        task_executor: ITaskExecutor = NapariThreadTaskExecutor.global_instance()
     ):
         super().__init__()
         self._training_model: TrainingModel = training_model
         self._experiments_model: ExperimentsModel = experiments_model
+        self._task_executor: ITaskExecutor = task_executor
         self._training_model.subscribe(
             Event.PROCESS_TRAINING,
             self,
             self._train_model_handler,
         )
-        self._extractor_factory: IExtractorFactory = extractor_factory
-        self._channel_extraction_thread: Optional[ChannelExtractionThread] = (
-            None
-        )
-
-        self._training_model.subscribe(
-            Event.ACTION_TRAINING_DATASET_SELECTED,
-            self,
-            self._training_image_directory_selected,
-        )
+        self._img_data_extractor: IImageDataExtractor = img_data_extractor
+        self._training_model.images_directory_set.connect(self._training_image_directory_selected)
 
     def _train_model_handler(self, _: Event) -> None:
         """
@@ -121,44 +122,32 @@ class TrainingService(Subscriber):
             return False
         return True
 
-    def _start_channel_extraction(
-        self, to_extract: Path, channel_callback: Callable
-    ):
-        try:
-            img_path: Path = get_img_path_from_csv(to_extract / "train.csv")
-        except Exception as e:
-            self._on_channel_extraction_failed(e)
-            return
+    def _extract_data_from_training_dir(self, training_dir: Path) -> DirectoryData:
+        num_imgs: int = FileUtils.count_images_in_csv_folder(training_dir)
+        training_csv: Path = training_dir / "train.csv"
+        raw_data: ImageData = self._img_data_extractor.extract_image_data(get_img_path_from_csv(training_csv, column="raw"), np_data=False)
+        seg1_data: ImageData = self._img_data_extractor.extract_image_data(get_img_path_from_csv(training_csv, column="seg1"), np_data=False)
+        seg2_path: Path = get_img_path_from_csv(training_csv, "seg2")
+        seg2_data: Optional[ImageData] = self._img_data_extractor.extract_image_data(seg2_path, np_data=False) if seg2_path else None
+        return DirectoryData(num_imgs, raw_data.channels, seg1_data.channels, seg2_data.channels if seg2_data else None)
 
-        self._channel_extraction_thread = self._extractor_factory.create(
-            img_path
-        )
-        self._channel_extraction_thread.channels_ready.connect(
-            channel_callback
-        )
-        self._channel_extraction_thread.task_failed.connect(
-            self._on_channel_extraction_failed
-        )
-        self._channel_extraction_thread.start()
-
-    def _on_channel_extraction_failed(self, err: Exception) -> None:
-        show_error(f"Channel extraction failed: {err}")
-        self._training_model.set_max_channel(None)
-
-    def _stop_channel_extraction(self) -> None:
-        if (
-            self._channel_extraction_thread
-            and self._channel_extraction_thread.isRunning()
-        ):
-            self._channel_extraction_thread.requestInterruption()
-            self._channel_extraction_thread.wait()
+    def _on_training_dir_data_extracted(self, dir_data: DirectoryData) -> None:
+        self._training_model.set_total_num_images(dir_data.num_images)
+        self._training_model.set_num_channels(TrainingImageType.RAW, dir_data.raw_channels)
+        self._training_model.set_num_channels(TrainingImageType.SEG1, dir_data.seg1_channels)
+        self._training_model.set_num_channels(TrainingImageType.SEG2, dir_data.seg2_channels)
+    
+    def _on_training_dir_data_error(self, e: Exception) -> None:
+        self._training_model.set_total_num_images(None)
+        self._training_model.set_num_channels(TrainingImageType.RAW, None)
+        self._training_model.set_num_channels(TrainingImageType.SEG1, None)
+        self._training_model.set_num_channels(TrainingImageType.SEG2, None)
+        show_error(f"Failed to get data from training directory: {e}")
 
     def _training_image_directory_selected(self, _: Event) -> None:
-        num_imgs: int = FileUtils.count_images_in_csv_folder(
-            self._training_model.get_images_directory()
-        )
-        self._training_model.set_total_num_images(num_imgs)
-        self._start_channel_extraction(
-            self._training_model.get_images_directory(),
-            self._training_model.set_max_channel,
+        training_dir: Path = self._training_model.get_images_directory()
+        self._task_executor.exec(
+            lambda: self._extract_data_from_training_dir(training_dir), 
+            on_return=self._on_training_dir_data_extracted,
+            on_error=self._on_training_dir_data_error,
         )
