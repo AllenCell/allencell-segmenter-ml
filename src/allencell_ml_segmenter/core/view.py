@@ -1,6 +1,6 @@
 from abc import abstractmethod, ABC
 from qtpy.QtWidgets import QWidget, QProgressDialog
-from qtpy.QtCore import Qt, QThread, Signal
+from qtpy.QtCore import Qt, QThread
 
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.progress_tracker import ProgressTracker
@@ -21,27 +21,6 @@ class LongTaskThread(QThread):
         self._do_work()
 
 
-class ProgressThread(QThread):
-    # pyqtSignal must be class attribute
-    # https://www.riverbankcomputing.com/static/Docs/PyQt5/signals_slots.html#defining-new-signals-with-pyqtsignal
-    task_progress: Signal = Signal(int)
-    label_text: Signal = Signal(str)
-
-    def __init__(self, progress_tracker: ProgressTracker, parent=None):
-        super().__init__(parent)
-        self._progress_tracker: ProgressTracker = progress_tracker
-
-    # override
-    def run(self):
-        while (
-            self._progress_tracker.get_progress()
-            < self._progress_tracker.get_progress_maximum()
-        ):
-            self.task_progress.emit(self._progress_tracker.get_progress())
-            self.label_text.emit(self._progress_tracker.get_label_text())
-            self.msleep(100)
-
-
 class View(QWidget, Subscriber, metaclass=ViewMeta):
     """
     Base class for all Views to inherit from
@@ -56,7 +35,6 @@ class View(QWidget, Subscriber, metaclass=ViewMeta):
         self, progress_tracker: ProgressTracker
     ) -> None:
         self.longTaskThread = LongTaskThread(do_work=self.doWork)
-        self.progressThread = ProgressThread(progress_tracker)
 
         self.progressDialog = QProgressDialog(
             f"{self.getTypeOfWork()} in Progress",
@@ -65,10 +43,10 @@ class View(QWidget, Subscriber, metaclass=ViewMeta):
             progress_tracker.get_progress_maximum(),
             self,
         )
+        self.progressDialog.setValue(progress_tracker.get_progress())
         self.progressDialog.setWindowTitle(f"{self.getTypeOfWork()} Progress")
         self.progressDialog.setWindowModality(Qt.ApplicationModal)
         self.progressDialog.canceled.connect(self.longTaskThread.terminate)
-        self.progressDialog.canceled.connect(self.progressThread.terminate)
         # stop the watchdog thread for file watching inside of the progress tracker
         self.progressDialog.canceled.connect(progress_tracker.stop_tracker)
 
@@ -79,16 +57,19 @@ class View(QWidget, Subscriber, metaclass=ViewMeta):
         self.longTaskThread.finished.connect(self.progressDialog.close)
         self.longTaskThread.finished.connect(self.showResults)
 
-        # progressThread's task_progress.emit now calls updateProgress
-        self.progressThread.task_progress.connect(self.updateProgress)
-        self.progressThread.label_text.connect(self.updateLabelText)
+        # connect signals from progress tracker to modify the qprogressdialog
+        progress_tracker.signals.progress_changed.connect(self.updateProgress)
+        progress_tracker.signals.label_text_changed.connect(
+            self.updateLabelText
+        )
+        progress_tracker.signals.progress_max_changed.connect(
+            self.setProgressMax
+        )
         # if the longTaskThread or the progressThread finishes, we no longer
         # need to update progress, so we should stop the progress tracker
-        self.progressThread.finished.connect(progress_tracker.stop_tracker)
         self.longTaskThread.finished.connect(progress_tracker.stop_tracker)
 
         progress_tracker.start_tracker()
-        self.progressThread.start()
         self.longTaskThread.start()
 
     @abstractmethod
@@ -100,6 +81,9 @@ class View(QWidget, Subscriber, metaclass=ViewMeta):
 
     def updateLabelText(self, value: str) -> None:
         self.progressDialog.setLabelText(value)
+
+    def setProgressMax(self, maximum: int) -> None:
+        self.progressDialog.setMaximum(maximum)
 
     @abstractmethod
     def doWork(self):
