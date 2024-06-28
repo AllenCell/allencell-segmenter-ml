@@ -3,7 +3,9 @@ import pytest
 from allencell_ml_segmenter._tests.fakes.fake_user_settings import (
     FakeUserSettings,
 )
-from allencell_ml_segmenter.core.image_data_extractor import FakeImageDataExtractor
+from allencell_ml_segmenter.core.image_data_extractor import (
+    FakeImageDataExtractor,
+)
 from allencell_ml_segmenter.core.task_executor import SynchroTaskExecutor
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel

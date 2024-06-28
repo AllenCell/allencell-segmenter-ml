@@ -15,7 +15,9 @@ def extract_channels_from_image(img_path: Path) -> int:
     return AICSImage(str(img_path)).dims.C
 
 
-def get_img_path_from_csv(csv_path: Path, column: str="raw") -> Optional[Path]:
+def get_img_path_from_csv(
+    csv_path: Path, column: str = "raw"
+) -> Optional[Path]:
     """
     Returns path of an image in the specified column of the csv or None if there is no data in that column.
     :param csv_path: path to a csv with a 'raw' column

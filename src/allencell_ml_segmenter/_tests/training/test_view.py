@@ -162,4 +162,3 @@ def test_set_patch_size(
 
     # ASSERT
     assert training_model.get_patch_size() == [1, 4, 12]
-
