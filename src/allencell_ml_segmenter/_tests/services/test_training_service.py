@@ -3,7 +3,8 @@ import pytest
 from allencell_ml_segmenter._tests.fakes.fake_user_settings import (
     FakeUserSettings,
 )
-from allencell_ml_segmenter.core.extractor_factory import FakeExtractorFactory
+from allencell_ml_segmenter.core.image_data_extractor import FakeImageDataExtractor
+from allencell_ml_segmenter.core.task_executor import SynchroTaskExecutor
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
 
@@ -12,6 +13,7 @@ from allencell_ml_segmenter.services.training_service import (
 )
 from allencell_ml_segmenter.training.training_model import (
     TrainingModel,
+    TrainingImageType,
 )
 import allencell_ml_segmenter
 
@@ -39,7 +41,9 @@ def training_model(experiments_model: ExperimentsModel) -> TrainingModel:
     model.set_experiment_type("segmentation")
     model.set_spatial_dims(2)
     model.set_images_directory("/path/to/images")
-    model.set_channel_index(9)
+    model.set_selected_channel(TrainingImageType.RAW, 1)
+    model.set_selected_channel(TrainingImageType.SEG1, 2)
+    model.set_selected_channel(TrainingImageType.SEG2, 3)
     model.set_use_max_time(True)
     model.set_max_time(9992)
     model.set_config_dir("/path/to/configs")
@@ -58,7 +62,8 @@ def training_service(
     return TrainingService(
         training_model=training_model,
         experiments_model=experiments_model,
-        extractor_factory=FakeExtractorFactory(0),
+        img_data_extractor=FakeImageDataExtractor.global_instance(),
+        task_executor=SynchroTaskExecutor.global_instance(),
     )
 
 
