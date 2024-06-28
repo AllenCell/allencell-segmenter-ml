@@ -85,6 +85,10 @@ def test_combos_update_when_num_channels_set(
     assert image_selection_widget._seg1_channel_combo_box.currentIndex() == -1
     assert image_selection_widget._seg2_channel_combo_box.currentIndex() == -1
 
+    assert not image_selection_widget._raw_channel_combo_box.isEnabled()
+    assert not image_selection_widget._seg1_channel_combo_box.isEnabled()
+    assert not image_selection_widget._seg2_channel_combo_box.isEnabled()
+
     assert training_model.get_selected_channel(TrainingImageType.RAW) == None
     assert training_model.get_selected_channel(TrainingImageType.SEG1) == None
     assert training_model.get_selected_channel(TrainingImageType.SEG2) == None
@@ -104,6 +108,10 @@ def test_combos_update_when_num_channels_set(
     assert image_selection_widget._raw_channel_combo_box.currentIndex() == 0
     assert image_selection_widget._seg1_channel_combo_box.currentIndex() == 0
     assert image_selection_widget._seg2_channel_combo_box.currentIndex() == 0
+
+    assert image_selection_widget._raw_channel_combo_box.isEnabled()
+    assert image_selection_widget._seg1_channel_combo_box.isEnabled()
+    assert image_selection_widget._seg2_channel_combo_box.isEnabled()
 
     assert training_model.get_selected_channel(TrainingImageType.RAW) == 0
     assert training_model.get_selected_channel(TrainingImageType.SEG1) == 0
@@ -154,4 +162,8 @@ def test_reset_num_channels_to_none(
     assert training_model.get_selected_channel(TrainingImageType.RAW) == None
     assert training_model.get_selected_channel(TrainingImageType.SEG1) == None
     assert training_model.get_selected_channel(TrainingImageType.SEG2) == None
+
+    assert not image_selection_widget._raw_channel_combo_box.isEnabled()
+    assert not image_selection_widget._seg1_channel_combo_box.isEnabled()
+    assert not image_selection_widget._seg2_channel_combo_box.isEnabled()
 
