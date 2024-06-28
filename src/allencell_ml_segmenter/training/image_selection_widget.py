@@ -15,7 +15,10 @@ from qtpy.QtWidgets import (
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.curation.stacked_spinner import StackedSpinner
 from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
-from allencell_ml_segmenter.training.training_model import TrainingModel, TrainingImageType
+from allencell_ml_segmenter.training.training_model import (
+    TrainingModel,
+    TrainingImageType,
+)
 from allencell_ml_segmenter.widgets.input_button_widget import (
     InputButton,
     FileInputMode,
@@ -144,15 +147,17 @@ class ImageSelectionWidget(QWidget):
         self._reset_combo_box(self._seg1_channel_combo_box, None)
         self._reset_combo_box(self._seg2_channel_combo_box, None)
 
-    def _handle_idx_change(self, idx: int, img_type: TrainingImageType) -> None:
+    def _handle_idx_change(
+        self, idx: int, img_type: TrainingImageType
+    ) -> None:
         self._model.set_selected_channel(img_type, idx if idx >= 0 else None)
 
-    def _reset_combo_box(self, combo_box: QComboBox, num_channels: Optional[int]) -> None:
+    def _reset_combo_box(
+        self, combo_box: QComboBox, num_channels: Optional[int]
+    ) -> None:
         combo_box.clear()
         if num_channels is not None:
-            combo_box.addItems(
-                [str(x) for x in range(num_channels)]
-            )
+            combo_box.addItems([str(x) for x in range(num_channels)])
             combo_box.setCurrentIndex(0)
             combo_box.setEnabled(True)
         else:
@@ -162,7 +167,15 @@ class ImageSelectionWidget(QWidget):
 
     def _update_channels(self) -> None:
         self._training_data_stacked_spinner.stop()
-        self._reset_combo_box(self._raw_channel_combo_box, self._model.get_num_channels(TrainingImageType.RAW))
-        self._reset_combo_box(self._seg1_channel_combo_box, self._model.get_num_channels(TrainingImageType.SEG1))
-        self._reset_combo_box(self._seg2_channel_combo_box, self._model.get_num_channels(TrainingImageType.SEG2))
-        
+        self._reset_combo_box(
+            self._raw_channel_combo_box,
+            self._model.get_num_channels(TrainingImageType.RAW),
+        )
+        self._reset_combo_box(
+            self._seg1_channel_combo_box,
+            self._model.get_num_channels(TrainingImageType.SEG1),
+        )
+        self._reset_combo_box(
+            self._seg2_channel_combo_box,
+            self._model.get_num_channels(TrainingImageType.SEG2),
+        )

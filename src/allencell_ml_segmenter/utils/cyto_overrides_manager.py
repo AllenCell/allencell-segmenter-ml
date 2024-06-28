@@ -92,7 +92,11 @@ class CytoDLOverridesManager:
         overrides_dict["input_channel"] = (
             self._training_model.get_selected_channel(TrainingImageType.RAW)
         )
-        overrides_dict["target_col1_channel"] = self._training_model.get_selected_channel(TrainingImageType.SEG1)
-        overrides_dict["target_col2_channel"] = self._training_model.get_selected_channel(TrainingImageType.SEG2)
+        overrides_dict["target_col1_channel"] = (
+            self._training_model.get_selected_channel(TrainingImageType.SEG1)
+        )
+        overrides_dict["target_col2_channel"] = (
+            self._training_model.get_selected_channel(TrainingImageType.SEG2)
+        )
 
         return overrides_dict

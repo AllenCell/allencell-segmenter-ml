@@ -29,10 +29,12 @@ class ModelSize(Enum):
     MEDIUM = [16, 32, 64]
     LARGE = [32, 64, 128]
 
+
 class TrainingImageType(Enum):
     RAW = "raw"
     SEG1 = "seg1"
     SEG2 = "seg2"
+
 
 # TODO: move these signals directly into TrainingModel once we deprecate
 # 'Publisher' in a refactor
@@ -40,11 +42,12 @@ class TrainingModelSignals(QObject):
     num_channels_set: Signal = Signal()
     images_directory_set: Signal = Signal()
 
+
 class TrainingModel(Publisher):
     """
     Stores state relevant to training processes.
     """
-    
+
     def __init__(
         self, main_model: MainModel, experiments_model: ExperimentsModel
     ):
@@ -54,8 +57,12 @@ class TrainingModel(Publisher):
         self.signals: TrainingModelSignals = TrainingModelSignals()
         self._experiment_type: TrainingType = None
         self._images_directory: Optional[Path] = None
-        self._selected_channel: dict[TrainingImageType, Optional[int]] = {t: None for t in TrainingImageType}
-        self._num_channels: dict[TrainingImageType, Optional[int]] = {t: None for t in TrainingImageType}
+        self._selected_channel: dict[TrainingImageType, Optional[int]] = {
+            t: None for t in TrainingImageType
+        }
+        self._num_channels: dict[TrainingImageType, Optional[int]] = {
+            t: None for t in TrainingImageType
+        }
         self._model_path: Union[Path, None] = (
             None  # if None, start a new model
         )
@@ -134,20 +141,25 @@ class TrainingModel(Publisher):
         self._images_directory = images_path
         self.signals.images_directory_set.emit()
 
-
     def get_num_channels(self, image_type: TrainingImageType) -> Optional[int]:
         return self._num_channels[image_type]
-    
-    def set_all_num_channels(self, num_channels: dict[TrainingImageType, Optional[int]]) -> None:
+
+    def set_all_num_channels(
+        self, num_channels: dict[TrainingImageType, Optional[int]]
+    ) -> None:
         self._num_channels = num_channels
         self.signals.num_channels_set.emit()
-    
-    def get_selected_channel(self, image_type: TrainingImageType) -> Optional[int]:
+
+    def get_selected_channel(
+        self, image_type: TrainingImageType
+    ) -> Optional[int]:
         return self._selected_channel[image_type]
-    
-    def set_selected_channel(self, image_type: TrainingImageType, channel: int) -> None:
+
+    def set_selected_channel(
+        self, image_type: TrainingImageType, channel: int
+    ) -> None:
         self._selected_channel[image_type] = channel
-    
+
     def get_patch_size(self) -> List[int]:
         """
         Gets patch size
