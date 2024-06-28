@@ -134,19 +134,6 @@ class TrainingModel(Publisher):
         self._images_directory = images_path
         self.signals.images_directory_set.emit()
 
-    def get_channel_index(self) -> Union[int, None]:
-        """
-        Gets channel index
-        """
-        return self._channel_index
-
-    def set_channel_index(self, index: int) -> None:
-        """
-        Sets channel index
-
-        channel_index (int | None): channel index for training, can be None for no channel index splicing
-        """
-        self._channel_index = index
 
     def get_num_channels(self, image_type: TrainingImageType) -> Optional[int]:
         return self._num_channels[image_type]
@@ -212,19 +199,6 @@ class TrainingModel(Publisher):
         Dispatches even to start training
         """
         self.dispatch(Event.PROCESS_TRAINING)
-
-    def set_max_channel(self, max: int) -> None:
-        """
-        Set the max number of channels in the images in the training dataset
-        """
-        self._max_channel = max
-        self.dispatch(Event.ACTION_TRAINING_MAX_NUMBER_CHANNELS_SET)
-
-    def get_max_channel(self) -> int:
-        """
-        Get the max number of channels in the images in the training dataset
-        """
-        return self._max_channel
 
     def use_max_time(self) -> bool:
         """
