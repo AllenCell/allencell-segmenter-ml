@@ -156,6 +156,7 @@ def test_selected_channel(training_model: TrainingModel) -> None:
     assert training_model.get_selected_channel(TrainingImageType.SEG1) == 2
     assert training_model.get_selected_channel(TrainingImageType.SEG2) == 3
 
+
 def test_num_channels(training_model: TrainingModel) -> None:
     # ASSSERT
     assert training_model.get_num_channels(TrainingImageType.RAW) is None
@@ -167,11 +168,13 @@ def test_num_channels(training_model: TrainingModel) -> None:
     training_model.signals.num_channels_set.connect(num_channel_listener)
 
     # ACT
-    training_model.set_all_num_channels({
-        TrainingImageType.RAW: 1,
-        TrainingImageType.SEG1: 2,
-        TrainingImageType.SEG2: 3,
-    })
+    training_model.set_all_num_channels(
+        {
+            TrainingImageType.RAW: 1,
+            TrainingImageType.SEG1: 2,
+            TrainingImageType.SEG2: 3,
+        }
+    )
 
     # ASSERT
     assert training_model.get_num_channels(TrainingImageType.RAW) == 1
