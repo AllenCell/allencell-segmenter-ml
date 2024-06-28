@@ -88,20 +88,17 @@ def test_get_training_overrides(
         == training_model.get_patch_size()
     )
 
-    assert (
-        training_overrides["input_channel"]
-        == training_model.get_selected_channel(TrainingImageType.RAW)
-    )
+    assert training_overrides[
+        "input_channel"
+    ] == training_model.get_selected_channel(TrainingImageType.RAW)
 
-    assert (
-        training_overrides["target_col1_channel"]
-        == training_model.get_selected_channel(TrainingImageType.SEG1)
-    )
+    assert training_overrides[
+        "target_col1_channel"
+    ] == training_model.get_selected_channel(TrainingImageType.SEG1)
 
-    assert (
-        training_overrides["target_col2_channel"]
-        == training_model.get_selected_channel(TrainingImageType.SEG2)
-    )
+    assert training_overrides[
+        "target_col2_channel"
+    ] == training_model.get_selected_channel(TrainingImageType.SEG2)
 
 
 def test_get_training_overrides_2d_spatial_dims(experiments_model) -> None:
@@ -112,7 +109,9 @@ def test_get_training_overrides_2d_spatial_dims(experiments_model) -> None:
     model.set_use_max_time(True)
     model.set_selected_channel(TrainingImageType.RAW, 0)
     model.set_selected_channel(TrainingImageType.SEG1, 0)
-    model.set_selected_channel(TrainingImageType.SEG2, 0)  # set to 0 if 2d image loaded
+    model.set_selected_channel(
+        TrainingImageType.SEG2, 0
+    )  # set to 0 if 2d image loaded
     model.set_max_time(9992)
     model.set_config_dir("/path/to/configs")
     model.set_num_epochs(100)
