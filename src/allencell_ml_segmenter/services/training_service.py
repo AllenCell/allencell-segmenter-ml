@@ -109,14 +109,7 @@ class TrainingService(Subscriber):
         if self._training_model.get_num_epochs() is None:
             show_warning("Please define max epoch(s) to run for")
             return False
-        if (
-            self._training_model.get_max_channel() > 0
-            and self._training_model.get_channel_index() is None
-        ):
-            show_warning(
-                "Your raw images have multiple channels, please select a channel to train on."
-            )
-            return False
+        
         if self._training_model.get_model_size() is None:
             show_warning("Please define model size.")
             return False
