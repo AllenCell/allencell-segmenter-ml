@@ -9,6 +9,7 @@ from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.training.training_model import (
     TrainingModel,
+    TrainingImageType,
 )
 from allencell_ml_segmenter.utils.cyto_overrides_manager import (
     CytoDLOverridesManager,
@@ -38,7 +39,9 @@ def training_model(experiments_model: ExperimentsModel) -> TrainingModel:
     model.set_experiment_type("segmentation")
     model.set_spatial_dims(3)
     model.set_images_directory("/path/to/images")
-    model.set_channel_index(9)
+    model.set_selected_channel(TrainingImageType.RAW, 1)
+    model.set_selected_channel(TrainingImageType.SEG1, 2)
+    model.set_selected_channel(TrainingImageType.SEG2, 3)
     model.set_use_max_time(True)
     model.set_max_time(9992)
     model.set_config_dir("/path/to/configs")
@@ -87,7 +90,17 @@ def test_get_training_overrides(
 
     assert (
         training_overrides["input_channel"]
-        == training_model.get_channel_index()
+        == training_model.get_selected_channel(TrainingImageType.RAW)
+    )
+
+    assert (
+        training_overrides["target_col1_channel"]
+        == training_model.get_selected_channel(TrainingImageType.SEG1)
+    )
+
+    assert (
+        training_overrides["target_col2_channel"]
+        == training_model.get_selected_channel(TrainingImageType.SEG2)
     )
 
 
@@ -97,7 +110,9 @@ def test_get_training_overrides_2d_spatial_dims(experiments_model) -> None:
     model.set_experiment_type("segmentation")
     model.set_images_directory("/path/to/images")
     model.set_use_max_time(True)
-    model.set_channel_index(0)  # set to 0 if 2d image loaded
+    model.set_selected_channel(TrainingImageType.RAW, 0)
+    model.set_selected_channel(TrainingImageType.SEG1, 0)
+    model.set_selected_channel(TrainingImageType.SEG2, 0)  # set to 0 if 2d image loaded
     model.set_max_time(9992)
     model.set_config_dir("/path/to/configs")
     model.set_num_epochs(100)
