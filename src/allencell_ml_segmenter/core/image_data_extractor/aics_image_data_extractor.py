@@ -31,7 +31,7 @@ class AICSImageDataExtractor(IImageDataExtractor):
         aics_img: AICSImage = AICSImage(img_path)
         if aics_img.dims.T > 1:
             raise RuntimeError("Cannot load timeseries images")
-        
+
         img_data = None
         if np_data:
             img_data = aics_img.get_image_dask_data("ZYX", C=channel).compute()
