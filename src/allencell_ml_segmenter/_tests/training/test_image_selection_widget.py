@@ -163,6 +163,15 @@ def test_reset_num_channels_to_none(
         }
     )
 
+    # ASSERT (sanity check)
+    assert training_model.get_selected_channel(TrainingImageType.RAW) == 0
+    assert training_model.get_selected_channel(TrainingImageType.SEG1) == 0
+    assert training_model.get_selected_channel(TrainingImageType.SEG2) == 0
+
+    assert image_selection_widget._raw_channel_combo_box.isEnabled()
+    assert image_selection_widget._seg1_channel_combo_box.isEnabled()
+    assert image_selection_widget._seg2_channel_combo_box.isEnabled()
+
     # ACT
     training_model.set_all_num_channels(
         {
