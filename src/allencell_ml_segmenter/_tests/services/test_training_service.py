@@ -43,9 +43,17 @@ def training_model(experiments_model: ExperimentsModel) -> TrainingModel:
     return model
 
 
-def test_service_reacts_to_image_dir_set(qtbot: QtBot, training_model: TrainingModel, experiments_model: ExperimentsModel) -> None:
+def test_service_reacts_to_image_dir_set(
+    qtbot: QtBot,
+    training_model: TrainingModel,
+    experiments_model: ExperimentsModel,
+) -> None:
     # Arrange
-    service: TrainingService = TrainingService(training_model, experiments_model, img_data_extractor=FakeImageDataExtractor.global_instance())
+    service: TrainingService = TrainingService(
+        training_model,
+        experiments_model,
+        img_data_extractor=FakeImageDataExtractor.global_instance(),
+    )
     img_dir: Path = (
         Path(allencell_ml_segmenter.__file__).parent
         / "_tests"
