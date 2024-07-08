@@ -2,7 +2,6 @@ from pathlib import Path
 from typing import Optional
 import csv
 
-from aicsimageio.exceptions import UnsupportedFileFormatError
 from qtpy.QtCore import QObject, QThread, Signal
 from aicsimageio import AICSImage
 
@@ -12,7 +11,11 @@ def extract_channels_from_image(img_path: Path) -> int:
     Returns number of channels in the given img_path.
     :param img_path: image to extract channels from
     """
-    return AICSImage(str(img_path)).dims.C
+    img_data: AICSImage = AICSImage(str(img_path))
+    if img_data.dims.T > 1:
+        raise RuntimeError("Cannot load timeseries images")
+
+    return img_data.dims.C
 
 
 def get_img_path_from_csv(
@@ -56,12 +59,9 @@ class ChannelExtractionThread(QThread):
 
         try:
             channels: int = extract_channels_from_image(self._img_path)
-        except UnsupportedFileFormatError as ex:
+        except Exception as ex:
             self.task_failed.emit(ex)
             return  # return instead of reraise to surprss error message in napari console
-        except FileNotFoundError as ex:
-            self.task_failed.emit(ex)
-            return
 
         if not QThread.currentThread().isInterruptionRequested():
             self.channels_ready.emit(channels)
