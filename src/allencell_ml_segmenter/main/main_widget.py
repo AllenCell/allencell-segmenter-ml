@@ -79,7 +79,6 @@ class MainWidget(AicsWidget):
         self._training_service: TrainingService = TrainingService(
             training_model=self._training_model,
             experiments_model=self._experiments_model,
-            extractor_factory=ExtractorFactory(),
         )
         self._prediction_service: PredictionService = PredictionService(
             prediction_model=self._prediction_model,
