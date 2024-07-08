@@ -140,7 +140,9 @@ class PredictionFileInput(QWidget):
 
         grid_layout: QGridLayout = QGridLayout()
 
-        image_input_label: LabelWithHint = LabelWithHint("Input image's channel")
+        image_input_label: LabelWithHint = LabelWithHint(
+            "Input image's channel"
+        )
         image_input_label.set_hint("0-indexed channel in image to segment.")
 
         self._channel_select_dropdown: QComboBox = QComboBox()

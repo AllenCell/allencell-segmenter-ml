@@ -84,7 +84,7 @@ class TrainingView(View, MainWindow):
 
         # bottom half
         bottom_grid_layout = QGridLayout()
-        
+
         patch_size_text_layout = QVBoxLayout()
         patch_size_text_layout.setSpacing(0)
         patch_size_label: LabelWithHint = LabelWithHint("Patch size")
