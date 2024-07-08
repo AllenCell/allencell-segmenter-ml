@@ -41,7 +41,7 @@ class PredictionFileInput(QWidget):
     """
 
     TOP_TEXT: str = "On-screen image(s)"
-    BOTTOM_TEXT: str = "Image(s) from a directory"
+    BOTTOM_TEXT: str = "Image directory"
 
     def __init__(
         self, model: PredictionModel, viewer: Viewer, service: ModelFileService
@@ -117,17 +117,7 @@ class PredictionFileInput(QWidget):
             "Select images to segment from a folder. All images should have the same number and ordering of channels."
         )
         question_label.add_right_space(10)
-
-        guide_text: QLabel = QLabel()
-        guide_text.setText(
-            "Accepts directories, <a href='https://www.allencell.org/segmenter.html'>see instructions</a>"
-        )
-        guide_text.setObjectName("guideText")
-        guide_text.setTextFormat(Qt.RichText)
-        guide_text.setOpenExternalLinks(True)
-
         image_dir_layout.addWidget(question_label)
-        image_dir_layout.addWidget(guide_text)
 
         horiz_layout.addLayout(image_dir_layout)
 
@@ -150,7 +140,7 @@ class PredictionFileInput(QWidget):
 
         grid_layout: QGridLayout = QGridLayout()
 
-        image_input_label: LabelWithHint = LabelWithHint("Image input channel")
+        image_input_label: LabelWithHint = LabelWithHint("Input image's channel")
         image_input_label.set_hint("0-indexed channel in image to segment.")
 
         self._channel_select_dropdown: QComboBox = QComboBox()
