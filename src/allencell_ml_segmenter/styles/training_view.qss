@@ -60,3 +60,8 @@
     background-color: #414851;
     color: #868E93;
 }
+
+#subtext {
+    font-size: 10px;
+    color: #868E93;
+}
