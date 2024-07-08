@@ -4,8 +4,8 @@ from enum import Enum
 from typing import Union, Optional, List
 from pathlib import Path
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
-
 from allencell_ml_segmenter.main.main_model import MainModel
+from qtpy.QtCore import QObject, Signal
 
 
 class TrainingType(Enum):
@@ -30,6 +30,19 @@ class ModelSize(Enum):
     LARGE = [32, 64, 128]
 
 
+class TrainingImageType(Enum):
+    RAW = "raw"
+    SEG1 = "seg1"
+    SEG2 = "seg2"
+
+
+# TODO: move these signals directly into TrainingModel once we deprecate
+# 'Publisher' in a refactor
+class TrainingModelSignals(QObject):
+    num_channels_set: Signal = Signal()
+    images_directory_set: Signal = Signal()
+
+
 class TrainingModel(Publisher):
     """
     Stores state relevant to training processes.
@@ -41,16 +54,21 @@ class TrainingModel(Publisher):
         super().__init__()
         self._main_model = main_model
         self.experiments_model = experiments_model
+        self.signals: TrainingModelSignals = TrainingModelSignals()
         self._experiment_type: TrainingType = None
-        self._images_directory: Path = None
-        self._channel_index: Union[int, None] = None
+        self._images_directory: Optional[Path] = None
+        self._selected_channel: dict[TrainingImageType, Optional[int]] = {
+            t: None for t in TrainingImageType
+        }
+        self._num_channels: dict[TrainingImageType, Optional[int]] = {
+            t: None for t in TrainingImageType
+        }
         self._model_path: Union[Path, None] = (
             None  # if None, start a new model
         )
         self._patch_size: List[int] = None
         self._spatial_dims: int = None
         self._num_epochs: int = None
-        self._current_epoch: int = None
         self._max_time: int = None  # in minutes
         self._config_dir: Path = None
         self._max_channel = None
@@ -108,50 +126,39 @@ class TrainingModel(Publisher):
         """
         self._num_epochs = num_epochs
 
-    def get_current_epoch(self) -> int:
-        """
-        Gets current epoch
-        """
-        return self._current_epoch
-
-    def set_current_epoch(self, current: int) -> None:
-        """
-        Sets current epoch
-
-        current_epoch (int): current epoch number
-        """
-        self._current_epoch = current
-        self.dispatch(Event.PROCESS_TRAINING_PROGRESS)
-
-    def get_images_directory(self) -> Path:
+    def get_images_directory(self) -> Optional[Path]:
         """
         Gets images directory
         """
         return self._images_directory
 
-    def set_images_directory(self, images_path: Path) -> None:
+    def set_images_directory(self, images_path: Optional[Path]) -> None:
         """
         Sets images directory, and dispatches channel extraction
 
         images_path (Path): path to images directory
         """
         self._images_directory = images_path
-        if images_path is not None:
-            self.dispatch(Event.ACTION_TRAINING_DATASET_SELECTED)
+        self.signals.images_directory_set.emit()
 
-    def get_channel_index(self) -> Union[int, None]:
-        """
-        Gets channel index
-        """
-        return self._channel_index
+    def get_num_channels(self, image_type: TrainingImageType) -> Optional[int]:
+        return self._num_channels[image_type]
 
-    def set_channel_index(self, index: int) -> None:
-        """
-        Sets channel index
+    def set_all_num_channels(
+        self, num_channels: dict[TrainingImageType, Optional[int]]
+    ) -> None:
+        self._num_channels = num_channels
+        self.signals.num_channels_set.emit()
 
-        channel_index (int | None): channel index for training, can be None for no channel index splicing
-        """
-        self._channel_index = index
+    def get_selected_channel(
+        self, image_type: TrainingImageType
+    ) -> Optional[int]:
+        return self._selected_channel[image_type]
+
+    def set_selected_channel(
+        self, image_type: TrainingImageType, channel: int
+    ) -> None:
+        self._selected_channel[image_type] = channel
 
     def get_patch_size(self) -> List[int]:
         """
@@ -204,19 +211,6 @@ class TrainingModel(Publisher):
         Dispatches even to start training
         """
         self.dispatch(Event.PROCESS_TRAINING)
-
-    def set_max_channel(self, max: int) -> None:
-        """
-        Set the max number of channels in the images in the training dataset
-        """
-        self._max_channel = max
-        self.dispatch(Event.ACTION_TRAINING_MAX_NUMBER_CHANNELS_SET)
-
-    def get_max_channel(self) -> int:
-        """
-        Get the max number of channels in the images in the training dataset
-        """
-        return self._max_channel
 
     def use_max_time(self) -> bool:
         """
