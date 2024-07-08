@@ -55,7 +55,7 @@ class ModelSelectionWidget(QWidget):
         self._title: LabelWithHint = LabelWithHint(
             ModelSelectionWidget.TITLE_TEXT,
         )
-        self._title.setObjectName("title")
+        self._title.setStyleSheet("padding-top: 12px")
 
         self._model_name_label: QLabel = QLabel()
         self._model_name_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
@@ -79,7 +79,7 @@ class ModelSelectionWidget(QWidget):
 
         plugin_title_widget_layout: QHBoxLayout = QHBoxLayout()
         plugin_title_widget_layout.addWidget(
-            QLabel("Allen Cell & Structure Segmentation")
+            QLabel("Allen Cell & Structure Segmenter - MACHINE LEARNING")
         )
         plugin_title_widget_layout.addWidget(
             self.help_combo_box, alignment=Qt.AlignmentFlag.AlignRight
@@ -87,7 +87,6 @@ class ModelSelectionWidget(QWidget):
 
         layout.setContentsMargins(20, 20, 20, 20)
         layout.addLayout(plugin_title_widget_layout)
-        layout.addWidget(QLabel("DEEP LEARNING"))
 
         # layout for model labels
         label_widget_layout: QHBoxLayout = QHBoxLayout()
