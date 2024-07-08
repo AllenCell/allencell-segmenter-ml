@@ -8,7 +8,9 @@ from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.training.training_model import (
     TrainingModel,
     TrainingType,
+    TrainingImageType,
 )
+from unittest.mock import Mock
 
 
 @pytest.fixture
@@ -123,38 +125,62 @@ def test_set_images_directory(training_model: TrainingModel) -> None:
     Tests that set_images_directory sets the correct images directory.
     """
     # ARRANGE
+    img_dir_listener: Mock = Mock()
     path: Path = Path("/path/to/images")
+    training_model.signals.images_directory_set.connect(img_dir_listener)
 
     # ACT
     training_model.set_images_directory(path)
 
     # ASSERT
     assert training_model._images_directory == path
+    img_dir_listener.assert_called_once()
 
 
-def test_get_channel_index(training_model: TrainingModel) -> None:
+def test_selected_channel(training_model: TrainingModel) -> None:
     """
     Tests that get_channel_index returns the correct channel index.
     """
     # ASSERT
-    assert training_model.get_channel_index() is None
+    assert training_model.get_selected_channel(TrainingImageType.RAW) is None
+    assert training_model.get_selected_channel(TrainingImageType.SEG1) is None
+    assert training_model.get_selected_channel(TrainingImageType.SEG2) is None
 
-    # ARRANGE
-    training_model._channel_index = 1
+    # ACT
+    training_model.set_selected_channel(TrainingImageType.RAW, 1)
+    training_model.set_selected_channel(TrainingImageType.SEG1, 2)
+    training_model.set_selected_channel(TrainingImageType.SEG2, 3)
 
     # ACT/ASSERT
-    assert training_model.get_channel_index() == 1
+    assert training_model.get_selected_channel(TrainingImageType.RAW) == 1
+    assert training_model.get_selected_channel(TrainingImageType.SEG1) == 2
+    assert training_model.get_selected_channel(TrainingImageType.SEG2) == 3
 
 
-def test_set_channel_index(training_model: TrainingModel) -> None:
-    """
-    Tests that set_channel_index sets the correct channel index.
-    """
+def test_num_channels(training_model: TrainingModel) -> None:
+    # ASSSERT
+    assert training_model.get_num_channels(TrainingImageType.RAW) is None
+    assert training_model.get_num_channels(TrainingImageType.SEG1) is None
+    assert training_model.get_num_channels(TrainingImageType.SEG2) is None
+
+    # ARRANGE
+    num_channel_listener: Mock = Mock()
+    training_model.signals.num_channels_set.connect(num_channel_listener)
+
     # ACT
-    training_model.set_channel_index(1)
+    training_model.set_all_num_channels(
+        {
+            TrainingImageType.RAW: 1,
+            TrainingImageType.SEG1: 2,
+            TrainingImageType.SEG2: 3,
+        }
+    )
 
     # ASSERT
-    assert training_model._channel_index == 1
+    assert training_model.get_num_channels(TrainingImageType.RAW) == 1
+    assert training_model.get_num_channels(TrainingImageType.SEG1) == 2
+    assert training_model.get_num_channels(TrainingImageType.SEG2) == 3
+    num_channel_listener.assert_called_once()
 
 
 def test_get_patch_size(training_model: TrainingModel) -> None:
