@@ -73,20 +73,20 @@ class ImageSelectionWidget(QWidget):
         )
 
         frame.layout().addWidget(directory_label, 0, 0, Qt.AlignVCenter)
-        
+
         # remove until we provide tutorial for manually creating csv
-        #guide_text: QLabel = QLabel()
-        #guide_text.setText(
+        # guide_text: QLabel = QLabel()
+        # guide_text.setText(
         #    "<a href='https://www.allencell.org/segmenter.html'>See instructions</a> for CSV file"
-        #)
-        #guide_text.setObjectName("guideText")
-        #guide_text.setTextFormat(Qt.RichText)
-        #guide_text.setOpenExternalLinks(True)
+        # )
+        # guide_text.setObjectName("guideText")
+        # guide_text.setTextFormat(Qt.RichText)
+        # guide_text.setOpenExternalLinks(True)
 
         frame.layout().addWidget(
             self._training_data_stacked_spinner, 0, 1, Qt.AlignVCenter
         )
-        #frame.layout().addWidget(guide_text, 1, 1, Qt.AlignTop)
+        # frame.layout().addWidget(guide_text, 1, 1, Qt.AlignTop)
 
         self._raw_channel_combo_box: QComboBox = QComboBox()
         self._raw_channel_combo_box.setMinimumWidth(306)
