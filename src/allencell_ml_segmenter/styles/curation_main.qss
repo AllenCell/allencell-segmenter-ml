@@ -19,6 +19,7 @@ QPushButton {
 
 #subtext {
     font-size: 10px;
+    color: #868E93;
 }
 
 #save_csv_btn {
