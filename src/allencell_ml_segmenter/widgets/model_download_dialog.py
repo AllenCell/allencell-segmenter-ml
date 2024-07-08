@@ -40,12 +40,12 @@ class ModelDownloadDialog(QDialog):
             continue_download = overwrite_dialog.get_selection()
 
         if continue_download:
-            self._model_downloader.download_model_to(
+            self._model_downloader.download_model_and_unzip(
                 selected_model_name,
                 self._experiments_model.get_user_experiments_path(),
             )
             download_complete_message = InfoDialogBox(
-                f"Downloadaded {selected_model_name} to {self._experiments_model.get_user_experiments_path() / selected_model_name}"
+                f"Downloaded {selected_model_name} to {self._experiments_model.get_user_experiments_path() / selected_model_name}"
             )
             download_complete_message.exec()
             self._experiments_model.refresh_experiments()  # prevents repeat downloads of model before exiting download dialog
