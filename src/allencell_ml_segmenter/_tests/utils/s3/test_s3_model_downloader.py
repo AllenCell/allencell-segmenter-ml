@@ -108,6 +108,65 @@ def test_get_available_models() -> None:
 
 
 @responses.activate
+def test_get_available_models_duplicate_file_error() -> None:
+    # ARRANGE
+    test_url: str = "http://testbucketendpoint.com"
+    # The following line mimics what s3 would send back from the ListObjectV2 http request
+    # example response is from https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListObjectsV2.html
+    # and does not represent any real data.
+    xml_response: str = (
+        f'<?xml version="1.0" encoding="UTF-8"?>'
+        f"<ListBucketResult>"
+        f"<Name>bucket</Name>"
+        f"<Prefix></Prefix>"
+        f"<ContinuationToken>randomtoken</ContinuationToken>"
+        f"<KeyCount>112</KeyCount>"
+        f"<MaxKeys>1000</MaxKeys>"
+        f"<IsTruncated>false</IsTruncated>"
+        f"  <Contents>"
+        f"    <Key>model1.zip</Key>"  # 1st Model file name
+        f"    <LastModified>2014-11-21T19:40:05.000Z</LastModified>"
+        f'    <ETag>"70ee1738b6b21e2c8a43f3a5ab0eee71"</ETag>'
+        f"    <Size>1111</Size>"
+        f"    <StorageClass>STANDARD</StorageClass>"
+        f"  </Contents>"
+        f"  <Contents>"
+        f"    <Key>model1.zip</Key>"  # 1st Model file name (duplicated)
+        f"    <LastModified>2014-11-21T19:40:05.000Z</LastModified>"
+        f'     <ETag>"70ee1738b6b21e2c8a43f3a5ab0eee71"</ETag>'
+        f"    <Size>1111</Size>"
+        f"    <StorageClass>STANDARD</StorageClass>"
+        f"  </Contents>"
+        f"  <Contents>"
+        f"    <Key>some_random_file</Key>"  # some random file
+        f"    <LastModified>2014-11-21T19:40:05.000Z</LastModified>"
+        f'    <ETag>"70ee1738b6b21e2c8a43f3a5ab0eee71"</ETag>'
+        f"    <Size>1111</Size>"
+        f"    <StorageClass>STANDARD</StorageClass>"
+        f"  </Contents>"
+        f"</ListBucketResult>"
+    )
+    # add fake xml response that is returned when we make a request to the test_url with the list-type=2 param
+    responses.add(
+        **{
+            "method": responses.GET,
+            "url": f"{test_url}?list-type=2",
+            "body": xml_response,
+            "status": 200,
+            "content_type": "application/xml",
+            "adding_headers": {"X-Foo": "Bar"},
+        }
+    )
+
+    model_downloader: S3ModelDownloader = S3ModelDownloader(test_url=test_url)
+
+    # ACT/ASSERT
+    with pytest.raises(ValueError):
+        # if there are models with duplicate names on s3 somehow- we show an error
+        model_downloader.get_available_models()
+
+
+@responses.activate
 def test_get_available_models_bad_request() -> None:
     # ARRANGE
     test_url: str = "http://testbucketendpoint.com"
