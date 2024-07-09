@@ -1,4 +1,5 @@
-from xml.etree.ElementTree import ElementTree
+from typing import Optional
+from xml.etree import ElementTree
 
 import requests
 
@@ -18,10 +19,13 @@ STG_BUCKET_ENDPOINT = ""
 
 
 class S3ModelDownloader:
-    def __init__(self, staging=False):
-        self._bucket_endpoint = (
-            STG_BUCKET_ENDPOINT if staging else BUCKET_ENDPOINT
-        )
+    def __init__(self, staging=False, test_url: Optional[str] = None):
+        if test_url:
+            self._bucket_endpoint = test_url
+        else:
+            self._bucket_endpoint = (
+                STG_BUCKET_ENDPOINT if staging else BUCKET_ENDPOINT
+            )
 
     def get_available_models(self) -> dict[str, AvailableModels]:
         """
@@ -82,3 +86,6 @@ class S3ModelDownloader:
             if model_name.endswith(".zip"):
                 available.append(model_name)
         return available
+
+    def get_bucket_endpoint(self) -> str:
+        return self._bucket_endpoint
