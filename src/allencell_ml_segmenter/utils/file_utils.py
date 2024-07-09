@@ -196,19 +196,3 @@ class FileUtils:
         # for Linux
         else:
             subprocess.Popen(["xdg-open", dir])
-
-    @staticmethod
-    def unzip_zipped_file_and_delete_zip(path_to_zipped: Path) -> None:
-        """
-        Extract a zipped file to the same directory it is in, and delete the original zip file
-        """
-        with ZipFile(path_to_zipped, 'r') as zipped:
-            zipped.extractall(path_to_zipped.parent)
-        # delete original zip file
-        path_to_zipped.unlink()
-
-    @staticmethod
-    def write_to_file(path: Path, contents: bytes) -> None:
-        # Save file
-        with open(path, 'wb') as f:
-            f.write(contents)

@@ -353,24 +353,4 @@ def test_count_images_in_csv_folder_multiple_csv() -> None:
     assert FileUtils.count_images_in_csv_folder(folder) == 6
 
 
-def test_write_to_file() -> None:
-    # Arrange
-    to_write: bytes = bytes('abcde', "utf-8")
-    test_path: Path = (
-        Path(allencell_ml_segmenter.__file__).parent
-        / "_tests"
-        / "test_files"
-        / "zip_files"
-        / "test_zip.zip"
-    )
-    open_file_mock: Mock = mock_open()
-
-    # Act
-    with patch("allencell_ml_segmenter.utils.file_utils.open", open_file_mock):
-        FileUtils.write_to_file(test_path, to_write)
-
-    # Assert
-    open_file_mock.assert_called_with(test_path, "wb")
-    open_file_mock.return_value.write.assert_called_once_with(to_write)
-
 
