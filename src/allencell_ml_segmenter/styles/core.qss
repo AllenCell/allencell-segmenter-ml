@@ -39,6 +39,10 @@ QPushButton:pressed {
     background-color: #00489D;
 }
 
+QComboBox:disabled {
+    color: #868E93;
+}
+
 #subtext {
     font-size: 10px;
     color: #868E93;
