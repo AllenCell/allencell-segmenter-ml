@@ -45,21 +45,21 @@ def test_get_available_models() -> None:
         f"<MaxKeys>1000</MaxKeys>"
         f"<IsTruncated>false</IsTruncated>"
         f"  <Contents>"
-        f"    <Key>model1.zip</Key>" # 1st Model file name
+        f"    <Key>model1.zip</Key>"  # 1st Model file name
         f"    <LastModified>2014-11-21T19:40:05.000Z</LastModified>"
         f'    <ETag>"70ee1738b6b21e2c8a43f3a5ab0eee71"</ETag>'
         f"    <Size>1111</Size>"
         f"    <StorageClass>STANDARD</StorageClass>"
         f"  </Contents>"
         f"  <Contents>"
-        f"    <Key>model2.zip</Key>" # 2nd Model file name
+        f"    <Key>model2.zip</Key>"  # 2nd Model file name
         f"    <LastModified>2014-11-21T19:40:05.000Z</LastModified>"
         f'     <ETag>"70ee1738b6b21e2c8a43f3a5ab0eee71"</ETag>'
         f"    <Size>1111</Size>"
         f"    <StorageClass>STANDARD</StorageClass>"
         f"  </Contents>"
         f"  <Contents>"
-        f"    <Key>model3.zip</Key>" # 3rd Model file name
+        f"    <Key>model3.zip</Key>"  # 3rd Model file name
         f"    <LastModified>2014-11-21T19:40:05.000Z</LastModified>"
         f'    <ETag>"70ee1738b6b21e2c8a43f3a5ab0eee71"</ETag>'
         f"    <Size>1111</Size>"
@@ -122,4 +122,4 @@ def test_get_available_models_bad_request() -> None:
 
     # ACT/ASSERT
     with pytest.raises(S3RequestException):
-        model_downloader.get_available_models() # any status code != 200 should throw S3RequestException
+        model_downloader.get_available_models()  # any status code != 200 should throw S3RequestException
