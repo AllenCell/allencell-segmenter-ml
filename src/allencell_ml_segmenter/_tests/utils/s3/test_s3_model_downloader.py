@@ -1,6 +1,3 @@
-import pytest
-import responses
-
 from allencell_ml_segmenter.utils.s3 import S3ModelDownloader, AvailableModels
 from allencell_ml_segmenter.utils.s3.s3_model_downloader import (
     STG_BUCKET_ENDPOINT,
@@ -10,8 +7,11 @@ from allencell_ml_segmenter.utils.s3.s3_request_exception import (
     S3RequestException,
 )
 
+import pytest
+import responses
 
-def test_init_s3_downloader_with_staging():
+
+def test_init_s3_downloader_with_staging() -> None:
     # Act
     downloader: S3ModelDownloader = S3ModelDownloader(staging=True)
 
@@ -19,7 +19,7 @@ def test_init_s3_downloader_with_staging():
     assert downloader.get_bucket_endpoint() == STG_BUCKET_ENDPOINT
 
 
-def test_init_s3_downloader_with_prod():
+def test_init_s3_downloader_with_prod() -> None:
     # Act
     # No params defaults to prod bucket
     downloader: S3ModelDownloader = S3ModelDownloader()
@@ -29,10 +29,9 @@ def test_init_s3_downloader_with_prod():
 
 
 @responses.activate
-def test_get_available_models():
+def test_get_available_models() -> None:
     # ARRANGE
     test_url: str = "http://testbucketendpoint.com"
-    model_file_names: list[str] = ["model1.zip", "model2.zip", "model3.zip"]
     # The following line mimics what s3 would send back from the ListObjectV2 http request
     # example response is from https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListObjectsV2.html
     # and does not represent any real data.
@@ -46,21 +45,21 @@ def test_get_available_models():
         f"<MaxKeys>1000</MaxKeys>"
         f"<IsTruncated>false</IsTruncated>"
         f"  <Contents>"
-        f"    <Key>model1.zip</Key>"
+        f"    <Key>model1.zip</Key>" # 1st Model file name
         f"    <LastModified>2014-11-21T19:40:05.000Z</LastModified>"
         f'    <ETag>"70ee1738b6b21e2c8a43f3a5ab0eee71"</ETag>'
         f"    <Size>1111</Size>"
         f"    <StorageClass>STANDARD</StorageClass>"
         f"  </Contents>"
         f"  <Contents>"
-        f"    <Key>model2.zip</Key>"
+        f"    <Key>model2.zip</Key>" # 2nd Model file name
         f"    <LastModified>2014-11-21T19:40:05.000Z</LastModified>"
         f'     <ETag>"70ee1738b6b21e2c8a43f3a5ab0eee71"</ETag>'
         f"    <Size>1111</Size>"
         f"    <StorageClass>STANDARD</StorageClass>"
         f"  </Contents>"
         f"  <Contents>"
-        f"    <Key>model3.zip</Key>"
+        f"    <Key>model3.zip</Key>" # 3rd Model file name
         f"    <LastModified>2014-11-21T19:40:05.000Z</LastModified>"
         f'    <ETag>"70ee1738b6b21e2c8a43f3a5ab0eee71"</ETag>'
         f"    <Size>1111</Size>"
@@ -68,7 +67,6 @@ def test_get_available_models():
         f"  </Contents>"
         f"</ListBucketResult>"
     )
-    model_downloader = S3ModelDownloader(test_url=test_url)
     # add fake xml response that is returned when we make a request to the test_url with the list-type=2 param
     responses.add(
         **{
@@ -80,6 +78,8 @@ def test_get_available_models():
             "adding_headers": {"X-Foo": "Bar"},
         }
     )
+
+    model_downloader: S3ModelDownloader = S3ModelDownloader(test_url=test_url)
 
     # ACT
     available_models_dict: dict[str, AvailableModels] = (
@@ -103,13 +103,10 @@ def test_get_available_models():
 
 
 @responses.activate
-def test_get_available_models_bad_request():
+def test_get_available_models_bad_request() -> None:
     # ARRANGE
     test_url: str = "http://testbucketendpoint.com"
-    model_file_names: list[str] = ["model1.zip", "model2.zip", "model3.zip"]
-    # This mimics what s3 would send back from a ListBucket http request
     error_response: str = "error"
-    model_downloader = S3ModelDownloader(test_url=test_url)
     responses.add(
         **{
             "method": responses.GET,
@@ -121,8 +118,8 @@ def test_get_available_models_bad_request():
         }
     )
 
+    model_downloader: S3ModelDownloader = S3ModelDownloader(test_url=test_url)
+
     # ACT/ASSERT
     with pytest.raises(S3RequestException):
-        available_models_dict: dict[str, AvailableModels] = (
-            model_downloader.get_available_models()
-        )
+        model_downloader.get_available_models() # any status code != 200 should throw S3RequestException
