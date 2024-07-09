@@ -59,7 +59,7 @@ def test_get_available_models() -> None:
         f"    <StorageClass>STANDARD</StorageClass>"
         f"  </Contents>"
         f"  <Contents>"
-        f"    <Key>model3.zip</Key>"  # 3rd Model file name
+        f"    <Key>some_random_file</Key>"  # some random file
         f"    <LastModified>2014-11-21T19:40:05.000Z</LastModified>"
         f'    <ETag>"70ee1738b6b21e2c8a43f3a5ab0eee71"</ETag>'
         f"    <Size>1111</Size>"
@@ -87,18 +87,23 @@ def test_get_available_models() -> None:
     )
 
     # ASSERT
-    # we store only file names as the dictionary keys (without .zip)
-    assert list(available_models_dict.keys()) == ["model1", "model2", "model3"]
+    # should have 2 models available
+    assert len(available_models_dict.keys()) == 2
+    assert "model1" in available_models_dict.keys()
+    assert "model2" in available_models_dict.keys()
+    assert "some_random_file" not in available_models_dict.keys()
+
     # dictionary values contain available models object w/ name and object url on s3
+    # check if object url was built correctly for the AvailableModels
     assert available_models_dict["model1"].get_name() == "model1.zip"
     assert (
         available_models_dict["model1"].get_object_url()
         == f"{test_url}/model1.zip"
     )
-    assert available_models_dict["model3"].get_name() == "model3.zip"
+    assert available_models_dict["model2"].get_name() == "model2.zip"
     assert (
-        available_models_dict["model3"].get_object_url()
-        == f"{test_url}/model3.zip"
+        available_models_dict["model2"].get_object_url()
+        == f"{test_url}/model2.zip"
     )
 
 
