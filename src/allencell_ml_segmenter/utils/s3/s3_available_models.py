@@ -35,3 +35,9 @@ class AvailableModels:
             raise S3RequestException(
                 f"Could not download model named {self._name} from {self._object_url}. Failed with status code {response.status_code}"
             )
+
+    def get_name(self) -> str:
+        return self._name
+
+    def get_object_url(self) -> str:
+        return self._object_url
