@@ -1,3 +1,6 @@
+from pathlib import Path
+import requests
+
 from allencell_ml_segmenter.utils.s3.s3_request_exception import (
     S3RequestException,
 )
@@ -5,8 +8,6 @@ from allencell_ml_segmenter.utils.zip_file import (
     IZipFileManager,
     ZipFileManager,
 )
-from pathlib import Path
-import requests
 
 
 class AvailableModels:
