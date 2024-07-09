@@ -5,6 +5,9 @@ from typing import Optional
 
 
 class FakeZipFileManager(IZipFileManager):
+    """
+    FakeZipFileManager for testing
+    """
     _instance: Optional = None
     # zip files that have been written, keys- path, values- content written
     written_zip_files: dict[Path, bytes] = {}
