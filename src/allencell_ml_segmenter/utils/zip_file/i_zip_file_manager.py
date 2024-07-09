@@ -6,6 +6,7 @@ class IZipFileManager(ABC):
     """
     ZipFileManager interface
     """
+
     def __init__(self):
         # using singleton pattern borrowed from IFIleWriter
         raise RuntimeError(
