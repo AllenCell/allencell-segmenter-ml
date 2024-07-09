@@ -7,8 +7,12 @@ from allencell_ml_segmenter.utils.s3.s3_available_models import AvailableModels
 import responses
 import pytest
 
-from allencell_ml_segmenter.utils.s3.s3_request_exception import S3RequestException
-from allencell_ml_segmenter.utils.zip_file.fake_zip_file_manager import FakeZipFileManager
+from allencell_ml_segmenter.utils.s3.s3_request_exception import (
+    S3RequestException,
+)
+from allencell_ml_segmenter.utils.zip_file.fake_zip_file_manager import (
+    FakeZipFileManager,
+)
 
 
 @responses.activate
@@ -17,14 +21,16 @@ def test_download_model_and_unzip_sucessful_request():
     fake_content: str = "fake_content abcde"
     fake_url: str = "http://test.com/abc"
     fake_model_file_name: str = "test_model.zip"
-    responses.add(**{
-        'method': responses.GET,
-        'url': f"{fake_url}/{fake_model_file_name}",
-        'body': fake_content,
-        'status': 200,
-        'content_type': 'application/zip',
-        'adding_headers': {'X-Foo': 'Bar'}
-    })
+    responses.add(
+        **{
+            "method": responses.GET,
+            "url": f"{fake_url}/{fake_model_file_name}",
+            "body": fake_content,
+            "status": 200,
+            "content_type": "application/zip",
+            "adding_headers": {"X-Foo": "Bar"},
+        }
+    )
     # Test path to save zip to
     test_path: Path = (
         Path(allencell_ml_segmenter.__file__).parent
@@ -33,15 +39,22 @@ def test_download_model_and_unzip_sucessful_request():
         / "zip_files"
     )
     fake_zip_file_manager = FakeZipFileManager.global_instance()
-    available_model: AvailableModels = AvailableModels(fake_model_file_name, fake_url, fake_zip_file_manager)
-
+    available_model: AvailableModels = AvailableModels(
+        fake_model_file_name, fake_url, fake_zip_file_manager
+    )
 
     # Act
     available_model.download_model_and_unzip(test_path)
 
     # Assert
-    assert fake_zip_file_manager.written_zip_files[test_path / fake_model_file_name] == bytes(fake_content, 'utf-8')
-    assert test_path / fake_model_file_name in fake_zip_file_manager.unzipped_files
+    assert fake_zip_file_manager.written_zip_files[
+        test_path / fake_model_file_name
+    ] == bytes(fake_content, "utf-8")
+    assert (
+        test_path / fake_model_file_name
+        in fake_zip_file_manager.unzipped_files
+    )
+
 
 @responses.activate
 def test_download_model_and_unzip_bad_request():
@@ -55,15 +68,19 @@ def test_download_model_and_unzip_bad_request():
     )
     fake_url: str = "https://testurl.com/test_url"
     fake_zip_file_manager = FakeZipFileManager.global_instance()
-    available_model: AvailableModels = AvailableModels("abc", fake_url, fake_zip_file_manager)
-    responses.add(**{
-        'method': responses.GET,
-        'url': f"{fake_url}/abc",
-        'body': '{"error": "error_reason"}',
-        'status': 400,
-        'content_type': 'application/zip',
-        'adding_headers': {'X-Foo': 'Bar'}
-    })
+    available_model: AvailableModels = AvailableModels(
+        "abc", fake_url, fake_zip_file_manager
+    )
+    responses.add(
+        **{
+            "method": responses.GET,
+            "url": f"{fake_url}/abc",
+            "body": '{"error": "error_reason"}',
+            "status": 400,
+            "content_type": "application/zip",
+            "adding_headers": {"X-Foo": "Bar"},
+        }
+    )
 
     # Act/Assert
     with pytest.raises(S3RequestException):
