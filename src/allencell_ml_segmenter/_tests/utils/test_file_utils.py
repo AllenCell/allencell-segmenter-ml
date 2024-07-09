@@ -1,4 +1,5 @@
 from pathlib import Path
+from unittest.mock import Mock, patch
 
 import allencell_ml_segmenter
 from allencell_ml_segmenter.utils.file_utils import FileUtils
@@ -10,6 +11,7 @@ from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
 
 from typing import List, Set
 import numpy as np
+from unittest import mock, mock_open
 
 
 def test_get_all_files_in_dir() -> None:
@@ -350,3 +352,26 @@ def test_count_images_in_csv_folder_multiple_csv() -> None:
     # Act / Assert
     # expect 6 since train has 3 unique, test has 3 unique, val is a copy of test
     assert FileUtils.count_images_in_csv_folder(folder) == 6
+
+
+def test_write_to_file() -> None:
+    # Arrange
+    to_write: bytes = bytearray('abcde', "utf-16")
+    test_path: Path = (
+        Path(allencell_ml_segmenter.__file__).parent
+        / "_tests"
+        / "test_files"
+        / "zip_files"
+        / "test_zip.zip"
+    )
+    open_file_mock: Mock = mock_open()
+
+    # Act
+    with patch("FileUtils.open", open_file_mock):
+        FileUtils.write_to_file(test_path, to_write)
+
+    # Assert
+    open_file_mock.assert_called_with(test_path, "wb")
+    open_file_mock.return_value.write.assert_called_once_with(to_write)
+
+
