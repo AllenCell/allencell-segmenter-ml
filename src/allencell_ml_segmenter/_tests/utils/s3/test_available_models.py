@@ -13,6 +13,18 @@ from allencell_ml_segmenter.utils.zip_file.fake_zip_file_manager import FakeZipF
 
 @responses.activate
 def test_download_model_and_unzip_sucessful_request():
+    # fake data
+    fake_content: str = "fake_content abcde"
+    fake_url: str = "http://test.com/abc"
+    fake_model_file_name: str = "test_model.zip"
+    responses.add(**{
+        'method': responses.GET,
+        'url': f"{fake_url}/{fake_model_file_name}",
+        'body': fake_content,
+        'status': 200,
+        'content_type': 'application/zip',
+        'adding_headers': {'X-Foo': 'Bar'}
+    })
     # Test path to save zip to
     test_path: Path = (
         Path(allencell_ml_segmenter.__file__).parent
@@ -20,26 +32,15 @@ def test_download_model_and_unzip_sucessful_request():
         / "test_files"
         / "zip_files"
     )
-    # fake data
-    fake_url: str = "https://testurl.com/test_url"
-    fake_content: str = "fake_content abcde"
-    fake_model_file_name: str = "test_model.zip"
     fake_zip_file_manager = FakeZipFileManager.global_instance()
     available_model: AvailableModels = AvailableModels(fake_model_file_name, fake_url, fake_zip_file_manager)
-    responses.add(**{
-        'method': responses.GET,
-        'url': fake_url,
-        'body': '{"content": ' + fake_content + '}',
-        'status': 200,
-        'content_type': 'application/zip',
-        'adding_headers': {'X-Foo': 'Bar'}
-    })
+
 
     # Act
     available_model.download_model_and_unzip(test_path)
 
     # Assert
-    assert fake_zip_file_manager.written_zip_files[test_path / fake_model_file_name] == fake_content
+    assert fake_zip_file_manager.written_zip_files[test_path / fake_model_file_name] == bytes(fake_content, 'utf-8')
     assert test_path / fake_model_file_name in fake_zip_file_manager.unzipped_files
 
 @responses.activate
@@ -57,7 +58,7 @@ def test_download_model_and_unzip_bad_request():
     available_model: AvailableModels = AvailableModels("abc", fake_url, fake_zip_file_manager)
     responses.add(**{
         'method': responses.GET,
-        'url': fake_url,
+        'url': f"{fake_url}/abc",
         'body': '{"error": "error_reason"}',
         'status': 400,
         'content_type': 'application/zip',
