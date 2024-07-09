@@ -1,11 +1,10 @@
 from PyQt5.QtWidgets import QPushButton
 from qtpy.QtWidgets import QDialog, QWidget, QComboBox, QVBoxLayout
-from typing import Optional
 
 from allencell_ml_segmenter.core.dialog_box import DialogBox
 from allencell_ml_segmenter.core.info_dialog_box import InfoDialogBox
 from allencell_ml_segmenter.main.experiments_model import IExperimentsModel
-from allencell_ml_segmenter.utils.s3_model_downloader import S3ModelDownloader
+from allencell_ml_segmenter.utils.s3.s3_model_downloader import S3ModelDownloader
 
 
 class ModelDownloadDialog(QDialog):

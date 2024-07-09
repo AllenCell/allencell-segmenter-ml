@@ -1,16 +1,8 @@
-import zipfile
-from enum import Enum
-from pathlib import Path
-from typing import Optional, Set
 from xml.etree.ElementTree import ElementTree
-from zipfile import ZipFile
 
-import boto3
 import requests
 
-from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
-from allencell_ml_segmenter.utils.file_utils import FileUtils
-from allencell_ml_segmenter.utils.s3_available_models import AvailableModels
+from allencell_ml_segmenter.utils.s3 import AvailableModels, S3RequestException
 
 # Enable Model Downloads on plugin
 ENABLE_MODEL_DOWNLOADS = True
@@ -19,8 +11,6 @@ BUCKET_ENDPOINT = "https://production-aics-ml-segmenter-models.s3.us-west-2.amaz
 # Endpoint for stg bucket
 STG_BUCKET_ENDPOINT = ""
 
-class S3RequestException(Exception):
-    pass
 
 class S3ModelDownloader:
     def __init__(self, staging=False):
