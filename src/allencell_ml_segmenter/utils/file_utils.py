@@ -1,7 +1,3 @@
-from pathlib import Path
-from typing import List, Generator, Tuple
-from zipfile import ZipFile
-
 from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
 from allencell_ml_segmenter.utils.file_writer import IFileWriter
 import os
@@ -9,6 +5,8 @@ import platform
 import subprocess
 import random
 from csv import DictReader
+from pathlib import Path
+from typing import List, Generator, Tuple
 
 
 class FileUtils:
