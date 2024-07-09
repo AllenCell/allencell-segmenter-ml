@@ -1,12 +1,11 @@
+from pathlib import Path
+from unittest.mock import Mock, mock_open, patch, create_autospec
+
 import allencell_ml_segmenter
 from allencell_ml_segmenter.utils.zip_file import (
     ZipFileManager,
     IZipFileManager,
 )
-
-from pathlib import Path
-from unittest.mock import Mock, mock_open, patch, create_autospec
-
 
 def test_write_to_file() -> None:
     # Arrange

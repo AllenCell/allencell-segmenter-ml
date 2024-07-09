@@ -1,3 +1,7 @@
+from pathlib import Path
+import responses
+import pytest
+
 import allencell_ml_segmenter
 from allencell_ml_segmenter.utils.s3.s3_available_models import AvailableModels
 from allencell_ml_segmenter.utils.s3.s3_request_exception import (
@@ -6,10 +10,6 @@ from allencell_ml_segmenter.utils.s3.s3_request_exception import (
 from allencell_ml_segmenter.utils.zip_file.fake_zip_file_manager import (
     FakeZipFileManager,
 )
-
-from pathlib import Path
-import responses
-import pytest
 
 
 @responses.activate

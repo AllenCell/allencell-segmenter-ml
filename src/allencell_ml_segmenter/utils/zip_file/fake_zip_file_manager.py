@@ -1,7 +1,7 @@
-from allencell_ml_segmenter.utils.zip_file import IZipFileManager
-
 from pathlib import Path
 from typing import Optional
+
+from allencell_ml_segmenter.utils.zip_file import IZipFileManager
 
 
 class FakeZipFileManager(IZipFileManager):
