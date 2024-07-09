@@ -1,4 +1,10 @@
-from qtpy.QtWidgets import QDialog, QWidget, QComboBox, QVBoxLayout, QPushButton
+from qtpy.QtWidgets import (
+    QDialog,
+    QWidget,
+    QComboBox,
+    QVBoxLayout,
+    QPushButton,
+)
 
 from allencell_ml_segmenter.core.dialog_box import DialogBox
 from allencell_ml_segmenter.core.info_dialog_box import InfoDialogBox

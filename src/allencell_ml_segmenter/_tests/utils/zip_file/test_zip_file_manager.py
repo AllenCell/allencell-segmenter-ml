@@ -7,6 +7,7 @@ from allencell_ml_segmenter.utils.zip_file import (
     IZipFileManager,
 )
 
+
 def test_write_to_file() -> None:
     # Arrange
     to_write: bytes = bytes("abcde", "utf-8")
