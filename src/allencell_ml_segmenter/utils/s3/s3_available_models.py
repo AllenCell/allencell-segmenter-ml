@@ -17,19 +17,25 @@ class AvailableModels:
         bucket_endpoint: str,
         zip_file_manager: IZipFileManager = ZipFileManager.global_instance(),
     ):
-        self._name = model_file_name
+        self._name: str = model_file_name
+        # the url of this AvailableModel on the specified s3 bucket
         self._object_url: str = f"{bucket_endpoint}/{model_file_name}"
-        self._zipfile = zip_file_manager
+        # ZipFileManager handles all zip-file related operations for the model
+        self._zipfile: IZipFileManager = zip_file_manager
 
     def download_model_and_unzip(self, path: Path) -> None:
-        response = requests.get(self._object_url)
+        """
+        Download this AvilableModel from s3 and unzip it into the specified :param path:
+        """
+        response: requests.Response = requests.get(self._object_url)
 
         if response.status_code == 200:
-            # write a zipfile to path
+            # Write contents of s3:getObject to the path (writing the zip file)
             self._zipfile.write_zip_file(path / self._name, response.content)
-            # unzip zipfile containing model and license file, and delete original zip file
+            # Unzip the contents of the zipfile where it is located, and delete the .zip
             self._zipfile.unzip_zipped_file_and_delete_zip(path / self._name)
         else:
+            # Something went wrong when downloading the object from s3
             raise S3RequestException(
                 f"Could not download model named {self._name} from {self._object_url}. Failed with status code {response.status_code}"
             )
