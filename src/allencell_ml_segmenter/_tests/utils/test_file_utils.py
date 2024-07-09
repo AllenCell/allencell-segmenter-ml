@@ -1,5 +1,5 @@
 from pathlib import Path
-from unittest.mock import Mock, patch
+from unittest.mock import Mock, patch, mock_open
 
 import allencell_ml_segmenter
 from allencell_ml_segmenter.utils.file_utils import FileUtils
@@ -11,7 +11,6 @@ from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
 
 from typing import List, Set
 import numpy as np
-from unittest import mock, mock_open
 
 
 def test_get_all_files_in_dir() -> None:
@@ -367,7 +366,7 @@ def test_write_to_file() -> None:
     open_file_mock: Mock = mock_open()
 
     # Act
-    with patch("FileUtils.open", open_file_mock):
+    with patch("allencell_ml_segmenter.utils.file_utils.open", open_file_mock):
         FileUtils.write_to_file(test_path, to_write)
 
     # Assert
