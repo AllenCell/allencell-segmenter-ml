@@ -2,28 +2,9 @@
     margin: 5px 13px;
 }
 
-
-#modelSelection QComboBox:disabled {
-    color: #868E93;
-}
-
-#imageSelection #title {
-    font-weight: bold;
-}
-
-#modelSelection #title {
-    font-weight: bold;
-}
-
 #modelSelection QRadioButton {
     margin-left: 25px;
     margin-right: 6px;
-}
-
-#imageSelection #guideText {
-    font-size: 8px;
-    color: #868E93;
-    margin: 1px 0px 5px;
 }
 
 #modelSelection #structureSizeComboBox, #modelSelection #3DRadio, #modelSelection #trainingStepInput, #modelSelection #timeoutCheckbox {
