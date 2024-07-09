@@ -102,7 +102,8 @@ class ModelSelectionWidget(QWidget):
 
         frame: QFrame = QFrame()
         frame.setLayout(QVBoxLayout())
-        frame.setObjectName("frame")
+        # uncomment to make frame visible
+        # frame.setObjectName("frame")
         self.layout().addWidget(frame)
 
         # existing model selection components must be initialized before the new/existing model radios

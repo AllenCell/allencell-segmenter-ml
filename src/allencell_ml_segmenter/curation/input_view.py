@@ -48,7 +48,8 @@ class CurationInputView(QWidget):
 
         frame: QFrame = QFrame()
         frame.setLayout(QVBoxLayout())
-        frame.setObjectName("frame")
+        # uncomment to make frame visible
+        # frame.setObjectName("frame")
         self.layout().addWidget(frame)
 
         input_images_label: QLabel = QLabel("Input images")
