@@ -41,7 +41,9 @@ class S3ModelDownloader:
         req_params: str = "list-type=2"
 
         # request all bucket objects
-        response: requests.Response = requests.get(f"{self._bucket_endpoint}?{req_params}")
+        response: requests.Response = requests.get(
+            f"{self._bucket_endpoint}?{req_params}"
+        )
 
         if response.status_code == 200:
             # parse XML response with key
