@@ -4,7 +4,9 @@ from qtpy.QtWidgets import QDialog, QWidget, QComboBox, QVBoxLayout
 from allencell_ml_segmenter.core.dialog_box import DialogBox
 from allencell_ml_segmenter.core.info_dialog_box import InfoDialogBox
 from allencell_ml_segmenter.main.experiments_model import IExperimentsModel
-from allencell_ml_segmenter.utils.s3.s3_model_downloader import S3ModelDownloader
+from allencell_ml_segmenter.utils.s3.s3_model_downloader import (
+    S3ModelDownloader,
+)
 
 
 class ModelDownloadDialog(QDialog):
@@ -37,7 +39,11 @@ class ModelDownloadDialog(QDialog):
             continue_download = overwrite_dialog.get_selection()
 
         if continue_download:
-            self._available_models[selected_model_name].download_model_and_unzip(self._experiments_model.get_user_experiments_path())
+            self._available_models[
+                selected_model_name
+            ].download_model_and_unzip(
+                self._experiments_model.get_user_experiments_path()
+            )
             download_complete_message = InfoDialogBox(
                 f"Downloaded {selected_model_name} to {self._experiments_model.get_user_experiments_path() / selected_model_name}"
             )

@@ -351,6 +351,3 @@ def test_count_images_in_csv_folder_multiple_csv() -> None:
     # Act / Assert
     # expect 6 since train has 3 unique, test has 3 unique, val is a copy of test
     assert FileUtils.count_images_in_csv_folder(folder) == 6
-
-
-
