@@ -1,3 +1,6 @@
+import pytest
+import responses
+
 from allencell_ml_segmenter.utils.s3 import S3ModelDownloader, AvailableModels
 from allencell_ml_segmenter.utils.s3.s3_model_downloader import (
     STG_BUCKET_ENDPOINT,
@@ -6,9 +9,6 @@ from allencell_ml_segmenter.utils.s3.s3_model_downloader import (
 from allencell_ml_segmenter.utils.s3.s3_request_exception import (
     S3RequestException,
 )
-
-import pytest
-import responses
 
 
 def test_init_s3_downloader_with_staging() -> None:
