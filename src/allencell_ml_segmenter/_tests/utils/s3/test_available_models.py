@@ -1,12 +1,5 @@
-from pathlib import Path
-from unittest.mock import Mock, mock_open, patch
-
 import allencell_ml_segmenter
-from allencell_ml_segmenter.utils.file_utils import FileUtils
 from allencell_ml_segmenter.utils.s3.s3_available_models import AvailableModels
-import responses
-import pytest
-
 from allencell_ml_segmenter.utils.s3.s3_request_exception import (
     S3RequestException,
 )
@@ -14,9 +7,13 @@ from allencell_ml_segmenter.utils.zip_file.fake_zip_file_manager import (
     FakeZipFileManager,
 )
 
+from pathlib import Path
+import responses
+import pytest
+
 
 @responses.activate
-def test_download_model_and_unzip_sucessful_request():
+def test_download_model_and_unzip_sucessful_request() -> None:
     # fake data
     fake_content: str = "fake_content abcde"
     fake_url: str = "http://test.com/abc"
@@ -38,7 +35,9 @@ def test_download_model_and_unzip_sucessful_request():
         / "test_files"
         / "zip_files"
     )
-    fake_zip_file_manager = FakeZipFileManager.global_instance()
+    fake_zip_file_manager: FakeZipFileManager = (
+        FakeZipFileManager.global_instance()
+    )
     available_model: AvailableModels = AvailableModels(
         fake_model_file_name, fake_url, fake_zip_file_manager
     )
@@ -57,7 +56,7 @@ def test_download_model_and_unzip_sucessful_request():
 
 
 @responses.activate
-def test_download_model_and_unzip_bad_request():
+def test_download_model_and_unzip_bad_request() -> None:
     # ARRANGE
     test_path: Path = (
         Path(allencell_ml_segmenter.__file__).parent
@@ -67,7 +66,9 @@ def test_download_model_and_unzip_bad_request():
         / "test_zip.zip"
     )
     fake_url: str = "https://testurl.com/test_url"
-    fake_zip_file_manager = FakeZipFileManager.global_instance()
+    fake_zip_file_manager: FakeZipFileManager = (
+        FakeZipFileManager.global_instance()
+    )
     available_model: AvailableModels = AvailableModels(
         "abc", fake_url, fake_zip_file_manager
     )
