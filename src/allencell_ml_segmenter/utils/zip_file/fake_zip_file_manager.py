@@ -1,11 +1,14 @@
-from pathlib import Path
-
 from allencell_ml_segmenter.utils.zip_file import IZipFileManager
+
+from pathlib import Path
+from typing import Optional
 
 
 class FakeZipFileManager(IZipFileManager):
-    _instance = None
+    _instance: Optional = None
+    # zip files that have been written, keys- path, values- content written
     written_zip_files: dict[Path, bytes] = {}
+    # list of unzipped files
     unzipped_files: list[Path] = []
 
     def write_zip_file(self, path: Path, contents: bytes) -> None:
