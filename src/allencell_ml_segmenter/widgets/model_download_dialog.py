@@ -12,14 +12,12 @@ class ModelDownloadDialog(QDialog):
     def __init__(self, parent: QWidget, experiments_model: IExperimentsModel):
         super().__init__(parent)
         self._experiments_model = experiments_model
-        self._model_downloader = S3ModelDownloader(staging=True)
+        self._available_models = S3ModelDownloader().get_available_models()
         self.setLayout(QVBoxLayout())
 
         self._model_select_dropdown: QComboBox = QComboBox()
         self._model_select_dropdown.setCurrentIndex(-1)
-        self._model_select_dropdown.addItems(
-            self._model_downloader.get_available_models()
-        )
+        self._model_select_dropdown.addItems(self._available_models.keys())
         self.layout().addWidget(self._model_select_dropdown)
 
         self._download_button: QPushButton = QPushButton("Download")
@@ -40,10 +38,7 @@ class ModelDownloadDialog(QDialog):
             continue_download = overwrite_dialog.get_selection()
 
         if continue_download:
-            self._model_downloader.download_model_and_unzip(
-                selected_model_name,
-                self._experiments_model.get_user_experiments_path(),
-            )
+            self._available_models[selected_model_name].download_model_and_unzip(self._experiments_model.get_user_experiments_path())
             download_complete_message = InfoDialogBox(
                 f"Downloaded {selected_model_name} to {self._experiments_model.get_user_experiments_path() / selected_model_name}"
             )

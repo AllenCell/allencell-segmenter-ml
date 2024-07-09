@@ -18,6 +18,7 @@ from allencell_ml_segmenter.config.i_user_settings import IUserSettings
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
+from allencell_ml_segmenter.utils.s3_model_downloader import ENABLE_MODEL_DOWNLOADS
 
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 from allencell_ml_segmenter.widgets.model_download_dialog import (
@@ -228,7 +229,7 @@ class ModelSelectionWidget(QWidget):
                 parent=self
             )
             self._refresh_experiment_options()
-        elif text == ModelSelectionWidget.DOWNLOAD_EXPERIMENTS_TEXT:
+        elif text == ModelSelectionWidget.DOWNLOAD_EXPERIMENTS_TEXT and ENABLE_MODEL_DOWNLOADS:
             dialog = ModelDownloadDialog(self, self._experiments_model)
             dialog.exec()
             self._refresh_experiment_options()  # once all models are downloaded, one final refresh to load them into existing models dropdown
