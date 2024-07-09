@@ -1,7 +1,7 @@
 from pathlib import Path
 from zipfile import ZipFile
 
-from src.allencell_ml_segmenter.utils.zip_file import IZipFileManager
+from allencell_ml_segmenter.utils.zip_file import IZipFileManager
 
 
 class ZipFileManager(IZipFileManager):
