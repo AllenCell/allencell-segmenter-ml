@@ -2,7 +2,8 @@ from xml.etree.ElementTree import ElementTree
 
 import requests
 
-from allencell_ml_segmenter.utils.s3 import AvailableModels, S3RequestException
+from allencell_ml_segmenter.utils.s3 import AvailableModels
+from allencell_ml_segmenter.utils.s3.s3_request_exception import S3RequestException
 
 # Enable Model Downloads on plugin
 ENABLE_MODEL_DOWNLOADS = True

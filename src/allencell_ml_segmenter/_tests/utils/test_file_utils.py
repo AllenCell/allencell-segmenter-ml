@@ -355,7 +355,7 @@ def test_count_images_in_csv_folder_multiple_csv() -> None:
 
 def test_write_to_file() -> None:
     # Arrange
-    to_write: bytes = bytearray('abcde', "utf-16")
+    to_write: bytes = bytes('abcde', "utf-8")
     test_path: Path = (
         Path(allencell_ml_segmenter.__file__).parent
         / "_tests"
