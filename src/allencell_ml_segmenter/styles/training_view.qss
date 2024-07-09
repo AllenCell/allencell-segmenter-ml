@@ -1,36 +1,10 @@
-* {
-    color: #F0F1F2;
-}
-
-#title {
-    font-weight: bold;
-    margin: 10px 0px;
-}
-
 #trainBtn {
-    background-color: #007ACC;
-    color: #F0F1F2;
     margin: 5px 13px;
-}
-
-#trainBtn:pressed {
-    background-color: #00489D;
-    color: #F0F1F2;
 }
 
 
 #modelSelection QComboBox:disabled {
     color: #868E93;
-}
-
-#imageSelection #frame {
-    border: 1px solid #AAAAAA;
-    border-radius: 5px;
-}
-
-#modelSelection #frame {
-    border: 1px solid #AAAAAA;
-    border-radius: 5px;
 }
 
 #imageSelection #title {
@@ -58,10 +32,5 @@
 
 #modelSelection #timeoutHourInput:disabled {
     background-color: #414851;
-    color: #868E93;
-}
-
-#subtext {
-    font-size: 10px;
     color: #868E93;
 }
