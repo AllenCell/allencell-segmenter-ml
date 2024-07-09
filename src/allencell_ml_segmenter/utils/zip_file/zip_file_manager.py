@@ -5,6 +5,9 @@ from src.allencell_ml_segmenter.utils.zip_file import IZipFileManager
 
 
 class ZipFileManager(IZipFileManager):
+    """
+    ZipFileManager to manage writing zip files / unzipping zip files
+    """
     _instance = None
 
     def write_zip_file(self, path: Path, contents: bytes) -> None:
