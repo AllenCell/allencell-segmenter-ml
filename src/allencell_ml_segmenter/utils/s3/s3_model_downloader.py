@@ -2,7 +2,7 @@ from typing import Optional
 from xml.etree import ElementTree
 import requests
 
-from allencell_ml_segmenter.utils.s3 import AvailableModels
+from allencell_ml_segmenter.utils.s3.s3_available_models import AvailableModels
 from allencell_ml_segmenter.utils.s3.s3_request_exception import (
     S3RequestException,
 )

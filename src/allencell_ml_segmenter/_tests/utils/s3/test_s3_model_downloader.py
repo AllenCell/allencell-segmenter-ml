@@ -1,13 +1,18 @@
 import pytest
 import responses
 
-from allencell_ml_segmenter.utils.s3 import S3ModelDownloader, AvailableModels
+from allencell_ml_segmenter.utils.s3.s3_available_models import AvailableModels
 from allencell_ml_segmenter.utils.s3.s3_model_downloader import (
+    S3ModelDownloader,
     STG_BUCKET,
     PROD_BUCKET,
 )
 from allencell_ml_segmenter.utils.s3.s3_request_exception import (
     S3RequestException,
+)
+from allencell_ml_segmenter._tests.utils.s3.s3_response_fixtures import (
+    s3_response_listobjectv2_contents_two_models,
+    s3_response_listobjectv2_contents_duplicate_model,
 )
 
 
@@ -29,50 +34,17 @@ def test_init_s3_downloader_with_prod() -> None:
 
 
 @responses.activate
-def test_get_available_models() -> None:
+def test_get_available_models(
+    s3_response_listobjectv2_contents_two_models: str,
+) -> None:
     # ARRANGE
     test_url: str = "http://tests3bucketendpoint.com"
-    # The following line mimics what s3 would send back from the ListObjectV2 http request
-    # example response is from https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListObjectsV2.html
-    # and does not represent any real data.
-    xml_response: str = (
-        f'<?xml version="1.0" encoding="UTF-8"?>'
-        f'<ListBucketResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/">'
-        f"<Name>bucket</Name>"
-        f"<Prefix></Prefix>"
-        f"<ContinuationToken>randomtoken</ContinuationToken>"
-        f"<KeyCount>112</KeyCount>"
-        f"<MaxKeys>1000</MaxKeys>"
-        f"<IsTruncated>false</IsTruncated>"
-        f"  <Contents>"
-        f"    <Key>model1.zip</Key>"  # 1st Model file name
-        f"    <LastModified>2014-11-21T19:40:05.000Z</LastModified>"
-        f'    <ETag>"70ee1738b6b21e2c8a43f3a5ab0eee71"</ETag>'
-        f"    <Size>1111</Size>"
-        f"    <StorageClass>STANDARD</StorageClass>"
-        f"  </Contents>"
-        f"  <Contents>"
-        f"    <Key>model2.zip</Key>"  # 2nd Model file name
-        f"    <LastModified>2014-11-21T19:40:05.000Z</LastModified>"
-        f'     <ETag>"70ee1738b6b21e2c8a43f3a5ab0eee71"</ETag>'
-        f"    <Size>1111</Size>"
-        f"    <StorageClass>STANDARD</StorageClass>"
-        f"  </Contents>"
-        f"  <Contents>"
-        f"    <Key>some_random_file</Key>"  # some random file
-        f"    <LastModified>2014-11-21T19:40:05.000Z</LastModified>"
-        f'    <ETag>"70ee1738b6b21e2c8a43f3a5ab0eee71"</ETag>'
-        f"    <Size>1111</Size>"
-        f"    <StorageClass>STANDARD</StorageClass>"
-        f"  </Contents>"
-        f"</ListBucketResult>"
-    )
     # add fake xml response that is returned when we make a request to the test_url with the list-type=2 param
     responses.add(
         **{
             "method": responses.GET,
             "url": f"{test_url}?list-type=2",
-            "body": xml_response,
+            "body": s3_response_listobjectv2_contents_two_models,
             "status": 200,
             "content_type": "application/xml",
             "adding_headers": {"X-Foo": "Bar"},
@@ -108,50 +80,18 @@ def test_get_available_models() -> None:
 
 
 @responses.activate
-def test_get_available_models_duplicate_file_error() -> None:
+def test_get_available_models_duplicate_file_error(
+    s3_response_listobjectv2_contents_duplicate_model: str,
+) -> None:
     # ARRANGE
     test_url: str = "http://testbucketendpoint.com"
-    # The following line mimics what s3 would send back from the ListObjectV2 http request
-    # example response is from https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListObjectsV2.html
-    # and does not represent any real data.
-    xml_response: str = (
-        f'<?xml version="1.0" encoding="UTF-8"?>'
-        f'<ListBucketResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/">'
-        f"<Name>bucket</Name>"
-        f"<Prefix></Prefix>"
-        f"<ContinuationToken>randomtoken</ContinuationToken>"
-        f"<KeyCount>112</KeyCount>"
-        f"<MaxKeys>1000</MaxKeys>"
-        f"<IsTruncated>false</IsTruncated>"
-        f"  <Contents>"
-        f"    <Key>model1.zip</Key>"  # 1st Model file name
-        f"    <LastModified>2014-11-21T19:40:05.000Z</LastModified>"
-        f'    <ETag>"70ee1738b6b21e2c8a43f3a5ab0eee71"</ETag>'
-        f"    <Size>1111</Size>"
-        f"    <StorageClass>STANDARD</StorageClass>"
-        f"  </Contents>"
-        f"  <Contents>"
-        f"    <Key>model1.zip</Key>"  # 1st Model file name (duplicated)
-        f"    <LastModified>2014-11-21T19:40:05.000Z</LastModified>"
-        f'     <ETag>"70ee1738b6b21e2c8a43f3a5ab0eee71"</ETag>'
-        f"    <Size>1111</Size>"
-        f"    <StorageClass>STANDARD</StorageClass>"
-        f"  </Contents>"
-        f"  <Contents>"
-        f"    <Key>some_random_file</Key>"  # some random file
-        f"    <LastModified>2014-11-21T19:40:05.000Z</LastModified>"
-        f'    <ETag>"70ee1738b6b21e2c8a43f3a5ab0eee71"</ETag>'
-        f"    <Size>1111</Size>"
-        f"    <StorageClass>STANDARD</StorageClass>"
-        f"  </Contents>"
-        f"</ListBucketResult>"
-    )
+
     # add fake xml response that is returned when we make a request to the test_url with the list-type=2 param
     responses.add(
         **{
             "method": responses.GET,
             "url": f"{test_url}?list-type=2",
-            "body": xml_response,
+            "body": s3_response_listobjectv2_contents_duplicate_model,
             "status": 200,
             "content_type": "application/xml",
             "adding_headers": {"X-Foo": "Bar"},

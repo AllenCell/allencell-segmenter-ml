@@ -1,5 +1,6 @@
 import pytest
 
+
 @pytest.fixture
 def s3_response_listobjectv2_contents_two_models() -> str:
     """
