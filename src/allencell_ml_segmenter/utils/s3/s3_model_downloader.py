@@ -15,7 +15,7 @@ BUCKET_ENDPOINT = (
     "https://production-aics-ml-segmenter-models.s3.us-west-2.amazonaws.com"
 )
 # Endpoint for stg bucket
-STG_BUCKET_ENDPOINT = ""
+STG_BUCKET_ENDPOINT = "https://staging-aics-ml-segmenter-models.s3.us-west-2.amazonaws.com"
 
 
 class S3ModelDownloader:
