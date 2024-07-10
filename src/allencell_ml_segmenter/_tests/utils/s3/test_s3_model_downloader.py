@@ -31,13 +31,13 @@ def test_init_s3_downloader_with_prod() -> None:
 @responses.activate
 def test_get_available_models() -> None:
     # ARRANGE
-    test_url: str = "http://testbucketendpoint.com"
+    test_url: str = "http://tests3bucketendpoint.com"
     # The following line mimics what s3 would send back from the ListObjectV2 http request
     # example response is from https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListObjectsV2.html
     # and does not represent any real data.
     xml_response: str = (
         f'<?xml version="1.0" encoding="UTF-8"?>'
-        f"<ListBucketResult>"
+        f'<ListBucketResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/">'
         f"<Name>bucket</Name>"
         f"<Prefix></Prefix>"
         f"<ContinuationToken>randomtoken</ContinuationToken>"
@@ -116,7 +116,7 @@ def test_get_available_models_duplicate_file_error() -> None:
     # and does not represent any real data.
     xml_response: str = (
         f'<?xml version="1.0" encoding="UTF-8"?>'
-        f"<ListBucketResult>"
+        f'<ListBucketResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/">'
         f"<Name>bucket</Name>"
         f"<Prefix></Prefix>"
         f"<ContinuationToken>randomtoken</ContinuationToken>"

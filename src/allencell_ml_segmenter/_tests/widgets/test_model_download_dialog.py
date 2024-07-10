@@ -3,16 +3,25 @@ import pytest
 import responses
 
 import allencell_ml_segmenter
-from allencell_ml_segmenter._tests.fakes.fake_user_settings import FakeUserSettings
+from allencell_ml_segmenter._tests.fakes.fake_user_settings import (
+    FakeUserSettings,
+)
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
-from allencell_ml_segmenter.widgets.model_download_dialog import ModelDownloadDialog
+from allencell_ml_segmenter.widgets.model_download_dialog import (
+    ModelDownloadDialog,
+)
+
 
 @pytest.fixture
 @responses.activate
 def model_download_dialog() -> ModelDownloadDialog:
     fake_settings: FakeUserSettings = FakeUserSettings()
     fake_settings.set_user_experiments_path(
-        Path(allencell_ml_segmenter.__file__).parent / "_tests" / "test_files" / "output_test_folder")
+        Path(allencell_ml_segmenter.__file__).parent
+        / "_tests"
+        / "test_files"
+        / "output_test_folder"
+    )
     exp_model: ExperimentsModel = ExperimentsModel(fake_settings)
     fake_url: str = "http://fakeurl.com"
     # The following lines mimic what s3 would send back from the ListObjectV2 http request
@@ -20,7 +29,7 @@ def model_download_dialog() -> ModelDownloadDialog:
     # and does not represent any real data.
     xml_response: str = (
         f'<?xml version="1.0" encoding="UTF-8"?>'
-        f"<ListBucketResult>"
+        f'<ListBucketResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/">'
         f"<Name>bucket</Name>"
         f"<Prefix></Prefix>"
         f"<ContinuationToken>randomtoken</ContinuationToken>"
@@ -63,7 +72,11 @@ def model_download_dialog() -> ModelDownloadDialog:
     )
     return ModelDownloadDialog(None, exp_model, test_s3_bucket=fake_url)
 
-def test_model_download_dialog_init(model_download_dialog: ModelDownloadDialog):
-    # ASSERT
-    assert model_download_dialog._model_select_dropdown.count() == 2 # two items added to combobox
 
+def test_model_download_dialog_init(
+    model_download_dialog: ModelDownloadDialog,
+):
+    # ASSERT
+    assert (
+        model_download_dialog._model_select_dropdown.count() == 2
+    )  # two items added to combobox
