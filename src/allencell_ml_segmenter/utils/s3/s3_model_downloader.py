@@ -15,7 +15,13 @@ PROD_BUCKET = (
     "https://production-aics-ml-segmenter-models.s3.us-west-2.amazonaws.com"
 )
 # Endpoint for stg bucket
-STG_BUCKET = "https://staging-aics-ml-segmenter-models.s3.us-west-2.amazonaws.com"
+STG_BUCKET = (
+    "https://staging-aics-ml-segmenter-models.s3.us-west-2.amazonaws.com"
+)
+# XML namespaces we might expect- currently only aws_s3
+# we need this to parse XML with namespaces
+# for more info: https://docs.python.org/3/library/xml.etree.elementtree.html#parsing-xml-with-namespaces
+XML_NAMESPACES = {"aws_s3": "http://s3.amazonaws.com/doc/2006-03-01/"}
 
 
 class S3ModelDownloader:
@@ -25,9 +31,7 @@ class S3ModelDownloader:
         if test_url:
             self._bucket_endpoint = test_url
         else:
-            self._bucket_endpoint = (
-                STG_BUCKET if staging else PROD_BUCKET
-            )
+            self._bucket_endpoint = STG_BUCKET if staging else PROD_BUCKET
 
     def get_available_models(self) -> dict[str, AvailableModels]:
         """
@@ -49,9 +53,7 @@ class S3ModelDownloader:
         if response.status_code == 200:
             # parse XML response with key
             model_names: set[str] = (
-                self._parse_s3_xml_filelist_for_model_names(
-                    response.content, ".//Contents"
-                )
+                self._parse_s3_xml_filelist_for_model_names(response.content)
             )
             # Create Dict of available Models
             # Where key- model_name and value- AvailableModels object (which stores the endpoint to download each model)
@@ -68,7 +70,7 @@ class S3ModelDownloader:
             )
 
     def _parse_s3_xml_filelist_for_model_names(
-        self, response: bytes, element_name: str
+        self, response: bytes
     ) -> set[str]:
         """
         Parse XML response from s3 containing list of available objects for model names.
@@ -80,8 +82,10 @@ class S3ModelDownloader:
         # find all XML elements which match :param element_name: and get its "Key" element
         # which contains the object's filename
         all_s3_objects: list[str] = [
-            xml_content.find("Key").text
-            for xml_content in xml_root.findall(element_name)
+            xml_content.find("aws_s3:Key", XML_NAMESPACES).text
+            for xml_content in xml_root.findall(
+                "aws_s3:Contents", XML_NAMESPACES
+            )
         ]
         for file in all_s3_objects:
             # append file name if it is a zip file- these are models stored on s3
