@@ -1,7 +1,5 @@
 from pathlib import Path
-
 import pytest
-from pytestqt.qtbot import QtBot
 import responses
 
 import allencell_ml_segmenter
@@ -65,7 +63,7 @@ def model_download_dialog() -> ModelDownloadDialog:
     )
     return ModelDownloadDialog(None, exp_model, test_s3_bucket=fake_url)
 
-def test_model_download_dialog_init(qtbot: QtBot, model_download_dialog: ModelDownloadDialog):
+def test_model_download_dialog_init(model_download_dialog: ModelDownloadDialog):
     # ASSERT
     assert model_download_dialog._model_select_dropdown.count() == 2 # two items added to combobox
 
