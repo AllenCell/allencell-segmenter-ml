@@ -3,8 +3,8 @@ import responses
 
 from allencell_ml_segmenter.utils.s3 import S3ModelDownloader, AvailableModels
 from allencell_ml_segmenter.utils.s3.s3_model_downloader import (
-    STG_BUCKET_ENDPOINT,
-    BUCKET_ENDPOINT,
+    STG_BUCKET,
+    PROD_BUCKET,
 )
 from allencell_ml_segmenter.utils.s3.s3_request_exception import (
     S3RequestException,
@@ -16,7 +16,7 @@ def test_init_s3_downloader_with_staging() -> None:
     downloader: S3ModelDownloader = S3ModelDownloader(staging=True)
 
     # Assert
-    assert downloader.get_bucket_endpoint() == STG_BUCKET_ENDPOINT
+    assert downloader.get_bucket_endpoint() == STG_BUCKET
 
 
 def test_init_s3_downloader_with_prod() -> None:
@@ -25,7 +25,7 @@ def test_init_s3_downloader_with_prod() -> None:
     downloader: S3ModelDownloader = S3ModelDownloader()
 
     # Assert
-    assert downloader.get_bucket_endpoint() == BUCKET_ENDPOINT
+    assert downloader.get_bucket_endpoint() == PROD_BUCKET
 
 
 @responses.activate

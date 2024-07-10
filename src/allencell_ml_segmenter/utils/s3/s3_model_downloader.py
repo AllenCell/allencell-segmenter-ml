@@ -11,11 +11,11 @@ from allencell_ml_segmenter.utils.s3.s3_request_exception import (
 # Enable Model Downloads on plugin
 ENABLE_MODEL_DOWNLOADS = True
 # Endpoint for prod bucket
-BUCKET_ENDPOINT = (
+PROD_BUCKET = (
     "https://production-aics-ml-segmenter-models.s3.us-west-2.amazonaws.com"
 )
 # Endpoint for stg bucket
-STG_BUCKET_ENDPOINT = "https://staging-aics-ml-segmenter-models.s3.us-west-2.amazonaws.com"
+STG_BUCKET = "https://staging-aics-ml-segmenter-models.s3.us-west-2.amazonaws.com"
 
 
 class S3ModelDownloader:
@@ -26,7 +26,7 @@ class S3ModelDownloader:
             self._bucket_endpoint = test_url
         else:
             self._bucket_endpoint = (
-                STG_BUCKET_ENDPOINT if staging else BUCKET_ENDPOINT
+                STG_BUCKET if staging else PROD_BUCKET
             )
 
     def get_available_models(self) -> dict[str, AvailableModels]:
