@@ -85,8 +85,14 @@ class TrainingView(View, MainWindow):
         # bottom half
         bottom_grid_layout = QGridLayout()
 
+        patch_size_text_layout = QVBoxLayout()
+        patch_size_text_layout.setSpacing(0)
         patch_size_label: LabelWithHint = LabelWithHint("Patch size")
-        bottom_grid_layout.addWidget(patch_size_label, 0, 0)
+        patch_size_text_layout.addWidget(patch_size_label)
+        guide_text: QLabel = QLabel("All values must be multiples of 4")
+        guide_text.setObjectName("subtext")
+        patch_size_text_layout.addWidget(guide_text)
+        bottom_grid_layout.addLayout(patch_size_text_layout, 0, 0)
         patch_size_entry_layout: QHBoxLayout = QHBoxLayout()
 
         # allow only integers for the linedits below
