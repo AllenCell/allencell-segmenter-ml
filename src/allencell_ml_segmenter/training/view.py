@@ -28,7 +28,9 @@ from allencell_ml_segmenter.training.training_model import (
     TrainingModel,
     ModelSize,
 )
-from allencell_ml_segmenter.training.patch_size_validator import PatchSizeValidator
+from allencell_ml_segmenter.training.patch_size_validator import (
+    PatchSizeValidator,
+)
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 from qtpy.QtGui import QIntValidator
 from allencell_ml_segmenter.training.training_progress_tracker import (
