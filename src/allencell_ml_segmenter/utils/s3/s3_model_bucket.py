@@ -10,7 +10,7 @@ from allencell_ml_segmenter.utils.s3.s3_request_exception import (
 from allencell_ml_segmenter.utils.s3.s3_bucket_constants import XML_NAMESPACES
 
 
-class S3ModelDownloader:
+class S3ModelBucket:
     def __init__(self, bucket_endpoint: str, path_to_save_models:Path):
         self._bucket_endpoint: str = bucket_endpoint
         self._path_to_save_models: Path = path_to_save_models
