@@ -128,6 +128,9 @@ class CurationMainView(QWidget):
         base_combo_label: LabelWithHint = LabelWithHint(
             "Select a base segmentation"
         )
+        base_combo_label.set_hint(
+            "Areas of the base segmentation that are covered by the merging mask will be overwritten by the other segmentation"
+        )
         self.merging_base_combo: QComboBox = QComboBox()
         self.merging_base_combo.addItem("seg1")
         self.merging_base_combo.addItem("seg2")
@@ -147,6 +150,9 @@ class CurationMainView(QWidget):
         # Label for Merging mask
         merging_mask_label_and_status: QHBoxLayout = QHBoxLayout()
         merging_mask_label: LabelWithHint = LabelWithHint("Merging mask")
+        merging_mask_label.set_hint(
+            "Indicates areas of the base segmentation that will be overwritten by the other segmentation"
+        )
         self.merging_mask_status: QLabel = QLabel("Create and draw mask")
         merging_mask_label_and_status.addWidget(merging_mask_label)
         merging_mask_label_and_status.addWidget(self.merging_mask_status)
@@ -180,6 +186,7 @@ class CurationMainView(QWidget):
         excluding_mask_labels: QHBoxLayout = QHBoxLayout()
         excluding_mask_labels.setContentsMargins(0, 12, 0, 0)
         excluding_mask_label: LabelWithHint = LabelWithHint("Excluding mask")
+        excluding_mask_label.set_hint("Indicates areas of the image set (raw, seg(s)) that will be excluded from training")
         excluding_mask_labels.addWidget(excluding_mask_label)
         self.excluding_mask_status = QLabel("Create and draw mask")
         excluding_mask_labels.addWidget(
