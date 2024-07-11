@@ -1,12 +1,13 @@
 import typing
 from qtpy.QtGui import QValidator
 
+
 # https://doc.qt.io/qtforpython-5/PySide2/QtGui/QValidator.html
 class PatchSizeValidator(QValidator):
     # override
     def fixup(self, a0: typing.Optional[str]) -> str:
         """
-        This function attempts to change input to be valid according to this validator’s rules. 
+        This function attempts to change input to be valid according to this validator’s rules.
         It need not result in a valid string: callers of this function must re-test afterwards; the default does nothing
         """
         try:
@@ -20,9 +21,11 @@ class PatchSizeValidator(QValidator):
             return a0
 
     # override
-    def validate(self, a0: typing.Optional[str], a1: int) -> typing.Tuple[QValidator.State, str, int]:
+    def validate(
+        self, a0: typing.Optional[str], a1: int
+    ) -> typing.Tuple[QValidator.State, str, int]:
         """
-        This virtual function returns Invalid if input is invalid according to this validator’s rules, 
+        This virtual function returns Invalid if input is invalid according to this validator’s rules,
         Intermediate if it is likely that a little more editing will make the input acceptable
         (e.g. the user types “4” into a widget which accepts integers between 10 and 99), and Acceptable if the input is valid.
 
