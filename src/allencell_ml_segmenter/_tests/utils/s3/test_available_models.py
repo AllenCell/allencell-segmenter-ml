@@ -39,11 +39,11 @@ def test_download_model_and_unzip_sucessful_request() -> None:
         FakeZipFileManager.global_instance()
     )
     available_model: AvailableModels = AvailableModels(
-        fake_model_file_name, fake_url, fake_zip_file_manager
+        fake_model_file_name, fake_url, test_path, fake_zip_file_manager
     )
 
     # Act
-    available_model.download_model_and_unzip(test_path)
+    available_model.download_model_and_unzip()
 
     # Assert
     assert fake_zip_file_manager.written_zip_files[
@@ -70,7 +70,7 @@ def test_download_model_and_unzip_bad_request() -> None:
         FakeZipFileManager.global_instance()
     )
     available_model: AvailableModels = AvailableModels(
-        "abc", fake_url, fake_zip_file_manager
+        "abc", fake_url, test_path, fake_zip_file_manager
     )
     responses.add(
         **{
@@ -85,4 +85,4 @@ def test_download_model_and_unzip_bad_request() -> None:
 
     # Act/Assert
     with pytest.raises(S3RequestException):
-        available_model.download_model_and_unzip(test_path)
+        available_model.download_model_and_unzip()

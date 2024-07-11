@@ -1,6 +1,9 @@
+from pathlib import Path
+
 import pytest
 import responses
 
+import allencell_ml_segmenter
 from allencell_ml_segmenter.utils.s3.s3_available_models import AvailableModels
 from allencell_ml_segmenter.utils.s3.s3_model_downloader import (
     S3ModelDownloader,
@@ -17,17 +20,31 @@ from allencell_ml_segmenter._tests.utils.s3.s3_response_fixtures import (
 
 
 def test_init_s3_downloader_with_staging() -> None:
+    # Test path to save zip to
+    test_path: Path = (
+            Path(allencell_ml_segmenter.__file__).parent
+            / "_tests"
+            / "test_files"
+            / "zip_files"
+    )
     # Act
-    downloader: S3ModelDownloader = S3ModelDownloader(staging=True)
+    downloader: S3ModelDownloader = S3ModelDownloader(test_path, staging=True)
 
     # Assert
     assert downloader.get_bucket_endpoint() == STG_BUCKET
 
 
 def test_init_s3_downloader_with_prod() -> None:
+    # Test path to save zip to
+    test_path: Path = (
+        Path(allencell_ml_segmenter.__file__).parent
+        / "_tests"
+        / "test_files"
+        / "zip_files"
+    )
     # Act
     # No params defaults to prod bucket
-    downloader: S3ModelDownloader = S3ModelDownloader()
+    downloader: S3ModelDownloader = S3ModelDownloader(test_path)
 
     # Assert
     assert downloader.get_bucket_endpoint() == PROD_BUCKET
@@ -50,8 +67,15 @@ def test_get_available_models(
             "adding_headers": {"X-Foo": "Bar"},
         }
     )
+    # Test path to save zip to
+    test_path: Path = (
+        Path(allencell_ml_segmenter.__file__).parent
+        / "_tests"
+        / "test_files"
+        / "zip_files"
+    )
 
-    model_downloader: S3ModelDownloader = S3ModelDownloader(test_url=test_url)
+    model_downloader: S3ModelDownloader = S3ModelDownloader(test_path, test_url=test_url)
 
     # ACT
     available_models_dict: dict[str, AvailableModels] = (
@@ -97,8 +121,15 @@ def test_get_available_models_duplicate_file_error(
             "adding_headers": {"X-Foo": "Bar"},
         }
     )
+    # Test path to save zip to
+    test_path: Path = (
+        Path(allencell_ml_segmenter.__file__).parent
+        / "_tests"
+        / "test_files"
+        / "zip_files"
+    )
 
-    model_downloader: S3ModelDownloader = S3ModelDownloader(test_url=test_url)
+    model_downloader: S3ModelDownloader = S3ModelDownloader(test_path, test_url=test_url)
 
     # ACT/ASSERT
     with pytest.raises(ValueError):
@@ -121,8 +152,14 @@ def test_get_available_models_bad_request() -> None:
             "adding_headers": {"X-Foo": "Bar"},
         }
     )
-
-    model_downloader: S3ModelDownloader = S3ModelDownloader(test_url=test_url)
+    # Test path to save zip to
+    test_path: Path = (
+        Path(allencell_ml_segmenter.__file__).parent
+        / "_tests"
+        / "test_files"
+        / "zip_files"
+    )
+    model_downloader: S3ModelDownloader = S3ModelDownloader(test_path, test_url=test_url)
 
     # ACT/ASSERT
     with pytest.raises(S3RequestException):

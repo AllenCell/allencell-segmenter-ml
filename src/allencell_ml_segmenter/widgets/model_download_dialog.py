@@ -26,7 +26,7 @@ class ModelDownloadDialog(QDialog):
         super().__init__(parent)
         self._experiments_model = experiments_model
         self._available_models = S3ModelDownloader(
-            staging=True, test_url=test_s3_bucket
+            self._experiments_model.get_user_experiments_path(), staging=True, test_url=test_s3_bucket
         ).get_available_models()
         self.setLayout(QVBoxLayout())
 
@@ -55,9 +55,7 @@ class ModelDownloadDialog(QDialog):
         if continue_download:
             self._available_models[
                 selected_model_name
-            ].download_model_and_unzip(
-                self._experiments_model.get_user_experiments_path()
-            )
+            ].download_model_and_unzip()
             download_complete_message = InfoDialogBox(
                 f"Downloaded {selected_model_name} to {self._experiments_model.get_user_experiments_path() / selected_model_name}"
             )

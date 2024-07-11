@@ -15,6 +15,7 @@ class AvailableModels:
         self,
         model_file_name: str,
         bucket_endpoint: str,
+        path_to_save_model: Path,
         zip_file_manager: IZipFileManager = ZipFileManager.global_instance(),
     ):
         self._name: str = model_file_name
@@ -22,8 +23,10 @@ class AvailableModels:
         self._object_url: str = f"{bucket_endpoint}/{model_file_name}"
         # ZipFileManager handles all zip-file related operations for the model
         self._zipfile: IZipFileManager = zip_file_manager
+        # dir where models should be downloaded to
+        self._path_to_store_model: Path = path_to_save_model
 
-    def download_model_and_unzip(self, path: Path) -> None:
+    def download_model_and_unzip(self) -> None:
         """
         Download this AvilableModel from s3 and unzip it into the specified :param path:
         """
@@ -31,9 +34,9 @@ class AvailableModels:
 
         if response.status_code == 200:
             # Write contents of s3:getObject to the path (writing the zip file)
-            self._zipfile.write_zip_file(path / self._name, response.content)
+            self._zipfile.write_zip_file(self._path_to_store_model / self._name, response.content)
             # Unzip the contents of the zipfile where it is located, and delete the .zip
-            self._zipfile.unzip_zipped_file_and_delete_zip(path / self._name)
+            self._zipfile.unzip_zipped_file_and_delete_zip(self._path_to_store_model / self._name)
         else:
             # Something went wrong when downloading the object from s3
             raise S3RequestException(
