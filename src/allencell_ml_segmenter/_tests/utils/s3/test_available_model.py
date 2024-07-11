@@ -3,7 +3,7 @@ import responses
 import pytest
 
 import allencell_ml_segmenter
-from allencell_ml_segmenter.utils.s3.s3_available_models import AvailableModels
+from allencell_ml_segmenter.utils.s3.s3_available_model import AvailableModel
 from allencell_ml_segmenter.utils.s3.s3_request_exception import (
     S3RequestException,
 )
@@ -38,7 +38,7 @@ def test_download_model_and_unzip_sucessful_request() -> None:
     fake_zip_file_manager: FakeZipFileManager = (
         FakeZipFileManager.global_instance()
     )
-    available_model: AvailableModels = AvailableModels(
+    available_model: AvailableModel = AvailableModel(
         fake_model_file_name, fake_url, test_path, fake_zip_file_manager
     )
 
@@ -69,7 +69,7 @@ def test_download_model_and_unzip_bad_request() -> None:
     fake_zip_file_manager: FakeZipFileManager = (
         FakeZipFileManager.global_instance()
     )
-    available_model: AvailableModels = AvailableModels(
+    available_model: AvailableModel = AvailableModel(
         "abc", fake_url, test_path, fake_zip_file_manager
     )
     responses.add(

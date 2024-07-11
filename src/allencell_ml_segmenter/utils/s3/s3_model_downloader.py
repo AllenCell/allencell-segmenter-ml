@@ -3,7 +3,7 @@ from typing import Optional
 from xml.etree import ElementTree
 import requests
 
-from allencell_ml_segmenter.utils.s3.s3_available_models import AvailableModels
+from allencell_ml_segmenter.utils.s3.s3_available_model import AvailableModel
 from allencell_ml_segmenter.utils.s3.s3_request_exception import (
     S3RequestException,
 )
@@ -15,7 +15,7 @@ class S3ModelDownloader:
         self._bucket_endpoint: str = bucket_endpoint
         self._path_to_save_models: Path = path_to_save_models
 
-    def get_available_models(self) -> dict[str, AvailableModels]:
+    def get_available_models(self) -> dict[str, AvailableModel]:
         """
         Get a dict of the filenames of available models on s3.
 
@@ -39,10 +39,10 @@ class S3ModelDownloader:
             )
             # Create Dict of available Models
             # Where key- model_name and value- AvailableModels object (which stores the endpoint to download each model)
-            available_models_dict: dict[str, AvailableModels] = {}
+            available_models_dict: dict[str, AvailableModel] = {}
             for model_name in model_names:
                 available_models_dict[model_name.split(".")[0]] = (
-                    AvailableModels(model_name, self._bucket_endpoint, self._path_to_save_models)
+                    AvailableModel(model_name, self._bucket_endpoint, self._path_to_save_models)
                 )
             return available_models_dict
         else:

@@ -4,7 +4,7 @@ import pytest
 import responses
 
 import allencell_ml_segmenter
-from allencell_ml_segmenter.utils.s3.s3_available_models import AvailableModels
+from allencell_ml_segmenter.utils.s3.s3_available_model import AvailableModel
 from allencell_ml_segmenter.utils.s3.s3_model_downloader import (
     S3ModelDownloader,
 )
@@ -59,7 +59,7 @@ def test_get_available_models(
     model_downloader: S3ModelDownloader = S3ModelDownloader(PROD_BUCKET, test_path)
 
     # ACT
-    available_models_dict: dict[str, AvailableModels] = (
+    available_models_dict: dict[str, AvailableModel] = (
         model_downloader.get_available_models()
     )
 
