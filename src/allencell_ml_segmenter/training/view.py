@@ -1,4 +1,6 @@
 from napari.utils.notifications import show_warning
+from pathlib import Path
+from typing import Optional
 
 from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
 from allencell_ml_segmenter.main.i_viewer import IViewer
@@ -34,6 +36,7 @@ from allencell_ml_segmenter.training.training_progress_tracker import (
     TrainingProgressTracker,
 )
 from allencell_ml_segmenter.core.info_dialog_box import InfoDialogBox
+from allencell_ml_segmenter.utils.file_utils import FileUtils
 
 
 class TrainingView(View, MainWindow):
@@ -263,7 +266,11 @@ class TrainingView(View, MainWindow):
         return "Training"
 
     def showResults(self):
-        dialog_box = InfoDialogBox("Training finished")
+        csv_path: Path = self._experiments_model.get_latest_metrics_csv_path()
+        min_loss: Optional[float] = FileUtils.get_min_loss_from_csv(csv_path)
+        dialog_box = InfoDialogBox(
+            "Training finished -- Final loss: {:.3f}".format(min_loss)
+        )
         dialog_box.exec()
 
     def _num_epochs_field_handler(self, num_epochs: str) -> None:

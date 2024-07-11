@@ -76,6 +76,10 @@ class IExperimentsModel(Publisher):
         pass
 
     @abstractmethod
+    def get_latest_metrics_csv_path(self) -> Optional[Path]:
+        pass
+
+    @abstractmethod
     def get_csv_path(self) -> Path:
         pass
 
