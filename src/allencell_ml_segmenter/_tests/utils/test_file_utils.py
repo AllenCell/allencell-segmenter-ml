@@ -350,3 +350,56 @@ def test_count_images_in_csv_folder_multiple_csv() -> None:
     # Act / Assert
     # expect 6 since train has 3 unique, test has 3 unique, val is a copy of test
     assert FileUtils.count_images_in_csv_folder(folder) == 6
+
+
+def test_get_min_loss_from_csv() -> None:
+    """
+    Ensure the function returns the expected minimum loss from a well-formatted
+    metrics csv file.
+    """
+    # Arrange
+    csv_path: Path = (
+        Path(allencell_ml_segmenter.__file__).parent
+        / "_tests"
+        / "test_files"
+        / "csv"
+        / "metrics.csv"
+    )
+
+    # Act / Assert
+    assert FileUtils.get_min_loss_from_csv(csv_path) == 0.9382843971252441
+
+
+def test_get_min_loss_from_csv_invalid_csv() -> None:
+    """
+    Ensure the function returns none when the CSV doesn't contain the expected
+    loss column.
+    """
+    # Arrange
+    csv_path: Path = (
+        Path(allencell_ml_segmenter.__file__).parent
+        / "_tests"
+        / "test_files"
+        / "csv"
+        / "test_csv.csv"
+    )
+
+    # Act / Assert
+    assert FileUtils.get_min_loss_from_csv(csv_path) is None
+
+
+def test_get_min_loss_from_csv_empty_loss_col() -> None:
+    """
+    Ensure the function returns none when the CSV's loss column is empty.
+    """
+    # Arrange
+    csv_path: Path = (
+        Path(allencell_ml_segmenter.__file__).parent
+        / "_tests"
+        / "test_files"
+        / "csv"
+        / "metrics_empty_loss.csv"
+    )
+
+    # Act / Assert
+    assert FileUtils.get_min_loss_from_csv(csv_path) is None

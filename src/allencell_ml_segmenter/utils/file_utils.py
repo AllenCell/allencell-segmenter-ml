@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Generator, Tuple
+from typing import List, Generator, Tuple, Optional
 from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
 from allencell_ml_segmenter.utils.file_writer import IFileWriter
 import os
@@ -57,6 +57,21 @@ class FileUtils:
                     if "raw" in row:
                         images.add(str(Path(row["raw"]).resolve()))
         return len(images)
+
+    @staticmethod
+    def get_min_loss_from_csv(csv_path: Path) -> Optional[float]:
+        min_loss: Optional[float] = None
+        with open(csv_path, newline="") as fr:
+            reader: DictReader = DictReader(fr)
+            for row in reader:
+                try:
+                    # this data is not available in all rows for a given epoch
+                    loss: float = float(row["val/loss_epoch"])
+                    if min_loss is None or loss < min_loss:
+                        min_loss = loss
+                except Exception:
+                    pass
+        return min_loss
 
     def write_curation_record(
         self,
