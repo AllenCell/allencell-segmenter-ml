@@ -90,7 +90,9 @@ class CurationMainView(QWidget):
         )
         self.layout().addLayout(progress_bar_layout)
 
-        self.save_csv_button: QPushButton = QPushButton("Save Curation CSV")
+        self.save_csv_button: QPushButton = QPushButton(
+            "Save Curation Progress"
+        )
         self.save_csv_button.clicked.connect(self._on_save_curation_csv)
         self.save_csv_button.setObjectName("save_csv_btn")
         self.layout().addWidget(self.save_csv_button)
@@ -183,12 +185,6 @@ class CurationMainView(QWidget):
             self.excluding_mask_status, alignment=Qt.AlignLeft
         )
         self.layout().addLayout(excluding_mask_labels)
-
-        excluding_mask_subtext: QLabel = QLabel(
-            "If performing merging, merge first before excluding mask."
-        )
-        excluding_mask_subtext.setObjectName("subtext")
-        self.layout().addWidget(excluding_mask_subtext)
 
         # buttons for excluding mask
         excluding_mask_buttons: QHBoxLayout = QHBoxLayout()

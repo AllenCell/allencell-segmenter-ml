@@ -140,7 +140,7 @@ class CurationInputView(QWidget):
         seg2_grid_layout.setVerticalSpacing(10)
 
         # First Row in Gridlayout
-        seg2_image_label: LabelWithHint = LabelWithHint("Seg 2")
+        seg2_image_label: LabelWithHint = LabelWithHint("Seg 2 (OPTIONAL)")
         # TODO set hint
         seg2_grid_layout.addWidget(
             seg2_image_label, 0, 0, alignment=Qt.AlignLeft
