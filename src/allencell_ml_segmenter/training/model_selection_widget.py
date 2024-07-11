@@ -55,6 +55,8 @@ class ModelSelectionWidget(QWidget):
         self._title: LabelWithHint = LabelWithHint(
             ModelSelectionWidget.TITLE_TEXT,
         )
+        self._title.set_hint(
+            "A type of ML model that separates the structures of interest from their background in a 2D/3D mircroscopy image")
         self._title.setStyleSheet("padding-top: 12px")
 
         self._model_name_label: QLabel = QLabel()
@@ -130,6 +132,8 @@ class ModelSelectionWidget(QWidget):
         )
 
         label_new_model: LabelWithHint = LabelWithHint("Start a new model")
+        label_new_model.set_hint(
+            "Use your own data to train a model from scratch")
         top_grid_layout.addWidget(label_new_model, 0, 1)
         top_grid_layout.addWidget(self._experiment_name_input, 0, 2)
 
@@ -138,7 +142,10 @@ class ModelSelectionWidget(QWidget):
         # initialize the radio button and combos / tabs to match the model state
         top_grid_layout.addWidget(self._radio_existing_model, 1, 0)
         top_grid_layout.addWidget(
-            LabelWithHint("Select an existing model"), 1, 1
+            LabelWithHint(
+                label_text="Select an existing model",
+                hint="Resume training from pretrained model weights"),
+            1, 1
         )
         top_grid_layout.addWidget(self._combo_box_existing_models, 1, 2)
 
