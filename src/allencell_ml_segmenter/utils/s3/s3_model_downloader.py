@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Optional
 from xml.etree import ElementTree
 import requests
@@ -25,8 +26,9 @@ XML_NAMESPACES = {"aws_s3": "http://s3.amazonaws.com/doc/2006-03-01/"}
 
 
 class S3ModelDownloader:
-    def __init__(self, staging=False, test_url: Optional[str] = None):
+    def __init__(self, path_to_save_models:Path, staging=False, test_url: Optional[str] = None):
         self._bucket_endpoint: str
+        self._path_to_save_models: Path = path_to_save_models
         # if a test_url is provided set that as the bucket endpoint
         if test_url:
             self._bucket_endpoint = test_url
@@ -60,7 +62,7 @@ class S3ModelDownloader:
             available_models_dict: dict[str, AvailableModels] = {}
             for model_name in model_names:
                 available_models_dict[model_name.split(".")[0]] = (
-                    AvailableModels(model_name, self._bucket_endpoint)
+                    AvailableModels(model_name, self._bucket_endpoint, self._path_to_save_models)
                 )
             return available_models_dict
         else:
