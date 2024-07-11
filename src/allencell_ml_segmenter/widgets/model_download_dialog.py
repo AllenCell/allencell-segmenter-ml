@@ -11,8 +11,8 @@ from qtpy.QtWidgets import (
 from allencell_ml_segmenter.core.dialog_box import DialogBox
 from allencell_ml_segmenter.core.info_dialog_box import InfoDialogBox
 from allencell_ml_segmenter.main.experiments_model import IExperimentsModel
-from allencell_ml_segmenter.utils.s3.s3_model_downloader import (
-    S3ModelDownloader,
+from allencell_ml_segmenter.utils.s3.s3_model_bucket import (
+    S3ModelBucket,
 )
 from allencell_ml_segmenter.utils.s3.s3_bucket_constants import PROD_BUCKET
 
@@ -24,8 +24,8 @@ class ModelDownloadDialog(QDialog):
         experiments_model: IExperimentsModel):
         super().__init__(parent)
         self._experiments_model = experiments_model
-        self._available_models = S3ModelDownloader(PROD_BUCKET,
-            self._experiments_model.get_user_experiments_path()).get_available_models()
+        self._available_models = S3ModelBucket(PROD_BUCKET,
+                                               self._experiments_model.get_user_experiments_path()).get_available_models()
         self.setLayout(QVBoxLayout())
 
         self._model_select_dropdown: QComboBox = QComboBox()

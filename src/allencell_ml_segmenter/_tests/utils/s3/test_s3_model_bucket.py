@@ -5,8 +5,8 @@ import responses
 
 import allencell_ml_segmenter
 from allencell_ml_segmenter.utils.s3.s3_available_model import AvailableModel
-from allencell_ml_segmenter.utils.s3.s3_model_downloader import (
-    S3ModelDownloader,
+from allencell_ml_segmenter.utils.s3.s3_model_bucket import (
+    S3ModelBucket,
 )
 from allencell_ml_segmenter.utils.s3.s3_request_exception import (
     S3RequestException,
@@ -40,7 +40,7 @@ def test_get_available_models(
         / "zip_files"
     )
 
-    model_downloader: S3ModelDownloader = S3ModelDownloader(PROD_BUCKET, test_path)
+    model_downloader: S3ModelBucket = S3ModelBucket(PROD_BUCKET, test_path)
 
     # ACT
     available_models_dict: dict[str, AvailableModel] = (
@@ -92,7 +92,7 @@ def test_get_available_models_duplicate_file_error(
         / "zip_files"
     )
 
-    model_downloader: S3ModelDownloader = S3ModelDownloader(PROD_BUCKET, test_path)
+    model_downloader: S3ModelBucket = S3ModelBucket(PROD_BUCKET, test_path)
 
     # ACT/ASSERT
     with pytest.raises(ValueError):
@@ -121,7 +121,7 @@ def test_get_available_models_bad_request() -> None:
         / "test_files"
         / "zip_files"
     )
-    model_downloader: S3ModelDownloader = S3ModelDownloader(PROD_BUCKET, test_path)
+    model_downloader: S3ModelBucket = S3ModelBucket(PROD_BUCKET, test_path)
 
     # ACT/ASSERT
     with pytest.raises(S3RequestException):
