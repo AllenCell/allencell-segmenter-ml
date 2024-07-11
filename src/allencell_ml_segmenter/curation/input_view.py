@@ -61,7 +61,7 @@ class CurationInputView(QWidget):
 
         # First Row in Gridlayout
         raw_image_label: LabelWithHint = LabelWithHint("Raw")
-        # TODO set hint
+        raw_image_label.set_hint("Original microscopy images")
         raw_grid_layout.addWidget(
             raw_image_label, 0, 0, alignment=Qt.AlignLeft
         )
@@ -101,7 +101,7 @@ class CurationInputView(QWidget):
 
         # First Row in Gridlayout
         seg1_image_label: LabelWithHint = LabelWithHint("Seg 1")
-        # TODO set hint
+        seg2_image_label.set_hint("Segmentation of the structure of interest")
         seg1_grid_layout.addWidget(
             seg1_image_label, 0, 0, alignment=Qt.AlignLeft
         )
@@ -142,7 +142,7 @@ class CurationInputView(QWidget):
 
         # First Row in Gridlayout
         seg2_image_label: LabelWithHint = LabelWithHint("Seg 2 (OPTIONAL)")
-        # TODO set hint
+        seg2_image_label.set_hint("(Optional) Complementary segmentation, useful if Seg 1 fails predictably (e.g. a segmentation that works during mitosis to supplement an interphase segmentation)")
         seg2_grid_layout.addWidget(
             seg2_image_label, 0, 0, alignment=Qt.AlignLeft
         )
