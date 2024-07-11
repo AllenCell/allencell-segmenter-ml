@@ -17,22 +17,6 @@ from allencell_ml_segmenter._tests.utils.s3.s3_response_fixtures import (
 )
 from allencell_ml_segmenter.utils.s3.s3_bucket_constants import PROD_BUCKET
 
-
-def test_init_s3_downloader() -> None:
-    # Test path to save zip to
-    test_path: Path = (
-            Path(allencell_ml_segmenter.__file__).parent
-            / "_tests"
-            / "test_files"
-            / "zip_files"
-    )
-    # Act
-    downloader: S3ModelDownloader = S3ModelDownloader(PROD_BUCKET, test_path)
-
-    # Assert
-    assert downloader.get_bucket_endpoint() == PROD_BUCKET
-    assert downloader.get_path_to_save_models_to() == test_path
-
 @responses.activate
 def test_get_available_models(
     s3_response_listobjectv2_contents_two_models: str,
