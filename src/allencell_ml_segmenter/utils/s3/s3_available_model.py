@@ -10,7 +10,7 @@ from allencell_ml_segmenter.utils.zip_file import (
 )
 
 
-class AvailableModels:
+class AvailableModel:
     def __init__(
         self,
         model_file_name: str,
