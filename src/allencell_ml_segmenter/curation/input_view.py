@@ -61,7 +61,7 @@ class CurationInputView(QWidget):
 
         # First Row in Gridlayout
         raw_image_label: LabelWithHint = LabelWithHint("Raw")
-        raw_image_label.set_hint("Original microscopy images")
+        raw_image_label.set_hint("Original microscopy images (.czi, .ome.tiff, .tiff)")
         raw_grid_layout.addWidget(
             raw_image_label, 0, 0, alignment=Qt.AlignLeft
         )
@@ -101,7 +101,7 @@ class CurationInputView(QWidget):
 
         # First Row in Gridlayout
         seg1_image_label: LabelWithHint = LabelWithHint("Seg 1")
-        seg2_image_label.set_hint("Segmentation of the structure of interest")
+        seg2_image_label.set_hint("Segmentation of the structure of interest (.czi, .ome.tiff, .tiff)")
         seg1_grid_layout.addWidget(
             seg1_image_label, 0, 0, alignment=Qt.AlignLeft
         )

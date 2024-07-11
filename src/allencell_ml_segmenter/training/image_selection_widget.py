@@ -61,6 +61,7 @@ class ImageSelectionWidget(QWidget):
         directory_label: LabelWithHint = LabelWithHint(
             "Curated image data source"
         )
+        directory_label.set_hint("The image dataset output by Curation. Directory should contain train.csv, val.csv, and test.csv files.")
         self._images_directory_input_button: InputButton = InputButton(
             self._model,
             lambda dir: self._on_input_images_select(dir),
