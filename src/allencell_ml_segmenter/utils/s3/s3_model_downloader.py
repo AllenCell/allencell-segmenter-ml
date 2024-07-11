@@ -7,33 +7,13 @@ from allencell_ml_segmenter.utils.s3.s3_available_models import AvailableModels
 from allencell_ml_segmenter.utils.s3.s3_request_exception import (
     S3RequestException,
 )
-
-# CONSTANTS RELATED TO MODEL DOWNLOADS
-# Enable Model Downloads on plugin
-ENABLE_MODEL_DOWNLOADS = True
-# Endpoint for prod bucket
-PROD_BUCKET = (
-    "https://production-aics-ml-segmenter-models.s3.us-west-2.amazonaws.com"
-)
-# Endpoint for stg bucket
-STG_BUCKET = (
-    "https://staging-aics-ml-segmenter-models.s3.us-west-2.amazonaws.com"
-)
-# XML namespaces we might expect- currently only aws_s3
-# we need this to parse XML with namespaces
-# for more info: https://docs.python.org/3/library/xml.etree.elementtree.html#parsing-xml-with-namespaces
-XML_NAMESPACES = {"aws_s3": "http://s3.amazonaws.com/doc/2006-03-01/"}
+from allencell_ml_segmenter.utils.s3.s3_bucket_constants import XML_NAMESPACES
 
 
 class S3ModelDownloader:
-    def __init__(self, path_to_save_models:Path, staging=False, test_url: Optional[str] = None):
-        self._bucket_endpoint: str
+    def __init__(self, bucket_endpoint: str, path_to_save_models:Path):
+        self._bucket_endpoint: str = bucket_endpoint
         self._path_to_save_models: Path = path_to_save_models
-        # if a test_url is provided set that as the bucket endpoint
-        if test_url:
-            self._bucket_endpoint = test_url
-        else:
-            self._bucket_endpoint = STG_BUCKET if staging else PROD_BUCKET
 
     def get_available_models(self) -> dict[str, AvailableModels]:
         """
@@ -102,3 +82,6 @@ class S3ModelDownloader:
 
     def get_bucket_endpoint(self) -> str:
         return self._bucket_endpoint
+
+    def get_path_to_save_models_to(self) -> Path:
+        return self._path_to_save_models

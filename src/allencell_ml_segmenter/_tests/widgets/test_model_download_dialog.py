@@ -7,6 +7,7 @@ from allencell_ml_segmenter._tests.fakes.fake_user_settings import (
     FakeUserSettings,
 )
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
+from allencell_ml_segmenter.utils.s3.s3_bucket_constants import PROD_BUCKET
 from allencell_ml_segmenter.widgets.model_download_dialog import (
     ModelDownloadDialog,
 )
@@ -28,20 +29,19 @@ def model_download_dialog(
         / "output_test_folder"
     )
     exp_model: ExperimentsModel = ExperimentsModel(fake_settings)
-    fake_url: str = "http://fakeurl.com"
 
     # add fake xml response that is returned when we make a request to the test_url with the list-type=2 param
     responses.add(
         **{
             "method": responses.GET,
-            "url": f"{fake_url}?list-type=2",
+            "url": f"{PROD_BUCKET}?list-type=2",
             "body": s3_response_listobjectv2_contents_two_models,
             "status": 200,
             "content_type": "application/xml",
             "adding_headers": {"X-Foo": "Bar"},
         }
     )
-    return ModelDownloadDialog(None, exp_model, test_s3_bucket=fake_url)
+    return ModelDownloadDialog(None, exp_model)
 
 
 def test_model_download_dialog_init(

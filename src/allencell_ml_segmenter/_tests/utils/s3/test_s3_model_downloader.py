@@ -7,8 +7,6 @@ import allencell_ml_segmenter
 from allencell_ml_segmenter.utils.s3.s3_available_models import AvailableModels
 from allencell_ml_segmenter.utils.s3.s3_model_downloader import (
     S3ModelDownloader,
-    STG_BUCKET,
-    PROD_BUCKET,
 )
 from allencell_ml_segmenter.utils.s3.s3_request_exception import (
     S3RequestException,
@@ -17,9 +15,10 @@ from allencell_ml_segmenter._tests.utils.s3.s3_response_fixtures import (
     s3_response_listobjectv2_contents_two_models,
     s3_response_listobjectv2_contents_duplicate_model,
 )
+from allencell_ml_segmenter.utils.s3.s3_bucket_constants import PROD_BUCKET
 
 
-def test_init_s3_downloader_with_staging() -> None:
+def test_init_s3_downloader() -> None:
     # Test path to save zip to
     test_path: Path = (
             Path(allencell_ml_segmenter.__file__).parent
@@ -28,39 +27,21 @@ def test_init_s3_downloader_with_staging() -> None:
             / "zip_files"
     )
     # Act
-    downloader: S3ModelDownloader = S3ModelDownloader(test_path, staging=True)
-
-    # Assert
-    assert downloader.get_bucket_endpoint() == STG_BUCKET
-
-
-def test_init_s3_downloader_with_prod() -> None:
-    # Test path to save zip to
-    test_path: Path = (
-        Path(allencell_ml_segmenter.__file__).parent
-        / "_tests"
-        / "test_files"
-        / "zip_files"
-    )
-    # Act
-    # No params defaults to prod bucket
-    downloader: S3ModelDownloader = S3ModelDownloader(test_path)
+    downloader: S3ModelDownloader = S3ModelDownloader(PROD_BUCKET, test_path)
 
     # Assert
     assert downloader.get_bucket_endpoint() == PROD_BUCKET
-
+    assert downloader.get_path_to_save_models_to() == test_path
 
 @responses.activate
 def test_get_available_models(
     s3_response_listobjectv2_contents_two_models: str,
 ) -> None:
-    # ARRANGE
-    test_url: str = "http://tests3bucketendpoint.com"
     # add fake xml response that is returned when we make a request to the test_url with the list-type=2 param
     responses.add(
         **{
             "method": responses.GET,
-            "url": f"{test_url}?list-type=2",
+            "url": f"{PROD_BUCKET}?list-type=2",
             "body": s3_response_listobjectv2_contents_two_models,
             "status": 200,
             "content_type": "application/xml",
@@ -75,7 +56,7 @@ def test_get_available_models(
         / "zip_files"
     )
 
-    model_downloader: S3ModelDownloader = S3ModelDownloader(test_path, test_url=test_url)
+    model_downloader: S3ModelDownloader = S3ModelDownloader(PROD_BUCKET, test_path)
 
     # ACT
     available_models_dict: dict[str, AvailableModels] = (
@@ -94,12 +75,12 @@ def test_get_available_models(
     assert available_models_dict["model1"].get_name() == "model1.zip"
     assert (
         available_models_dict["model1"].get_object_url()
-        == f"{test_url}/model1.zip"
+        == f"{PROD_BUCKET}/model1.zip"
     )
     assert available_models_dict["model2"].get_name() == "model2.zip"
     assert (
         available_models_dict["model2"].get_object_url()
-        == f"{test_url}/model2.zip"
+        == f"{PROD_BUCKET}/model2.zip"
     )
 
 
@@ -108,13 +89,11 @@ def test_get_available_models_duplicate_file_error(
     s3_response_listobjectv2_contents_duplicate_model: str,
 ) -> None:
     # ARRANGE
-    test_url: str = "http://testbucketendpoint.com"
-
     # add fake xml response that is returned when we make a request to the test_url with the list-type=2 param
     responses.add(
         **{
             "method": responses.GET,
-            "url": f"{test_url}?list-type=2",
+            "url": f"{PROD_BUCKET}?list-type=2",
             "body": s3_response_listobjectv2_contents_duplicate_model,
             "status": 200,
             "content_type": "application/xml",
@@ -129,7 +108,7 @@ def test_get_available_models_duplicate_file_error(
         / "zip_files"
     )
 
-    model_downloader: S3ModelDownloader = S3ModelDownloader(test_path, test_url=test_url)
+    model_downloader: S3ModelDownloader = S3ModelDownloader(PROD_BUCKET, test_path)
 
     # ACT/ASSERT
     with pytest.raises(ValueError):
@@ -140,12 +119,11 @@ def test_get_available_models_duplicate_file_error(
 @responses.activate
 def test_get_available_models_bad_request() -> None:
     # ARRANGE
-    test_url: str = "http://testbucketendpoint.com"
     error_response: str = "error"
     responses.add(
         **{
             "method": responses.GET,
-            "url": f"{test_url}?list-type=2",
+            "url": f"{PROD_BUCKET}?list-type=2",
             "body": error_response,
             "status": 400,
             "content_type": "error",
@@ -159,7 +137,7 @@ def test_get_available_models_bad_request() -> None:
         / "test_files"
         / "zip_files"
     )
-    model_downloader: S3ModelDownloader = S3ModelDownloader(test_path, test_url=test_url)
+    model_downloader: S3ModelDownloader = S3ModelDownloader(PROD_BUCKET, test_path)
 
     # ACT/ASSERT
     with pytest.raises(S3RequestException):

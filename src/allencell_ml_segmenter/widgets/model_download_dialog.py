@@ -14,20 +14,18 @@ from allencell_ml_segmenter.main.experiments_model import IExperimentsModel
 from allencell_ml_segmenter.utils.s3.s3_model_downloader import (
     S3ModelDownloader,
 )
+from allencell_ml_segmenter.utils.s3.s3_bucket_constants import PROD_BUCKET
 
 
 class ModelDownloadDialog(QDialog):
     def __init__(
         self,
-        parent: QWidget,
-        experiments_model: IExperimentsModel,
-        test_s3_bucket: Optional[str] = None,
-    ):
+        parent: Optional[QWidget],
+        experiments_model: IExperimentsModel):
         super().__init__(parent)
         self._experiments_model = experiments_model
-        self._available_models = S3ModelDownloader(
-            self._experiments_model.get_user_experiments_path(), staging=True, test_url=test_s3_bucket
-        ).get_available_models()
+        self._available_models = S3ModelDownloader(PROD_BUCKET,
+            self._experiments_model.get_user_experiments_path()).get_available_models()
         self.setLayout(QVBoxLayout())
 
         self._model_select_dropdown: QComboBox = QComboBox()
