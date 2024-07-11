@@ -79,9 +79,3 @@ class S3ModelDownloader:
                     )
                 available.add(file)
         return available
-
-    def get_bucket_endpoint(self) -> str:
-        return self._bucket_endpoint
-
-    def get_path_to_save_models_to(self) -> Path:
-        return self._path_to_save_models
