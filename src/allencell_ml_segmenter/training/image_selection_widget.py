@@ -72,6 +72,7 @@ class ImageSelectionWidget(QWidget):
             self._images_directory_input_button
         )
 
+        frame.layout().setSpacing(10)
         frame.layout().addWidget(directory_label, 0, 0, Qt.AlignVCenter)
 
         # remove until we provide tutorial for manually creating csv
