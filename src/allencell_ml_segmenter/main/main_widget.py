@@ -33,6 +33,7 @@ from allencell_ml_segmenter.training.model_selection_widget import (
 from allencell_ml_segmenter.training.training_model import TrainingModel
 from allencell_ml_segmenter.training.view import TrainingView
 from allencell_ml_segmenter.curation.curation_model import CurationModel
+from allencell_ml_segmenter._style import Style
 
 
 class MainWidget(AicsWidget):
@@ -125,6 +126,7 @@ class MainWidget(AicsWidget):
         self.layout().addWidget(model_selection_widget, Qt.AlignTop)
         self.layout().addWidget(self._window_container, Qt.AlignCenter)
         self.layout().addStretch(100)
+        self.setStyleSheet(Style.get_stylesheet("core.qss"))
 
     def _handle_experiment_applied(self, _: Event) -> None:
         """
