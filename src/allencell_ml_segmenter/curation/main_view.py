@@ -186,7 +186,9 @@ class CurationMainView(QWidget):
         excluding_mask_labels: QHBoxLayout = QHBoxLayout()
         excluding_mask_labels.setContentsMargins(0, 12, 0, 0)
         excluding_mask_label: LabelWithHint = LabelWithHint("Excluding mask")
-        excluding_mask_label.set_hint("Indicates areas of the image set (raw, seg(s)) that will be excluded from training")
+        excluding_mask_label.set_hint(
+            "Indicates areas of the image set (raw, seg(s)) that will be excluded from training"
+        )
         excluding_mask_labels.addWidget(excluding_mask_label)
         self.excluding_mask_status = QLabel("Create and draw mask")
         excluding_mask_labels.addWidget(

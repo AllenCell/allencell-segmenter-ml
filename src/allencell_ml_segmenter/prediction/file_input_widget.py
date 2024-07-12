@@ -86,9 +86,7 @@ class PredictionFileInput(QWidget):
         question_label: LabelWithHint = LabelWithHint(
             PredictionFileInput.TOP_TEXT
         )
-        question_label.set_hint(
-            "Image(s) already opened in napari"
-        )
+        question_label.set_hint("Image(s) already opened in napari")
         horiz_layout.addWidget(question_label)
 
         frame.layout().addLayout(horiz_layout)
@@ -143,7 +141,9 @@ class PredictionFileInput(QWidget):
         image_input_label: LabelWithHint = LabelWithHint(
             "Input image's channel"
         )
-        image_input_label.set_hint("Select which channel of the input image(s) to apply the trained model on")
+        image_input_label.set_hint(
+            "Select which channel of the input image(s) to apply the trained model on"
+        )
 
         self._channel_select_dropdown: QComboBox = QComboBox()
 
@@ -166,7 +166,9 @@ class PredictionFileInput(QWidget):
         )
 
         output_dir_label: LabelWithHint = LabelWithHint("Output directory")
-        output_dir_label.set_hint("Directory to store the prediction result(s)")
+        output_dir_label.set_hint(
+            "Directory to store the prediction result(s)"
+        )
 
         self._browse_output_edit: InputButton = InputButton(
             self._model,
