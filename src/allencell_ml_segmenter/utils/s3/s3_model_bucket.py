@@ -11,7 +11,7 @@ from allencell_ml_segmenter.utils.s3.s3_bucket_constants import XML_NAMESPACES
 
 
 class S3ModelBucket:
-    def __init__(self, bucket_endpoint: str, path_to_save_models:Path):
+    def __init__(self, bucket_endpoint: str, path_to_save_models: Path):
         self._bucket_endpoint: str = bucket_endpoint
         self._path_to_save_models: Path = path_to_save_models
 
@@ -42,7 +42,11 @@ class S3ModelBucket:
             available_models_dict: dict[str, AvailableModel] = {}
             for model_name in model_names:
                 available_models_dict[model_name.split(".")[0]] = (
-                    AvailableModel(model_name, self._bucket_endpoint, self._path_to_save_models)
+                    AvailableModel(
+                        model_name,
+                        self._bucket_endpoint,
+                        self._path_to_save_models,
+                    )
                 )
             return available_models_dict
         else:

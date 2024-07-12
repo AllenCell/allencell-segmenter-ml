@@ -19,13 +19,13 @@ from allencell_ml_segmenter.utils.s3.s3_bucket_constants import PROD_BUCKET
 
 class ModelDownloadDialog(QDialog):
     def __init__(
-        self,
-        parent: Optional[QWidget],
-        experiments_model: IExperimentsModel):
+        self, parent: Optional[QWidget], experiments_model: IExperimentsModel
+    ):
         super().__init__(parent)
         self._experiments_model = experiments_model
-        self._available_models = S3ModelBucket(PROD_BUCKET,
-                                               self._experiments_model.get_user_experiments_path()).get_available_models()
+        self._available_models = S3ModelBucket(
+            PROD_BUCKET, self._experiments_model.get_user_experiments_path()
+        ).get_available_models()
         self.setLayout(QVBoxLayout())
 
         self._model_select_dropdown: QComboBox = QComboBox()
@@ -41,21 +41,10 @@ class ModelDownloadDialog(QDialog):
         selected_model_name: str = str(
             self._model_select_dropdown.currentText()
         )
-        continue_download: bool = True
-        # check if the model already exists in experiments home
-        if selected_model_name in self._experiments_model.get_experiments():
-            overwrite_dialog = DialogBox(
-                f"{selected_model_name} is already in your experiments folder. Overwrite?"
-            )
-            overwrite_dialog.exec()
-            continue_download = overwrite_dialog.get_selection()
 
-        if continue_download:
-            self._available_models[
-                selected_model_name
-            ].download_model_and_unzip()
-            download_complete_message = InfoDialogBox(
-                f"Downloaded {selected_model_name} to {self._experiments_model.get_user_experiments_path() / selected_model_name}"
-            )
-            download_complete_message.exec()
-            self._experiments_model.refresh_experiments()  # prevents repeat downloads of model before exiting download dialog
+        self._available_models[selected_model_name].download_model_and_unzip()
+        download_complete_message = InfoDialogBox(
+            f"Downloaded {selected_model_name} to {self._experiments_model.get_user_experiments_path() / selected_model_name}"
+        )
+        download_complete_message.exec()
+        self._experiments_model.refresh_experiments()  # prevents repeat downloads of model before exiting download dialog
