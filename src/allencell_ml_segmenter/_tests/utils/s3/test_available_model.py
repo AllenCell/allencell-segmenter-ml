@@ -36,7 +36,7 @@ def test_download_model_and_unzip_sucessful_request() -> None:
         / "zip_files"
     )
     fake_zip_file_manager: FakeZipFileManager = (
-        FakeZipFileManager.global_instance()
+        FakeZipFileManager()
     )
     available_model: AvailableModel = AvailableModel(
         fake_model_file_name, fake_url, test_path, fake_zip_file_manager
@@ -67,7 +67,7 @@ def test_download_model_and_unzip_bad_request() -> None:
     )
     fake_url: str = "https://testurl.com/test_url"
     fake_zip_file_manager: FakeZipFileManager = (
-        FakeZipFileManager.global_instance()
+        FakeZipFileManager()
     )
     available_model: AvailableModel = AvailableModel(
         "abc", fake_url, test_path, fake_zip_file_manager

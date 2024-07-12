@@ -19,7 +19,7 @@ def test_write_to_file() -> None:
         / "test_zip.zip"
     )
     open_file_mock: Mock = mock_open()
-    file_manager: IZipFileManager = ZipFileManager.global_instance()
+    file_manager: IZipFileManager = ZipFileManager()
 
     # Act
     with patch(
@@ -35,7 +35,7 @@ def test_write_to_file() -> None:
 
 def test_unzip_zipped_file_and_delete_zip() -> None:
     # Arrange
-    file_manager: IZipFileManager = ZipFileManager.global_instance()
+    file_manager: IZipFileManager = ZipFileManager()
     mock_extract_all: Mock = Mock()
     mock_path: Mock = create_autospec(Path)
     mock_path.parent = "parent"

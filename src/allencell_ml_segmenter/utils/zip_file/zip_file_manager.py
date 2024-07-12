@@ -8,8 +8,8 @@ class ZipFileManager(IZipFileManager):
     """
     ZipFileManager to manage writing zip files / unzipping zip files
     """
-
-    _instance = None
+    def __init__(self):
+        super().__init__()
 
     def write_zip_file(self, path: Path, contents: bytes) -> None:
         """
@@ -29,8 +29,3 @@ class ZipFileManager(IZipFileManager):
         # delete original zip file
         path_to_zipped.unlink()
 
-    @classmethod
-    def global_instance(cls):
-        if cls._instance is None:
-            cls._instance = super().__new__(cls)
-        return cls._instance
