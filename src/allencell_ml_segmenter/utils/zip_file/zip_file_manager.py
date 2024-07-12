@@ -8,6 +8,7 @@ class ZipFileManager(IZipFileManager):
     """
     ZipFileManager to manage writing zip files / unzipping zip files
     """
+
     def __init__(self):
         super().__init__()
 
@@ -28,4 +29,3 @@ class ZipFileManager(IZipFileManager):
             zipped.extractall(path_to_zipped.parent)
         # delete original zip file
         path_to_zipped.unlink()
-

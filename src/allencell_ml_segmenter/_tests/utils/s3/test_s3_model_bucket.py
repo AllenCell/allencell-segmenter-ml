@@ -17,6 +17,7 @@ from allencell_ml_segmenter._tests.utils.s3.s3_response_fixtures import (
 )
 from allencell_ml_segmenter.utils.s3.s3_bucket_constants import PROD_BUCKET
 
+
 @responses.activate
 def test_get_available_models(
     s3_response_listobjectv2_contents_two_models: str,

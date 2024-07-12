@@ -8,6 +8,7 @@ class FakeZipFileManager(IZipFileManager):
     """
     FakeZipFileManager for testing
     """
+
     def __init__(self):
         super().__init__()
         # zip files that have been written, keys- path, values- content written
