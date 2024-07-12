@@ -14,12 +14,18 @@ from qtpy.QtWidgets import (
     QLabel,
 )
 from qtpy.QtCore import Qt
+
 from allencell_ml_segmenter.config.i_user_settings import IUserSettings
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
-
+from allencell_ml_segmenter.utils.s3.s3_bucket_constants import (
+    ENABLE_MODEL_DOWNLOADS,
+)
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
+from allencell_ml_segmenter.widgets.model_download_dialog import (
+    ModelDownloadDialog,
+)
 
 
 class ModelSelectionWidget(QWidget):
@@ -33,6 +39,7 @@ class ModelSelectionWidget(QWidget):
     FORUM_TEXT: str = "Forum"
     WEBSITE_TEXT: str = "Website"
     EXPERIMENTS_HOME_TEXT: str = "Experiments Home"
+    DOWNLOAD_EXPERIMENTS_TEXT: str = "Download Models"
 
     def __init__(
         self,
@@ -55,6 +62,9 @@ class ModelSelectionWidget(QWidget):
         self._title: LabelWithHint = LabelWithHint(
             ModelSelectionWidget.TITLE_TEXT,
         )
+        self._title.set_hint(
+            "A type of ML model that separates the structures of interest from their background in a 2D/3D mircroscopy image"
+        )
         self._title.setStyleSheet("padding-top: 12px")
 
         self._model_name_label: QLabel = QLabel()
@@ -71,6 +81,7 @@ class ModelSelectionWidget(QWidget):
                 ModelSelectionWidget.FORUM_TEXT,
                 ModelSelectionWidget.WEBSITE_TEXT,
                 ModelSelectionWidget.EXPERIMENTS_HOME_TEXT,
+                ModelSelectionWidget.DOWNLOAD_EXPERIMENTS_TEXT,
             ]
         )
         self.help_combo_box.currentTextChanged.connect(
@@ -102,7 +113,8 @@ class ModelSelectionWidget(QWidget):
 
         frame: QFrame = QFrame()
         frame.setLayout(QVBoxLayout())
-        frame.setObjectName("frame")
+        # uncomment to make frame visible
+        # frame.setObjectName("frame")
         self.layout().addWidget(frame)
 
         # existing model selection components must be initialized before the new/existing model radios
@@ -130,6 +142,9 @@ class ModelSelectionWidget(QWidget):
         )
 
         label_new_model: LabelWithHint = LabelWithHint("Start a new model")
+        label_new_model.set_hint(
+            "Use your own data to train a model from scratch"
+        )
         top_grid_layout.addWidget(label_new_model, 0, 1)
         top_grid_layout.addWidget(self._experiment_name_input, 0, 2)
 
@@ -138,7 +153,12 @@ class ModelSelectionWidget(QWidget):
         # initialize the radio button and combos / tabs to match the model state
         top_grid_layout.addWidget(self._radio_existing_model, 1, 0)
         top_grid_layout.addWidget(
-            LabelWithHint("Select an existing model"), 1, 1
+            LabelWithHint(
+                label_text="Select an existing model",
+                hint="Resume training from pretrained model weights",
+            ),
+            1,
+            1,
         )
         top_grid_layout.addWidget(self._combo_box_existing_models, 1, 2)
 
@@ -222,6 +242,14 @@ class ModelSelectionWidget(QWidget):
                 parent=self
             )
             self._refresh_experiment_options()
+        elif (
+            text == ModelSelectionWidget.DOWNLOAD_EXPERIMENTS_TEXT
+            and ENABLE_MODEL_DOWNLOADS
+        ):
+            dialog = ModelDownloadDialog(self, self._experiments_model)
+            dialog.exec()
+            self._refresh_experiment_options()  # once all models are downloaded, one final refresh to load them into existing models dropdown
+
         # reset the combo box, so that it bahaves more like a menu
         self.help_combo_box.setCurrentIndex(-1)
 

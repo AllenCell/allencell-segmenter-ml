@@ -5,37 +5,8 @@ Qt stylesheet reference: https://doc.qt.io/qtforpython-5/overviews/stylesheet-sy
 Examples: https://doc.qt.io/qt-5/stylesheet-examples.html#customizing-specific-widgets
 */
 
-* {
-    color: #F0F1F2;
-}
-
-#title {
-    font-weight: bold;
-    margin: 10px 0px;
-}
-
 #run {
-    background-color: #007ACC;
-    color: #F0F1F2;
     margin: 5px 13px;
-}
-
-#run:pressed {
-    background-color: #00489D;
-    color: #F0F1F2;
-}
-
-#modelInput QComboBox:disabled {
-    color: #868E93;
-}
-
-#modelInput #frame {
-    border: 1px solid #AAAAAA;
-    border-radius: 5px;
-}
-
-#modelInput #title {
-    font-weight: bold;
 }
 
 #modelInput #methodLabel {
@@ -64,34 +35,6 @@ Examples: https://doc.qt.io/qt-5/stylesheet-examples.html#customizing-specific-w
     font-size: 10px;
 }
 
-#fileInput #frame {
-    border: 1px solid #AAAAAA;
-    border-radius: 5px;
-}
-
-#fileInput #title {
-    font-weight: bold;
-}
-
 #fileInput #onScreen, #imageList, #radioDirectory {
     margin-left: 40px;
-}
-
-#fileInput #guideText {
-    font-size: 8px;
-    color: #868E93;
-}
-
-a {
-    color: #007ACC;
-    text-decoration: none;
-}
-
-a:hover {
-    text-decoration: underline;
-}
-
-a:active {
-    color: #41B3FF;
-    text-decoration: underline;
 }
