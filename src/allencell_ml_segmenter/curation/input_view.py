@@ -101,7 +101,7 @@ class CurationInputView(QWidget):
 
         # First Row in Gridlayout
         seg1_image_label: LabelWithHint = LabelWithHint("Seg 1")
-        seg2_image_label.set_hint("Segmentation of the structure of interest (.czi, .ome.tiff, .tiff)")
+        seg1_image_label.set_hint("Segmentation of the structure of interest (.czi, .ome.tiff, .tiff)")
         seg1_grid_layout.addWidget(
             seg1_image_label, 0, 0, alignment=Qt.AlignLeft
         )
