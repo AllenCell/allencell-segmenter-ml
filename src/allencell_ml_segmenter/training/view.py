@@ -254,6 +254,8 @@ class TrainingView(View, MainWindow):
         """
         Starts training process
         """
+        # reset training completed to False since just starting out
+        self._training_model.set_training_completed(False)
         self._training_model.dispatch_training()
 
     def getTypeOfWork(self) -> str:
@@ -263,8 +265,9 @@ class TrainingView(View, MainWindow):
         return "Training"
 
     def showResults(self):
-        dialog_box = InfoDialogBox("Training finished")
-        dialog_box.exec()
+        if self._training_model.get_training_completed():
+            dialog_box = InfoDialogBox("Training finished")
+            dialog_box.exec()
 
     def _num_epochs_field_handler(self, num_epochs: str) -> None:
         self._training_model.set_num_epochs(int(num_epochs))

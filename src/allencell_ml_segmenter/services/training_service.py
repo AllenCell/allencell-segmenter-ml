@@ -92,6 +92,7 @@ class TrainingService(Subscriber):
                 )
             )
             model.train()
+            self._training_model.set_training_completed(True)
 
     def _able_to_continue_training(self) -> bool:
         if self._experiments_model.get_experiment_name() is None:

@@ -78,6 +78,8 @@ class TrainingModel(Publisher):
         self._model_size: Optional[ModelSize] = None
         # the total number of images used for training/test/validation for this model
         self._total_num_images: int = 0
+        # training started, then finished
+        self._training_completed: bool = False
 
     def get_experiment_type(self) -> Optional[str]:
         """
@@ -241,3 +243,9 @@ class TrainingModel(Publisher):
 
     def get_total_num_images(self) -> int:
         return self._total_num_images
+
+    def set_training_completed(self, completed: bool) -> None:
+        self._training_completed = completed
+
+    def get_training_completed(self) -> bool:
+        return self._training_completed
