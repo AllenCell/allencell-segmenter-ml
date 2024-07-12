@@ -19,7 +19,7 @@ def test_download_model_and_unzip_sucessful_request() -> None:
     # fake data
     fake_content: str = "fake_content abcde"
     fake_url: str = "http://test.com/abc"
-    fake_model_file_name: str = "test_model.zip"
+    fake_model_file_name: str = "some_new_model.zip"
     responses.add(
         **{
             "method": responses.GET,
@@ -63,7 +63,7 @@ def test_download_model_and_unzip_bad_request() -> None:
         / "_tests"
         / "test_files"
         / "zip_files"
-        / "test_model.zip"
+        / "test_zip.zip"
     )
     fake_url: str = "https://testurl.com/test_url"
     fake_zip_file_manager: FakeZipFileManager = FakeZipFileManager()
@@ -98,6 +98,7 @@ def test_download_model_and_unzip_model_exists_overwrite(
     # fake data
     fake_content: str = "fake_content abcde"
     fake_url: str = "http://test.com/abc"
+    # this is an existing "model" name in the test files directory
     fake_model_file_name: str = "test_zip.zip"
     responses.add(
         **{
@@ -135,7 +136,7 @@ def test_download_model_and_unzip_model_exists_overwrite(
 
 
 @responses.activate
-def test_download_model_and_unzip_model_exists_do_notoverwrite(
+def test_download_model_and_unzip_model_exists_do_not_overwrite(
     monkeypatch: MonkeyPatch,
 ) -> None:
     # standard way to deal with modal dialogs: https://pytest-qt.readthedocs.io/en/latest/note_dialogs.html
@@ -146,6 +147,7 @@ def test_download_model_and_unzip_model_exists_do_notoverwrite(
     # fake data
     fake_content: str = "fake_content abcde"
     fake_url: str = "http://test.com/abc"
+    # this is an existing "model" name in the test files directory
     fake_model_file_name: str = "test_zip.zip"
     responses.add(
         **{
@@ -174,3 +176,4 @@ def test_download_model_and_unzip_model_exists_do_notoverwrite(
 
     # Assert
     assert len(fake_zip_file_manager.written_zip_files) == 0
+    assert len(fake_zip_file_manager.unzipped_files) == 0
