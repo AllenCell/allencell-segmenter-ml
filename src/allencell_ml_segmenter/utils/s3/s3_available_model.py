@@ -32,8 +32,8 @@ class AvailableModel:
         Download this AvilableModel from s3 and unzip it into the specified :param path:
         """
         continue_download: bool = True
-        # check if the model already exists in experiments home
-        if (self._path_to_store_model / self.get_name()).exists():
+        # check to see if model already exists.
+        if (self._path_to_store_model / Path(self.get_name()).stem).exists():
             overwrite_dialog = DialogBox(
                 f"{self.get_name()} is already in your experiments folder. Overwrite?"
             )
