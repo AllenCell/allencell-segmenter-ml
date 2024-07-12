@@ -32,6 +32,7 @@ class LabelWithHint(QWidget):
         self._question_mark.setToolTip(hint)
 
         self.layout().addWidget(self._question_mark)
+        self._question_mark.setVisible(bool(hint))
 
         self._label: QLabel = QLabel(value_text)
         self.layout().addWidget(self._label)
@@ -54,6 +55,7 @@ class LabelWithHint(QWidget):
         Sets the tooltip to be displayed when the question icon is hovered over.
         """
         self._question_mark.setToolTip(hint)
+        self._question_mark.setVisible(bool(hint))
 
     def add_right_space(self, marg: int) -> None:
         """
