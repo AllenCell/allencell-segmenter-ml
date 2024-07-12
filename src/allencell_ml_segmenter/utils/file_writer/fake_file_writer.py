@@ -1,7 +1,7 @@
 from .i_file_writer import IFileWriter
 import numpy as np
 from pathlib import Path
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Union
 
 
 class FakeFileWriter(IFileWriter):
@@ -12,6 +12,9 @@ class FakeFileWriter(IFileWriter):
 
     # {path: {"open": T/F, "rows": [[header1, header2...], [col1, col2...]]}}
     csv_state: Dict[Path, Dict[str, Any]] = {}
+
+    # {path: json-like-obj}
+    json_state: dict[Path, Union[list, dict]] = {}
 
     def np_save(self, path: Path, arr: np.ndarray) -> None:
         """
@@ -48,6 +51,9 @@ class FakeFileWriter(IFileWriter):
         path = path.resolve()
         if path in self.csv_state:
             self.csv_state[path]["open"] = False
+
+    def write_json(self, json_like_obj: Union[list, dict], path: Path) -> None:
+        self.json_state[path] = json_like_obj
 
     @classmethod
     def global_instance(cls):
