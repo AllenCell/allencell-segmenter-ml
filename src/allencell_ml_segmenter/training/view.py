@@ -30,6 +30,9 @@ from allencell_ml_segmenter.training.training_model import (
     TrainingModel,
     ModelSize,
 )
+from allencell_ml_segmenter.training.patch_size_validator import (
+    PatchSizeValidator,
+)
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 from qtpy.QtGui import QIntValidator
 from allencell_ml_segmenter.training.training_progress_tracker import (
@@ -102,21 +105,20 @@ class TrainingView(View, MainWindow):
         patch_size_entry_layout: QHBoxLayout = QHBoxLayout()
 
         # allow only integers for the linedits below
-        enforce_int: QIntValidator = QIntValidator()
-        enforce_int.setBottom(1)
+        patch_validator: PatchSizeValidator = PatchSizeValidator()
 
         self.z_patch_size: QLineEdit = QLineEdit()
-        self.z_patch_size.setValidator(enforce_int)
+        self.z_patch_size.setValidator(patch_validator)
         patch_size_entry_layout.addWidget(QLabel("Z:"))
         patch_size_entry_layout.addWidget(self.z_patch_size)
 
         self.y_patch_size: QLineEdit = QLineEdit()
-        self.y_patch_size.setValidator(enforce_int)
+        self.y_patch_size.setValidator(patch_validator)
         patch_size_entry_layout.addWidget(QLabel("Y:"))
         patch_size_entry_layout.addWidget(self.y_patch_size)
 
         self.x_patch_size: QLineEdit = QLineEdit()
-        self.x_patch_size.setValidator(enforce_int)
+        self.x_patch_size.setValidator(patch_validator)
         patch_size_entry_layout.addWidget(QLabel("X:"))
         patch_size_entry_layout.addWidget(self.x_patch_size)
 
@@ -185,8 +187,9 @@ class TrainingView(View, MainWindow):
         bottom_grid_layout.addWidget(num_epochs_label, 3, 0)
 
         self._num_epochs_input: QLineEdit = QLineEdit()
-        # allow only integers TODO [needs test coverage]
-        self._num_epochs_input.setValidator(QIntValidator())
+        int_validator: QIntValidator = QIntValidator()
+        int_validator.setBottom(1)
+        self._num_epochs_input.setValidator(int_validator)
         self._num_epochs_input.setPlaceholderText("1000")
         self._num_epochs_input.setObjectName("trainingStepInput")
         self._num_epochs_input.textChanged.connect(
