@@ -16,7 +16,7 @@ class AvailableModel:
         model_file_name: str,
         bucket_endpoint: str,
         path_to_save_model: Path,
-        zip_file_manager: IZipFileManager = ZipFileManager.global_instance(),
+        zip_file_manager: IZipFileManager = ZipFileManager(),
     ):
         self._name: str = model_file_name
         # the url of this AvailableModel on the specified s3 bucket
