@@ -1,7 +1,7 @@
 from pathlib import Path
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
-from typing import Dict, Callable, List
+from typing import Dict, Callable, List, Optional
 from allencell_ml_segmenter.core.event import Event
 
 
@@ -48,6 +48,9 @@ class FakeExperimentsModel(IExperimentsModel):
 
     def get_latest_metrics_csv_version(self) -> int:
         pass
+
+    def get_latest_metrics_csv_path(self) -> Optional[Path]:
+        return Path()
 
     def get_csv_path(self) -> Path:
         return Path()

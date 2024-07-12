@@ -134,6 +134,14 @@ class ExperimentsModel(IExperimentsModel):
                         continue
         return last_version
 
+    def get_latest_metrics_csv_path(self) -> Optional[Path]:
+        version: int = self.get_latest_metrics_csv_version()
+        return (
+            self.get_metrics_csv_path() / f"version_{version}" / "metrics.csv"
+            if version >= 0
+            else None
+        )
+
     def get_train_config_path(self, experiment_name: str) -> Path:
         return (
             self.get_user_experiments_path()

@@ -1,0 +1,9 @@
+val/loss_epoch,val/loss/target_epoch,epoch,step,train/loss_epoch,train/loss/target_epoch
+,,0,0,,
+,,0,0,1.0,1.0
+,,1,1,,
+,,1,1,1.0,1.0
+,,2,2,,
+,,2,2,,
+,,3,3,,
+,,3,3,1.0,1.0
