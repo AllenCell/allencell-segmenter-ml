@@ -61,6 +61,7 @@ test_lint = [
     "pyqt5",
     "black>=24.2.0",
     'pytest-xvfb; sys_platform == "linux"',
+    "responses",
 ]
 
 dev = [
@@ -74,6 +75,8 @@ dev = [
     "bumpver>=2023.1129",
     "build>=1.0.3",
     "twine>=5.0.0",
+    "responses"
+
 ]
 
 # entry points
