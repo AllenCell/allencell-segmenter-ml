@@ -4,10 +4,12 @@ import subprocess
 import random
 from csv import DictReader
 from pathlib import Path
-from typing import List, Generator, Tuple
+from typing import List, Generator, Tuple, Optional
 
 from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
 from allencell_ml_segmenter.utils.file_writer import IFileWriter
+
+LOSS_COLUMN: str = "val/loss_epoch"
 
 
 class FileUtils:
@@ -58,6 +60,23 @@ class FileUtils:
                     if "raw" in row:
                         images.add(str(Path(row["raw"]).resolve()))
         return len(images)
+
+    @staticmethod
+    def get_min_loss_from_csv(csv_path: Path) -> Optional[float]:
+        min_loss: Optional[float] = None
+        with open(csv_path, newline="") as fr:
+            reader: DictReader = DictReader(fr)
+            if LOSS_COLUMN not in reader.fieldnames:
+                return None
+
+            for row in reader:
+                entry: str = row[LOSS_COLUMN]
+                if len(entry) > 0:
+                    loss: float = float(entry)
+                    if min_loss is None or loss < min_loss:
+                        min_loss = loss
+
+        return min_loss
 
     def write_curation_record(
         self,
