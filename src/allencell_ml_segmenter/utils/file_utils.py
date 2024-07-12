@@ -8,6 +8,8 @@ import subprocess
 import random
 from csv import DictReader
 
+LOSS_COLUMN: str = "val/loss_epoch"
+
 
 class FileUtils:
     """
@@ -61,14 +63,13 @@ class FileUtils:
     @staticmethod
     def get_min_loss_from_csv(csv_path: Path) -> Optional[float]:
         min_loss: Optional[float] = None
-        expected_column: str = "val/loss_epoch"
         with open(csv_path, newline="") as fr:
             reader: DictReader = DictReader(fr)
-            if expected_column not in reader.fieldnames:
+            if LOSS_COLUMN not in reader.fieldnames:
                 return None
 
             for row in reader:
-                entry: str = row[expected_column]
+                entry: str = row[LOSS_COLUMN]
                 if len(entry) > 0:
                     loss: float = float(entry)
                     if min_loss is None or loss < min_loss:
