@@ -65,7 +65,7 @@ class PredictionFileInput(QWidget):
         frame.setObjectName("frame")
 
         title: LabelWithHint = LabelWithHint("Input image(s)")
-        # TODO: hints for widget titles?
+        title.set_hint("Image(s) to apply the trained model on")
         title.setObjectName("title")
 
         self.layout().addWidget(title)
@@ -86,9 +86,7 @@ class PredictionFileInput(QWidget):
         question_label: LabelWithHint = LabelWithHint(
             PredictionFileInput.TOP_TEXT
         )
-        question_label.set_hint(
-            "Select images to segment from the napari viewer. All images should have the same number and ordering of channels."
-        )
+        question_label.set_hint("Image(s) already opened in napari")
         horiz_layout.addWidget(question_label)
 
         frame.layout().addLayout(horiz_layout)
@@ -114,7 +112,7 @@ class PredictionFileInput(QWidget):
 
         question_label = LabelWithHint(PredictionFileInput.BOTTOM_TEXT)
         question_label.set_hint(
-            "Select images to segment from a folder. All images should have the same number and ordering of channels."
+            "Whole directory of image will be used as input. Prediction results will not be displayed in napari after prediction completion."
         )
         question_label.add_right_space(10)
         image_dir_layout.addWidget(question_label)
@@ -143,7 +141,9 @@ class PredictionFileInput(QWidget):
         image_input_label: LabelWithHint = LabelWithHint(
             "Input image's channel"
         )
-        image_input_label.set_hint("0-indexed channel in image to segment.")
+        image_input_label.set_hint(
+            "Select which channel of the input image(s) to apply the trained model on"
+        )
 
         self._channel_select_dropdown: QComboBox = QComboBox()
 
@@ -166,7 +166,9 @@ class PredictionFileInput(QWidget):
         )
 
         output_dir_label: LabelWithHint = LabelWithHint("Output directory")
-        output_dir_label.set_hint("Location to save segmentations.")
+        output_dir_label.set_hint(
+            "Directory to store the prediction result(s)"
+        )
 
         self._browse_output_edit: InputButton = InputButton(
             self._model,
