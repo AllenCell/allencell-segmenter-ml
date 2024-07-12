@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 import numpy as np
 from pathlib import Path
-from typing import List
+from typing import List, Union
 
 
 class IFileWriter(ABC):
@@ -38,6 +38,10 @@ class IFileWriter(ABC):
         """
         Closes the open CSV at :param path:
         """
+        pass
+
+    @abstractmethod
+    def write_json(self, json_like_obj: Union[list, dict], path: Path) -> None:
         pass
 
     @classmethod
