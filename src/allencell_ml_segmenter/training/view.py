@@ -88,6 +88,7 @@ class TrainingView(View, MainWindow):
         patch_size_text_layout = QVBoxLayout()
         patch_size_text_layout.setSpacing(0)
         patch_size_label: LabelWithHint = LabelWithHint("Patch size")
+        patch_size_label.set_hint("Patch size to split images into during training. Should encompass the structure of interest and all dimensions should be evenly divisble by 4. If 2D, Z can be left blank.")
         patch_size_text_layout.addWidget(patch_size_label)
         guide_text: QLabel = QLabel("All values must be multiples of 4")
         guide_text.setObjectName("subtext")
@@ -117,6 +118,7 @@ class TrainingView(View, MainWindow):
         bottom_grid_layout.addLayout(patch_size_entry_layout, 0, 1)
 
         model_size_label: LabelWithHint = LabelWithHint("Model size")
+        model_size_label.set_hint("Defines the complexity of the model - smaller models train more quickly but perform worse than larger models")
         bottom_grid_layout.addWidget(model_size_label, 1, 0)
 
         self._model_size_combo_box: QComboBox = QComboBox()
@@ -134,6 +136,7 @@ class TrainingView(View, MainWindow):
         image_dimensions_label: LabelWithHint = LabelWithHint(
             "Image dimension"
         )
+        image_dimensions_label.set_hint("Dimensionality of your image data")
         bottom_grid_layout.addWidget(image_dimensions_label, 2, 0)
 
         dimension_choice_layout: QHBoxLayout = QHBoxLayout()
@@ -169,6 +172,7 @@ class TrainingView(View, MainWindow):
         bottom_grid_layout.addWidget(dimension_choice_dummy, 2, 1)
 
         num_epochs_label: LabelWithHint = LabelWithHint("Training steps")
+        num_epochs_label.set_hint("Number of model updates to perform. More steps yields better performance at the cost of training time.")
         bottom_grid_layout.addWidget(num_epochs_label, 3, 0)
 
         self._num_epochs_input: QLineEdit = QLineEdit()
@@ -205,6 +209,7 @@ class TrainingView(View, MainWindow):
         max_time_layout.addWidget(self._max_time_in_minutes_input)
 
         max_time_right_text: LabelWithHint = LabelWithHint("minutes")
+        max_time_right_text.set_hint("(Optional) Maximum time to train model")
         max_time_layout.addWidget(max_time_right_text, alignment=Qt.AlignLeft)
         max_time_layout.addStretch()
 
