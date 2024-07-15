@@ -1,5 +1,6 @@
 from pathlib import Path
 from typing import Optional
+import json
 
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
@@ -158,12 +159,12 @@ class ImageSelectionWidget(QWidget):
         self._model.set_selected_channel(img_type, idx if idx >= 0 else None)
 
     def _reset_combo_box(
-        self, combo_box: QComboBox, num_channels: Optional[int]
+        self, combo_box: QComboBox, num_channels: Optional[int], default_channel: int=0
     ) -> None:
         combo_box.clear()
         if num_channels is not None:
             combo_box.addItems([str(x) for x in range(num_channels)])
-            combo_box.setCurrentIndex(0)
+            combo_box.setCurrentIndex(default_channel if default_channel < num_channels else 0)
             combo_box.setEnabled(True)
         else:
             combo_box.setPlaceholderText("")
@@ -172,15 +173,25 @@ class ImageSelectionWidget(QWidget):
 
     def _update_channels(self) -> None:
         self._training_data_stacked_spinner.stop()
+
+        default_channels_path: Path = self._experiments_model.get_channel_selection_path()
+        default_channels: dict[str, Optional[int]] = None
+        if default_channels_path.exists():
+            with open(default_channels_path, "r") as fr:
+                default_channels = json.load(fr)
+        # reduce dupl logic?
         self._reset_combo_box(
             self._raw_channel_combo_box,
             self._model.get_num_channels(TrainingImageType.RAW),
+            default_channel=default_channels["raw"] if default_channels is not None and default_channels["raw"] is not None else 0,
         )
         self._reset_combo_box(
             self._seg1_channel_combo_box,
             self._model.get_num_channels(TrainingImageType.SEG1),
+            default_channel=default_channels["seg1"] if default_channels is not None and default_channels["seg1"] is not None else 0,
         )
         self._reset_combo_box(
             self._seg2_channel_combo_box,
             self._model.get_num_channels(TrainingImageType.SEG2),
+            default_channel=default_channels["seg2"] if default_channels is not None and default_channels["seg2"] is not None else 0,
         )
