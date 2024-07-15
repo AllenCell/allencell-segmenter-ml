@@ -125,7 +125,7 @@ def _generate_default_records(num_records: int) -> List[CurationRecord]:
 
 def test_write_curation_record_closes_files():
     # Arrange
-    fake_writer: IFileWriter = FakeFileWriter.global_instance()
+    fake_writer: IFileWriter = FakeFileWriter()
     f_utils: FileUtils = FileUtils(fake_writer)
     fake_curation_record: List[CurationRecord] = _generate_default_records(10)
 
@@ -145,7 +145,7 @@ def test_write_curation_record_writes_mask_to_disk():
     Verify that a call to the public write_curation_record will result in excluding/merging masks being written to disk
     """
     # Arrange
-    fake_writer: IFileWriter = FakeFileWriter.global_instance()
+    fake_writer: IFileWriter = FakeFileWriter()
     f_utils: FileUtils = FileUtils(fake_writer)
     fake_curation_record: List[CurationRecord] = _generate_default_records(3)
     masks: List[np.ndarray] = [
@@ -186,7 +186,7 @@ def test_write_curation_record_split_sizes():
     of different lengths.
     """
     # Arrange
-    fake_writer: IFileWriter = FakeFileWriter.global_instance()
+    fake_writer: IFileWriter = FakeFileWriter()
     f_utils: FileUtils = FileUtils(fake_writer)
 
     # Act
@@ -250,7 +250,7 @@ def test_write_curation_record_includes_only_selected_images():
     to be written.
     """
     # Arrange
-    fake_writer: IFileWriter = FakeFileWriter.global_instance()
+    fake_writer: IFileWriter = FakeFileWriter()
     f_utils: FileUtils = FileUtils(fake_writer)
 
     fake_records: List[CurationRecord] = _generate_default_records(40)
@@ -275,7 +275,7 @@ def test_write_curation_record_does_not_include_duplicates():
     are no duplicates within train or val.
     """
     # Arrange
-    fake_writer: IFileWriter = FakeFileWriter.global_instance()
+    fake_writer: IFileWriter = FakeFileWriter()
     f_utils: FileUtils = FileUtils(fake_writer)
 
     fake_curation_record: List[CurationRecord] = _generate_default_records(20)
@@ -302,7 +302,7 @@ def test_write_curation_record_test_val_same():
     Test that the records in val and test are the same.
     """
     # Arrange
-    fake_writer: IFileWriter = FakeFileWriter.global_instance()
+    fake_writer: IFileWriter = FakeFileWriter()
     f_utils: FileUtils = FileUtils(fake_writer)
 
     fake_curation_record: List[CurationRecord] = _generate_default_records(20)
