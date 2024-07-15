@@ -1,6 +1,5 @@
 from typing import Dict
 from allencell_ml_segmenter.config.i_user_settings import IUserSettings
-from allencell_ml_segmenter.core.extractor_factory import ExtractorFactory
 
 from allencell_ml_segmenter.main.viewer import Viewer
 
