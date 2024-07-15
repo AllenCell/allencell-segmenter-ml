@@ -7,14 +7,15 @@ from typing import List, Dict, Any, Union
 class FakeFileWriter(IFileWriter):
     _instance = None
 
-    # {path: saved_array}
-    np_save_state: Dict[Path, np.ndarray] = {}
+    def __init__(self):
+        # {path: saved_array}
+        self.np_save_state: Dict[Path, np.ndarray] = {}
 
-    # {path: {"open": T/F, "rows": [[header1, header2...], [col1, col2...]]}}
-    csv_state: Dict[Path, Dict[str, Any]] = {}
+        # {path: {"open": T/F, "rows": [[header1, header2...], [col1, col2...]]}}
+        self.csv_state: Dict[Path, Dict[str, Any]] = {}
 
-    # {path: json-like-obj}
-    json_state: dict[Path, Union[list, dict]] = {}
+        # {path: json-like-obj}
+        self.json_state: dict[Path, Union[list, dict]] = {}
 
     def np_save(self, path: Path, arr: np.ndarray) -> None:
         """
@@ -54,9 +55,3 @@ class FakeFileWriter(IFileWriter):
 
     def write_json(self, json_like_obj: Union[list, dict], path: Path) -> None:
         self.json_state[path] = json_like_obj
-
-    @classmethod
-    def global_instance(cls):
-        if cls._instance is None:
-            cls._instance = super().__new__(cls)
-        return cls._instance
