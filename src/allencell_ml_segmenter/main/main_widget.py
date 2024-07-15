@@ -34,6 +34,7 @@ from allencell_ml_segmenter.training.training_model import TrainingModel
 from allencell_ml_segmenter.training.view import TrainingView
 from allencell_ml_segmenter.curation.curation_model import CurationModel
 from allencell_ml_segmenter._style import Style
+from allencell_ml_segmenter.curation.curation_service import CurationService
 
 
 class MainWidget(AicsWidget):
@@ -77,6 +78,10 @@ class MainWidget(AicsWidget):
         )
 
         # init services
+        self._curation_service: CurationService = CurationService(
+            self._curation_model,
+            self._experiments_model,
+        )
         self._training_service: TrainingService = TrainingService(
             training_model=self._training_model,
             experiments_model=self._experiments_model,

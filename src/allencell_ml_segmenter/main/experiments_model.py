@@ -180,3 +180,6 @@ class ExperimentsModel(IExperimentsModel):
 
         files.sort(key=lambda file: file.stat().st_mtime)
         return files[-1].name
+
+    def get_channel_selection_path(self) -> Path:
+        return self.get_csv_path() / "selected_channels.json"
