@@ -55,6 +55,7 @@ class FileWriter(IFileWriter):
             del self._open_files[path]
 
     def write_json(self, json_like_obj: Union[list, dict], path: Path) -> None:
+        path.parent.mkdir(parents=True, exist_ok=True)
         with open(path, "w") as fw:
             json.dump(json_like_obj, fw)
 

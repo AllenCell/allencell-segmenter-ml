@@ -54,6 +54,7 @@ class CurationService(QObject):
         self._curation_model.save_to_disk_requested.connect(
             self._on_save_to_disk
         )
+        self._curation_model.current_view_changed.connect(self._on_current_view_changed)
 
     def _get_dir_data(self, dir: Path) -> DirectoryData:
         files: List[Path] = (
@@ -209,7 +210,7 @@ class CurationService(QObject):
                 "seg1": self._curation_model.get_selected_channel(CurationImageType.SEG1),
                 "seg2": self._curation_model.get_selected_channel(CurationImageType.SEG2),
             }
-            
+
             # this is a non-critical task, so failing silently is OK--user will just have to manually specify
             # channels during training
             self._task_executor.exec(
