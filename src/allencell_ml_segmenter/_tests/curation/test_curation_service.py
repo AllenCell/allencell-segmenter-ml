@@ -239,7 +239,6 @@ def test_service_reacts_to_view_change(
     )
 
     # Assert (sanity check)
-    print(test_env.file_writer.json_state)
     assert len(test_env.file_writer.json_state) == 0
 
     # Act
