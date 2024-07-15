@@ -54,7 +54,9 @@ class CurationService(QObject):
         self._curation_model.save_to_disk_requested.connect(
             self._on_save_to_disk
         )
-        self._curation_model.current_view_changed.connect(self._on_current_view_changed)
+        self._curation_model.current_view_changed.connect(
+            self._on_current_view_changed
+        )
 
     def _get_dir_data(self, dir: Path) -> DirectoryData:
         files: List[Path] = (
@@ -202,17 +204,26 @@ class CurationService(QObject):
             ),
             on_error=self._on_save_to_disk_error,
         )
-    
+
     def _on_current_view_changed(self) -> None:
         if self._curation_model.get_current_view() == CurationView.MAIN_VIEW:
             channel_selections: dict[str, int] = {
-                "raw": self._curation_model.get_selected_channel(CurationImageType.RAW),
-                "seg1": self._curation_model.get_selected_channel(CurationImageType.SEG1),
-                "seg2": self._curation_model.get_selected_channel(CurationImageType.SEG2),
+                "raw": self._curation_model.get_selected_channel(
+                    CurationImageType.RAW
+                ),
+                "seg1": self._curation_model.get_selected_channel(
+                    CurationImageType.SEG1
+                ),
+                "seg2": self._curation_model.get_selected_channel(
+                    CurationImageType.SEG2
+                ),
             }
 
             # this is a non-critical task, so failing silently is OK--user will just have to manually specify
             # channels during training
             self._task_executor.exec(
-                lambda: self._file_writer.write_json(channel_selections, self._experiments_model.get_channel_selection_path())
+                lambda: self._file_writer.write_json(
+                    channel_selections,
+                    self._experiments_model.get_channel_selection_path(),
+                )
             )

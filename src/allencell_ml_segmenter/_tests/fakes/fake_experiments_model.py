@@ -57,6 +57,6 @@ class FakeExperimentsModel(IExperimentsModel):
 
     def get_cache_dir(self) -> Path:
         return Path()
-    
+
     def get_channel_selection_path(self) -> Path:
         return Path()
