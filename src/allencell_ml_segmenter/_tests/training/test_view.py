@@ -166,7 +166,10 @@ def test_set_patch_size(
     # ASSERT
     assert training_model.get_patch_size() == [1, 4, 12]
 
-def test_navigate_to_training_populates_channel_selection(qtbot: QtBot) -> None:
+
+def test_navigate_to_training_populates_channel_selection(
+    qtbot: QtBot,
+) -> None:
     """
     Validates that when there is a valid channel selection JSON, navigating to training
     will auto-populate the channel selection dropdowns with the previously chosen channels
@@ -181,8 +184,12 @@ def test_navigate_to_training_populates_channel_selection(qtbot: QtBot) -> None:
         / "valid_mixed.json"
     )
     main_model: MainModel = MainModel()
-    experiments_model: FakeExperimentsModel = FakeExperimentsModel(channel_selection_path=test_channel_path)
-    training_model: TrainingModel = TrainingModel(main_model, experiments_model)
+    experiments_model: FakeExperimentsModel = FakeExperimentsModel(
+        channel_selection_path=test_channel_path
+    )
+    training_model: TrainingModel = TrainingModel(
+        main_model, experiments_model
+    )
     view: TrainingView = TrainingView(
         main_model=main_model,
         experiments_model=experiments_model,
@@ -193,21 +200,32 @@ def test_navigate_to_training_populates_channel_selection(qtbot: QtBot) -> None:
     # Act (simulate a navigation event to the training view)
     view.focus_changed()
     # simulate service completing its channel extraction work
-    training_model.set_all_num_channels({
-        TrainingImageType.RAW: 8,
-        TrainingImageType.SEG1: 6,
-        TrainingImageType.SEG2: 4
-    })
+    training_model.set_all_num_channels(
+        {
+            TrainingImageType.RAW: 8,
+            TrainingImageType.SEG1: 6,
+            TrainingImageType.SEG2: 4,
+        }
+    )
 
     # Assert (these values come from valid_mixed.json)
     assert training_model.get_selected_channel(TrainingImageType.RAW) == 5
     assert training_model.get_selected_channel(TrainingImageType.SEG1) == 2
     assert training_model.get_selected_channel(TrainingImageType.SEG2) == 1
-    assert view.image_selection_widget._raw_channel_combo_box.currentIndex() == 5
-    assert view.image_selection_widget._seg1_channel_combo_box.currentIndex() == 2
-    assert view.image_selection_widget._seg2_channel_combo_box.currentIndex() == 1
+    assert (
+        view.image_selection_widget._raw_channel_combo_box.currentIndex() == 5
+    )
+    assert (
+        view.image_selection_widget._seg1_channel_combo_box.currentIndex() == 2
+    )
+    assert (
+        view.image_selection_widget._seg2_channel_combo_box.currentIndex() == 1
+    )
 
-def test_navigate_to_training_populates_channel_selection_no_json(qtbot: QtBot) -> None:
+
+def test_navigate_to_training_populates_channel_selection_no_json(
+    qtbot: QtBot,
+) -> None:
     """
     Validates that when there is no channel selection JSON, navigating to training
     will auto-populate the channel selection dropdowns with 0.
@@ -221,8 +239,12 @@ def test_navigate_to_training_populates_channel_selection_no_json(qtbot: QtBot) 
         / "nonexistent.json"
     )
     main_model: MainModel = MainModel()
-    experiments_model: FakeExperimentsModel = FakeExperimentsModel(channel_selection_path=test_channel_path)
-    training_model: TrainingModel = TrainingModel(main_model, experiments_model)
+    experiments_model: FakeExperimentsModel = FakeExperimentsModel(
+        channel_selection_path=test_channel_path
+    )
+    training_model: TrainingModel = TrainingModel(
+        main_model, experiments_model
+    )
     view: TrainingView = TrainingView(
         main_model=main_model,
         experiments_model=experiments_model,
@@ -233,16 +255,24 @@ def test_navigate_to_training_populates_channel_selection_no_json(qtbot: QtBot) 
     # Act (simulate a navigation event to the training view)
     view.focus_changed()
     # simulate service completing its channel extraction work
-    training_model.set_all_num_channels({
-        TrainingImageType.RAW: 8,
-        TrainingImageType.SEG1: 6,
-        TrainingImageType.SEG2: 4
-    })
+    training_model.set_all_num_channels(
+        {
+            TrainingImageType.RAW: 8,
+            TrainingImageType.SEG1: 6,
+            TrainingImageType.SEG2: 4,
+        }
+    )
 
     # Assert (these values come from valid_mixed.json)
     assert training_model.get_selected_channel(TrainingImageType.RAW) == 0
     assert training_model.get_selected_channel(TrainingImageType.SEG1) == 0
     assert training_model.get_selected_channel(TrainingImageType.SEG2) == 0
-    assert view.image_selection_widget._raw_channel_combo_box.currentIndex() == 0
-    assert view.image_selection_widget._seg1_channel_combo_box.currentIndex() == 0
-    assert view.image_selection_widget._seg2_channel_combo_box.currentIndex() == 0
+    assert (
+        view.image_selection_widget._raw_channel_combo_box.currentIndex() == 0
+    )
+    assert (
+        view.image_selection_widget._seg1_channel_combo_box.currentIndex() == 0
+    )
+    assert (
+        view.image_selection_widget._seg2_channel_combo_box.currentIndex() == 0
+    )

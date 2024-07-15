@@ -6,15 +6,20 @@ from allencell_ml_segmenter.core.event import Event
 import allencell_ml_segmenter
 
 test_channel_path: Path = (
-        Path(allencell_ml_segmenter.__file__).parent
-        / "_tests"
-        / "test_files"
-        / "channel_selection_json"
-        / "valid_0.json"
-    )
+    Path(allencell_ml_segmenter.__file__).parent
+    / "_tests"
+    / "test_files"
+    / "channel_selection_json"
+    / "valid_0.json"
+)
+
 
 class FakeExperimentsModel(IExperimentsModel):
-    def __init__(self, experiments: List[str] = ["0_exp", "1_exp", "2_exp"], channel_selection_path: Path=test_channel_path):
+    def __init__(
+        self,
+        experiments: List[str] = ["0_exp", "1_exp", "2_exp"],
+        channel_selection_path: Path = test_channel_path,
+    ):
         self._experiments = experiments
         self._experiment_name = None
         self._checkpoint = None
