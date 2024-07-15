@@ -14,9 +14,6 @@ from allencell_ml_segmenter.curation.curation_model import (
 )
 from allencell_ml_segmenter.curation.input_view import CurationInputView
 from allencell_ml_segmenter.curation.main_view import CurationMainView
-from allencell_ml_segmenter.curation.curation_service import CurationService
-from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
-
 import napari
 
 
