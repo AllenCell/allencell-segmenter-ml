@@ -43,8 +43,3 @@ class IFileWriter(ABC):
     @abstractmethod
     def write_json(self, json_like_obj: Union[list, dict], path: Path) -> None:
         pass
-
-    @classmethod
-    @abstractmethod
-    def global_instance(cls):
-        pass
