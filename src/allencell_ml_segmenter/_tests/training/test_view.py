@@ -10,6 +10,7 @@ from allencell_ml_segmenter.training.training_model import (
 from allencell_ml_segmenter.training.view import TrainingView
 import pytest
 from pytestqt.qtbot import QtBot
+import allencell_ml_segmenter
 
 
 @pytest.fixture
@@ -162,3 +163,13 @@ def test_set_patch_size(
 
     # ASSERT
     assert training_model.get_patch_size() == [1, 4, 12]
+"""
+def test_navigate_to_training_populates_channel_selection(qtbot: QtBot) -> None:
+    experiments_model = FakeExperimentsModel()
+    return TrainingView(
+        main_model=main_model,
+        experiments_model=experiments_model,
+        training_model=training_model,
+        viewer=FakeViewer(),
+    )
+"""

@@ -37,6 +37,7 @@ def test_env_input_view() -> TestEnvironment:
     writer: FakeFileWriter = FakeFileWriter.global_instance()
     service: CurationService = CurationService(
         model,
+        exp_mod,
         img_data_extractor=FakeImageDataExtractor.global_instance(),
         file_writer=writer,
     )
