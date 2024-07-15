@@ -19,7 +19,11 @@ from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
     FakeExperimentsModel,
 )
 from allencell_ml_segmenter.utils.file_writer import FakeFileWriter
+from allencell_ml_segmenter.core.task_executor import SynchroTaskExecutor
 import allencell_ml_segmenter
+
+
+FAKE_CHANNEL_SELECTION_PATH: Path = Path("channel_sel")
 
 
 @dataclass
@@ -34,11 +38,29 @@ def test_env_input_view() -> TestEnvironment:
     exp_mod: FakeExperimentsModel = FakeExperimentsModel()
     exp_mod.apply_experiment_name("0_exp")
     model: CurationModel = CurationModel(exp_mod)
-    writer: FakeFileWriter = FakeFileWriter.global_instance()
+    writer: FakeFileWriter = FakeFileWriter()
     service: CurationService = CurationService(
         model,
         exp_mod,
         img_data_extractor=FakeImageDataExtractor.global_instance(),
+        file_writer=writer,
+    )
+    return TestEnvironment(model, service, writer)
+
+
+@pytest.fixture
+def test_env_input_view_synchro_executor() -> TestEnvironment:
+    exp_mod: FakeExperimentsModel = FakeExperimentsModel(
+        channel_selection_path=FAKE_CHANNEL_SELECTION_PATH
+    )
+    exp_mod.apply_experiment_name("0_exp")
+    model: CurationModel = CurationModel(exp_mod)
+    writer: FakeFileWriter = FakeFileWriter()
+    service: CurationService = CurationService(
+        model,
+        exp_mod,
+        img_data_extractor=FakeImageDataExtractor.global_instance(),
+        task_executor=SynchroTaskExecutor.global_instance(),
         file_writer=writer,
     )
     return TestEnvironment(model, service, writer)
@@ -191,3 +213,42 @@ def test_service_reacts_to_save_csv(
 
     # Assert
     assert len(test_env.file_writer.csv_state) > 0
+
+
+def test_service_reacts_to_view_change(
+    qtbot: QtBot, test_env_input_view_synchro_executor: TestEnvironment
+) -> None:
+    """
+    When the view changes to main, we expect a copy of the selected channels to be
+    saved to disk.
+    """
+    test_env: TestEnvironment = test_env_input_view_synchro_executor
+
+    # Arrange
+    test_env.model.set_selected_channel(CurationImageType.RAW, 1)
+    test_env.model.set_selected_channel(CurationImageType.SEG1, 2)
+    test_env.model.set_selected_channel(CurationImageType.SEG2, 3)
+    test_env.model.set_image_directory_paths(
+        CurationImageType.RAW, IMG_DIR_FILES
+    )
+    test_env.model.set_image_directory_paths(
+        CurationImageType.SEG1, IMG_DIR_FILES
+    )
+    test_env.model.set_image_directory_paths(
+        CurationImageType.SEG2, IMG_DIR_FILES
+    )
+
+    # Assert (sanity check)
+    print(test_env.file_writer.json_state)
+    assert len(test_env.file_writer.json_state) == 0
+
+    # Act
+    test_env.model.set_current_view(CurationView.MAIN_VIEW)
+
+    # Assert
+    assert len(test_env.file_writer.json_state) == 1
+    assert test_env.file_writer.json_state[FAKE_CHANNEL_SELECTION_PATH] == {
+        "raw": 1,
+        "seg1": 2,
+        "seg2": 3,
+    }
