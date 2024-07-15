@@ -86,3 +86,7 @@ class IExperimentsModel(Publisher):
     @abstractmethod
     def get_cache_dir(self) -> Path:
         pass
+
+    @abstractmethod
+    def get_channel_selection_path(self) -> Path:
+        pass

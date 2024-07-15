@@ -15,6 +15,7 @@ from allencell_ml_segmenter.curation.curation_model import (
 from allencell_ml_segmenter.curation.input_view import CurationInputView
 from allencell_ml_segmenter.curation.main_view import CurationMainView
 from allencell_ml_segmenter.curation.curation_service import CurationService
+from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
 
 import napari
 
@@ -40,10 +41,6 @@ class CurationWidget(
         self.viewer: napari.Viewer = viewer
         self.view_to_index: Dict[View, int] = dict()
         self.curation_model: CurationModel = curation_model
-        self.curation_service: CurationService = CurationService(
-            self.curation_model
-        )
-
         # basic styling
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
         self.setLayout(QVBoxLayout())

@@ -1,12 +1,14 @@
-from allencell_ml_segmenter.core.image_data_extractor import ImageData
+from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
 from allencell_ml_segmenter.curation.curation_model import (
     CurationModel,
     CurationRecord,
     CurationImageType,
+    CurationView,
 )
 from allencell_ml_segmenter.core.image_data_extractor import (
     IImageDataExtractor,
     AICSImageDataExtractor,
+    ImageData,
 )
 from allencell_ml_segmenter.core.task_executor import (
     ITaskExecutor,
@@ -32,14 +34,17 @@ class CurationService(QObject):
     def __init__(
         self,
         curation_model: CurationModel,
+        experiments_model: IExperimentsModel,
         img_data_extractor: IImageDataExtractor = AICSImageDataExtractor.global_instance(),
         task_executor: ITaskExecutor = NapariThreadTaskExecutor.global_instance(),
         file_writer: IFileWriter = FileWriter.global_instance(),
     ) -> None:
         super().__init__()
         self._curation_model: CurationModel = curation_model
+        self._experiments_model: IExperimentsModel = experiments_model
         self._img_data_extractor: IImageDataExtractor = img_data_extractor
         self._task_executor: ITaskExecutor = task_executor
+        self._file_writer: IFileWriter = file_writer
         self._file_utils: FileUtils = FileUtils(file_writer)
 
         self._curation_model.image_directory_set.connect(
@@ -196,3 +201,17 @@ class CurationService(QObject):
             ),
             on_error=self._on_save_to_disk_error,
         )
+    
+    def _on_current_view_changed(self) -> None:
+        if self._curation_model.get_current_view() == CurationView.MAIN_VIEW:
+            channel_selections: dict[str, int] = {
+                "raw": self._curation_model.get_selected_channel(CurationImageType.RAW),
+                "seg1": self._curation_model.get_selected_channel(CurationImageType.SEG1),
+                "seg2": self._curation_model.get_selected_channel(CurationImageType.SEG2),
+            }
+            
+            # this is a non-critical task, so failing silently is OK--user will just have to manually specify
+            # channels during training
+            self._task_executor.exec(
+                lambda: self._file_writer.write_json(channel_selections, self._experiments_model.get_channel_selection_path())
+            )
