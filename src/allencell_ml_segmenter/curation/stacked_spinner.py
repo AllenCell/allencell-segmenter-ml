@@ -12,7 +12,9 @@ class StackedSpinner(QStackedWidget):
     def __init__(self, input_button: InputButton = None):
         super().__init__()
 
-        self.setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Maximum)
+        self.setSizePolicy(
+            QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Maximum
+        )
         if input_button is not None:
             self.resize(input_button.width(), input_button.height())
         else:
