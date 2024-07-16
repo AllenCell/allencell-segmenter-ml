@@ -11,10 +11,6 @@ from qtpy.QtCore import QSize, Qt
 class StackedSpinner(QStackedWidget):
     def __init__(self, input_button: InputButton = None):
         super().__init__()
-        if input_button is not None:
-            self.setSizePolicy(input_button.width(), input_button.height())
-        else:
-            self.setSizePolicy(260, 50)
 
         self.spinner = QLabel(self)
         self.spinner.setAlignment(Qt.AlignCenter)
