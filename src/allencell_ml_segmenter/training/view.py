@@ -126,7 +126,7 @@ class TrainingView(View, MainWindow):
 
         model_size_label: LabelWithHint = LabelWithHint("Model size")
         model_size_label.set_hint(
-            "Defines the complexity of the model - smaller models train more quickly but perform worse than larger models"
+            "Defines the complexity of the model - smaller models train faster, while large models train slower but may learn complex relationships better."
         )
         bottom_grid_layout.addWidget(model_size_label, 1, 0)
 
@@ -180,9 +180,9 @@ class TrainingView(View, MainWindow):
 
         bottom_grid_layout.addWidget(dimension_choice_dummy, 2, 1)
 
-        num_epochs_label: LabelWithHint = LabelWithHint("Training steps")
+        num_epochs_label: LabelWithHint = LabelWithHint("Number of epochs")
         num_epochs_label.set_hint(
-            "Number of model updates to perform. More steps yields better performance at the cost of training time."
+            "Each epoch is one complete pass through the entire training dataset. More epochs yields better performance at the cost of training time."
         )
         bottom_grid_layout.addWidget(num_epochs_label, 3, 0)
 
