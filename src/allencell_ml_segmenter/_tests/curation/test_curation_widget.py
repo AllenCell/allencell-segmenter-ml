@@ -47,15 +47,9 @@ def test_env() -> TestEnvironment:
 
 def test_view_change(qtbot: QtBot, test_env: TestEnvironment) -> None:
     # Arrange
-    test_env.model.set_image_directory_paths(
-        ImageType.RAW, IMG_DIR_FILES
-    )
-    test_env.model.set_image_directory_paths(
-        ImageType.SEG1, IMG_DIR_FILES
-    )
-    test_env.model.set_image_directory_paths(
-        ImageType.SEG2, IMG_DIR_FILES
-    )
+    test_env.model.set_image_directory_paths(ImageType.RAW, IMG_DIR_FILES)
+    test_env.model.set_image_directory_paths(ImageType.SEG1, IMG_DIR_FILES)
+    test_env.model.set_image_directory_paths(ImageType.SEG2, IMG_DIR_FILES)
 
     # Act / Assert
     assert test_env.widget.get_view() == CurationView.INPUT_VIEW
