@@ -73,7 +73,8 @@ class MainWidget(AicsWidget):
 
         self._prediction_model: PredictionModel = PredictionModel()
         self._curation_model: CurationModel = CurationModel(
-            self._experiments_model
+            self._experiments_model,
+            self._model,
         )
 
         # init services

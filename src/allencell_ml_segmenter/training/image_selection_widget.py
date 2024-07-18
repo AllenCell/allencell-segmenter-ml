@@ -162,8 +162,11 @@ class ImageSelectionWidget(QWidget):
         self,
         combo_box: QComboBox,
         num_channels: Optional[int],
-        default_channel: int = 0,
+        default_channel: Optional[int]=None,
     ) -> None:
+        if default_channel is None:
+            default_channel = 0
+            
         combo_box.clear()
         if num_channels is not None:
             combo_box.addItems([str(x) for x in range(num_channels)])
