@@ -21,6 +21,7 @@ from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
 )
 from allencell_ml_segmenter.core.image_data_extractor import ImageData
 import allencell_ml_segmenter
+from allencell_ml_segmenter.main.main_model import MainModel
 
 from pytestqt.qtbot import QtBot
 from unittest.mock import Mock
@@ -51,7 +52,7 @@ class TestEnvironment:
 
 @pytest.fixture
 def test_environment_with_seg2() -> TestEnvironment:
-    curation_model: CurationModel = CurationModel(FakeExperimentsModel())
+    curation_model: CurationModel = CurationModel(FakeExperimentsModel(), MainModel())
 
     curation_model.set_image_directory_paths(
         ImageType.RAW, IMG_DIR_FILES
@@ -92,7 +93,7 @@ def test_environment_first_images_ready(
 
 @pytest.fixture
 def test_environment_without_seg2() -> TestEnvironment:
-    curation_model: CurationModel = CurationModel(FakeExperimentsModel())
+    curation_model: CurationModel = CurationModel(FakeExperimentsModel(), MainModel())
 
     curation_model.set_image_directory_paths(
         ImageType.RAW, IMG_DIR_FILES

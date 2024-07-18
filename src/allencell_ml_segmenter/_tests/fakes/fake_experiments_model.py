@@ -20,6 +20,7 @@ class FakeExperimentsModel(IExperimentsModel):
         experiments: List[str] = ["0_exp", "1_exp", "2_exp"],
         channel_selection_path: Path = test_channel_path,
     ):
+        super().__init__()
         self._experiments = experiments
         self._experiment_name = None
         self._checkpoint = None
@@ -27,12 +28,6 @@ class FakeExperimentsModel(IExperimentsModel):
             Dict[Subscriber, Callable]
         ] = {event: dict() for event in [e.value for e in Event]}
         self._chan_sel_path = channel_selection_path
-
-    def get_experiment_name(self) -> str:
-        return self._experiment_name
-
-    def apply_experiment_name(self, name: str) -> None:
-        self._experiment_name = name
 
     def get_checkpoint(self) -> str:
         return self._checkpoint

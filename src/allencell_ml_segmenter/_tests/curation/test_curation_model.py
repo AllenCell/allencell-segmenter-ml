@@ -11,6 +11,7 @@ from allencell_ml_segmenter.curation.curation_model import (
 from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
     FakeExperimentsModel,
 )
+from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.core.image_data_extractor import ImageData
 import numpy as np
 
@@ -23,7 +24,7 @@ FAKE_IMAGE_DATA: ImageData = ImageData(
 @pytest.fixture
 def curation_model() -> CurationModel:
     # returns curation model with view set to input view
-    return CurationModel(FakeExperimentsModel())
+    return CurationModel(FakeExperimentsModel(), MainModel())
 
 
 @pytest.fixture
