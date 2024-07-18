@@ -8,7 +8,7 @@ from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 from allencell_ml_segmenter.curation.curation_model import (
     CurationModel,
     CurationView,
-    CurationImageType,
+    ImageType,
 )
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
@@ -197,16 +197,16 @@ class CurationInputView(QWidget):
                 value is None
                 for value in [
                     self._curation_model.get_image_directory(
-                        CurationImageType.RAW
+                        ImageType.RAW
                     ),
                     self._curation_model.get_selected_channel(
-                        CurationImageType.RAW
+                        ImageType.RAW
                     ),
                     self._curation_model.get_image_directory(
-                        CurationImageType.SEG1
+                        ImageType.SEG1
                     ),
                     self._curation_model.get_selected_channel(
-                        CurationImageType.SEG1
+                        ImageType.SEG1
                     ),
                 ]
             ]
@@ -217,10 +217,10 @@ class CurationInputView(QWidget):
             return
 
         if (
-            self._curation_model.get_image_directory(CurationImageType.SEG2)
+            self._curation_model.get_image_directory(ImageType.SEG2)
             is not None
             and self._curation_model.get_selected_channel(
-                CurationImageType.SEG2
+                ImageType.SEG2
             )
             is None
         ):
@@ -256,19 +256,19 @@ class CurationInputView(QWidget):
         self._set_to_loading(
             self.raw_image_channel_combo, self.raw_dir_stacked_spinner
         )
-        self._curation_model.set_image_directory(CurationImageType.RAW, dir)
+        self._curation_model.set_image_directory(ImageType.RAW, dir)
 
     def _on_seg1_dir_select(self, dir: Path) -> None:
         self._set_to_loading(
             self.seg1_image_channel_combo, self.seg1_dir_stacked_spinner
         )
-        self._curation_model.set_image_directory(CurationImageType.SEG1, dir)
+        self._curation_model.set_image_directory(ImageType.SEG1, dir)
 
     def _on_seg2_dir_select(self, dir: Path) -> None:
         self._set_to_loading(
             self.seg2_image_channel_combo, self.seg2_dir_stacked_spinner
         )
-        self._curation_model.set_image_directory(CurationImageType.SEG2, dir)
+        self._curation_model.set_image_directory(ImageType.SEG2, dir)
 
     def _populate_channel_combo(
         self, channel_combo: QComboBox, num_channels: int
@@ -282,12 +282,12 @@ class CurationInputView(QWidget):
             channel_combo.setPlaceholderText("")
             channel_combo.setEnabled(False)
 
-    def update_channels(self, img_type: CurationImageType) -> None:
-        if img_type == CurationImageType.RAW:
+    def update_channels(self, img_type: ImageType) -> None:
+        if img_type == ImageType.RAW:
             self.update_raw_channels()
-        elif img_type == CurationImageType.SEG1:
+        elif img_type == ImageType.SEG1:
             self.update_seg1_channels()
-        elif img_type == CurationImageType.SEG2:
+        elif img_type == ImageType.SEG2:
             self.update_seg2_channels()
         else:
             raise RuntimeError("Unrecognized curation image type")
@@ -300,9 +300,9 @@ class CurationInputView(QWidget):
         self.raw_dir_stacked_spinner.stop()
         self._populate_channel_combo(
             self.raw_image_channel_combo,
-            self._curation_model.get_channel_count(CurationImageType.RAW),
+            self._curation_model.get_channel_count(ImageType.RAW),
         )
-        self._curation_model.set_selected_channel(CurationImageType.RAW, 0)
+        self._curation_model.set_selected_channel(ImageType.RAW, 0)
 
     def update_seg1_channels(self) -> None:
         """
@@ -312,9 +312,9 @@ class CurationInputView(QWidget):
         self.seg1_dir_stacked_spinner.stop()
         self._populate_channel_combo(
             self.seg1_image_channel_combo,
-            self._curation_model.get_channel_count(CurationImageType.SEG1),
+            self._curation_model.get_channel_count(ImageType.SEG1),
         )
-        self._curation_model.set_selected_channel(CurationImageType.SEG1, 0)
+        self._curation_model.set_selected_channel(ImageType.SEG1, 0)
 
     def update_seg2_channels(self) -> None:
         """
@@ -324,22 +324,22 @@ class CurationInputView(QWidget):
         self.seg2_dir_stacked_spinner.stop()
         self._populate_channel_combo(
             self.seg2_image_channel_combo,
-            self._curation_model.get_channel_count(CurationImageType.SEG2),
+            self._curation_model.get_channel_count(ImageType.SEG2),
         )
-        self._curation_model.set_selected_channel(CurationImageType.SEG2, 0)
+        self._curation_model.set_selected_channel(ImageType.SEG2, 0)
 
     def raw_channel_selected(self, index) -> None:
         """
         Event handler when combobox channel selection is made. Sets the raw channel index in the model.
         """
-        self._curation_model.set_selected_channel(CurationImageType.RAW, index)
+        self._curation_model.set_selected_channel(ImageType.RAW, index)
 
     def seg1_channel_selected(self, index) -> None:
         """
         Event handler when combobox channel selection is made. Sets the seg1 channel index in the model.
         """
         self._curation_model.set_selected_channel(
-            CurationImageType.SEG1, index
+            ImageType.SEG1, index
         )
 
     def seg2_channel_selected(self, index) -> None:
@@ -347,5 +347,5 @@ class CurationInputView(QWidget):
         Event handler when combobox channel selection is made. Sets the seg2 channel index in the model.
         """
         self._curation_model.set_selected_channel(
-            CurationImageType.SEG2, index
+            ImageType.SEG2, index
         )
