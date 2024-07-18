@@ -10,7 +10,7 @@ from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
 from allencell_ml_segmenter.curation.curation_model import (
     CurationModel,
     CurationView,
-    CurationImageType,
+    ImageType,
 )
 from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
     FakeExperimentsModel,
@@ -46,13 +46,13 @@ def test_env() -> TestEnvironment:
 def test_view_change(qtbot: QtBot, test_env: TestEnvironment) -> None:
     # Arrange
     test_env.model.set_image_directory_paths(
-        CurationImageType.RAW, IMG_DIR_FILES
+        ImageType.RAW, IMG_DIR_FILES
     )
     test_env.model.set_image_directory_paths(
-        CurationImageType.SEG1, IMG_DIR_FILES
+        ImageType.SEG1, IMG_DIR_FILES
     )
     test_env.model.set_image_directory_paths(
-        CurationImageType.SEG2, IMG_DIR_FILES
+        ImageType.SEG2, IMG_DIR_FILES
     )
 
     # Act / Assert

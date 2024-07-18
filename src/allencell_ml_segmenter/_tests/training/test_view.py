@@ -6,7 +6,7 @@ from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.training.training_model import (
     TrainingModel,
     ModelSize,
-    TrainingImageType,
+    ImageType,
 )
 from allencell_ml_segmenter.training.view import TrainingView
 import pytest
@@ -202,16 +202,16 @@ def test_navigate_to_training_populates_channel_selection(
     # simulate service completing its channel extraction work
     training_model.set_all_num_channels(
         {
-            TrainingImageType.RAW: 8,
-            TrainingImageType.SEG1: 6,
-            TrainingImageType.SEG2: 4,
+            ImageType.RAW: 8,
+            ImageType.SEG1: 6,
+            ImageType.SEG2: 4,
         }
     )
 
     # Assert (these values come from valid_mixed.json)
-    assert training_model.get_selected_channel(TrainingImageType.RAW) == 5
-    assert training_model.get_selected_channel(TrainingImageType.SEG1) == 2
-    assert training_model.get_selected_channel(TrainingImageType.SEG2) == 1
+    assert training_model.get_selected_channel(ImageType.RAW) == 5
+    assert training_model.get_selected_channel(ImageType.SEG1) == 2
+    assert training_model.get_selected_channel(ImageType.SEG2) == 1
     assert (
         view.image_selection_widget._raw_channel_combo_box.currentIndex() == 5
     )
@@ -257,16 +257,16 @@ def test_navigate_to_training_populates_channel_selection_no_json(
     # simulate service completing its channel extraction work
     training_model.set_all_num_channels(
         {
-            TrainingImageType.RAW: 8,
-            TrainingImageType.SEG1: 6,
-            TrainingImageType.SEG2: 4,
+            ImageType.RAW: 8,
+            ImageType.SEG1: 6,
+            ImageType.SEG2: 4,
         }
     )
 
     # Assert (these values come from valid_mixed.json)
-    assert training_model.get_selected_channel(TrainingImageType.RAW) == 0
-    assert training_model.get_selected_channel(TrainingImageType.SEG1) == 0
-    assert training_model.get_selected_channel(TrainingImageType.SEG2) == 0
+    assert training_model.get_selected_channel(ImageType.RAW) == 0
+    assert training_model.get_selected_channel(ImageType.SEG1) == 0
+    assert training_model.get_selected_channel(ImageType.SEG2) == 0
     assert (
         view.image_selection_widget._raw_channel_combo_box.currentIndex() == 0
     )
