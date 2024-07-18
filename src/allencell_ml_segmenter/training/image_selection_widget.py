@@ -182,32 +182,20 @@ class ImageSelectionWidget(QWidget):
         default_channels_path: Path = (
             self._experiments_model.get_channel_selection_path()
         )
-        default_channels: dict[str, Optional[int]] = None
-        if default_channels_path.exists():
-            with open(default_channels_path, "r") as fr:
-                default_channels = json.load(fr)
-        if default_channels is not None:
-            for k in default_channels:
-                default_channels[k] = (
-                    default_channels[k]
-                    if default_channels[k] is not None
-                    else 0
-                )
-        else:
-            default_channels = {"raw": 0, "seg1": 0, "seg2": 0}
-
+        default_channels: dict[ImageType, Optional[int]] = self._model.get_selected_channels()
+        
         self._reset_combo_box(
             self._raw_channel_combo_box,
             self._model.get_num_channels(ImageType.RAW),
-            default_channel=default_channels["raw"],
+            default_channel=default_channels[ImageType.RAW],
         )
         self._reset_combo_box(
             self._seg1_channel_combo_box,
             self._model.get_num_channels(ImageType.SEG1),
-            default_channel=default_channels["seg1"],
+            default_channel=default_channels[ImageType.SEG1],
         )
         self._reset_combo_box(
             self._seg2_channel_combo_box,
             self._model.get_num_channels(ImageType.SEG2),
-            default_channel=default_channels["seg2"],
+            default_channel=default_channels[ImageType.SEG2],
         )

@@ -1,7 +1,10 @@
 from enum import Enum
+from typing import Optional
+from copy import deepcopy
 from allencell_ml_segmenter.core.aics_widget import AicsWidget
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.publisher import Publisher
+from qtpy.QtCore import QObject, Signal
 
 
 class ImageType(Enum):
@@ -10,6 +13,11 @@ class ImageType(Enum):
     SEG2 = "seg2"
 
 
+class MainModelSignals(QObject):
+    selected_channels_changed: Signal = Signal()
+
+
+# TODO: once we deprecate custom Publisher, make MainModel a QObject with its own signals instead of composing
 class MainModel(Publisher):
     """
     Main model for this application. Responsible for non-tab-related view switching.
@@ -20,6 +28,13 @@ class MainModel(Publisher):
         # Current page of the UI
         self._current_view: AicsWidget = None
         self._is_new_model: bool = False
+        self.signals: MainModelSignals = MainModelSignals()
+
+        self._selected_channels: dict[ImageType, Optional[int]] = {
+            ImageType.RAW: None,
+            ImageType.SEG1: None,
+            ImageType.SEG2: None,
+        }
 
     def get_current_view(self):
         """
@@ -46,3 +61,10 @@ class MainModel(Publisher):
         getter/property for is_new_model
         """
         return self._is_new_model
+    
+    def get_selected_channels(self) -> dict[ImageType, Optional[int]]:
+        return deepcopy(self._selected_channels)
+    
+    def set_selected_channels(self, selected_channels: dict[ImageType, Optional[int]]) -> None:
+        self._selected_channels = deepcopy(selected_channels)
+        self.signals.selected_channels_changed.emit()

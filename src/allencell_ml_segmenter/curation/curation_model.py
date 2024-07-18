@@ -34,10 +34,12 @@ class CurationModel(QObject):
     def __init__(
         self,
         experiments_model: ExperimentsModel,
+        main_model: MainModel,
     ) -> None:
         super().__init__()
         # should always start at input view
         self._experiments_model: ExperimentsModel = experiments_model
+        self._main_model: MainModel = main_model
         self._current_view: CurationView = CurationView.INPUT_VIEW
 
         self._img_dirs: Dict[ImageType, Optional[Path]] = (
@@ -140,6 +142,8 @@ class CurationModel(QObject):
                     incl_seg2=seg2_exists
                 )
                 self._curation_record_saved_to_disk = False
+                # set the central selected channels for the app once the user clicks 'start curation'
+                self._main_model.set_selected_channels(self._selected_channels)
             else:
                 self._curation_record = None
                 self._curr_img_data = None
