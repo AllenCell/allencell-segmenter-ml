@@ -79,7 +79,9 @@ class MainWidget(AicsWidget):
         )
 
         # init services
-        self._main_service: MainService = MainService(self._model, self._experiments_model)
+        self._main_service: MainService = MainService(
+            self._model, self._experiments_model
+        )
         self._curation_service: CurationService = CurationService(
             self._curation_model,
             self._experiments_model,

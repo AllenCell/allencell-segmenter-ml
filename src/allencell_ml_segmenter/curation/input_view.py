@@ -196,18 +196,10 @@ class CurationInputView(QWidget):
             [
                 value is None
                 for value in [
-                    self._curation_model.get_image_directory(
-                        ImageType.RAW
-                    ),
-                    self._curation_model.get_selected_channel(
-                        ImageType.RAW
-                    ),
-                    self._curation_model.get_image_directory(
-                        ImageType.SEG1
-                    ),
-                    self._curation_model.get_selected_channel(
-                        ImageType.SEG1
-                    ),
+                    self._curation_model.get_image_directory(ImageType.RAW),
+                    self._curation_model.get_selected_channel(ImageType.RAW),
+                    self._curation_model.get_image_directory(ImageType.SEG1),
+                    self._curation_model.get_selected_channel(ImageType.SEG1),
                 ]
             ]
         ):
@@ -219,9 +211,7 @@ class CurationInputView(QWidget):
         if (
             self._curation_model.get_image_directory(ImageType.SEG2)
             is not None
-            and self._curation_model.get_selected_channel(
-                ImageType.SEG2
-            )
+            and self._curation_model.get_selected_channel(ImageType.SEG2)
             is None
         ):
             show_info("Please select a channel for seg2.")
@@ -338,14 +328,10 @@ class CurationInputView(QWidget):
         """
         Event handler when combobox channel selection is made. Sets the seg1 channel index in the model.
         """
-        self._curation_model.set_selected_channel(
-            ImageType.SEG1, index
-        )
+        self._curation_model.set_selected_channel(ImageType.SEG1, index)
 
     def seg2_channel_selected(self, index) -> None:
         """
         Event handler when combobox channel selection is made. Sets the seg2 channel index in the model.
         """
-        self._curation_model.set_selected_channel(
-            ImageType.SEG2, index
-        )
+        self._curation_model.set_selected_channel(ImageType.SEG2, index)
