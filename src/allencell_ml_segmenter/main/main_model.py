@@ -61,12 +61,21 @@ class MainModel(Publisher):
         getter/property for is_new_model
         """
         return self._is_new_model
-    
+
     def get_selected_channels(self) -> dict[ImageType, Optional[int]]:
         return deepcopy(self._selected_channels)
-    
-    def set_selected_channels(self, selected_channels: dict[ImageType, Optional[int]]) -> None:
-        new_channels: dict[ImageType, Optional[int]] = deepcopy(selected_channels)
-        if any([self._selected_channels[k] != new_channels[k] for k in new_channels.keys()]):
+
+    def set_selected_channels(
+        self, selected_channels: dict[ImageType, Optional[int]]
+    ) -> None:
+        new_channels: dict[ImageType, Optional[int]] = deepcopy(
+            selected_channels
+        )
+        if any(
+            [
+                self._selected_channels[k] != new_channels[k]
+                for k in new_channels.keys()
+            ]
+        ):
             self._selected_channels = new_channels
             self.signals.selected_channels_changed.emit()

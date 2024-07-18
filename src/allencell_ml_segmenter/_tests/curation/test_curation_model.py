@@ -82,9 +82,7 @@ def test_set_raw_directory(curation_model: CurationModel) -> None:
     curation_model.set_image_directory(ImageType.RAW, directory)
 
     # Assert
-    assert (
-        curation_model.get_image_directory(ImageType.RAW) == directory
-    )
+    assert curation_model.get_image_directory(ImageType.RAW) == directory
     dir_set_slot.assert_called_once_with(ImageType.RAW)
 
 
@@ -98,9 +96,7 @@ def test_set_seg1_directory(curation_model: CurationModel) -> None:
     curation_model.set_image_directory(ImageType.SEG1, directory)
 
     # Assert
-    assert (
-        curation_model.get_image_directory(ImageType.SEG1) == directory
-    )
+    assert curation_model.get_image_directory(ImageType.SEG1) == directory
     dir_set_slot.assert_called_once_with(ImageType.SEG1)
 
 
@@ -114,9 +110,7 @@ def test_set_seg2_directory(curation_model: CurationModel) -> None:
     curation_model.set_image_directory(ImageType.SEG2, directory)
 
     # Assert
-    assert (
-        curation_model.get_image_directory(ImageType.SEG2) == directory
-    )
+    assert curation_model.get_image_directory(ImageType.SEG2) == directory
     dir_set_slot.assert_called_once_with(ImageType.SEG2)
 
 
@@ -133,10 +127,7 @@ def test_set_raw_image_channel_count(
     curation_model_loading_started.set_channel_count(ImageType.RAW, 4)
 
     # Assert
-    assert (
-        curation_model_loading_started.get_channel_count(ImageType.RAW)
-        == 4
-    )
+    assert curation_model_loading_started.get_channel_count(ImageType.RAW) == 4
     channel_count_set_slot.assert_called_once_with(ImageType.RAW)
 
 
@@ -154,10 +145,7 @@ def test_set_seg1_image_channel_count(
 
     # Assert
     assert (
-        curation_model_loading_started.get_channel_count(
-            ImageType.SEG1
-        )
-        == 5
+        curation_model_loading_started.get_channel_count(ImageType.SEG1) == 5
     )
     channel_count_set_slot.assert_called_once_with(ImageType.SEG1)
 
@@ -176,10 +164,7 @@ def test_set_seg2_image_channel_count(
 
     # Assert
     assert (
-        curation_model_loading_started.get_channel_count(
-            ImageType.SEG2
-        )
-        == 6
+        curation_model_loading_started.get_channel_count(ImageType.SEG2) == 6
     )
     channel_count_set_slot.assert_called_once_with(ImageType.SEG2)
 
@@ -192,9 +177,7 @@ def test_set_raw_channel(curation_model: CurationModel) -> None:
     curation_model.set_selected_channel(ImageType.RAW, channel)
 
     # Assert
-    assert (
-        curation_model.get_selected_channel(ImageType.RAW) == channel
-    )
+    assert curation_model.get_selected_channel(ImageType.RAW) == channel
 
 
 def test_set_seg1_channel(curation_model: CurationModel) -> None:
@@ -205,9 +188,7 @@ def test_set_seg1_channel(curation_model: CurationModel) -> None:
     curation_model.set_selected_channel(ImageType.SEG1, channel)
 
     # Assert
-    assert (
-        curation_model.get_selected_channel(ImageType.SEG1) == channel
-    )
+    assert curation_model.get_selected_channel(ImageType.SEG1) == channel
 
 
 def test_set_seg2_channel(curation_model: CurationModel) -> None:
@@ -218,9 +199,7 @@ def test_set_seg2_channel(curation_model: CurationModel) -> None:
     curation_model.set_selected_channel(ImageType.SEG2, channel)
 
     # Assert
-    assert (
-        curation_model.get_selected_channel(ImageType.SEG2) == channel
-    )
+    assert curation_model.get_selected_channel(ImageType.SEG2) == channel
 
 
 def test_set_current_view_to_main_view(curation_model: CurationModel) -> None:
@@ -295,8 +274,7 @@ def test_start_loading_images(curation_model_main_view: CurationModel) -> None:
     # Assert
     img_loading_finished_slot.assert_called_once()
     assert (
-        curation_model_main_view.get_curr_image_data(ImageType.RAW)
-        is not None
+        curation_model_main_view.get_curr_image_data(ImageType.RAW) is not None
     )
     assert (
         curation_model_main_view.get_curr_image_data(ImageType.SEG1)
