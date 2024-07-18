@@ -1,6 +1,13 @@
+from enum import Enum
 from allencell_ml_segmenter.core.aics_widget import AicsWidget
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.publisher import Publisher
+
+
+class ImageType(Enum):
+    RAW = "raw"
+    SEG1 = "seg1"
+    SEG2 = "seg2"
 
 
 class MainModel(Publisher):

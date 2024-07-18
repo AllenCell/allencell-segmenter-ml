@@ -14,7 +14,7 @@ from allencell_ml_segmenter.curation.curation_model import (
     CurationModel,
     CurationView,
     CurationRecord,
-    CurationImageType,
+    ImageType,
 )
 from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
     FakeExperimentsModel,
@@ -54,13 +54,13 @@ def test_environment_with_seg2() -> TestEnvironment:
     curation_model: CurationModel = CurationModel(FakeExperimentsModel())
 
     curation_model.set_image_directory_paths(
-        CurationImageType.RAW, IMG_DIR_FILES
+        ImageType.RAW, IMG_DIR_FILES
     )
     curation_model.set_image_directory_paths(
-        CurationImageType.SEG1, IMG_DIR_FILES
+        ImageType.SEG1, IMG_DIR_FILES
     )
     curation_model.set_image_directory_paths(
-        CurationImageType.SEG2, IMG_DIR_FILES
+        ImageType.SEG2, IMG_DIR_FILES
     )
     curation_model.set_current_view(CurationView.MAIN_VIEW)
     curation_model.start_loading_images()
@@ -80,13 +80,13 @@ def test_environment_first_images_ready(
     test_environment_with_seg2: TestEnvironment,
 ) -> TestEnvironment:
     env: TestEnvironment = test_environment_with_seg2
-    env.model.set_curr_image_data(CurationImageType.RAW, FAKE_IMG_DATA[0])
-    env.model.set_curr_image_data(CurationImageType.SEG1, FAKE_IMG_DATA[0])
-    env.model.set_curr_image_data(CurationImageType.SEG2, FAKE_IMG_DATA[0])
+    env.model.set_curr_image_data(ImageType.RAW, FAKE_IMG_DATA[0])
+    env.model.set_curr_image_data(ImageType.SEG1, FAKE_IMG_DATA[0])
+    env.model.set_curr_image_data(ImageType.SEG2, FAKE_IMG_DATA[0])
 
-    env.model.set_next_image_data(CurationImageType.RAW, FAKE_IMG_DATA[1])
-    env.model.set_next_image_data(CurationImageType.SEG1, FAKE_IMG_DATA[1])
-    env.model.set_next_image_data(CurationImageType.SEG2, FAKE_IMG_DATA[1])
+    env.model.set_next_image_data(ImageType.RAW, FAKE_IMG_DATA[1])
+    env.model.set_next_image_data(ImageType.SEG1, FAKE_IMG_DATA[1])
+    env.model.set_next_image_data(ImageType.SEG2, FAKE_IMG_DATA[1])
     return env
 
 
@@ -95,10 +95,10 @@ def test_environment_without_seg2() -> TestEnvironment:
     curation_model: CurationModel = CurationModel(FakeExperimentsModel())
 
     curation_model.set_image_directory_paths(
-        CurationImageType.RAW, IMG_DIR_FILES
+        ImageType.RAW, IMG_DIR_FILES
     )
     curation_model.set_image_directory_paths(
-        CurationImageType.SEG1, IMG_DIR_FILES
+        ImageType.SEG1, IMG_DIR_FILES
     )
     curation_model.set_current_view(CurationView.MAIN_VIEW)
     curation_model.start_loading_images()
@@ -145,13 +145,13 @@ def test_initial_state_with_seg2(
     assert not env.view.next_button.isEnabled()
 
     # Act (pretend to be service)
-    env.model.set_curr_image_data(CurationImageType.RAW, FAKE_IMG_DATA[0])
-    env.model.set_curr_image_data(CurationImageType.SEG1, FAKE_IMG_DATA[0])
-    env.model.set_curr_image_data(CurationImageType.SEG2, FAKE_IMG_DATA[0])
+    env.model.set_curr_image_data(ImageType.RAW, FAKE_IMG_DATA[0])
+    env.model.set_curr_image_data(ImageType.SEG1, FAKE_IMG_DATA[0])
+    env.model.set_curr_image_data(ImageType.SEG2, FAKE_IMG_DATA[0])
 
-    env.model.set_next_image_data(CurationImageType.RAW, FAKE_IMG_DATA[1])
-    env.model.set_next_image_data(CurationImageType.SEG1, FAKE_IMG_DATA[1])
-    env.model.set_next_image_data(CurationImageType.SEG2, FAKE_IMG_DATA[1])
+    env.model.set_next_image_data(ImageType.RAW, FAKE_IMG_DATA[1])
+    env.model.set_next_image_data(ImageType.SEG1, FAKE_IMG_DATA[1])
+    env.model.set_next_image_data(ImageType.SEG2, FAKE_IMG_DATA[1])
 
     # Assert
     # this behavior is already tested in the model tests, so if this fails, then you haven't
@@ -212,11 +212,11 @@ def test_initial_state_no_seg2(
     assert not env.view.next_button.isEnabled()
 
     # Act (pretend to be service)
-    env.model.set_curr_image_data(CurationImageType.RAW, FAKE_IMG_DATA[0])
-    env.model.set_curr_image_data(CurationImageType.SEG1, FAKE_IMG_DATA[0])
+    env.model.set_curr_image_data(ImageType.RAW, FAKE_IMG_DATA[0])
+    env.model.set_curr_image_data(ImageType.SEG1, FAKE_IMG_DATA[0])
 
-    env.model.set_next_image_data(CurationImageType.RAW, FAKE_IMG_DATA[1])
-    env.model.set_next_image_data(CurationImageType.SEG1, FAKE_IMG_DATA[1])
+    env.model.set_next_image_data(ImageType.RAW, FAKE_IMG_DATA[1])
+    env.model.set_next_image_data(ImageType.SEG1, FAKE_IMG_DATA[1])
 
     # Assert
     loading_finished_mock.assert_called_once()
@@ -253,13 +253,13 @@ def test_next_image(
     loading_finished_mock: Mock = Mock()
     env.model.image_loading_finished.connect(loading_finished_mock)
     # finish 'loading' the first set of images
-    env.model.set_curr_image_data(CurationImageType.RAW, FAKE_IMG_DATA[0])
-    env.model.set_curr_image_data(CurationImageType.SEG1, FAKE_IMG_DATA[0])
-    env.model.set_curr_image_data(CurationImageType.SEG2, FAKE_IMG_DATA[0])
+    env.model.set_curr_image_data(ImageType.RAW, FAKE_IMG_DATA[0])
+    env.model.set_curr_image_data(ImageType.SEG1, FAKE_IMG_DATA[0])
+    env.model.set_curr_image_data(ImageType.SEG2, FAKE_IMG_DATA[0])
 
-    env.model.set_next_image_data(CurationImageType.RAW, FAKE_IMG_DATA[1])
-    env.model.set_next_image_data(CurationImageType.SEG1, FAKE_IMG_DATA[1])
-    env.model.set_next_image_data(CurationImageType.SEG2, FAKE_IMG_DATA[1])
+    env.model.set_next_image_data(ImageType.RAW, FAKE_IMG_DATA[1])
+    env.model.set_next_image_data(ImageType.SEG1, FAKE_IMG_DATA[1])
+    env.model.set_next_image_data(ImageType.SEG2, FAKE_IMG_DATA[1])
 
     # Act
     env.view.next_button.click()
@@ -287,9 +287,9 @@ def test_next_image(
     assert env.viewer.contains_layer(f"[seg2] {IMG_DIR_FILES[1].name}")
 
     # Act
-    env.model.set_next_image_data(CurationImageType.RAW, FAKE_IMG_DATA[2])
-    env.model.set_next_image_data(CurationImageType.SEG1, FAKE_IMG_DATA[2])
-    env.model.set_next_image_data(CurationImageType.SEG2, FAKE_IMG_DATA[2])
+    env.model.set_next_image_data(ImageType.RAW, FAKE_IMG_DATA[2])
+    env.model.set_next_image_data(ImageType.SEG1, FAKE_IMG_DATA[2])
+    env.model.set_next_image_data(ImageType.SEG2, FAKE_IMG_DATA[2])
 
     # Assert
     assert loading_finished_mock.call_count == 2
@@ -308,19 +308,19 @@ def test_last_image(
     loading_finished_mock: Mock = Mock()
     env.model.image_loading_finished.connect(loading_finished_mock)
     # finish 'loading' the first set of images
-    env.model.set_curr_image_data(CurationImageType.RAW, FAKE_IMG_DATA[0])
-    env.model.set_curr_image_data(CurationImageType.SEG1, FAKE_IMG_DATA[0])
-    env.model.set_curr_image_data(CurationImageType.SEG2, FAKE_IMG_DATA[0])
+    env.model.set_curr_image_data(ImageType.RAW, FAKE_IMG_DATA[0])
+    env.model.set_curr_image_data(ImageType.SEG1, FAKE_IMG_DATA[0])
+    env.model.set_curr_image_data(ImageType.SEG2, FAKE_IMG_DATA[0])
 
-    env.model.set_next_image_data(CurationImageType.RAW, FAKE_IMG_DATA[1])
-    env.model.set_next_image_data(CurationImageType.SEG1, FAKE_IMG_DATA[1])
-    env.model.set_next_image_data(CurationImageType.SEG2, FAKE_IMG_DATA[1])
+    env.model.set_next_image_data(ImageType.RAW, FAKE_IMG_DATA[1])
+    env.model.set_next_image_data(ImageType.SEG1, FAKE_IMG_DATA[1])
+    env.model.set_next_image_data(ImageType.SEG2, FAKE_IMG_DATA[1])
 
     # Act
     env.view.next_button.click()
-    env.model.set_next_image_data(CurationImageType.RAW, FAKE_IMG_DATA[2])
-    env.model.set_next_image_data(CurationImageType.SEG1, FAKE_IMG_DATA[2])
-    env.model.set_next_image_data(CurationImageType.SEG2, FAKE_IMG_DATA[2])
+    env.model.set_next_image_data(ImageType.RAW, FAKE_IMG_DATA[2])
+    env.model.set_next_image_data(ImageType.SEG1, FAKE_IMG_DATA[2])
+    env.model.set_next_image_data(ImageType.SEG2, FAKE_IMG_DATA[2])
     env.view.next_button.click()
 
     # Assert
@@ -584,9 +584,9 @@ def test_curation_record_on_next(
     env.view.merging_base_combo.setCurrentIndex(0)
     merging_base: str = env.view.merging_base_combo.currentText()
     env.view.next_button.click()
-    env.model.set_next_image_data(CurationImageType.RAW, FAKE_IMG_DATA[2])
-    env.model.set_next_image_data(CurationImageType.SEG1, FAKE_IMG_DATA[2])
-    env.model.set_next_image_data(CurationImageType.SEG2, FAKE_IMG_DATA[2])
+    env.model.set_next_image_data(ImageType.RAW, FAKE_IMG_DATA[2])
+    env.model.set_next_image_data(ImageType.SEG1, FAKE_IMG_DATA[2])
+    env.model.set_next_image_data(ImageType.SEG2, FAKE_IMG_DATA[2])
 
     # Assert
     record: CurationRecord = env.model.get_curation_record()[0]
