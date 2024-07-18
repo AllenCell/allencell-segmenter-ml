@@ -282,9 +282,7 @@ class CurationMainView(QWidget):
         )
         if self._curation_model.has_seg2_data():
             seg2_img_data: ImageData = (
-                self._curation_model.get_curr_image_data(
-                    ImageType.SEG2
-                )
+                self._curation_model.get_curr_image_data(ImageType.SEG2)
             )
             self._viewer.add_labels(
                 seg2_img_data.np_data, f"[seg2] {seg2_img_data.path.name}"

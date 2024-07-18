@@ -52,17 +52,13 @@ class TestEnvironment:
 
 @pytest.fixture
 def test_environment_with_seg2() -> TestEnvironment:
-    curation_model: CurationModel = CurationModel(FakeExperimentsModel(), MainModel())
+    curation_model: CurationModel = CurationModel(
+        FakeExperimentsModel(), MainModel()
+    )
 
-    curation_model.set_image_directory_paths(
-        ImageType.RAW, IMG_DIR_FILES
-    )
-    curation_model.set_image_directory_paths(
-        ImageType.SEG1, IMG_DIR_FILES
-    )
-    curation_model.set_image_directory_paths(
-        ImageType.SEG2, IMG_DIR_FILES
-    )
+    curation_model.set_image_directory_paths(ImageType.RAW, IMG_DIR_FILES)
+    curation_model.set_image_directory_paths(ImageType.SEG1, IMG_DIR_FILES)
+    curation_model.set_image_directory_paths(ImageType.SEG2, IMG_DIR_FILES)
     curation_model.set_current_view(CurationView.MAIN_VIEW)
     curation_model.start_loading_images()
 
@@ -93,14 +89,12 @@ def test_environment_first_images_ready(
 
 @pytest.fixture
 def test_environment_without_seg2() -> TestEnvironment:
-    curation_model: CurationModel = CurationModel(FakeExperimentsModel(), MainModel())
+    curation_model: CurationModel = CurationModel(
+        FakeExperimentsModel(), MainModel()
+    )
 
-    curation_model.set_image_directory_paths(
-        ImageType.RAW, IMG_DIR_FILES
-    )
-    curation_model.set_image_directory_paths(
-        ImageType.SEG1, IMG_DIR_FILES
-    )
+    curation_model.set_image_directory_paths(ImageType.RAW, IMG_DIR_FILES)
+    curation_model.set_image_directory_paths(ImageType.SEG1, IMG_DIR_FILES)
     curation_model.set_current_view(CurationView.MAIN_VIEW)
     curation_model.start_loading_images()
 

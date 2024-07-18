@@ -190,7 +190,11 @@ def test_navigate_to_training_populates_channel_selection(
         channel_selection_path=test_channel_path
     )
     # must init main service and set experiment name to pull channel data into main model
-    main_service: MainService = MainService(main_model, experiments_model, task_executor=SynchroTaskExecutor.global_instance())
+    main_service: MainService = MainService(
+        main_model,
+        experiments_model,
+        task_executor=SynchroTaskExecutor.global_instance(),
+    )
     experiments_model.apply_experiment_name("test")
 
     training_model: TrainingModel = TrainingModel(
@@ -249,7 +253,11 @@ def test_navigate_to_training_populates_channel_selection_no_json(
         channel_selection_path=test_channel_path
     )
     # must init main service and set experiment to pull channel data into main model
-    main_service: MainService = MainService(main_model, experiments_model, task_executor=SynchroTaskExecutor.global_instance())
+    main_service: MainService = MainService(
+        main_model,
+        experiments_model,
+        task_executor=SynchroTaskExecutor.global_instance(),
+    )
     experiments_model.apply_experiment_name("test")
 
     training_model: TrainingModel = TrainingModel(

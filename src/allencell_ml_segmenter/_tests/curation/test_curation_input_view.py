@@ -158,9 +158,7 @@ class TestsWithStubbedFileDialog:
         # Arrange
         test_env.view.raw_directory_select.button.click()
         test_env.model.set_channel_count(ImageType.RAW, 5)
-        test_env.model.set_image_directory_paths(
-            ImageType.RAW, MOCK_DIR_PATHS
-        )
+        test_env.model.set_image_directory_paths(ImageType.RAW, MOCK_DIR_PATHS)
         test_env.view.raw_image_channel_combo.setCurrentIndex(1)
 
         test_env.view.seg1_directory_select.button.click()
@@ -186,9 +184,7 @@ class TestsWithStubbedFileDialog:
         # Arrange
         test_env.view.raw_directory_select.button.click()
         test_env.model.set_channel_count(ImageType.RAW, 5)
-        test_env.model.set_image_directory_paths(
-            ImageType.RAW, MOCK_DIR_PATHS
-        )
+        test_env.model.set_image_directory_paths(ImageType.RAW, MOCK_DIR_PATHS)
         test_env.view.raw_image_channel_combo.setCurrentIndex(1)
 
         test_env.view.seg1_directory_select.button.click()

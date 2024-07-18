@@ -144,9 +144,7 @@ class TrainingModel(Publisher):
         self._num_channels = num_channels
         self.signals.num_channels_set.emit()
 
-    def get_selected_channel(
-        self, image_type: ImageType
-    ) -> Optional[int]:
+    def get_selected_channel(self, image_type: ImageType) -> Optional[int]:
         return self._selected_channel[image_type]
 
     def set_selected_channel(

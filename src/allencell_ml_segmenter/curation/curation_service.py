@@ -72,9 +72,7 @@ class CurationService(QObject):
         )
         self._curation_model.set_channel_count(img_type, dir_data.channels)
 
-    def _on_dir_data_errored(
-        self, img_type: ImageType, e: Exception
-    ) -> None:
+    def _on_dir_data_errored(self, img_type: ImageType, e: Exception) -> None:
         self._curation_model.set_channel_count(img_type, 0)
         raise e
 
@@ -104,14 +102,10 @@ class CurationService(QObject):
             ImageType.RAW
         )
         seg1_paths: List[Path] = (
-            self._curation_model.get_image_directory_paths(
-                ImageType.SEG1
-            )
+            self._curation_model.get_image_directory_paths(ImageType.SEG1)
         )
         seg2_paths: Optional[List[Path]] = (
-            self._curation_model.get_image_directory_paths(
-                ImageType.SEG2
-            )
+            self._curation_model.get_image_directory_paths(ImageType.SEG2)
         )
 
         raw_channel: int = self._curation_model.get_selected_channel(
@@ -129,9 +123,7 @@ class CurationService(QObject):
                 raw_paths[img_idx],
                 channel=raw_channel,
             ),
-            on_return=lambda img_data: setter_fn(
-                ImageType.RAW, img_data
-            ),
+            on_return=lambda img_data: setter_fn(ImageType.RAW, img_data),
             on_error=lambda e: self._on_cursor_moved_error(
                 ImageType.RAW, err_str, e
             ),
@@ -140,9 +132,7 @@ class CurationService(QObject):
             lambda: self._img_data_extractor.extract_image_data(
                 seg1_paths[img_idx], channel=seg1_channel, seg=1
             ),
-            on_return=lambda img_data: setter_fn(
-                ImageType.SEG1, img_data
-            ),
+            on_return=lambda img_data: setter_fn(ImageType.SEG1, img_data),
             on_error=lambda e: self._on_cursor_moved_error(
                 ImageType.SEG1, err_str, e
             ),
@@ -152,9 +142,7 @@ class CurationService(QObject):
                 lambda: self._img_data_extractor.extract_image_data(
                     seg2_paths[img_idx], channel=seg2_channel, seg=2
                 ),
-                on_return=lambda img_data: setter_fn(
-                    ImageType.SEG2, img_data
-                ),
+                on_return=lambda img_data: setter_fn(ImageType.SEG2, img_data),
                 on_error=lambda e: self._on_cursor_moved_error(
                     ImageType.SEG2, err_str, e
                 ),
@@ -201,4 +189,3 @@ class CurationService(QObject):
             ),
             on_error=self._on_save_to_disk_error,
         )
-

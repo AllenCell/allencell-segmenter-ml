@@ -153,20 +153,18 @@ class ImageSelectionWidget(QWidget):
         self._reset_combo_box(self._seg1_channel_combo_box, None)
         self._reset_combo_box(self._seg2_channel_combo_box, None)
 
-    def _handle_idx_change(
-        self, idx: int, img_type: ImageType
-    ) -> None:
+    def _handle_idx_change(self, idx: int, img_type: ImageType) -> None:
         self._model.set_selected_channel(img_type, idx if idx >= 0 else None)
 
     def _reset_combo_box(
         self,
         combo_box: QComboBox,
         num_channels: Optional[int],
-        default_channel: Optional[int]=None,
+        default_channel: Optional[int] = None,
     ) -> None:
         if default_channel is None:
             default_channel = 0
-            
+
         combo_box.clear()
         if num_channels is not None:
             combo_box.addItems([str(x) for x in range(num_channels)])
@@ -181,8 +179,10 @@ class ImageSelectionWidget(QWidget):
 
     def _update_channels(self) -> None:
         self._training_data_stacked_spinner.stop()
-        default_channels: dict[ImageType, Optional[int]] = self._model.get_selected_channels()
-        
+        default_channels: dict[ImageType, Optional[int]] = (
+            self._model.get_selected_channels()
+        )
+
         self._reset_combo_box(
             self._raw_channel_combo_box,
             self._model.get_num_channels(ImageType.RAW),

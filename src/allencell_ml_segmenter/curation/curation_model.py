@@ -92,15 +92,11 @@ class CurationModel(QObject):
     def set_use_image(self, use: bool) -> None:
         self._curation_record[self._cursor].to_use = use
 
-    def set_image_directory(
-        self, img_type: ImageType, dir: Path
-    ) -> None:
+    def set_image_directory(self, img_type: ImageType, dir: Path) -> None:
         self._img_dirs[img_type] = dir
         self.image_directory_set.emit(img_type)
 
-    def get_image_directory(
-        self, img_type: ImageType
-    ) -> Optional[Path]:
+    def get_image_directory(self, img_type: ImageType) -> Optional[Path]:
         return self._img_dirs[img_type]
 
     def set_image_directory_paths(
@@ -113,14 +109,10 @@ class CurationModel(QObject):
     ) -> Optional[List[Path]]:
         return self._img_dir_paths[img_type]
 
-    def set_selected_channel(
-        self, img_type: ImageType, channel: int
-    ) -> None:
+    def set_selected_channel(self, img_type: ImageType, channel: int) -> None:
         self._selected_channels[img_type] = channel
 
-    def get_selected_channel(
-        self, img_type: ImageType
-    ) -> Optional[int]:
+    def get_selected_channel(self, img_type: ImageType) -> Optional[int]:
         return self._selected_channels[img_type]
 
     def set_current_view(self, view: CurationView) -> None:
@@ -157,9 +149,7 @@ class CurationModel(QObject):
         """
         return self._current_view
 
-    def set_channel_count(
-        self, img_type: ImageType, count: int
-    ) -> None:
+    def set_channel_count(self, img_type: ImageType, count: int) -> None:
         self._channel_counts[img_type] = count
         self.channel_count_set.emit(img_type)
 
@@ -183,9 +173,7 @@ class CurationModel(QObject):
         if not self.is_waiting_for_images():
             self.image_loading_finished.emit()
 
-    def get_curr_image_data(
-        self, img_type: ImageType
-    ) -> Optional[ImageData]:
+    def get_curr_image_data(self, img_type: ImageType) -> Optional[ImageData]:
         return self._curr_img_data[img_type]
 
     def set_next_image_data(
@@ -298,9 +286,7 @@ class CurationModel(QObject):
         """
         raw_paths: List[Path] = self._img_dir_paths[ImageType.RAW]
         seg1_paths: List[Path] = self._img_dir_paths[ImageType.SEG1]
-        seg2_paths: Optional[List[Path]] = self._img_dir_paths[
-            ImageType.SEG2
-        ]
+        seg2_paths: Optional[List[Path]] = self._img_dir_paths[ImageType.SEG2]
         if len(raw_paths) != len(seg1_paths) or (
             seg2_paths is not None and len(seg1_paths) != len(seg2_paths)
         ):
