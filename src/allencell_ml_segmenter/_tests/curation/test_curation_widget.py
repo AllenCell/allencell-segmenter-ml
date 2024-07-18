@@ -20,6 +20,8 @@ from pytestqt.qtbot import QtBot
 
 from allencell_ml_segmenter.curation.curation_widget import CurationWidget
 import allencell_ml_segmenter
+from allencell_ml_segmenter.main.main_model import MainModel
+
 
 IMG_DIR_PATH = (
     Path(allencell_ml_segmenter.__file__).parent
@@ -39,7 +41,7 @@ class TestEnvironment:
 
 @pytest.fixture
 def test_env() -> TestEnvironment:
-    model: CurationModel = CurationModel(FakeExperimentsModel())
+    model: CurationModel = CurationModel(FakeExperimentsModel(), MainModel())
     return TestEnvironment(model, CurationWidget(FakeViewer(), model))
 
 

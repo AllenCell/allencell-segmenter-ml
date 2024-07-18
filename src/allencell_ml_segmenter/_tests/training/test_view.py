@@ -3,12 +3,14 @@ from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
     FakeExperimentsModel,
 )
 from allencell_ml_segmenter.main.main_model import MainModel
+from allencell_ml_segmenter.main.main_service import MainService
 from allencell_ml_segmenter.training.training_model import (
     TrainingModel,
     ModelSize,
     ImageType,
 )
 from allencell_ml_segmenter.training.view import TrainingView
+from allencell_ml_segmenter.core.task_executor import SynchroTaskExecutor
 import pytest
 from pytestqt.qtbot import QtBot
 import allencell_ml_segmenter
@@ -187,6 +189,10 @@ def test_navigate_to_training_populates_channel_selection(
     experiments_model: FakeExperimentsModel = FakeExperimentsModel(
         channel_selection_path=test_channel_path
     )
+    # must init main service and set experiment name to pull channel data into main model
+    main_service: MainService = MainService(main_model, experiments_model, task_executor=SynchroTaskExecutor.global_instance())
+    experiments_model.apply_experiment_name("test")
+
     training_model: TrainingModel = TrainingModel(
         main_model, experiments_model
     )
@@ -242,6 +248,10 @@ def test_navigate_to_training_populates_channel_selection_no_json(
     experiments_model: FakeExperimentsModel = FakeExperimentsModel(
         channel_selection_path=test_channel_path
     )
+    # must init main service and set experiment to pull channel data into main model
+    main_service: MainService = MainService(main_model, experiments_model, task_executor=SynchroTaskExecutor.global_instance())
+    experiments_model.apply_experiment_name("test")
+
     training_model: TrainingModel = TrainingModel(
         main_model, experiments_model
     )
