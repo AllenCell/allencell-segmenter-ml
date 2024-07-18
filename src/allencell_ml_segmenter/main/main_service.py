@@ -33,13 +33,14 @@ class MainService:
         )
 
     def _read_selected_channels(self, e: Event) -> None:
-        channel_path: Path = (
+        channel_path: Optional[Path] = (
             self._experiments_model.get_channel_selection_path()
         )
-        self._task_executor.exec(
-            lambda: self._read_channel_json(channel_path),
-            on_return=self._main_model.set_selected_channels,
-        )
+        if channel_path is not None:
+            self._task_executor.exec(
+                lambda: self._read_channel_json(channel_path),
+                on_return=self._main_model.set_selected_channels,
+            )
 
     def _read_channel_json(
         self, channel_path: Path
