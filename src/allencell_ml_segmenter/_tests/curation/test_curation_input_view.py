@@ -16,6 +16,7 @@ from allencell_ml_segmenter.curation.curation_model import (
 from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
     FakeExperimentsModel,
 )
+from allencell_ml_segmenter.main.main_model import MainModel
 
 
 @dataclass
@@ -26,7 +27,7 @@ class TestEnvironment:
 
 @pytest.fixture
 def test_env() -> TestEnvironment:
-    model: CurationModel = CurationModel(FakeExperimentsModel())
+    model: CurationModel = CurationModel(FakeExperimentsModel(), MainModel())
     return TestEnvironment(model, CurationInputView(model))
 
 
