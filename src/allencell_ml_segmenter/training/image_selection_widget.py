@@ -178,10 +178,6 @@ class ImageSelectionWidget(QWidget):
 
     def _update_channels(self) -> None:
         self._training_data_stacked_spinner.stop()
-
-        default_channels_path: Path = (
-            self._experiments_model.get_channel_selection_path()
-        )
         default_channels: dict[ImageType, Optional[int]] = self._model.get_selected_channels()
         
         self._reset_combo_box(
