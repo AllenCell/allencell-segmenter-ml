@@ -50,24 +50,6 @@ def test_env_input_view() -> TestEnvironment:
 
 
 @pytest.fixture
-def test_env_input_view_synchro_executor() -> TestEnvironment:
-    exp_mod: FakeExperimentsModel = FakeExperimentsModel(
-        channel_selection_path=FAKE_CHANNEL_SELECTION_PATH
-    )
-    exp_mod.apply_experiment_name("0_exp")
-    model: CurationModel = CurationModel(exp_mod, MainModel())
-    writer: FakeFileWriter = FakeFileWriter()
-    service: CurationService = CurationService(
-        model,
-        exp_mod,
-        img_data_extractor=FakeImageDataExtractor.global_instance(),
-        task_executor=SynchroTaskExecutor.global_instance(),
-        file_writer=writer,
-    )
-    return TestEnvironment(model, service, writer)
-
-
-@pytest.fixture
 def test_env_main_view(
     test_env_input_view: TestEnvironment,
 ) -> TestEnvironment:
