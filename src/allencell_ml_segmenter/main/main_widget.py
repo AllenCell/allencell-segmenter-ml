@@ -19,6 +19,7 @@ from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.view import MainWindow
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
+from allencell_ml_segmenter.main.main_service import MainService
 from allencell_ml_segmenter.main.i_viewer import IViewer
 from allencell_ml_segmenter.prediction.model import PredictionModel
 from allencell_ml_segmenter.prediction.view import PredictionView
@@ -78,6 +79,7 @@ class MainWidget(AicsWidget):
         )
 
         # init services
+        self._main_service: MainService = MainService(self._model, self._experiments_model)
         self._curation_service: CurationService = CurationService(
             self._curation_model,
             self._experiments_model,
