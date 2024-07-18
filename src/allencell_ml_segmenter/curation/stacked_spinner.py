@@ -3,7 +3,7 @@ from allencell_ml_segmenter.widgets.input_button_widget import (
     InputButton,
 )
 from pathlib import Path
-from qtpy.QtWidgets import QStackedWidget, QLabel
+from qtpy.QtWidgets import QStackedWidget, QLabel, QSizePolicy
 from qtpy.QtGui import QMovie
 from qtpy.QtCore import QSize, Qt
 
@@ -11,10 +11,14 @@ from qtpy.QtCore import QSize, Qt
 class StackedSpinner(QStackedWidget):
     def __init__(self, input_button: InputButton = None):
         super().__init__()
+
+        self.setSizePolicy(
+            QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Maximum
+        )
         if input_button is not None:
-            self.setSizePolicy(input_button.width(), input_button.height())
+            self.resize(input_button.width(), input_button.height())
         else:
-            self.setSizePolicy(260, 50)
+            self.resize(260, 50)
 
         self.spinner = QLabel(self)
         self.spinner.setAlignment(Qt.AlignCenter)
