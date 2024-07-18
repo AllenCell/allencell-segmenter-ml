@@ -235,3 +235,6 @@ class TrainingModel(Publisher):
 
     def get_total_num_images(self) -> int:
         return self._total_num_images
+
+    def get_selected_channels(self) -> dict[ImageType, Optional[int]]:
+        return self._main_model.get_selected_channels()
