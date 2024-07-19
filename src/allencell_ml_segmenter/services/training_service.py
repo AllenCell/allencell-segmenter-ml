@@ -130,6 +130,9 @@ class TrainingService(Subscriber):
         self, training_dir: Path
     ) -> DirectoryData:
         num_imgs: int = FileUtils.count_images_in_csv_folder(training_dir)
+        if num_imgs < 4:
+            raise RuntimeError("Training requires at least 4 images and their segmentations")
+        
         training_csv: Path = training_dir / "train.csv"
         raw_data: ImageData = self._img_data_extractor.extract_image_data(
             get_img_path_from_csv(training_csv, column="raw"), np_data=False
