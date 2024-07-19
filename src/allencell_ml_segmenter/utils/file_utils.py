@@ -107,15 +107,14 @@ class FileUtils:
         """
         Returns (train_split, test_split) of the items marked to_use in the provided curation record.
         Attempts to reserve 10% of these for test, but if that value is < 2, it will become 2, and
-        if it is > 100, it will become 100. If there are <= 2 records marked to_use, an empty test
-        split will be provided.
+        if it is > 100, it will become 100. If there are < 4 curation records selected for use, an exception will be thrown.
         :param curation_record: record to split
         """
         curation_records_to_use: List[CurationRecord] = [
             r for r in curation_records if r.to_use
         ]
-        if len(curation_records_to_use) <= 2:
-            return curation_records_to_use, []
+        if len(curation_records_to_use) <= 4:
+            raise RuntimeError("At least 4 images must be selected for use")
 
         test_len: int = max(2, min(100, len(curation_records_to_use) // 10))
         random.shuffle(curation_records_to_use)
