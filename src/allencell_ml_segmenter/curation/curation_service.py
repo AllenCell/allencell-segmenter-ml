@@ -59,6 +59,10 @@ class CurationService(QObject):
         files: List[Path] = (
             self._file_utils.get_all_files_in_dir_ignore_hidden(dir)
         )
+
+        if len(files) < 4:
+            raise RuntimeError("Curation requires at least 4 images and their segmentations")
+        
         img_data: ImageData = self._img_data_extractor.extract_image_data(
             files[0], np_data=False
         )
