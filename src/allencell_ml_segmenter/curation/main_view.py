@@ -251,11 +251,11 @@ class CurationMainView(QWidget):
 
     def _on_first_image_loading_finished(self) -> None:
         self.use_img_stacked_spinner.stop()
-        self.enable_save_csv_button()
+        self.update_save_csv_button_enabled_state()
         self._update_progress_bar()
         self.add_curr_images_to_widget()
         self._enable_next_button()
-        self.enable_radio_buttons()
+        self.update_radio_buttons_enabled_state()
         self._curation_model.image_loading_finished.disconnect(
             self._on_first_image_loading_finished
         )
@@ -313,8 +313,8 @@ class CurationMainView(QWidget):
             # these lines will update UI and model state, must go after
             # a call to next image
             self.yes_radio.click()
-            self.enable_radio_buttons()
-            self.enable_save_csv_button()
+            self.update_radio_buttons_enabled_state()
+            self.update_save_csv_button_enabled_state()
             self.merging_base_combo.setCurrentIndex(0)
         else:
             self._on_save_curation_csv()
@@ -385,7 +385,7 @@ class CurationMainView(QWidget):
         self.yes_radio.setEnabled(False)
         self.no_radio.setEnabled(False)
 
-    def enable_radio_buttons(self):
+    def update_radio_buttons_enabled_state(self):
         if (
             self._curation_model.get_max_num_images_to_use()
             <= MIN_DATASET_SIZE
@@ -397,7 +397,7 @@ class CurationMainView(QWidget):
             self.yes_radio.setEnabled(True)
             self.no_radio.setEnabled(True)
 
-    def enable_save_csv_button(self):
+    def update_save_csv_button_enabled_state(self):
         self.save_csv_button.setEnabled(
             self._curation_model.get_num_images_selected_to_use()
             >= MIN_DATASET_SIZE
@@ -529,9 +529,9 @@ class CurationMainView(QWidget):
     def _on_no_radio_clicked(self) -> None:
         self.disable_all_masks()
         self._curation_model.set_use_image(False)
-        self.enable_save_csv_button()
+        self.update_save_csv_button_enabled_state()
 
     def _on_yes_radio_clicked(self) -> None:
         self.enable_valid_masks()
         self._curation_model.set_use_image(True)
-        self.enable_save_csv_button()
+        self.update_save_csv_button_enabled_state()

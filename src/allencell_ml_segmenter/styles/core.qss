@@ -16,6 +16,10 @@ a:active {
     text-decoration: underline;
 }
 
+QRadioButton:disabled {
+    color: #414851;
+}
+
 QPushButton {
     margin-left: 2px;
     margin-right: 2px;
