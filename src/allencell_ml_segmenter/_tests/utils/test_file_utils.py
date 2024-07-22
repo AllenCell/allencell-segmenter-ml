@@ -205,10 +205,8 @@ def test_write_curation_record_split_sizes():
     with pytest.raises(RuntimeError) as e:
         records: list[CurationRecord] = _generate_default_records(4)
         records[0].to_use = False
-        f_utils.write_curation_record(
-            records, FAKE_CSV_PATH, FAKE_MASK_PATH
-        )
-    
+        f_utils.write_curation_record(records, FAKE_CSV_PATH, FAKE_MASK_PATH)
+
     # Act
     f_utils.write_curation_record(
         _generate_default_records(4), FAKE_CSV_PATH, FAKE_MASK_PATH
