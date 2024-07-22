@@ -18,6 +18,9 @@ class MainModelSignals(QObject):
 
 
 # TODO: once we deprecate custom Publisher, make MainModel a QObject with its own signals instead of composing
+MIN_DATASET_SIZE: int = 4
+
+
 class MainModel(Publisher):
     """
     Main model for this application. Responsible for non-tab-related view switching.
