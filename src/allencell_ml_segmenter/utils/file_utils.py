@@ -8,6 +8,7 @@ from typing import List, Generator, Tuple, Optional
 
 from allencell_ml_segmenter.curation.curation_data_class import CurationRecord
 from allencell_ml_segmenter.utils.file_writer import IFileWriter
+from allencell_ml_segmenter.main.main_model import MIN_DATASET_SIZE
 
 LOSS_COLUMN: str = "val/loss_epoch"
 
@@ -113,8 +114,8 @@ class FileUtils:
         curation_records_to_use: List[CurationRecord] = [
             r for r in curation_records if r.to_use
         ]
-        if len(curation_records_to_use) <= 4:
-            raise RuntimeError("At least 4 images must be selected for use")
+        if len(curation_records_to_use) < MIN_DATASET_SIZE:
+            raise RuntimeError(f"At least {MIN_DATASET_SIZE} images must be selected for use")
 
         test_len: int = max(2, min(100, len(curation_records_to_use) // 10))
         random.shuffle(curation_records_to_use)
