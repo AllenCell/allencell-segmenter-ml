@@ -153,7 +153,8 @@ def test_initial_state_with_seg2(
     # set all the required image data
     loading_finished_mock.assert_called_once()
 
-    assert env.view.save_csv_button.isEnabled()
+    # save csv will not be enabled until >= 4 images have been curated
+    assert not env.view.save_csv_button.isEnabled()
     assert env.view.merging_create_button.isEnabled()
     assert not env.view.merging_save_button.isEnabled()
     assert env.view.merging_base_combo.isEnabled()
@@ -176,7 +177,7 @@ def test_initial_state_with_seg2(
     assert env.viewer.contains_layer(f"[seg2] {IMG_DIR_FILES[0].name}")
 
     assert env.view.progress_bar.value() == 1
-    assert env.view.progress_bar.maximum() == 3
+    assert env.view.progress_bar.maximum() == len(IMG_DIR_FILES)
 
 
 def test_initial_state_no_seg2(
@@ -216,7 +217,8 @@ def test_initial_state_no_seg2(
     # Assert
     loading_finished_mock.assert_called_once()
 
-    assert env.view.save_csv_button.isEnabled()
+    # save csv will not be enabled until >= 4 images have been curated
+    assert not env.view.save_csv_button.isEnabled()
     assert not env.view.merging_create_button.isEnabled()
     assert not env.view.merging_save_button.isEnabled()
     assert not env.view.merging_base_combo.isEnabled()
@@ -237,7 +239,7 @@ def test_initial_state_no_seg2(
     assert not env.viewer.contains_layer(f"[seg2] {IMG_DIR_FILES[0].name}")
 
     assert env.view.progress_bar.value() == 1
-    assert env.view.progress_bar.maximum() == 3
+    assert env.view.progress_bar.maximum() == len(IMG_DIR_FILES)
 
 
 def test_next_image(
@@ -317,12 +319,20 @@ def test_last_image(
     env.model.set_next_image_data(ImageType.SEG1, FAKE_IMG_DATA[2])
     env.model.set_next_image_data(ImageType.SEG2, FAKE_IMG_DATA[2])
     env.view.next_button.click()
+    env.model.set_next_image_data(CurationImageType.RAW, FAKE_IMG_DATA[3])
+    env.model.set_next_image_data(CurationImageType.SEG1, FAKE_IMG_DATA[3])
+    env.model.set_next_image_data(CurationImageType.SEG2, FAKE_IMG_DATA[3])
+    env.view.next_button.click()
+    env.model.set_next_image_data(CurationImageType.RAW, FAKE_IMG_DATA[4])
+    env.model.set_next_image_data(CurationImageType.SEG1, FAKE_IMG_DATA[4])
+    env.model.set_next_image_data(CurationImageType.SEG2, FAKE_IMG_DATA[4])
+    env.view.next_button.click()
 
     # Assert
     # one finished signal should be emitted after 'start_loading_images', and one
-    # should be emitted after clicking the next button (which we do twice)
-    assert loading_finished_mock.call_count == 3
-    assert env.view.progress_bar.value() == 3
+    # should be emitted after clicking the next button (which we do 4 times)
+    assert loading_finished_mock.call_count == 5
+    assert env.view.progress_bar.value() == 5
 
     assert env.view.merging_create_button.isEnabled()
     assert not env.view.merging_save_button.isEnabled()
@@ -338,17 +348,17 @@ def test_last_image(
 
     assert env.view.next_button.isEnabled()
 
-    assert env.viewer.contains_layer(f"[raw] {IMG_DIR_FILES[2].name}")
-    assert env.viewer.contains_layer(f"[seg1] {IMG_DIR_FILES[2].name}")
-    assert env.viewer.contains_layer(f"[seg2] {IMG_DIR_FILES[2].name}")
+    assert env.viewer.contains_layer(f"[raw] {IMG_DIR_FILES[-1].name}")
+    assert env.viewer.contains_layer(f"[seg1] {IMG_DIR_FILES[-1].name}")
+    assert env.viewer.contains_layer(f"[seg2] {IMG_DIR_FILES[-1].name}")
 
     # Act
     env.view.next_button.click()
 
     # reached end, so buttons should be disabled
     # Assert
-    assert loading_finished_mock.call_count == 3
-    assert env.view.progress_bar.value() == 3
+    assert loading_finished_mock.call_count == len(IMG_DIR_FILES)
+    assert env.view.progress_bar.value() == len(IMG_DIR_FILES)
 
     assert not env.view.merging_create_button.isEnabled()
     assert not env.view.merging_save_button.isEnabled()
@@ -409,6 +419,19 @@ def test_save_csv(
 
     save_requested_slot: Mock = Mock()
     env.model.save_to_disk_requested.connect(save_requested_slot)
+    # need to get to a point where enough images are marked to use that saving is allowed
+    env.view.next_button.click()
+    env.model.set_next_image_data(CurationImageType.RAW, FAKE_IMG_DATA[2])
+    env.model.set_next_image_data(CurationImageType.SEG1, FAKE_IMG_DATA[2])
+    env.model.set_next_image_data(CurationImageType.SEG2, FAKE_IMG_DATA[2])
+    env.view.next_button.click()
+    env.model.set_next_image_data(CurationImageType.RAW, FAKE_IMG_DATA[3])
+    env.model.set_next_image_data(CurationImageType.SEG1, FAKE_IMG_DATA[3])
+    env.model.set_next_image_data(CurationImageType.SEG2, FAKE_IMG_DATA[3])
+    env.view.next_button.click()
+    env.model.set_next_image_data(CurationImageType.RAW, FAKE_IMG_DATA[4])
+    env.model.set_next_image_data(CurationImageType.SEG1, FAKE_IMG_DATA[4])
+    env.model.set_next_image_data(CurationImageType.SEG2, FAKE_IMG_DATA[4])
 
     # Act / Assert
     env.view.save_csv_button.click()
@@ -419,6 +442,91 @@ def test_save_csv(
         True
     )  # should re-enable the button
     assert env.view.save_csv_button.isEnabled()
+
+def test_save_csv_enabled_state(qtbot: QtBot, test_environment_first_images_ready: TestEnvironment) -> None:
+    """
+    Test that save csv button is enabled only when at least 4 images have been selected for use.
+    """
+    # Arrange
+    env: TestEnvironment = test_environment_first_images_ready
+
+    # Assert
+    assert not env.view.save_csv_button.isEnabled()
+
+    # Act
+    env.view.next_button.click()
+    env.model.set_next_image_data(CurationImageType.RAW, FAKE_IMG_DATA[2])
+    env.model.set_next_image_data(CurationImageType.SEG1, FAKE_IMG_DATA[2])
+    env.model.set_next_image_data(CurationImageType.SEG2, FAKE_IMG_DATA[2])
+    env.view.next_button.click()
+    env.model.set_next_image_data(CurationImageType.RAW, FAKE_IMG_DATA[3])
+    env.model.set_next_image_data(CurationImageType.SEG1, FAKE_IMG_DATA[3])
+    env.model.set_next_image_data(CurationImageType.SEG2, FAKE_IMG_DATA[3])
+
+    # Assert
+    # we are at the 3rd image, so button should still be disabled
+    assert not env.view.save_csv_button.isEnabled()
+
+    # Act
+    env.view.next_button.click()
+    env.model.set_next_image_data(CurationImageType.RAW, FAKE_IMG_DATA[4])
+    env.model.set_next_image_data(CurationImageType.SEG1, FAKE_IMG_DATA[4])
+    env.model.set_next_image_data(CurationImageType.SEG2, FAKE_IMG_DATA[4])
+
+    # Assert
+    # by default, use_image should be selected, so save csv button should be enabled
+    assert env.view.save_csv_button.isEnabled()
+
+    # Act
+    env.view.no_radio.click()
+
+    # Assert
+    assert not env.view.save_csv_button.isEnabled()
+
+    # Act
+    env.view.yes_radio.click()
+    env.view.next_button.click()
+
+    # Assert
+    assert env.view.save_csv_button.isEnabled()
+
+    # Act
+    env.view.no_radio.click()
+
+    # Assert
+    # since we are toggling between 4 and 5 images selected for use, should still be enabled
+    assert env.view.save_csv_button.isEnabled()
+
+def test_radio_button_enabled_state(qtbot: QtBot, test_environment_first_images_ready: TestEnvironment) -> None:
+    """
+    Test that radio buttons get disabled when it's only possible to select 4 images for use.
+    """
+    # Arrange
+    env: TestEnvironment = test_environment_first_images_ready
+
+    # Assert
+    assert env.view.yes_radio.isEnabled()
+    assert env.view.no_radio.isEnabled()
+
+    # Act
+    env.view.next_button.click()
+    env.model.set_next_image_data(CurationImageType.RAW, FAKE_IMG_DATA[2])
+    env.model.set_next_image_data(CurationImageType.SEG1, FAKE_IMG_DATA[2])
+    env.model.set_next_image_data(CurationImageType.SEG2, FAKE_IMG_DATA[2])
+    
+    # Assert
+    assert env.view.yes_radio.isEnabled()
+    assert env.view.no_radio.isEnabled()
+
+    # Act
+    env.view.no_radio.click()
+    env.view.next_button.click()
+
+    # Assert
+    # since there are 5 images total, and we've said we don't want to use one, we shouldn't be able to
+    # select not to use any more of them
+    assert not env.view.yes_radio.isEnabled()
+    assert not env.view.no_radio.isEnabled()
 
 
 def test_delete_merging_mask(
