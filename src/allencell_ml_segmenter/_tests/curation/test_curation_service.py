@@ -34,6 +34,7 @@ IMG_DIR_PATH = (
 
 IMG_DIR_FILES = [path for path in IMG_DIR_PATH.iterdir()]
 
+
 @dataclass
 class TestEnvironment:
     model: CurationModel
@@ -160,7 +161,7 @@ def test_service_reacts_to_save_csv(
     # Arrange
     with qtbot.waitSignal(test_env.model.image_loading_finished):
         test_env.model.start_loading_images()
-    
+
     # get to the fourth image so that we can save csv
     with qtbot.waitSignal(test_env.model.image_loading_finished):
         test_env.model.next_image()

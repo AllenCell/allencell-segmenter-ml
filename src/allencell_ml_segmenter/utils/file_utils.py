@@ -115,7 +115,9 @@ class FileUtils:
             r for r in curation_records if r.to_use
         ]
         if len(curation_records_to_use) < MIN_DATASET_SIZE:
-            raise RuntimeError(f"At least {MIN_DATASET_SIZE} images must be selected for use")
+            raise RuntimeError(
+                f"At least {MIN_DATASET_SIZE} images must be selected for use"
+            )
 
         test_len: int = max(2, min(100, len(curation_records_to_use) // 10))
         random.shuffle(curation_records_to_use)

@@ -62,8 +62,10 @@ class CurationService(QObject):
         )
 
         if len(files) < MIN_DATASET_SIZE:
-            raise RuntimeError(f"Curation requires at least {MIN_DATASET_SIZE} images and their segmentations")
-        
+            raise RuntimeError(
+                f"Curation requires at least {MIN_DATASET_SIZE} images and their segmentations"
+            )
+
         img_data: ImageData = self._img_data_extractor.extract_image_data(
             files[0], np_data=False
         )

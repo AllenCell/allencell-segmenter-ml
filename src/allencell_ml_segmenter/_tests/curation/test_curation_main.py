@@ -443,7 +443,10 @@ def test_save_csv(
     )  # should re-enable the button
     assert env.view.save_csv_button.isEnabled()
 
-def test_save_csv_enabled_state(qtbot: QtBot, test_environment_first_images_ready: TestEnvironment) -> None:
+
+def test_save_csv_enabled_state(
+    qtbot: QtBot, test_environment_first_images_ready: TestEnvironment
+) -> None:
     """
     Test that save csv button is enabled only when at least 4 images have been selected for use.
     """
@@ -497,7 +500,10 @@ def test_save_csv_enabled_state(qtbot: QtBot, test_environment_first_images_read
     # since we are toggling between 4 and 5 images selected for use, should still be enabled
     assert env.view.save_csv_button.isEnabled()
 
-def test_radio_button_enabled_state(qtbot: QtBot, test_environment_first_images_ready: TestEnvironment) -> None:
+
+def test_radio_button_enabled_state(
+    qtbot: QtBot, test_environment_first_images_ready: TestEnvironment
+) -> None:
     """
     Test that radio buttons get disabled when it's only possible to select 4 images for use.
     """
@@ -513,7 +519,7 @@ def test_radio_button_enabled_state(qtbot: QtBot, test_environment_first_images_
     env.model.set_next_image_data(ImageType.RAW, FAKE_IMG_DATA[2])
     env.model.set_next_image_data(ImageType.SEG1, FAKE_IMG_DATA[2])
     env.model.set_next_image_data(ImageType.SEG2, FAKE_IMG_DATA[2])
-    
+
     # Assert
     assert env.view.yes_radio.isEnabled()
     assert env.view.no_radio.isEnabled()

@@ -278,7 +278,7 @@ class CurationModel(QObject):
             / self._experiments_model.get_experiment_name()
             / "data"
         )
-    
+
     def get_max_num_images_to_use(self) -> int:
         """
         Returns the maximum size of the resulting dataset at this point in curation. For example,
@@ -293,7 +293,7 @@ class CurationModel(QObject):
 
     def get_num_images_selected_to_use(self) -> int:
         return sum([1 if rec.to_use else 0 for rec in self._curation_record])
-    
+
     def _generate_new_curation_record(self) -> List[CurationRecord]:
         """
         Returns a list of curation records populated with the file paths in self._img_dir_paths. See
