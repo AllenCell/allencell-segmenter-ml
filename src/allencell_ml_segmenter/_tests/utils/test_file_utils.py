@@ -197,24 +197,25 @@ def test_write_curation_record_split_sizes():
             _generate_default_records(1), FAKE_CSV_PATH, FAKE_MASK_PATH
         )
 
+    with pytest.raises(RuntimeError) as e:
+        f_utils.write_curation_record(
+            _generate_default_records(3), FAKE_CSV_PATH, FAKE_MASK_PATH
+        )
+
+    with pytest.raises(RuntimeError) as e:
+        records: list[CurationRecord] = _generate_default_records(4)
+        records[0].to_use = False
+        f_utils.write_curation_record(
+            records, FAKE_CSV_PATH, FAKE_MASK_PATH
+        )
+    
     # Act
     f_utils.write_curation_record(
-        _generate_default_records(2), FAKE_CSV_PATH, FAKE_MASK_PATH
+        _generate_default_records(4), FAKE_CSV_PATH, FAKE_MASK_PATH
     )
 
     # Assert
     assert len(fake_writer.csv_state[EXP_TRAIN_PATH]["rows"]) == 3
-    assert len(fake_writer.csv_state[EXP_TEST_PATH]["rows"]) == 1
-    assert len(fake_writer.csv_state[EXP_VAL_PATH]["rows"]) == 1
-
-    # Act
-    f_utils.write_curation_record(
-        _generate_default_records(3), FAKE_CSV_PATH, FAKE_MASK_PATH
-    )
-
-    # Assert
-    # here, we finally have enough records to have some validation/test records
-    assert len(fake_writer.csv_state[EXP_TRAIN_PATH]["rows"]) == 2
     assert len(fake_writer.csv_state[EXP_TEST_PATH]["rows"]) == 3
     assert len(fake_writer.csv_state[EXP_VAL_PATH]["rows"]) == 3
 

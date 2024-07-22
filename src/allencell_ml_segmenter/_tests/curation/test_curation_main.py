@@ -319,13 +319,13 @@ def test_last_image(
     env.model.set_next_image_data(ImageType.SEG1, FAKE_IMG_DATA[2])
     env.model.set_next_image_data(ImageType.SEG2, FAKE_IMG_DATA[2])
     env.view.next_button.click()
-    env.model.set_next_image_data(CurationImageType.RAW, FAKE_IMG_DATA[3])
-    env.model.set_next_image_data(CurationImageType.SEG1, FAKE_IMG_DATA[3])
-    env.model.set_next_image_data(CurationImageType.SEG2, FAKE_IMG_DATA[3])
+    env.model.set_next_image_data(ImageType.RAW, FAKE_IMG_DATA[3])
+    env.model.set_next_image_data(ImageType.SEG1, FAKE_IMG_DATA[3])
+    env.model.set_next_image_data(ImageType.SEG2, FAKE_IMG_DATA[3])
     env.view.next_button.click()
-    env.model.set_next_image_data(CurationImageType.RAW, FAKE_IMG_DATA[4])
-    env.model.set_next_image_data(CurationImageType.SEG1, FAKE_IMG_DATA[4])
-    env.model.set_next_image_data(CurationImageType.SEG2, FAKE_IMG_DATA[4])
+    env.model.set_next_image_data(ImageType.RAW, FAKE_IMG_DATA[4])
+    env.model.set_next_image_data(ImageType.SEG1, FAKE_IMG_DATA[4])
+    env.model.set_next_image_data(ImageType.SEG2, FAKE_IMG_DATA[4])
     env.view.next_button.click()
 
     # Assert
@@ -421,17 +421,17 @@ def test_save_csv(
     env.model.save_to_disk_requested.connect(save_requested_slot)
     # need to get to a point where enough images are marked to use that saving is allowed
     env.view.next_button.click()
-    env.model.set_next_image_data(CurationImageType.RAW, FAKE_IMG_DATA[2])
-    env.model.set_next_image_data(CurationImageType.SEG1, FAKE_IMG_DATA[2])
-    env.model.set_next_image_data(CurationImageType.SEG2, FAKE_IMG_DATA[2])
+    env.model.set_next_image_data(ImageType.RAW, FAKE_IMG_DATA[2])
+    env.model.set_next_image_data(ImageType.SEG1, FAKE_IMG_DATA[2])
+    env.model.set_next_image_data(ImageType.SEG2, FAKE_IMG_DATA[2])
     env.view.next_button.click()
-    env.model.set_next_image_data(CurationImageType.RAW, FAKE_IMG_DATA[3])
-    env.model.set_next_image_data(CurationImageType.SEG1, FAKE_IMG_DATA[3])
-    env.model.set_next_image_data(CurationImageType.SEG2, FAKE_IMG_DATA[3])
+    env.model.set_next_image_data(ImageType.RAW, FAKE_IMG_DATA[3])
+    env.model.set_next_image_data(ImageType.SEG1, FAKE_IMG_DATA[3])
+    env.model.set_next_image_data(ImageType.SEG2, FAKE_IMG_DATA[3])
     env.view.next_button.click()
-    env.model.set_next_image_data(CurationImageType.RAW, FAKE_IMG_DATA[4])
-    env.model.set_next_image_data(CurationImageType.SEG1, FAKE_IMG_DATA[4])
-    env.model.set_next_image_data(CurationImageType.SEG2, FAKE_IMG_DATA[4])
+    env.model.set_next_image_data(ImageType.RAW, FAKE_IMG_DATA[4])
+    env.model.set_next_image_data(ImageType.SEG1, FAKE_IMG_DATA[4])
+    env.model.set_next_image_data(ImageType.SEG2, FAKE_IMG_DATA[4])
 
     # Act / Assert
     env.view.save_csv_button.click()
@@ -455,13 +455,13 @@ def test_save_csv_enabled_state(qtbot: QtBot, test_environment_first_images_read
 
     # Act
     env.view.next_button.click()
-    env.model.set_next_image_data(CurationImageType.RAW, FAKE_IMG_DATA[2])
-    env.model.set_next_image_data(CurationImageType.SEG1, FAKE_IMG_DATA[2])
-    env.model.set_next_image_data(CurationImageType.SEG2, FAKE_IMG_DATA[2])
+    env.model.set_next_image_data(ImageType.RAW, FAKE_IMG_DATA[2])
+    env.model.set_next_image_data(ImageType.SEG1, FAKE_IMG_DATA[2])
+    env.model.set_next_image_data(ImageType.SEG2, FAKE_IMG_DATA[2])
     env.view.next_button.click()
-    env.model.set_next_image_data(CurationImageType.RAW, FAKE_IMG_DATA[3])
-    env.model.set_next_image_data(CurationImageType.SEG1, FAKE_IMG_DATA[3])
-    env.model.set_next_image_data(CurationImageType.SEG2, FAKE_IMG_DATA[3])
+    env.model.set_next_image_data(ImageType.RAW, FAKE_IMG_DATA[3])
+    env.model.set_next_image_data(ImageType.SEG1, FAKE_IMG_DATA[3])
+    env.model.set_next_image_data(ImageType.SEG2, FAKE_IMG_DATA[3])
 
     # Assert
     # we are at the 3rd image, so button should still be disabled
@@ -469,9 +469,9 @@ def test_save_csv_enabled_state(qtbot: QtBot, test_environment_first_images_read
 
     # Act
     env.view.next_button.click()
-    env.model.set_next_image_data(CurationImageType.RAW, FAKE_IMG_DATA[4])
-    env.model.set_next_image_data(CurationImageType.SEG1, FAKE_IMG_DATA[4])
-    env.model.set_next_image_data(CurationImageType.SEG2, FAKE_IMG_DATA[4])
+    env.model.set_next_image_data(ImageType.RAW, FAKE_IMG_DATA[4])
+    env.model.set_next_image_data(ImageType.SEG1, FAKE_IMG_DATA[4])
+    env.model.set_next_image_data(ImageType.SEG2, FAKE_IMG_DATA[4])
 
     # Assert
     # by default, use_image should be selected, so save csv button should be enabled
@@ -510,9 +510,9 @@ def test_radio_button_enabled_state(qtbot: QtBot, test_environment_first_images_
 
     # Act
     env.view.next_button.click()
-    env.model.set_next_image_data(CurationImageType.RAW, FAKE_IMG_DATA[2])
-    env.model.set_next_image_data(CurationImageType.SEG1, FAKE_IMG_DATA[2])
-    env.model.set_next_image_data(CurationImageType.SEG2, FAKE_IMG_DATA[2])
+    env.model.set_next_image_data(ImageType.RAW, FAKE_IMG_DATA[2])
+    env.model.set_next_image_data(ImageType.SEG1, FAKE_IMG_DATA[2])
+    env.model.set_next_image_data(ImageType.SEG2, FAKE_IMG_DATA[2])
     
     # Assert
     assert env.view.yes_radio.isEnabled()
