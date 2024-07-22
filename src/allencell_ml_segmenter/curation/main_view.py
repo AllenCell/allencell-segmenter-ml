@@ -116,7 +116,9 @@ class CurationMainView(QWidget):
         self.no_radio.clicked.connect(self._on_no_radio_clicked)
         use_image_frame.layout().addWidget(self.no_radio, 0, 2, 1, 1)
 
-        self.use_img_help_text = QLabel(f"Must select >= {MIN_DATASET_SIZE} images to use")
+        self.use_img_help_text = QLabel(
+            f"Must select >= {MIN_DATASET_SIZE} images to use"
+        )
         self.use_img_help_text.setObjectName("subtext")
         use_image_frame.layout().addWidget(self.use_img_help_text, 2, 0, 1, 1)
 
@@ -384,16 +386,22 @@ class CurationMainView(QWidget):
         self.no_radio.setEnabled(False)
 
     def enable_radio_buttons(self):
-        if self._curation_model.get_max_num_images_to_use() <= MIN_DATASET_SIZE:
+        if (
+            self._curation_model.get_max_num_images_to_use()
+            <= MIN_DATASET_SIZE
+        ):
             self.yes_radio.setEnabled(False)
             self.no_radio.setEnabled(False)
             self.use_img_help_text.setText("Must use all remaining images")
         else:
             self.yes_radio.setEnabled(True)
             self.no_radio.setEnabled(True)
-    
+
     def enable_save_csv_button(self):
-        self.save_csv_button.setEnabled(self._curation_model.get_num_images_selected_to_use() >= MIN_DATASET_SIZE)
+        self.save_csv_button.setEnabled(
+            self._curation_model.get_num_images_selected_to_use()
+            >= MIN_DATASET_SIZE
+        )
 
     def _update_progress_bar(self) -> None:
         """
