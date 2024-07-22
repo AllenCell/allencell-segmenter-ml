@@ -19,13 +19,20 @@ from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
     FakeExperimentsModel,
 )
 from allencell_ml_segmenter.utils.file_writer import FakeFileWriter
-from allencell_ml_segmenter.core.task_executor import SynchroTaskExecutor
 import allencell_ml_segmenter
 from allencell_ml_segmenter.main.main_model import MainModel
 
 
 FAKE_CHANNEL_SELECTION_PATH: Path = Path("channel_sel")
 
+IMG_DIR_PATH = (
+    Path(allencell_ml_segmenter.__file__).parent
+    / "_tests"
+    / "test_files"
+    / "img_folder"
+)
+
+IMG_DIR_FILES = [path for path in IMG_DIR_PATH.iterdir()]
 
 @dataclass
 class TestEnvironment:
@@ -61,15 +68,6 @@ def test_env_main_view(
 
     return test_env_input_view
 
-
-IMG_DIR_PATH = (
-    Path(allencell_ml_segmenter.__file__).parent
-    / "_tests"
-    / "test_files"
-    / "img_folder"
-)
-
-IMG_DIR_FILES = [path for path in IMG_DIR_PATH.iterdir()]
 
 # NOTE: the service tests follow this general format:
 # 1. act on the model to trigger a signal which service should be connected to
@@ -162,6 +160,14 @@ def test_service_reacts_to_save_csv(
     # Arrange
     with qtbot.waitSignal(test_env.model.image_loading_finished):
         test_env.model.start_loading_images()
+    
+    # get to the fourth image so that we can save csv
+    with qtbot.waitSignal(test_env.model.image_loading_finished):
+        test_env.model.next_image()
+    with qtbot.waitSignal(test_env.model.image_loading_finished):
+        test_env.model.next_image()
+    with qtbot.waitSignal(test_env.model.image_loading_finished):
+        test_env.model.next_image()
 
     # Assert (sanity check)
     assert len(test_env.file_writer.csv_state) == 0
