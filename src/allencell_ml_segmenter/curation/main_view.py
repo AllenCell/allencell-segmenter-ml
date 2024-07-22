@@ -26,6 +26,7 @@ from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 from allencell_ml_segmenter.curation.stacked_spinner import StackedSpinner
 from allencell_ml_segmenter.main.segmenter_layer import ShapesLayer
 from allencell_ml_segmenter.core.info_dialog_box import InfoDialogBox
+from allencell_ml_segmenter.main.main_model import MIN_DATASET_SIZE
 
 
 from napari.utils.notifications import show_info, show_warning
@@ -102,18 +103,22 @@ class CurationMainView(QWidget):
 
         use_image_frame: QFrame = QFrame()
         use_image_frame.setObjectName("frame")
-        use_image_frame.setLayout(QHBoxLayout())
+        use_image_frame.setLayout(QGridLayout())
         use_image_frame.layout().addWidget(
-            QLabel("Use this image for training")
+            QLabel("Use this image for training"), 0, 0, 1, 1
         )
         self.yes_radio: QRadioButton = QRadioButton("Yes")
         self.yes_radio.setChecked(True)
         self.yes_radio.clicked.connect(self._on_yes_radio_clicked)
 
-        use_image_frame.layout().addWidget(self.yes_radio)
+        use_image_frame.layout().addWidget(self.yes_radio, 0, 1, 1, 1)
         self.no_radio: QRadioButton = QRadioButton("No")
         self.no_radio.clicked.connect(self._on_no_radio_clicked)
-        use_image_frame.layout().addWidget(self.no_radio)
+        use_image_frame.layout().addWidget(self.no_radio, 0, 2, 1, 1)
+
+        self.use_img_help_text = QLabel(f"Must select >= {MIN_DATASET_SIZE} images to use")
+        self.use_img_help_text.setObjectName("subtext")
+        use_image_frame.layout().addWidget(self.use_img_help_text, 2, 0, 1, 1)
 
         self.use_img_stacked_spinner = StackedSpinner(use_image_frame)
         self.layout().addWidget(
@@ -244,7 +249,7 @@ class CurationMainView(QWidget):
 
     def _on_first_image_loading_finished(self) -> None:
         self.use_img_stacked_spinner.stop()
-        self.save_csv_button.setEnabled(True)
+        self.enable_save_csv_button()
         self._update_progress_bar()
         self.add_curr_images_to_widget()
         self._enable_next_button()
@@ -306,6 +311,8 @@ class CurationMainView(QWidget):
             # these lines will update UI and model state, must go after
             # a call to next image
             self.yes_radio.click()
+            self.enable_radio_buttons()
+            self.enable_save_csv_button()
             self.merging_base_combo.setCurrentIndex(0)
         else:
             self._on_save_curation_csv()
@@ -377,8 +384,16 @@ class CurationMainView(QWidget):
         self.no_radio.setEnabled(False)
 
     def enable_radio_buttons(self):
-        self.yes_radio.setEnabled(True)
-        self.no_radio.setEnabled(True)
+        if self._curation_model.get_max_num_images_to_use() <= MIN_DATASET_SIZE:
+            self.yes_radio.setEnabled(False)
+            self.no_radio.setEnabled(False)
+            self.use_img_help_text.setText("Must use all remaining images")
+        else:
+            self.yes_radio.setEnabled(True)
+            self.no_radio.setEnabled(True)
+    
+    def enable_save_csv_button(self):
+        self.save_csv_button.setEnabled(self._curation_model.get_num_images_selected_to_use() >= MIN_DATASET_SIZE)
 
     def _update_progress_bar(self) -> None:
         """
@@ -506,7 +521,9 @@ class CurationMainView(QWidget):
     def _on_no_radio_clicked(self) -> None:
         self.disable_all_masks()
         self._curation_model.set_use_image(False)
+        self.enable_save_csv_button()
 
     def _on_yes_radio_clicked(self) -> None:
         self.enable_valid_masks()
         self._curation_model.set_use_image(True)
+        self.enable_save_csv_button()
