@@ -207,8 +207,7 @@ def test_navigate_to_training_populates_channel_selection(
         viewer=FakeViewer(),
     )
 
-    # Act (simulate a navigation event to the training view)
-    view.focus_changed()
+    # Act
     # simulate service completing its channel extraction work
     training_model.set_all_num_channels(
         {
