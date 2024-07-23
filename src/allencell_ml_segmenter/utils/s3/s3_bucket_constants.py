@@ -1,6 +1,6 @@
 # CONSTANTS RELATED TO MODEL DOWNLOADS
 # Enable Model Downloads on plugin
-ENABLE_MODEL_DOWNLOADS = False  # TODO: ENABLE WHEN MODELS UPLOADED
+ENABLE_MODEL_DOWNLOADS = True  # TODO: ENABLE WHEN MODELS UPLOADED
 # Endpoint for prod bucket
 PROD_BUCKET = (
     "https://production-aics-ml-segmenter-models.s3.us-west-2.amazonaws.com"
