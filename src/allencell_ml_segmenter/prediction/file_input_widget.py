@@ -221,7 +221,7 @@ class PredictionFileInput(QWidget):
         ):
             selected_indices: List[int] = self._image_list.get_checked_rows()
             selected_paths: List[Path] = [
-                self._viewer.get_layers()[i].source.path
+                Path(self._viewer.get_layers()[i].source.path)
                 for i in selected_indices
             ]
 
