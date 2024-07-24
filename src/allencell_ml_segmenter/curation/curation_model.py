@@ -292,6 +292,10 @@ class CurationModel(QObject):
         return possible
 
     def get_num_images_selected_to_use(self) -> int:
+        """
+        Returns the number of images that the user has marked as 'use this image'. Current
+        'to_use' selection is included.
+        """
         return sum([1 if rec.to_use else 0 for rec in self._curation_record])
 
     def _generate_new_curation_record(self) -> List[CurationRecord]:
