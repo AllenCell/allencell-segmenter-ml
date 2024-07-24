@@ -31,7 +31,10 @@ from qtpy.QtWidgets import (
     QLabel,
 )
 from allencell_ml_segmenter.main.i_viewer import IViewer
-from allencell_ml_segmenter.core.image_data_extractor import IImageDataExtractor, AICSImageDataExtractor
+from allencell_ml_segmenter.core.image_data_extractor import (
+    IImageDataExtractor,
+    AICSImageDataExtractor,
+)
 
 
 class PredictionView(View, MainWindow):
@@ -44,7 +47,7 @@ class PredictionView(View, MainWindow):
         main_model: MainModel,
         prediction_model: PredictionModel,
         viewer: IViewer,
-        img_data_extractor: IImageDataExtractor=AICSImageDataExtractor.global_instance()
+        img_data_extractor: IImageDataExtractor = AICSImageDataExtractor.global_instance(),
     ):
         super().__init__()
         self._main_model: MainModel = main_model
@@ -144,7 +147,9 @@ class PredictionView(View, MainWindow):
             segmentations: list[Path] = (
                 FileUtils.get_all_files_in_dir_ignore_hidden(output_path)
             )
-            channel: int = self._prediction_model.get_image_input_channel_index()
+            channel: int = (
+                self._prediction_model.get_image_input_channel_index()
+            )
             stem_to_data: dict[str, dict[str, Path]] = {
                 raw_img.stem: {"raw": raw_img} for raw_img in raw_imgs
             }
@@ -154,11 +159,16 @@ class PredictionView(View, MainWindow):
             self._viewer.clear_layers()
             for data in stem_to_data.values():
                 self._viewer.add_image(
-                    self._img_data_extractor.extract_image_data(data["raw"], channel=channel).np_data,
-                    f"[raw] {data['raw'].name}"
+                    self._img_data_extractor.extract_image_data(
+                        data["raw"], channel=channel
+                    ).np_data,
+                    f"[raw] {data['raw'].name}",
                 )
                 self._viewer.add_labels(
-                    self._img_data_extractor.extract_image_data(data["seg"], seg=1).np_data, name=f"[seg] {data['seg'].name}"
+                    self._img_data_extractor.extract_image_data(
+                        data["seg"], seg=1
+                    ).np_data,
+                    name=f"[seg] {data['seg'].name}",
                 )
         # Display popup with saved images path if prediction inputs are from a directory
         else:

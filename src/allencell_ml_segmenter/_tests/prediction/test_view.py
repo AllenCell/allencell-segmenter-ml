@@ -11,7 +11,9 @@ from allencell_ml_segmenter.prediction.model import (
     PredictionModel,
     PredictionInputMode,
 )
-from allencell_ml_segmenter.core.image_data_extractor import FakeImageDataExtractor
+from allencell_ml_segmenter.core.image_data_extractor import (
+    FakeImageDataExtractor,
+)
 from allencell_ml_segmenter.prediction.view import PredictionView
 
 
@@ -60,11 +62,16 @@ def test_show_results(main_model: MainModel) -> None:
     prediction_model.set_prediction_input_mode(
         PredictionInputMode.FROM_NAPARI_LAYERS
     )
-    prediction_model.set_selected_paths([Path('output_1.tiff'), Path('output_2.tiff')])
+    prediction_model.set_selected_paths(
+        [Path("output_1.tiff"), Path("output_2.tiff")]
+    )
     fake_viewer: FakeViewer = FakeViewer()
 
     prediction_view: PredictionView = PredictionView(
-        main_model, prediction_model, fake_viewer, img_data_extractor=FakeImageDataExtractor.global_instance()
+        main_model,
+        prediction_model,
+        fake_viewer,
+        img_data_extractor=FakeImageDataExtractor.global_instance(),
     )
 
     # ACT
@@ -77,4 +84,3 @@ def test_show_results(main_model: MainModel) -> None:
     assert fake_viewer.contains_layer("[seg] output_1.tiff")
     assert fake_viewer.contains_layer("[raw] output_2.tiff")
     assert fake_viewer.contains_layer("[seg] output_2.tiff")
-
