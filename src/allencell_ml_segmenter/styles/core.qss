@@ -57,3 +57,7 @@ QComboBox:disabled {
     font-weight: bold;
     margin: 10px 0px;
 }
+
+QTabBar::tab:!selected {
+    color: #868E93;
+}
