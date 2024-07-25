@@ -233,11 +233,16 @@ class PredictionFileInput(QWidget):
                     # only extract if it's the only one checked and it's just been checked;
                     # otherwise we assume they are checking images with same number of channels
                     self._model.set_selected_paths(
-                        selected_paths, extract_channels=len(selected_paths) == 1
+                        selected_paths,
+                        extract_channels=len(selected_paths) == 1,
                     )
                 else:
-                    show_warning("Cannot predict on > 10 images from the viewer")
-                    self._image_list.item(row).setCheckState(Qt.CheckState.Unchecked)
+                    show_warning(
+                        "Cannot predict on > 10 images from the viewer"
+                    )
+                    self._image_list.item(row).setCheckState(
+                        Qt.CheckState.Unchecked
+                    )
             elif state == Qt.CheckState.Unchecked:
                 # could have unselected the img we got channels from originally, so need to re-extract
                 # as long as there are still some images selected
