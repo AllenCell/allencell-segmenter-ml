@@ -175,7 +175,7 @@ def test_text_input_cleared_disables_apply_button(
     model_selection_widget: ModelSelectionWidget,
 ) -> None:
     """
-    Test that the apply button is disabled when a model is not selected.
+    Test that the apply button is disabled when a typed model name is cleared.
     """
     # SANITY CHECK
     assert not model_selection_widget._apply_btn.isEnabled()
