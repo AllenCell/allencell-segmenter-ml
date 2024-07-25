@@ -3,7 +3,7 @@ from typing import Dict, Union, Optional, List
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.training.training_model import (
     TrainingModel,
-    TrainingImageType,
+    ImageType,
 )
 from allencell_ml_segmenter.utils.cuda_util import CUDAUtils
 
@@ -90,13 +90,13 @@ class CytoDLOverridesManager:
 
         # Channel Override
         overrides_dict["input_channel"] = (
-            self._training_model.get_selected_channel(TrainingImageType.RAW)
+            self._training_model.get_selected_channel(ImageType.RAW)
         )
         overrides_dict["target_col1_channel"] = (
-            self._training_model.get_selected_channel(TrainingImageType.SEG1)
+            self._training_model.get_selected_channel(ImageType.SEG1)
         )
         overrides_dict["target_col2_channel"] = (
-            self._training_model.get_selected_channel(TrainingImageType.SEG2)
+            self._training_model.get_selected_channel(ImageType.SEG2)
         )
 
         return overrides_dict
