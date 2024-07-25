@@ -182,11 +182,12 @@ def test_text_input_cleared_disables_apply_button(
     model_selection_widget._experiment_name_input.setText("dummy_experiment")
     assert model_selection_widget._apply_btn.isEnabled()
 
-    #ACT
+    # ACT
     model_selection_widget._experiment_name_input.setText("")
 
     # ASSERT
     assert not model_selection_widget._apply_btn.isEnabled()
+
 
 def test_combo_input_enables_apply_button_new_radio_disables(
     model_selection_widget: ModelSelectionWidget,
