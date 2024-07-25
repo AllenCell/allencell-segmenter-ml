@@ -6,11 +6,12 @@ import numpy as np
 from allencell_ml_segmenter.curation.curation_model import (
     CurationModel,
     CurationView,
-    CurationImageType,
+    ImageType,
 )
 from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
     FakeExperimentsModel,
 )
+from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.core.image_data_extractor import ImageData
 import numpy as np
 
@@ -23,20 +24,20 @@ FAKE_IMAGE_DATA: ImageData = ImageData(
 @pytest.fixture
 def curation_model() -> CurationModel:
     # returns curation model with view set to input view
-    return CurationModel(FakeExperimentsModel())
+    return CurationModel(FakeExperimentsModel(), MainModel())
 
 
 @pytest.fixture
 def curation_model_main_view(curation_model: CurationModel) -> CurationModel:
     # returns curation model configured to main view
     curation_model.set_image_directory_paths(
-        CurationImageType.RAW, [Path("r1"), Path("r2"), Path("r3")]
+        ImageType.RAW, [Path("r1"), Path("r2"), Path("r3")]
     )
     curation_model.set_image_directory_paths(
-        CurationImageType.SEG1, [Path("s11"), Path("s12"), Path("s13")]
+        ImageType.SEG1, [Path("s11"), Path("s12"), Path("s13")]
     )
     curation_model.set_image_directory_paths(
-        CurationImageType.SEG2, [Path("s21"), Path("s22"), Path("s23")]
+        ImageType.SEG2, [Path("s21"), Path("s22"), Path("s23")]
     )
     curation_model.set_current_view(CurationView.MAIN_VIEW)
     return curation_model
@@ -50,23 +51,23 @@ def curation_model_loading_started(
     curation_model_main_view.start_loading_images()
 
     curation_model_main_view.set_curr_image_data(
-        CurationImageType.RAW, FAKE_IMAGE_DATA
+        ImageType.RAW, FAKE_IMAGE_DATA
     )
     curation_model_main_view.set_curr_image_data(
-        CurationImageType.SEG1, FAKE_IMAGE_DATA
+        ImageType.SEG1, FAKE_IMAGE_DATA
     )
     curation_model_main_view.set_curr_image_data(
-        CurationImageType.SEG2, FAKE_IMAGE_DATA
+        ImageType.SEG2, FAKE_IMAGE_DATA
     )
 
     curation_model_main_view.set_next_image_data(
-        CurationImageType.RAW, FAKE_IMAGE_DATA
+        ImageType.RAW, FAKE_IMAGE_DATA
     )
     curation_model_main_view.set_next_image_data(
-        CurationImageType.SEG1, FAKE_IMAGE_DATA
+        ImageType.SEG1, FAKE_IMAGE_DATA
     )
     curation_model_main_view.set_next_image_data(
-        CurationImageType.SEG2, FAKE_IMAGE_DATA
+        ImageType.SEG2, FAKE_IMAGE_DATA
     )
     return curation_model_main_view
 
@@ -78,13 +79,11 @@ def test_set_raw_directory(curation_model: CurationModel) -> None:
     curation_model.image_directory_set.connect(dir_set_slot)
 
     # Act
-    curation_model.set_image_directory(CurationImageType.RAW, directory)
+    curation_model.set_image_directory(ImageType.RAW, directory)
 
     # Assert
-    assert (
-        curation_model.get_image_directory(CurationImageType.RAW) == directory
-    )
-    dir_set_slot.assert_called_once_with(CurationImageType.RAW)
+    assert curation_model.get_image_directory(ImageType.RAW) == directory
+    dir_set_slot.assert_called_once_with(ImageType.RAW)
 
 
 def test_set_seg1_directory(curation_model: CurationModel) -> None:
@@ -94,13 +93,11 @@ def test_set_seg1_directory(curation_model: CurationModel) -> None:
     curation_model.image_directory_set.connect(dir_set_slot)
 
     # Act
-    curation_model.set_image_directory(CurationImageType.SEG1, directory)
+    curation_model.set_image_directory(ImageType.SEG1, directory)
 
     # Assert
-    assert (
-        curation_model.get_image_directory(CurationImageType.SEG1) == directory
-    )
-    dir_set_slot.assert_called_once_with(CurationImageType.SEG1)
+    assert curation_model.get_image_directory(ImageType.SEG1) == directory
+    dir_set_slot.assert_called_once_with(ImageType.SEG1)
 
 
 def test_set_seg2_directory(curation_model: CurationModel) -> None:
@@ -110,13 +107,11 @@ def test_set_seg2_directory(curation_model: CurationModel) -> None:
     curation_model.image_directory_set.connect(dir_set_slot)
 
     # Act
-    curation_model.set_image_directory(CurationImageType.SEG2, directory)
+    curation_model.set_image_directory(ImageType.SEG2, directory)
 
     # Assert
-    assert (
-        curation_model.get_image_directory(CurationImageType.SEG2) == directory
-    )
-    dir_set_slot.assert_called_once_with(CurationImageType.SEG2)
+    assert curation_model.get_image_directory(ImageType.SEG2) == directory
+    dir_set_slot.assert_called_once_with(ImageType.SEG2)
 
 
 def test_set_raw_image_channel_count(
@@ -129,14 +124,11 @@ def test_set_raw_image_channel_count(
     )
 
     # Act
-    curation_model_loading_started.set_channel_count(CurationImageType.RAW, 4)
+    curation_model_loading_started.set_channel_count(ImageType.RAW, 4)
 
     # Assert
-    assert (
-        curation_model_loading_started.get_channel_count(CurationImageType.RAW)
-        == 4
-    )
-    channel_count_set_slot.assert_called_once_with(CurationImageType.RAW)
+    assert curation_model_loading_started.get_channel_count(ImageType.RAW) == 4
+    channel_count_set_slot.assert_called_once_with(ImageType.RAW)
 
 
 def test_set_seg1_image_channel_count(
@@ -149,16 +141,13 @@ def test_set_seg1_image_channel_count(
     )
 
     # Act
-    curation_model_loading_started.set_channel_count(CurationImageType.SEG1, 5)
+    curation_model_loading_started.set_channel_count(ImageType.SEG1, 5)
 
     # Assert
     assert (
-        curation_model_loading_started.get_channel_count(
-            CurationImageType.SEG1
-        )
-        == 5
+        curation_model_loading_started.get_channel_count(ImageType.SEG1) == 5
     )
-    channel_count_set_slot.assert_called_once_with(CurationImageType.SEG1)
+    channel_count_set_slot.assert_called_once_with(ImageType.SEG1)
 
 
 def test_set_seg2_image_channel_count(
@@ -171,16 +160,13 @@ def test_set_seg2_image_channel_count(
     )
 
     # Act
-    curation_model_loading_started.set_channel_count(CurationImageType.SEG2, 6)
+    curation_model_loading_started.set_channel_count(ImageType.SEG2, 6)
 
     # Assert
     assert (
-        curation_model_loading_started.get_channel_count(
-            CurationImageType.SEG2
-        )
-        == 6
+        curation_model_loading_started.get_channel_count(ImageType.SEG2) == 6
     )
-    channel_count_set_slot.assert_called_once_with(CurationImageType.SEG2)
+    channel_count_set_slot.assert_called_once_with(ImageType.SEG2)
 
 
 def test_set_raw_channel(curation_model: CurationModel) -> None:
@@ -188,12 +174,10 @@ def test_set_raw_channel(curation_model: CurationModel) -> None:
     channel: int = 0
 
     # Act
-    curation_model.set_selected_channel(CurationImageType.RAW, channel)
+    curation_model.set_selected_channel(ImageType.RAW, channel)
 
     # Assert
-    assert (
-        curation_model.get_selected_channel(CurationImageType.RAW) == channel
-    )
+    assert curation_model.get_selected_channel(ImageType.RAW) == channel
 
 
 def test_set_seg1_channel(curation_model: CurationModel) -> None:
@@ -201,12 +185,10 @@ def test_set_seg1_channel(curation_model: CurationModel) -> None:
     channel: int = 1
 
     # Act
-    curation_model.set_selected_channel(CurationImageType.SEG1, channel)
+    curation_model.set_selected_channel(ImageType.SEG1, channel)
 
     # Assert
-    assert (
-        curation_model.get_selected_channel(CurationImageType.SEG1) == channel
-    )
+    assert curation_model.get_selected_channel(ImageType.SEG1) == channel
 
 
 def test_set_seg2_channel(curation_model: CurationModel) -> None:
@@ -214,12 +196,10 @@ def test_set_seg2_channel(curation_model: CurationModel) -> None:
     channel: int = 2
 
     # Act
-    curation_model.set_selected_channel(CurationImageType.SEG2, channel)
+    curation_model.set_selected_channel(ImageType.SEG2, channel)
 
     # Assert
-    assert (
-        curation_model.get_selected_channel(CurationImageType.SEG2) == channel
-    )
+    assert curation_model.get_selected_channel(ImageType.SEG2) == channel
 
 
 def test_set_current_view_to_main_view(curation_model: CurationModel) -> None:
@@ -227,13 +207,13 @@ def test_set_current_view_to_main_view(curation_model: CurationModel) -> None:
 
     # expect paths to be set before changing view
     curation_model.set_image_directory_paths(
-        CurationImageType.RAW, [Path("r1"), Path("r2"), Path("r3")]
+        ImageType.RAW, [Path("r1"), Path("r2"), Path("r3")]
     )
     curation_model.set_image_directory_paths(
-        CurationImageType.SEG1, [Path("s11"), Path("s12"), Path("s13")]
+        ImageType.SEG1, [Path("s11"), Path("s12"), Path("s13")]
     )
     curation_model.set_image_directory_paths(
-        CurationImageType.SEG2, [Path("s21"), Path("s22"), Path("s23")]
+        ImageType.SEG2, [Path("s21"), Path("s22"), Path("s23")]
     )
 
     view_changed_slot: Mock = Mock()
@@ -266,20 +246,20 @@ def test_start_loading_images(curation_model_main_view: CurationModel) -> None:
 
     # Act (pretending to be curation service)
     curation_model_main_view.set_curr_image_data(
-        CurationImageType.RAW, FAKE_IMAGE_DATA
+        ImageType.RAW, FAKE_IMAGE_DATA
     )
     curation_model_main_view.set_curr_image_data(
-        CurationImageType.SEG1, FAKE_IMAGE_DATA
+        ImageType.SEG1, FAKE_IMAGE_DATA
     )
     curation_model_main_view.set_curr_image_data(
-        CurationImageType.SEG2, FAKE_IMAGE_DATA
+        ImageType.SEG2, FAKE_IMAGE_DATA
     )
 
     curation_model_main_view.set_next_image_data(
-        CurationImageType.RAW, FAKE_IMAGE_DATA
+        ImageType.RAW, FAKE_IMAGE_DATA
     )
     curation_model_main_view.set_next_image_data(
-        CurationImageType.SEG1, FAKE_IMAGE_DATA
+        ImageType.SEG1, FAKE_IMAGE_DATA
     )
 
     # Assert
@@ -288,21 +268,20 @@ def test_start_loading_images(curation_model_main_view: CurationModel) -> None:
 
     # Act
     curation_model_main_view.set_next_image_data(
-        CurationImageType.SEG2, FAKE_IMAGE_DATA
+        ImageType.SEG2, FAKE_IMAGE_DATA
     )
 
     # Assert
     img_loading_finished_slot.assert_called_once()
     assert (
-        curation_model_main_view.get_curr_image_data(CurationImageType.RAW)
+        curation_model_main_view.get_curr_image_data(ImageType.RAW) is not None
+    )
+    assert (
+        curation_model_main_view.get_curr_image_data(ImageType.SEG1)
         is not None
     )
     assert (
-        curation_model_main_view.get_curr_image_data(CurationImageType.SEG1)
-        is not None
-    )
-    assert (
-        curation_model_main_view.get_curr_image_data(CurationImageType.SEG2)
+        curation_model_main_view.get_curr_image_data(ImageType.SEG2)
         is not None
     )
 
@@ -317,20 +296,20 @@ def test_next_image(curation_model_main_view: CurationModel) -> None:
     )
     curation_model_main_view.start_loading_images()
     curation_model_main_view.set_curr_image_data(
-        CurationImageType.RAW, FAKE_IMAGE_DATA
+        ImageType.RAW, FAKE_IMAGE_DATA
     )
     curation_model_main_view.set_curr_image_data(
-        CurationImageType.SEG1, FAKE_IMAGE_DATA
+        ImageType.SEG1, FAKE_IMAGE_DATA
     )
 
     curation_model_main_view.set_next_image_data(
-        CurationImageType.RAW, FAKE_IMAGE_DATA
+        ImageType.RAW, FAKE_IMAGE_DATA
     )
     curation_model_main_view.set_next_image_data(
-        CurationImageType.SEG1, FAKE_IMAGE_DATA
+        ImageType.SEG1, FAKE_IMAGE_DATA
     )
     curation_model_main_view.set_next_image_data(
-        CurationImageType.SEG2, FAKE_IMAGE_DATA
+        ImageType.SEG2, FAKE_IMAGE_DATA
     )
 
     # Assert
@@ -340,7 +319,7 @@ def test_next_image(curation_model_main_view: CurationModel) -> None:
 
     # Act
     curation_model_main_view.set_curr_image_data(
-        CurationImageType.SEG2, FAKE_IMAGE_DATA
+        ImageType.SEG2, FAKE_IMAGE_DATA
     )
     curation_model_main_view.next_image()
 
@@ -352,13 +331,13 @@ def test_next_image(curation_model_main_view: CurationModel) -> None:
 
     # Act
     curation_model_main_view.set_next_image_data(
-        CurationImageType.RAW, FAKE_IMAGE_DATA
+        ImageType.RAW, FAKE_IMAGE_DATA
     )
     curation_model_main_view.set_next_image_data(
-        CurationImageType.SEG1, FAKE_IMAGE_DATA
+        ImageType.SEG1, FAKE_IMAGE_DATA
     )
     curation_model_main_view.set_next_image_data(
-        CurationImageType.SEG2, FAKE_IMAGE_DATA
+        ImageType.SEG2, FAKE_IMAGE_DATA
     )
 
     # Assert

@@ -88,5 +88,5 @@ class IExperimentsModel(Publisher):
         pass
 
     @abstractmethod
-    def get_channel_selection_path(self) -> Path:
+    def get_channel_selection_path(self) -> Optional[Path]:
         pass

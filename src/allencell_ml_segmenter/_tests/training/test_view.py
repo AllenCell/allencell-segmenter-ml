@@ -3,12 +3,14 @@ from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
     FakeExperimentsModel,
 )
 from allencell_ml_segmenter.main.main_model import MainModel
+from allencell_ml_segmenter.main.main_service import MainService
 from allencell_ml_segmenter.training.training_model import (
     TrainingModel,
     ModelSize,
-    TrainingImageType,
+    ImageType,
 )
 from allencell_ml_segmenter.training.view import TrainingView
+from allencell_ml_segmenter.core.task_executor import SynchroTaskExecutor
 import pytest
 from pytestqt.qtbot import QtBot
 import allencell_ml_segmenter
@@ -187,6 +189,14 @@ def test_navigate_to_training_populates_channel_selection(
     experiments_model: FakeExperimentsModel = FakeExperimentsModel(
         channel_selection_path=test_channel_path
     )
+    # must init main service and set experiment name to pull channel data into main model
+    main_service: MainService = MainService(
+        main_model,
+        experiments_model,
+        task_executor=SynchroTaskExecutor.global_instance(),
+    )
+    experiments_model.apply_experiment_name("test")
+
     training_model: TrainingModel = TrainingModel(
         main_model, experiments_model
     )
@@ -197,21 +207,20 @@ def test_navigate_to_training_populates_channel_selection(
         viewer=FakeViewer(),
     )
 
-    # Act (simulate a navigation event to the training view)
-    view.focus_changed()
+    # Act
     # simulate service completing its channel extraction work
     training_model.set_all_num_channels(
         {
-            TrainingImageType.RAW: 8,
-            TrainingImageType.SEG1: 6,
-            TrainingImageType.SEG2: 4,
+            ImageType.RAW: 8,
+            ImageType.SEG1: 6,
+            ImageType.SEG2: 4,
         }
     )
 
     # Assert (these values come from valid_mixed.json)
-    assert training_model.get_selected_channel(TrainingImageType.RAW) == 5
-    assert training_model.get_selected_channel(TrainingImageType.SEG1) == 2
-    assert training_model.get_selected_channel(TrainingImageType.SEG2) == 1
+    assert training_model.get_selected_channel(ImageType.RAW) == 5
+    assert training_model.get_selected_channel(ImageType.SEG1) == 2
+    assert training_model.get_selected_channel(ImageType.SEG2) == 1
     assert (
         view.image_selection_widget._raw_channel_combo_box.currentIndex() == 5
     )
@@ -242,6 +251,14 @@ def test_navigate_to_training_populates_channel_selection_no_json(
     experiments_model: FakeExperimentsModel = FakeExperimentsModel(
         channel_selection_path=test_channel_path
     )
+    # must init main service and set experiment to pull channel data into main model
+    main_service: MainService = MainService(
+        main_model,
+        experiments_model,
+        task_executor=SynchroTaskExecutor.global_instance(),
+    )
+    experiments_model.apply_experiment_name("test")
+
     training_model: TrainingModel = TrainingModel(
         main_model, experiments_model
     )
@@ -252,21 +269,20 @@ def test_navigate_to_training_populates_channel_selection_no_json(
         viewer=FakeViewer(),
     )
 
-    # Act (simulate a navigation event to the training view)
-    view.focus_changed()
+    # Act
     # simulate service completing its channel extraction work
     training_model.set_all_num_channels(
         {
-            TrainingImageType.RAW: 8,
-            TrainingImageType.SEG1: 6,
-            TrainingImageType.SEG2: 4,
+            ImageType.RAW: 8,
+            ImageType.SEG1: 6,
+            ImageType.SEG2: 4,
         }
     )
 
     # Assert (these values come from valid_mixed.json)
-    assert training_model.get_selected_channel(TrainingImageType.RAW) == 0
-    assert training_model.get_selected_channel(TrainingImageType.SEG1) == 0
-    assert training_model.get_selected_channel(TrainingImageType.SEG2) == 0
+    assert training_model.get_selected_channel(ImageType.RAW) == 0
+    assert training_model.get_selected_channel(ImageType.SEG1) == 0
+    assert training_model.get_selected_channel(ImageType.SEG2) == 0
     assert (
         view.image_selection_widget._raw_channel_combo_box.currentIndex() == 0
     )

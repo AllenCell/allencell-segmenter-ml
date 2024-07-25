@@ -15,7 +15,7 @@ from cyto_dl.api.model import CytoDLModel
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.training.training_model import (
     TrainingModel,
-    TrainingImageType,
+    ImageType,
 )
 from typing import Optional
 from napari.utils.notifications import show_warning
@@ -156,9 +156,9 @@ class TrainingService(Subscriber):
         self._training_model.set_total_num_images(dir_data.num_images)
         self._training_model.set_all_num_channels(
             {
-                TrainingImageType.RAW: dir_data.raw_channels,
-                TrainingImageType.SEG1: dir_data.seg1_channels,
-                TrainingImageType.SEG2: dir_data.seg2_channels,
+                ImageType.RAW: dir_data.raw_channels,
+                ImageType.SEG1: dir_data.seg1_channels,
+                ImageType.SEG2: dir_data.seg2_channels,
             }
         )
 
@@ -166,9 +166,9 @@ class TrainingService(Subscriber):
         self._training_model.set_total_num_images(None)
         self._training_model.set_all_num_channels(
             {
-                TrainingImageType.RAW: None,
-                TrainingImageType.SEG1: None,
-                TrainingImageType.SEG2: None,
+                ImageType.RAW: None,
+                ImageType.SEG1: None,
+                ImageType.SEG2: None,
             }
         )
         show_error(f"Failed to get data from training directory: {e}")
