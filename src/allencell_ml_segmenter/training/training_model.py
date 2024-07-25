@@ -4,7 +4,7 @@ from enum import Enum
 from typing import Union, Optional, List
 from pathlib import Path
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
-from allencell_ml_segmenter.main.main_model import MainModel
+from allencell_ml_segmenter.main.main_model import MainModel, ImageType
 from qtpy.QtCore import QObject, Signal
 
 
@@ -30,12 +30,6 @@ class ModelSize(Enum):
     LARGE = [32, 64, 128]
 
 
-class TrainingImageType(Enum):
-    RAW = "raw"
-    SEG1 = "seg1"
-    SEG2 = "seg2"
-
-
 # TODO: move these signals directly into TrainingModel once we deprecate
 # 'Publisher' in a refactor
 class TrainingModelSignals(QObject):
@@ -57,11 +51,11 @@ class TrainingModel(Publisher):
         self.signals: TrainingModelSignals = TrainingModelSignals()
         self._experiment_type: TrainingType = None
         self._images_directory: Optional[Path] = None
-        self._selected_channel: dict[TrainingImageType, Optional[int]] = {
-            t: None for t in TrainingImageType
+        self._selected_channel: dict[ImageType, Optional[int]] = {
+            t: None for t in ImageType
         }
-        self._num_channels: dict[TrainingImageType, Optional[int]] = {
-            t: None for t in TrainingImageType
+        self._num_channels: dict[ImageType, Optional[int]] = {
+            t: None for t in ImageType
         }
         self._model_path: Union[Path, None] = (
             None  # if None, start a new model
@@ -141,22 +135,20 @@ class TrainingModel(Publisher):
         self._images_directory = images_path
         self.signals.images_directory_set.emit()
 
-    def get_num_channels(self, image_type: TrainingImageType) -> Optional[int]:
+    def get_num_channels(self, image_type: ImageType) -> Optional[int]:
         return self._num_channels[image_type]
 
     def set_all_num_channels(
-        self, num_channels: dict[TrainingImageType, Optional[int]]
+        self, num_channels: dict[ImageType, Optional[int]]
     ) -> None:
         self._num_channels = num_channels
         self.signals.num_channels_set.emit()
 
-    def get_selected_channel(
-        self, image_type: TrainingImageType
-    ) -> Optional[int]:
+    def get_selected_channel(self, image_type: ImageType) -> Optional[int]:
         return self._selected_channel[image_type]
 
     def set_selected_channel(
-        self, image_type: TrainingImageType, channel: int
+        self, image_type: ImageType, channel: int
     ) -> None:
         self._selected_channel[image_type] = channel
 
@@ -241,3 +233,6 @@ class TrainingModel(Publisher):
 
     def get_total_num_images(self) -> int:
         return self._total_num_images
+
+    def get_selected_channels(self) -> dict[ImageType, Optional[int]]:
+        return self._main_model.get_selected_channels()
