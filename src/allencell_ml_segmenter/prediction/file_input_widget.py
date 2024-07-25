@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import List, Optional
 
 from napari.utils.events import Event as NapariEvent
+from napari.utils.notifications import show_warning
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
     QWidget,
@@ -227,13 +228,17 @@ class PredictionFileInput(QWidget):
 
             # this will preserve the invariant: the options in the dropdown will be equal
             # to the number of channels in at least one of the selected images (or empty if no images selected)
-            if state == Qt.Checked:
-                # only extract if it's the only one checked and it's just been checked;
-                # otherwise we assume they are checking images with same number of channels
-                self._model.set_selected_paths(
-                    selected_paths, extract_channels=len(selected_paths) == 1
-                )
-            elif state == Qt.Unchecked:
+            if state == Qt.CheckState.Checked:
+                if len(selected_paths) <= 10:
+                    # only extract if it's the only one checked and it's just been checked;
+                    # otherwise we assume they are checking images with same number of channels
+                    self._model.set_selected_paths(
+                        selected_paths, extract_channels=len(selected_paths) == 1
+                    )
+                else:
+                    show_warning("Cannot predict on > 10 images from the viewer")
+                    self._image_list.item(row).setCheckState(Qt.CheckState.Unchecked)
+            elif state == Qt.CheckState.Unchecked:
                 # could have unselected the img we got channels from originally, so need to re-extract
                 # as long as there are still some images selected
                 if len(selected_indices) == 0:
