@@ -32,6 +32,7 @@ from qtpy.QtWidgets import (
     QLabel,
 )
 from allencell_ml_segmenter.main.i_viewer import IViewer
+from allencell_ml_segmenter.prediction.thresh_beta import simple_thresh_widget
 
 
 class PredictionView(View, MainWindow):
@@ -96,6 +97,10 @@ class PredictionView(View, MainWindow):
         self._run_btn.setObjectName("run")
         self.layout().addWidget(self._run_btn)
         self._run_btn.clicked.connect(self.run_btn_handler)
+
+        thresh_btn: QPushButton = QPushButton("Thresholding")
+        thresh_btn.clicked.connect(lambda _:self._viewer.viewer.window.add_dock_widget(simple_thresh_widget))
+        self.layout().addWidget(thresh_btn)
 
         self.setStyleSheet(Style.get_stylesheet("prediction_view.qss"))
 
