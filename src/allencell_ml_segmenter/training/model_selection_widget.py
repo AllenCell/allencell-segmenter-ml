@@ -190,7 +190,7 @@ class ModelSelectionWidget(QWidget):
 
     def _handle_experiment_selected(self, _: Event) -> None:
         experiment_selected = (
-            self._experiments_model.get_experiment_name_selection() is not None
+            self._experiments_model.get_experiment_name_selection() not in [None, ""]
         )
         self._apply_btn.setEnabled(experiment_selected)
 
