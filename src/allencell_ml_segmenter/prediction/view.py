@@ -150,7 +150,7 @@ class PredictionView(View, MainWindow):
             channel: int = (
                 self._prediction_model.get_image_input_channel_index()
             )
-            
+
             # here, we will pair raw images and segmentations based on the stem component of their paths
             stem_to_data: dict[str, dict[str, Path]] = {
                 raw_img.stem: {"raw": raw_img} for raw_img in raw_imgs
