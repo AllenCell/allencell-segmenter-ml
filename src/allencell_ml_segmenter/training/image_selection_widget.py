@@ -1,5 +1,6 @@
 from pathlib import Path
 from typing import Optional
+import json
 
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
@@ -17,7 +18,7 @@ from allencell_ml_segmenter.curation.stacked_spinner import StackedSpinner
 from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
 from allencell_ml_segmenter.training.training_model import (
     TrainingModel,
-    TrainingImageType,
+    ImageType,
 )
 from allencell_ml_segmenter.widgets.input_button_widget import (
     InputButton,
@@ -96,7 +97,7 @@ class ImageSelectionWidget(QWidget):
         self._raw_channel_combo_box.setMinimumWidth(306)
         self._reset_combo_box(self._raw_channel_combo_box, None)
         self._raw_channel_combo_box.currentIndexChanged.connect(
-            lambda idx: self._handle_idx_change(idx, TrainingImageType.RAW)
+            lambda idx: self._handle_idx_change(idx, ImageType.RAW)
         )
         frame.layout().addWidget(LabelWithHint("Raw image channel"), 2, 0)
         frame.layout().addWidget(self._raw_channel_combo_box, 2, 1)
@@ -105,7 +106,7 @@ class ImageSelectionWidget(QWidget):
         self._seg1_channel_combo_box.setMinimumWidth(306)
         self._reset_combo_box(self._seg1_channel_combo_box, None)
         self._seg1_channel_combo_box.currentIndexChanged.connect(
-            lambda idx: self._handle_idx_change(idx, TrainingImageType.SEG1)
+            lambda idx: self._handle_idx_change(idx, ImageType.SEG1)
         )
         frame.layout().addWidget(LabelWithHint("Seg1 image channel"), 3, 0)
         frame.layout().addWidget(self._seg1_channel_combo_box, 3, 1)
@@ -114,7 +115,7 @@ class ImageSelectionWidget(QWidget):
         self._seg2_channel_combo_box.setMinimumWidth(306)
         self._reset_combo_box(self._seg2_channel_combo_box, None)
         self._seg2_channel_combo_box.currentIndexChanged.connect(
-            lambda idx: self._handle_idx_change(idx, TrainingImageType.SEG2)
+            lambda idx: self._handle_idx_change(idx, ImageType.SEG2)
         )
         frame.layout().addWidget(LabelWithHint("Seg2 image channel"), 4, 0)
         frame.layout().addWidget(self._seg2_channel_combo_box, 4, 1)
@@ -152,18 +153,24 @@ class ImageSelectionWidget(QWidget):
         self._reset_combo_box(self._seg1_channel_combo_box, None)
         self._reset_combo_box(self._seg2_channel_combo_box, None)
 
-    def _handle_idx_change(
-        self, idx: int, img_type: TrainingImageType
-    ) -> None:
+    def _handle_idx_change(self, idx: int, img_type: ImageType) -> None:
         self._model.set_selected_channel(img_type, idx if idx >= 0 else None)
 
     def _reset_combo_box(
-        self, combo_box: QComboBox, num_channels: Optional[int]
+        self,
+        combo_box: QComboBox,
+        num_channels: Optional[int],
+        default_channel: Optional[int] = None,
     ) -> None:
+        if default_channel is None:
+            default_channel = 0
+
         combo_box.clear()
         if num_channels is not None:
             combo_box.addItems([str(x) for x in range(num_channels)])
-            combo_box.setCurrentIndex(0)
+            combo_box.setCurrentIndex(
+                default_channel if default_channel < num_channels else 0
+            )
             combo_box.setEnabled(True)
         else:
             combo_box.setPlaceholderText("")
@@ -172,15 +179,22 @@ class ImageSelectionWidget(QWidget):
 
     def _update_channels(self) -> None:
         self._training_data_stacked_spinner.stop()
+        default_channels: dict[ImageType, Optional[int]] = (
+            self._model.get_selected_channels()
+        )
+
         self._reset_combo_box(
             self._raw_channel_combo_box,
-            self._model.get_num_channels(TrainingImageType.RAW),
+            self._model.get_num_channels(ImageType.RAW),
+            default_channel=default_channels[ImageType.RAW],
         )
         self._reset_combo_box(
             self._seg1_channel_combo_box,
-            self._model.get_num_channels(TrainingImageType.SEG1),
+            self._model.get_num_channels(ImageType.SEG1),
+            default_channel=default_channels[ImageType.SEG1],
         )
         self._reset_combo_box(
             self._seg2_channel_combo_box,
-            self._model.get_num_channels(TrainingImageType.SEG2),
+            self._model.get_num_channels(ImageType.SEG2),
+            default_channel=default_channels[ImageType.SEG2],
         )

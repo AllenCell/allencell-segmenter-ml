@@ -1,12 +1,14 @@
-from allencell_ml_segmenter.core.image_data_extractor import ImageData
+from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
 from allencell_ml_segmenter.curation.curation_model import (
     CurationModel,
     CurationRecord,
-    CurationImageType,
+    ImageType,
+    CurationView,
 )
 from allencell_ml_segmenter.core.image_data_extractor import (
     IImageDataExtractor,
     AICSImageDataExtractor,
+    ImageData,
 )
 from allencell_ml_segmenter.core.task_executor import (
     ITaskExecutor,
@@ -32,14 +34,17 @@ class CurationService(QObject):
     def __init__(
         self,
         curation_model: CurationModel,
+        experiments_model: IExperimentsModel,
         img_data_extractor: IImageDataExtractor = AICSImageDataExtractor.global_instance(),
         task_executor: ITaskExecutor = NapariThreadTaskExecutor.global_instance(),
         file_writer: IFileWriter = FileWriter.global_instance(),
     ) -> None:
         super().__init__()
         self._curation_model: CurationModel = curation_model
+        self._experiments_model: IExperimentsModel = experiments_model
         self._img_data_extractor: IImageDataExtractor = img_data_extractor
         self._task_executor: ITaskExecutor = task_executor
+        self._file_writer: IFileWriter = file_writer
         self._file_utils: FileUtils = FileUtils(file_writer)
 
         self._curation_model.image_directory_set.connect(
@@ -60,20 +65,18 @@ class CurationService(QObject):
         return DirectoryData(files, img_data.channels)
 
     def _on_dir_data_extracted(
-        self, img_type: CurationImageType, dir_data: DirectoryData
+        self, img_type: ImageType, dir_data: DirectoryData
     ) -> None:
         self._curation_model.set_image_directory_paths(
             img_type, dir_data.fpaths
         )
         self._curation_model.set_channel_count(img_type, dir_data.channels)
 
-    def _on_dir_data_errored(
-        self, img_type: CurationImageType, e: Exception
-    ) -> None:
+    def _on_dir_data_errored(self, img_type: ImageType, e: Exception) -> None:
         self._curation_model.set_channel_count(img_type, 0)
         raise e
 
-    def _on_image_dir_set(self, img_type: CurationImageType) -> None:
+    def _on_image_dir_set(self, img_type: ImageType) -> None:
         # paths are immutable, so no need to explicitly copy
         dir: Path = self._curation_model.get_image_directory(img_type)
         self._task_executor.exec(
@@ -87,7 +90,7 @@ class CurationService(QObject):
     def _extract_images(
         self,
         img_idx: int,
-        setter_fn: Callable[[CurationImageType, ImageData], None],
+        setter_fn: Callable[[ImageType, ImageData], None],
         err_str: str,
     ) -> None:
         """
@@ -96,27 +99,23 @@ class CurationService(QObject):
         handler for additional debugging info.
         """
         raw_paths: List[Path] = self._curation_model.get_image_directory_paths(
-            CurationImageType.RAW
+            ImageType.RAW
         )
         seg1_paths: List[Path] = (
-            self._curation_model.get_image_directory_paths(
-                CurationImageType.SEG1
-            )
+            self._curation_model.get_image_directory_paths(ImageType.SEG1)
         )
         seg2_paths: Optional[List[Path]] = (
-            self._curation_model.get_image_directory_paths(
-                CurationImageType.SEG2
-            )
+            self._curation_model.get_image_directory_paths(ImageType.SEG2)
         )
 
         raw_channel: int = self._curation_model.get_selected_channel(
-            CurationImageType.RAW
+            ImageType.RAW
         )
         seg1_channel: int = self._curation_model.get_selected_channel(
-            CurationImageType.SEG1
+            ImageType.SEG1
         )
         seg2_channel: Optional[int] = (
-            self._curation_model.get_selected_channel(CurationImageType.SEG2)
+            self._curation_model.get_selected_channel(ImageType.SEG2)
         )
 
         self._task_executor.exec(
@@ -124,22 +123,18 @@ class CurationService(QObject):
                 raw_paths[img_idx],
                 channel=raw_channel,
             ),
-            on_return=lambda img_data: setter_fn(
-                CurationImageType.RAW, img_data
-            ),
+            on_return=lambda img_data: setter_fn(ImageType.RAW, img_data),
             on_error=lambda e: self._on_cursor_moved_error(
-                CurationImageType.RAW, err_str, e
+                ImageType.RAW, err_str, e
             ),
         )
         self._task_executor.exec(
             lambda: self._img_data_extractor.extract_image_data(
                 seg1_paths[img_idx], channel=seg1_channel, seg=1
             ),
-            on_return=lambda img_data: setter_fn(
-                CurationImageType.SEG1, img_data
-            ),
+            on_return=lambda img_data: setter_fn(ImageType.SEG1, img_data),
             on_error=lambda e: self._on_cursor_moved_error(
-                CurationImageType.SEG1, err_str, e
+                ImageType.SEG1, err_str, e
             ),
         )
         if seg2_paths is not None:
@@ -147,16 +142,14 @@ class CurationService(QObject):
                 lambda: self._img_data_extractor.extract_image_data(
                     seg2_paths[img_idx], channel=seg2_channel, seg=2
                 ),
-                on_return=lambda img_data: setter_fn(
-                    CurationImageType.SEG2, img_data
-                ),
+                on_return=lambda img_data: setter_fn(ImageType.SEG2, img_data),
                 on_error=lambda e: self._on_cursor_moved_error(
-                    CurationImageType.SEG2, err_str, e
+                    ImageType.SEG2, err_str, e
                 ),
             )
 
     def _on_cursor_moved_error(
-        self, img_type: CurationImageType, curr_or_next: str, e: Exception
+        self, img_type: ImageType, curr_or_next: str, e: Exception
     ) -> None:
         raise RuntimeError(
             f"There was a problem loading {img_type} for the {curr_or_next} images"

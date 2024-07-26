@@ -6,7 +6,7 @@ from pytestqt.qtbot import QtBot
 
 from allencell_ml_segmenter.curation.curation_model import (
     CurationModel,
-    CurationImageType,
+    ImageType,
     CurationView,
 )
 from allencell_ml_segmenter.curation.curation_service import (
@@ -19,7 +19,12 @@ from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
     FakeExperimentsModel,
 )
 from allencell_ml_segmenter.utils.file_writer import FakeFileWriter
+from allencell_ml_segmenter.core.task_executor import SynchroTaskExecutor
 import allencell_ml_segmenter
+from allencell_ml_segmenter.main.main_model import MainModel
+
+
+FAKE_CHANNEL_SELECTION_PATH: Path = Path("channel_sel")
 
 
 @dataclass
@@ -33,10 +38,11 @@ class TestEnvironment:
 def test_env_input_view() -> TestEnvironment:
     exp_mod: FakeExperimentsModel = FakeExperimentsModel()
     exp_mod.apply_experiment_name("0_exp")
-    model: CurationModel = CurationModel(exp_mod)
-    writer: FakeFileWriter = FakeFileWriter.global_instance()
+    model: CurationModel = CurationModel(exp_mod, MainModel())
+    writer: FakeFileWriter = FakeFileWriter()
     service: CurationService = CurationService(
         model,
+        exp_mod,
         img_data_extractor=FakeImageDataExtractor.global_instance(),
         file_writer=writer,
     )
@@ -48,9 +54,9 @@ def test_env_main_view(
     test_env_input_view: TestEnvironment,
 ) -> TestEnvironment:
     model: CurationModel = test_env_input_view.model
-    model.set_image_directory_paths(CurationImageType.RAW, IMG_DIR_FILES)
-    model.set_image_directory_paths(CurationImageType.SEG1, IMG_DIR_FILES)
-    model.set_image_directory_paths(CurationImageType.SEG2, IMG_DIR_FILES)
+    model.set_image_directory_paths(ImageType.RAW, IMG_DIR_FILES)
+    model.set_image_directory_paths(ImageType.SEG1, IMG_DIR_FILES)
+    model.set_image_directory_paths(ImageType.SEG2, IMG_DIR_FILES)
     model.set_current_view(CurationView.MAIN_VIEW)
 
     return test_env_input_view
@@ -77,22 +83,18 @@ def test_service_reacts_to_set_raw_dir(
 ) -> None:
     test_env: TestEnvironment = test_env_input_view
     # Assert (sanity check)
-    assert test_env.model.get_channel_count(CurationImageType.RAW) is None
-    assert (
-        test_env.model.get_image_directory_paths(CurationImageType.RAW) is None
-    )
+    assert test_env.model.get_channel_count(ImageType.RAW) is None
+    assert test_env.model.get_image_directory_paths(ImageType.RAW) is None
 
     # Act
     with qtbot.waitSignal(test_env.model.channel_count_set):
-        test_env.model.set_image_directory(CurationImageType.RAW, IMG_DIR_PATH)
+        test_env.model.set_image_directory(ImageType.RAW, IMG_DIR_PATH)
 
     # Assert
     # we expect that when the raw directory is set, CurationService will extract the paths
     # and the number of channels from that directory
-    assert test_env.model.get_channel_count(CurationImageType.RAW) is not None
-    for file in test_env.model.get_image_directory_paths(
-        CurationImageType.RAW
-    ):
+    assert test_env.model.get_channel_count(ImageType.RAW) is not None
+    for file in test_env.model.get_image_directory_paths(ImageType.RAW):
         assert file in IMG_DIR_FILES
 
 
@@ -101,23 +103,16 @@ def test_service_reacts_to_set_seg1_dir(
 ) -> None:
     test_env: TestEnvironment = test_env_input_view
     # Assert (sanity check)
-    assert test_env.model.get_channel_count(CurationImageType.SEG1) is None
-    assert (
-        test_env.model.get_image_directory_paths(CurationImageType.SEG1)
-        is None
-    )
+    assert test_env.model.get_channel_count(ImageType.SEG1) is None
+    assert test_env.model.get_image_directory_paths(ImageType.SEG1) is None
 
     # Act
     with qtbot.waitSignal(test_env.model.channel_count_set):
-        test_env.model.set_image_directory(
-            CurationImageType.SEG1, IMG_DIR_PATH
-        )
+        test_env.model.set_image_directory(ImageType.SEG1, IMG_DIR_PATH)
 
     # Assert
-    assert test_env.model.get_channel_count(CurationImageType.SEG1) is not None
-    for file in test_env.model.get_image_directory_paths(
-        CurationImageType.SEG1
-    ):
+    assert test_env.model.get_channel_count(ImageType.SEG1) is not None
+    for file in test_env.model.get_image_directory_paths(ImageType.SEG1):
         assert file in IMG_DIR_FILES
 
 
@@ -126,23 +121,16 @@ def test_service_reacts_to_set_seg2_dir(
 ) -> None:
     test_env: TestEnvironment = test_env_input_view
     # Assert (sanity check)
-    assert test_env.model.get_channel_count(CurationImageType.SEG2) is None
-    assert (
-        test_env.model.get_image_directory_paths(CurationImageType.SEG2)
-        is None
-    )
+    assert test_env.model.get_channel_count(ImageType.SEG2) is None
+    assert test_env.model.get_image_directory_paths(ImageType.SEG2) is None
 
     # Act
     with qtbot.waitSignal(test_env.model.channel_count_set):
-        test_env.model.set_image_directory(
-            CurationImageType.SEG2, IMG_DIR_PATH
-        )
+        test_env.model.set_image_directory(ImageType.SEG2, IMG_DIR_PATH)
 
     # Assert
-    assert test_env.model.get_channel_count(CurationImageType.SEG2) is not None
-    for file in test_env.model.get_image_directory_paths(
-        CurationImageType.SEG2
-    ):
+    assert test_env.model.get_channel_count(ImageType.SEG2) is not None
+    for file in test_env.model.get_image_directory_paths(ImageType.SEG2):
         assert file in IMG_DIR_FILES
 
 
@@ -151,9 +139,9 @@ def test_service_reacts_to_cursor_moved(
 ) -> None:
     test_env: TestEnvironment = test_env_main_view
     # Assert (sanity check)
-    assert test_env.model.get_curr_image_data(CurationImageType.RAW) is None
-    assert test_env.model.get_curr_image_data(CurationImageType.SEG1) is None
-    assert test_env.model.get_curr_image_data(CurationImageType.SEG2) is None
+    assert test_env.model.get_curr_image_data(ImageType.RAW) is None
+    assert test_env.model.get_curr_image_data(ImageType.SEG1) is None
+    assert test_env.model.get_curr_image_data(ImageType.SEG2) is None
 
     # Act
     with qtbot.waitSignal(test_env.model.image_loading_finished):
@@ -161,15 +149,9 @@ def test_service_reacts_to_cursor_moved(
 
     # Assert
     assert not test_env.model.is_waiting_for_images()
-    assert (
-        test_env.model.get_curr_image_data(CurationImageType.RAW) is not None
-    )
-    assert (
-        test_env.model.get_curr_image_data(CurationImageType.SEG1) is not None
-    )
-    assert (
-        test_env.model.get_curr_image_data(CurationImageType.SEG2) is not None
-    )
+    assert test_env.model.get_curr_image_data(ImageType.RAW) is not None
+    assert test_env.model.get_curr_image_data(ImageType.SEG1) is not None
+    assert test_env.model.get_curr_image_data(ImageType.SEG2) is not None
 
 
 def test_service_reacts_to_save_csv(

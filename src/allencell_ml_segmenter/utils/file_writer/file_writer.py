@@ -2,8 +2,9 @@ from .i_file_writer import IFileWriter
 import numpy as np
 from pathlib import Path
 import csv
+import json
 from io import TextIOBase
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Union
 
 
 class FileWriter(IFileWriter):
@@ -52,6 +53,11 @@ class FileWriter(IFileWriter):
         if path in self._open_files:
             self._open_files[path][0].close()
             del self._open_files[path]
+
+    def write_json(self, json_like_obj: Union[list, dict], path: Path) -> None:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with open(path, "w") as fw:
+            json.dump(json_like_obj, fw)
 
     @classmethod
     def global_instance(cls):

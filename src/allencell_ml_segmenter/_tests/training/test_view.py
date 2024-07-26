@@ -3,13 +3,18 @@ from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
     FakeExperimentsModel,
 )
 from allencell_ml_segmenter.main.main_model import MainModel
+from allencell_ml_segmenter.main.main_service import MainService
 from allencell_ml_segmenter.training.training_model import (
     TrainingModel,
     ModelSize,
+    ImageType,
 )
 from allencell_ml_segmenter.training.view import TrainingView
+from allencell_ml_segmenter.core.task_executor import SynchroTaskExecutor
 import pytest
 from pytestqt.qtbot import QtBot
+import allencell_ml_segmenter
+from pathlib import Path
 
 
 @pytest.fixture
@@ -162,3 +167,128 @@ def test_set_patch_size(
 
     # ASSERT
     assert training_model.get_patch_size() == [1, 4, 12]
+
+
+def test_navigate_to_training_populates_channel_selection(
+    qtbot: QtBot,
+) -> None:
+    """
+    Validates that when there is a valid channel selection JSON, navigating to training
+    will auto-populate the channel selection dropdowns with the previously chosen channels
+    from curation.
+    """
+    # Arrange
+    test_channel_path: Path = (
+        Path(allencell_ml_segmenter.__file__).parent
+        / "_tests"
+        / "test_files"
+        / "channel_selection_json"
+        / "valid_mixed.json"
+    )
+    main_model: MainModel = MainModel()
+    experiments_model: FakeExperimentsModel = FakeExperimentsModel(
+        channel_selection_path=test_channel_path
+    )
+    # must init main service and set experiment name to pull channel data into main model
+    main_service: MainService = MainService(
+        main_model,
+        experiments_model,
+        task_executor=SynchroTaskExecutor.global_instance(),
+    )
+    experiments_model.apply_experiment_name("test")
+
+    training_model: TrainingModel = TrainingModel(
+        main_model, experiments_model
+    )
+    view: TrainingView = TrainingView(
+        main_model=main_model,
+        experiments_model=experiments_model,
+        training_model=training_model,
+        viewer=FakeViewer(),
+    )
+
+    # Act
+    # simulate service completing its channel extraction work
+    training_model.set_all_num_channels(
+        {
+            ImageType.RAW: 8,
+            ImageType.SEG1: 6,
+            ImageType.SEG2: 4,
+        }
+    )
+
+    # Assert (these values come from valid_mixed.json)
+    assert training_model.get_selected_channel(ImageType.RAW) == 5
+    assert training_model.get_selected_channel(ImageType.SEG1) == 2
+    assert training_model.get_selected_channel(ImageType.SEG2) == 1
+    assert (
+        view.image_selection_widget._raw_channel_combo_box.currentIndex() == 5
+    )
+    assert (
+        view.image_selection_widget._seg1_channel_combo_box.currentIndex() == 2
+    )
+    assert (
+        view.image_selection_widget._seg2_channel_combo_box.currentIndex() == 1
+    )
+
+
+def test_navigate_to_training_populates_channel_selection_no_json(
+    qtbot: QtBot,
+) -> None:
+    """
+    Validates that when there is no channel selection JSON, navigating to training
+    will auto-populate the channel selection dropdowns with 0.
+    """
+    # Arrange
+    test_channel_path: Path = (
+        Path(allencell_ml_segmenter.__file__).parent
+        / "_tests"
+        / "test_files"
+        / "channel_selection_json"
+        / "nonexistent.json"
+    )
+    main_model: MainModel = MainModel()
+    experiments_model: FakeExperimentsModel = FakeExperimentsModel(
+        channel_selection_path=test_channel_path
+    )
+    # must init main service and set experiment to pull channel data into main model
+    main_service: MainService = MainService(
+        main_model,
+        experiments_model,
+        task_executor=SynchroTaskExecutor.global_instance(),
+    )
+    experiments_model.apply_experiment_name("test")
+
+    training_model: TrainingModel = TrainingModel(
+        main_model, experiments_model
+    )
+    view: TrainingView = TrainingView(
+        main_model=main_model,
+        experiments_model=experiments_model,
+        training_model=training_model,
+        viewer=FakeViewer(),
+    )
+
+    # Act
+    # simulate service completing its channel extraction work
+    training_model.set_all_num_channels(
+        {
+            ImageType.RAW: 8,
+            ImageType.SEG1: 6,
+            ImageType.SEG2: 4,
+        }
+    )
+
+    # Assert (these values come from valid_mixed.json)
+    assert training_model.get_selected_channel(ImageType.RAW) == 0
+    assert training_model.get_selected_channel(ImageType.SEG1) == 0
+    assert training_model.get_selected_channel(ImageType.SEG2) == 0
+    assert (
+        view.image_selection_widget._raw_channel_combo_box.currentIndex() == 0
+    )
+    assert (
+        view.image_selection_widget._seg1_channel_combo_box.currentIndex() == 0
+    )
+    assert (
+        view.image_selection_widget._seg2_channel_combo_box.currentIndex() == 0
+    )
