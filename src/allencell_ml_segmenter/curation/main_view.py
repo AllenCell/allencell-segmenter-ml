@@ -31,6 +31,7 @@ from allencell_ml_segmenter.main.main_model import MIN_DATASET_SIZE
 
 from napari.utils.notifications import show_info, show_warning
 from copy import deepcopy
+import numpy as np
 
 MERGING_MASK_LAYER_NAME: str = "Merging Mask"
 EXCLUDING_MASK_LAYER_NAME: str = "Excluding Mask"
@@ -304,6 +305,8 @@ class CurationMainView(QWidget):
         """
         Advance to next image set.
         """
+        self._check_unsaved_excluding_mask()
+        self._check_unsaved_merging_mask()
         self._viewer.clear_layers()
 
         if self._curation_model.has_next_image():
@@ -329,6 +332,35 @@ class CurationMainView(QWidget):
             ).exec()
 
         self._update_progress_bar()
+
+    def _save_changed_mask_prompt(self, mask_str: str) -> bool:
+        save_changes_prompt = DialogBox(
+            f"The current {mask_str} mask layer has unsaved changes. Would you like to save these changes?"
+        )
+        save_changes_prompt.exec()
+        return save_changes_prompt.selection
+    
+    def _check_unsaved_excluding_mask(self) -> None:
+        curr_excl_mask: Optional[ShapesLayer] = self._viewer.get_shapes(
+            EXCLUDING_MASK_LAYER_NAME
+        )
+        saved_excl_mask: Optional[np.ndarray] = self._curation_model.get_excluding_mask()
+        if curr_excl_mask is not None:
+            if saved_excl_mask is None or not np.array_equal(saved_excl_mask, curr_excl_mask.data):
+                save_changes: bool = self._save_changed_mask_prompt("excluding")
+                if save_changes:
+                    self._curation_model.set_excluding_mask(deepcopy(curr_excl_mask.data))
+    
+    def _check_unsaved_merging_mask(self) -> None:
+        curr_merg_mask: Optional[ShapesLayer] = self._viewer.get_shapes(
+            MERGING_MASK_LAYER_NAME
+        )
+        saved_merg_mask: Optional[np.ndarray] = self._curation_model.get_merging_mask()
+        if curr_merg_mask is not None:
+            if saved_merg_mask is None or not np.array_equal(saved_merg_mask, curr_merg_mask.data):
+                save_changes: bool = self._save_changed_mask_prompt("merging")
+                if save_changes:
+                    self._curation_model.set_merging_mask(deepcopy(curr_merg_mask.data))
 
     def _on_save_curation_csv(self) -> None:
         self._curation_model.save_curr_curation_record_to_disk()
