@@ -10,12 +10,13 @@ from pytestqt.qtbot import QtBot
 from allencell_ml_segmenter.curation.input_view import CurationInputView
 from allencell_ml_segmenter.curation.curation_model import (
     CurationModel,
-    CurationImageType,
+    ImageType,
     CurationView,
 )
 from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
     FakeExperimentsModel,
 )
+from allencell_ml_segmenter.main.main_model import MainModel
 
 
 @dataclass
@@ -26,7 +27,7 @@ class TestEnvironment:
 
 @pytest.fixture
 def test_env() -> TestEnvironment:
-    model: CurationModel = CurationModel(FakeExperimentsModel())
+    model: CurationModel = CurationModel(FakeExperimentsModel(), MainModel())
     return TestEnvironment(model, CurationInputView(model))
 
 
@@ -95,7 +96,7 @@ class TestsWithStubbedFileDialog:
         combo_box: QComboBox = test_env.view.raw_image_channel_combo
 
         # Act
-        test_env.model.set_channel_count(CurationImageType.RAW, count)
+        test_env.model.set_channel_count(ImageType.RAW, count)
 
         # Assert
         assert not test_env.view.raw_dir_stacked_spinner.is_spinning()
@@ -111,7 +112,7 @@ class TestsWithStubbedFileDialog:
         combo_box: QComboBox = test_env.view.seg1_image_channel_combo
 
         # Act
-        test_env.model.set_channel_count(CurationImageType.SEG1, count)
+        test_env.model.set_channel_count(ImageType.SEG1, count)
 
         # Assert
         assert not test_env.view.seg1_dir_stacked_spinner.is_spinning()
@@ -127,7 +128,7 @@ class TestsWithStubbedFileDialog:
         combo_box: QComboBox = test_env.view.seg2_image_channel_combo
 
         # Act
-        test_env.model.set_channel_count(CurationImageType.SEG2, count)
+        test_env.model.set_channel_count(ImageType.SEG2, count)
 
         # Assert
         assert not test_env.view.seg2_dir_stacked_spinner.is_spinning()
@@ -138,7 +139,7 @@ class TestsWithStubbedFileDialog:
     ) -> None:
         # Arrange
         test_env.view.raw_directory_select.button.click()
-        test_env.model.set_channel_count(CurationImageType.RAW, 5)
+        test_env.model.set_channel_count(ImageType.RAW, 5)
         test_env.view.raw_image_channel_combo.setCurrentIndex(1)
 
         # Assert (sanity check)
@@ -156,16 +157,14 @@ class TestsWithStubbedFileDialog:
     ) -> None:
         # Arrange
         test_env.view.raw_directory_select.button.click()
-        test_env.model.set_channel_count(CurationImageType.RAW, 5)
-        test_env.model.set_image_directory_paths(
-            CurationImageType.RAW, MOCK_DIR_PATHS
-        )
+        test_env.model.set_channel_count(ImageType.RAW, 5)
+        test_env.model.set_image_directory_paths(ImageType.RAW, MOCK_DIR_PATHS)
         test_env.view.raw_image_channel_combo.setCurrentIndex(1)
 
         test_env.view.seg1_directory_select.button.click()
-        test_env.model.set_channel_count(CurationImageType.SEG1, 5)
+        test_env.model.set_channel_count(ImageType.SEG1, 5)
         test_env.model.set_image_directory_paths(
-            CurationImageType.SEG1, MOCK_DIR_PATHS
+            ImageType.SEG1, MOCK_DIR_PATHS
         )
         test_env.view.seg1_image_channel_combo.setCurrentIndex(2)
 
@@ -184,23 +183,21 @@ class TestsWithStubbedFileDialog:
     ) -> None:
         # Arrange
         test_env.view.raw_directory_select.button.click()
-        test_env.model.set_channel_count(CurationImageType.RAW, 5)
-        test_env.model.set_image_directory_paths(
-            CurationImageType.RAW, MOCK_DIR_PATHS
-        )
+        test_env.model.set_channel_count(ImageType.RAW, 5)
+        test_env.model.set_image_directory_paths(ImageType.RAW, MOCK_DIR_PATHS)
         test_env.view.raw_image_channel_combo.setCurrentIndex(1)
 
         test_env.view.seg1_directory_select.button.click()
-        test_env.model.set_channel_count(CurationImageType.SEG1, 5)
+        test_env.model.set_channel_count(ImageType.SEG1, 5)
         test_env.model.set_image_directory_paths(
-            CurationImageType.SEG1, MOCK_DIR_PATHS
+            ImageType.SEG1, MOCK_DIR_PATHS
         )
         test_env.view.seg1_image_channel_combo.setCurrentIndex(2)
 
         test_env.view.seg2_directory_select.button.click()
-        test_env.model.set_channel_count(CurationImageType.SEG2, 5)
+        test_env.model.set_channel_count(ImageType.SEG2, 5)
         test_env.model.set_image_directory_paths(
-            CurationImageType.SEG2, MOCK_DIR_PATHS
+            ImageType.SEG2, MOCK_DIR_PATHS
         )
         test_env.view.seg2_image_channel_combo.setCurrentIndex(3)
 
@@ -220,45 +217,45 @@ class TestsWithStubbedFileDialog:
 
 def test_raw_channel_selected(qtbot: QtBot, test_env: TestEnvironment) -> None:
     # Arrange
-    test_env.model.set_channel_count(CurationImageType.RAW, 3)
+    test_env.model.set_channel_count(ImageType.RAW, 3)
     combo_box: QComboBox = test_env.view.raw_image_channel_combo
     # Act / Assert
-    assert test_env.model.get_selected_channel(CurationImageType.RAW) == 0
+    assert test_env.model.get_selected_channel(ImageType.RAW) == 0
     combo_box.setCurrentIndex(0)
-    assert test_env.model.get_selected_channel(CurationImageType.RAW) == 0
+    assert test_env.model.get_selected_channel(ImageType.RAW) == 0
     combo_box.setCurrentIndex(1)
-    assert test_env.model.get_selected_channel(CurationImageType.RAW) == 1
+    assert test_env.model.get_selected_channel(ImageType.RAW) == 1
     combo_box.setCurrentIndex(2)
-    assert test_env.model.get_selected_channel(CurationImageType.RAW) == 2
+    assert test_env.model.get_selected_channel(ImageType.RAW) == 2
 
 
 def test_seg1_channel_selected(
     qtbot: QtBot, test_env: TestEnvironment
 ) -> None:
     # Arrange
-    test_env.model.set_channel_count(CurationImageType.SEG1, 3)
+    test_env.model.set_channel_count(ImageType.SEG1, 3)
     combo_box: QComboBox = test_env.view.seg1_image_channel_combo
     # Act / Assert
-    assert test_env.model.get_selected_channel(CurationImageType.SEG1) == 0
+    assert test_env.model.get_selected_channel(ImageType.SEG1) == 0
     combo_box.setCurrentIndex(0)
-    assert test_env.model.get_selected_channel(CurationImageType.SEG1) == 0
+    assert test_env.model.get_selected_channel(ImageType.SEG1) == 0
     combo_box.setCurrentIndex(1)
-    assert test_env.model.get_selected_channel(CurationImageType.SEG1) == 1
+    assert test_env.model.get_selected_channel(ImageType.SEG1) == 1
     combo_box.setCurrentIndex(2)
-    assert test_env.model.get_selected_channel(CurationImageType.SEG1) == 2
+    assert test_env.model.get_selected_channel(ImageType.SEG1) == 2
 
 
 def test_seg2_channel_selected(
     qtbot: QtBot, test_env: TestEnvironment
 ) -> None:
     # Arrange
-    test_env.model.set_channel_count(CurationImageType.SEG2, 3)
+    test_env.model.set_channel_count(ImageType.SEG2, 3)
     combo_box: QComboBox = test_env.view.seg2_image_channel_combo
     # Act / Assert
-    assert test_env.model.get_selected_channel(CurationImageType.SEG2) == 0
+    assert test_env.model.get_selected_channel(ImageType.SEG2) == 0
     combo_box.setCurrentIndex(0)
-    assert test_env.model.get_selected_channel(CurationImageType.SEG2) == 0
+    assert test_env.model.get_selected_channel(ImageType.SEG2) == 0
     combo_box.setCurrentIndex(1)
-    assert test_env.model.get_selected_channel(CurationImageType.SEG2) == 1
+    assert test_env.model.get_selected_channel(ImageType.SEG2) == 1
     combo_box.setCurrentIndex(2)
-    assert test_env.model.get_selected_channel(CurationImageType.SEG2) == 2
+    assert test_env.model.get_selected_channel(ImageType.SEG2) == 2
