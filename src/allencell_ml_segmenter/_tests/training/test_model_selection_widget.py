@@ -132,7 +132,7 @@ def test_select_existing_model_option(
         model_selection_widget._combo_box_existing_models.setCurrentIndex(i)
 
         # ASSERT
-        assert experiment == experiment_model.get_experiment_name_selection()
+        assert experiment == model_selection_widget.get_experiment_name_selection()
 
 
 def test_apply_button_enabled(
@@ -149,7 +149,7 @@ def test_apply_button_enabled(
     assert not model_selection_widget._apply_btn.isEnabled()
 
     # ACT
-    experiment_model.select_experiment_name("dummy_experiment")
+    model_selection_widget.select_experiment_name("dummy_experiment")
 
     # ASSERT
     assert model_selection_widget._apply_btn.isEnabled()
@@ -253,7 +253,7 @@ def test_click_apply_btn(
     Test that the apply button updates model.
     """
     # ARRANGE
-    experiment_model.select_experiment_name("dummy_experiment")
+    model_selection_widget.select_experiment_name("dummy_experiment")
 
     # Sanity check
     assert experiment_model.get_experiment_name() is None
@@ -301,7 +301,7 @@ def test_new_experiment_apply(
 
     # ASSERT note that the model name is selected but not applied until the apply button is clicked
     assert (
-        experiment_model.get_experiment_name_selection() == "dummy_experiment"
+        model_selection_widget.get_experiment_name_selection() == "dummy_experiment"
     )
     assert experiment_model.get_experiment_name() is None
 

@@ -230,25 +230,3 @@ def test_apply_experiment_name() -> None:
     # Assert
     assert model.get_experiment_name() == expected
     assert subscriber.was_handled(Event.ACTION_EXPERIMENT_APPLIED)
-
-
-def test_set_experiment_name_selection() -> None:
-    # Arrange
-    user_experiments_path = Path(__file__).parent / "experiments_home"
-    config = FakeUserSettings(
-        cyto_dl_home_path=Path(__file__).parent / "cyto_dl_home",
-        user_experiments_path=user_experiments_path,
-    )
-    model = ExperimentsModel(config)
-    subscriber = FakeSubscriber()
-    model.subscribe(
-        Event.ACTION_EXPERIMENT_SELECTED, subscriber, subscriber.handle
-    )
-    expected = "test_experiment"
-
-    # Act
-    model.select_experiment_name(expected)
-
-    # Assert
-    assert model.get_experiment_name_selection() == expected
-    assert subscriber.was_handled(Event.ACTION_EXPERIMENT_SELECTED)
