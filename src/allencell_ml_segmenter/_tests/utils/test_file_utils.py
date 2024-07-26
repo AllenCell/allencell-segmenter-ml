@@ -1,5 +1,5 @@
 from pathlib import Path
-from unittest.mock import Mock, patch, mock_open
+import pytest
 
 import allencell_ml_segmenter
 from allencell_ml_segmenter.utils.file_utils import FileUtils
@@ -26,10 +26,12 @@ def test_get_all_files_in_dir() -> None:
     all_files = FileUtils.get_all_files_in_dir_ignore_hidden(folder)
 
     # assert
-    assert len(all_files) == 3
+    assert len(all_files) == 5
     assert all_files[0].name == "t1.tiff"
     assert all_files[1].name == "t2.tiff"
     assert all_files[2].name == "t3.tiff"
+    assert all_files[3].name == "t4.tiff"
+    assert all_files[4].name == "t5.tiff"
 
 
 def test_get_all_files_in_dir_with_hidden_files() -> None:
@@ -147,7 +149,7 @@ def test_write_curation_record_writes_mask_to_disk():
     # Arrange
     fake_writer: IFileWriter = FakeFileWriter()
     f_utils: FileUtils = FileUtils(fake_writer)
-    fake_curation_record: List[CurationRecord] = _generate_default_records(3)
+    fake_curation_record: List[CurationRecord] = _generate_default_records(4)
     masks: List[np.ndarray] = [
         np.asarray([[[1, 2], [3, 4], [5, 6]]]),
         np.asarray([[[2, 2], [3, 4], [5, 6]]]),
@@ -189,37 +191,29 @@ def test_write_curation_record_split_sizes():
     fake_writer: IFileWriter = FakeFileWriter()
     f_utils: FileUtils = FileUtils(fake_writer)
 
+    # Act / Assert
+    with pytest.raises(RuntimeError) as e:
+        f_utils.write_curation_record(
+            _generate_default_records(1), FAKE_CSV_PATH, FAKE_MASK_PATH
+        )
+
+    with pytest.raises(RuntimeError) as e:
+        f_utils.write_curation_record(
+            _generate_default_records(3), FAKE_CSV_PATH, FAKE_MASK_PATH
+        )
+
+    with pytest.raises(RuntimeError) as e:
+        records: list[CurationRecord] = _generate_default_records(4)
+        records[0].to_use = False
+        f_utils.write_curation_record(records, FAKE_CSV_PATH, FAKE_MASK_PATH)
+
     # Act
     f_utils.write_curation_record(
-        _generate_default_records(1), FAKE_CSV_PATH, FAKE_MASK_PATH
-    )
-
-    # Assert
-    # one header row, one content row
-    assert len(fake_writer.csv_state[EXP_TRAIN_PATH]["rows"]) == 2
-    # one header row
-    assert len(fake_writer.csv_state[EXP_TEST_PATH]["rows"]) == 1
-    # one header row
-    assert len(fake_writer.csv_state[EXP_VAL_PATH]["rows"]) == 1
-
-    # Act
-    f_utils.write_curation_record(
-        _generate_default_records(2), FAKE_CSV_PATH, FAKE_MASK_PATH
+        _generate_default_records(4), FAKE_CSV_PATH, FAKE_MASK_PATH
     )
 
     # Assert
     assert len(fake_writer.csv_state[EXP_TRAIN_PATH]["rows"]) == 3
-    assert len(fake_writer.csv_state[EXP_TEST_PATH]["rows"]) == 1
-    assert len(fake_writer.csv_state[EXP_VAL_PATH]["rows"]) == 1
-
-    # Act
-    f_utils.write_curation_record(
-        _generate_default_records(3), FAKE_CSV_PATH, FAKE_MASK_PATH
-    )
-
-    # Assert
-    # here, we finally have enough records to have some validation/test records
-    assert len(fake_writer.csv_state[EXP_TRAIN_PATH]["rows"]) == 2
     assert len(fake_writer.csv_state[EXP_TEST_PATH]["rows"]) == 3
     assert len(fake_writer.csv_state[EXP_VAL_PATH]["rows"]) == 3
 

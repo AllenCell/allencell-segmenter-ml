@@ -29,6 +29,7 @@ from allencell_ml_segmenter.core.task_executor import (
     NapariThreadTaskExecutor,
 )
 from collections import namedtuple
+from allencell_ml_segmenter.main.main_model import MIN_DATASET_SIZE
 
 
 DirectoryData = namedtuple(
@@ -130,6 +131,11 @@ class TrainingService(Subscriber):
         self, training_dir: Path
     ) -> DirectoryData:
         num_imgs: int = FileUtils.count_images_in_csv_folder(training_dir)
+        if num_imgs < MIN_DATASET_SIZE:
+            raise RuntimeError(
+                f"Training requires at least {MIN_DATASET_SIZE} images and their segmentations"
+            )
+
         training_csv: Path = training_dir / "train.csv"
         raw_data: ImageData = self._img_data_extractor.extract_image_data(
             get_img_path_from_csv(training_csv, column="raw"), np_data=False
