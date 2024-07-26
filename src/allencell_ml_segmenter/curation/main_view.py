@@ -308,7 +308,7 @@ class CurationMainView(QWidget):
         if self.yes_radio.isChecked():
             self._check_unsaved_excluding_mask()
             self._check_unsaved_merging_mask()
-            
+
         self._viewer.clear_layers()
 
         if self._curation_model.has_next_image():
@@ -335,9 +335,18 @@ class CurationMainView(QWidget):
 
         self._update_progress_bar()
 
-    def _check_unsaved_mask(self, curr_mask_layer: Optional[ShapesLayer], saved_mask: Optional[np.ndarray], mask_type: str) -> Optional[np.ndarray]:
+    def _check_unsaved_mask(
+        self,
+        curr_mask_layer: Optional[ShapesLayer],
+        saved_mask: Optional[np.ndarray],
+        mask_type: str,
+    ) -> Optional[np.ndarray]:
         if curr_mask_layer is not None:
-            diff_exists: bool = len(curr_mask_layer.data) > 0 if saved_mask is None else not np.array_equal(saved_mask, curr_mask_layer.data)
+            diff_exists: bool = (
+                len(curr_mask_layer.data) > 0
+                if saved_mask is None
+                else not np.array_equal(saved_mask, curr_mask_layer.data)
+            )
             if diff_exists:
                 save_changes_prompt = DialogBox(
                     f"The current {mask_type} mask layer has unsaved changes. Would you like to save these changes?"
@@ -346,23 +355,31 @@ class CurationMainView(QWidget):
                 if save_changes_prompt.selection:
                     return deepcopy(curr_mask_layer.data)
         return saved_mask
-    
+
     def _check_unsaved_excluding_mask(self) -> None:
         curr_excl_mask_layer: Optional[ShapesLayer] = self._viewer.get_shapes(
             EXCLUDING_MASK_LAYER_NAME
         )
-        saved_excl_mask: Optional[np.ndarray] = self._curation_model.get_excluding_mask()
-        self._curation_model.set_excluding_mask(
-            self._check_unsaved_mask(curr_excl_mask_layer, saved_excl_mask, "excluding")
+        saved_excl_mask: Optional[np.ndarray] = (
+            self._curation_model.get_excluding_mask()
         )
-    
+        self._curation_model.set_excluding_mask(
+            self._check_unsaved_mask(
+                curr_excl_mask_layer, saved_excl_mask, "excluding"
+            )
+        )
+
     def _check_unsaved_merging_mask(self) -> None:
         curr_merg_mask_layer: Optional[ShapesLayer] = self._viewer.get_shapes(
             MERGING_MASK_LAYER_NAME
         )
-        saved_merg_mask: Optional[np.ndarray] = self._curation_model.get_merging_mask()
+        saved_merg_mask: Optional[np.ndarray] = (
+            self._curation_model.get_merging_mask()
+        )
         self._curation_model.set_merging_mask(
-            self._check_unsaved_mask(curr_merg_mask_layer, saved_merg_mask, "merging")
+            self._check_unsaved_mask(
+                curr_merg_mask_layer, saved_merg_mask, "merging"
+            )
         )
 
     def _on_save_curation_csv(self) -> None:
