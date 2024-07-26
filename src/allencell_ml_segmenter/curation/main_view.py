@@ -305,8 +305,10 @@ class CurationMainView(QWidget):
         """
         Advance to next image set.
         """
-        self._check_unsaved_excluding_mask()
-        self._check_unsaved_merging_mask()
+        if self.yes_radio.isChecked():
+            self._check_unsaved_excluding_mask()
+            self._check_unsaved_merging_mask()
+            
         self._viewer.clear_layers()
 
         if self._curation_model.has_next_image():
@@ -335,7 +337,8 @@ class CurationMainView(QWidget):
 
     def _check_unsaved_mask(self, curr_mask_layer: Optional[ShapesLayer], saved_mask: Optional[np.ndarray], mask_type: str) -> Optional[np.ndarray]:
         if curr_mask_layer is not None:
-            if (saved_mask is None and len(curr_mask_layer.data) > 0) or not np.array_equal(saved_mask, curr_mask_layer.data):
+            diff_exists: bool = len(curr_mask_layer.data) > 0 if saved_mask is None else not np.array_equal(saved_mask, curr_mask_layer.data)
+            if diff_exists:
                 save_changes_prompt = DialogBox(
                     f"The current {mask_type} mask layer has unsaved changes. Would you like to save these changes?"
                 )
