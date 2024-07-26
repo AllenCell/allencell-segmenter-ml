@@ -21,7 +21,11 @@ class IExperimentsModel(Publisher):
         """
         Sets experiment name
         """
-        self._experiment_name_selection = name
+        if name == "":
+            self._experiment_name_selection = None
+        else:
+            self._experiment_name_selection = name
+
         self.dispatch(Event.ACTION_EXPERIMENT_SELECTED)
 
     def get_experiment_name_selection(self) -> Optional[str]:
