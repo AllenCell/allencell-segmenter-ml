@@ -17,23 +17,6 @@ class IExperimentsModel(Publisher):
         # state
         self._experiment_name: Optional[str] = None
 
-    def select_experiment_name(self, name: Optional[str]) -> None:
-        """
-        Sets experiment name
-        """
-        if name == "":
-            self._experiment_name_selection = None
-        else:
-            self._experiment_name_selection = name
-
-        self.dispatch(Event.ACTION_EXPERIMENT_SELECTED)
-
-    def get_experiment_name_selection(self) -> Optional[str]:
-        """
-        Gets experiment name
-        """
-        return self._experiment_name_selection
-
     def get_experiment_name(self) -> Optional[str]:
         """
         Gets experiment name

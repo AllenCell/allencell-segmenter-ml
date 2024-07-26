@@ -1,3 +1,4 @@
+from typing import Optional
 import webbrowser
 from qtpy.QtWidgets import (
     QWidget,
@@ -164,11 +165,6 @@ class ModelSelectionWidget(QWidget):
 
         self._apply_change_stacked_widget = QStackedWidget()
 
-        self._experiments_model.subscribe(
-            Event.ACTION_EXPERIMENT_SELECTED,
-            self,
-            self._handle_experiment_selected,
-        )
         apply_model_layout = QVBoxLayout()
         apply_model_layout.addLayout(top_grid_layout)
 
@@ -188,15 +184,9 @@ class ModelSelectionWidget(QWidget):
             Event.ACTION_REFRESH, self, self._handle_process_event
         )
 
-    def _handle_experiment_selected(self, _: Event) -> None:
-        experiment_selected = (
-            self._experiments_model.get_experiment_name_selection() is not None
-        )
-        self._apply_btn.setEnabled(experiment_selected)
-
     def _handle_apply_model(self):
         self._experiments_model.apply_experiment_name(
-            self._experiments_model.get_experiment_name_selection()
+            self.get_experiment_name_selection()
         )
         self._title.set_value_text(
             "    " + self._experiments_model.get_experiment_name()
@@ -208,17 +198,14 @@ class ModelSelectionWidget(QWidget):
         Triggered when the user selects a model from the _combo_box_existing_models.
         Sets the model path in the model.
         """
-        if experiment_name == "":
-            self._experiments_model.select_experiment_name(None)
-        else:
-            self._experiments_model.select_experiment_name(experiment_name)
+        self.select_experiment_name(experiment_name)
 
     def _experiment_name_input_handler(self, text: str) -> None:
         """
         Triggered when the user types in the _experiment_name_input.
         Sets the model name in the model.
         """
-        self._experiments_model.select_experiment_name(text)
+        self.select_experiment_name(text)
 
     def _help_combo_handler(self, text: str) -> None:
         """
@@ -257,7 +244,7 @@ class ModelSelectionWidget(QWidget):
         self._main_model.set_new_model(self._radio_new_model.isChecked())
         self._combo_box_existing_models.setCurrentIndex(-1)
         self._experiment_name_input.clear()
-        self._experiments_model.select_experiment_name(None)
+        self.select_experiment_name(None)
         if self._radio_new_model.isChecked():
             """
             Triggered when the user selects the "start a new model" radio button.
@@ -282,6 +269,26 @@ class ModelSelectionWidget(QWidget):
         """
         if self._radio_new_model.isChecked():
             self._refresh_experiment_options()
+
+    def get_experiment_name_selection(self) -> Optional[str]:
+        """
+        Gets experiment name
+        """
+        return self._experiment_name_selection
+    
+    def select_experiment_name(self, name: Optional[str]) -> None:
+        """
+        Sets experiment name
+        """
+        if name == "":
+            self._experiment_name_selection = None
+        else:
+            self._experiment_name_selection = name
+
+        experiment_selected = (
+            self.get_experiment_name_selection() is not None
+        )
+        self._apply_btn.setEnabled(experiment_selected)
 
     def _refresh_experiment_options(self):
         self._experiments_model.refresh_experiments()
