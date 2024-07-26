@@ -16,6 +16,7 @@ from allencell_ml_segmenter.core.task_executor import (
 )
 from allencell_ml_segmenter.utils.file_utils import FileUtils
 from allencell_ml_segmenter.utils.file_writer import IFileWriter, FileWriter
+from allencell_ml_segmenter.main.main_model import MIN_DATASET_SIZE
 
 from pathlib import Path
 from qtpy.QtCore import QObject
@@ -59,6 +60,12 @@ class CurationService(QObject):
         files: List[Path] = (
             self._file_utils.get_all_files_in_dir_ignore_hidden(dir)
         )
+
+        if len(files) < MIN_DATASET_SIZE:
+            raise RuntimeError(
+                f"Curation requires at least {MIN_DATASET_SIZE} images and their segmentations"
+            )
+
         img_data: ImageData = self._img_data_extractor.extract_image_data(
             files[0], np_data=False
         )
