@@ -339,6 +339,17 @@ class CurationMainView(QWidget):
         )
         save_changes_prompt.exec()
         return save_changes_prompt.selection
+
+    def _check_unsaved_mask(self, curr_mask_layer: Optional[ShapesLayer], saved_mask: Optional[np.ndarray], mask_type: str) -> Optional[np.ndarray]:
+        if curr_mask_layer is not None:
+            if (saved_mask is None and len(curr_mask_layer.data) > 0) or not np.array_equal(saved_mask, curr_mask_layer.data):
+                save_changes_prompt = DialogBox(
+                    f"The current {mask_type} mask layer has unsaved changes. Would you like to save these changes?"
+                )
+                save_changes_prompt.exec()
+                if save_changes_prompt.selection:
+                    return deepcopy(curr_mask_layer.data)
+        return saved_mask
     
     def _check_unsaved_excluding_mask(self) -> None:
         curr_excl_mask: Optional[ShapesLayer] = self._viewer.get_shapes(
@@ -346,7 +357,7 @@ class CurationMainView(QWidget):
         )
         saved_excl_mask: Optional[np.ndarray] = self._curation_model.get_excluding_mask()
         if curr_excl_mask is not None:
-            if saved_excl_mask is None or not np.array_equal(saved_excl_mask, curr_excl_mask.data):
+            if (saved_excl_mask is None and len(curr_excl_mask.data) > 0) or not np.array_equal(saved_excl_mask, curr_excl_mask.data):
                 save_changes: bool = self._save_changed_mask_prompt("excluding")
                 if save_changes:
                     self._curation_model.set_excluding_mask(deepcopy(curr_excl_mask.data))
@@ -357,7 +368,7 @@ class CurationMainView(QWidget):
         )
         saved_merg_mask: Optional[np.ndarray] = self._curation_model.get_merging_mask()
         if curr_merg_mask is not None:
-            if saved_merg_mask is None or not np.array_equal(saved_merg_mask, curr_merg_mask.data):
+            if (saved_merg_mask is None and len(curr_merg_mask.data > 0)) or not np.array_equal(saved_merg_mask, curr_merg_mask.data):
                 save_changes: bool = self._save_changed_mask_prompt("merging")
                 if save_changes:
                     self._curation_model.set_merging_mask(deepcopy(curr_merg_mask.data))
