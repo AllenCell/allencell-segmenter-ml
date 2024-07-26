@@ -180,3 +180,10 @@ class ExperimentsModel(IExperimentsModel):
 
         files.sort(key=lambda file: file.stat().st_mtime)
         return files[-1].name
+
+    def get_channel_selection_path(self) -> Optional[Path]:
+        return (
+            self.get_csv_path() / "selected_channels.json"
+            if self.get_csv_path() is not None
+            else None
+        )

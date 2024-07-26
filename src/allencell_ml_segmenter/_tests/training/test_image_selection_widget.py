@@ -18,7 +18,7 @@ from allencell_ml_segmenter.training.image_selection_widget import (
 )
 from allencell_ml_segmenter.training.training_model import (
     TrainingModel,
-    TrainingImageType,
+    ImageType,
 )
 
 
@@ -93,16 +93,16 @@ def test_combos_update_when_num_channels_set(
     assert not image_selection_widget._seg1_channel_combo_box.isEnabled()
     assert not image_selection_widget._seg2_channel_combo_box.isEnabled()
 
-    assert training_model.get_selected_channel(TrainingImageType.RAW) == None
-    assert training_model.get_selected_channel(TrainingImageType.SEG1) == None
-    assert training_model.get_selected_channel(TrainingImageType.SEG2) == None
+    assert training_model.get_selected_channel(ImageType.RAW) == None
+    assert training_model.get_selected_channel(ImageType.SEG1) == None
+    assert training_model.get_selected_channel(ImageType.SEG2) == None
 
     # ACT (image selection widget should react to this event)
     training_model.set_all_num_channels(
         {
-            TrainingImageType.RAW: 1,
-            TrainingImageType.SEG1: 2,
-            TrainingImageType.SEG2: 3,
+            ImageType.RAW: 1,
+            ImageType.SEG1: 2,
+            ImageType.SEG2: 3,
         }
     )
 
@@ -119,9 +119,9 @@ def test_combos_update_when_num_channels_set(
     assert image_selection_widget._seg1_channel_combo_box.isEnabled()
     assert image_selection_widget._seg2_channel_combo_box.isEnabled()
 
-    assert training_model.get_selected_channel(TrainingImageType.RAW) == 0
-    assert training_model.get_selected_channel(TrainingImageType.SEG1) == 0
-    assert training_model.get_selected_channel(TrainingImageType.SEG2) == 0
+    assert training_model.get_selected_channel(ImageType.RAW) == 0
+    assert training_model.get_selected_channel(ImageType.SEG1) == 0
+    assert training_model.get_selected_channel(ImageType.SEG2) == 0
 
 
 def test_combos_index_controls_model_state(
@@ -132,9 +132,9 @@ def test_combos_index_controls_model_state(
     # ARRANGE
     training_model.set_all_num_channels(
         {
-            TrainingImageType.RAW: 4,
-            TrainingImageType.SEG1: 4,
-            TrainingImageType.SEG2: 4,
+            ImageType.RAW: 4,
+            ImageType.SEG1: 4,
+            ImageType.SEG2: 4,
         }
     )
 
@@ -144,9 +144,9 @@ def test_combos_index_controls_model_state(
     image_selection_widget._seg2_channel_combo_box.setCurrentIndex(3)
 
     # ASSERT
-    assert training_model.get_selected_channel(TrainingImageType.RAW) == 1
-    assert training_model.get_selected_channel(TrainingImageType.SEG1) == 2
-    assert training_model.get_selected_channel(TrainingImageType.SEG2) == 3
+    assert training_model.get_selected_channel(ImageType.RAW) == 1
+    assert training_model.get_selected_channel(ImageType.SEG1) == 2
+    assert training_model.get_selected_channel(ImageType.SEG2) == 3
 
 
 def test_reset_num_channels_to_none(
@@ -157,16 +157,16 @@ def test_reset_num_channels_to_none(
     # ARRANGE
     training_model.set_all_num_channels(
         {
-            TrainingImageType.RAW: 4,
-            TrainingImageType.SEG1: 4,
-            TrainingImageType.SEG2: 4,
+            ImageType.RAW: 4,
+            ImageType.SEG1: 4,
+            ImageType.SEG2: 4,
         }
     )
 
     # ASSERT (sanity check)
-    assert training_model.get_selected_channel(TrainingImageType.RAW) == 0
-    assert training_model.get_selected_channel(TrainingImageType.SEG1) == 0
-    assert training_model.get_selected_channel(TrainingImageType.SEG2) == 0
+    assert training_model.get_selected_channel(ImageType.RAW) == 0
+    assert training_model.get_selected_channel(ImageType.SEG1) == 0
+    assert training_model.get_selected_channel(ImageType.SEG2) == 0
 
     assert image_selection_widget._raw_channel_combo_box.isEnabled()
     assert image_selection_widget._seg1_channel_combo_box.isEnabled()
@@ -175,16 +175,16 @@ def test_reset_num_channels_to_none(
     # ACT
     training_model.set_all_num_channels(
         {
-            TrainingImageType.RAW: None,
-            TrainingImageType.SEG1: None,
-            TrainingImageType.SEG2: None,
+            ImageType.RAW: None,
+            ImageType.SEG1: None,
+            ImageType.SEG2: None,
         }
     )
 
     # ASSERT
-    assert training_model.get_selected_channel(TrainingImageType.RAW) == None
-    assert training_model.get_selected_channel(TrainingImageType.SEG1) == None
-    assert training_model.get_selected_channel(TrainingImageType.SEG2) == None
+    assert training_model.get_selected_channel(ImageType.RAW) == None
+    assert training_model.get_selected_channel(ImageType.SEG1) == None
+    assert training_model.get_selected_channel(ImageType.SEG2) == None
 
     assert not image_selection_widget._raw_channel_combo_box.isEnabled()
     assert not image_selection_widget._seg1_channel_combo_box.isEnabled()
