@@ -869,6 +869,28 @@ def test_unsaved_empty_merg_mask_with_saved_mask(
     assert len(record.merging_mask) == 0
 
 
+def test_unsaved_merg_mask_not_to_use(
+    qtbot: QtBot,
+    test_environment_first_images_ready: TestEnvironment,
+    monkeypatch: MonkeyPatch,
+) -> None:
+    """
+    When the user selects not to use an image, we should not show the unsaved dialog
+    even if there are unsaved mask changes.
+    """
+    # Arrange
+    env: TestEnvironment = test_environment_first_images_ready
+
+    # Act
+    env.view.merging_create_button.click()
+    env.view.no_radio.click()
+    env.view.next_button.click()
+
+    # Assert
+    record: CurationRecord = env.model.get_curation_record()[0]
+    assert record.merging_mask is None
+
+
 def test_unsaved_exclud_mask_yes_save(
     qtbot: QtBot,
     test_environment_first_images_ready: TestEnvironment,
@@ -994,3 +1016,25 @@ def test_unsaved_empty_exclud_mask_with_saved_mask(
     # Assert
     record: CurationRecord = env.model.get_curation_record()[0]
     assert len(record.excluding_mask) == 0
+
+
+def test_unsaved_exclud_mask_not_to_use(
+    qtbot: QtBot,
+    test_environment_first_images_ready: TestEnvironment,
+    monkeypatch: MonkeyPatch,
+) -> None:
+    """
+    When the user selects not to use an image, we should not show the unsaved dialog
+    even if there are unsaved mask changes.
+    """
+    # Arrange
+    env: TestEnvironment = test_environment_first_images_ready
+
+    # Act
+    env.view.excluding_create_button.click()
+    env.view.no_radio.click()
+    env.view.next_button.click()
+
+    # Assert
+    record: CurationRecord = env.model.get_curation_record()[0]
+    assert record.excluding_mask is None
