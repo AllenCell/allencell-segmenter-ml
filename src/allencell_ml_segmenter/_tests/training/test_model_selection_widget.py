@@ -127,12 +127,15 @@ def test_select_existing_model_option(
         model_selection_widget._radio_existing_model.click()  # enables the combo box
 
     for i, experiment in enumerate(experiment_model.get_experiments()):
-        # ACT
+        # ACT - This is a compound action, consisting of selecting an option in the combo box and clicking the apply button
+        # In prod, this could only be done for one option since the UI would then change.
+        # As an isolated unit, we can test all options.
         # Invariant: options in existing_models combo were added in the order the appear in the model.
         model_selection_widget._combo_box_existing_models.setCurrentIndex(i)
+        model_selection_widget._apply_btn.click()
 
         # ASSERT
-        assert experiment == model_selection_widget.get_experiment_name_selection()
+        assert experiment_model.get_experiment_name() == experiment
 
 
 def test_apply_button_enabled(
@@ -301,7 +304,7 @@ def test_new_experiment_apply(
 
     # ASSERT note that the model name is selected but not applied until the apply button is clicked
     assert (
-        model_selection_widget.get_experiment_name_selection() == "dummy_experiment"
+        model_selection_widget._get_experiment_name_selection() == "dummy_experiment"
     )
     assert experiment_model.get_experiment_name() is None
 
