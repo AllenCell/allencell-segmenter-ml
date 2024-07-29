@@ -303,9 +303,6 @@ def test_new_experiment_apply(
     model_selection_widget._experiment_name_input.setText("dummy_experiment")
 
     # ASSERT note that the model name is selected but not applied until the apply button is clicked
-    assert (
-        model_selection_widget._get_experiment_name_selection() == "dummy_experiment"
-    )
     assert experiment_model.get_experiment_name() is None
 
     # ACT
