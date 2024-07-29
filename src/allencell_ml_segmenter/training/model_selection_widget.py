@@ -280,9 +280,7 @@ class ModelSelectionWidget(QWidget):
         else:
             self._experiment_name_selection = name
 
-        experiment_selected = (
-            self._experiment_name_selection is not None
-        )
+        experiment_selected = self._experiment_name_selection is not None
         self._apply_btn.setEnabled(experiment_selected)
 
     def _refresh_experiment_options(self):
