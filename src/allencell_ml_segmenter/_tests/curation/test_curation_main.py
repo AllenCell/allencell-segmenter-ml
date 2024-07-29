@@ -751,7 +751,9 @@ def test_unsaved_merg_mask_yes_save(
     When the user asks to save the unsaved mask, we expect that mask to persist in model state.
     """
     # Arrange
-    monkeypatch.setattr(DialogBox, "exec", lambda *args: QDialog.DialogCode.Accepted)
+    monkeypatch.setattr(
+        DialogBox, "exec", lambda *args: QDialog.DialogCode.Accepted
+    )
     env: TestEnvironment = test_environment_first_images_ready
     unsaved_mask: np.ndarray = np.asarray([[4, 5], [6, 7]])
 
@@ -775,7 +777,9 @@ def test_unsaved_merg_mask_no_save(
     When the user asks not to save the unsaved mask, we expect that mask to not persist in model state.
     """
     # Arrange
-    monkeypatch.setattr(DialogBox, "exec", lambda *args: QDialog.DialogCode.Rejected)
+    monkeypatch.setattr(
+        DialogBox, "exec", lambda *args: QDialog.DialogCode.Rejected
+    )
     env: TestEnvironment = test_environment_first_images_ready
     unsaved_mask: np.ndarray = np.asarray([[4, 5], [6, 7]])
 
@@ -799,7 +803,9 @@ def test_unsaved_merg_mask_no_saved_mask(
     When there is no saved mask, we expect the unsaved dialog to pop-up.
     """
     # Arrange
-    monkeypatch.setattr(DialogBox, "exec", lambda *args: QDialog.DialogCode.Accepted)
+    monkeypatch.setattr(
+        DialogBox, "exec", lambda *args: QDialog.DialogCode.Accepted
+    )
     env: TestEnvironment = test_environment_first_images_ready
     unsaved_mask: np.ndarray = np.asarray([[4, 5], [6, 7]])
 
@@ -846,7 +852,9 @@ def test_unsaved_empty_merg_mask_with_saved_mask(
     expect to click next and have a dialog pop up / a mask get saved if we say "yes".
     """
     # Arrange
-    monkeypatch.setattr(DialogBox, "exec", lambda *args: QDialog.DialogCode.Accepted)
+    monkeypatch.setattr(
+        DialogBox, "exec", lambda *args: QDialog.DialogCode.Accepted
+    )
     env: TestEnvironment = test_environment_first_images_ready
 
     # Act
@@ -870,7 +878,9 @@ def test_unsaved_exclud_mask_yes_save(
     When the user asks to save the unsaved mask, we expect that mask to persist in model state.
     """
     # Arrange
-    monkeypatch.setattr(DialogBox, "exec", lambda *args: QDialog.DialogCode.Accepted)
+    monkeypatch.setattr(
+        DialogBox, "exec", lambda *args: QDialog.DialogCode.Accepted
+    )
     env: TestEnvironment = test_environment_first_images_ready
     unsaved_mask: np.ndarray = np.asarray([[4, 5], [6, 7]])
 
@@ -894,7 +904,9 @@ def test_unsaved_exclud_mask_no_save(
     When the user asks not to save the unsaved mask, we expect that mask to not persist in model state.
     """
     # Arrange
-    monkeypatch.setattr(DialogBox, "exec", lambda *args: QDialog.DialogCode.Rejected)
+    monkeypatch.setattr(
+        DialogBox, "exec", lambda *args: QDialog.DialogCode.Rejected
+    )
     env: TestEnvironment = test_environment_first_images_ready
     unsaved_mask: np.ndarray = np.asarray([[4, 5], [6, 7]])
 
@@ -918,7 +930,9 @@ def test_unsaved_exclud_mask_no_saved_mask(
     When there is no saved mask, we expect the unsaved dialog to pop-up.
     """
     # Arrange
-    monkeypatch.setattr(DialogBox, "exec", lambda *args: QDialog.DialogCode.Accepted)
+    monkeypatch.setattr(
+        DialogBox, "exec", lambda *args: QDialog.DialogCode.Accepted
+    )
     env: TestEnvironment = test_environment_first_images_ready
     unsaved_mask: np.ndarray = np.asarray([[4, 5], [6, 7]])
 
@@ -965,7 +979,9 @@ def test_unsaved_empty_exclud_mask_with_saved_mask(
     expect to click next and have a dialog pop up / a mask get saved if we say "yes".
     """
     # Arrange
-    monkeypatch.setattr(DialogBox, "exec", lambda *args: QDialog.DialogCode.Accepted)
+    monkeypatch.setattr(
+        DialogBox, "exec", lambda *args: QDialog.DialogCode.Accepted
+    )
     env: TestEnvironment = test_environment_first_images_ready
 
     # Act
