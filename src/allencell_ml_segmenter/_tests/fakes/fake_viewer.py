@@ -55,7 +55,7 @@ class FakeViewer(IViewer):
     def modify_shapes(self, name: str, new_shapes: np.ndarray) -> None:
         if name in self._shapes_layers:
             self._shapes_layers[name] = ShapesLayer(name, new_shapes)
-    
+
     def add_labels(self, data: np.ndarray, name: str) -> None:
         self._labels_layers[name] = LabelsLayer(name)
         self._on_layers_change()
