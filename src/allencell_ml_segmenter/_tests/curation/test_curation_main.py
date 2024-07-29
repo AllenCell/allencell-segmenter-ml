@@ -742,6 +742,77 @@ def test_curation_record_on_next(
     assert record.base_image == merging_base
 
 
+def test_unsaved_merg_mask_yes_save(
+    qtbot: QtBot,
+    test_environment_first_images_ready: TestEnvironment,
+    monkeypatch: MonkeyPatch,
+) -> None:
+    """
+    When the user asks to save the unsaved mask, we expect that mask to persist in model state.
+    """
+    # Arrange
+    monkeypatch.setattr(DialogBox, "exec", lambda *args: QDialog.DialogCode.Accepted)
+    env: TestEnvironment = test_environment_first_images_ready
+    unsaved_mask: np.ndarray = np.asarray([[4, 5], [6, 7]])
+
+    # Act
+    env.view.merging_create_button.click()
+    env.view.merging_save_button.click()
+    env.viewer.modify_shapes(MERGING_MASK_LAYER_NAME, unsaved_mask)
+    env.view.next_button.click()
+
+    # Assert
+    record: CurationRecord = env.model.get_curation_record()[0]
+    assert np.array_equal(record.merging_mask, unsaved_mask)
+
+
+def test_unsaved_merg_mask_no_save(
+    qtbot: QtBot,
+    test_environment_first_images_ready: TestEnvironment,
+    monkeypatch: MonkeyPatch,
+) -> None:
+    """
+    When the user asks not to save the unsaved mask, we expect that mask to not persist in model state.
+    """
+    # Arrange
+    monkeypatch.setattr(DialogBox, "exec", lambda *args: QDialog.DialogCode.Rejected)
+    env: TestEnvironment = test_environment_first_images_ready
+    unsaved_mask: np.ndarray = np.asarray([[4, 5], [6, 7]])
+
+    # Act
+    env.view.merging_create_button.click()
+    env.view.merging_save_button.click()
+    env.viewer.modify_shapes(MERGING_MASK_LAYER_NAME, unsaved_mask)
+    env.view.next_button.click()
+
+    # Assert
+    record: CurationRecord = env.model.get_curation_record()[0]
+    assert not np.array_equal(record.merging_mask, unsaved_mask)
+
+
+def test_unsaved_merg_mask_no_saved_mask(
+    qtbot: QtBot,
+    test_environment_first_images_ready: TestEnvironment,
+    monkeypatch: MonkeyPatch,
+) -> None:
+    """
+    When there is no saved mask, we expect the unsaved dialog to pop-up.
+    """
+    # Arrange
+    monkeypatch.setattr(DialogBox, "exec", lambda *args: QDialog.DialogCode.Accepted)
+    env: TestEnvironment = test_environment_first_images_ready
+    unsaved_mask: np.ndarray = np.asarray([[4, 5], [6, 7]])
+
+    # Act
+    env.view.merging_create_button.click()
+    env.viewer.modify_shapes(MERGING_MASK_LAYER_NAME, unsaved_mask)
+    env.view.next_button.click()
+
+    # Assert
+    record: CurationRecord = env.model.get_curation_record()[0]
+    assert np.array_equal(record.merging_mask, unsaved_mask)
+
+
 def test_unsaved_empty_merg_mask_no_saved_mask(
     qtbot: QtBot,
     test_environment_first_images_ready: TestEnvironment,
@@ -757,7 +828,7 @@ def test_unsaved_empty_merg_mask_no_saved_mask(
     # Act
     env.view.merging_create_button.click()
     # make it so that merging mask has no shapes
-    env.viewer.modify_shapes(MERGING_MASK_LAYER_NAME, np.array([]))
+    env.viewer.modify_shapes(MERGING_MASK_LAYER_NAME, np.asarray([]))
     env.view.next_button.click()
 
     # Assert
@@ -788,3 +859,122 @@ def test_unsaved_empty_merg_mask_with_saved_mask(
     # Assert
     record: CurationRecord = env.model.get_curation_record()[0]
     assert len(record.merging_mask) == 0
+
+
+def test_unsaved_exclud_mask_yes_save(
+    qtbot: QtBot,
+    test_environment_first_images_ready: TestEnvironment,
+    monkeypatch: MonkeyPatch,
+) -> None:
+    """
+    When the user asks to save the unsaved mask, we expect that mask to persist in model state.
+    """
+    # Arrange
+    monkeypatch.setattr(DialogBox, "exec", lambda *args: QDialog.DialogCode.Accepted)
+    env: TestEnvironment = test_environment_first_images_ready
+    unsaved_mask: np.ndarray = np.asarray([[4, 5], [6, 7]])
+
+    # Act
+    env.view.excluding_create_button.click()
+    env.view.excluding_save_button.click()
+    env.viewer.modify_shapes(EXCLUDING_MASK_LAYER_NAME, unsaved_mask)
+    env.view.next_button.click()
+
+    # Assert
+    record: CurationRecord = env.model.get_curation_record()[0]
+    assert np.array_equal(record.excluding_mask, unsaved_mask)
+
+
+def test_unsaved_exclud_mask_no_save(
+    qtbot: QtBot,
+    test_environment_first_images_ready: TestEnvironment,
+    monkeypatch: MonkeyPatch,
+) -> None:
+    """
+    When the user asks not to save the unsaved mask, we expect that mask to not persist in model state.
+    """
+    # Arrange
+    monkeypatch.setattr(DialogBox, "exec", lambda *args: QDialog.DialogCode.Rejected)
+    env: TestEnvironment = test_environment_first_images_ready
+    unsaved_mask: np.ndarray = np.asarray([[4, 5], [6, 7]])
+
+    # Act
+    env.view.excluding_create_button.click()
+    env.view.excluding_save_button.click()
+    env.viewer.modify_shapes(EXCLUDING_MASK_LAYER_NAME, unsaved_mask)
+    env.view.next_button.click()
+
+    # Assert
+    record: CurationRecord = env.model.get_curation_record()[0]
+    assert not np.array_equal(record.excluding_mask, unsaved_mask)
+
+
+def test_unsaved_exclud_mask_no_saved_mask(
+    qtbot: QtBot,
+    test_environment_first_images_ready: TestEnvironment,
+    monkeypatch: MonkeyPatch,
+) -> None:
+    """
+    When there is no saved mask, we expect the unsaved dialog to pop-up.
+    """
+    # Arrange
+    monkeypatch.setattr(DialogBox, "exec", lambda *args: QDialog.DialogCode.Accepted)
+    env: TestEnvironment = test_environment_first_images_ready
+    unsaved_mask: np.ndarray = np.asarray([[4, 5], [6, 7]])
+
+    # Act
+    env.view.excluding_create_button.click()
+    env.viewer.modify_shapes(EXCLUDING_MASK_LAYER_NAME, unsaved_mask)
+    env.view.next_button.click()
+
+    # Assert
+    record: CurationRecord = env.model.get_curation_record()[0]
+    assert np.array_equal(record.excluding_mask, unsaved_mask)
+
+
+def test_unsaved_empty_exclud_mask_no_saved_mask(
+    qtbot: QtBot,
+    test_environment_first_images_ready: TestEnvironment,
+    monkeypatch: MonkeyPatch,
+) -> None:
+    """
+    When there is an empty excluding mask in the viewer and no mask saved yet, we
+    expect to be able to click next and have no dialog pop up / no mask get saved.
+    """
+    # Arrange
+    env: TestEnvironment = test_environment_first_images_ready
+
+    # Act
+    env.view.excluding_create_button.click()
+    # make it so that excluding mask has no shapes
+    env.viewer.modify_shapes(EXCLUDING_MASK_LAYER_NAME, np.asarray([]))
+    env.view.next_button.click()
+
+    # Assert
+    record: CurationRecord = env.model.get_curation_record()[0]
+    assert record.excluding_mask is None
+
+
+def test_unsaved_empty_exclud_mask_with_saved_mask(
+    qtbot: QtBot,
+    test_environment_first_images_ready: TestEnvironment,
+    monkeypatch: MonkeyPatch,
+) -> None:
+    """
+    When there is an empty excluding mask in the viewer and some non-empty mask saved, we
+    expect to click next and have a dialog pop up / a mask get saved if we say "yes".
+    """
+    # Arrange
+    monkeypatch.setattr(DialogBox, "exec", lambda *args: QDialog.DialogCode.Accepted)
+    env: TestEnvironment = test_environment_first_images_ready
+
+    # Act
+    env.view.excluding_create_button.click()
+    env.view.excluding_save_button.click()
+    # make it so that excluding mask has no shapes
+    env.viewer.modify_shapes(EXCLUDING_MASK_LAYER_NAME, np.array([]))
+    env.view.next_button.click()
+
+    # Assert
+    record: CurationRecord = env.model.get_curation_record()[0]
+    assert len(record.excluding_mask) == 0
