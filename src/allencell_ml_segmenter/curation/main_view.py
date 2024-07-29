@@ -13,6 +13,7 @@ from qtpy.QtWidgets import (
     QPushButton,
     QProgressBar,
     QRadioButton,
+    QDialog,
 )
 from allencell_ml_segmenter.core.dialog_box import DialogBox
 from allencell_ml_segmenter._style import Style
@@ -351,8 +352,8 @@ class CurationMainView(QWidget):
                 save_changes_prompt = DialogBox(
                     f"The current {mask_type} mask layer has unsaved changes. Would you like to save these changes?"
                 )
-                save_changes_prompt.exec()
-                if save_changes_prompt.selection:
+                selection: QDialog.DialogCode = save_changes_prompt.exec()
+                if selection == QDialog.DialogCode.Accepted:
                     return deepcopy(curr_mask_layer.data)
         return saved_mask
 
@@ -470,15 +471,13 @@ class CurationMainView(QWidget):
         discard_layer_prompt = DialogBox(
             f"There is already a '{layer}' layer in the viewer. Would you like to discard this layer?"
         )
-        discard_layer_prompt.exec()
-        return discard_layer_prompt.selection
+        return discard_layer_prompt.exec() == QDialog.DialogCode.Accepted
 
     def _replace_saved_mask_prompt(self, merging_or_excluding: str):
         replace_prompt = DialogBox(
             f"There is already a {merging_or_excluding} mask layer saved. Would you like to overwrite?"
         )
-        replace_prompt.exec()
-        return replace_prompt.selection
+        return replace_prompt.exec() == QDialog.DialogCode.Accepted
 
     def _create_merging_mask(self) -> None:
         if self._viewer.contains_layer(MERGING_MASK_LAYER_NAME):

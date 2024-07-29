@@ -10,6 +10,8 @@ from allencell_ml_segmenter.curation.main_view import (
 from allencell_ml_segmenter._tests.fakes.fake_viewer import FakeViewer
 from allencell_ml_segmenter.main.i_viewer import IViewer
 from allencell_ml_segmenter.core.info_dialog_box import InfoDialogBox
+from allencell_ml_segmenter.core.dialog_box import DialogBox
+from qtpy.QtWidgets import QDialog
 from allencell_ml_segmenter.curation.curation_model import (
     CurationModel,
     CurationView,
@@ -45,7 +47,7 @@ FAKE_IMG_DATA = [
 
 @dataclass
 class TestEnvironment:
-    viewer: IViewer
+    viewer: FakeViewer
     model: CurationModel
     view: CurationMainView
 
@@ -738,3 +740,51 @@ def test_curation_record_on_next(
     assert record.seg2 == IMG_DIR_FILES[2]
     assert record.raw_file == IMG_DIR_FILES[2]
     assert record.base_image == merging_base
+
+
+def test_unsaved_empty_merg_mask_no_saved_mask(
+    qtbot: QtBot,
+    test_environment_first_images_ready: TestEnvironment,
+    monkeypatch: MonkeyPatch,
+) -> None:
+    """
+    When there is an empty merging mask in the viewer and no mask saved yet, we
+    expect to be able to click next and have no dialog pop up / no mask get saved.
+    """
+    # Arrange
+    env: TestEnvironment = test_environment_first_images_ready
+
+    # Act
+    env.view.merging_create_button.click()
+    # make it so that merging mask has no shapes
+    env.viewer.modify_shapes(MERGING_MASK_LAYER_NAME, np.array([]))
+    env.view.next_button.click()
+
+    # Assert
+    record: CurationRecord = env.model.get_curation_record()[0]
+    assert record.merging_mask is None
+
+
+def test_unsaved_empty_merg_mask_with_saved_mask(
+    qtbot: QtBot,
+    test_environment_first_images_ready: TestEnvironment,
+    monkeypatch: MonkeyPatch,
+) -> None:
+    """
+    When there is an empty merging mask in the viewer and some non-empty mask saved, we
+    expect to click next and have a dialog pop up / a mask get saved if we say "yes".
+    """
+    # Arrange
+    monkeypatch.setattr(DialogBox, "exec", lambda *args: QDialog.DialogCode.Accepted)
+    env: TestEnvironment = test_environment_first_images_ready
+
+    # Act
+    env.view.merging_create_button.click()
+    env.view.merging_save_button.click()
+    # make it so that merging mask has no shapes
+    env.viewer.modify_shapes(MERGING_MASK_LAYER_NAME, np.array([]))
+    env.view.next_button.click()
+
+    # Assert
+    record: CurationRecord = env.model.get_curation_record()[0]
+    assert len(record.merging_mask) == 0
