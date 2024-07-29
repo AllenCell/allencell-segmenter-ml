@@ -180,15 +180,15 @@ def test_text_input_cleared_disables_apply_button(
     """
     Test that the apply button is disabled when a typed model name is cleared.
     """
-    # SANITY CHECK
+    # SANITY CHECK start in a state as if the user had endtered a new experiment name
     assert not model_selection_widget._apply_btn.isEnabled()
     model_selection_widget._experiment_name_input.setText("dummy_experiment")
     assert model_selection_widget._apply_btn.isEnabled()
 
-    # ACT
+    # ACT simulate clearing the text input
     model_selection_widget._experiment_name_input.setText("")
 
-    # ASSERT
+    # ASSERT UI behavior should revery to being as if the text input was never filled
     assert not model_selection_widget._apply_btn.isEnabled()
 
 
