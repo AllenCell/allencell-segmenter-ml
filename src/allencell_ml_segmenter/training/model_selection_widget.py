@@ -186,7 +186,7 @@ class ModelSelectionWidget(QWidget):
 
     def _handle_apply_model(self):
         self._experiments_model.apply_experiment_name(
-            self.get_experiment_name_selection()
+            self._experiment_name_selection
         )
         self._title.set_value_text(
             "    " + self._experiments_model.get_experiment_name()
@@ -235,7 +235,8 @@ class ModelSelectionWidget(QWidget):
         ):
             dialog = ModelDownloadDialog(self, self._experiments_model)
             dialog.exec()
-            self._refresh_experiment_options()  # once all models are downloaded, one final refresh to load them into existing models dropdown
+            # once all models are downloaded, one final refresh to load them into existing models dropdown
+            self._refresh_experiment_options()
 
         # reset the combo box, so that it bahaves more like a menu
         self.help_combo_box.setCurrentIndex(-1)
@@ -270,12 +271,6 @@ class ModelSelectionWidget(QWidget):
         if self._radio_new_model.isChecked():
             self._refresh_experiment_options()
 
-    def get_experiment_name_selection(self) -> Optional[str]:
-        """
-        Gets experiment name
-        """
-        return self._experiment_name_selection
-    
     def select_experiment_name(self, name: Optional[str]) -> None:
         """
         Sets experiment name
@@ -286,7 +281,7 @@ class ModelSelectionWidget(QWidget):
             self._experiment_name_selection = name
 
         experiment_selected = (
-            self.get_experiment_name_selection() is not None
+            self._experiment_name_selection is not None
         )
         self._apply_btn.setEnabled(experiment_selected)
 
