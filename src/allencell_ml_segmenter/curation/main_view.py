@@ -307,6 +307,7 @@ class CurationMainView(QWidget):
         Advance to next image set.
         """
         if self.yes_radio.isChecked():
+            # prompt and conditionally save unsaved masks
             self._check_unsaved_excluding_mask()
             self._check_unsaved_merging_mask()
 
