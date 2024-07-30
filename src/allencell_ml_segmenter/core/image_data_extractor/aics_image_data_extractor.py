@@ -5,7 +5,7 @@ from allencell_ml_segmenter.core.image_data_extractor import (
     IImageDataExtractor,
     ImageData,
 )
-from aicsimageio.aics_image import AICSImage
+from bioio.bio_image import BioImage
 
 from allencell_ml_segmenter.utils.image_processing import (
     set_all_nonzero_values_to,
@@ -28,7 +28,7 @@ class AICSImageDataExtractor(IImageDataExtractor):
         seg: Optional[int] = None,
     ) -> ImageData:
 
-        aics_img: AICSImage = AICSImage(img_path)
+        aics_img: BioImage = BioImage(img_path)
         if aics_img.dims.T > 1:
             raise RuntimeError("Cannot load timeseries images")
 
