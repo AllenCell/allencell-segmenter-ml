@@ -337,25 +337,32 @@ class CurationMainView(QWidget):
 
         self._update_progress_bar()
 
+    def _should_prompt_to_save_mask(
+        self,
+        mask_layer: Optional[ShapesLayer],
+        saved_mask: Optional[np.ndarray],
+    ) -> bool:
+        if mask_layer is not None:
+            return (
+                len(mask_layer.data) > 0
+                if saved_mask is None
+                else not np.array_equal(saved_mask, mask_layer.data)
+            )
+        return False
+
     def _check_unsaved_mask(
         self,
         curr_mask_layer: Optional[ShapesLayer],
         saved_mask: Optional[np.ndarray],
         mask_type: str,
     ) -> Optional[np.ndarray]:
-        if curr_mask_layer is not None:
-            diff_exists: bool = (
-                len(curr_mask_layer.data) > 0
-                if saved_mask is None
-                else not np.array_equal(saved_mask, curr_mask_layer.data)
+        if self._should_prompt_to_save_mask(curr_mask_layer, saved_mask):
+            save_changes_prompt = DialogBox(
+                f"The current {mask_type} mask layer has unsaved changes. Would you like to save these changes?"
             )
-            if diff_exists:
-                save_changes_prompt = DialogBox(
-                    f"The current {mask_type} mask layer has unsaved changes. Would you like to save these changes?"
-                )
-                selection: QDialog.DialogCode = save_changes_prompt.exec()
-                if selection == QDialog.DialogCode.Accepted:
-                    return deepcopy(curr_mask_layer.data)
+            selection: QDialog.DialogCode = save_changes_prompt.exec()
+            if selection == QDialog.DialogCode.Accepted:
+                return deepcopy(curr_mask_layer.data)
         return saved_mask
 
     def _check_unsaved_excluding_mask(self) -> None:
