@@ -3,7 +3,7 @@ from typing import Optional
 import csv
 
 from qtpy.QtCore import QObject, QThread, Signal
-from aicsimageio import AICSImage
+from bioio import BioImage
 
 
 def extract_channels_from_image(img_path: Path) -> int:
@@ -11,7 +11,7 @@ def extract_channels_from_image(img_path: Path) -> int:
     Returns number of channels in the given img_path.
     :param img_path: image to extract channels from
     """
-    img_data: AICSImage = AICSImage(str(img_path))
+    img_data: BioImage = BioImage(str(img_path))
     if img_data.dims.T > 1:
         raise RuntimeError("Cannot load timeseries images")
 
