@@ -742,13 +742,16 @@ def test_curation_record_on_next(
     assert record.base_image == merging_base
 
 
-def test_unsaved_merg_mask_yes_save(
+def test_merg_viewer_unsaved_model_saved_yes_to_prompt(
     qtbot: QtBot,
     test_environment_first_images_ready: TestEnvironment,
     monkeypatch: MonkeyPatch,
 ) -> None:
     """
-    When the user asks to save the unsaved mask, we expect that mask to persist in model state.
+    Scenario: merging mask in viewer is unsaved, and mask in viewer is different from previously saved mask. User
+    clicks 'next' then responds 'yes' to the 'do you want to save the unsaved changes' prompt.
+
+    Expectation: we expect that the mask in the viewer will be saved and persist in model state.
     """
     # Arrange
     monkeypatch.setattr(
@@ -768,13 +771,17 @@ def test_unsaved_merg_mask_yes_save(
     assert np.array_equal(record.merging_mask, unsaved_mask)
 
 
-def test_unsaved_merg_mask_no_save(
+def test_merg_viewer_unsaved_model_saved_no_to_prompt(
     qtbot: QtBot,
     test_environment_first_images_ready: TestEnvironment,
     monkeypatch: MonkeyPatch,
 ) -> None:
     """
-    When the user asks not to save the unsaved mask, we expect that mask to not persist in model state.
+    Scenario: merging mask in viewer is unsaved, and mask in viewer is different from previously saved mask. User
+    clicks 'next' then responds 'no' to the 'do you want to save the unsaved changes' prompt.
+
+    Expectation: we expect that the mask in the viewer will not be saved and the previously saved mask will
+    persist in model state.
     """
     # Arrange
     monkeypatch.setattr(
@@ -794,13 +801,16 @@ def test_unsaved_merg_mask_no_save(
     assert not np.array_equal(record.merging_mask, unsaved_mask)
 
 
-def test_unsaved_merg_mask_no_saved_mask(
+def test_merg_viewer_unsaved_model_unsaved_yes_to_prompt(
     qtbot: QtBot,
     test_environment_first_images_ready: TestEnvironment,
     monkeypatch: MonkeyPatch,
 ) -> None:
     """
-    When there is no saved mask, we expect the unsaved dialog to pop-up.
+    Scenario: mask in viewer is unsaved, and there is *no previously saved mask*. User
+    clicks 'next' then responds 'yes' to the 'do you want to save the unsaved changes' prompt.
+
+    Expectation: we expect that the mask in the viewer will be saved and persist in model state.
     """
     # Arrange
     monkeypatch.setattr(
@@ -819,14 +829,15 @@ def test_unsaved_merg_mask_no_saved_mask(
     assert np.array_equal(record.merging_mask, unsaved_mask)
 
 
-def test_unsaved_empty_merg_mask_no_saved_mask(
+def test_merg_viewer_empty_model_unsaved(
     qtbot: QtBot,
     test_environment_first_images_ready: TestEnvironment,
     monkeypatch: MonkeyPatch,
 ) -> None:
     """
-    When there is an empty merging mask in the viewer and no mask saved yet, we
-    expect to be able to click next and have no dialog pop up / no mask get saved.
+    Scenario: there is an empty merging mask in the viewer and no mask saved yet
+
+    Expectation: user should click next and have no dialog pop up / no mask get saved.
     """
     # Arrange
     env: TestEnvironment = test_environment_first_images_ready
@@ -842,14 +853,15 @@ def test_unsaved_empty_merg_mask_no_saved_mask(
     assert record.merging_mask is None
 
 
-def test_unsaved_empty_merg_mask_with_saved_mask(
+def test_merg_viewer_empty_model_saved_yes_to_prompt(
     qtbot: QtBot,
     test_environment_first_images_ready: TestEnvironment,
     monkeypatch: MonkeyPatch,
 ) -> None:
     """
-    When there is an empty merging mask in the viewer and some non-empty mask saved, we
-    expect to click next and have a dialog pop up / a mask get saved if we say "yes".
+    Scenario: there is an empty merging mask in the viewer and some non-empty mask saved
+
+    Expectation: clicking next causes dialog to pop up; empty mask will get saved when we select 'yes'.
     """
     # Arrange
     monkeypatch.setattr(
@@ -869,14 +881,15 @@ def test_unsaved_empty_merg_mask_with_saved_mask(
     assert len(record.merging_mask) == 0
 
 
-def test_unsaved_merg_mask_not_to_use(
+def test_merg_viewer_unsaved_not_to_use(
     qtbot: QtBot,
     test_environment_first_images_ready: TestEnvironment,
     monkeypatch: MonkeyPatch,
 ) -> None:
     """
-    When the user selects not to use an image, we should not show the unsaved dialog
-    even if there are unsaved mask changes.
+    Scenario: there is an unsaved merging mask in the viewer, but the user has opted not to use this image
+
+    Expectation: no dialog will pop up since we are not using the image anyways
     """
     # Arrange
     env: TestEnvironment = test_environment_first_images_ready
@@ -891,13 +904,16 @@ def test_unsaved_merg_mask_not_to_use(
     assert record.merging_mask is None
 
 
-def test_unsaved_exclud_mask_yes_save(
+def test_exclud_viewer_unsaved_model_saved_yes_to_prompt(
     qtbot: QtBot,
     test_environment_first_images_ready: TestEnvironment,
     monkeypatch: MonkeyPatch,
 ) -> None:
     """
-    When the user asks to save the unsaved mask, we expect that mask to persist in model state.
+    Scenario: excluding mask in viewer is unsaved, and mask in viewer is different from previously saved mask. User
+    clicks 'next' then responds 'yes' to the 'do you want to save the unsaved changes' prompt.
+
+    Expectation: we expect that the mask in the viewer will be saved and persist in model state.
     """
     # Arrange
     monkeypatch.setattr(
@@ -917,13 +933,17 @@ def test_unsaved_exclud_mask_yes_save(
     assert np.array_equal(record.excluding_mask, unsaved_mask)
 
 
-def test_unsaved_exclud_mask_no_save(
+def test_exclud_viewer_unsaved_model_saved_no_to_prompt(
     qtbot: QtBot,
     test_environment_first_images_ready: TestEnvironment,
     monkeypatch: MonkeyPatch,
 ) -> None:
     """
-    When the user asks not to save the unsaved mask, we expect that mask to not persist in model state.
+    Scenario: excluding mask in viewer is unsaved, and mask in viewer is different from previously saved mask. User
+    clicks 'next' then responds 'no' to the 'do you want to save the unsaved changes' prompt.
+
+    Expectation: we expect that the mask in the viewer will not be saved and the previously saved mask will
+    persist in model state.
     """
     # Arrange
     monkeypatch.setattr(
@@ -943,13 +963,16 @@ def test_unsaved_exclud_mask_no_save(
     assert not np.array_equal(record.excluding_mask, unsaved_mask)
 
 
-def test_unsaved_exclud_mask_no_saved_mask(
+def test_exclud_viewer_unsaved_model_unsaved_yes_to_prompt(
     qtbot: QtBot,
     test_environment_first_images_ready: TestEnvironment,
     monkeypatch: MonkeyPatch,
 ) -> None:
     """
-    When there is no saved mask, we expect the unsaved dialog to pop-up.
+    Scenario: excluding mask in viewer is unsaved, and there is *no previously saved mask*. User
+    clicks 'next' then responds 'yes' to the 'do you want to save the unsaved changes' prompt.
+
+    Expectation: we expect that the mask in the viewer will be saved and persist in model state.
     """
     # Arrange
     monkeypatch.setattr(
@@ -968,14 +991,15 @@ def test_unsaved_exclud_mask_no_saved_mask(
     assert np.array_equal(record.excluding_mask, unsaved_mask)
 
 
-def test_unsaved_empty_exclud_mask_no_saved_mask(
+def test_exclud_viewer_empty_model_unsaved(
     qtbot: QtBot,
     test_environment_first_images_ready: TestEnvironment,
     monkeypatch: MonkeyPatch,
 ) -> None:
     """
-    When there is an empty excluding mask in the viewer and no mask saved yet, we
-    expect to be able to click next and have no dialog pop up / no mask get saved.
+    Scenario: there is an empty excluding mask in the viewer and no mask saved yet
+
+    Expectation: user should click next and have no dialog pop up / no mask get saved.
     """
     # Arrange
     env: TestEnvironment = test_environment_first_images_ready
@@ -991,14 +1015,15 @@ def test_unsaved_empty_exclud_mask_no_saved_mask(
     assert record.excluding_mask is None
 
 
-def test_unsaved_empty_exclud_mask_with_saved_mask(
+def test_exclud_viewer_empty_model_saved_yes_to_prompt(
     qtbot: QtBot,
     test_environment_first_images_ready: TestEnvironment,
     monkeypatch: MonkeyPatch,
 ) -> None:
     """
-    When there is an empty excluding mask in the viewer and some non-empty mask saved, we
-    expect to click next and have a dialog pop up / a mask get saved if we say "yes".
+    Scenario: there is an empty excluding mask in the viewer and some non-empty mask saved
+
+    Expectation: clicking next causes dialog to pop up; empty mask will get saved when we select 'yes'.
     """
     # Arrange
     monkeypatch.setattr(
@@ -1018,14 +1043,15 @@ def test_unsaved_empty_exclud_mask_with_saved_mask(
     assert len(record.excluding_mask) == 0
 
 
-def test_unsaved_exclud_mask_not_to_use(
+def test_exclud_viewer_unsaved_not_to_use(
     qtbot: QtBot,
     test_environment_first_images_ready: TestEnvironment,
     monkeypatch: MonkeyPatch,
 ) -> None:
     """
-    When the user selects not to use an image, we should not show the unsaved dialog
-    even if there are unsaved mask changes.
+    Scenario: there is an unsaved excluding mask in the viewer, but the user has opted not to use this image
+
+    Expectation: no dialog will pop up since we are not using the image anyways
     """
     # Arrange
     env: TestEnvironment = test_environment_first_images_ready
