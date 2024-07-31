@@ -156,7 +156,9 @@ class PredictionView(View, MainWindow):
                 raw_img.stem: {"raw": raw_img} for raw_img in raw_imgs
             }
             for seg in segmentations:
-                stem_to_data[seg.stem]["seg"] = seg
+                # ignore files in the folder that aren't from most recent predictions
+                if seg.stem in stem_to_data:
+                    stem_to_data[seg.stem]["seg"] = seg
 
             self._viewer.clear_layers()
             for data in stem_to_data.values():
