@@ -48,35 +48,6 @@ Homepage = "https://github.com/AllenCell/allencell-ml-segmenter"
 Documentation = "https://github.com/AllenCell/allencell-ml-segmenter#README.md"
 "User Support" = "https://github.com/AllenCell/allencell-ml-segmenter/issues"
 
-# extra dependencies
-# https://peps.python.org/pep-0621/#dependencies-optional-dependencies
-[project.optional-dependencies]
-test_lint = [
-    "pytest<8.0.0", # https://docs.pytest.org/en/latest/contents.html
-    "pytest-cov",  # https://pytest-cov.readthedocs.io/en/latest/
-    "pytest-qt",
-    "qtpy",
-    "pyqt5",
-    "black>=24.2.0",
-    'pytest-xvfb; sys_platform == "linux"',
-    "responses",
-]
-
-dev = [
-    "black>=24.2.0",
-    "coverage>=7.2.2",
-    "flake8>=6.0.0",
-    "pytest>=7.2.2, <8.0.0",
-    "pytest-qt>=3.3.0",
-    "pytest-cov>=2.6.1",
-    "pyqt5>=5.15.9",
-    "bumpver>=2023.1129",
-    "build>=1.0.3",
-    "twine>=5.0.0",
-    "responses"
-
-]
-
 # entry points
 # https://peps.python.org/pep-0621/#entry-points
 [project.entry-points."napari.manifest"]
@@ -129,3 +100,29 @@ select = "B,C,E,F,W,T4"
 # allow pytest testing on pyqt5
 [tool.pytest]
 qt_api="pyqt5"
+
+[tool.pdm.dev-dependencies]
+test_lint = [
+    "pytest<8.0.0", # https://docs.pytest.org/en/latest/contents.html
+    "pytest-cov",  # https://pytest-cov.readthedocs.io/en/latest/
+    "pytest-qt",
+    "qtpy",
+    "pyqt5",
+    "black>=24.2.0",
+    'pytest-xvfb; sys_platform == "linux"',
+    "responses",
+]
+
+dev = [
+    "black>=24.2.0",
+    "coverage>=7.2.2",
+    "flake8>=6.0.0",
+    "pytest>=7.2.2, <8.0.0",
+    "pytest-qt>=3.3.0",
+    "pytest-cov>=2.6.1",
+    "pyqt5>=5.15.9",
+    "bumpver>=2023.1129",
+    "build>=1.0.3",
+    "twine>=5.0.0",
+    "responses"
+]
