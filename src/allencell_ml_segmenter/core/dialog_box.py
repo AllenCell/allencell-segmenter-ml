@@ -39,11 +39,11 @@ class DialogBox(QDialog):
 
     def yes_selected(self):
         self.selection = True
-        self.close()
+        self.accept()
 
     def no_selected(self):
         self.selection = False
-        self.close()
+        self.reject()
 
     def setMessage(self, message: str):
         self._text.setText(message)
