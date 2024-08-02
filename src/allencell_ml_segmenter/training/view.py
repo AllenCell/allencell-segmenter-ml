@@ -48,11 +48,11 @@ class TrainingView(View, MainWindow):
     """
 
     def __init__(
-        self,
-        main_model: MainModel,
-        experiments_model: IExperimentsModel,
-        training_model: TrainingModel,
-        viewer: IViewer,
+            self,
+            main_model: MainModel,
+            experiments_model: IExperimentsModel,
+            training_model: TrainingModel,
+            viewer: IViewer,
     ):
         super().__init__()
 
@@ -89,7 +89,27 @@ class TrainingView(View, MainWindow):
         self.layout().addWidget(top_dummy)
 
         # bottom half
-        bottom_grid_layout = QGridLayout()
+        bottom_grid_layout: QGridLayout = QGridLayout()
+
+        # Existing model label
+        existing_model_label: LabelWithHint = LabelWithHint("Start from previous model")
+        existing_model_label.set_hint("Select a previously trained model to continue training from")
+        bottom_grid_layout.addWidget(existing_model_label, 0, 0)
+
+        # Existing model selection
+        existing_model_selection_layout: QVBoxLayout = QVBoxLayout()
+        # existing_model_selection_layout.setSpacing(0) # check if this is needed
+        existing_model_no_radio: QRadioButton = QRadioButton("No")
+        existing_model_no_radio.setChecked(True)
+        existing_model_selection_layout.addWidget(existing_model_no_radio)
+        existing_model_yes_radio: QRadioButton = QRadioButton("Yes")
+        self.existing_model_dropdown: QComboBox = QComboBox()
+        self.existing_model_dropdown.addItems(self._experiments_model.get_experiments())
+        existing_model_yes_layout: QHBoxLayout = QHBoxLayout()
+        existing_model_yes_layout.addWidget(existing_model_yes_radio)
+        existing_model_yes_layout.addWidget(self.existing_model_dropdown)
+        existing_model_selection_layout.addLayout(existing_model_yes_layout)
+        bottom_grid_layout.addLayout(existing_model_selection_layout, 0, 1)
 
         patch_size_text_layout = QVBoxLayout()
         patch_size_text_layout.setSpacing(0)
@@ -101,7 +121,7 @@ class TrainingView(View, MainWindow):
         guide_text: QLabel = QLabel("All values must be multiples of 4")
         guide_text.setObjectName("subtext")
         patch_size_text_layout.addWidget(guide_text)
-        bottom_grid_layout.addLayout(patch_size_text_layout, 0, 0)
+        bottom_grid_layout.addLayout(patch_size_text_layout, 1, 0)
         patch_size_entry_layout: QHBoxLayout = QHBoxLayout()
 
         # allow only integers for the linedits below
@@ -122,13 +142,13 @@ class TrainingView(View, MainWindow):
         patch_size_entry_layout.addWidget(QLabel("X:"))
         patch_size_entry_layout.addWidget(self.x_patch_size)
 
-        bottom_grid_layout.addLayout(patch_size_entry_layout, 0, 1)
+        bottom_grid_layout.addLayout(patch_size_entry_layout, 1, 1)
 
         model_size_label: LabelWithHint = LabelWithHint("Model size")
         model_size_label.set_hint(
             "Defines the complexity of the model - smaller models train faster, while large models train slower but may learn complex relationships better."
         )
-        bottom_grid_layout.addWidget(model_size_label, 1, 0)
+        bottom_grid_layout.addWidget(model_size_label, 2, 0)
 
         self._model_size_combo_box: QComboBox = QComboBox()
         self._model_size_combo_box.setObjectName("modelSizeComboBox")
@@ -140,13 +160,13 @@ class TrainingView(View, MainWindow):
         self._model_size_combo_box.currentTextChanged.connect(
             lambda model_size: self._training_model.set_model_size(model_size)
         )
-        bottom_grid_layout.addWidget(self._model_size_combo_box, 1, 1)
+        bottom_grid_layout.addWidget(self._model_size_combo_box, 2, 1)
 
         image_dimensions_label: LabelWithHint = LabelWithHint(
             "Image dimension"
         )
         image_dimensions_label.set_hint("Dimensionality of your image data")
-        bottom_grid_layout.addWidget(image_dimensions_label, 2, 0)
+        bottom_grid_layout.addWidget(image_dimensions_label, 3, 0)
 
         dimension_choice_layout: QHBoxLayout = QHBoxLayout()
         dimension_choice_layout.setSpacing(0)
@@ -178,13 +198,13 @@ class TrainingView(View, MainWindow):
         )  # stops interference with other radio buttons
         dimension_choice_dummy.setLayout(dimension_choice_layout)
 
-        bottom_grid_layout.addWidget(dimension_choice_dummy, 2, 1)
+        bottom_grid_layout.addWidget(dimension_choice_dummy, 3, 1)
 
         num_epochs_label: LabelWithHint = LabelWithHint("Number of epochs")
         num_epochs_label.set_hint(
             "Each epoch is one complete pass through the entire training dataset. More epochs yields better performance at the cost of training time."
         )
-        bottom_grid_layout.addWidget(num_epochs_label, 3, 0)
+        bottom_grid_layout.addWidget(num_epochs_label, 4, 0)
 
         self._num_epochs_input: QLineEdit = QLineEdit()
         int_validator: QIntValidator = QIntValidator()
@@ -195,7 +215,7 @@ class TrainingView(View, MainWindow):
         self._num_epochs_input.textChanged.connect(
             self._num_epochs_field_handler
         )
-        bottom_grid_layout.addWidget(self._num_epochs_input, 3, 1)
+        bottom_grid_layout.addWidget(self._num_epochs_input, 4, 1)
 
         max_time_layout: QHBoxLayout = QHBoxLayout()
         max_time_layout.setSpacing(0)
@@ -225,7 +245,7 @@ class TrainingView(View, MainWindow):
         max_time_layout.addWidget(max_time_right_text, alignment=Qt.AlignLeft)
         max_time_layout.addStretch()
 
-        bottom_grid_layout.addLayout(max_time_layout, 4, 1)
+        bottom_grid_layout.addLayout(max_time_layout, 5, 1)
         bottom_grid_layout.setColumnStretch(1, 8)
         bottom_grid_layout.setColumnStretch(0, 3)
 
@@ -310,8 +330,8 @@ class TrainingView(View, MainWindow):
         missing_patches: list[str] = []
 
         if (
-            not self.z_patch_size.text()
-            and self._training_model.get_spatial_dims() == 3
+                not self.z_patch_size.text()
+                and self._training_model.get_spatial_dims() == 3
         ):
             missing_patches.append("Z")
 
