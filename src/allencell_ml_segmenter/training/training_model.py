@@ -73,6 +73,14 @@ class TrainingModel(Publisher):
         # the total number of images used for training/test/validation for this model
         self._total_num_images: int = 0
 
+        # Whether to use an existing model, and the existing model to use if one is selected
+        # If is_using_existing_model is False, the existing_model_to_use will be None
+        # If is_using_existing_model is True, the existing_model_to_use will be the name of the experiment containing
+        # the existing model to pull weights from for training
+        # If existing_model_to_use is None, no model was selected to pull weights from and the user should be prompted to select one
+        self._is_using_existing_model: bool = False # No by default
+        self._existing_model_to_use: Optional[Path] = None # None if no existing model selected- default behavior
+
     def get_experiment_type(self) -> Optional[str]:
         """
         Gets experiment type
@@ -236,3 +244,15 @@ class TrainingModel(Publisher):
 
     def get_selected_channels(self) -> dict[ImageType, Optional[int]]:
         return self._main_model.get_selected_channels()
+
+    def set_existing_model(self, model: Optional[str]) -> None:
+        self._existing_model_to_use = model
+
+    def get_existing_model(self) -> Optional[str]:
+        return self._existing_model_to_use
+
+    def is_using_existing_model(self) -> bool:
+        return self._is_using_existing_model
+
+    def set_is_using_existing_model(self, is_using: bool) -> None:
+        self._is_using_existing_model = is_using

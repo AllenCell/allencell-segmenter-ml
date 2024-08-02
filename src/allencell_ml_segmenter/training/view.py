@@ -93,21 +93,29 @@ class TrainingView(View, MainWindow):
 
         # Existing model label
         existing_model_label: LabelWithHint = LabelWithHint("Start from previous model")
-        existing_model_label.set_hint("Select a previously trained model to continue training from")
-        bottom_grid_layout.addWidget(existing_model_label, 0, 0)
+        existing_model_label.set_hint("Select a previously trained model to pull model weights from")
+        bottom_grid_layout.addWidget(existing_model_label, 0, 0, alignment=Qt.AlignTop)
 
         # Existing model selection
-        existing_model_selection_layout: QVBoxLayout = QVBoxLayout()
-        # existing_model_selection_layout.setSpacing(0) # check if this is needed
-        existing_model_no_radio: QRadioButton = QRadioButton("No")
-        existing_model_no_radio.setChecked(True)
-        existing_model_selection_layout.addWidget(existing_model_no_radio)
-        existing_model_yes_radio: QRadioButton = QRadioButton("Yes")
         self.existing_model_dropdown: QComboBox = QComboBox()
         self.existing_model_dropdown.addItems(self._experiments_model.get_experiments())
+        self.existing_model_dropdown.currentIndexChanged.connect(
+            lambda: self._training_model.set_existing_model(self.existing_model_dropdown.currentText()))
+        self.existing_model_dropdown.setEnabled(False) # Disabled by default since no is the default
+        # Yes and no radio buttons stacked on top of each other in a VBoxLayout
+        existing_model_selection_layout: QVBoxLayout = QVBoxLayout()
+        self.existing_model_no_radio: QRadioButton = QRadioButton("No")
+        self.existing_model_no_radio.toggled.connect(self._existing_model_no_radio_slot)
+        self.existing_model_no_radio.setChecked(True) # No enabled by default
+        existing_model_selection_layout.addWidget(self.existing_model_no_radio)
+        self.existing_model_yes_radio: QRadioButton = QRadioButton("Yes")
+        self.existing_model_yes_radio.toggled.connect(self._existing_model_yes_radio_slot)
+
+
+        # have model selection dropdown in-line with yes button
         existing_model_yes_layout: QHBoxLayout = QHBoxLayout()
-        existing_model_yes_layout.addWidget(existing_model_yes_radio)
-        existing_model_yes_layout.addWidget(self.existing_model_dropdown)
+        existing_model_yes_layout.addWidget(self.existing_model_yes_radio)
+        existing_model_yes_layout.addWidget(self.existing_model_dropdown, stretch=1)
         existing_model_selection_layout.addLayout(existing_model_yes_layout)
         bottom_grid_layout.addLayout(existing_model_selection_layout, 0, 1)
 
@@ -361,3 +369,16 @@ class TrainingView(View, MainWindow):
     def focus_changed(self) -> None:
         self.image_selection_widget.set_inputs_csv()
         self._viewer.clear_layers()
+
+    def _existing_model_no_radio_slot(self) -> None:
+        # disable dropdown
+        self.existing_model_dropdown.setEnabled(False)
+        # reset dropdown and selected model
+        self.existing_model_dropdown.setCurrentIndex(-1)
+        self._training_model.set_is_using_existing_model(False)
+        self._training_model.set_existing_model(None)
+
+    def _existing_model_yes_radio_slot(self) -> None:
+        # enable dropdown
+        self._training_model.set_is_using_existing_model(True)
+        self.existing_model_dropdown.setEnabled(True)
