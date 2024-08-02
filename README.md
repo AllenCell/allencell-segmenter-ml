@@ -23,34 +23,28 @@ https://napari.org/stable/plugins/index.html
 
 ## Dev setup
 
-_Note on Mac OS, use `gmake` instead of `make`_
+We recommend using PDM for dev work.
 
-First, set up a venv and installing project dependencies into it, use `make install-dev`.
+### Getting started
+1. [install PDM](https://pdm-project.org/en/latest/#installation) if not already installed (on macOS, I prefer the `brew install pdm` method).
+2. clone this repository.
+3. in the root of the cloned repository, run `pdm install -G dev`. This will create a `.venv` virtual environment and install all dev dependencies there. It will also automatically install this repo as an editable package.
+4. activate the virtual environment (either through your IDE or with something like `source .venv/bin/activate` depending on your OS)
+5. run `napari` in your shell
 
-More useful dev tasks:
+Congrats! You now have a working editable installation of segmenter ML--you can develop and see your changes live now by re-running `napari`.
 
-- `make clean` [clean the venv and other build/test artifacts]
-- `make test` [Run unit tests]
-- `make lint` [Find lint errors in source code]
-- `make format` [Format source code]
+### Adding dependencies
+If you need to add a dependency to the project, do so by running `pdm add <dep>`. This will automatically update the lock file and `pyproject.toml`. Remember to commit both `pdm.lock` and `pyproject.toml`. You **do not** need to commit `.pdm-python` or any other PDM artifacts.
 
-## Current steps for integrating plugin with cyto-del:
+If you want to add a dev-only dependency, use `pdm add -dG dev <dep>`.
 
-- clone plugin (use main - my stuff is merged)
-- git checkout bugfix/allencell-ml-segmenter
-- clone cyto-dl as sibling to plugin repo
-- cd into cyto-dl and download data: python scripts/download_test_data.py
-- copy `/cyto-dl/data` to `allencell-ml-segmenter/`.  The input image paths are references in train.csv as relative paths, and so must be resolved at PYTHON_PATH (in the plugin repo).
-- from the plugin repo, `gmake install`
-- activate new venv (happens autmatically i think)
-- `pip install .`
-- `pip install PyQt5`
-- `python -m pip install -e ../cyto-dl/`
-- `touch cyto-dl/configs/__init__.py` (necessary to reference `segmenter.yaml` in the cyto-dl repo)
-- [DEPRACATED] update hardcoded paths in TrainingService for your system
-- update the paths stored in `constants.py` to work on your system
-- `napari`
-- select training view, hit training button. It should run to completion.
+### Editable installs for other packages
+I found this useful when I had a branch on `cyto-dl` I wanted to test segmenter with:
+
+`pdm add -e git+https://github.com/AllenCellModeling/cyto-dl.git@make-req-optional#egg=cyto-dl --dev`
+
+Remember if you are adding an editable dependency, you **should not** commit the changed `pdm.lock` or `pyproject.toml`, as this is only a temporary solution for testing.
 
 ## Releasing
 
