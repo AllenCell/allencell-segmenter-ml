@@ -95,6 +95,7 @@ class TrainingService(Subscriber):
             model.train()
 
     def _able_to_continue_training(self) -> bool:
+        # TODO: refactor- these checks should be in the View before we start a thread for training.
         if self._experiments_model.get_experiment_name() is None:
             show_warning(
                 "Please select an experiment before running prediction."
@@ -125,6 +126,11 @@ class TrainingService(Subscriber):
         if self._training_model.get_model_size() is None:
             show_warning("Please define model size.")
             return False
+
+        if self._training_model.is_using_existing_model():
+            if self._training_model.get_existing_model() is None:
+                show_warning("If using weights from an existing model, please select one.")
+                return False
         return True
 
     def _extract_data_from_training_dir(
