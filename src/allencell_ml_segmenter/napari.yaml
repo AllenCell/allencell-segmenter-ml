@@ -1,5 +1,5 @@
 name: allencell-segmenter-ml
-display_name: Allen Cell Segmenter - ML
+display_name: allencell-segmenter-ml
 contributions:
   commands:
     - id: allencell-segmenter-ml.make_qwidget
