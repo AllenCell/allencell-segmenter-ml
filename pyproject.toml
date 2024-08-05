@@ -109,6 +109,8 @@ test_lint = [
     "pytest-qt",
     "qtpy",
     "pyqt5",
+    'pyqt5-qt5==5.15.14; sys_platform == "linux" or sys_platform == "darwin"',
+    'pyqt5-qt5==5.15.2; sys_platform == "win32"', # https://github.com/pdm-project/pdm/issues/2566
     "black>=24.2.0",
     'pytest-xvfb; sys_platform == "linux"',
     "responses",
