@@ -124,6 +124,8 @@ dev = [
     "pytest-qt>=3.3.0",
     "pytest-cov>=2.6.1",
     "pyqt5>=5.15.9",
+    'pyqt5-qt5==5.15.14; sys_platform == "linux" or sys_platform == "darwin"',
+    'pyqt5-qt5==5.15.2; sys_platform == "win32"', # https://github.com/pdm-project/pdm/issues/2566
     "bumpver>=2023.1129",
     "build>=1.0.3",
     "twine>=5.0.0",
