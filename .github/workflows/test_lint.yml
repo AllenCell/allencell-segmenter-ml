@@ -40,10 +40,10 @@ jobs:
           pdm install -G test_lint
       - name: Lint with Black
         run: |
-          black --check --verbose .
+          pdm run black --check --verbose .
       - name: Test with pytest
         run: |
-          pytest -v --color=yes --cov=allencell_ml_segmenter --cov-report=xml
+          pdm run pytest -v --color=yes --cov=allencell_ml_segmenter --cov-report=xml
       # - name: Upload coverage reports to Codecov
       #   uses: codecov/codecov-action@v3
       #   env:
