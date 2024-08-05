@@ -28,9 +28,9 @@ We recommend using PDM for dev work.
 ### Getting started
 1. [install PDM](https://pdm-project.org/en/latest/#installation) if not already installed (on macOS, I prefer the `brew install pdm` method).
 2. clone this repository.
-3. in the root of the cloned repository, run `pdm install -G dev`. This will create a `.venv` virtual environment and install all dev dependencies there. It will also automatically install this repo as an editable package.
+3. in the root of the cloned repository, run `pdm install -G dev`. This will create a `.venv` virtual environment and install all dev dependencies there. It will also automatically install this repo as an editable package. (**NOTE:** due to dependency issues, we currently maintain a separate Windows lock file--if developing on Windows, you will need to add `-L windows.lock` to the above command)
 4. activate the virtual environment (either through your IDE or with something like `source .venv/bin/activate` depending on your OS)
-5. run `napari` in your shell
+5. run `napari` in your shell (alternatively, you can skip **4** and run `pdm run napari`)
 
 Congrats! You now have a working editable installation of segmenter ML--you can develop and see your changes live now by re-running `napari`.
 
