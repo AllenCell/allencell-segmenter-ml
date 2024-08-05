@@ -35,9 +35,14 @@ jobs:
         run: |
           git clone --depth 1 https://github.com/pyvista/gl-ci-helpers.git
           powershell gl-ci-helpers/appveyor/install_opengl.ps1
-      - name: Install dependencies
+      - name: Install from Windows lock
+        if: runner.os == 'Windows'
         run: |
-          pdm install -G test_lint
+          pdm install -G test_lint -L windows.lock
+      - name: Install from standard lock
+        if: runner.os != 'Windows'
+        run: |
+          pdm install -G test_lint -L pdm.lock
       - name: Lint with Black
         run: |
           pdm run black --check --verbose .
