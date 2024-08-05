@@ -35,7 +35,7 @@ We recommend using PDM for dev work.
 Congrats! You now have a working editable installation of segmenter ML--you can develop and see your changes live now by re-running `napari`.
 
 ### Adding dependencies
-If you need to add a dependency to the project, do so by running `pdm add <dep>`. This will automatically update the lock file and `pyproject.toml`. Remember to commit both `pdm.lock` and `pyproject.toml`. You **do not** need to commit `.pdm-python` or any other PDM artifacts.
+If you need to add a dependency to the project, do so by running `pdm add <dep>`. This will automatically update the lock file and `pyproject.toml`. Remember to commit both `pdm.lock` and `pyproject.toml`. You **should not** commit `.pdm-python` or any other PDM artifacts.
 
 If you want to add a dev-only dependency, use `pdm add -dG dev <dep>`.
 
@@ -48,13 +48,18 @@ Remember if you are adding an editable dependency, you **should not** commit the
 
 ## Releasing
 
-Release a new version and publishing to Pypi is based on a Github Actions workflow. The steps are:
+Release a new version and publishing to Pypi is based on Github Actions workflows. The steps are:
 
-- From repository homepage, go to `actions > Bump version and publish to PyPI`
+- From repository homepage, go to `actions > Bump version and PR`
 - Enter which semantic version component you want to bump for this release
 - Run the workflow
 
-A GitHub runner will then bump the version, build and release to PyPI, and push the version changes back to main.
+A GitHub runner will then bump the version, and create a PR back into main. Among the changed files will be `version.toml`.
+
+- Another workflow, `publish.yaml` will see the changes to `version.toml` and initialize a publish process
+- This publish workflow must be approved in GH actions by a repo admin
+
+After the workflow is approved, changes will be published to the external package index.
 
 **Note**: There are restrictions on which component you can bump depending on the current version.
 If the current version has a dev component (e.g. `1.0.1.dev0`), you must bump the dev component or the patch component
