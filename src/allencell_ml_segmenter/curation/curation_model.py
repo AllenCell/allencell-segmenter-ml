@@ -71,21 +71,21 @@ class CurationModel(QObject):
     def get_merging_mask(self) -> Optional[np.ndarray]:
         return self._curation_record[self._cursor].merging_mask if self._curation_record is not None and self._cursor is not None else None
 
-    def set_merging_mask(self, mask: np.ndarray) -> None:
+    def set_merging_mask(self, mask: Optional[np.ndarray]) -> None:
         if self._curation_record is not None and self._cursor is not None:
             self._curation_record[self._cursor].merging_mask = mask
 
     def get_excluding_mask(self) -> Optional[np.ndarray]:
         return self._curation_record[self._cursor].excluding_mask if self._curation_record is not None and self._cursor is not None else None
 
-    def set_excluding_mask(self, mask: np.ndarray) -> None:
+    def set_excluding_mask(self, mask: Optional[np.ndarray]) -> None:
         if self._curation_record is not None and self._cursor is not None:
             self._curation_record[self._cursor].excluding_mask = mask
 
     def get_base_image(self) -> Optional[str]:
         return self._curation_record[self._cursor].base_image if self._curation_record is not None and self._cursor is not None else None
 
-    def set_base_image(self, base: str) -> None:
+    def set_base_image(self, base: Optional[str]) -> None:
         if self._curation_record is not None and self._cursor is not None:
             self._curation_record[self._cursor].base_image = base
 

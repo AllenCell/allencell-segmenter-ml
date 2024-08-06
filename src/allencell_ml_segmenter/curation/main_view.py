@@ -30,7 +30,7 @@ from allencell_ml_segmenter.core.info_dialog_box import InfoDialogBox
 from allencell_ml_segmenter.main.main_model import MIN_DATASET_SIZE
 
 
-from napari.utils.notifications import show_info, show_warning
+from napari.utils.notifications import show_info, show_warning # type: ignore
 from copy import deepcopy
 import numpy as np
 
@@ -47,26 +47,27 @@ class CurationMainView(QWidget):
         super().__init__()
         self._curation_model: CurationModel = curation_model
         self._viewer: IViewer = viewer
-
-        self.setLayout(QVBoxLayout())
-        self.layout().setContentsMargins(0, 10, 0, 10)
-        self.layout().setSpacing(0)
-        self.layout().setAlignment(Qt.AlignTop)
-        self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
+        layout: QVBoxLayout = QVBoxLayout()
+        self.setLayout(layout)
+        layout.setContentsMargins(0, 10, 0, 10)
+        layout.setSpacing(0)
+        layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+        self.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Maximum)
         self.setStyleSheet(Style.get_stylesheet("curation_main.qss"))
 
         self._title: QLabel = QLabel("CURATION UI MAIN", self)
         self._title.setObjectName("title")
-        self.layout().addWidget(
-            self._title, alignment=Qt.AlignHCenter | Qt.AlignTop
+        layout.addWidget(
+            self._title, alignment=Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignTop # type: ignore
         )
 
         frame: QFrame = QFrame()
-        frame.setLayout(QVBoxLayout())
-        self.layout().addWidget(frame)
+        frame_layout: QVBoxLayout = QVBoxLayout()
+        frame.setLayout(frame_layout)
+        layout.addWidget(frame)
 
         input_images_label: QLabel = QLabel("Curation Progress")
-        frame.layout().addWidget(input_images_label, alignment=Qt.AlignHCenter)
+        frame_layout.addWidget(input_images_label, alignment=Qt.AlignmentFlag.AlignHCenter)
 
         progress_bar_layout: QHBoxLayout = QHBoxLayout()
         # Button and progress bar on top row
@@ -76,62 +77,64 @@ class CurationMainView(QWidget):
 
         # inner progress bar frame and layout
         inner_progress_frame: QFrame = QFrame()
-        inner_progress_frame.setLayout(QHBoxLayout())
+        inner_progress_frame_layout: QHBoxLayout = QHBoxLayout()
+        inner_progress_frame.setLayout(inner_progress_frame_layout)
         inner_progress_frame.setObjectName("frame")
         self.progress_bar: QProgressBar = QProgressBar()
-        inner_progress_frame.layout().addWidget(self.progress_bar)
+        inner_progress_frame_layout.addWidget(self.progress_bar)
         self.progress_bar_image_count: QLabel = QLabel("0/0")
-        inner_progress_frame.layout().addWidget(
-            self.progress_bar_image_count, alignment=Qt.AlignRight
+        inner_progress_frame_layout.addWidget(
+            self.progress_bar_image_count, alignment=Qt.AlignmentFlag.AlignRight
         )
         progress_bar_layout.addWidget(inner_progress_frame)
         self.next_button: QPushButton = QPushButton()
         self.next_button.setObjectName("big_blue_btn")
         self.next_button.clicked.connect(self._on_next)
         progress_bar_layout.addWidget(
-            self.next_button, alignment=Qt.AlignRight
+            self.next_button, alignment=Qt.AlignmentFlag.AlignRight
         )
-        self.layout().addLayout(progress_bar_layout)
+        layout.addLayout(progress_bar_layout)
 
         self.save_csv_button: QPushButton = QPushButton(
             "Save Curation Progress"
         )
         self.save_csv_button.clicked.connect(self._on_save_curation_csv)
         self.save_csv_button.setObjectName("save_csv_btn")
-        self.layout().addWidget(self.save_csv_button)
+        layout.addWidget(self.save_csv_button)
 
         self.file_name: QLabel = QLabel()
-        self.layout().addWidget(self.file_name, alignment=Qt.AlignHCenter)
+        layout.addWidget(self.file_name, alignment=Qt.AlignmentFlag.AlignHCenter)
 
         use_image_frame: QFrame = QFrame()
         use_image_frame.setObjectName("frame")
-        use_image_frame.setLayout(QGridLayout())
-        use_image_frame.layout().addWidget(
+        use_image_frame_layout: QGridLayout = QGridLayout()
+        use_image_frame.setLayout(use_image_frame_layout)
+        use_image_frame_layout.addWidget(
             QLabel("Use this image for training"), 0, 0, 1, 1
         )
         self.yes_radio: QRadioButton = QRadioButton("Yes")
         self.yes_radio.setChecked(True)
         self.yes_radio.clicked.connect(self._on_yes_radio_clicked)
 
-        use_image_frame.layout().addWidget(self.yes_radio, 0, 1, 1, 1)
+        use_image_frame_layout.addWidget(self.yes_radio, 0, 1, 1, 1)
         self.no_radio: QRadioButton = QRadioButton("No")
         self.no_radio.clicked.connect(self._on_no_radio_clicked)
-        use_image_frame.layout().addWidget(self.no_radio, 0, 2, 1, 1)
+        use_image_frame_layout.addWidget(self.no_radio, 0, 2, 1, 1)
 
         self.use_img_help_text = QLabel(
             f"Must select >= {MIN_DATASET_SIZE} images to use"
         )
         self.use_img_help_text.setObjectName("subtext")
-        use_image_frame.layout().addWidget(self.use_img_help_text, 2, 0, 1, 1)
+        use_image_frame_layout.addWidget(self.use_img_help_text, 2, 0, 1, 1)
 
         self.use_img_stacked_spinner = StackedSpinner(use_image_frame)
-        self.layout().addWidget(
-            self.use_img_stacked_spinner, alignment=Qt.AlignHCenter
+        layout.addWidget(
+            self.use_img_stacked_spinner, alignment=Qt.AlignmentFlag.AlignHCenter
         )
 
         optional_text: QLabel = QLabel("OPTIONAL", self)
         optional_text.setObjectName("text_with_vert_padding")
-        self.layout().addWidget(optional_text, alignment=Qt.AlignHCenter)
+        layout.addWidget(optional_text, alignment=Qt.AlignmentFlag.AlignHCenter)
 
         base_image_layout: QGridLayout = QGridLayout()
         base_combo_label: LabelWithHint = LabelWithHint(
@@ -155,7 +158,7 @@ class CurationMainView(QWidget):
         base_image_layout.addWidget(base_combo_label, 1, 0, 1, 2)
         base_image_layout.addWidget(self.merging_base_combo, 1, 2, 1, 2)
         base_image_layout.addWidget(QLabel(), 2, 0)
-        self.layout().addLayout(base_image_layout)
+        layout.addLayout(base_image_layout)
         # Label for Merging mask
         merging_mask_label_and_status: QHBoxLayout = QHBoxLayout()
         merging_mask_label: LabelWithHint = LabelWithHint("Merging mask")
@@ -165,12 +168,12 @@ class CurationMainView(QWidget):
         self.merging_mask_status: QLabel = QLabel("Create and draw mask")
         merging_mask_label_and_status.addWidget(merging_mask_label)
         merging_mask_label_and_status.addWidget(self.merging_mask_status)
-        self.layout().addLayout(merging_mask_label_and_status)
+        layout.addLayout(merging_mask_label_and_status)
         merging_mask_subtext: QLabel = QLabel(
             "Without merging mask, base image will be used for training."
         )
         merging_mask_subtext.setObjectName("subtext")
-        self.layout().addWidget(merging_mask_subtext)
+        layout.addWidget(merging_mask_subtext)
 
         # buttons for merging mask
         merging_mask_buttons: QHBoxLayout = QHBoxLayout()
@@ -189,7 +192,7 @@ class CurationMainView(QWidget):
         merging_mask_buttons.addWidget(self.merging_delete_button)
         merging_mask_buttons.addWidget(self.merging_save_button)
 
-        self.layout().addLayout(merging_mask_buttons)
+        layout.addLayout(merging_mask_buttons)
 
         # Labels for excluding mask
         excluding_mask_labels: QHBoxLayout = QHBoxLayout()
@@ -201,9 +204,9 @@ class CurationMainView(QWidget):
         excluding_mask_labels.addWidget(excluding_mask_label)
         self.excluding_mask_status = QLabel("Create and draw mask")
         excluding_mask_labels.addWidget(
-            self.excluding_mask_status, alignment=Qt.AlignLeft
+            self.excluding_mask_status, alignment=Qt.AlignmentFlag.AlignLeft
         )
-        self.layout().addLayout(excluding_mask_labels)
+        layout.addLayout(excluding_mask_labels)
 
         # buttons for excluding mask
         excluding_mask_buttons: QHBoxLayout = QHBoxLayout()
@@ -232,7 +235,7 @@ class CurationMainView(QWidget):
         excluding_mask_buttons.addWidget(self.excluding_create_button)
         excluding_mask_buttons.addWidget(self.excluding_delete_button)
         excluding_mask_buttons.addWidget(self.excluding_save_button)
-        self.layout().addLayout(excluding_mask_buttons)
+        layout.addLayout(excluding_mask_buttons)
 
         self._curation_model.image_loading_finished.connect(
             self._on_first_image_loading_finished
@@ -277,28 +280,32 @@ class CurationMainView(QWidget):
         self.next_button.setText("Loading next...")
 
     def add_curr_images_to_widget(self) -> None:
-        raw_img_data: ImageData = self._curation_model.get_curr_image_data(
+        raw_img_data: Optional[ImageData] = self._curation_model.get_curr_image_data(
             ImageType.RAW
         )
-        self._viewer.add_image(
-            raw_img_data.np_data, f"[raw] {raw_img_data.path.name}"
-        )
-        seg1_img_data: ImageData = self._curation_model.get_curr_image_data(
+        if raw_img_data is not None and raw_img_data.np_data is not None:
+            self._viewer.add_image(
+                raw_img_data.np_data, f"[raw] {raw_img_data.path.name}"
+            )
+        seg1_img_data: Optional[ImageData] = self._curation_model.get_curr_image_data(
             ImageType.SEG1
         )
-        self._viewer.add_labels(
-            seg1_img_data.np_data, f"[seg1] {seg1_img_data.path.name}"
-        )
+        if seg1_img_data is not None and seg1_img_data.np_data is not None:
+            self._viewer.add_labels(
+                seg1_img_data.np_data, f"[seg1] {seg1_img_data.path.name}"
+            )
         if self._curation_model.has_seg2_data():
-            seg2_img_data: ImageData = (
+            seg2_img_data: Optional[ImageData] = (
                 self._curation_model.get_curr_image_data(ImageType.SEG2)
             )
-            self._viewer.add_labels(
-                seg2_img_data.np_data, f"[seg2] {seg2_img_data.path.name}"
-            )
+            if seg2_img_data is not None and seg2_img_data.np_data is not None:
+                self._viewer.add_labels(
+                    seg2_img_data.np_data, f"[seg2] {seg2_img_data.path.name}"
+                )
 
         self.enable_valid_masks()
-        self.file_name.setText(raw_img_data.path.name)
+        if raw_img_data is not None and raw_img_data.path is not None:
+            self.file_name.setText(raw_img_data.path.name)
         self.merging_mask_status.setText("Create and draw mask")
         self.excluding_mask_status.setText("Create and draw mask")
 
@@ -360,8 +367,8 @@ class CurationMainView(QWidget):
             save_changes_prompt = DialogBox(
                 f"The current {mask_type} mask layer has unsaved changes. Would you like to save these changes?"
             )
-            selection: QDialog.DialogCode = save_changes_prompt.exec()
-            if selection == QDialog.DialogCode.Accepted:
+            selection: QDialog.DialogCode = QDialog.DialogCode(save_changes_prompt.exec())
+            if selection == QDialog.DialogCode.Accepted and curr_mask_layer is not None:
                 return deepcopy(curr_mask_layer.data)
         return saved_mask
 
@@ -402,7 +409,7 @@ class CurationMainView(QWidget):
         else:
             show_warning("Failed to save current progress to CSV")
 
-    def disable_merging_mask_buttons(self):
+    def disable_merging_mask_buttons(self) -> None:
         """
         Disable the buttons for merging mask in the UI
         """
@@ -411,7 +418,7 @@ class CurationMainView(QWidget):
         self.merging_delete_button.setEnabled(False)
         self.merging_base_combo.setEnabled(False)
 
-    def enable_merging_mask_buttons(self):
+    def enable_merging_mask_buttons(self) -> None:
         """
         Enable the buttons for merging mask in the UI
         """
@@ -423,7 +430,7 @@ class CurationMainView(QWidget):
         self.merging_delete_button.setEnabled(mask_exists)
         self.merging_base_combo.setEnabled(True)
 
-    def disable_excluding_mask_buttons(self):
+    def disable_excluding_mask_buttons(self) -> None:
         """
         disable the buttons for excluding mask in the UI
         """
@@ -431,7 +438,7 @@ class CurationMainView(QWidget):
         self.excluding_create_button.setEnabled(False)
         self.excluding_delete_button.setEnabled(False)
 
-    def enable_excluding_mask_buttons(self):
+    def enable_excluding_mask_buttons(self) -> None:
         """
         Enable the buttons for excluding mask in the UI
         """
@@ -442,11 +449,11 @@ class CurationMainView(QWidget):
         self.excluding_create_button.setEnabled(True)
         self.excluding_delete_button.setEnabled(mask_exists)
 
-    def disable_radio_buttons(self):
+    def disable_radio_buttons(self) -> None:
         self.yes_radio.setEnabled(False)
         self.no_radio.setEnabled(False)
 
-    def update_radio_buttons_enabled_state(self):
+    def update_radio_buttons_enabled_state(self) -> None:
         if (
             self._curation_model.get_max_num_images_to_use()
             <= MIN_DATASET_SIZE
@@ -458,7 +465,7 @@ class CurationMainView(QWidget):
             self.yes_radio.setEnabled(True)
             self.no_radio.setEnabled(True)
 
-    def update_save_csv_button_enabled_state(self):
+    def update_save_csv_button_enabled_state(self) -> None:
         self.save_csv_button.setEnabled(
             self._curation_model.get_num_images_selected_to_use()
             >= MIN_DATASET_SIZE
@@ -468,24 +475,26 @@ class CurationMainView(QWidget):
         """
         update progress bar based on state of image loader
         """
-        curr_val: int = self._curation_model.get_curr_image_index() + 1
+        curr_val: int = 0
+        if self._curation_model.get_curr_image_index() is not None:
+            curr_val = self._curation_model.get_curr_image_index() + 1 # type: ignore
         num_images: int = self._curation_model.get_num_images()
         self.progress_bar.setMaximum(num_images)
         self.progress_bar.setValue(curr_val)
         # set progress bar hint
         self.progress_bar_image_count.setText(f"{curr_val}/{num_images}")
 
-    def _discard_layer_prompt(self, layer: str) -> None:
+    def _discard_layer_prompt(self, layer: str) -> bool:
         discard_layer_prompt = DialogBox(
             f"There is already a '{layer}' layer in the viewer. Would you like to discard this layer?"
         )
-        return discard_layer_prompt.exec() == QDialog.DialogCode.Accepted
+        return QDialog.DialogCode(discard_layer_prompt.exec()) == QDialog.DialogCode.Accepted
 
-    def _replace_saved_mask_prompt(self, merging_or_excluding: str):
+    def _replace_saved_mask_prompt(self, merging_or_excluding: str) -> bool:
         replace_prompt = DialogBox(
             f"There is already a {merging_or_excluding} mask layer saved. Would you like to overwrite?"
         )
-        return replace_prompt.exec() == QDialog.DialogCode.Accepted
+        return QDialog.DialogCode(replace_prompt.exec()) == QDialog.DialogCode.Accepted
 
     def _create_merging_mask(self) -> None:
         if self._viewer.contains_layer(MERGING_MASK_LAYER_NAME):
