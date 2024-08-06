@@ -65,32 +65,36 @@ class CurationModel(QObject):
         self._image_loading_stopped: bool = False
         # private invariant: _next_img_data will only have < self._get_num_data_dict_keys() keys if
         # a thread is currently updating _next_img_data. Same goes for curr
-        self._curr_img_data: Optional[Dict[str, Optional[ImageData]]] = None
-        self._next_img_data: Optional[Dict[str, Optional[ImageData]]] = None
+        self._curr_img_data: Optional[dict[ImageType, Optional[ImageData]]] = None
+        self._next_img_data: Optional[dict[ImageType, Optional[ImageData]]] = None
 
     def get_merging_mask(self) -> Optional[np.ndarray]:
-        return self._curation_record[self._cursor].merging_mask
+        return self._curation_record[self._cursor].merging_mask if self._curation_record is not None and self._cursor is not None else None
 
     def set_merging_mask(self, mask: np.ndarray) -> None:
-        self._curation_record[self._cursor].merging_mask = mask
+        if self._curation_record is not None and self._cursor is not None:
+            self._curation_record[self._cursor].merging_mask = mask
 
     def get_excluding_mask(self) -> Optional[np.ndarray]:
-        return self._curation_record[self._cursor].excluding_mask
+        return self._curation_record[self._cursor].excluding_mask if self._curation_record is not None and self._cursor is not None else None
 
     def set_excluding_mask(self, mask: np.ndarray) -> None:
-        self._curation_record[self._cursor].excluding_mask = mask
+        if self._curation_record is not None and self._cursor is not None:
+            self._curation_record[self._cursor].excluding_mask = mask
 
     def get_base_image(self) -> Optional[str]:
-        return self._curation_record[self._cursor].base_image
+        return self._curation_record[self._cursor].base_image if self._curation_record is not None and self._cursor is not None else None
 
     def set_base_image(self, base: str) -> None:
-        self._curation_record[self._cursor].base_image = base
+        if self._curation_record is not None and self._cursor is not None:
+            self._curation_record[self._cursor].base_image = base
 
-    def get_use_image(self) -> bool:
-        return self._curation_record[self._cursor].to_use
+    def get_use_image(self) -> Optional[bool]:
+        return self._curation_record[self._cursor].to_use if self._curation_record is not None and self._cursor is not None else None
 
     def set_use_image(self, use: bool) -> None:
-        self._curation_record[self._cursor].to_use = use
+        if self._curation_record is not None and self._cursor is not None:
+            self._curation_record[self._cursor].to_use = use
 
     def set_image_directory(self, img_type: ImageType, dir: Path) -> None:
         self._img_dirs[img_type] = dir
@@ -156,29 +160,31 @@ class CurationModel(QObject):
     def get_channel_count(self, img_type: ImageType) -> Optional[int]:
         return self._channel_counts[img_type]
 
-    def get_save_masks_path(self) -> Path:
-        return (
-            self._experiments_model.get_user_experiments_path()
-            / self._experiments_model.get_experiment_name()
-        )
+    def get_save_masks_path(self) -> Optional[Path]:
+        exp_name: Optional[str] = self._experiments_model.get_experiment_name()
+        return self._experiments_model.get_user_experiments_path() / exp_name if exp_name is not None else None
 
-    def get_curation_record(self) -> List[CurationRecord]:
+    def get_curation_record(self) -> Optional[list[CurationRecord]]:
         return self._curation_record
 
     # WARNING: methods that access data dicts must only be called from the main thread
     def set_curr_image_data(
         self, img_type: ImageType, img_data: ImageData
     ) -> None:
+        if self._curr_img_data is None:
+            raise RuntimeError("Current image data is uninitialized")
         self._curr_img_data[img_type] = img_data
         if not self.is_waiting_for_images():
             self.image_loading_finished.emit()
 
     def get_curr_image_data(self, img_type: ImageType) -> Optional[ImageData]:
-        return self._curr_img_data[img_type]
+        return self._curr_img_data[img_type] if self._curr_img_data is not None else None
 
     def set_next_image_data(
         self, img_type: ImageType, img_data: ImageData
     ) -> None:
+        if self._next_img_data is None:
+            raise RuntimeError("Next image data is uninitialized")
         self._next_img_data[img_type] = img_data
         if not self.is_waiting_for_images():
             self.image_loading_finished.emit()
@@ -186,21 +192,29 @@ class CurationModel(QObject):
     # note: I don't see a reason why we would need to get the next image data instead of
     # calling next_image, so leaving that out
     def has_seg2_data(self) -> bool:
-        return self._img_dir_paths[ImageType.SEG2] is not None
+        return self._img_dir_paths[ImageType.SEG2] is not None if self._img_dir_paths is not None else False
 
     def get_num_images(self) -> int:
-        return len(self._img_dir_paths[ImageType.RAW])
+        if self._img_dir_paths is not None and self._img_dir_paths[ImageType.RAW] is not None:
+                return len(self._img_dir_paths[ImageType.RAW]) # type: ignore
+        return 0
 
-    def get_curr_image_index(self) -> int:
+    def get_curr_image_index(self) -> Optional[int]:
         return self._cursor
 
     def has_next_image(self) -> bool:
+        if self._cursor is None:
+            return False
         return self._cursor + 1 < self.get_num_images()
 
     def is_waiting_for_curr_images(self) -> bool:
+        if self._curr_img_data is None:
+            return False
         return len(self._curr_img_data) != self._get_num_data_dict_keys()
 
     def is_waiting_for_next_images(self) -> bool:
+        if self._next_img_data is None:
+            return False
         return len(self._next_img_data) != self._get_num_data_dict_keys()
 
     def is_waiting_for_images(self) -> bool:
@@ -219,6 +233,9 @@ class CurationModel(QObject):
         immediate: cursor_moved
         at some point: image_loading_finished
         """
+        if self._curr_img_data is None or self._next_img_data is None:
+            raise RuntimeError("Cannot start loading when image data dict is uninitialized")
+        
         self._cursor = 0
         # need to set use image to true since we want this to be the default
         self.set_use_image(True)
@@ -232,6 +249,9 @@ class CurationModel(QObject):
         Drops pre-loaded images from memory and prevents further
         image loading from occurring in curation.
         """
+        if self._curr_img_data is None or self._next_img_data is None:
+            raise RuntimeError("Cannot stop loading when image data dict is uninitialized")
+        
         self._image_loading_stopped = True
         self._curr_img_data.clear()
         self._next_img_data.clear()
@@ -249,7 +269,7 @@ class CurationModel(QObject):
             raise RuntimeError(
                 "Image loader is busy. Please see image_loading_finished signal."
             )
-        if not self.has_next_image():
+        if not self.has_next_image() or self._cursor is None:
             raise RuntimeError("No next image available")
 
         self._curr_img_data = self._next_img_data
@@ -272,11 +292,12 @@ class CurationModel(QObject):
     def save_curr_curation_record_to_disk(self) -> None:
         self.save_to_disk_requested.emit()
 
-    def get_csv_path(self) -> Path:
+    def get_csv_path(self) -> Optional[Path]:
+        exp_name: Optional[str] = self._experiments_model.get_experiment_name()
         return (
             self._experiments_model.get_user_experiments_path()
-            / self._experiments_model.get_experiment_name()
-            / "data"
+            / exp_name
+            / "data" if exp_name is not None else None
         )
 
     def get_max_num_images_to_use(self) -> int:
@@ -285,6 +306,9 @@ class CurationModel(QObject):
         if the user has 12 images and has marked 3 as 'do not use', this method will return 9.
         Note that the current 'to_use' selection is not included, as it is not yet finalized.
         """
+        if self._cursor is None or self._curation_record is None:
+            raise RuntimeError("Cannot calculate with undefined cursor or curation record")
+        
         possible: int = self.get_num_images()
         for i in range(self._cursor):
             if not self._curation_record[i].to_use:
@@ -296,16 +320,19 @@ class CurationModel(QObject):
         Returns the number of images that the user has marked as 'use this image'. Current
         'to_use' selection is included.
         """
-        return sum([1 if rec.to_use else 0 for rec in self._curation_record])
+        return sum([1 if rec.to_use else 0 for rec in self._curation_record]) if self._curation_record is not None else 0
 
     def _generate_new_curation_record(self) -> List[CurationRecord]:
         """
         Returns a list of curation records populated with the file paths in self._img_dir_paths. See
         CurationRecord constructor below for the default values.
         """
-        raw_paths: List[Path] = self._img_dir_paths[ImageType.RAW]
-        seg1_paths: List[Path] = self._img_dir_paths[ImageType.SEG1]
-        seg2_paths: Optional[List[Path]] = self._img_dir_paths[ImageType.SEG2]
+        raw_paths: Optional[list[Path]] = self._img_dir_paths[ImageType.RAW]
+        seg1_paths: Optional[list[Path]] = self._img_dir_paths[ImageType.SEG1]
+        if raw_paths is None or seg1_paths is None:
+            raise RuntimeError("Expected values for raw and seg1 images")
+        
+        seg2_paths: Optional[list[Path]] = self._img_dir_paths[ImageType.SEG2]
         if len(raw_paths) != len(seg1_paths) or (
             seg2_paths is not None and len(seg1_paths) != len(seg2_paths)
         ):
