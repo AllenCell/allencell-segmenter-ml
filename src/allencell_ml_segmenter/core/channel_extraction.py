@@ -26,8 +26,8 @@ def get_img_path_from_csv(
     :param csv_path: path to a csv with a 'raw' column
     """
     with open(csv_path) as csv_file:
-        reader: csv.reader = csv.DictReader(csv_file)
-        img_path: str = next(reader)[column]
+        reader: csv.DictReader = csv.DictReader(csv_file)
+        img_path: str = next(reader)[column] # type: ignore
     return Path(img_path).resolve() if img_path else None
 
 
@@ -43,7 +43,7 @@ class ChannelExtractionThread(QThread):
     channels_ready: Signal = Signal(int)  # num_channels
     task_failed: Signal = Signal(Exception)
 
-    def __init__(self, img_path: Path, parent: QObject = None):
+    def __init__(self, img_path: Path, parent: Optional[QObject] = None):
         """
         :param img_path: path to image (must exist, otherwise ValueError)
         :param id: id for this thread instance, provided by parent thread
