@@ -3,6 +3,7 @@ from qtpy.QtCore import QSettings
 from qtpy.QtWidgets import QFileDialog
 from qtpy.QtWidgets import QMessageBox
 from qtpy.QtWidgets import QWidget
+from typing import Optional
 
 from allencell_ml_segmenter.config.i_user_settings import IUserSettings
 
@@ -22,7 +23,7 @@ class UserSettings(IUserSettings):
     def get_cyto_dl_home_path(self) -> Path:
         return self._cyto_dl_home_path
 
-    def get_user_experiments_path(self) -> Path:
+    def get_user_experiments_path(self) -> Optional[Path]:
         if self.settings.value(EXPERIMENTS_HOME_KEY) is None:
             return None
         else:
@@ -33,8 +34,10 @@ class UserSettings(IUserSettings):
 
     def prompt_for_user_experiments_home(self, parent: QWidget):
         message_dialog = QMessageBox(
+            QMessageBox.Icon.NoIcon,
+            "Segmenter home directory",
+            "Please select a location to store your Segmenter ML data.",
             parent=parent,
-            text="Please select a location to store your Segmenter ML data.",
         )
         message_dialog.exec()
         path: Path = self._prompt_for_directory(parent)
