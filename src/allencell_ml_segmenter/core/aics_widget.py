@@ -3,7 +3,7 @@ from qtpy.QtWidgets import QWidget
 from allencell_ml_segmenter.core.subscriber import Subscriber
 
 
-class AicsWidgetMeta(type(QWidget), type(Subscriber)):
+class AicsWidgetMeta(type(QWidget), type(Subscriber)): # type: ignore
     pass
 
 
