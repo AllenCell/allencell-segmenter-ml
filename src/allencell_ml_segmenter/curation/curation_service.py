@@ -85,7 +85,9 @@ class CurationService(QObject):
 
     def _on_image_dir_set(self, img_type: ImageType) -> None:
         # paths are immutable, so no need to explicitly copy
-        dir: Path = self._curation_model.get_image_directory(img_type)
+        dir: Optional[Path] = self._curation_model.get_image_directory(img_type)
+        if dir is None:
+            raise RuntimeError("Image dir not allowed to be None")
         self._task_executor.exec(
             lambda: self._get_dir_data(dir),
             on_return=lambda dir_data: self._on_dir_data_extracted(
@@ -105,26 +107,29 @@ class CurationService(QObject):
         :param setter_fn: to set model state. Provides :param err_str: ('curr' or 'next') to the error
         handler for additional debugging info.
         """
-        raw_paths: List[Path] = self._curation_model.get_image_directory_paths(
+        raw_paths: Optional[list[Path]] = self._curation_model.get_image_directory_paths(
             ImageType.RAW
         )
-        seg1_paths: List[Path] = (
+        seg1_paths: Optional[list[Path]] = (
             self._curation_model.get_image_directory_paths(ImageType.SEG1)
         )
-        seg2_paths: Optional[List[Path]] = (
+        seg2_paths: Optional[list[Path]] = (
             self._curation_model.get_image_directory_paths(ImageType.SEG2)
         )
 
-        raw_channel: int = self._curation_model.get_selected_channel(
+        raw_channel: Optional[int] = self._curation_model.get_selected_channel(
             ImageType.RAW
         )
-        seg1_channel: int = self._curation_model.get_selected_channel(
+        seg1_channel: Optional[int] = self._curation_model.get_selected_channel(
             ImageType.SEG1
         )
         seg2_channel: Optional[int] = (
             self._curation_model.get_selected_channel(ImageType.SEG2)
         )
 
+        if raw_paths is None or seg1_paths is None or raw_channel is None or seg1_channel is None:
+            raise RuntimeError("Must select raw and seg1 paths and channels")
+        
         self._task_executor.exec(
             lambda: self._img_data_extractor.extract_image_data(
                 raw_paths[img_idx],
@@ -144,7 +149,7 @@ class CurationService(QObject):
                 ImageType.SEG1, err_str, e
             ),
         )
-        if seg2_paths is not None:
+        if seg2_paths is not None and seg2_channel is not None:
             self._task_executor.exec(
                 lambda: self._img_data_extractor.extract_image_data(
                     seg2_paths[img_idx], channel=seg2_channel, seg=2
@@ -163,7 +168,9 @@ class CurationService(QObject):
         )
 
     def _on_cursor_moved(self) -> None:
-        cursor: int = self._curation_model.get_curr_image_index()
+        cursor: Optional[int] = self._curation_model.get_curr_image_index()
+        if cursor is None:
+            raise RuntimeError("Cursor must not be None")
 
         if self._curation_model.is_waiting_for_curr_images():
             # start extraction tasks for curr images (paths at cursor)
@@ -182,11 +189,14 @@ class CurationService(QObject):
         raise err
 
     def _on_save_to_disk(self) -> None:
-        record: List[CurationRecord] = deepcopy(
+        record: Optional[list[CurationRecord]] = deepcopy(
             self._curation_model.get_curation_record()
         )
-        csv_path: Path = self._curation_model.get_csv_path()
-        save_path: Path = self._curation_model.get_save_masks_path()
+        csv_path: Optional[Path] = self._curation_model.get_csv_path()
+        save_path: Optional[Path] = self._curation_model.get_save_masks_path()
+        if record is None or csv_path is None or save_path is None:
+            raise RuntimeError("Insufficient data to save to disk")
+        
         self._task_executor.exec(
             lambda: self._file_utils.write_curation_record(
                 record, csv_path, save_path
