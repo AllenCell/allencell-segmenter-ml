@@ -20,7 +20,8 @@ class SynchroTaskExecutor(ITaskExecutor):
         try:
             output: Any = task()
         except Exception as e:
-            on_error(e)
+            if on_error is not None:
+                on_error(e)
             return
 
         if on_return is not None:
