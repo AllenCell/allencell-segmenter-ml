@@ -1,6 +1,6 @@
 from enum import Enum
 from pathlib import Path
-from typing import Callable
+from typing import Callable, Any
 
 from qtpy.QtWidgets import (
     QWidget,
@@ -33,14 +33,14 @@ class InputButton(QWidget):
 
     def __init__(
         self,
-        model: Publisher,
+        model: Any,
         model_set_file_path_function: Callable,
         placeholder: str = "Select file...",
         mode: FileInputMode = FileInputMode.FILE,
     ):
         super().__init__()
         self._default_placeholder = placeholder
-        self._model: Publisher = model
+        self._model: Any = model
 
         self.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
 
