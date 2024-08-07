@@ -51,9 +51,6 @@ class CytoDLOverridesManager:
 
         # Patch shape (required if starting new model)
         if not self._training_model.is_using_existing_model():
-            patch_size: List[int] = self._training_model.get_patch_size()
-            overrides_dict["data._aux.patch_shape"] = patch_size
-
             # Filters/Model Size (required if starting new model)
             overrides_dict["model._aux.filters"] = (
                 self._training_model.get_model_size().value
@@ -88,6 +85,10 @@ class CytoDLOverridesManager:
         overrides_dict["data.path"] = str(
             self._training_model.get_images_directory()
         )
+
+        # patch size (required)
+        patch_size: List[int] = self._training_model.get_patch_size()
+        overrides_dict["data._aux.patch_shape"] = patch_size
 
         # Commented out 5/23 brian.kim
         # We no longer support training from a old checkpoint- leaving this in if we want to re-enable this in the
