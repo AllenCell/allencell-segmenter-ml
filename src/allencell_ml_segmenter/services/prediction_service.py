@@ -53,9 +53,7 @@ class PredictionService(Subscriber):
         """
         cyto_api: CytoDLModel = CytoDLModel()
         cyto_api.load_config_from_file(
-            self._experiments_model.get_train_config_path(
-                self._experiments_model.get_experiment_name()
-            )
+            self._experiments_model.get_train_config_path()
         )
         # We must override the config to set up predictions correctly
         cyto_api.override_config(
@@ -80,9 +78,7 @@ class PredictionService(Subscriber):
             return False
 
         # Check to see if training has occurred with the selected experiment.
-        training_config: Path = self._experiments_model.get_train_config_path(
-            experiment_name
-        )
+        training_config: Path = self._experiments_model.get_train_config_path()
         if not training_config.exists():
             show_warning(
                 f"Please train with the experiment: {experiment_name} before running a prediction."

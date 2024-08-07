@@ -1,6 +1,6 @@
 from abc import abstractmethod
 from pathlib import Path
-from typing import List, Optional
+from typing import Optional
 
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.publisher import Publisher
@@ -33,19 +33,19 @@ class IExperimentsModel(Publisher):
         self.dispatch(Event.ACTION_EXPERIMENT_APPLIED)
 
     @abstractmethod
-    def get_checkpoint(self) -> str:
+    def get_checkpoint(self) -> Optional[str]:
         pass
 
     @abstractmethod
-    def get_experiments(self) -> List[str]:
+    def get_experiments(self) -> list[str]:
         pass
 
     @abstractmethod
-    def refresh_experiments(self):
+    def refresh_experiments(self) -> None:
         pass
 
     @abstractmethod
-    def get_user_experiments_path(self):
+    def get_user_experiments_path(self) -> Optional[Path]:
         pass
 
     @abstractmethod

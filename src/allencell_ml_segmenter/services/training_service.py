@@ -88,9 +88,7 @@ class TrainingService(Subscriber):
             )
             model.print_config()
             model.save_config(
-                self._experiments_model.get_train_config_path(
-                    self._experiments_model.get_experiment_name()
-                )
+                self._experiments_model.get_train_config_path()
             )
             model.train()
 

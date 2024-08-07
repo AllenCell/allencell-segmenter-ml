@@ -1,13 +1,13 @@
 from abc import ABC, abstractmethod
-from typing import List, Optional, Callable
+from typing import Optional, Callable
 from allencell_ml_segmenter.main.segmenter_layer import (
     ShapesLayer,
     ImageLayer,
     LabelsLayer,
 )
 import numpy as np
-from napari.layers import Layer
-from napari.utils.events import Event as NapariEvent
+from napari.layers import Layer # type: ignore
+from napari.utils.events import Event as NapariEvent # type: ignore
 
 
 class IViewer(ABC):
@@ -23,7 +23,7 @@ class IViewer(ABC):
         pass
 
     @abstractmethod
-    def get_all_images(self) -> List[ImageLayer]:
+    def get_all_images(self) -> list[ImageLayer]:
         pass
 
     @abstractmethod
@@ -35,7 +35,7 @@ class IViewer(ABC):
         pass
 
     @abstractmethod
-    def get_all_shapes(self) -> List[ShapesLayer]:
+    def get_all_shapes(self) -> list[ShapesLayer]:
         pass
 
     @abstractmethod
@@ -47,7 +47,7 @@ class IViewer(ABC):
         pass
 
     @abstractmethod
-    def get_all_labels(self) -> List[LabelsLayer]:
+    def get_all_labels(self) -> list[LabelsLayer]:
         pass
 
     @abstractmethod
@@ -64,7 +64,7 @@ class IViewer(ABC):
 
     # TODO: refactor prediction/file_input_widget.py to not use this and use get_all_images instead
     @abstractmethod
-    def get_layers(self) -> List[Layer]:
+    def get_layers(self) -> list[Layer]:
         pass
 
     @abstractmethod
