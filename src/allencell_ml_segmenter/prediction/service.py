@@ -9,7 +9,7 @@ from allencell_ml_segmenter.core.channel_extraction import (
     get_img_path_from_csv,
 )
 from allencell_ml_segmenter.utils.file_utils import FileUtils
-from napari.utils.notifications import show_error
+from napari.utils.notifications import show_error # type: ignore
 
 
 class ModelFileService(Subscriber):
@@ -58,10 +58,10 @@ class ModelFileService(Subscriber):
         (the images currently checked in the prediction widget). Throws ValueError
         if both fields uninitialized.
         """
-        path: Path = self._model.get_input_image_path()
-        img_path: Path = None
+        path: Optional[Path] = self._model.get_input_image_path()
+        img_path: Optional[Path] = None
         if not path:  # using viewer input method
-            paths: List[Path] = self._model.get_selected_paths()
+            paths: Optional[list[Path]] = self._model.get_selected_paths()
             if not paths or len(paths) <= 0:
                 raise ValueError(
                     "expected input_image_path or selected_paths to be initialized and non-empty"
@@ -93,9 +93,12 @@ class ModelFileService(Subscriber):
             self._on_channel_extraction_failed
         )
         self._current_thread.finished.connect(
-            lambda: self._running_threads.pop(thread_id)
+            lambda: self._on_channel_extraction_finished(thread_id)
         )
         self._current_thread.start()
+
+    def _on_channel_extraction_finished(self, thread_id: int) -> None:
+        self._running_threads.pop(thread_id)
 
     def _on_channel_extraction_failed(self, err: Exception) -> None:
         # setting max channels to none will result in the spinner stopping

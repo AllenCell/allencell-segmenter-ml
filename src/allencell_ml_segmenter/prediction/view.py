@@ -1,6 +1,6 @@
 from pathlib import Path
-from typing import List
-
+from typing import Optional
+import numpy as np
 from qtpy.QtCore import Qt
 
 from allencell_ml_segmenter._style import Style
@@ -63,12 +63,12 @@ class PredictionView(View, MainWindow):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
         self.setLayout(layout)
-        self.layout().setAlignment(Qt.AlignTop)
-        self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
+        layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+        self.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Maximum)
 
         self._title: QLabel = QLabel("SEGMENTATION PREDICTION", self)
         self._title.setObjectName("title")
-        self.layout().addWidget(self._title, alignment=Qt.AlignHCenter)
+        layout.addWidget(self._title, alignment=Qt.AlignmentFlag.AlignHCenter)
 
         self._file_input_widget: PredictionFileInput = PredictionFileInput(
             self._prediction_model, self._viewer, self._service
@@ -89,17 +89,17 @@ class PredictionView(View, MainWindow):
 
         top_container.addWidget(self._file_input_widget)
         top_dummy.setLayout(top_container)
-        self.layout().addWidget(top_dummy)
+        layout.addWidget(top_dummy)
 
         # Disabled for V1 chrishu 3/30/24 https://github.com/AllenCell/allencell-ml-segmenter/issues/274
         # bottom_container.addWidget(self._model_input_widget)
 
         bottom_dummy.setLayout(bottom_container)
-        self.layout().addWidget(bottom_dummy)
+        layout.addWidget(bottom_dummy)
 
         self._run_btn: QPushButton = QPushButton("Run")
         self._run_btn.setObjectName("run")
-        self.layout().addWidget(self._run_btn)
+        layout.addWidget(self._run_btn)
         self._run_btn.clicked.connect(self.run_btn_handler)
 
         self.setStyleSheet(Style.get_stylesheet("prediction_view.qss"))
@@ -118,11 +118,12 @@ class PredictionView(View, MainWindow):
         # Verify prediction is able to start, and write csv if needed
         self._prediction_model.dispatch_prediction_setup()
 
-        total_num_images = self._prediction_model.get_total_num_images()
-        if total_num_images:
+        total_num_images: Optional[int] = self._prediction_model.get_total_num_images()
+        output_seg_dir: Optional[Path] = self._prediction_model.get_output_seg_directory()
+        if total_num_images is not None and output_seg_dir is not None:
             progress_tracker: PredictionFolderProgressTracker = (
                 PredictionFolderProgressTracker(
-                    self._prediction_model.get_output_seg_directory(),
+                    output_seg_dir,
                     total_num_images,
                 )
             )
@@ -136,20 +137,22 @@ class PredictionView(View, MainWindow):
         return "Prediction"
 
     def showResults(self):
-        output_path: Path = self._prediction_model.get_output_seg_directory()
+        output_path: Optional[Path] = self._prediction_model.get_output_seg_directory()
 
         # Display images if prediction inputs are from Napari Layers
         if (
             self._prediction_model.get_prediction_input_mode()
-            == PredictionInputMode.FROM_NAPARI_LAYERS
+            == PredictionInputMode.FROM_NAPARI_LAYERS and output_path is not None
         ):
-            raw_imgs: list[Path] = self._prediction_model.get_selected_paths()
+            raw_imgs: Optional[list[Path]] = self._prediction_model.get_selected_paths()
             segmentations: list[Path] = (
                 FileUtils.get_all_files_in_dir_ignore_hidden(output_path)
             )
-            channel: int = (
+            channel: Optional[int] = (
                 self._prediction_model.get_image_input_channel_index()
             )
+            if raw_imgs is None or channel is None:
+                raise RuntimeError("Insufficient data to show results")
 
             # here, we will pair raw images and segmentations based on the stem component of their paths
             stem_to_data: dict[str, dict[str, Path]] = {
@@ -162,25 +165,25 @@ class PredictionView(View, MainWindow):
 
             self._viewer.clear_layers()
             for data in stem_to_data.values():
-                self._viewer.add_image(
-                    self._img_data_extractor.extract_image_data(
-                        data["raw"], channel=channel
-                    ).np_data,
-                    f"[raw] {data['raw'].name}",
-                )
-                self._viewer.add_labels(
-                    self._img_data_extractor.extract_image_data(
-                        data["seg"], seg=1
-                    ).np_data,
-                    name=f"[seg] {data['seg'].name}",
-                )
+                raw_np_data: Optional[np.ndarray] = self._img_data_extractor.extract_image_data(data["raw"], channel=channel).np_data
+                seg_np_data: Optional[np.ndarray] = self._img_data_extractor.extract_image_data(data["seg"], seg=1).np_data
+                if raw_np_data is not None:
+                    self._viewer.add_image(
+                        raw_np_data,
+                        f"[raw] {data['raw'].name}",
+                    )
+                if seg_np_data is not None:
+                    self._viewer.add_labels(
+                        seg_np_data,
+                        name=f"[seg] {data['seg'].name}",
+                    )
         # Display popup with saved images path if prediction inputs are from a directory
         else:
             dialog_box = DialogBox(
                 f"Predicted images saved to {str(output_path)}. \nWould you like to open this folder?"
             )
             dialog_box.exec()
-            if dialog_box.get_selection():
+            if dialog_box.get_selection() and output_path is not None:
                 FileUtils.open_directory_in_window(output_path)
 
     def focus_changed(self):
