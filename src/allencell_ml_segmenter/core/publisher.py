@@ -13,7 +13,7 @@ class Publisher(ABC):
     def __init__(self):
         # Map of Event -> Subscriber -> Handler function
         self._events_to_subscriber_handlers: Dict[
-            Dict[Subscriber, Callable]
+            Dict[object, Callable]
         ] = {event: dict() for event in [e.value for e in Event]}
 
     def dispatch(self, event: Event) -> None:
@@ -25,13 +25,13 @@ class Publisher(ABC):
         ].items():
             handler(event)
 
-    def subscribe(self, event: Event, subscriber: Subscriber, handler) -> None:
+    def subscribe(self, event: Event, subscriber: object, handler) -> None:
         """
         subscribes a subscriber to this publisher
         """
         self._events_to_subscriber_handlers[event.value][subscriber] = handler
 
-    def unsubscribe(self, event: Event, subscriber: Subscriber) -> None:
+    def unsubscribe(self, event: Event, subscriber: object) -> None:
         """
         unsubscribes a subscriber from this publisher
         """
