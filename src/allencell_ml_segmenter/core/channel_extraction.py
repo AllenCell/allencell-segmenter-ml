@@ -20,15 +20,18 @@ def extract_channels_from_image(img_path: Path) -> int:
 
 def get_img_path_from_csv(
     csv_path: Path, column: str = "raw"
-) -> Optional[Path]:
+) -> Path:
     """
     Returns path of an image in the specified column of the csv or None if there is no data in that column.
     :param csv_path: path to a csv with a 'raw' column
     """
+    img_path: Optional[str] = None
     with open(csv_path) as csv_file:
         reader: csv.DictReader = csv.DictReader(csv_file)
-        img_path: str = next(reader)[column] # type: ignore
-    return Path(img_path).resolve() if img_path else None
+        img_path = next(reader)[column] # type: ignore
+    if img_path is None:
+        raise ValueError(f"No valid data at {csv_path}")
+    return Path(img_path).resolve()
 
 
 class ChannelExtractionThread(QThread):
