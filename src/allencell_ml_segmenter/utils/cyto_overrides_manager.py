@@ -98,7 +98,7 @@ class CytoDLOverridesManager:
             self._training_model.get_selected_channel(ImageType.SEG2)
         )
 
-        # Pull weights from existing model
+        # tell cyto-dl to pull weights from existing model
         if self._training_model.is_using_existing_model():
             # use best checkpoint from existing model to pull weights from
             overrides_dict["ckpt_path"] = str(
