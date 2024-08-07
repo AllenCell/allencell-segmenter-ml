@@ -74,10 +74,18 @@ class TrainingService(Subscriber):
         #  https://github.com/AllenCell/allencell-ml-segmenter/issues/156
         if self._able_to_continue_training():
             model = CytoDLModel()
-            model.load_default_experiment(
-                self._training_model.get_experiment_type(),
-                output_dir=f"{self._experiments_model.get_user_experiments_path()}/{self._experiments_model.get_experiment_name()}",
-            )
+            if self._training_model.is_using_existing_model():
+                # if training from existing model start with that training config
+                model.load_config_from_file(
+                    self._experiments_model.get_train_config_path(
+                        self._training_model.get_existing_model()
+                    )
+                )
+            else:
+                model.load_default_experiment(
+                    self._training_model.get_experiment_type(),
+                    output_dir=f"{self._experiments_model.get_user_experiments_path()}/{self._experiments_model.get_experiment_name()}",
+                )
             cyto_overrides_manager: CytoDLOverridesManager = (
                 CytoDLOverridesManager(
                     self._experiments_model, self._training_model
