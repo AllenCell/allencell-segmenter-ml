@@ -46,10 +46,10 @@ class TrainingModel(Publisher):
         self, main_model: MainModel, experiments_model: ExperimentsModel
     ):
         super().__init__()
-        self._main_model = main_model
-        self.experiments_model = experiments_model
+        self._main_model: MainModel = main_model
+        self.experiments_model: ExperimentsModel = experiments_model
         self.signals: TrainingModelSignals = TrainingModelSignals()
-        self._experiment_type: TrainingType = None
+        self._experiment_type: TrainingType = TrainingType.SEGMENTATION_PLUGIN
         self._images_directory: Optional[Path] = None
         self._selected_channel: dict[ImageType, Optional[int]] = {
             t: None for t in ImageType
@@ -57,15 +57,14 @@ class TrainingModel(Publisher):
         self._num_channels: dict[ImageType, Optional[int]] = {
             t: None for t in ImageType
         }
-        self._model_path: Union[Path, None] = (
+        self._model_path: Optional[Path] = (
             None  # if None, start a new model
         )
-        self._patch_size: List[int] = None
-        self._spatial_dims: int = None
-        self._num_epochs: int = None
-        self._max_time: int = None  # in minutes
-        self._config_dir: Path = None
-        self._max_channel = None
+        self._patch_size: Optional[list[int]] = None
+        self._spatial_dims: Optional[int] = None
+        self._num_epochs: Optional[int] = None
+        self._max_time: Optional[int] = None  # in minutes
+        self._max_channel: Optional[int] = None
         self._use_max_time: bool = (
             False  # default is false. UI starts with max epoch defined rather than max time.
         )
@@ -90,7 +89,7 @@ class TrainingModel(Publisher):
         # convert string to enum
         self._experiment_type = TrainingType(training_type)
 
-    def get_spatial_dims(self) -> int:
+    def get_spatial_dims(self) -> Optional[int]:
         """
         Gets image dimensions
         """
@@ -106,7 +105,7 @@ class TrainingModel(Publisher):
             raise ValueError("No support for non 2D and 3D images.")
         self._spatial_dims = spatial_dims
 
-    def get_num_epochs(self) -> int:
+    def get_num_epochs(self) -> Optional[int]:
         """
         Gets max epoch
         """
@@ -136,7 +135,9 @@ class TrainingModel(Publisher):
         self.signals.images_directory_set.emit()
 
     def get_num_channels(self, image_type: ImageType) -> Optional[int]:
-        return self._num_channels[image_type]
+        if self._num_channels is not None:
+            return self._num_channels[image_type]
+        return None
 
     def set_all_num_channels(
         self, num_channels: dict[ImageType, Optional[int]]
@@ -148,17 +149,17 @@ class TrainingModel(Publisher):
         return self._selected_channel[image_type]
 
     def set_selected_channel(
-        self, image_type: ImageType, channel: int
+        self, image_type: ImageType, channel: Optional[int]
     ) -> None:
         self._selected_channel[image_type] = channel
 
-    def get_patch_size(self) -> List[int]:
+    def get_patch_size(self) -> Optional[list[int]]:
         """
         Gets patch size
         """
         return self._patch_size
 
-    def set_patch_size(self, patch_size: List[int]) -> None:
+    def set_patch_size(self, patch_size: list[int]) -> None:
         """
         Sets patch size
 
@@ -170,7 +171,7 @@ class TrainingModel(Publisher):
             )
         self._patch_size = patch_size
 
-    def get_max_time(self) -> int:
+    def get_max_time(self) -> Optional[int]:
         """
         Gets max runtime (in seconds)
         """
@@ -183,20 +184,6 @@ class TrainingModel(Publisher):
         max_time (int): maximum runtime for training, in seconds
         """
         self._max_time = max_time
-
-    def get_config_dir(self) -> Path:
-        """
-        Gets config directory
-        """
-        return self._config_dir
-
-    def set_config_dir(self, config_dir: Path) -> None:
-        """
-        Sets config directory
-
-        config_dir (str): path to config directory
-        """
-        self._config_dir = config_dir
 
     def dispatch_training(self) -> None:
         """
@@ -225,7 +212,7 @@ class TrainingModel(Publisher):
             )
         self._model_size = ModelSize[model_size]
 
-    def get_model_size(self) -> ModelSize:
+    def get_model_size(self) -> Optional[ModelSize]:
         return self._model_size
 
     def set_total_num_images(self, num_images: int) -> None:

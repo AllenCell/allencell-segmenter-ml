@@ -1,4 +1,4 @@
-from napari.utils.notifications import show_warning
+from napari.utils.notifications import show_warning # type: ignore
 from pathlib import Path
 from typing import Optional
 
@@ -62,16 +62,17 @@ class TrainingView(View, MainWindow):
         self._experiments_model: IExperimentsModel = experiments_model
         self._training_model: TrainingModel = training_model
 
-        self.setLayout(QVBoxLayout())
-        self.layout().setContentsMargins(0, 0, 0, 0)
-        self.layout().setSpacing(0)
-        self.layout().setAlignment(Qt.AlignTop)
-        self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
+        layout: QVBoxLayout = QVBoxLayout()
+        self.setLayout(layout)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(0)
+        layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+        self.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Maximum)
 
         self._title: QLabel = QLabel("SEGMENTATION MODEL TRAINING", self)
         self._title.setObjectName("title")
-        self.layout().addWidget(
-            self._title, alignment=Qt.AlignHCenter | Qt.AlignTop
+        layout.addWidget(
+            self._title, alignment=Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignTop # type: ignore
         )
 
         # initialize constituent widgets
@@ -86,7 +87,7 @@ class TrainingView(View, MainWindow):
         bottom_dummy: QFrame = QFrame()
         top_container.addWidget(self.image_selection_widget)
         top_dummy.setLayout(top_container)
-        self.layout().addWidget(top_dummy)
+        layout.addWidget(top_dummy)
 
         # bottom half
         bottom_grid_layout = QGridLayout()
@@ -167,9 +168,9 @@ class TrainingView(View, MainWindow):
         dimension_choice_layout.addWidget(self._radio_3d)
         dimension_choice_layout.addWidget(label_3d)
         dimension_choice_layout.addWidget(
-            self._radio_2d, alignment=Qt.AlignLeft
+            self._radio_2d, alignment=Qt.AlignmentFlag.AlignLeft
         )
-        dimension_choice_layout.addWidget(label_2d, alignment=Qt.AlignLeft)
+        dimension_choice_layout.addWidget(label_2d, alignment=Qt.AlignmentFlag.AlignLeft)
         dimension_choice_layout.addStretch(10)
         dimension_choice_layout.setContentsMargins(0, 0, 0, 0)
 
@@ -222,7 +223,7 @@ class TrainingView(View, MainWindow):
 
         max_time_right_text: LabelWithHint = LabelWithHint("minutes")
         max_time_right_text.set_hint("(Optional) Maximum time to train model")
-        max_time_layout.addWidget(max_time_right_text, alignment=Qt.AlignLeft)
+        max_time_layout.addWidget(max_time_right_text, alignment=Qt.AlignmentFlag.AlignLeft)
         max_time_layout.addStretch()
 
         bottom_grid_layout.addLayout(max_time_layout, 4, 1)
@@ -230,11 +231,11 @@ class TrainingView(View, MainWindow):
         bottom_grid_layout.setColumnStretch(0, 3)
 
         bottom_dummy.setLayout(bottom_grid_layout)
-        self.layout().addWidget(bottom_dummy)
+        layout.addWidget(bottom_dummy)
 
         self._train_btn: QPushButton = QPushButton("Start training")
         self._train_btn.setObjectName("trainBtn")
-        self.layout().addWidget(self._train_btn)
+        layout.addWidget(self._train_btn)
         self._train_btn.clicked.connect(self.train_btn_handler)
 
         self._main_model.subscribe(
@@ -252,12 +253,12 @@ class TrainingView(View, MainWindow):
         """
         if self._patch_size_ok():
             self.set_patch_size()
-
+            num_epochs: Optional[int] = self._training_model.get_num_epochs()
             progress_tracker: TrainingProgressTracker = (
                 TrainingProgressTracker(
                     self._experiments_model.get_metrics_csv_path(),
                     self._experiments_model.get_cache_dir(),
-                    self._training_model.get_num_epochs(),
+                    num_epochs if num_epochs is not None else 0,
                     self._training_model.get_total_num_images(),
                     self._experiments_model.get_latest_metrics_csv_version()
                     + 1,
@@ -280,8 +281,12 @@ class TrainingView(View, MainWindow):
         return "Training"
 
     def showResults(self):
-        csv_path: Path = self._experiments_model.get_latest_metrics_csv_path()
+        csv_path: Optional[Path] = self._experiments_model.get_latest_metrics_csv_path()
+        if csv_path is None:
+            raise RuntimeError("Cannot get min loss from undefined csv")
         min_loss: Optional[float] = FileUtils.get_min_loss_from_csv(csv_path)
+        if min_loss is None:
+            raise RuntimeError("Cannot compute min loss")
         dialog_box = InfoDialogBox(
             "Training finished -- Final loss: {:.3f}".format(min_loss)
         )

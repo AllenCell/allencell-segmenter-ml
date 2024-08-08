@@ -57,8 +57,8 @@ class ModelSelectionWidget(QWidget):
         # widget skeleton
         layout: QVBoxLayout = QVBoxLayout()
         self.setLayout(layout)
-        self.layout().setContentsMargins(0, 0, 0, 0)
-        self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
+        layout.setContentsMargins(0, 0, 0, 0)
+        self.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Maximum)
 
         self._title: LabelWithHint = LabelWithHint(
             ModelSelectionWidget.TITLE_TEXT,
@@ -107,16 +107,17 @@ class ModelSelectionWidget(QWidget):
         label_widget_layout.setSpacing(0)
         label_widget_layout.addWidget(self._title)
         label_widget_layout.addWidget(
-            self._model_name_label, alignment=Qt.AlignLeft
+            self._model_name_label, alignment=Qt.AlignmentFlag.AlignLeft
         )
         label_widget_layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
         # TODO: hints for widget titles?
 
         frame: QFrame = QFrame()
-        frame.setLayout(QVBoxLayout())
+        frame_layout: QVBoxLayout = QVBoxLayout()
+        frame.setLayout(frame_layout)
         # uncomment to make frame visible
         # frame.setObjectName("frame")
-        self.layout().addWidget(frame)
+        layout.addWidget(frame)
 
         # existing model selection components must be initialized before the new/existing model radios
         self._combo_box_existing_models: QComboBox = QComboBox()
@@ -176,20 +177,23 @@ class ModelSelectionWidget(QWidget):
         self._apply_btn.clicked.connect(self._handle_apply_model)
         apply_model_layout.addWidget(self._apply_btn)
 
-        frameLayout = QVBoxLayout()
-        frameLayout.addWidget(self._apply_change_stacked_widget)
-        frame.layout().addLayout(frameLayout)
+        inner_frame_layout = QVBoxLayout()
+        inner_frame_layout.addWidget(self._apply_change_stacked_widget)
+        frame_layout.addLayout(inner_frame_layout)
 
         self._experiments_model.subscribe(
             Event.ACTION_REFRESH, self, self._handle_process_event
         )
 
     def _handle_apply_model(self):
+        if self._experiment_name_selection is None:
+            raise RuntimeError("Cannot apply an empty model name")
+        
         self._experiments_model.apply_experiment_name(
             self._experiment_name_selection
         )
         self._title.set_value_text(
-            "    " + self._experiments_model.get_experiment_name()
+            "    " + self._experiment_name_selection
         )
         self._apply_change_stacked_widget.setVisible(False)
 
@@ -264,7 +268,7 @@ class ModelSelectionWidget(QWidget):
             )
             self._experiment_name_input.setEnabled(False)
 
-    def _handle_process_event(self, _: Event = None) -> None:
+    def _handle_process_event(self, _: Optional[Event] = None) -> None:
         """
         Refreshes the experiments in the _combo_box_existing_models.
         """
