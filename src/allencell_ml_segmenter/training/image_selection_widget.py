@@ -1,6 +1,5 @@
 from pathlib import Path
 from typing import Optional
-import json
 
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
@@ -8,7 +7,6 @@ from qtpy.QtWidgets import (
     QVBoxLayout,
     QSizePolicy,
     QFrame,
-    QLabel,
     QGridLayout,
     QComboBox,
 )
@@ -43,20 +41,22 @@ class ImageSelectionWidget(QWidget):
         self._experiments_model: IExperimentsModel = experiments_model
 
         # widget skeleton
-        self.setLayout(QVBoxLayout())
-        self.layout().setContentsMargins(0, 0, 0, 0)
-        self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
+        layout: QVBoxLayout = QVBoxLayout()
+        self.setLayout(layout)
+        layout.setContentsMargins(0, 0, 0, 0)
+        self.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Maximum)
 
         title: LabelWithHint = LabelWithHint(ImageSelectionWidget.TITLE_TEXT)
         # TODO: hints for widget titles?
         title.setObjectName("title")
-        self.layout().addWidget(title)
+        layout.addWidget(title)
 
         frame: QFrame = QFrame()
-        frame.setLayout(QGridLayout())
-        frame.layout().setSpacing(0)
+        frame_layout: QGridLayout = QGridLayout()
+        frame.setLayout(frame_layout)
+        frame_layout.setSpacing(0)
         frame.setObjectName("frame")
-        self.layout().addWidget(frame)
+        layout.addWidget(frame)
 
         # grid contents
         directory_label: LabelWithHint = LabelWithHint(
@@ -76,8 +76,8 @@ class ImageSelectionWidget(QWidget):
             self._images_directory_input_button
         )
 
-        frame.layout().setSpacing(10)
-        frame.layout().addWidget(directory_label, 0, 0, Qt.AlignVCenter)
+        frame_layout.setSpacing(10)
+        frame_layout.addWidget(directory_label, 0, 0, Qt.AlignmentFlag.AlignVCenter)
 
         # remove until we provide tutorial for manually creating csv
         # guide_text: QLabel = QLabel()
@@ -88,10 +88,10 @@ class ImageSelectionWidget(QWidget):
         # guide_text.setTextFormat(Qt.RichText)
         # guide_text.setOpenExternalLinks(True)
 
-        frame.layout().addWidget(
-            self._training_data_stacked_spinner, 0, 1, Qt.AlignVCenter
+        frame_layout.addWidget(
+            self._training_data_stacked_spinner, 0, 1, Qt.AlignmentFlag.AlignVCenter
         )
-        # frame.layout().addWidget(guide_text, 1, 1, Qt.AlignTop)
+        # frame_layout.addWidget(guide_text, 1, 1, Qt.AlignTop)
 
         self._raw_channel_combo_box: QComboBox = QComboBox()
         self._raw_channel_combo_box.setMinimumWidth(306)
@@ -99,8 +99,8 @@ class ImageSelectionWidget(QWidget):
         self._raw_channel_combo_box.currentIndexChanged.connect(
             lambda idx: self._handle_idx_change(idx, ImageType.RAW)
         )
-        frame.layout().addWidget(LabelWithHint("Raw image channel"), 2, 0)
-        frame.layout().addWidget(self._raw_channel_combo_box, 2, 1)
+        frame_layout.addWidget(LabelWithHint("Raw image channel"), 2, 0)
+        frame_layout.addWidget(self._raw_channel_combo_box, 2, 1)
 
         self._seg1_channel_combo_box: QComboBox = QComboBox()
         self._seg1_channel_combo_box.setMinimumWidth(306)
@@ -108,8 +108,8 @@ class ImageSelectionWidget(QWidget):
         self._seg1_channel_combo_box.currentIndexChanged.connect(
             lambda idx: self._handle_idx_change(idx, ImageType.SEG1)
         )
-        frame.layout().addWidget(LabelWithHint("Seg1 image channel"), 3, 0)
-        frame.layout().addWidget(self._seg1_channel_combo_box, 3, 1)
+        frame_layout.addWidget(LabelWithHint("Seg1 image channel"), 3, 0)
+        frame_layout.addWidget(self._seg1_channel_combo_box, 3, 1)
 
         self._seg2_channel_combo_box: QComboBox = QComboBox()
         self._seg2_channel_combo_box.setMinimumWidth(306)
@@ -117,8 +117,8 @@ class ImageSelectionWidget(QWidget):
         self._seg2_channel_combo_box.currentIndexChanged.connect(
             lambda idx: self._handle_idx_change(idx, ImageType.SEG2)
         )
-        frame.layout().addWidget(LabelWithHint("Seg2 image channel"), 4, 0)
-        frame.layout().addWidget(self._seg2_channel_combo_box, 4, 1)
+        frame_layout.addWidget(LabelWithHint("Seg2 image channel"), 4, 0)
+        frame_layout.addWidget(self._seg2_channel_combo_box, 4, 1)
 
         self._experiments_model.subscribe(
             Event.ACTION_EXPERIMENT_APPLIED, self, self.set_inputs_csv
@@ -126,7 +126,7 @@ class ImageSelectionWidget(QWidget):
 
         self._model.signals.num_channels_set.connect(self._update_channels)
 
-    def set_inputs_csv(self, event: Event = None):
+    def set_inputs_csv(self, event: Optional[Event] = None):
         if self._experiments_model.get_csv_path() is not None:
             csv_path = self._experiments_model.get_csv_path() / "train.csv"
             if csv_path.is_file():

@@ -10,7 +10,7 @@ class PatchSizeValidator(QValidator):
         This function attempts to change input to be valid according to this validator’s rules.
         It need not result in a valid string: callers of this function must re-test afterwards; the default does nothing
         """
-        if a0.isdecimal():
+        if a0 is not None and a0.isdecimal():
             as_int: int = int(a0)
             # negative and 0 patch sizes not allowed
             if as_int < 4:
@@ -18,7 +18,7 @@ class PatchSizeValidator(QValidator):
             # round down to the nearest multiple of 4
             return str(as_int - (as_int % 4))
         else:
-            return a0
+            return a0 if a0 is not None else ""
 
     # override
     def validate(
@@ -43,4 +43,4 @@ class PatchSizeValidator(QValidator):
             else:
                 status = QValidator.State.Invalid
 
-        return status, a0, a1
+        return status, a0 if a0 is not None else "", a1
