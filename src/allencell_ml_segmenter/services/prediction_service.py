@@ -13,7 +13,7 @@ from allencell_ml_segmenter.utils.cuda_util import CUDAUtils
 from allencell_ml_segmenter.utils.file_utils import FileUtils
 
 from pathlib import Path
-from typing import Union, Dict, List, Optional
+from typing import Union, Any, List, Optional
 
 from cyto_dl.api.model import CytoDLModel # type: ignore
 from napari.utils.notifications import show_warning # type: ignore
@@ -74,7 +74,7 @@ class PredictionService(Subscriber):
 
     def _able_to_continue_prediction(self) -> bool:
         # Check to see if experiment selected
-        experiment_name: str = self._experiments_model.get_experiment_name()
+        experiment_name: Optional[str] = self._experiments_model.get_experiment_name()
         if experiment_name is None:
             show_warning(
                 "Please select an experiment before running prediction."
@@ -109,7 +109,7 @@ class PredictionService(Subscriber):
         If needed, write csv's for predictions, and set total number of images to be processed
         """
         # Check to see if user has selected an input mode
-        input_mode_selected: PredictionInputMode = (
+        input_mode_selected: Optional[PredictionInputMode] = (
             self._prediction_model.get_prediction_input_mode()
         )
         if not input_mode_selected:
@@ -128,12 +128,12 @@ class PredictionService(Subscriber):
 
     def build_overrides(
         self, experiment_name: str, checkpoint: str
-    ) -> Dict[str, Union[str, int, float, bool]]:
+    ) -> dict[str, Any]:
         """
         Build an overrides list for the cyto-dl API containing the
         overrides requried to run predictions, formatted as cyto-dl expects.
         """
-        overrides: Dict[str, Union[str, int, float, bool]] = dict()
+        overrides: dict[str, Any] = dict()
         # Default overrides needed for prediction
         overrides["test"] = False
         overrides["train"] = False
@@ -150,18 +150,23 @@ class PredictionService(Subscriber):
                 experiment_name=experiment_name, checkpoint=checkpoint
             )
         )
+
+        input_path: Optional[Path] = self._prediction_model.get_input_image_path()
+        if input_path is None:
+            raise RuntimeError("Path to prediction input undefined")
+        
         overrides["data.path"] = str(
-            self._prediction_model.get_input_image_path()
+            input_path
         )
 
         # overrides from model
         # if output_dir is not set, will default to saving in the experiment folder
-        output_dir: Path = self._prediction_model.get_output_directory()
+        output_dir: Optional[Path] = self._prediction_model.get_output_directory()
         if output_dir:
             overrides["paths.output_dir"] = str(output_dir)
 
         # if channel is not set, will default to same channel used to train
-        channel: int = self._prediction_model.get_image_input_channel_index()
+        channel: Optional[int] = self._prediction_model.get_image_input_channel_index()
         if channel:
             overrides["data.transforms.predict.transforms[1].reader[0].C"] = (
                 channel
@@ -180,12 +185,12 @@ class PredictionService(Subscriber):
         """
         write csv for inputs and return the total number of images
         """
-        if self._experiments_model.get_csv_path() is not None:
-            data_folder: Path = self._experiments_model.get_csv_path()
+        data_folder: Optional[Path] = self._experiments_model.get_csv_path()
+        if data_folder is not None:
             data_folder.mkdir(parents=False, exist_ok=True)
             csv_path: Path = data_folder / "test_csv.csv"
             with open(csv_path, "w") as file:
-                writer: csv.writer = csv.writer(file)
+                writer = csv.writer(file)
                 writer.writerow(["", "raw", "split"])
                 for i, path_of_image in enumerate(list_images):
                     writer.writerow([str(i), str(path_of_image), "test"])
@@ -197,15 +202,15 @@ class PredictionService(Subscriber):
         setup inputs from path and return total number of images to predict
         """
         # User has selected a directory or a csv as input images
-        input_path: Path = self._prediction_model.get_input_image_path()
-        if input_path.is_dir():
-            all_files = FileUtils.get_all_files_in_dir_ignore_hidden(
+        input_path: Optional[Path] = self._prediction_model.get_input_image_path()
+        if input_path is not None and input_path.is_dir():
+            all_files: list[Path] = FileUtils.get_all_files_in_dir_ignore_hidden(
                 input_path
             )
             # if input path selected is a directory, we need to manually write a CSV for cyto-dl
             self.write_csv_for_inputs(all_files)
             return len(all_files)
-        elif input_path.suffix == ".csv":
+        elif input_path is not None and input_path.suffix == ".csv":
             return self._grab_csv_data_rows(input_path)
         else:
             # This should not be possible with FileInputWidget- throw an error.
@@ -224,10 +229,10 @@ class PredictionService(Subscriber):
         setup inputs from napari layers and return total number of images to predict
         """
         # User has selected napari image layers as input images
-        selected_paths_from_napari: List[Path] = (
+        selected_paths_from_napari: Optional[list[Path]] = (
             self._prediction_model.get_selected_paths()
         )
-        if len(selected_paths_from_napari) < 1:
+        if selected_paths_from_napari is None or len(selected_paths_from_napari) < 1:
             # No image layers selected
             show_warning(
                 "Please select at least 1 image from the napari layer before running prediction."
@@ -236,6 +241,6 @@ class PredictionService(Subscriber):
         else:
             # If user selects input images from napari, we need to manually write a csv for cyto-dl
             self.write_csv_for_inputs(
-                self._prediction_model.get_selected_paths()
+                selected_paths_from_napari
             )
             return len(selected_paths_from_napari)
