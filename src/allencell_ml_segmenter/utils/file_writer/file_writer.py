@@ -4,14 +4,14 @@ from pathlib import Path
 import csv
 import json
 from io import TextIOBase
-from typing import List, Dict, Tuple, Union
+from typing import List, Tuple, Union, Any
 
 
 class FileWriter(IFileWriter):
     _instance = None
 
     # maps path to an open csv file and the corresponding csv writer
-    _open_files: Dict[Path, Tuple[TextIOBase, csv.writer]] = {}
+    _open_files: dict[Path, Tuple[TextIOBase, Any]] = {}
 
     def np_save(self, path: Path, arr: np.ndarray) -> None:
         """
@@ -31,7 +31,7 @@ class FileWriter(IFileWriter):
             raise RuntimeError(f"{path} already open")
         path.parent.mkdir(parents=True, exist_ok=True)
         open_file: TextIOBase = open(path, "w", newline="")
-        writer: csv.writer = csv.writer(open_file, delimiter=",")
+        writer = csv.writer(open_file, delimiter=",")
         self._open_files[path] = (open_file, writer)
 
     def csv_write_row(self, path: Path, row: List[str]) -> None:
@@ -43,7 +43,7 @@ class FileWriter(IFileWriter):
             raise RuntimeError(
                 f"{path} must be opened with csv_open_write_mode before writing"
             )
-        self._open_files[path][1].writerow(row)
+        self._open_files[path][1].writerow(row) # type: ignore
 
     def csv_close(self, path: Path) -> None:
         """
