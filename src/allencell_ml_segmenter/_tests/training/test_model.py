@@ -262,31 +262,3 @@ def test_set_max_time(training_model: TrainingModel) -> None:
     # ASSERT
     assert training_model._max_time == 100
 
-
-def test_get_config_dir(training_model: TrainingModel) -> None:
-    """
-    Tests that get_config_dir returns the correct config directory.
-    """
-    # ASSERT
-    assert training_model.get_config_dir() is None
-
-    # ARRANGE
-    path: Path = Path("/path/to/config")
-    training_model._config_dir = path
-
-    # ACT/ASSERT
-    assert training_model.get_config_dir() == path
-
-
-def test_set_config_dir(training_model: TrainingModel) -> None:
-    """
-    Tests that set_config_dir sets the correct config directory.
-    """
-    # ARRANGE
-    path: Path = Path("/path/to/config")
-
-    # ACT
-    training_model.set_config_dir(path)
-
-    # ASSERT
-    assert training_model._config_dir == path
