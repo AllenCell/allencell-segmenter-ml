@@ -43,7 +43,7 @@ class FileUtils:
         image: Path = next(path_generator)
         # ignore hidden files
         while str(image.name).startswith("."):
-            image: Path = next(path_generator)
+            image = next(path_generator)
         return image.resolve()
 
     @staticmethod
@@ -67,7 +67,7 @@ class FileUtils:
         min_loss: Optional[float] = None
         with open(csv_path, newline="") as fr:
             reader: DictReader = DictReader(fr)
-            if LOSS_COLUMN not in reader.fieldnames:
+            if reader.fieldnames is None or LOSS_COLUMN not in reader.fieldnames:
                 return None
 
             for row in reader:
@@ -190,12 +190,12 @@ class FileUtils:
                             else ""
                         ),
                         (
-                            get_merg_mask_path(record.raw_file.resolve())
+                            str(get_merg_mask_path(record.raw_file.resolve()))
                             if record.merging_mask is not None
                             else ""
                         ),
                         (
-                            get_excl_mask_path(record.raw_file.resolve())
+                            str(get_excl_mask_path(record.raw_file.resolve()))
                             if record.excluding_mask is not None
                             else ""
                         ),
@@ -209,7 +209,7 @@ class FileUtils:
     def open_directory_in_window(dir: Path) -> None:
         # for Windows operating systems
         if platform.system() == "Windows":
-            os.startfile(dir)
+            os.startfile(dir) # type: ignore
         # for MacOS operating systems
         elif platform.system() == "Darwin":
             subprocess.Popen(["open", dir])
