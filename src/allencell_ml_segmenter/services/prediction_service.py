@@ -15,8 +15,8 @@ from allencell_ml_segmenter.utils.file_utils import FileUtils
 from pathlib import Path
 from typing import Union, Dict, List, Optional
 
-from cyto_dl.api.model import CytoDLModel
-from napari.utils.notifications import show_warning
+from cyto_dl.api.model import CytoDLModel # type: ignore
+from napari.utils.notifications import show_warning # type: ignore
 
 
 class PredictionService(Subscriber):
@@ -55,11 +55,15 @@ class PredictionService(Subscriber):
         cyto_api.load_config_from_file(
             self._experiments_model.get_train_config_path()
         )
+        exp_name: Optional[str] = self._experiments_model.get_experiment_name()
+        ckpt: Optional[str] = self._experiments_model.get_checkpoint()
+        if exp_name is None or ckpt is None:
+            raise RuntimeError("Experiment name or checkpoint undefined. Cannot predict")
         # We must override the config to set up predictions correctly
         cyto_api.override_config(
             self.build_overrides(
-                self._experiments_model.get_experiment_name(),
-                self._experiments_model.get_checkpoint(),
+                exp_name,
+                ckpt,
             )
         )
         cyto_api.predict()
