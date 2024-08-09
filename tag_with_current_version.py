@@ -1,6 +1,6 @@
 # This file is intended to be called by a github workflow
 import subprocess
-import toml # type: ignore
+import toml  # type: ignore
 
 
 def main() -> None:

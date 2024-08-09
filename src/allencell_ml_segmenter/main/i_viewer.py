@@ -6,8 +6,8 @@ from allencell_ml_segmenter.main.segmenter_layer import (
     LabelsLayer,
 )
 import numpy as np
-from napari.layers import Layer # type: ignore
-from napari.utils.events import Event as NapariEvent # type: ignore
+from napari.layers import Layer  # type: ignore
+from napari.utils.events import Event as NapariEvent  # type: ignore
 
 
 class IViewer(ABC):

@@ -67,7 +67,10 @@ class FileUtils:
         min_loss: Optional[float] = None
         with open(csv_path, newline="") as fr:
             reader: DictReader = DictReader(fr)
-            if reader.fieldnames is None or LOSS_COLUMN not in reader.fieldnames:
+            if (
+                reader.fieldnames is None
+                or LOSS_COLUMN not in reader.fieldnames
+            ):
                 return None
 
             for row in reader:
@@ -209,7 +212,7 @@ class FileUtils:
     def open_directory_in_window(dir: Path) -> None:
         # for Windows operating systems
         if platform.system() == "Windows":
-            os.startfile(dir) # type: ignore
+            os.startfile(dir)  # type: ignore
         # for MacOS operating systems
         elif platform.system() == "Darwin":
             subprocess.Popen(["open", dir])

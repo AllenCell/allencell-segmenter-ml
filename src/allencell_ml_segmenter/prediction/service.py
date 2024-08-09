@@ -9,7 +9,7 @@ from allencell_ml_segmenter.core.channel_extraction import (
     get_img_path_from_csv,
 )
 from allencell_ml_segmenter.utils.file_utils import FileUtils
-from napari.utils.notifications import show_error # type: ignore
+from napari.utils.notifications import show_error  # type: ignore
 
 
 class ModelFileService(Subscriber):

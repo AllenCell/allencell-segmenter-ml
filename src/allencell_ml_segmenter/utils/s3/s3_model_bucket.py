@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import Optional
 from xml.etree import ElementTree
 from xml.etree.ElementTree import Element
-import requests # type: ignore
+import requests  # type: ignore
 
 from allencell_ml_segmenter.utils.s3.s3_available_model import AvailableModel
 from allencell_ml_segmenter.utils.s3.s3_request_exception import (
@@ -70,7 +70,9 @@ class S3ModelBucket:
         # which contains the object's filename
         all_s3_objects: list[str] = []
         for xml_content in xml_root.findall("aws_s3:Contents", XML_NAMESPACES):
-            elem: Optional[Element] = xml_content.find("aws_s3:Key", XML_NAMESPACES)
+            elem: Optional[Element] = xml_content.find(
+                "aws_s3:Key", XML_NAMESPACES
+            )
             if elem is not None and elem.text is not None:
                 all_s3_objects.append(elem.text)
 

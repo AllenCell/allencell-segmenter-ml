@@ -74,7 +74,9 @@ class MainService:
         jsonified_channels: dict[str, Optional[int]] = {
             k.value: v for k, v in selected_channels.items()
         }
-        channel_sel_path: Optional[Path] = self._experiments_model.get_channel_selection_path()
+        channel_sel_path: Optional[Path] = (
+            self._experiments_model.get_channel_selection_path()
+        )
         if channel_sel_path is not None:
             self._file_writer.write_json(
                 jsonified_channels,

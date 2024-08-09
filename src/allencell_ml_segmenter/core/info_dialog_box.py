@@ -26,6 +26,6 @@ class InfoDialogBox(QDialog):
         self.close_btn.clicked.connect(self._on_close_clicked)
         btns.addWidget(self.close_btn)
         layout.addLayout(btns)
-    
+
     def _on_close_clicked(self) -> None:
         self.close()

@@ -30,7 +30,7 @@ from allencell_ml_segmenter.core.info_dialog_box import InfoDialogBox
 from allencell_ml_segmenter.main.main_model import MIN_DATASET_SIZE
 
 
-from napari.utils.notifications import show_info, show_warning # type: ignore
+from napari.utils.notifications import show_info, show_warning  # type: ignore
 from copy import deepcopy
 import numpy as np
 
@@ -52,13 +52,15 @@ class CurationMainView(QWidget):
         layout.setContentsMargins(0, 10, 0, 10)
         layout.setSpacing(0)
         layout.setAlignment(Qt.AlignmentFlag.AlignTop)
-        self.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Maximum)
+        self.setSizePolicy(
+            QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Maximum
+        )
         self.setStyleSheet(Style.get_stylesheet("curation_main.qss"))
 
         self._title: QLabel = QLabel("CURATION UI MAIN", self)
         self._title.setObjectName("title")
         layout.addWidget(
-            self._title, alignment=Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignTop # type: ignore
+            self._title, alignment=Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignTop  # type: ignore
         )
 
         frame: QFrame = QFrame()
@@ -67,7 +69,9 @@ class CurationMainView(QWidget):
         layout.addWidget(frame)
 
         input_images_label: QLabel = QLabel("Curation Progress")
-        frame_layout.addWidget(input_images_label, alignment=Qt.AlignmentFlag.AlignHCenter)
+        frame_layout.addWidget(
+            input_images_label, alignment=Qt.AlignmentFlag.AlignHCenter
+        )
 
         progress_bar_layout: QHBoxLayout = QHBoxLayout()
         # Button and progress bar on top row
@@ -84,7 +88,8 @@ class CurationMainView(QWidget):
         inner_progress_frame_layout.addWidget(self.progress_bar)
         self.progress_bar_image_count: QLabel = QLabel("0/0")
         inner_progress_frame_layout.addWidget(
-            self.progress_bar_image_count, alignment=Qt.AlignmentFlag.AlignRight
+            self.progress_bar_image_count,
+            alignment=Qt.AlignmentFlag.AlignRight,
         )
         progress_bar_layout.addWidget(inner_progress_frame)
         self.next_button: QPushButton = QPushButton()
@@ -103,7 +108,9 @@ class CurationMainView(QWidget):
         layout.addWidget(self.save_csv_button)
 
         self.file_name: QLabel = QLabel()
-        layout.addWidget(self.file_name, alignment=Qt.AlignmentFlag.AlignHCenter)
+        layout.addWidget(
+            self.file_name, alignment=Qt.AlignmentFlag.AlignHCenter
+        )
 
         use_image_frame: QFrame = QFrame()
         use_image_frame.setObjectName("frame")
@@ -129,12 +136,15 @@ class CurationMainView(QWidget):
 
         self.use_img_stacked_spinner = StackedSpinner(use_image_frame)
         layout.addWidget(
-            self.use_img_stacked_spinner, alignment=Qt.AlignmentFlag.AlignHCenter
+            self.use_img_stacked_spinner,
+            alignment=Qt.AlignmentFlag.AlignHCenter,
         )
 
         optional_text: QLabel = QLabel("OPTIONAL", self)
         optional_text.setObjectName("text_with_vert_padding")
-        layout.addWidget(optional_text, alignment=Qt.AlignmentFlag.AlignHCenter)
+        layout.addWidget(
+            optional_text, alignment=Qt.AlignmentFlag.AlignHCenter
+        )
 
         base_image_layout: QGridLayout = QGridLayout()
         base_combo_label: LabelWithHint = LabelWithHint(
@@ -280,15 +290,15 @@ class CurationMainView(QWidget):
         self.next_button.setText("Loading next...")
 
     def add_curr_images_to_widget(self) -> None:
-        raw_img_data: Optional[ImageData] = self._curation_model.get_curr_image_data(
-            ImageType.RAW
+        raw_img_data: Optional[ImageData] = (
+            self._curation_model.get_curr_image_data(ImageType.RAW)
         )
         if raw_img_data is not None and raw_img_data.np_data is not None:
             self._viewer.add_image(
                 raw_img_data.np_data, f"[raw] {raw_img_data.path.name}"
             )
-        seg1_img_data: Optional[ImageData] = self._curation_model.get_curr_image_data(
-            ImageType.SEG1
+        seg1_img_data: Optional[ImageData] = (
+            self._curation_model.get_curr_image_data(ImageType.SEG1)
         )
         if seg1_img_data is not None and seg1_img_data.np_data is not None:
             self._viewer.add_labels(
@@ -367,8 +377,13 @@ class CurationMainView(QWidget):
             save_changes_prompt = DialogBox(
                 f"The current {mask_type} mask layer has unsaved changes. Would you like to save these changes?"
             )
-            selection: QDialog.DialogCode = QDialog.DialogCode(save_changes_prompt.exec())
-            if selection == QDialog.DialogCode.Accepted and curr_mask_layer is not None:
+            selection: QDialog.DialogCode = QDialog.DialogCode(
+                save_changes_prompt.exec()
+            )
+            if (
+                selection == QDialog.DialogCode.Accepted
+                and curr_mask_layer is not None
+            ):
                 return deepcopy(curr_mask_layer.data)
         return saved_mask
 
@@ -477,7 +492,7 @@ class CurationMainView(QWidget):
         """
         curr_val: int = 0
         if self._curation_model.get_curr_image_index() is not None:
-            curr_val = self._curation_model.get_curr_image_index() + 1 # type: ignore
+            curr_val = self._curation_model.get_curr_image_index() + 1  # type: ignore
         num_images: int = self._curation_model.get_num_images()
         self.progress_bar.setMaximum(num_images)
         self.progress_bar.setValue(curr_val)
@@ -488,13 +503,19 @@ class CurationMainView(QWidget):
         discard_layer_prompt = DialogBox(
             f"There is already a '{layer}' layer in the viewer. Would you like to discard this layer?"
         )
-        return QDialog.DialogCode(discard_layer_prompt.exec()) == QDialog.DialogCode.Accepted
+        return (
+            QDialog.DialogCode(discard_layer_prompt.exec())
+            == QDialog.DialogCode.Accepted
+        )
 
     def _replace_saved_mask_prompt(self, merging_or_excluding: str) -> bool:
         replace_prompt = DialogBox(
             f"There is already a {merging_or_excluding} mask layer saved. Would you like to overwrite?"
         )
-        return QDialog.DialogCode(replace_prompt.exec()) == QDialog.DialogCode.Accepted
+        return (
+            QDialog.DialogCode(replace_prompt.exec())
+            == QDialog.DialogCode.Accepted
+        )
 
     def _create_merging_mask(self) -> None:
         if self._viewer.contains_layer(MERGING_MASK_LAYER_NAME):

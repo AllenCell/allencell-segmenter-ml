@@ -14,10 +14,10 @@ from allencell_ml_segmenter.curation.curation_model import (
 )
 from allencell_ml_segmenter.curation.input_view import CurationInputView
 from allencell_ml_segmenter.curation.main_view import CurationMainView
-import napari # type: ignore
+import napari  # type: ignore
 
 
-class CurationUiMeta(type(QStackedWidget), type(Subscriber)): # type: ignore
+class CurationUiMeta(type(QStackedWidget), type(Subscriber)):  # type: ignore
     """
     Metaclass for MainWidget
 
@@ -39,7 +39,9 @@ class CurationWidget(
         self.view_to_index: Dict[View, int] = dict()
         self.curation_model: CurationModel = curation_model
         # basic styling
-        self.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.MinimumExpanding)
+        self.setSizePolicy(
+            QSizePolicy.Policy.Preferred, QSizePolicy.Policy.MinimumExpanding
+        )
         layout: QVBoxLayout = QVBoxLayout()
         self.setLayout(layout)
         layout.setContentsMargins(0, 0, 0, 0)

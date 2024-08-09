@@ -44,7 +44,9 @@ class ImageSelectionWidget(QWidget):
         layout: QVBoxLayout = QVBoxLayout()
         self.setLayout(layout)
         layout.setContentsMargins(0, 0, 0, 0)
-        self.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Maximum)
+        self.setSizePolicy(
+            QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Maximum
+        )
 
         title: LabelWithHint = LabelWithHint(ImageSelectionWidget.TITLE_TEXT)
         # TODO: hints for widget titles?
@@ -77,7 +79,9 @@ class ImageSelectionWidget(QWidget):
         )
 
         frame_layout.setSpacing(10)
-        frame_layout.addWidget(directory_label, 0, 0, Qt.AlignmentFlag.AlignVCenter)
+        frame_layout.addWidget(
+            directory_label, 0, 0, Qt.AlignmentFlag.AlignVCenter
+        )
 
         # remove until we provide tutorial for manually creating csv
         # guide_text: QLabel = QLabel()
@@ -89,7 +93,10 @@ class ImageSelectionWidget(QWidget):
         # guide_text.setOpenExternalLinks(True)
 
         frame_layout.addWidget(
-            self._training_data_stacked_spinner, 0, 1, Qt.AlignmentFlag.AlignVCenter
+            self._training_data_stacked_spinner,
+            0,
+            1,
+            Qt.AlignmentFlag.AlignVCenter,
         )
         # frame_layout.addWidget(guide_text, 1, 1, Qt.AlignTop)
 

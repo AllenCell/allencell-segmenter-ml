@@ -58,7 +58,9 @@ class ModelSelectionWidget(QWidget):
         layout: QVBoxLayout = QVBoxLayout()
         self.setLayout(layout)
         layout.setContentsMargins(0, 0, 0, 0)
-        self.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Maximum)
+        self.setSizePolicy(
+            QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Maximum
+        )
 
         self._title: LabelWithHint = LabelWithHint(
             ModelSelectionWidget.TITLE_TEXT,
@@ -188,13 +190,11 @@ class ModelSelectionWidget(QWidget):
     def _handle_apply_model(self) -> None:
         if self._experiment_name_selection is None:
             raise RuntimeError("Cannot apply an empty model name")
-        
+
         self._experiments_model.apply_experiment_name(
             self._experiment_name_selection
         )
-        self._title.set_value_text(
-            "    " + self._experiment_name_selection
-        )
+        self._title.set_value_text("    " + self._experiment_name_selection)
         self._apply_change_stacked_widget.setVisible(False)
 
     def _model_combo_handler(self, experiment_name: str) -> None:

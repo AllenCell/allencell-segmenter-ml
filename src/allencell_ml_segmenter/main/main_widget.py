@@ -3,7 +3,7 @@ from allencell_ml_segmenter.config.i_user_settings import IUserSettings
 
 from allencell_ml_segmenter.main.viewer import Viewer
 
-import napari # type: ignore
+import napari  # type: ignore
 from allencell_ml_segmenter.curation.curation_widget import CurationWidget
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
@@ -43,7 +43,9 @@ class MainWidget(AicsWidget):
     Holds the pertinent view at the moment to be displayed to the user.
     """
 
-    def __init__(self, viewer: napari.Viewer, settings: Optional[IUserSettings]=None):
+    def __init__(
+        self, viewer: napari.Viewer, settings: Optional[IUserSettings] = None
+    ):
         super().__init__()
         self.user_settings: IUserSettings
         if settings is None:
@@ -54,7 +56,9 @@ class MainWidget(AicsWidget):
         self.viewer: IViewer = Viewer(viewer)
 
         # basic styling
-        self.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.MinimumExpanding)
+        self.setSizePolicy(
+            QSizePolicy.Policy.Preferred, QSizePolicy.Policy.MinimumExpanding
+        )
         layout: QVBoxLayout = QVBoxLayout()
         self.setLayout(layout)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -185,7 +189,7 @@ class MainWidget(AicsWidget):
     def _initialize_window(self, window: MainWindow, title: str) -> None:
         # QTabWidget count method keeps track of how many child widgets have been added
         self._window_to_index[window] = self._window_container.count()
-        self._window_container.addTab(window, title) # type: ignore
+        self._window_container.addTab(window, title)  # type: ignore
 
     def _tab_changed(self, index: int) -> None:
         """

@@ -1,4 +1,4 @@
-from napari.utils.notifications import show_warning # type: ignore
+from napari.utils.notifications import show_warning  # type: ignore
 from pathlib import Path
 from typing import Optional
 
@@ -67,12 +67,14 @@ class TrainingView(View, MainWindow):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
         layout.setAlignment(Qt.AlignmentFlag.AlignTop)
-        self.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Maximum)
+        self.setSizePolicy(
+            QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Maximum
+        )
 
         self._title: QLabel = QLabel("SEGMENTATION MODEL TRAINING", self)
         self._title.setObjectName("title")
         layout.addWidget(
-            self._title, alignment=Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignTop # type: ignore
+            self._title, alignment=Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignTop  # type: ignore
         )
 
         # initialize constituent widgets
@@ -170,7 +172,9 @@ class TrainingView(View, MainWindow):
         dimension_choice_layout.addWidget(
             self._radio_2d, alignment=Qt.AlignmentFlag.AlignLeft
         )
-        dimension_choice_layout.addWidget(label_2d, alignment=Qt.AlignmentFlag.AlignLeft)
+        dimension_choice_layout.addWidget(
+            label_2d, alignment=Qt.AlignmentFlag.AlignLeft
+        )
         dimension_choice_layout.addStretch(10)
         dimension_choice_layout.setContentsMargins(0, 0, 0, 0)
 
@@ -223,7 +227,9 @@ class TrainingView(View, MainWindow):
 
         max_time_right_text: LabelWithHint = LabelWithHint("minutes")
         max_time_right_text.set_hint("(Optional) Maximum time to train model")
-        max_time_layout.addWidget(max_time_right_text, alignment=Qt.AlignmentFlag.AlignLeft)
+        max_time_layout.addWidget(
+            max_time_right_text, alignment=Qt.AlignmentFlag.AlignLeft
+        )
         max_time_layout.addStretch()
 
         bottom_grid_layout.addLayout(max_time_layout, 4, 1)
@@ -281,7 +287,9 @@ class TrainingView(View, MainWindow):
         return "Training"
 
     def showResults(self) -> None:
-        csv_path: Optional[Path] = self._experiments_model.get_latest_metrics_csv_path()
+        csv_path: Optional[Path] = (
+            self._experiments_model.get_latest_metrics_csv_path()
+        )
         if csv_path is None:
             raise RuntimeError("Cannot get min loss from undefined csv")
         min_loss: Optional[float] = FileUtils.get_min_loss_from_csv(csv_path)
