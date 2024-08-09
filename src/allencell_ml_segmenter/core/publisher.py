@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import Dict, Callable
+from typing import Any, Callable
 
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.event import Event
@@ -12,8 +12,8 @@ class Publisher(ABC):
 
     def __init__(self):
         # Map of Event -> Subscriber -> Handler function
-        self._events_to_subscriber_handlers: Dict[
-            Dict[object, Callable]
+        self._events_to_subscriber_handlers: dict[
+            Any, dict[object, Callable]
         ] = {event: dict() for event in [e.value for e in Event]}
 
     def dispatch(self, event: Event) -> None:

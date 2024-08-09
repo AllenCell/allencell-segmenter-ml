@@ -6,7 +6,7 @@ from typing import Optional
 
 class IUserSettings(ABC):
     def __init__(self):
-        super.__init__(self)
+        super().__init__()
 
     @abstractmethod
     def get_cyto_dl_home_path(self) -> Path:

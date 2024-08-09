@@ -66,5 +66,6 @@ class ChannelExtractionThread(QThread):
             self.task_failed.emit(ex)
             return  # return instead of reraise to surprss error message in napari console
 
-        if not QThread.currentThread().isInterruptionRequested():
+        curr_thread: Optional[QThread] = QThread.currentThread()
+        if curr_thread is not None and not curr_thread.isInterruptionRequested():
             self.channels_ready.emit(channels)
