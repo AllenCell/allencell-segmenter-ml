@@ -23,9 +23,13 @@ class ModelDownloadDialog(QDialog):
     ):
         super().__init__(parent)
         self._experiments_model = experiments_model
-        exp_path: Optional[Path] = self._experiments_model.get_user_experiments_path()
+        exp_path: Optional[Path] = (
+            self._experiments_model.get_user_experiments_path()
+        )
         if exp_path is None:
-            raise RuntimeError("Cannot download model when experiment dir is unknown")
+            raise RuntimeError(
+                "Cannot download model when experiment dir is unknown"
+            )
         self._available_models = S3ModelBucket(
             PROD_BUCKET, exp_path
         ).get_available_models()
@@ -47,7 +51,9 @@ class ModelDownloadDialog(QDialog):
         )
 
         self._available_models[selected_model_name].download_model_and_unzip()
-        exp_path: Optional[Path] = self._experiments_model.get_user_experiments_path()
+        exp_path: Optional[Path] = (
+            self._experiments_model.get_user_experiments_path()
+        )
         download_complete_message = InfoDialogBox(
             f"Downloaded {selected_model_name} to {exp_path / selected_model_name if exp_path is not None else 'unknown destination'}"
         )

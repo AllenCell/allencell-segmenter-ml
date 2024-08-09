@@ -64,7 +64,9 @@ class PredictionView(View, MainWindow):
         layout.setSpacing(0)
         self.setLayout(layout)
         layout.setAlignment(Qt.AlignmentFlag.AlignTop)
-        self.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Maximum)
+        self.setSizePolicy(
+            QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Maximum
+        )
 
         self._title: QLabel = QLabel("SEGMENTATION PREDICTION", self)
         self._title.setObjectName("title")
@@ -118,8 +120,12 @@ class PredictionView(View, MainWindow):
         # Verify prediction is able to start, and write csv if needed
         self._prediction_model.dispatch_prediction_setup()
 
-        total_num_images: Optional[int] = self._prediction_model.get_total_num_images()
-        output_seg_dir: Optional[Path] = self._prediction_model.get_output_seg_directory()
+        total_num_images: Optional[int] = (
+            self._prediction_model.get_total_num_images()
+        )
+        output_seg_dir: Optional[Path] = (
+            self._prediction_model.get_output_seg_directory()
+        )
         if total_num_images is not None and output_seg_dir is not None:
             progress_tracker: PredictionFolderProgressTracker = (
                 PredictionFolderProgressTracker(
@@ -137,14 +143,19 @@ class PredictionView(View, MainWindow):
         return "Prediction"
 
     def showResults(self) -> None:
-        output_path: Optional[Path] = self._prediction_model.get_output_seg_directory()
+        output_path: Optional[Path] = (
+            self._prediction_model.get_output_seg_directory()
+        )
 
         # Display images if prediction inputs are from Napari Layers
         if (
             self._prediction_model.get_prediction_input_mode()
-            == PredictionInputMode.FROM_NAPARI_LAYERS and output_path is not None
+            == PredictionInputMode.FROM_NAPARI_LAYERS
+            and output_path is not None
         ):
-            raw_imgs: Optional[list[Path]] = self._prediction_model.get_selected_paths()
+            raw_imgs: Optional[list[Path]] = (
+                self._prediction_model.get_selected_paths()
+            )
             segmentations: list[Path] = (
                 FileUtils.get_all_files_in_dir_ignore_hidden(output_path)
             )
@@ -165,8 +176,16 @@ class PredictionView(View, MainWindow):
 
             self._viewer.clear_layers()
             for data in stem_to_data.values():
-                raw_np_data: Optional[np.ndarray] = self._img_data_extractor.extract_image_data(data["raw"], channel=channel).np_data
-                seg_np_data: Optional[np.ndarray] = self._img_data_extractor.extract_image_data(data["seg"], seg=1).np_data
+                raw_np_data: Optional[np.ndarray] = (
+                    self._img_data_extractor.extract_image_data(
+                        data["raw"], channel=channel
+                    ).np_data
+                )
+                seg_np_data: Optional[np.ndarray] = (
+                    self._img_data_extractor.extract_image_data(
+                        data["seg"], seg=1
+                    ).np_data
+                )
                 if raw_np_data is not None:
                     self._viewer.add_image(
                         raw_np_data,

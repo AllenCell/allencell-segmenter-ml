@@ -33,5 +33,5 @@ class ITaskExecutor(ABC):
 
     @classmethod
     @abstractmethod
-    def global_instance(cls): # type: ignore
+    def global_instance(cls):  # type: ignore
         pass

@@ -41,7 +41,9 @@ class InputButton(QWidget):
         self._default_placeholder = placeholder
         self._model: Any = model
 
-        self.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
+        self.setSizePolicy(
+            QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed
+        )
 
         layout: QHBoxLayout = QHBoxLayout()
         self.setLayout(layout)
@@ -62,7 +64,9 @@ class InputButton(QWidget):
         self.button.setObjectName("button")
 
         # add widgets to layout
-        layout.addWidget(self._text_display, alignment=Qt.AlignmentFlag.AlignLeft)
+        layout.addWidget(
+            self._text_display, alignment=Qt.AlignmentFlag.AlignLeft
+        )
         layout.addWidget(self.button, alignment=Qt.AlignmentFlag.AlignLeft)
 
         # connect to slot
@@ -101,7 +105,7 @@ class InputButton(QWidget):
                 self,
                 "Select a file",
                 options=QFileDialog.Option.DontUseNativeDialog
-                | QFileDialog.Option.DontUseCustomDirectoryIcons, # type: ignore
+                | QFileDialog.Option.DontUseCustomDirectoryIcons,  # type: ignore
             )[0]
         elif self._mode == FileInputMode.DIRECTORY_OR_CSV:
             custom_dialog: DirectoryOrCSVFileDialog = (

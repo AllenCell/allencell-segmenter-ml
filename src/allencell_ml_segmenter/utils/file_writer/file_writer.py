@@ -43,7 +43,7 @@ class FileWriter(IFileWriter):
             raise RuntimeError(
                 f"{path} must be opened with csv_open_write_mode before writing"
             )
-        self._open_files[path][1].writerow(row) # type: ignore
+        self._open_files[path][1].writerow(row)  # type: ignore
 
     def csv_close(self, path: Path) -> None:
         """

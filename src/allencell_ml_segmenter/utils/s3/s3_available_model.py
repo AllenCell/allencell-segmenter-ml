@@ -1,5 +1,5 @@
 from pathlib import Path
-import requests # type: ignore
+import requests  # type: ignore
 from typing import Optional
 
 from allencell_ml_segmenter.core.dialog_box import DialogBox

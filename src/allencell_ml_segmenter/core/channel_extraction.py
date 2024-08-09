@@ -18,9 +18,7 @@ def extract_channels_from_image(img_path: Path) -> int:
     return img_data.dims.C
 
 
-def get_img_path_from_csv(
-    csv_path: Path, column: str = "raw"
-) -> Path:
+def get_img_path_from_csv(csv_path: Path, column: str = "raw") -> Path:
     """
     Returns path of an image in the specified column of the csv or None if there is no data in that column.
     :param csv_path: path to a csv with a 'raw' column
@@ -28,7 +26,7 @@ def get_img_path_from_csv(
     img_path: Optional[str] = None
     with open(csv_path) as csv_file:
         reader: csv.DictReader = csv.DictReader(csv_file)
-        img_path = next(reader)[column] # type: ignore
+        img_path = next(reader)[column]  # type: ignore
     if img_path is None:
         raise ValueError(f"No valid data at {csv_path}")
     return Path(img_path).resolve()
@@ -67,5 +65,8 @@ class ChannelExtractionThread(QThread):
             return  # return instead of reraise to surprss error message in napari console
 
         curr_thread: Optional[QThread] = QThread.currentThread()
-        if curr_thread is not None and not curr_thread.isInterruptionRequested():
+        if (
+            curr_thread is not None
+            and not curr_thread.isInterruptionRequested()
+        ):
             self.channels_ready.emit(channels)

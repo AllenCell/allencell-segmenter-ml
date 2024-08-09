@@ -11,14 +11,14 @@ from allencell_ml_segmenter.core.image_data_extractor import (
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.event import Event
 
-from cyto_dl.api.model import CytoDLModel # type: ignore
+from cyto_dl.api.model import CytoDLModel  # type: ignore
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.training.training_model import (
     TrainingModel,
     ImageType,
 )
 from typing import Optional
-from napari.utils.notifications import show_warning, show_error # type: ignore
+from napari.utils.notifications import show_warning, show_error  # type: ignore
 from allencell_ml_segmenter.utils.cyto_overrides_manager import (
     CytoDLOverridesManager,
 )
@@ -86,9 +86,7 @@ class TrainingService(Subscriber):
                 cyto_overrides_manager.get_training_overrides()
             )
             model.print_config()
-            model.save_config(
-                self._experiments_model.get_train_config_path()
-            )
+            model.save_config(self._experiments_model.get_train_config_path())
             model.train()
 
     def _able_to_continue_training(self) -> bool:

@@ -7,12 +7,14 @@ from allencell_ml_segmenter.core.progress_tracker import ProgressTracker
 from typing import Callable, Optional
 
 
-class ViewMeta(type(QWidget), type(Subscriber)): # type: ignore
+class ViewMeta(type(QWidget), type(Subscriber)):  # type: ignore
     pass
 
 
 class LongTaskThread(QThread):
-    def __init__(self, do_work: Callable, parent: Optional[QObject]=None) -> None:
+    def __init__(
+        self, do_work: Callable, parent: Optional[QObject] = None
+    ) -> None:
         super().__init__(parent)
         self._do_work = do_work
 
@@ -46,7 +48,9 @@ class View(QWidget, Subscriber, metaclass=ViewMeta):
         )
         self.progressDialog.setValue(progress_tracker.get_progress())
         self.progressDialog.setWindowTitle(f"{self.getTypeOfWork()} Progress")
-        self.progressDialog.setWindowModality(Qt.WindowModality.ApplicationModal)
+        self.progressDialog.setWindowModality(
+            Qt.WindowModality.ApplicationModal
+        )
         self.progressDialog.canceled.connect(self.longTaskThread.terminate)
         # stop the watchdog thread for file watching inside of the progress tracker
         self.progressDialog.canceled.connect(progress_tracker.stop_tracker)
@@ -82,13 +86,12 @@ class View(QWidget, Subscriber, metaclass=ViewMeta):
 
     def setProgressMax(self, maximum: int) -> None:
         self.progressDialog.setMaximum(maximum)
-    
+
     def _onLongTaskThreadFinished(self) -> None:
         self.progressDialog.reset()
         self.longTaskThread.deleteLater()
         self.progressDialog.close()
         self.showResults()
-
 
     @abstractmethod
     def doWork(self) -> None:

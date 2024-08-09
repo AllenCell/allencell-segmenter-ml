@@ -57,9 +57,7 @@ class TrainingModel(Publisher):
         self._num_channels: dict[ImageType, Optional[int]] = {
             t: None for t in ImageType
         }
-        self._model_path: Optional[Path] = (
-            None  # if None, start a new model
-        )
+        self._model_path: Optional[Path] = None  # if None, start a new model
         self._patch_size: Optional[list[int]] = None
         self._spatial_dims: Optional[int] = None
         self._num_epochs: Optional[int] = None
