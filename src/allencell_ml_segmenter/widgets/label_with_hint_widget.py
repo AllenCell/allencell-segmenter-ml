@@ -14,15 +14,16 @@ class LabelWithHint(QWidget):
     ):
         super().__init__()
 
-        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
 
-        self.setLayout(QHBoxLayout())
-        self.layout().setContentsMargins(0, 0, 0, 0)
-        self.layout().setSpacing(0)
+        layout: QHBoxLayout = QHBoxLayout()
+        self.setLayout(layout)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(0)
 
         self._label: QLabel = QLabel("")
         self._label.setText(label_text)
-        self.layout().addWidget(self._label)
+        layout.addWidget(self._label)
 
         self._question_mark: QLabel = QLabel()
         self._question_mark.setPixmap(
@@ -33,12 +34,12 @@ class LabelWithHint(QWidget):
         self._question_mark.setObjectName("questionMark")
         self._question_mark.setToolTip(hint)
 
-        self.layout().addWidget(self._question_mark)
+        layout.addWidget(self._question_mark)
         self._question_mark.setVisible(bool(hint))
 
-        self._label: QLabel = QLabel(value_text)
-        self.layout().addWidget(self._label)
-        self.layout().addStretch(6)
+        self._label = QLabel(value_text)
+        layout.addWidget(self._label)
+        layout.addStretch(6)
 
     def set_label_text(self, text: str) -> None:
         """
