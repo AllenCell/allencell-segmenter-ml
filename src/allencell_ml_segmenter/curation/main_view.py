@@ -244,7 +244,7 @@ class CurationMainView(QWidget):
         self._curation_model.saved_to_disk.connect(self._on_saved_to_disk)
         self._set_to_initial_state()
 
-    def _set_to_initial_state(self):
+    def _set_to_initial_state(self) -> None:
         self.save_csv_button.setEnabled(False)
         self._set_next_button_to_loading()
         self.disable_all_masks()

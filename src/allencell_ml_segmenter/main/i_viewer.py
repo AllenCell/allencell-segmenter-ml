@@ -11,7 +11,7 @@ from napari.utils.events import Event as NapariEvent # type: ignore
 
 
 class IViewer(ABC):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
     @abstractmethod

@@ -16,7 +16,7 @@ class PredictionModel(Publisher):
     Stores state relevant to prediction processes.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
         # state related to PredictionFileInput
@@ -193,7 +193,7 @@ class PredictionModel(Publisher):
     def get_max_channels(self) -> Optional[int]:
         return self._max_channels
 
-    def set_total_num_images(self, total: Optional[int]):
+    def set_total_num_images(self, total: Optional[int]) -> None:
         self.total_num_images = total
 
     def get_total_num_images(self) -> Optional[int]:

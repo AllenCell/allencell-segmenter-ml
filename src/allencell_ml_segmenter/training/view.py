@@ -268,7 +268,7 @@ class TrainingView(View, MainWindow):
 
     # Abstract methods from View implementations #######################
 
-    def doWork(self):
+    def doWork(self) -> None:
         """
         Starts training process
         """
@@ -280,7 +280,7 @@ class TrainingView(View, MainWindow):
         """
         return "Training"
 
-    def showResults(self):
+    def showResults(self) -> None:
         csv_path: Optional[Path] = self._experiments_model.get_latest_metrics_csv_path()
         if csv_path is None:
             raise RuntimeError("Cannot get min loss from undefined csv")
