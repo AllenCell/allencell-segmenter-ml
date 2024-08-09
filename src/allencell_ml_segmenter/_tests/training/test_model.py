@@ -21,34 +21,6 @@ def training_model() -> TrainingModel:
     return TrainingModel(MainModel(), FakeExperimentsModel())
 
 
-def test_get_experiment_type(training_model: TrainingModel) -> None:
-    """
-    Tests that get_experiment_type returns the correct experiment type.
-    """
-    # ASSERT
-    assert training_model.get_experiment_type() is None
-
-    # ARRANGE
-    experiment: TrainingType = TrainingType("segmentation")
-    training_model.set_experiment_type(experiment.value)
-
-    # ACT/ASSERT
-    assert training_model.get_experiment_type() == experiment.value
-
-
-def test_set_experiment_type(training_model: TrainingModel) -> None:
-    """
-    Tests that set_experiment_type sets the correct experiment type.
-    """
-    training_type_str = "segmentation"
-
-    # ACT
-    training_model.set_experiment_type(training_type_str)
-
-    # ASSERT
-    assert training_model.get_experiment_type() == training_type_str
-
-
 def test_set_experiment_type_invalid_experiment(
     training_model: TrainingModel,
 ) -> None:

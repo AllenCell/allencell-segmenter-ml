@@ -122,6 +122,7 @@ def test_build_overrides() -> None:
         / "0_exp"
         / "prediction_output_test"
     )
+    prediction_model.set_input_image_path(Path("fake_img_path"))
     prediction_model.set_image_input_channel_index(3)
 
     # act
