@@ -261,4 +261,3 @@ def test_set_max_time(training_model: TrainingModel) -> None:
 
     # ASSERT
     assert training_model._max_time == 100
-

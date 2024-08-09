@@ -25,11 +25,11 @@ class ExperimentsModel(IExperimentsModel):
     def refresh_experiments(self) -> None:
         # TODO: make a FileUtils method for this?
         self.experiments = []
-        user_exp_path: Optional[Path] = self.user_settings.get_user_experiments_path()
+        user_exp_path: Optional[Path] = (
+            self.user_settings.get_user_experiments_path()
+        )
         if user_exp_path is not None:
-            for (
-                experiment
-            ) in user_exp_path.iterdir():
+            for experiment in user_exp_path.iterdir():
                 if (
                     experiment.is_dir()
                     and self._is_cyto_dl_experiment(experiment)
@@ -74,17 +74,12 @@ class ExperimentsModel(IExperimentsModel):
             raise ValueError(
                 "Checkpoint cannot be None in order to get model_checkpoint_path"
             )
-        
+
         user_exp_path: Optional[Path] = self.get_user_experiments_path()
         if user_exp_path is None:
             raise ValueError("User experiments path cannot be None")
-        
-        return (
-            user_exp_path
-            / experiment_name
-            / "checkpoints"
-            / checkpoint
-        )
+
+        return user_exp_path / experiment_name / "checkpoints" / checkpoint
 
     def _get_exp_path(self) -> Path:
         user_exp_path: Optional[Path] = self.get_user_experiments_path()
@@ -92,7 +87,7 @@ class ExperimentsModel(IExperimentsModel):
         if user_exp_path is None or exp_name is None:
             raise ValueError("Experiment path or name undefined")
         return user_exp_path / exp_name
-    
+
     def get_csv_path(self) -> Path:
         return self._get_exp_path() / "data"
 
@@ -147,11 +142,7 @@ class ExperimentsModel(IExperimentsModel):
         if user_exp_path is None or exp_name is None:
             return None
 
-        checkpoints_path = (
-            user_exp_path
-            / exp_name
-            / "checkpoints"
-        )
+        checkpoints_path = user_exp_path / exp_name / "checkpoints"
         if not checkpoints_path.exists():
             return None
 

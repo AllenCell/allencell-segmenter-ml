@@ -41,7 +41,9 @@ class ModelInputWidget(AicsWidget):
 
         self._model: PredictionModel = model
 
-        self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        self.setSizePolicy(
+            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed
+        )
 
         # instantiate widgets
         self._frame: QFrame = QFrame()
@@ -240,7 +242,7 @@ class ModelInputWidget(AicsWidget):
         layout: QVBoxLayout = QVBoxLayout()
         self.setLayout(layout)
         layout.setContentsMargins(0, 0, 0, 0)
-        
+
         frame_layout: QVBoxLayout = QVBoxLayout()
         self._frame.setLayout(frame_layout)
 
@@ -252,7 +254,8 @@ class ModelInputWidget(AicsWidget):
         preprocessing_layout.setSpacing(0)
 
         preprocessing_layout.addWidget(
-            self._preprocessing_label_with_hint, alignment=Qt.AlignmentFlag.AlignLeft
+            self._preprocessing_label_with_hint,
+            alignment=Qt.AlignmentFlag.AlignLeft,
         )
         preprocessing_layout.addWidget(
             self._method_label, alignment=Qt.AlignmentFlag.AlignRight
@@ -287,7 +290,8 @@ class ModelInputWidget(AicsWidget):
         # add inner widgets and layouts to overarching layout
         frame_layout.addLayout(preprocessing_layout)
         frame_layout.addWidget(
-            self._postprocessing_label_with_hint, alignment=Qt.AlignmentFlag.AlignLeft
+            self._postprocessing_label_with_hint,
+            alignment=Qt.AlignmentFlag.AlignLeft,
         )
         frame_layout.addLayout(grid_layout)
 

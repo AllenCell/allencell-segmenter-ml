@@ -1,6 +1,6 @@
 from allencell_ml_segmenter.core.task_executor import ITaskExecutor
 from typing import Callable, Optional, Any
-from napari.qt.threading import FunctionWorker, create_worker # type: ignore
+from napari.qt.threading import FunctionWorker, create_worker  # type: ignore
 
 
 class NapariThreadTaskExecutor(ITaskExecutor):

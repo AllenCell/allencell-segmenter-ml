@@ -80,7 +80,11 @@ class PredictionModel(Publisher):
         """
         Gets path to where segmentation predictions are stored.
         """
-        return self._output_directory / "target" if self._output_directory is not None else None
+        return (
+            self._output_directory / "target"
+            if self._output_directory is not None
+            else None
+        )
 
     def set_output_directory(self, dir: Optional[Path]) -> None:
         """
@@ -133,7 +137,9 @@ class PredictionModel(Publisher):
         """
         return self._postprocessing_simple_threshold
 
-    def set_postprocessing_simple_threshold(self, threshold: Optional[float]) -> None:
+    def set_postprocessing_simple_threshold(
+        self, threshold: Optional[float]
+    ) -> None:
         """
         Sets simple threshold selected by user from the slider.
         """
@@ -146,14 +152,18 @@ class PredictionModel(Publisher):
         """
         return self._postprocessing_auto_threshold
 
-    def set_postprocessing_auto_threshold(self, threshold: Optional[str]) -> None:
+    def set_postprocessing_auto_threshold(
+        self, threshold: Optional[str]
+    ) -> None:
         """
         Sets auto threshold selected by user.
         """
         self._postprocessing_auto_threshold = threshold
         self.dispatch(Event.ACTION_PREDICTION_POSTPROCESSING_AUTO_THRESHOLD)
 
-    def set_prediction_input_mode(self, mode: Optional[PredictionInputMode]) -> None:
+    def set_prediction_input_mode(
+        self, mode: Optional[PredictionInputMode]
+    ) -> None:
         self._input_mode = mode
 
     def get_prediction_input_mode(self) -> Optional[PredictionInputMode]:

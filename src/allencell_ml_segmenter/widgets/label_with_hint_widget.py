@@ -14,7 +14,9 @@ class LabelWithHint(QWidget):
     ):
         super().__init__()
 
-        self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        self.setSizePolicy(
+            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed
+        )
 
         layout: QHBoxLayout = QHBoxLayout()
         self.setLayout(layout)
