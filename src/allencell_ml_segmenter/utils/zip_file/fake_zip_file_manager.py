@@ -1,5 +1,4 @@
 from pathlib import Path
-from typing import Optional
 
 from allencell_ml_segmenter.utils.zip_file import IZipFileManager
 
@@ -9,7 +8,7 @@ class FakeZipFileManager(IZipFileManager):
     FakeZipFileManager for testing
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         # zip files that have been written, keys- path, values- content written
         self.written_zip_files: dict[Path, bytes] = {}

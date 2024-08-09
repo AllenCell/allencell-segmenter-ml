@@ -110,7 +110,7 @@ class PredictionView(View, MainWindow):
             lambda e: self._main_model.set_current_view(self),
         )
 
-    def run_btn_handler(self):
+    def run_btn_handler(self) -> None:
         # dispatch events to set _prediction_model._input_image_path to a real CSV
 
         # get image paths from napari if they are selected
@@ -129,14 +129,14 @@ class PredictionView(View, MainWindow):
             )
             self.startLongTaskWithProgressBar(progress_tracker)
 
-    def doWork(self):
+    def doWork(self) -> None:
         self._prediction_model.dispatch_prediction()
         # TODO Need way to set result images to show after prediction complete and refresh viewer.
 
-    def getTypeOfWork(self):
+    def getTypeOfWork(self) -> str:
         return "Prediction"
 
-    def showResults(self):
+    def showResults(self) -> None:
         output_path: Optional[Path] = self._prediction_model.get_output_seg_directory()
 
         # Display images if prediction inputs are from Napari Layers
@@ -186,5 +186,5 @@ class PredictionView(View, MainWindow):
             if dialog_box.get_selection() and output_path is not None:
                 FileUtils.open_directory_in_window(output_path)
 
-    def focus_changed(self):
+    def focus_changed(self) -> None:
         self._viewer.clear_layers()

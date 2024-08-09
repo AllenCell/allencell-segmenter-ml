@@ -10,7 +10,7 @@ class Publisher(ABC):
     ABC publisher class
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         # Map of Event -> Subscriber -> Handler function
         self._events_to_subscriber_handlers: dict[
             Any, dict[object, Callable]
@@ -25,7 +25,7 @@ class Publisher(ABC):
         ].items():
             handler(event)
 
-    def subscribe(self, event: Event, subscriber: object, handler) -> None:
+    def subscribe(self, event: Event, subscriber: object, handler: Callable) -> None:
         """
         subscribes a subscriber to this publisher
         """

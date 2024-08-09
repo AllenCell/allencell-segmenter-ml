@@ -84,7 +84,7 @@ class CurationWidget(
         self.view_to_index[view] = self.count()
         self.addWidget(view)
 
-    def focus_changed(self):
+    def focus_changed(self) -> None:
         # if we haven't finished curation, then reload current images
         if (
             self.currentWidget() == self.curation_main_view

@@ -30,7 +30,7 @@ class SynchroTaskExecutor(ITaskExecutor):
             on_finish()
 
     @classmethod
-    def global_instance(cls):
+    def global_instance(cls) -> ITaskExecutor:
         if cls._instance is None:
             cls._instance = super().__new__(cls)
         return cls._instance

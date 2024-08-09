@@ -68,7 +68,7 @@ class PredictionService(Subscriber):
         )
         cyto_api.predict()
 
-    def _prediction_setup(self, _: Event):
+    def _prediction_setup(self, _: Event) -> None:
         if self._able_to_continue_prediction():
             self._write_csv_for_prediction()
 

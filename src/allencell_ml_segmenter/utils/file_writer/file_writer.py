@@ -4,7 +4,7 @@ from pathlib import Path
 import csv
 import json
 from io import TextIOBase
-from typing import List, Tuple, Union, Any
+from typing import List, Tuple, Union, Any, Optional
 
 
 class FileWriter(IFileWriter):
@@ -60,7 +60,7 @@ class FileWriter(IFileWriter):
             json.dump(json_like_obj, fw)
 
     @classmethod
-    def global_instance(cls):
+    def global_instance(cls) -> IFileWriter:
         if cls._instance is None:
             cls._instance = super().__new__(cls)
         return cls._instance

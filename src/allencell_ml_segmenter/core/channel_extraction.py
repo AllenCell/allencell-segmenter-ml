@@ -55,7 +55,7 @@ class ChannelExtractionThread(QThread):
         self._img_path: Path = img_path
 
     # override
-    def run(self):
+    def run(self) -> None:
         # will show up as a pop-up in the UI, does not force napari to quit
         if not self._img_path.exists():
             raise ValueError(f"{self._img_path} does not exist")

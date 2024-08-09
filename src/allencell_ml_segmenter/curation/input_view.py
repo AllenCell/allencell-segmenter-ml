@@ -263,7 +263,7 @@ class CurationInputView(QWidget):
 
     def _populate_channel_combo(
         self, channel_combo: QComboBox, num_channels: int
-    ):
+    ) -> None:
         channel_combo.clear()
         if num_channels > 0:
             channel_combo.addItems([str(x) for x in range(num_channels)])
@@ -322,19 +322,19 @@ class CurationInputView(QWidget):
         )
         self._curation_model.set_selected_channel(ImageType.SEG2, 0)
 
-    def raw_channel_selected(self, index) -> None:
+    def raw_channel_selected(self, index: int) -> None:
         """
         Event handler when combobox channel selection is made. Sets the raw channel index in the model.
         """
         self._curation_model.set_selected_channel(ImageType.RAW, index)
 
-    def seg1_channel_selected(self, index) -> None:
+    def seg1_channel_selected(self, index: int) -> None:
         """
         Event handler when combobox channel selection is made. Sets the seg1 channel index in the model.
         """
         self._curation_model.set_selected_channel(ImageType.SEG1, index)
 
-    def seg2_channel_selected(self, index) -> None:
+    def seg2_channel_selected(self, index: int) -> None:
         """
         Event handler when combobox channel selection is made. Sets the seg2 channel index in the model.
         """

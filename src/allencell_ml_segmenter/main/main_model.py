@@ -26,7 +26,7 @@ class MainModel(Publisher):
     Main model for this application. Responsible for non-tab-related view switching.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         # Current page of the UI
         self._current_view: Optional[MainWindow] = None

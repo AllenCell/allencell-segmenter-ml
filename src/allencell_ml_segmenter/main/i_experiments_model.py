@@ -11,7 +11,7 @@ class IExperimentsModel(Publisher):
     Interface for implementing and testing ExperimentsModel
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
         # state

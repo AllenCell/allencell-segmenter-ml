@@ -14,7 +14,7 @@ EXPERIMENTS_HOME_KEY = "experimentshome"
 class UserSettings(IUserSettings):
     def __init__(
         self, settings: QSettings = QSettings("AICS", "Segmenter ML")
-    ):
+    ) -> None:
         self.settings = settings
 
         # still hardcoding this for now, hoping that cytodl api will make it unecessary
@@ -29,10 +29,10 @@ class UserSettings(IUserSettings):
         else:
             return Path(self.settings.value(EXPERIMENTS_HOME_KEY))
 
-    def set_user_experiments_path(self, path: Path):
+    def set_user_experiments_path(self, path: Path) -> None:
         self.settings.setValue(EXPERIMENTS_HOME_KEY, path)
 
-    def prompt_for_user_experiments_home(self, parent: QWidget):
+    def prompt_for_user_experiments_home(self, parent: QWidget) -> None:
         message_dialog = QMessageBox(
             QMessageBox.Icon.NoIcon,
             "Segmenter home directory",
@@ -43,7 +43,7 @@ class UserSettings(IUserSettings):
         path: Path = self._prompt_for_directory(parent)
         self.set_user_experiments_path(path)
 
-    def display_change_user_experiments_home(self, parent: QWidget):
+    def display_change_user_experiments_home(self, parent: QWidget) -> None:
         buttonReply = QMessageBox.question(
             parent,
             "Experiments Home",
