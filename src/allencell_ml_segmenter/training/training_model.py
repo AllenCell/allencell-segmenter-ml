@@ -197,7 +197,7 @@ class TrainingModel(Publisher):
         """
         return self._use_max_time
 
-    def set_use_max_time(self, use_max: bool):
+    def set_use_max_time(self, use_max: bool) -> None:
         """
         Set if training run will be based off of max time
         """

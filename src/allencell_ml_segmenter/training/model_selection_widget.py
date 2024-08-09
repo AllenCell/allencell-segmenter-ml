@@ -47,7 +47,7 @@ class ModelSelectionWidget(QWidget):
         main_model: MainModel,
         experiments_model: IExperimentsModel,
         user_settings: IUserSettings,
-    ):
+    ) -> None:
         super().__init__()
 
         self._main_model: MainModel = main_model
@@ -185,7 +185,7 @@ class ModelSelectionWidget(QWidget):
             Event.ACTION_REFRESH, self, self._handle_process_event
         )
 
-    def _handle_apply_model(self):
+    def _handle_apply_model(self) -> None:
         if self._experiment_name_selection is None:
             raise RuntimeError("Cannot apply an empty model name")
         
@@ -287,7 +287,7 @@ class ModelSelectionWidget(QWidget):
         experiment_selected = self._experiment_name_selection is not None
         self._apply_btn.setEnabled(experiment_selected)
 
-    def _refresh_experiment_options(self):
+    def _refresh_experiment_options(self) -> None:
         self._experiments_model.refresh_experiments()
         self._combo_box_existing_models.clear()
         self._combo_box_existing_models.addItems(

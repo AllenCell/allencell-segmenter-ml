@@ -9,7 +9,7 @@ class ZipFileManager(IZipFileManager):
     ZipFileManager to manage writing zip files / unzipping zip files
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
     def write_zip_file(self, path: Path, contents: bytes) -> None:

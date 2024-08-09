@@ -1,12 +1,12 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Any
 
 from allencell_ml_segmenter.core.image_data_extractor import ImageData
 
 
 class IImageDataExtractor(ABC):
-    def __init__(self):
+    def __init__(self) -> None:
         raise RuntimeError(
             "Cannot initialize new singleton, please use .global_instance() instead"
         )
@@ -24,5 +24,5 @@ class IImageDataExtractor(ABC):
 
     @classmethod
     @abstractmethod
-    def global_instance(cls):
+    def global_instance(cls) -> Any:
         pass

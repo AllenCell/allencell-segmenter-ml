@@ -14,5 +14,5 @@ class AicsWidget(QWidget, Subscriber, metaclass=AicsWidgetMeta):
 
     _template = None
 
-    def __init__(self):
+    def __init__(self) -> None:
         QWidget.__init__(self)
