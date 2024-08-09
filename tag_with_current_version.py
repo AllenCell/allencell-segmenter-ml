@@ -1,9 +1,9 @@
 # This file is intended to be called by a github workflow
 import subprocess
-import toml
+import toml # type: ignore
 
 
-def main():
+def main() -> None:
     version: str = toml.load("pyproject.toml")["project"]["version"]
     tag_output: subprocess.CompletedProcess = subprocess.run(
         ["git", "tag", f"v{version}"]

@@ -3,24 +3,24 @@
 # which the workflow cannot do
 import subprocess
 import sys
-from typing import Set, List
-import toml
+import toml # type: ignore
+from typing import Optional
 
 
-def main():
+def main() -> None:
     if len(sys.argv) < 2:
         raise ValueError("No component specified for bumping version")
 
     component: str = sys.argv[1].lower()
-    valid_options: Set[str] = {"major", "minor", "patch", "dev"}
+    valid_options: set[str] = {"major", "minor", "patch", "dev"}
 
     if component not in valid_options:
         raise ValueError(f"Component must be one of {valid_options}")
 
     version: str = toml.load("pyproject.toml")["project"]["version"]
-    version_components: List[str] = version.split(".")
+    version_components: list[str] = version.split(".")
 
-    update_output: subprocess.CompletedProcess = None
+    update_output: subprocess.CompletedProcess
     # 4 components means we currently have a dev version
     if len(version_components) == 4:
         if component == "dev":
