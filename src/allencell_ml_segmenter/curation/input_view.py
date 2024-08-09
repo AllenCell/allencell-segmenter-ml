@@ -21,7 +21,7 @@ from qtpy.QtWidgets import (
     QWidget,
 )
 from pathlib import Path
-from napari.utils.notifications import show_info # type: ignore
+from napari.utils.notifications import show_info  # type: ignore
 from typing import Optional
 
 
@@ -38,12 +38,14 @@ class CurationInputView(QWidget):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
         layout.setAlignment(Qt.AlignmentFlag.AlignTop)
-        self.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Maximum)
+        self.setSizePolicy(
+            QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Maximum
+        )
 
         self._title: QLabel = QLabel("CURATION UI", self)
         self._title.setObjectName("title")
         layout.addWidget(
-            self._title, alignment=Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignTop # type: ignore
+            self._title, alignment=Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignTop  # type: ignore
         )
 
         frame: QFrame = QFrame()
@@ -81,19 +83,28 @@ class CurationInputView(QWidget):
             self.raw_directory_select
         )
         raw_grid_layout.addWidget(
-            self.raw_dir_stacked_spinner, 0, 2, alignment=Qt.AlignmentFlag.AlignRight
+            self.raw_dir_stacked_spinner,
+            0,
+            2,
+            alignment=Qt.AlignmentFlag.AlignRight,
         )
 
         # Second Row in Gridlayout
         raw_grid_layout.addWidget(
-            QLabel("Image channel"), 1, 1, alignment=Qt.AlignmentFlag.AlignRight
+            QLabel("Image channel"),
+            1,
+            1,
+            alignment=Qt.AlignmentFlag.AlignRight,
         )
         self.raw_image_channel_combo: QComboBox = QComboBox()
         self.raw_image_channel_combo.currentIndexChanged.connect(
             self.raw_channel_selected
         )
         raw_grid_layout.addWidget(
-            self.raw_image_channel_combo, 1, 2, alignment=Qt.AlignmentFlag.AlignLeft
+            self.raw_image_channel_combo,
+            1,
+            2,
+            alignment=Qt.AlignmentFlag.AlignLeft,
         )
 
         # add grid to frame
@@ -124,19 +135,28 @@ class CurationInputView(QWidget):
             self.seg1_directory_select
         )
         seg1_grid_layout.addWidget(
-            self.seg1_dir_stacked_spinner, 0, 2, alignment=Qt.AlignmentFlag.AlignRight
+            self.seg1_dir_stacked_spinner,
+            0,
+            2,
+            alignment=Qt.AlignmentFlag.AlignRight,
         )
 
         # Second Row in Gridlayout
         seg1_grid_layout.addWidget(
-            QLabel("Image channel"), 1, 1, alignment=Qt.AlignmentFlag.AlignRight
+            QLabel("Image channel"),
+            1,
+            1,
+            alignment=Qt.AlignmentFlag.AlignRight,
         )
         self.seg1_image_channel_combo: QComboBox = QComboBox()
         self.seg1_image_channel_combo.currentIndexChanged.connect(
             self.seg1_channel_selected
         )
         seg1_grid_layout.addWidget(
-            self.seg1_image_channel_combo, 1, 2, alignment=Qt.AlignmentFlag.AlignLeft
+            self.seg1_image_channel_combo,
+            1,
+            2,
+            alignment=Qt.AlignmentFlag.AlignLeft,
         )
 
         # add grid to frame
@@ -167,19 +187,28 @@ class CurationInputView(QWidget):
             self.seg2_directory_select
         )
         seg2_grid_layout.addWidget(
-            self.seg2_dir_stacked_spinner, 0, 2, alignment=Qt.AlignmentFlag.AlignRight
+            self.seg2_dir_stacked_spinner,
+            0,
+            2,
+            alignment=Qt.AlignmentFlag.AlignRight,
         )
 
         # Second Row in Gridlayout
         seg2_grid_layout.addWidget(
-            QLabel("Image channel"), 1, 1, alignment=Qt.AlignmentFlag.AlignRight
+            QLabel("Image channel"),
+            1,
+            1,
+            alignment=Qt.AlignmentFlag.AlignRight,
         )
         self.seg2_image_channel_combo: QComboBox = QComboBox()
         self.seg2_image_channel_combo.currentIndexChanged.connect(
             self.seg2_channel_selected
         )
         seg2_grid_layout.addWidget(
-            self.seg2_image_channel_combo, 1, 2, alignment=Qt.AlignmentFlag.AlignLeft
+            self.seg2_image_channel_combo,
+            1,
+            2,
+            alignment=Qt.AlignmentFlag.AlignLeft,
         )
 
         # add grid to frame
@@ -289,7 +318,9 @@ class CurationInputView(QWidget):
         images from the raw directory.
         """
         self.raw_dir_stacked_spinner.stop()
-        channel_count: Optional[int] = self._curation_model.get_channel_count(ImageType.RAW)
+        channel_count: Optional[int] = self._curation_model.get_channel_count(
+            ImageType.RAW
+        )
         self._populate_channel_combo(
             self.raw_image_channel_combo,
             channel_count if channel_count is not None else 0,
@@ -302,7 +333,9 @@ class CurationInputView(QWidget):
         images from the seg1 directory.
         """
         self.seg1_dir_stacked_spinner.stop()
-        channel_count: Optional[int] = self._curation_model.get_channel_count(ImageType.SEG1)
+        channel_count: Optional[int] = self._curation_model.get_channel_count(
+            ImageType.SEG1
+        )
         self._populate_channel_combo(
             self.seg1_image_channel_combo,
             channel_count if channel_count is not None else 0,
@@ -315,7 +348,9 @@ class CurationInputView(QWidget):
         images from the seg2 directory.
         """
         self.seg2_dir_stacked_spinner.stop()
-        channel_count: Optional[int] = self._curation_model.get_channel_count(ImageType.SEG2)
+        channel_count: Optional[int] = self._curation_model.get_channel_count(
+            ImageType.SEG2
+        )
         self._populate_channel_combo(
             self.seg2_image_channel_combo,
             channel_count if channel_count is not None else 0,

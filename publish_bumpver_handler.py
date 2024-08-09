@@ -3,7 +3,7 @@
 # which the workflow cannot do
 import subprocess
 import sys
-import toml # type: ignore
+import toml  # type: ignore
 from typing import Optional
 
 

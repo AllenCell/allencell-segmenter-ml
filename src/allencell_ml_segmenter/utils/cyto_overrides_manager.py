@@ -57,13 +57,15 @@ class CytoDLOverridesManager:
 
         # Max Run
         # define max run (in epochs, required)
-        current_epoch: Optional[int] = self._experiments_model.get_current_epoch()
+        current_epoch: Optional[int] = (
+            self._experiments_model.get_current_epoch()
+        )
         num_epochs: Optional[int] = self._training_model.get_num_epochs()
         if num_epochs is not None:
-            adjusted_epoch: int = current_epoch + 1 if current_epoch is not None else 0
-            overrides_dict["trainer.max_epochs"] = (
-                num_epochs + adjusted_epoch
+            adjusted_epoch: int = (
+                current_epoch + 1 if current_epoch is not None else 0
             )
+            overrides_dict["trainer.max_epochs"] = num_epochs + adjusted_epoch
         # max run in time is also defined (optional)
         if self._training_model.use_max_time():
             # define max runtime (in hours)
@@ -91,16 +93,22 @@ class CytoDLOverridesManager:
         # Filters/Model Size (required)
         model_size: Optional[ModelSize] = self._training_model.get_model_size()
         if model_size is None:
-            raise RuntimeError("Cannot generate overrides when model size is undefined")
-        
-        overrides_dict["model._aux.filters"] = (
-            model_size.value
-        )
+            raise RuntimeError(
+                "Cannot generate overrides when model size is undefined"
+            )
+
+        overrides_dict["model._aux.filters"] = model_size.value
 
         # Channel Override
-        raw_channel: Optional[int] = self._training_model.get_selected_channel(ImageType.RAW)
-        seg1_channel: Optional[int] = self._training_model.get_selected_channel(ImageType.SEG1)
-        seg2_channel: Optional[int] = self._training_model.get_selected_channel(ImageType.SEG2)
+        raw_channel: Optional[int] = self._training_model.get_selected_channel(
+            ImageType.RAW
+        )
+        seg1_channel: Optional[int] = (
+            self._training_model.get_selected_channel(ImageType.SEG1)
+        )
+        seg2_channel: Optional[int] = (
+            self._training_model.get_selected_channel(ImageType.SEG2)
+        )
 
         if raw_channel is not None:
             overrides_dict["input_channel"] = raw_channel

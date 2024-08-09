@@ -25,7 +25,9 @@ class Publisher(ABC):
         ].items():
             handler(event)
 
-    def subscribe(self, event: Event, subscriber: object, handler: Callable) -> None:
+    def subscribe(
+        self, event: Event, subscriber: object, handler: Callable
+    ) -> None:
         """
         subscribes a subscriber to this publisher
         """

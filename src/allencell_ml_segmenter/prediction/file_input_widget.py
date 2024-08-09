@@ -1,8 +1,8 @@
 from pathlib import Path
 from typing import List, Optional
 
-from napari.utils.events import Event as NapariEvent # type: ignore
-from napari.utils.notifications import show_warning # type: ignore
+from napari.utils.events import Event as NapariEvent  # type: ignore
+from napari.utils.notifications import show_warning  # type: ignore
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
     QWidget,
@@ -46,7 +46,10 @@ class PredictionFileInput(QWidget):
     BOTTOM_TEXT: str = "Image directory"
 
     def __init__(
-        self, model: PredictionModel, viewer: IViewer, service: ModelFileService
+        self,
+        model: PredictionModel,
+        viewer: IViewer,
+        service: ModelFileService,
     ):
         super().__init__()
 
@@ -56,7 +59,9 @@ class PredictionFileInput(QWidget):
         layout: QVBoxLayout = QVBoxLayout()
         self.setLayout(layout)
         layout.setContentsMargins(0, 0, 0, 0)
-        self.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Maximum)
+        self.setSizePolicy(
+            QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Maximum
+        )
 
         # set up napari event listener for layer changes
         # this keeps the layer list in our UI updated as the layers are added/deleted from napari
@@ -243,11 +248,11 @@ class PredictionFileInput(QWidget):
                     show_warning(
                         "Cannot predict on > 10 images from the viewer"
                     )
-                    qlist_item: Optional[QListWidgetItem] = self._image_list.item(row)
+                    qlist_item: Optional[QListWidgetItem] = (
+                        self._image_list.item(row)
+                    )
                     if qlist_item is not None:
-                        qlist_item.setCheckState(
-                            Qt.CheckState.Unchecked
-                        )
+                        qlist_item.setCheckState(Qt.CheckState.Unchecked)
             elif state == Qt.CheckState.Unchecked:
                 # could have unselected the img we got channels from originally, so need to re-extract
                 # as long as there are still some images selected
@@ -274,15 +279,19 @@ class PredictionFileInput(QWidget):
         self._channel_select_dropdown.setCurrentIndex(-1)
         self._channel_select_dropdown.setEnabled(False)
 
-    def _populate_input_channel_combobox(self, event: Optional[Event] = None) -> None:
+    def _populate_input_channel_combobox(
+        self, event: Optional[Event] = None
+    ) -> None:
         self.input_image_spinner.stop()
         channels_in_image: Optional[int] = self._model.get_max_channels()
         max_channels: Optional[int] = self._model.get_max_channels()
         self._reset_channel_combobox()
-        if channels_in_image is not None and channels_in_image > 0 and max_channels is not None:
-            values_range: List[str] = [
-                str(i) for i in range(max_channels)
-            ]
+        if (
+            channels_in_image is not None
+            and channels_in_image > 0
+            and max_channels is not None
+        ):
+            values_range: List[str] = [str(i) for i in range(max_channels)]
             self._channel_select_dropdown.setPlaceholderText(
                 "select a channel index"
             )

@@ -1,8 +1,8 @@
 from pathlib import Path
 
-from napari.layers import Layer, Shapes, Image, Labels # type: ignore
-from napari.layers.shapes.shapes import Mode # type: ignore
-from napari.utils.events import Event as NapariEvent # type: ignore
+from napari.layers import Layer, Shapes, Image, Labels  # type: ignore
+from napari.layers.shapes.shapes import Mode  # type: ignore
+from napari.utils.events import Event as NapariEvent  # type: ignore
 
 from allencell_ml_segmenter.main.i_viewer import IViewer
 from allencell_ml_segmenter.main.segmenter_layer import (
@@ -10,7 +10,7 @@ from allencell_ml_segmenter.main.segmenter_layer import (
     ImageLayer,
     LabelsLayer,
 )
-import napari # type: ignore
+import napari  # type: ignore
 from typing import Callable, Optional
 import numpy as np
 
