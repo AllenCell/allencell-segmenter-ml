@@ -65,6 +65,7 @@ def test_show_results(main_model: MainModel) -> None:
     prediction_model.set_selected_paths(
         [Path("output_1.tiff"), Path("output_2.tiff")]
     )
+    prediction_model.set_image_input_channel_index(0)
     fake_viewer: FakeViewer = FakeViewer()
 
     prediction_view: PredictionView = PredictionView(
@@ -104,6 +105,7 @@ def test_show_results_non_empty_folder(main_model: MainModel) -> None:
     prediction_model.set_selected_paths(
         [Path("output_3.tiff"), Path("output_4.tiff")]
     )
+    prediction_model.set_image_input_channel_index(0)
     fake_viewer: FakeViewer = FakeViewer()
 
     prediction_view: PredictionView = PredictionView(
