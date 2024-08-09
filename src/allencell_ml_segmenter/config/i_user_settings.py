@@ -5,7 +5,7 @@ from typing import Optional
 
 
 class IUserSettings(ABC):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
     @abstractmethod
@@ -17,13 +17,13 @@ class IUserSettings(ABC):
         pass
 
     @abstractmethod
-    def set_user_experiments_path(self, path: Path):
+    def set_user_experiments_path(self, path: Path) -> None:
         pass
 
     @abstractmethod
-    def prompt_for_user_experiments_home(self, parent: QWidget):
+    def prompt_for_user_experiments_home(self, parent: QWidget) -> None:
         pass
 
     @abstractmethod
-    def display_change_user_experiments_home(self, parent: QWidget):
+    def display_change_user_experiments_home(self, parent: QWidget) -> None:
         pass
