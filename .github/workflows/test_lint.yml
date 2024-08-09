@@ -40,7 +40,7 @@ jobs:
       - name: Lint with Black
         run: |
           black --check --verbose .
-      - name: Type check with Mypy
+      - name: Type check with mypy
         run: |
           mypy .
       - name: Test with pytest
