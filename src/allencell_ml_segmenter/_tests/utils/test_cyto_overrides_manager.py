@@ -44,7 +44,6 @@ def training_model(experiments_model: ExperimentsModel) -> TrainingModel:
     model.set_selected_channel(ImageType.SEG2, 3)
     model.set_use_max_time(True)
     model.set_max_time(9992)
-    model.set_config_dir("/path/to/configs")
     model.set_patch_size([1, 2, 4])
     model.set_num_epochs(100)
     model.set_model_size("medium")
@@ -113,7 +112,6 @@ def test_get_training_overrides_2d_spatial_dims(experiments_model) -> None:
         ImageType.SEG2, 0
     )  # set to 0 if 2d image loaded
     model.set_max_time(9992)
-    model.set_config_dir("/path/to/configs")
     model.set_num_epochs(100)
     model.set_model_size("medium")
 
