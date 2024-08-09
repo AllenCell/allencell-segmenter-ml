@@ -162,7 +162,8 @@ class CurationModel(QObject):
 
     def get_save_masks_path(self) -> Optional[Path]:
         exp_name: Optional[str] = self._experiments_model.get_experiment_name()
-        return self._experiments_model.get_user_experiments_path() / exp_name if exp_name is not None else None
+        exp_path: Optional[Path] = self._experiments_model.get_user_experiments_path()
+        return exp_path / exp_name if exp_name is not None and exp_path is not None else None
 
     def get_curation_record(self) -> Optional[list[CurationRecord]]:
         return self._curation_record
@@ -294,10 +295,11 @@ class CurationModel(QObject):
 
     def get_csv_path(self) -> Optional[Path]:
         exp_name: Optional[str] = self._experiments_model.get_experiment_name()
+        exp_path: Optional[Path] = self._experiments_model.get_user_experiments_path()
         return (
-            self._experiments_model.get_user_experiments_path()
+            exp_path
             / exp_name
-            / "data" if exp_name is not None else None
+            / "data" if exp_name is not None and exp_path is not None else None
         )
 
     def get_max_num_images_to_use(self) -> int:
