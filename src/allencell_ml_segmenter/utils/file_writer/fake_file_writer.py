@@ -7,7 +7,7 @@ from typing import List, Dict, Any, Union
 class FakeFileWriter(IFileWriter):
     _instance = None
 
-    def __init__(self):
+    def __init__(self) -> None:
         # {path: saved_array}
         self.np_save_state: Dict[Path, np.ndarray] = {}
 

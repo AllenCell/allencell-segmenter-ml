@@ -26,10 +26,13 @@ def main_widget(qtbot: QtBot) -> MainWidget:
     """
     Returns a MainWidget instance for testing.
     """
-    settings: IUserSettings = FakeUserSettings()
+    settings: IUserSettings = FakeUserSettings(
+        user_experiments_path=Path("fake_home")
+    )
     settings.set_cyto_dl_home_path(Path())
     settings.set_user_experiments_path(Path())
-    return MainWidget(viewer=Mock(), settings=settings)
+    main_widget: MainWidget = MainWidget(viewer=Mock(), settings=settings)
+    return main_widget
 
 
 def test_tabs_react_to_new_model_event(
@@ -38,7 +41,6 @@ def test_tabs_react_to_new_model_event(
     """
     Tests that the main widget handles the action new model event correctly.
     """
-
     # ACT: have the model dispatch the action new model event
     main_widget._model.set_new_model(True)
 
@@ -74,7 +76,7 @@ def test_tabs_react_to_existing_model_event(
     """
     Tests that the main widget handles the action new model event correctly.
     """
-
+    main_widget._experiments_model.apply_experiment_name("test_exp")
     # ACT: have the model dispatch the action new model event
     main_widget._model.set_new_model(False)
 
@@ -112,7 +114,7 @@ def test_handle_action_change_view_event(
     """
     # ARRANGE
     views: Set[AicsWidget] = main_widget._window_to_index.keys()
-
+    main_widget._experiments_model.apply_experiment_name("test_exp")
     for view in views:
         # ACT: have the model dispatch the action change view event
         main_widget._model.set_current_view(view)
@@ -151,24 +153,14 @@ def test_experiments_home_initialized(qtbot: QtBot) -> None:
     )  # The path chosen by the user should have been persisted in settings.
 
 
-def test_tab_enabled(main_widget) -> None:
+def test_tab_enabled(main_widget: MainWidget) -> None:
     """
     Tests that the main widget enables the correct tabs when the experiment is applied.
     """
-
-    # ARRANGE
-    main_widget._experiments_model.apply_experiment_name("foo")
-
-    # Sanity check
-    assert main_widget._window_container.isEnabled() == True
-
-    # ACT
-    main_widget._experiments_model.apply_experiment_name(None)
-
     # ASSERT
     assert main_widget._window_container.isEnabled() == False
 
-    # ACT
+    # ARRANGE
     main_widget._experiments_model.apply_experiment_name("foo")
 
     # Sanity check

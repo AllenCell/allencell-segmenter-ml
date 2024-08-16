@@ -9,7 +9,7 @@ class DirectoryOrCSVFileDialog(QFileDialog):
     Used in relation to InputButton.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.setOption(QFileDialog.DontUseNativeDialog)
         self.setFileMode(QFileDialog.Directory)

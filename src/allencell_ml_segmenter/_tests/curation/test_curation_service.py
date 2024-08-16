@@ -65,6 +65,10 @@ def test_env_main_view(
     model.set_image_directory_paths(ImageType.RAW, IMG_DIR_FILES)
     model.set_image_directory_paths(ImageType.SEG1, IMG_DIR_FILES)
     model.set_image_directory_paths(ImageType.SEG2, IMG_DIR_FILES)
+    model.set_selected_channel(ImageType.RAW, 0)
+    model.set_selected_channel(ImageType.SEG1, 0)
+    model.set_selected_channel(ImageType.SEG2, 0)
+
     model.set_current_view(CurationView.MAIN_VIEW)
 
     return test_env_input_view

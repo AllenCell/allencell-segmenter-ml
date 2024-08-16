@@ -5,7 +5,7 @@ from typing import List, Union
 
 
 class IFileWriter(ABC):
-    def __init__(self):
+    def __init__(self) -> None:
         raise RuntimeError(
             "Cannot initialize new singleton, please use .global_instance() instead"
         )

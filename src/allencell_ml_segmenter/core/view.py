@@ -1,22 +1,25 @@
 from abc import abstractmethod, ABC
 from qtpy.QtWidgets import QWidget, QProgressDialog
-from qtpy.QtCore import Qt, QThread
+from qtpy.QtCore import Qt, QThread, QObject
 
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.progress_tracker import ProgressTracker
+from typing import Callable, Optional
 
 
-class ViewMeta(type(QWidget), type(Subscriber)):
+class ViewMeta(type(QWidget), type(Subscriber)):  # type: ignore
     pass
 
 
 class LongTaskThread(QThread):
-    def __init__(self, do_work: callable, parent=None):
+    def __init__(
+        self, do_work: Callable, parent: Optional[QObject] = None
+    ) -> None:
         super().__init__(parent)
         self._do_work = do_work
 
     # override
-    def run(self):
+    def run(self) -> None:
         print("running")
         self._do_work()
 
@@ -28,7 +31,7 @@ class View(QWidget, Subscriber, metaclass=ViewMeta):
 
     _template = None
 
-    def __init__(self):
+    def __init__(self) -> None:
         QWidget.__init__(self)
 
     def startLongTaskWithProgressBar(
@@ -45,17 +48,16 @@ class View(QWidget, Subscriber, metaclass=ViewMeta):
         )
         self.progressDialog.setValue(progress_tracker.get_progress())
         self.progressDialog.setWindowTitle(f"{self.getTypeOfWork()} Progress")
-        self.progressDialog.setWindowModality(Qt.ApplicationModal)
+        self.progressDialog.setWindowModality(
+            Qt.WindowModality.ApplicationModal
+        )
         self.progressDialog.canceled.connect(self.longTaskThread.terminate)
         # stop the watchdog thread for file watching inside of the progress tracker
         self.progressDialog.canceled.connect(progress_tracker.stop_tracker)
 
         self.progressDialog.show()
 
-        self.longTaskThread.finished.connect(self.progressDialog.reset)
-        self.longTaskThread.finished.connect(self.longTaskThread.deleteLater)
-        self.longTaskThread.finished.connect(self.progressDialog.close)
-        self.longTaskThread.finished.connect(self.showResults)
+        self.longTaskThread.finished.connect(self._onLongTaskThreadFinished)
 
         # connect signals from progress tracker to modify the qprogressdialog
         progress_tracker.signals.progress_changed.connect(self.updateProgress)
@@ -73,7 +75,7 @@ class View(QWidget, Subscriber, metaclass=ViewMeta):
         self.longTaskThread.start()
 
     @abstractmethod
-    def showResults(self):
+    def showResults(self) -> None:
         pass
 
     def updateProgress(self, value: int) -> None:
@@ -85,19 +87,25 @@ class View(QWidget, Subscriber, metaclass=ViewMeta):
     def setProgressMax(self, maximum: int) -> None:
         self.progressDialog.setMaximum(maximum)
 
+    def _onLongTaskThreadFinished(self) -> None:
+        self.progressDialog.reset()
+        self.longTaskThread.deleteLater()
+        self.progressDialog.close()
+        self.showResults()
+
     @abstractmethod
-    def doWork(self):
+    def doWork(self) -> None:
         pass
 
     @abstractmethod
-    def getTypeOfWork(self):
+    def getTypeOfWork(self) -> str:
         pass
 
 
 class MainWindow(ABC):
     # this is an ABC that defines a main window in the app, currently this is TrainingView, PredictionView,
     # and CurationMainWidget
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
     @abstractmethod

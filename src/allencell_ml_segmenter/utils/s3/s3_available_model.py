@@ -1,5 +1,6 @@
 from pathlib import Path
-import requests
+import requests  # type: ignore
+from typing import Optional
 
 from allencell_ml_segmenter.core.dialog_box import DialogBox
 from allencell_ml_segmenter.utils.s3.s3_request_exception import (
@@ -38,7 +39,8 @@ class AvailableModel:
                 f"{self.get_name()} is already in your experiments folder. Overwrite?"
             )
             overwrite_dialog.exec()
-            continue_download = overwrite_dialog.get_selection()
+            selection: Optional[bool] = overwrite_dialog.get_selection()
+            continue_download = selection if selection is not None else False
 
         if continue_download:
             response: requests.Response = requests.get(self._object_url)

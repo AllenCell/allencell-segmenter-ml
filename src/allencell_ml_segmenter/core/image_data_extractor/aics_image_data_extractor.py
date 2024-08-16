@@ -50,7 +50,7 @@ class AICSImageDataExtractor(IImageDataExtractor):
         )
 
     @classmethod
-    def global_instance(cls):
+    def global_instance(cls) -> IImageDataExtractor:
         if cls._instance is None:
             cls._instance = super().__new__(cls)
         return cls._instance

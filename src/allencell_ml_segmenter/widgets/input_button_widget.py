@@ -1,6 +1,6 @@
 from enum import Enum
 from pathlib import Path
-from typing import Callable
+from typing import Callable, Any, Optional
 
 from qtpy.QtWidgets import (
     QWidget,
@@ -13,7 +13,6 @@ from qtpy.QtWidgets import (
 from qtpy.QtCore import Qt
 
 from allencell_ml_segmenter._style import Style
-from allencell_ml_segmenter.core.publisher import Publisher
 from allencell_ml_segmenter.widgets.directory_or_csv_file_dialog import (
     DirectoryOrCSVFileDialog,
 )
@@ -33,20 +32,23 @@ class InputButton(QWidget):
 
     def __init__(
         self,
-        model: Publisher,
+        model: Any,
         model_set_file_path_function: Callable,
         placeholder: str = "Select file...",
         mode: FileInputMode = FileInputMode.FILE,
     ):
         super().__init__()
         self._default_placeholder = placeholder
-        self._model: Publisher = model
+        self._model: Any = model
 
-        self.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
+        self.setSizePolicy(
+            QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed
+        )
 
-        self.setLayout(QHBoxLayout())
-        self.layout().setContentsMargins(0, 0, 0, 0)
-        self.layout().setSpacing(0)
+        layout: QHBoxLayout = QHBoxLayout()
+        self.setLayout(layout)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(0)
 
         self._set_path_function: Callable = model_set_file_path_function
         self._mode: FileInputMode = mode
@@ -62,26 +64,29 @@ class InputButton(QWidget):
         self.button.setObjectName("button")
 
         # add widgets to layout
-        self.layout().addWidget(self._text_display, alignment=Qt.AlignLeft)
-        self.layout().addWidget(self.button, alignment=Qt.AlignLeft)
+        layout.addWidget(
+            self._text_display, alignment=Qt.AlignmentFlag.AlignLeft
+        )
+        layout.addWidget(self.button, alignment=Qt.AlignmentFlag.AlignLeft)
 
         # connect to slot
         self.button.clicked.connect(self._select_path)
         # connect to stylesheet
         self.setStyleSheet(Style.get_stylesheet("input_button_widget.qss"))
 
-    def _update_path_text(self, path_text: str) -> None:
+    def _update_path_text(self, path_text: Optional[str]) -> None:
         """
         Displays chosen file or directory path on label portion of input button.
         """
-        self._text_display.setReadOnly(False)
-        self._text_display.setText(path_text)
-        self._text_display.setReadOnly(True)
+        if path_text is not None:
+            self._text_display.setReadOnly(False)
+            self._text_display.setText(path_text)
+            self._text_display.setReadOnly(True)
 
-        # convert path_text to the appropriate path
-        path: Path = Path(path_text)
+            # convert path_text to the appropriate path
+            path: Path = Path(path_text)
 
-        self._set_path_function(path)
+            self._set_path_function(path)
 
     def elongate(self, min_width: int) -> None:
         """
@@ -94,12 +99,13 @@ class InputButton(QWidget):
         Called whenever an input button is clicked. Takes into account the type of files that can be selected
         and makes a call to _update_path_text if the user selects a compatible file or directory.
         """
+        file_path: Optional[str]
         if self._mode == FileInputMode.FILE:
-            file_path: str = QFileDialog.getOpenFileName(
+            file_path = QFileDialog.getOpenFileName(
                 self,
                 "Select a file",
                 options=QFileDialog.Option.DontUseNativeDialog
-                | QFileDialog.Option.DontUseCustomDirectoryIcons,
+                | QFileDialog.Option.DontUseCustomDirectoryIcons,  # type: ignore
             )[0]
         elif self._mode == FileInputMode.DIRECTORY_OR_CSV:
             custom_dialog: DirectoryOrCSVFileDialog = (
@@ -110,7 +116,7 @@ class InputButton(QWidget):
             else:
                 file_path = None
         else:  # FileInputMode.DIRECTORY
-            file_path: str = QFileDialog.getExistingDirectory(
+            file_path = QFileDialog.getExistingDirectory(
                 self,
                 "Select a directory",
                 options=QFileDialog.Option.DontUseNativeDialog

@@ -11,5 +11,5 @@ class CurationRecord:
     seg2: Optional[Path]
     excluding_mask: Optional[np.ndarray]
     merging_mask: Optional[np.ndarray]
-    base_image: str
+    base_image: Optional[str]
     to_use: bool

@@ -1,8 +1,8 @@
 from pathlib import Path
 from typing import List, Optional
 
-from napari.utils.events import Event as NapariEvent
-from napari.utils.notifications import show_warning
+from napari.utils.events import Event as NapariEvent  # type: ignore
+from napari.utils.notifications import show_warning  # type: ignore
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
     QWidget,
@@ -14,6 +14,7 @@ from qtpy.QtWidgets import (
     QLabel,
     QFrame,
     QSizePolicy,
+    QListWidgetItem,
 )
 
 from allencell_ml_segmenter.core.event import Event
@@ -31,7 +32,7 @@ from allencell_ml_segmenter.widgets.check_box_list_widget import (
     CheckBoxListWidget,
 )
 
-from allencell_ml_segmenter.main.viewer import Viewer
+from allencell_ml_segmenter.main.viewer import IViewer
 from allencell_ml_segmenter.prediction.service import ModelFileService
 from allencell_ml_segmenter.curation.stacked_spinner import StackedSpinner
 
@@ -45,23 +46,30 @@ class PredictionFileInput(QWidget):
     BOTTOM_TEXT: str = "Image directory"
 
     def __init__(
-        self, model: PredictionModel, viewer: Viewer, service: ModelFileService
+        self,
+        model: PredictionModel,
+        viewer: IViewer,
+        service: ModelFileService,
     ):
         super().__init__()
 
         self._model: PredictionModel = model
-        self._viewer: Viewer = viewer
+        self._viewer: IViewer = viewer
         self._service: ModelFileService = service
-        self.setLayout(QVBoxLayout())
-        self.layout().setContentsMargins(0, 0, 0, 0)
-        self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
+        layout: QVBoxLayout = QVBoxLayout()
+        self.setLayout(layout)
+        layout.setContentsMargins(0, 0, 0, 0)
+        self.setSizePolicy(
+            QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Maximum
+        )
 
         # set up napari event listener for layer changes
         # this keeps the layer list in our UI updated as the layers are added/deleted from napari
         self._viewer.subscribe_layers_change_event(self._update_layer_list)
 
         frame: QFrame = QFrame()
-        frame.setLayout(QVBoxLayout())
+        frame_layout: QVBoxLayout = QVBoxLayout()
+        frame.setLayout(frame_layout)
 
         frame.setObjectName("frame")
 
@@ -69,10 +77,10 @@ class PredictionFileInput(QWidget):
         title.set_hint("Image(s) to apply the trained model on")
         title.setObjectName("title")
 
-        self.layout().addWidget(title)
-        self.layout().addWidget(frame)
+        layout.addWidget(title)
+        layout.addWidget(frame)
 
-        frame.layout().addWidget(QLabel("Select input image(s):"))
+        frame_layout.addWidget(QLabel("Select input image(s):"))
 
         # radiobox for images from napari
         horiz_layout: QHBoxLayout = QHBoxLayout()
@@ -90,14 +98,14 @@ class PredictionFileInput(QWidget):
         question_label.set_hint("Image(s) already opened in napari")
         horiz_layout.addWidget(question_label)
 
-        frame.layout().addLayout(horiz_layout)
+        frame_layout.addLayout(horiz_layout)
 
         # list of available images on napari
         self._image_list: CheckBoxListWidget = CheckBoxListWidget()
         self._image_list.setEnabled(False)
         self._image_list.setObjectName("imageList")
         self._image_list.checkedSignal.connect(self._process_checked_signal)
-        frame.layout().addWidget(self._image_list)
+        frame_layout.addWidget(self._image_list)
 
         # radiobox for images from directory
         horiz_layout = QHBoxLayout()
@@ -135,7 +143,7 @@ class PredictionFileInput(QWidget):
         )
         self._browse_dir_edit.setEnabled(False)
         horiz_layout.addWidget(self.input_image_spinner)
-        frame.layout().addLayout(horiz_layout)
+        frame_layout.addLayout(horiz_layout)
 
         grid_layout: QGridLayout = QGridLayout()
 
@@ -187,7 +195,7 @@ class PredictionFileInput(QWidget):
         grid_layout.setColumnStretch(0, 1)
         grid_layout.setColumnStretch(1, 0)
 
-        frame.layout().addLayout(grid_layout)
+        frame_layout.addLayout(grid_layout)
 
     def _on_screen_slot(self) -> None:
         """Prohibits usage of non-related input fields if top button is checked."""
@@ -240,9 +248,11 @@ class PredictionFileInput(QWidget):
                     show_warning(
                         "Cannot predict on > 10 images from the viewer"
                     )
-                    self._image_list.item(row).setCheckState(
-                        Qt.CheckState.Unchecked
+                    qlist_item: Optional[QListWidgetItem] = (
+                        self._image_list.item(row)
                     )
+                    if qlist_item is not None:
+                        qlist_item.setCheckState(Qt.CheckState.Unchecked)
             elif state == Qt.CheckState.Unchecked:
                 # could have unselected the img we got channels from originally, so need to re-extract
                 # as long as there are still some images selected
@@ -261,7 +271,7 @@ class PredictionFileInput(QWidget):
         self._channel_select_dropdown.setEnabled(False)
 
     def _set_input_channel_combobox_to_loading(
-        self, event: Event = None
+        self, event: Optional[Event] = None
     ) -> None:
         self.input_image_spinner.start()
         self._channel_select_dropdown.clear()
@@ -269,14 +279,19 @@ class PredictionFileInput(QWidget):
         self._channel_select_dropdown.setCurrentIndex(-1)
         self._channel_select_dropdown.setEnabled(False)
 
-    def _populate_input_channel_combobox(self, event: Event = None) -> None:
+    def _populate_input_channel_combobox(
+        self, event: Optional[Event] = None
+    ) -> None:
         self.input_image_spinner.stop()
         channels_in_image: Optional[int] = self._model.get_max_channels()
+        max_channels: Optional[int] = self._model.get_max_channels()
         self._reset_channel_combobox()
-        if channels_in_image is not None and channels_in_image > 0:
-            values_range: List[str] = [
-                str(i) for i in range(self._model.get_max_channels())
-            ]
+        if (
+            channels_in_image is not None
+            and channels_in_image > 0
+            and max_channels is not None
+        ):
+            values_range: List[str] = [str(i) for i in range(max_channels)]
             self._channel_select_dropdown.setPlaceholderText(
                 "select a channel index"
             )
