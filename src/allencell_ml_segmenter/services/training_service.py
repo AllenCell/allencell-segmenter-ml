@@ -11,19 +11,18 @@ from allencell_ml_segmenter.core.image_data_extractor import (
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.event import Event
 
-from cyto_dl.api.model import CytoDLModel
+from cyto_dl.api.model import CytoDLModel  # type: ignore
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.training.training_model import (
     TrainingModel,
     ImageType,
 )
 from typing import Optional
-from napari.utils.notifications import show_warning
+from napari.utils.notifications import show_warning, show_error  # type: ignore
 from allencell_ml_segmenter.utils.cyto_overrides_manager import (
     CytoDLOverridesManager,
 )
 from allencell_ml_segmenter.utils.file_utils import FileUtils
-from napari.utils.notifications import show_error
 from allencell_ml_segmenter.core.task_executor import (
     ITaskExecutor,
     NapariThreadTaskExecutor,
@@ -87,11 +86,7 @@ class TrainingService(Subscriber):
                 cyto_overrides_manager.get_training_overrides()
             )
             model.print_config()
-            model.save_config(
-                self._experiments_model.get_train_config_path(
-                    self._experiments_model.get_experiment_name()
-                )
-            )
+            model.save_config(self._experiments_model.get_train_config_path())
             model.train()
 
     def _able_to_continue_training(self) -> bool:
@@ -169,7 +164,7 @@ class TrainingService(Subscriber):
         )
 
     def _on_training_dir_data_error(self, e: Exception) -> None:
-        self._training_model.set_total_num_images(None)
+        self._training_model.set_total_num_images(0)
         self._training_model.set_all_num_channels(
             {
                 ImageType.RAW: None,

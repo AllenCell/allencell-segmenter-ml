@@ -1,15 +1,16 @@
-from typing import Dict
+from typing import Optional, Dict
 from allencell_ml_segmenter.config.i_user_settings import IUserSettings
 
 from allencell_ml_segmenter.main.viewer import Viewer
 
-import napari
+import napari  # type: ignore
 from allencell_ml_segmenter.curation.curation_widget import CurationWidget
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
     QVBoxLayout,
     QSizePolicy,
     QTabWidget,
+    QWidget,
 )
 from allencell_ml_segmenter.config.user_settings import UserSettings
 
@@ -42,17 +43,25 @@ class MainWidget(AicsWidget):
     Holds the pertinent view at the moment to be displayed to the user.
     """
 
-    def __init__(self, viewer: napari.Viewer, settings: IUserSettings = None):
+    def __init__(
+        self, viewer: napari.Viewer, settings: Optional[IUserSettings] = None
+    ):
         super().__init__()
-        self.user_settings: IUserSettings = settings
-        if self.user_settings is None:
+        self.user_settings: IUserSettings
+        if settings is None:
             self.user_settings = UserSettings()
+        else:
+            self.user_settings = settings
+
         self.viewer: IViewer = Viewer(viewer)
 
         # basic styling
-        self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
-        self.setLayout(QVBoxLayout())
-        self.layout().setContentsMargins(0, 0, 0, 0)
+        self.setSizePolicy(
+            QSizePolicy.Policy.Preferred, QSizePolicy.Policy.MinimumExpanding
+        )
+        layout: QVBoxLayout = QVBoxLayout()
+        self.setLayout(layout)
+        layout.setContentsMargins(0, 0, 0, 0)
 
         self._model: MainModel = MainModel()
         self._model.subscribe(
@@ -98,7 +107,7 @@ class MainWidget(AicsWidget):
         # keep track of windows
         self._window_container: QTabWidget = QTabWidget()
         self._window_container.setDisabled(True)
-        self._window_to_index: Dict[MainWindow, int] = dict()
+        self._window_to_index: dict[MainWindow, int] = dict()
 
         self._experiments_model.subscribe(
             Event.ACTION_EXPERIMENT_APPLIED,
@@ -132,9 +141,9 @@ class MainWidget(AicsWidget):
         )
         model_selection_widget.setObjectName("modelSelection")
 
-        self.layout().addWidget(model_selection_widget, Qt.AlignTop)
-        self.layout().addWidget(self._window_container, Qt.AlignCenter)
-        self.layout().addStretch(100)
+        layout.addWidget(model_selection_widget, Qt.AlignmentFlag.AlignTop)
+        layout.addWidget(self._window_container, Qt.AlignmentFlag.AlignCenter)
+        layout.addStretch(100)
         self.setStyleSheet(Style.get_stylesheet("core.qss"))
 
     def _handle_experiment_applied(self, _: Event) -> None:
@@ -167,7 +176,9 @@ class MainWidget(AicsWidget):
         inputs:
             event - MainEvent
         """
-        self._set_window(self._model.get_current_view())
+        curr_view: Optional[MainWindow] = self._model.get_current_view()
+        if curr_view is not None:
+            self._set_window(curr_view)
 
     def _set_window(self, window: MainWindow) -> None:
         """
@@ -178,20 +189,21 @@ class MainWidget(AicsWidget):
     def _initialize_window(self, window: MainWindow, title: str) -> None:
         # QTabWidget count method keeps track of how many child widgets have been added
         self._window_to_index[window] = self._window_container.count()
-        self._window_container.addTab(window, title)
+        self._window_container.addTab(window, title)  # type: ignore
 
     def _tab_changed(self, index: int) -> None:
         """
         Resize bottom edge of QTabWidget to fit the current view.
         """
         for i in range(self._window_container.count()):
-            if i == index:
-                self._window_container.widget(i).setSizePolicy(
-                    QSizePolicy.Preferred, QSizePolicy.Maximum
+            widget: Optional[QWidget] = self._window_container.widget(i)
+            if widget is not None and i == index:
+                widget.setSizePolicy(
+                    QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Maximum
                 )
-            else:
-                self._window_container.widget(i).setSizePolicy(
-                    QSizePolicy.Ignored, QSizePolicy.Ignored
+            elif widget is not None:
+                widget.setSizePolicy(
+                    QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Ignored
                 )
 
                 # call the focus_changed method of the view that we are switching to
