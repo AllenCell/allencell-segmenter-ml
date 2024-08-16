@@ -7,7 +7,7 @@ build-backend = "setuptools.build_meta"
 # package basics
 # https://peps.python.org/pep-0621/
 [project]
-name = "allencell-ml-segmenter"
+name = "allencell-segmenter-ml"
 version = "0.1.16"
 description = "A plugin to leverage ML segmentation in napari"
 readme = "README.md"
@@ -82,7 +82,7 @@ dev = [
 # entry points
 # https://peps.python.org/pep-0621/#entry-points
 [project.entry-points."napari.manifest"]
-allencell-ml-segmenter = "allencell_ml_segmenter:napari.yaml"
+allencell-segmenter-ml = "allencell_ml_segmenter:napari.yaml"
 
 # build settings
 # https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html
