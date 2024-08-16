@@ -1,5 +1,5 @@
 from qtpy.QtWidgets import QListWidget, QListWidgetItem
-from typing import Union, List
+from typing import Union, List, Optional
 from qtpy.QtCore import Qt, Signal
 
 
@@ -30,46 +30,47 @@ class CheckBoxListWidget(QListWidget):
         """
         Adds an item to the list.
         """
+        item_add: QListWidgetItem
         if isinstance(item, str):
-            item_add: QListWidgetItem = QListWidgetItem(item)
+            item_add = QListWidgetItem(item)
         elif isinstance(item, QListWidgetItem):
-            item_add: QListWidgetItem = item
+            item_add = item
         else:
             raise TypeError(
                 f"Item added to CheckBoxListWidget must be a string or QListWidgetItem, but got {type(item)} instead"
             )
 
         # set checkable and unchecked by default
-        item_add.setFlags(item_add.flags() | Qt.ItemIsUserCheckable)
-        item_add.setCheckState(Qt.Unchecked)
+        item_add.setFlags(item_add.flags() | Qt.ItemFlag.ItemIsUserCheckable)
+        item_add.setCheckState(Qt.CheckState.Unchecked)
         super().addItem(item_add)
 
     def set_all_state(self, state: Qt.CheckState) -> None:
         for i in range(self.count()):
-            item: QListWidgetItem = self.item(i)
-            if item.checkState() != state:
+            item: Optional[QListWidgetItem] = self.item(i)
+            if item is not None and item.checkState() != state:
                 item.setCheckState(state)
 
     def get_checked_rows(self) -> List[int]:
-        return self.__get_flag_rows(Qt.Checked)
+        return self.__get_flag_rows(Qt.CheckState.Checked)
 
     def get_unchecked_rows(self) -> List[int]:
-        return self.__get_flag_rows(Qt.Unchecked)
+        return self.__get_flag_rows(Qt.CheckState.Unchecked)
 
     def __get_flag_rows(self, flag: Qt.CheckState) -> List[int]:
         flag_lst: List[int] = []
         for i in range(self.count()):
-            item: QListWidgetItem = self.item(i)
-            if item.checkState() == flag:
+            item: Optional[QListWidgetItem] = self.item(i)
+            if item is not None and item.checkState() == flag:
                 flag_lst.append(i)
 
         return flag_lst
 
     def remove_checked_rows(self) -> None:
-        self.__remove_flag_rows(Qt.Checked)
+        self.__remove_flag_rows(Qt.CheckState.Checked)
 
     def remove_unchecked_rows(self) -> None:
-        self.__remove_flag_rows(Qt.Unchecked)
+        self.__remove_flag_rows(Qt.CheckState.Unchecked)
 
     def __remove_flag_rows(self, flag: Qt.CheckState) -> None:
         flag_lst: List[int] = self.__get_flag_rows(flag)
