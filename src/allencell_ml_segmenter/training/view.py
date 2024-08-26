@@ -114,20 +114,18 @@ class TrainingView(View, MainWindow):
         self.z_patch_size.setValidator(patch_validator)
         patch_size_entry_layout.addWidget(QLabel("Z:"))
         patch_size_entry_layout.addWidget(self.z_patch_size)
-        self.z_patch_size.setEnabled(False)
 
         self.y_patch_size: QLineEdit = QLineEdit()
         self.y_patch_size.setValidator(patch_validator)
         patch_size_entry_layout.addWidget(QLabel("Y:"))
         patch_size_entry_layout.addWidget(self.y_patch_size)
-        self.y_patch_size.setEnabled(False)
 
         self.x_patch_size: QLineEdit = QLineEdit()
         self.x_patch_size.setValidator(patch_validator)
         patch_size_entry_layout.addWidget(QLabel("X:"))
         patch_size_entry_layout.addWidget(self.x_patch_size)
-        self.x_patch_size.setEnabled(False)
 
+        self._update_spatial_dims_boxes()
         bottom_grid_layout.addLayout(patch_size_entry_layout, 0, 1)
 
         model_size_label: LabelWithHint = LabelWithHint("Model size")
@@ -212,7 +210,7 @@ class TrainingView(View, MainWindow):
             self,
             lambda e: self._main_model.set_current_view(self),
         )
-        self._training_model.signals.spatial_dims_set.connect(self._on_spatial_dims_set)
+        self._training_model.signals.spatial_dims_set.connect(self._update_spatial_dims_boxes)
 
         # apply styling
         self.setStyleSheet(Style.get_stylesheet("training_view.qss"))
@@ -319,8 +317,16 @@ class TrainingView(View, MainWindow):
         self.image_selection_widget.set_inputs_csv()
         self._viewer.clear_layers()
     
-    def _on_spatial_dims_set(self) -> None:
-        self.x_patch_size.setEnabled(True)
-        self.y_patch_size.setEnabled(True)
-        if self._training_model.get_spatial_dims() == 3:
-            self.z_patch_size.setEnabled(True)
+    def _update_spatial_dim_box(self, line_edit: QLineEdit, should_be_enabled: bool) -> None:
+        if should_be_enabled:
+            line_edit.setEnabled(True)
+            line_edit.setPlaceholderText(None)
+        else:
+            line_edit.setEnabled(False)
+            line_edit.setPlaceholderText("N/A")
+
+    def _update_spatial_dims_boxes(self) -> None:
+        spatial_dims: Optional[int] = self._training_model.get_spatial_dims()
+        self._update_spatial_dim_box(self.x_patch_size, spatial_dims is not None)
+        self._update_spatial_dim_box(self.y_patch_size, spatial_dims is not None)
+        self._update_spatial_dim_box(self.z_patch_size, spatial_dims == 3)
