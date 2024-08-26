@@ -155,7 +155,7 @@ class TrainingService(Subscriber):
 
         return DirectoryData(
             num_imgs,
-            3 if raw_data.dim_z > 1 else 2,
+            3 if raw_data.dim_z is not None and raw_data.dim_z > 1 else 2,
             raw_data.channels,
             seg1_data.channels,
             seg2_data.channels if seg2_data else None,
