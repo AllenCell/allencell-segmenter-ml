@@ -145,51 +145,11 @@ class TrainingView(View, MainWindow):
         )
         bottom_grid_layout.addWidget(self._model_size_combo_box, 1, 1)
 
-        image_dimensions_label: LabelWithHint = LabelWithHint(
-            "Image dimension"
-        )
-        image_dimensions_label.set_hint("Dimensionality of your image data")
-        bottom_grid_layout.addWidget(image_dimensions_label, 2, 0)
-
-        dimension_choice_layout: QHBoxLayout = QHBoxLayout()
-        dimension_choice_layout.setSpacing(0)
-
-        self._radio_3d: QRadioButton = QRadioButton()
-        self._radio_3d.setObjectName("3DRadio")
-        self._radio_3d.toggled.connect(
-            lambda: self._training_model.set_spatial_dims(3)
-        )
-        label_3d: LabelWithHint = LabelWithHint("3D")
-
-        self._radio_2d: QRadioButton = QRadioButton()
-        self._radio_2d.toggled.connect(
-            lambda: self._training_model.set_spatial_dims(2)
-        )
-        label_2d: LabelWithHint = LabelWithHint("2D")
-
-        dimension_choice_layout.addWidget(self._radio_3d)
-        dimension_choice_layout.addWidget(label_3d)
-        dimension_choice_layout.addWidget(
-            self._radio_2d, alignment=Qt.AlignmentFlag.AlignLeft
-        )
-        dimension_choice_layout.addWidget(
-            label_2d, alignment=Qt.AlignmentFlag.AlignLeft
-        )
-        dimension_choice_layout.addStretch(10)
-        dimension_choice_layout.setContentsMargins(0, 0, 0, 0)
-
-        dimension_choice_dummy: QWidget = (
-            QWidget()
-        )  # stops interference with other radio buttons
-        dimension_choice_dummy.setLayout(dimension_choice_layout)
-
-        bottom_grid_layout.addWidget(dimension_choice_dummy, 2, 1)
-
         num_epochs_label: LabelWithHint = LabelWithHint("Number of epochs")
         num_epochs_label.set_hint(
             "Each epoch is one complete pass through the entire training dataset. More epochs yields better performance at the cost of training time."
         )
-        bottom_grid_layout.addWidget(num_epochs_label, 3, 0)
+        bottom_grid_layout.addWidget(num_epochs_label, 2, 0)
 
         self._num_epochs_input: QLineEdit = QLineEdit()
         int_validator: QIntValidator = QIntValidator()
@@ -200,7 +160,7 @@ class TrainingView(View, MainWindow):
         self._num_epochs_input.textChanged.connect(
             self._num_epochs_field_handler
         )
-        bottom_grid_layout.addWidget(self._num_epochs_input, 3, 1)
+        bottom_grid_layout.addWidget(self._num_epochs_input, 2, 1)
 
         max_time_layout: QHBoxLayout = QHBoxLayout()
         max_time_layout.setSpacing(0)
@@ -232,7 +192,7 @@ class TrainingView(View, MainWindow):
         )
         max_time_layout.addStretch()
 
-        bottom_grid_layout.addLayout(max_time_layout, 4, 1)
+        bottom_grid_layout.addLayout(max_time_layout, 3, 1)
         bottom_grid_layout.setColumnStretch(1, 8)
         bottom_grid_layout.setColumnStretch(0, 3)
 
