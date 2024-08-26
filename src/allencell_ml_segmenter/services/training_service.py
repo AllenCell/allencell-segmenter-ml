@@ -33,7 +33,7 @@ from allencell_ml_segmenter.main.main_model import MIN_DATASET_SIZE
 
 DirectoryData = namedtuple(
     "DirectoryData",
-    ["num_images", "raw_channels", "seg1_channels", "seg2_channels"],
+    ["num_images", "spatial_dims", "raw_channels", "seg1_channels", "seg2_channels"],
 )
 
 
@@ -138,16 +138,20 @@ class TrainingService(Subscriber):
         seg1_data: ImageData = self._img_data_extractor.extract_image_data(
             get_img_path_from_csv(training_csv, column="seg1"), np_data=False
         )
-        seg2_path: Path = get_img_path_from_csv(training_csv, "seg2")
-        seg2_data: Optional[ImageData] = (
-            self._img_data_extractor.extract_image_data(
-                seg2_path, np_data=False
+        seg2_data: Optional[ImageData]
+        try:
+            seg2_path: Path = get_img_path_from_csv(training_csv, "seg2")
+            seg2_data = (
+                self._img_data_extractor.extract_image_data(
+                    seg2_path, np_data=False
+                )
             )
-            if seg2_path
-            else None
-        )
+        except ValueError:
+            seg2_data = None
+
         return DirectoryData(
             num_imgs,
+            3 if raw_data.dim_z > 1 else 2,
             raw_data.channels,
             seg1_data.channels,
             seg2_data.channels if seg2_data else None,
@@ -162,6 +166,7 @@ class TrainingService(Subscriber):
                 ImageType.SEG2: dir_data.seg2_channels,
             }
         )
+        self._training_model.set_spatial_dims(dir_data.spatial_dims)
 
     def _on_training_dir_data_error(self, e: Exception) -> None:
         self._training_model.set_total_num_images(0)
