@@ -114,16 +114,19 @@ class TrainingView(View, MainWindow):
         self.z_patch_size.setValidator(patch_validator)
         patch_size_entry_layout.addWidget(QLabel("Z:"))
         patch_size_entry_layout.addWidget(self.z_patch_size)
+        self.z_patch_size.setEnabled(False)
 
         self.y_patch_size: QLineEdit = QLineEdit()
         self.y_patch_size.setValidator(patch_validator)
         patch_size_entry_layout.addWidget(QLabel("Y:"))
         patch_size_entry_layout.addWidget(self.y_patch_size)
+        self.y_patch_size.setEnabled(False)
 
         self.x_patch_size: QLineEdit = QLineEdit()
         self.x_patch_size.setValidator(patch_validator)
         patch_size_entry_layout.addWidget(QLabel("X:"))
         patch_size_entry_layout.addWidget(self.x_patch_size)
+        self.x_patch_size.setEnabled(False)
 
         bottom_grid_layout.addLayout(patch_size_entry_layout, 0, 1)
 
@@ -209,6 +212,7 @@ class TrainingView(View, MainWindow):
             self,
             lambda e: self._main_model.set_current_view(self),
         )
+        self._training_model.signals.spatial_dims_set.connect(self._on_spatial_dims_set)
 
         # apply styling
         self.setStyleSheet(Style.get_stylesheet("training_view.qss"))
@@ -314,3 +318,9 @@ class TrainingView(View, MainWindow):
     def focus_changed(self) -> None:
         self.image_selection_widget.set_inputs_csv()
         self._viewer.clear_layers()
+    
+    def _on_spatial_dims_set(self) -> None:
+        self.x_patch_size.setEnabled(True)
+        self.y_patch_size.setEnabled(True)
+        if self._training_model.get_spatial_dims() == 3:
+            self.z_patch_size.setEnabled(True)
