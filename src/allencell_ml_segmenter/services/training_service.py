@@ -33,7 +33,13 @@ from allencell_ml_segmenter.main.main_model import MIN_DATASET_SIZE
 
 DirectoryData = namedtuple(
     "DirectoryData",
-    ["num_images", "spatial_dims", "raw_channels", "seg1_channels", "seg2_channels"],
+    [
+        "num_images",
+        "spatial_dims",
+        "raw_channels",
+        "seg1_channels",
+        "seg2_channels",
+    ],
 )
 
 
@@ -141,10 +147,8 @@ class TrainingService(Subscriber):
         seg2_data: Optional[ImageData]
         try:
             seg2_path: Path = get_img_path_from_csv(training_csv, "seg2")
-            seg2_data = (
-                self._img_data_extractor.extract_image_data(
-                    seg2_path, np_data=False
-                )
+            seg2_data = self._img_data_extractor.extract_image_data(
+                seg2_path, np_data=False
             )
         except ValueError:
             seg2_data = None
