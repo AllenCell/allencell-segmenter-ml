@@ -210,7 +210,9 @@ class TrainingView(View, MainWindow):
             self,
             lambda e: self._main_model.set_current_view(self),
         )
-        self._training_model.signals.spatial_dims_set.connect(self._update_spatial_dims_boxes)
+        self._training_model.signals.spatial_dims_set.connect(
+            self._update_spatial_dims_boxes
+        )
 
         # apply styling
         self.setStyleSheet(Style.get_stylesheet("training_view.qss"))
@@ -316,8 +318,10 @@ class TrainingView(View, MainWindow):
     def focus_changed(self) -> None:
         self.image_selection_widget.set_inputs_csv()
         self._viewer.clear_layers()
-    
-    def _update_spatial_dim_box(self, line_edit: QLineEdit, should_be_enabled: bool) -> None:
+
+    def _update_spatial_dim_box(
+        self, line_edit: QLineEdit, should_be_enabled: bool
+    ) -> None:
         if should_be_enabled:
             line_edit.setEnabled(True)
             line_edit.setPlaceholderText(None)
@@ -327,6 +331,10 @@ class TrainingView(View, MainWindow):
 
     def _update_spatial_dims_boxes(self) -> None:
         spatial_dims: Optional[int] = self._training_model.get_spatial_dims()
-        self._update_spatial_dim_box(self.x_patch_size, spatial_dims is not None)
-        self._update_spatial_dim_box(self.y_patch_size, spatial_dims is not None)
+        self._update_spatial_dim_box(
+            self.x_patch_size, spatial_dims is not None
+        )
+        self._update_spatial_dim_box(
+            self.y_patch_size, spatial_dims is not None
+        )
         self._update_spatial_dim_box(self.z_patch_size, spatial_dims == 3)
