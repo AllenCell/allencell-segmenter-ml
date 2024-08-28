@@ -16,12 +16,6 @@ class ExperimentsModel(IExperimentsModel):
         self.experiments = []
         self.refresh_experiments()
 
-    def get_checkpoint(self) -> Optional[str]:
-        """
-        Gets checkpoint
-        """
-        return self.get_best_ckpt(self.get_experiment_name())
-
     def refresh_experiments(self) -> None:
         # TODO: make a FileUtils method for this?
         self.experiments = []
@@ -152,15 +146,19 @@ class ExperimentsModel(IExperimentsModel):
         )
 
     def get_current_epoch(self) -> Optional[int]:
-        ckpt: Optional[str] = self.get_checkpoint()
+        ckpt: Optional[str] = self.get_best_ckpt()
         if not ckpt:
             return None
         # assumes checkpoint format: epoch_001.ckpt
         return int(ckpt.split(".")[0].split("_")[-1])
 
-    def get_best_ckpt(self, experiment_name: str) -> Optional[str]:
-        if not experiment_name:
-            return None
+    def get_best_ckpt(self, experiment_name: str = None) -> Optional[str]:
+        # If no experiment name is specified, assume we want the to use the current experiment selected
+        if experiment_name is None:
+            if self.get_experiment_name() is None:
+                return None
+            else:
+                experiment_name = self.get_experiment_name()
 
         checkpoints_path = (
             Path(self.user_settings.get_user_experiments_path())
