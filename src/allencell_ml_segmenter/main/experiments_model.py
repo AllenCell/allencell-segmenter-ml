@@ -20,7 +20,7 @@ class ExperimentsModel(IExperimentsModel):
         """
         Gets checkpoint
         """
-        return self._get_best_ckpt()
+        return self.get_best_ckpt(self.get_experiment_name())
 
     def refresh_experiments(self) -> None:
         # TODO: make a FileUtils method for this?
@@ -158,13 +158,13 @@ class ExperimentsModel(IExperimentsModel):
         # assumes checkpoint format: epoch_001.ckpt
         return int(ckpt.split(".")[0].split("_")[-1])
 
-    def _get_best_ckpt(self) -> Optional[str]:
-        if not self.get_experiment_name():
+    def get_best_ckpt(self, experiment_name: str) -> Optional[str]:
+        if not experiment_name:
             return None
 
         checkpoints_path = (
             Path(self.user_settings.get_user_experiments_path())
-            / self.get_experiment_name()
+            / experiment_name
             / "checkpoints"
         )
         if not checkpoints_path.exists():
