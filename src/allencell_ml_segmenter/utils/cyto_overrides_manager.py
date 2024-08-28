@@ -40,16 +40,17 @@ class CytoDLOverridesManager:
         # if pulling weights from an existing model
         if self._training_model.is_using_existing_model():
             # use best checkpoint from existing model to pull weights from
-            overrides_dict["ckpt_path"] = str(
+            overrides_dict["checkpoint.ckpt_path"] = str(
                 self._experiments_model.get_model_checkpoints_path(
                     self._training_model.get_existing_model(),
-                    self._experiments_model.get_checkpoint()
+                    self._experiments_model.get_best_ckpt(self._training_model.get_existing_model())
                 )
             )
             # needed for pulling weights
-            overrides_dict["weights_only"] = True
+            overrides_dict["checkpoint.weights_only"] = True
+            # ensure correct output path for these models
+            overrides_dict["paths.output_dir"] = f"{self._experiments_model.get_user_experiments_path()}/{self._training_model.get_existing_model()}"
 
-        # Patch shape (required if starting new model)
         if not self._training_model.is_using_existing_model():
             # Filters/Model Size (required if starting new model)
             overrides_dict["model._aux.filters"] = (
