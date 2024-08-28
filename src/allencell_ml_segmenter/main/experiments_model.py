@@ -153,7 +153,7 @@ class ExperimentsModel(IExperimentsModel):
         return int(ckpt.split(".")[0].split("_")[-1])
 
     def get_best_ckpt(self, experiment_name: str = None) -> Optional[str]:
-        # If no experiment name is specified, assume we want the to use the current experiment selected
+        # If no experiment name is specified, assume we want the to use the current experiment selected in this model.
         if experiment_name is None:
             if self.get_experiment_name() is None:
                 return None
