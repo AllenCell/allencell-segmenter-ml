@@ -75,13 +75,14 @@ class TrainingService(Subscriber):
         if self._able_to_continue_training():
             model = CytoDLModel()
             if self._training_model.is_using_existing_model():
-                # if training from existing model start with that training config
+                # ITERATIVE TRAINING: train starting from existing model weights
                 model.load_config_from_file(
                     self._experiments_model.get_train_config_path(
                         self._training_model.get_existing_model()
                     )
                 )
             else:
+                # NEW TRAINING: load the default experiment config
                 model.load_default_experiment(
                     self._training_model.get_experiment_type(),
                     output_dir=f"{self._experiments_model.get_user_experiments_path()}/{self._experiments_model.get_experiment_name()}",

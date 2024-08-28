@@ -246,13 +246,25 @@ class TrainingModel(Publisher):
         return self._main_model.get_selected_channels()
 
     def set_existing_model(self, model: Optional[str]) -> None:
+        """
+        Set the existing model to use for iterative training
+        """
         self._existing_model_to_use = model
 
     def get_existing_model(self) -> Optional[str]:
+        """
+        Existing model to be used for iterative training
+        """
         return self._existing_model_to_use
 
     def is_using_existing_model(self) -> bool:
+        """
+        Iterative training- will use existing model to start
+        """
         return self._is_using_existing_model
 
     def set_is_using_existing_model(self, is_using: bool) -> None:
+        """
+        Set iterative training
+        """
         self._is_using_existing_model = is_using
