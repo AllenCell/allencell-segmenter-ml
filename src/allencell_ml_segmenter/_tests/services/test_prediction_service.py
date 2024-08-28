@@ -128,7 +128,7 @@ def test_build_overrides() -> None:
     overrides: Dict[str, Union[str, int, float, bool]] = (
         prediction_service.build_overrides(
             experiments_model.get_experiment_name(),
-            experiments_model.get_checkpoint(),
+            experiments_model.get_best_ckpt(),
         )
     )
 
@@ -187,7 +187,7 @@ def test_build_overrides_experiment_none() -> None:
         overrides: Dict[str, Union[str, int, float, bool]] = (
             prediction_service.build_overrides(
                 experiments_model.get_experiment_name(),
-                experiments_model.get_checkpoint(),
+                experiments_model.get_best_ckpt(),
             )
         )
 
@@ -221,7 +221,7 @@ def test_build_overrides_checkpoint_none() -> None:
         overrides: Dict[str, Union[str, int, float, bool]] = (
             prediction_service.build_overrides(
                 experiments_model.get_experiment_name(),
-                experiments_model.get_checkpoint(),
+                experiments_model.get_best_ckpt(),
             )
         )
 

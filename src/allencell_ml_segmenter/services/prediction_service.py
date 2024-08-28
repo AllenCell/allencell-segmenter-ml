@@ -61,7 +61,7 @@ class PredictionService(Subscriber):
         cyto_api.override_config(
             self.build_overrides(
                 self._experiments_model.get_experiment_name(),
-                self._experiments_model.get_checkpoint(),
+                self._experiments_model.get_best_ckpt(),
             )
         )
         cyto_api.predict()
@@ -90,7 +90,7 @@ class PredictionService(Subscriber):
             return False
 
         # Check to see the user has specified a ckpt to use.
-        if self._experiments_model.get_checkpoint() is None:
+        if self._experiments_model.get_best_ckpt() is None:
             show_warning(
                 f"Please select a checkpoint to run predictions with."
             )

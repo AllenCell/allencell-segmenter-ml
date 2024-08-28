@@ -33,7 +33,7 @@ class IExperimentsModel(Publisher):
         self.dispatch(Event.ACTION_EXPERIMENT_APPLIED)
 
     @abstractmethod
-    def get_checkpoint(self) -> str:
+    def get_best_ckpt(self) -> str:
         pass
 
     @abstractmethod
