@@ -36,6 +36,27 @@ class CytoDLOverridesManager:
             dict()
         )
 
+        # ITERATIVE TRAINING
+        # if pulling weights from an existing model
+        if self._training_model.is_using_existing_model():
+            # use best checkpoint from existing model to pull weights from
+            overrides_dict["checkpoint.ckpt_path"] = str(
+                self._experiments_model.get_model_checkpoints_path(
+                    self._training_model.get_existing_model(),
+                    self._experiments_model.get_best_ckpt(self._training_model.get_existing_model())
+                )
+            )
+            # needed for pulling weights
+            overrides_dict["checkpoint.weights_only"] = True
+            # ensure correct output path for these models
+            overrides_dict["paths.output_dir"] = f"{self._experiments_model.get_user_experiments_path()}/{self._training_model.get_existing_model()}"
+
+        if not self._training_model.is_using_existing_model():
+            # Filters/Model Size (required if starting new model)
+            overrides_dict["model._aux.filters"] = (
+                self._training_model.get_model_size().value
+            )
+
         # Hardware overrides (required)
         if CUDAUtils.cuda_available():
             overrides_dict["trainer.accelerator"] = "gpu"
@@ -46,10 +67,6 @@ class CytoDLOverridesManager:
         # Spatial Dims (required)
         dims: int = self._training_model.get_spatial_dims()
         overrides_dict["spatial_dims"] = dims
-
-        # Patch shape (required)
-        patch_size: List[int] = self._training_model.get_patch_size()
-        overrides_dict["data._aux.patch_shape"] = patch_size
 
         # Max Run
         # define max run (in epochs, required)
@@ -70,6 +87,10 @@ class CytoDLOverridesManager:
             self._training_model.get_images_directory()
         )
 
+        # patch size (required)
+        patch_size: List[int] = self._training_model.get_patch_size()
+        overrides_dict["data._aux.patch_shape"] = patch_size
+
         # Commented out 5/23 brian.kim
         # We no longer support training from a old checkpoint- leaving this in if we want to re-enable this in the
         # future to continue training from an existing checkpoint.
@@ -82,11 +103,6 @@ class CytoDLOverridesManager:
         #         )
         #     )
 
-        # Filters/Model Size (required)
-        overrides_dict["model._aux.filters"] = (
-            self._training_model.get_model_size().value
-        )
-
         # Channel Override
         overrides_dict["input_channel"] = (
             self._training_model.get_selected_channel(ImageType.RAW)
@@ -97,17 +113,4 @@ class CytoDLOverridesManager:
         overrides_dict["target_col2_channel"] = (
             self._training_model.get_selected_channel(ImageType.SEG2)
         )
-
-        # tell cyto-dl to pull weights from existing model
-        if self._training_model.is_using_existing_model():
-            # use best checkpoint from existing model to pull weights from
-            overrides_dict["checkpoint.ckpt_path"] = str(
-                self._experiments_model.get_model_checkpoints_path(
-                    self._training_model.get_existing_model(),
-                    self._experiments_model.get_checkpoint()
-                )
-            )
-            # needed for pulling weights
-            overrides_dict["checkpoint.weights_only"] = True
-
         return overrides_dict
