@@ -48,11 +48,11 @@ class TrainingView(View, MainWindow):
     """
 
     def __init__(
-            self,
-            main_model: MainModel,
-            experiments_model: IExperimentsModel,
-            training_model: TrainingModel,
-            viewer: IViewer,
+        self,
+        main_model: MainModel,
+        experiments_model: IExperimentsModel,
+        training_model: TrainingModel,
+        viewer: IViewer,
     ):
         super().__init__()
 
@@ -92,30 +92,48 @@ class TrainingView(View, MainWindow):
         bottom_grid_layout: QGridLayout = QGridLayout()
 
         # Existing model label
-        existing_model_label: LabelWithHint = LabelWithHint("Start from previous model")
-        existing_model_label.set_hint("Select a previously trained model to pull model weights from")
-        bottom_grid_layout.addWidget(existing_model_label, 0, 0, alignment=Qt.AlignTop)
+        existing_model_label: LabelWithHint = LabelWithHint(
+            "Start from previous model"
+        )
+        existing_model_label.set_hint(
+            "Select a previously trained model to pull model weights from"
+        )
+        bottom_grid_layout.addWidget(
+            existing_model_label, 0, 0, alignment=Qt.AlignTop
+        )
 
         # Existing model selection
         self.existing_model_dropdown: QComboBox = QComboBox()
-        self.existing_model_dropdown.addItems(self._experiments_model.get_experiments())
+        self.existing_model_dropdown.addItems(
+            self._experiments_model.get_experiments()
+        )
         self.existing_model_dropdown.currentIndexChanged.connect(
-            lambda: self._training_model.set_existing_model(self.existing_model_dropdown.currentText()))
-        self.existing_model_dropdown.setEnabled(False) # Disabled by default since no is the default
+            lambda: self._training_model.set_existing_model(
+                self.existing_model_dropdown.currentText()
+            )
+        )
+        self.existing_model_dropdown.setEnabled(
+            False
+        )  # Disabled by default since no is the default
         # Yes and no radio buttons stacked on top of each other in a VBoxLayout
         existing_model_selection_layout: QVBoxLayout = QVBoxLayout()
         self.existing_model_no_radio: QRadioButton = QRadioButton("No")
-        self.existing_model_no_radio.toggled.connect(self._existing_model_no_radio_slot)
-        self.existing_model_no_radio.setChecked(True) # No enabled by default
+        self.existing_model_no_radio.toggled.connect(
+            self._existing_model_no_radio_slot
+        )
+        self.existing_model_no_radio.setChecked(True)  # No enabled by default
         existing_model_selection_layout.addWidget(self.existing_model_no_radio)
         self.existing_model_yes_radio: QRadioButton = QRadioButton("Yes")
-        self.existing_model_yes_radio.toggled.connect(self._existing_model_yes_radio_slot)
-
+        self.existing_model_yes_radio.toggled.connect(
+            self._existing_model_yes_radio_slot
+        )
 
         # have model selection dropdown in-line with yes button
         existing_model_yes_layout: QHBoxLayout = QHBoxLayout()
         existing_model_yes_layout.addWidget(self.existing_model_yes_radio)
-        existing_model_yes_layout.addWidget(self.existing_model_dropdown, stretch=1)
+        existing_model_yes_layout.addWidget(
+            self.existing_model_dropdown, stretch=1
+        )
         existing_model_selection_layout.addLayout(existing_model_yes_layout)
         bottom_grid_layout.addLayout(existing_model_selection_layout, 0, 1)
 
@@ -338,8 +356,8 @@ class TrainingView(View, MainWindow):
         missing_patches: list[str] = []
 
         if (
-                not self.z_patch_size.text()
-                and self._training_model.get_spatial_dims() == 3
+            not self.z_patch_size.text()
+            and self._training_model.get_spatial_dims() == 3
         ):
             missing_patches.append("Z")
 

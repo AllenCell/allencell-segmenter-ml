@@ -232,6 +232,7 @@ def test_apply_experiment_name() -> None:
     assert model.get_experiment_name() == expected
     assert subscriber.was_handled(Event.ACTION_EXPERIMENT_APPLIED)
 
+
 def test_get_best_ckpt_experiment_name_specified() -> None:
     # ARRANGE
     user_experiments_path: Path = Path(__file__).parent / "experiments_home"
@@ -246,6 +247,7 @@ def test_get_best_ckpt_experiment_name_specified() -> None:
 
     assert selected_ckpt == "1.ckpt"
 
+
 def test_get_best_ckpt_from_current_experiment() -> None:
     # ARRANGE
     user_experiments_path: Path = Path(__file__).parent / "experiments_home"
@@ -257,9 +259,12 @@ def test_get_best_ckpt_from_current_experiment() -> None:
     model.apply_experiment_name("2_exp")
 
     # ACT
-    selected_ckpt: str = model.get_best_ckpt() # dont specify a specific experiemnt to grab the ckpt from
+    selected_ckpt: str = (
+        model.get_best_ckpt()
+    )  # dont specify a specific experiemnt to grab the ckpt from
 
     assert selected_ckpt == "1.ckpt"
+
 
 def test_get_best_ckpt_from_current_experiment_no_experiment_selected():
     # ARRANGE
@@ -271,9 +276,12 @@ def test_get_best_ckpt_from_current_experiment_no_experiment_selected():
     model: ExperimentsModel = ExperimentsModel(config)
 
     # ACT
-    selected_ckpt: str = model.get_best_ckpt() # dont specify a specific experiemnt to grab the ckpt from
+    selected_ckpt: str = (
+        model.get_best_ckpt()
+    )  # dont specify a specific experiemnt to grab the ckpt from
 
     assert selected_ckpt is None
+
 
 def test_get_best_ckpt_no_checkpoint_dir():
     # ARRANGE
@@ -283,13 +291,16 @@ def test_get_best_ckpt_no_checkpoint_dir():
         user_experiments_path=user_experiments_path,
     )
     model: ExperimentsModel = ExperimentsModel(config)
-    model.apply_experiment_name("0_exp") # No checkpoint folder in this test dir
+    model.apply_experiment_name(
+        "0_exp"
+    )  # No checkpoint folder in this test dir
 
     # ACT
     selected_ckpt: str = model.get_best_ckpt()
 
     # assert
     assert selected_ckpt is None
+
 
 def test_get_best_ckpt_empty_checkpoint_dir():
     # ARRANGE
@@ -299,15 +310,12 @@ def test_get_best_ckpt_empty_checkpoint_dir():
         user_experiments_path=user_experiments_path,
     )
     model: ExperimentsModel = ExperimentsModel(config)
-    model.apply_experiment_name("a_exp") # Checkpoint folder exisits, but no checkpoint file
+    model.apply_experiment_name(
+        "a_exp"
+    )  # Checkpoint folder exisits, but no checkpoint file
 
     # ACT
     selected_ckpt: str = model.get_best_ckpt()
 
     # assert
     assert selected_ckpt is None
-
-
-
-
-
