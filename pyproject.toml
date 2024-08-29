@@ -62,7 +62,7 @@ test_lint = [
     "black>=24.2.0",
     'pytest-xvfb; sys_platform == "linux"',
     "responses",
-    "mypy",
+    "mypy<1.11.2",
 ]
 
 dev = [
@@ -77,7 +77,7 @@ dev = [
     "build>=1.0.3",
     "twine>=5.0.0",
     "responses",
-    "mypy<=1.11.1",
+    "mypy<1.11.2",
 ]
 
 # entry points
