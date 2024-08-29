@@ -77,7 +77,7 @@ dev = [
     "build>=1.0.3",
     "twine>=5.0.0",
     "responses",
-    "mypy",
+    "mypy<=1.11.1",
 ]
 
 # entry points
