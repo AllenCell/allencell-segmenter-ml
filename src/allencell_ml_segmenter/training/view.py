@@ -102,6 +102,19 @@ class TrainingView(View, MainWindow):
             existing_model_label, 0, 0, alignment=Qt.AlignTop
         )
 
+        # Model Size Selection
+        self._model_size_combo_box: QComboBox = QComboBox()
+        self._model_size_combo_box.setObjectName("modelSizeComboBox")
+        self._model_size_combo_box.setCurrentIndex(-1)
+        self._model_size_combo_box.setPlaceholderText("Select an option")
+        self._model_size_combo_box.addItems(
+            [size.name.lower() for size in ModelSize]
+        )
+        self._model_size_combo_box.currentTextChanged.connect(
+            lambda model_size: self._training_model.set_model_size(model_size)
+        )
+
+
         # Existing model selection
         self.existing_model_dropdown: QComboBox = QComboBox()
         self.existing_model_dropdown.addItems(
@@ -175,17 +188,6 @@ class TrainingView(View, MainWindow):
             "Defines the complexity of the model - smaller models train faster, while large models train slower but may learn complex relationships better."
         )
         bottom_grid_layout.addWidget(model_size_label, 2, 0)
-
-        self._model_size_combo_box: QComboBox = QComboBox()
-        self._model_size_combo_box.setObjectName("modelSizeComboBox")
-        self._model_size_combo_box.setCurrentIndex(-1)
-        self._model_size_combo_box.setPlaceholderText("Select an option")
-        self._model_size_combo_box.addItems(
-            [size.name.lower() for size in ModelSize]
-        )
-        self._model_size_combo_box.currentTextChanged.connect(
-            lambda model_size: self._training_model.set_model_size(model_size)
-        )
         bottom_grid_layout.addWidget(self._model_size_combo_box, 2, 1)
 
         image_dimensions_label: LabelWithHint = LabelWithHint(
@@ -388,6 +390,13 @@ class TrainingView(View, MainWindow):
         self.image_selection_widget.set_inputs_csv()
         self._viewer.clear_layers()
 
+    def _disable_model_size_combo_box(self) -> None:
+        self._model_size_combo_box.setEnabled(False)
+        self._model_size_combo_box.setCurrentIndex(-1)  # clear any selection, if any  # clear model
+
+    def _enable_model_size_combo_box(self) -> None:
+        self._model_size_combo_box.setEnabled(True)
+
     def _existing_model_no_radio_slot(self) -> None:
         # disable dropdown
         self.existing_model_dropdown.setEnabled(False)
@@ -395,8 +404,12 @@ class TrainingView(View, MainWindow):
         self.existing_model_dropdown.setCurrentIndex(-1)
         self._training_model.set_is_using_existing_model(False)
         self._training_model.set_existing_model(None)
+        self._enable_model_size_combo_box()
+
 
     def _existing_model_yes_radio_slot(self) -> None:
         # enable dropdown
         self._training_model.set_is_using_existing_model(True)
         self.existing_model_dropdown.setEnabled(True)
+        self._disable_model_size_combo_box()
+
