@@ -66,4 +66,3 @@ class LabelWithHint(QWidget):
         self._question_mark.setStyleSheet(
             "#questionMark {margin-right: " + str(marg) + "}"
         )
-
