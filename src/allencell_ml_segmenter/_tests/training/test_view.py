@@ -336,8 +336,9 @@ def test_existing_model_radio(
     assert not training_model.is_using_existing_model()
     assert training_model.get_existing_model() is None
 
+
 def test_model_size_combo_box(
-        qtbot: QtBot, training_model: TrainingModel, main_model: MainModel
+    qtbot: QtBot, training_model: TrainingModel, main_model: MainModel
 ) -> None:
     """
     Test to see if radio selection enables/disabled the model size correctly

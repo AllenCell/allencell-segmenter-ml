@@ -114,7 +114,6 @@ class TrainingView(View, MainWindow):
             lambda model_size: self._training_model.set_model_size(model_size)
         )
 
-
         # Existing model selection
         self.existing_model_dropdown: QComboBox = QComboBox()
         self.existing_model_dropdown.addItems(
@@ -392,7 +391,9 @@ class TrainingView(View, MainWindow):
 
     def _disable_model_size_combo_box(self) -> None:
         self._model_size_combo_box.setEnabled(False)
-        self._model_size_combo_box.setCurrentIndex(-1)  # clear any selection, if any  # clear model
+        self._model_size_combo_box.setCurrentIndex(
+            -1
+        )  # clear any selection, if any  # clear model
 
     def _enable_model_size_combo_box(self) -> None:
         self._model_size_combo_box.setEnabled(True)
@@ -406,10 +407,8 @@ class TrainingView(View, MainWindow):
         self._training_model.set_existing_model(None)
         self._enable_model_size_combo_box()
 
-
     def _existing_model_yes_radio_slot(self) -> None:
         # enable dropdown
         self._training_model.set_is_using_existing_model(True)
         self.existing_model_dropdown.setEnabled(True)
         self._disable_model_size_combo_box()
-
