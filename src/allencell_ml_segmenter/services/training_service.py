@@ -77,9 +77,11 @@ class TrainingService(Subscriber):
             if self._training_model.is_using_existing_model():
                 # ITERATIVE TRAINING: train starting from existing model weights
                 model.load_config_from_file(
-                    str(self._experiments_model.get_train_config_path(
-                        self._training_model.get_existing_model()
-                    ))
+                    str(
+                        self._experiments_model.get_train_config_path(
+                            self._training_model.get_existing_model()
+                        )
+                    )
                 )
             else:
                 # NEW TRAINING: load the default experiment config
@@ -132,13 +134,20 @@ class TrainingService(Subscriber):
             show_warning("Please define max epoch(s) to run for")
             return False
 
-        if self._training_model.get_model_size() is None and not self._training_model.is_using_existing_model():
-            show_warning("Please define model size for a new model from scratch.")
+        if (
+            self._training_model.get_model_size() is None
+            and not self._training_model.is_using_existing_model()
+        ):
+            show_warning(
+                "Please define model size for a new model from scratch."
+            )
             return False
 
         if self._training_model.is_using_existing_model():
             if self._training_model.get_existing_model() is None:
-                show_warning("If using weights from an existing model, please select one.")
+                show_warning(
+                    "If using weights from an existing model, please select one."
+                )
                 return False
         return True
 

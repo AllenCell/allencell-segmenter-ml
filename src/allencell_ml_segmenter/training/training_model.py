@@ -78,8 +78,10 @@ class TrainingModel(Publisher):
         # If is_using_existing_model is True, the existing_model_to_use will be the name of the experiment containing
         # the existing model to pull weights from for training
         # If existing_model_to_use is None, no model was selected to pull weights from and the user should be prompted to select one
-        self._is_using_existing_model: bool = False # No by default
-        self._existing_model_to_use: Optional[Path] = None # None if no existing model selected- default behavior
+        self._is_using_existing_model: bool = False  # No by default
+        self._existing_model_to_use: Optional[Path] = (
+            None  # None if no existing model selected- default behavior
+        )
 
     def get_experiment_type(self) -> Optional[str]:
         """
