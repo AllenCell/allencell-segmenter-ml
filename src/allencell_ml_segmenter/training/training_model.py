@@ -226,7 +226,10 @@ class TrainingModel(Publisher):
         """
         self._use_max_time = use_max
 
-    def set_model_size(self, model_size: str) -> None:
+    def set_model_size(self, model_size: Optional[str]) -> None:
+        if model_size is None or model_size == '':
+            self._model_size = None
+            return
         # convert string to enum
         model_size = model_size.upper()
         if model_size not in [x.name for x in ModelSize]:
