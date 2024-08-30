@@ -35,6 +35,11 @@ jobs:
         with:
           ref: main
 
+      - name: Check out tag
+        run: |
+          git fetch --tags
+          git checkout ${{ inputs.tag }}
+
       - name: Set up Python 3.10
         uses: actions/setup-python@v5
         with:
