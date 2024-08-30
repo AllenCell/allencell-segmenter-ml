@@ -109,7 +109,6 @@ push            = false
 
 [tool.bumpver.file_patterns]
 "pyproject.toml" = ['current_version = "{version}"', 'version = "{version}"']
-"version.toml" = ['version = "{version}"']
 "src/allencell_ml_segmenter/__init__.py" = ['__version__ = "{version}"']
 # ".github/workflows/publish_to_pypi.yaml" = ["Current version: {version}"]
 
