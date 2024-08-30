@@ -37,7 +37,7 @@ def main() -> None:
             raise ValueError(
                 "Cannot update major or minor version while dev version is current"
             )
-    elif len(version_components) == 4: # must be hotfix
+    elif len(version_components) == 4:  # must be hotfix
         if component == "hotfix":
             update_output = subprocess.run(
                 ["bumpver", "update", "--tag-num", "-n"]
