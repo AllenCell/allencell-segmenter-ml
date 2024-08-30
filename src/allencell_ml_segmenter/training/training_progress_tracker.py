@@ -73,13 +73,13 @@ class TrainingProgressTracker(ProgressTracker):
             self._target_path, self._set_progress, self.set_label_text
         )
         self._observer.schedule(
-            csv_handler, path=self._csv_path, recursive=True
+            csv_handler, path=str(self._csv_path.resolve()), recursive=True
         )
         cache_handler: CacheDirEventHandler = CacheDirEventHandler(
             self._set_cache_progress_text
         )
         self._observer.schedule(
-            cache_handler, path=self._cache_path, recursive=True
+            cache_handler, path=str(self._cache_path.resolve()), recursive=True
         )
         self._observer.start()
 
