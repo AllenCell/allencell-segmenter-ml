@@ -35,7 +35,7 @@ jobs:
         run: |
           git config --global user.name 'aicsgithub'
           git config --global user.email 'aicsgithub@alleninstitute.org'
-          python publish_bumpver_handler.py hotfix
+          python bumpver_handler.py hotfix
 
       - name: Commit and push
         run: |
