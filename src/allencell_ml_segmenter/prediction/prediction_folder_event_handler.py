@@ -18,6 +18,7 @@ class PredictionFolderEventHandler(FileSystemEventHandler):
 
     # override
     def on_created(self, event: FileSystemEvent) -> None:
-        if any([event.src_path.endswith(ext) for ext in self.PRED_FILE_EXTS]):
+        src_path: str = str(event.src_path)
+        if any([src_path.endswith(ext) for ext in self.PRED_FILE_EXTS]):
             self._num_pred_files_created += 1
             self._progress_callback(self._num_pred_files_created)

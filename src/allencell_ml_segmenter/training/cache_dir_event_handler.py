@@ -19,6 +19,6 @@ class CacheDirEventHandler(FileSystemEventHandler):
 
     # override
     def on_created(self, event: FileSystemEvent) -> None:
-        if event.src_path.endswith(".pt"):
+        if str(event.src_path).endswith(".pt"):
             self._num_files += 1
             self._progress_callback(self._num_files)

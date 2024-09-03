@@ -40,7 +40,9 @@ class PredictionFolderProgressTracker(ProgressTracker):
             PredictionFolderEventHandler(self.set_progress)
         )
         self._observer.schedule(
-            event_handler, path=self._prediction_folder_path, recursive=False
+            event_handler,
+            path=str(self._prediction_folder_path.resolve()),
+            recursive=False,
         )
         self._observer.start()
 
