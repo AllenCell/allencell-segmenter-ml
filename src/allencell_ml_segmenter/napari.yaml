@@ -1,13 +1,13 @@
-name: allencell-ml-segmenter
-display_name: Allencell ML Segmenter
+name: allencell-segmenter-ml
+display_name: allencell-segmenter-ml
 contributions:
   commands:
-    - id: allencell-ml-segmenter.make_qwidget
+    - id: allencell-segmenter-ml.make_qwidget
       python_name: allencell_ml_segmenter.main.main_widget:MainWidget
-      title: Allen Cell ML Segmenter
+      title: Allen Cell Segmenter - ML
   readers:
   writers:
   sample_data:
   widgets:
-    - command: allencell-ml-segmenter.make_qwidget
-      display_name: Allen Cell ML Segmenter
+    - command: allencell-segmenter-ml.make_qwidget
+      display_name: Allen Cell Segmenter - ML

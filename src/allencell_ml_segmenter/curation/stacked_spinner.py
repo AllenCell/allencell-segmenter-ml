@@ -6,10 +6,11 @@ from pathlib import Path
 from qtpy.QtWidgets import QStackedWidget, QLabel, QSizePolicy
 from qtpy.QtGui import QMovie
 from qtpy.QtCore import QSize, Qt
+from typing import Optional
 
 
 class StackedSpinner(QStackedWidget):
-    def __init__(self, input_button: InputButton = None):
+    def __init__(self, input_button: Optional[InputButton] = None):
         super().__init__()
 
         self.setSizePolicy(
@@ -21,7 +22,7 @@ class StackedSpinner(QStackedWidget):
             self.resize(260, 50)
 
         self.spinner = QLabel(self)
-        self.spinner.setAlignment(Qt.AlignCenter)
+        self.spinner.setAlignment(Qt.AlignmentFlag.AlignCenter)
         gif_path: Path = Directories.get_assets_dir() / "loading.gif"
         self.movie = QMovie(str(gif_path.resolve()))
         self.spinner.setMovie(self.movie)
@@ -32,7 +33,7 @@ class StackedSpinner(QStackedWidget):
         self.setCurrentWidget(self.input_button)
         self._is_spinning = False
 
-    def start(self):
+    def start(self) -> None:
         self.setCurrentWidget(self.spinner)
         min_dim: int = min(self.spinner.width(), self.spinner.height())
         padding: int = 2  # necessary to make sure the gif isn't cut off
@@ -42,7 +43,7 @@ class StackedSpinner(QStackedWidget):
         self.movie.start()
         self._is_spinning = True
 
-    def stop(self):
+    def stop(self) -> None:
         self.setCurrentWidget(self.input_button)
         self.movie.stop()
         self._is_spinning = False
