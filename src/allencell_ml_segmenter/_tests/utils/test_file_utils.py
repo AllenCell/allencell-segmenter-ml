@@ -58,29 +58,13 @@ def test_get_img_path_from_folder():
         / "test_files"
         / "img_folder"
     )
-    t1: Path = (
-        Path(allencell_ml_segmenter.__file__).parent
-        / "_tests"
-        / "test_files"
-        / "img_folder"
-        / "t1.tiff"
-    )
-    t2: Path = (
-        Path(allencell_ml_segmenter.__file__).parent
-        / "_tests"
-        / "test_files"
-        / "img_folder"
-        / "t2.tiff"
-    )
-    t3: Path = (
-        Path(allencell_ml_segmenter.__file__).parent
-        / "_tests"
-        / "test_files"
-        / "img_folder"
-        / "t3.tiff"
-    )
     img: Path = FileUtils.get_img_path_from_folder(folder)
-    assert img.samefile(t1) or img.samefile(t2) or img.samefile(t3)
+    assert any(
+        [
+            img.samefile(exist_img)
+            for exist_img in [folder / f"t{i + 1}.tiff" for i in range(5)]
+        ]
+    )
 
 
 def test_get_img_path_from_folder_hidden_files():

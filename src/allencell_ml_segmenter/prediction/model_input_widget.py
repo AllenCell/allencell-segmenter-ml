@@ -41,7 +41,9 @@ class ModelInputWidget(AicsWidget):
 
         self._model: PredictionModel = model
 
-        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        self.setSizePolicy(
+            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed
+        )
 
         # instantiate widgets
         self._frame: QFrame = QFrame()
@@ -237,23 +239,26 @@ class ModelInputWidget(AicsWidget):
         Places previously instantiated widgets into respective layouts.
         """
         # initial set-up
-        self.setLayout(QVBoxLayout())
-        self.layout().setContentsMargins(0, 0, 0, 0)
+        layout: QVBoxLayout = QVBoxLayout()
+        self.setLayout(layout)
+        layout.setContentsMargins(0, 0, 0, 0)
 
-        self._frame.setLayout(QVBoxLayout())
+        frame_layout: QVBoxLayout = QVBoxLayout()
+        self._frame.setLayout(frame_layout)
 
-        self.layout().addWidget(self._title)
-        self.layout().addWidget(self._frame)
+        layout.addWidget(self._title)
+        layout.addWidget(self._frame)
 
         # horizontal layout containing widgets related to preprocessing
         preprocessing_layout: QHBoxLayout = QHBoxLayout()
         preprocessing_layout.setSpacing(0)
 
         preprocessing_layout.addWidget(
-            self._preprocessing_label_with_hint, alignment=Qt.AlignLeft
+            self._preprocessing_label_with_hint,
+            alignment=Qt.AlignmentFlag.AlignLeft,
         )
         preprocessing_layout.addWidget(
-            self._method_label, alignment=Qt.AlignRight
+            self._method_label, alignment=Qt.AlignmentFlag.AlignRight
         )
 
         # grid layout containing widgets related to postprocessing
@@ -263,7 +268,7 @@ class ModelInputWidget(AicsWidget):
         # slider bounds
         horiz_layout: QHBoxLayout = QHBoxLayout()
         horiz_layout.addWidget(self._lower_bound)
-        horiz_layout.addWidget(self._upper_bound, Qt.AlignLeft)
+        horiz_layout.addWidget(self._upper_bound, Qt.AlignmentFlag.AlignLeft)
         horiz_layout.setSpacing(0)
 
         # slider + bounds
@@ -276,22 +281,19 @@ class ModelInputWidget(AicsWidget):
             grid_layout.addWidget(button, idx, 0)
         for idx, label in enumerate(self._postproc_labels):
             grid_layout.addWidget(label, idx, 1)
-        for idx, selection in enumerate(
-            [vert_layout, self._auto_thresh_selection]
-        ):
-            if isinstance(selection, QVBoxLayout):
-                grid_layout.addLayout(selection, idx + 1, 2)
-            else:
-                grid_layout.addWidget(selection, idx + 1, 2)
+
+        grid_layout.addLayout(vert_layout, idx + 1, 2)
+        grid_layout.addWidget(self._auto_thresh_selection, idx + 1, 2)
 
         grid_layout.setColumnStretch(1, 1)
 
         # add inner widgets and layouts to overarching layout
-        self._frame.layout().addLayout(preprocessing_layout)
-        self._frame.layout().addWidget(
-            self._postprocessing_label_with_hint, alignment=Qt.AlignLeft
+        frame_layout.addLayout(preprocessing_layout)
+        frame_layout.addWidget(
+            self._postprocessing_label_with_hint,
+            alignment=Qt.AlignmentFlag.AlignLeft,
         )
-        self._frame.layout().addLayout(grid_layout)
+        frame_layout.addLayout(grid_layout)
 
     def _configure_slots(self) -> None:
         """

@@ -40,6 +40,9 @@ jobs:
       - name: Lint with Black
         run: |
           black --check --verbose .
+      - name: Type check with mypy
+        run: |
+          mypy src/allencell_ml_segmenter
       - name: Test with pytest
         run: |
           pytest -v --color=yes --cov=allencell_ml_segmenter --cov-report=xml

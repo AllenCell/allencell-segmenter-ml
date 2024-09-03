@@ -105,9 +105,10 @@ def test_get_train_config_path() -> None:
     )
     expected = user_experiments_path / "test_experiment" / "train_config.yaml"
     model = ExperimentsModel(config)
+    model.apply_experiment_name("test_experiment")
 
     # Act / Assert
-    assert model.get_train_config_path("test_experiment") == expected
+    assert model.get_train_config_path() == expected
 
 
 def test_get_csv_path() -> None:

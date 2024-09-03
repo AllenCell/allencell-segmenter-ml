@@ -1,8 +1,8 @@
 from pathlib import Path
 
-from napari.layers import Layer, Shapes, Image, Labels
-from napari.layers.shapes.shapes import Mode
-from napari.utils.events import Event as NapariEvent
+from napari.layers import Layer, Shapes, Image, Labels  # type: ignore
+from napari.layers.shapes.shapes import Mode  # type: ignore
+from napari.utils.events import Event as NapariEvent  # type: ignore
 
 from allencell_ml_segmenter.main.i_viewer import IViewer
 from allencell_ml_segmenter.main.segmenter_layer import (
@@ -10,8 +10,8 @@ from allencell_ml_segmenter.main.segmenter_layer import (
     ImageLayer,
     LabelsLayer,
 )
-import napari
-from typing import List, Callable, Optional
+import napari  # type: ignore
+from typing import Callable, Optional
 import numpy as np
 
 
@@ -32,8 +32,8 @@ class Viewer(IViewer):
                 return img
         return None
 
-    def get_all_images(self) -> List[ImageLayer]:
-        imgs: List[ImageLayer] = []
+    def get_all_images(self) -> list[ImageLayer]:
+        imgs: list[ImageLayer] = []
         for l in self.viewer.layers:
             if isinstance(l, Image) and l.source.path:
                 imgs.append(ImageLayer(l.name, Path(l.source.path)))
@@ -53,7 +53,7 @@ class Viewer(IViewer):
                 return shapes
         return None
 
-    def get_all_shapes(self) -> List[ShapesLayer]:
+    def get_all_shapes(self) -> list[ShapesLayer]:
         return [
             ShapesLayer(l.name, np.asarray(l.data, dtype=object))
             for l in self.viewer.layers
@@ -69,7 +69,7 @@ class Viewer(IViewer):
                 return labels
         return None
 
-    def get_all_labels(self) -> List[LabelsLayer]:
+    def get_all_labels(self) -> list[LabelsLayer]:
         # all items in self.viewer.layers inherit from napari.layers.Layer
         # possible types outlined in https://napari.org/stable/api/napari.layers.html
         return [
@@ -91,7 +91,7 @@ class Viewer(IViewer):
     def contains_layer(self, name: str) -> bool:
         return self._get_layer_by_name(name) is not None
 
-    def get_layers(self) -> List[Layer]:
+    def get_layers(self) -> list[Layer]:
         return [l for l in self.viewer.layers]
 
     def subscribe_layers_change_event(
@@ -100,7 +100,7 @@ class Viewer(IViewer):
         self.viewer.events.layers_change.connect(function)
 
     def _get_layer_by_name(self, name: str) -> Optional[Layer]:
-        layers: List[Layer] = self.get_layers()
+        layers: list[Layer] = self.get_layers()
         for l in layers:
             if l.name == name:
                 return l
