@@ -4,7 +4,6 @@
 import subprocess
 import sys
 import toml  # type: ignore
-from typing import Optional
 
 
 def main() -> None:
@@ -21,8 +20,10 @@ def main() -> None:
     version_components: list[str] = version.split(".")
 
     update_output: subprocess.CompletedProcess
-    # 4 components means we currently have a dev or hotfix version
-    if len(version_components) == 4 and component == "dev":
+    # 4 components means we currently have a dev or post version
+    if len(version_components) == 4 and version_components[-1].startswith(
+        "dev"
+    ):
         if component == "dev":
             # increment the dev tag (e.g. 1.0.0.dev0 -> 1.0.0.dev1)
             update_output = subprocess.run(
@@ -37,15 +38,13 @@ def main() -> None:
             raise ValueError(
                 "Cannot update major or minor version while dev version is current"
             )
-    elif len(version_components) == 4:  # must be post
+    elif len(version_components) == 4:  # current version must be post
         if component == "post":
             update_output = subprocess.run(
                 ["bumpver", "update", "--tag-num", "-n"]
             )
         else:
-            raise ValueError(
-                "Cannot change hotfix version to standard version"
-            )
+            raise ValueError("Cannot change post version to standard version")
     elif len(version_components) == 3:
         if component == "dev":
             # increment patch and begin at dev0 (e.g. 1.0.0 -> 1.0.1.dev0)
