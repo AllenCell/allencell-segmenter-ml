@@ -1,6 +1,6 @@
 from allencell_ml_segmenter.core.task_executor import ITaskExecutor
 from typing import Callable, Optional, Any
-from napari.qt.threading import FunctionWorker, create_worker
+from napari.qt.threading import FunctionWorker, create_worker  # type: ignore
 
 
 class NapariThreadTaskExecutor(ITaskExecutor):
@@ -27,7 +27,7 @@ class NapariThreadTaskExecutor(ITaskExecutor):
         worker.start()
 
     @classmethod
-    def global_instance(cls):
+    def global_instance(cls) -> ITaskExecutor:
         if cls._instance is None:
             cls._instance = super().__new__(cls)
         return cls._instance
