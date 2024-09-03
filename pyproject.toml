@@ -63,6 +63,7 @@ test_lint = [
     'pytest-xvfb; sys_platform == "linux"',
     "responses",
     "mypy",
+    "toml",
 ]
 
 dev = [
