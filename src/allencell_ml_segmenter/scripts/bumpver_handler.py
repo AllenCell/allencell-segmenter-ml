@@ -12,7 +12,7 @@ def main() -> None:
         raise ValueError("No component specified for bumping version")
 
     component: str = sys.argv[1].lower()
-    valid_options: set[str] = {"major", "minor", "patch", "dev", "hotfix"}
+    valid_options: set[str] = {"major", "minor", "patch", "dev", "post"}
 
     if component not in valid_options:
         raise ValueError(f"Component must be one of {valid_options}")
@@ -37,8 +37,8 @@ def main() -> None:
             raise ValueError(
                 "Cannot update major or minor version while dev version is current"
             )
-    elif len(version_components) == 4:  # must be hotfix
-        if component == "hotfix":
+    elif len(version_components) == 4:  # must be post
+        if component == "post":
             update_output = subprocess.run(
                 ["bumpver", "update", "--tag-num", "-n"]
             )
@@ -52,7 +52,7 @@ def main() -> None:
             update_output = subprocess.run(
                 ["bumpver", "update", "--patch", "--tag=dev", "-n"]
             )
-        elif component == "hotfix":
+        elif component == "post":
             update_output = subprocess.run(
                 ["bumpver", "update", "--tag=post", "-n"]
             )
@@ -74,42 +74,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
-"""
-TESTING:
-- add and commit any changes (keep track of this commit hash)
-- bumpver update --set-version 1.0.0
-
-- python publish_bumpver_handler.py
-  - expect: ValueError
-
-- python publish_bumpver_handler.py fake
-  - expect: ValueError
-
-- python publish_bumpver_handler.py major
-  - expect: version updated to 2.0.0
-
-- python publish_bumpver_handler.py minor
-  - expect: version updated to 2.1.0
-
-- python publish_bumpver_handler.py patch
-  - expect: version updated to 2.1.1
-
-- python publish_bumpver_handler.py dev
-  - expect: version updated to 2.1.2.dev0
-
-- python publish_bumpver_handler.py dev
-  - expect: version updated to 2.1.2.dev1
-
-- python publish_bumpver_handler.py major
-  - expect: ValueError
-
-- python publish_bumpver_handler.py minor
-  - expect: ValueError
-
-- python publish_bumpver_handler.py patch
-  - expect: version updated to 2.1.2
-
-- git reset --hard {hash of the commit made at the beginning}
-- git tag --delete 1.0.0 2.0.0 2.1.0 2.1.1 2.1.2 2.1.2.dev0 2.1.2.dev1
-"""
