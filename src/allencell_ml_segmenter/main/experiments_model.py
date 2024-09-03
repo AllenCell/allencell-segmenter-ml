@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Optional
+from typing import Optional
 from allencell_ml_segmenter.config.i_user_settings import IUserSettings
 
 import copy
@@ -10,26 +10,28 @@ from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
 class ExperimentsModel(IExperimentsModel):
     def __init__(self, config: IUserSettings) -> None:
         super().__init__()
-        self.user_settings = config
+        self.user_settings: IUserSettings = config
 
         # options
-        self.experiments = []
+        self.experiments: list[str] = []
         self.refresh_experiments()
 
     def refresh_experiments(self) -> None:
         # TODO: make a FileUtils method for this?
         self.experiments = []
-        for (
-            experiment
-        ) in self.user_settings.get_user_experiments_path().iterdir():
-            if (
-                experiment.is_dir()
-                and self._is_cyto_dl_experiment(experiment)
-                and experiment not in self.experiments
-                and not experiment.name.startswith(".")
-            ):
-                self.experiments.append(experiment.name)
-        self.experiments.sort()
+        user_exp_path: Optional[Path] = (
+            self.user_settings.get_user_experiments_path()
+        )
+        if user_exp_path is not None:
+            for experiment in user_exp_path.iterdir():
+                if (
+                    experiment.is_dir()
+                    and self._is_cyto_dl_experiment(experiment)
+                    and experiment not in self.experiments
+                    and not experiment.name.startswith(".")
+                ):
+                    self.experiments.append(experiment.name)
+            self.experiments.sort()
 
     """
     Returns a defensive copy of Experiments list.
@@ -37,28 +39,20 @@ class ExperimentsModel(IExperimentsModel):
 
     def _is_cyto_dl_experiment(self, experiment: Path) -> bool:
         # Heuristic for checking if dir is a cyto-dl experiment
-        csv_path = experiment / "data" / "train.csv"
-        checkpoints_path = experiment / "checkpoints"
+        csv_path: Path = experiment / "data" / "train.csv"
+        checkpoints_path: Path = experiment / "checkpoints"
         return checkpoints_path.exists() or csv_path.exists()
 
-    def get_experiments(self) -> List[str]:
+    def get_experiments(self) -> list[str]:
         return copy.deepcopy(self.experiments)
 
     def get_user_settings(self) -> IUserSettings:
         return self.user_settings
 
-    def get_user_experiments_path(self) -> Path:
+    def get_user_experiments_path(self) -> Optional[Path]:
         return self.get_user_settings().get_user_experiments_path()
 
-    def get_model_test_images_path(self, experiment_name: str) -> Path:
-        return (
-            self.get_user_settings().get_user_experiments_path()
-            / experiment_name
-            / "test_images"
-            if experiment_name
-            else None
-        )
-
+    # TODO: possibly refactor to get rid of exp name and checkpoint params?
     def get_model_checkpoints_path(
         self, experiment_name: str, checkpoint: str
     ) -> Path:
@@ -74,38 +68,28 @@ class ExperimentsModel(IExperimentsModel):
             raise ValueError(
                 "Checkpoint cannot be None in order to get model_checkpoint_path"
             )
-        return (
-            self.get_user_experiments_path()
-            / experiment_name
-            / "checkpoints"
-            / checkpoint
-        )
 
-    def get_csv_path(self) -> Optional[Path]:
-        if (
-            self.get_user_experiments_path() is not None
-            and self.get_experiment_name() is not None
-        ):
-            return (
-                self.get_user_experiments_path()
-                / self.get_experiment_name()
-                / "data"
-            )
-        return None
+        user_exp_path: Optional[Path] = self.get_user_experiments_path()
+        if user_exp_path is None:
+            raise ValueError("User experiments path cannot be None")
+
+        return user_exp_path / experiment_name / "checkpoints" / checkpoint
+
+    def _get_exp_path(self) -> Path:
+        user_exp_path: Optional[Path] = self.get_user_experiments_path()
+        exp_name: Optional[str] = self.get_experiment_name()
+        if user_exp_path is None or exp_name is None:
+            raise ValueError("Experiment path or name undefined")
+        return user_exp_path / exp_name
+
+    def get_csv_path(self) -> Path:
+        return self._get_exp_path() / "data"
 
     def get_metrics_csv_path(self) -> Path:
-        return (
-            self.get_user_experiments_path()
-            / self.get_experiment_name()
-            / "csv"
-        )
+        return self._get_exp_path() / "csv"
 
     def get_cache_dir(self) -> Path:
-        return (
-            self.get_user_experiments_path()
-            / self.get_experiment_name()
-            / "cache"
-        )
+        return self._get_exp_path() / "cache"
 
     def get_latest_metrics_csv_version(self) -> int:
         """
@@ -136,14 +120,8 @@ class ExperimentsModel(IExperimentsModel):
             else None
         )
 
-    def get_train_config_path(self, experiment_name: str) -> Path:
-        return (
-            self.get_user_experiments_path()
-            / experiment_name
-            / "train_config.yaml"
-            if experiment_name
-            else None
-        )
+    def get_train_config_path(self) -> Path:
+        return self._get_exp_path() / "train_config.yaml"
 
     def get_current_epoch(self) -> Optional[int]:
         ckpt: Optional[str] = self.get_best_ckpt()
@@ -168,7 +146,7 @@ class ExperimentsModel(IExperimentsModel):
         if not checkpoints_path.exists():
             return None
 
-        files: List[Path] = [
+        files: list[Path] = [
             entry
             for entry in checkpoints_path.iterdir()
             if entry.is_file() and not "last" in entry.name.lower()

@@ -7,7 +7,7 @@ class ITaskExecutor(ABC):
     A TaskExecutor will run the tasks provided to exec() at some point (may be sync or async).
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         raise RuntimeError(
             "Cannot initialize new singleton, please use .global_instance() instead"
         )
@@ -33,5 +33,5 @@ class ITaskExecutor(ABC):
 
     @classmethod
     @abstractmethod
-    def global_instance(cls):
+    def global_instance(cls):  # type: ignore
         pass

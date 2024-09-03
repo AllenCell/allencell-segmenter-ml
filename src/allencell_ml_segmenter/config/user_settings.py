@@ -3,6 +3,7 @@ from qtpy.QtCore import QSettings
 from qtpy.QtWidgets import QFileDialog
 from qtpy.QtWidgets import QMessageBox
 from qtpy.QtWidgets import QWidget
+from typing import Optional
 
 from allencell_ml_segmenter.config.i_user_settings import IUserSettings
 
@@ -13,7 +14,7 @@ EXPERIMENTS_HOME_KEY = "experimentshome"
 class UserSettings(IUserSettings):
     def __init__(
         self, settings: QSettings = QSettings("AICS", "Segmenter ML")
-    ):
+    ) -> None:
         self.settings = settings
 
         # still hardcoding this for now, hoping that cytodl api will make it unecessary
@@ -22,25 +23,27 @@ class UserSettings(IUserSettings):
     def get_cyto_dl_home_path(self) -> Path:
         return self._cyto_dl_home_path
 
-    def get_user_experiments_path(self) -> Path:
+    def get_user_experiments_path(self) -> Optional[Path]:
         if self.settings.value(EXPERIMENTS_HOME_KEY) is None:
             return None
         else:
             return Path(self.settings.value(EXPERIMENTS_HOME_KEY))
 
-    def set_user_experiments_path(self, path: Path):
+    def set_user_experiments_path(self, path: Path) -> None:
         self.settings.setValue(EXPERIMENTS_HOME_KEY, path)
 
-    def prompt_for_user_experiments_home(self, parent: QWidget):
+    def prompt_for_user_experiments_home(self, parent: QWidget) -> None:
         message_dialog = QMessageBox(
+            QMessageBox.Icon.NoIcon,
+            "Segmenter home directory",
+            "Please select a location to store your Segmenter ML data.",
             parent=parent,
-            text="Please select a location to store your Segmenter ML data.",
         )
         message_dialog.exec()
         path: Path = self._prompt_for_directory(parent)
         self.set_user_experiments_path(path)
 
-    def display_change_user_experiments_home(self, parent: QWidget):
+    def display_change_user_experiments_home(self, parent: QWidget) -> None:
         buttonReply = QMessageBox.question(
             parent,
             "Experiments Home",

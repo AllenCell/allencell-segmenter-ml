@@ -20,7 +20,8 @@ class SynchroTaskExecutor(ITaskExecutor):
         try:
             output: Any = task()
         except Exception as e:
-            on_error(e)
+            if on_error is not None:
+                on_error(e)
             return
 
         if on_return is not None:
@@ -29,7 +30,7 @@ class SynchroTaskExecutor(ITaskExecutor):
             on_finish()
 
     @classmethod
-    def global_instance(cls):
+    def global_instance(cls) -> ITaskExecutor:
         if cls._instance is None:
             cls._instance = super().__new__(cls)
         return cls._instance
