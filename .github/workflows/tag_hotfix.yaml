@@ -35,7 +35,7 @@ jobs:
         run: |
           git config --global user.name 'aicsgithub'
           git config --global user.email 'aicsgithub@alleninstitute.org'
-          python bumpver_handler.py hotfix
+          python src/allencell_ml_segmenter/scripts/bumpver_handler.py hotfix
 
       - name: Commit and push
         run: |
@@ -45,5 +45,5 @@ jobs:
 
       - name: Create and push tag
         run: |
-          python tag_with_current_version.py
+          python src/allencell_ml_segmenter/scripts/tag_with_current_version.py
           git push origin --tags
