@@ -38,3 +38,72 @@ def test_bump_patch() -> None:
     # ASSERT
     assert_curr_version_number("0.0.3")
     navigate_back_to_root_dir()
+
+def test_bump_minor() -> None:
+    navigate_to_test_dir_and_reset_version()
+    # ASSERT (sanity check)
+    assert_curr_version_number(DEFAULT_START_VERSION)
+    # ACT
+    sys.argv = ["bumpver_handler.py", "minor"]
+    bumpver_handler.main()
+    # ASSERT
+    assert_curr_version_number("0.1.0")
+    # ACT
+    sys.argv = ["bumpver_handler.py", "minor"]
+    bumpver_handler.main()
+    # ASSERT
+    assert_curr_version_number("0.2.0")
+    navigate_back_to_root_dir()
+
+def test_bump_major() -> None:
+    navigate_to_test_dir_and_reset_version()
+    # ASSERT (sanity check)
+    assert_curr_version_number(DEFAULT_START_VERSION)
+    # ACT
+    sys.argv = ["bumpver_handler.py", "major"]
+    bumpver_handler.main()
+    # ASSERT
+    assert_curr_version_number("1.0.0")
+    # ACT
+    sys.argv = ["bumpver_handler.py", "major"]
+    bumpver_handler.main()
+    # ASSERT
+    assert_curr_version_number("2.0.0")
+    navigate_back_to_root_dir()
+
+def test_bump_dev() -> None:
+    navigate_to_test_dir_and_reset_version()
+    # ASSERT (sanity check)
+    assert_curr_version_number(DEFAULT_START_VERSION)
+    # ACT (create new patch version with .dev0 tag)
+    sys.argv = ["bumpver_handler.py", "dev"]
+    bumpver_handler.main()
+    # ASSERT
+    assert_curr_version_number("0.0.2.dev0")
+    # ACT
+    sys.argv = ["bumpver_handler.py", "dev"]
+    bumpver_handler.main()
+    # ASSERT
+    assert_curr_version_number("0.0.2.dev1")
+    # ACT (finalize the new patch version)
+    sys.argv = ["bumpver_handler.py", "patch"]
+    bumpver_handler.main()
+    # ASSERT
+    assert_curr_version_number("0.0.2")
+    navigate_back_to_root_dir()
+
+def test_bump_post() -> None:
+    navigate_to_test_dir_and_reset_version()
+    # ASSERT (sanity check)
+    assert_curr_version_number(DEFAULT_START_VERSION)
+    # ACT (create new post version with .post1 tag)
+    sys.argv = ["bumpver_handler.py", "post"]
+    bumpver_handler.main()
+    # ASSERT
+    assert_curr_version_number("0.0.1.post1")
+    # ACT
+    sys.argv = ["bumpver_handler.py", "post"]
+    bumpver_handler.main()
+    # ASSERT
+    assert_curr_version_number("0.0.1.post2")
+    navigate_back_to_root_dir()

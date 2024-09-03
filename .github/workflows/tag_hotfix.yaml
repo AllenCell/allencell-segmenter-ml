@@ -35,12 +35,10 @@ jobs:
         run: |
           git config --global user.name 'aicsgithub'
           git config --global user.email 'aicsgithub@alleninstitute.org'
-          python src/allencell_ml_segmenter/scripts/bumpver_handler.py hotfix
+          python src/allencell_ml_segmenter/scripts/bumpver_handler.py post
 
-      - name: Commit and push
+      - name: Push changes
         run: |
-          git add -u
-          git commit -m "hotfix"
           git push origin ${{ inputs.branch }}
 
       - name: Create and push tag
