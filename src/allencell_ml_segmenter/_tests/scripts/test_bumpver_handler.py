@@ -30,6 +30,9 @@ So, the tests work as follows:
   - run bumpver_handler.py, changing sys.argv to modify the args we provide it
   - read pyproject.toml to make sure the version updated as we expected
   - change working directory back to the root of the repo
+
+The first and last steps are accomplished with navigate_to_test_dir_and_reset_version
+and navigate_back_to_root_dir, respectively
 """
 DEFAULT_START_VERSION: str = "0.0.1"
 
