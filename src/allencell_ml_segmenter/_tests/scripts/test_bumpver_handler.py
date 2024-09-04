@@ -149,6 +149,8 @@ def test_bump_minor_fails_when_dev_current() -> None:
     # ACT (create new dev version with .dev0 tag)
     sys.argv = ["bumpver_handler.py", "dev"]
     bumpver_handler.main()
+    # ASSERT (sanity check)
+    assert_curr_version_number("0.0.2.dev0")
 
     got_expected_exception: bool = False
     try:
@@ -171,6 +173,8 @@ def test_bump_major_fails_when_dev_current() -> None:
     # ACT (create new dev version with .dev0 tag)
     sys.argv = ["bumpver_handler.py", "dev"]
     bumpver_handler.main()
+    # ASSERT (sanity check)
+    assert_curr_version_number("0.0.2.dev0")
 
     got_expected_exception: bool = False
     try:
@@ -193,6 +197,8 @@ def test_bump_post_fails_when_dev_current() -> None:
     # ACT (create new dev version with .dev0 tag)
     sys.argv = ["bumpver_handler.py", "dev"]
     bumpver_handler.main()
+    # ASSERT (sanity check)
+    assert_curr_version_number("0.0.2.dev0")
 
     got_expected_exception: bool = False
     try:
@@ -215,6 +221,8 @@ def test_bump_minor_fails_when_post_current() -> None:
     # ACT (create new post version with .post0 tag)
     sys.argv = ["bumpver_handler.py", "post"]
     bumpver_handler.main()
+    # ASSERT (sanity check)
+    assert_curr_version_number("0.0.1.post0")
 
     got_expected_exception: bool = False
     try:
@@ -237,6 +245,8 @@ def test_bump_major_fails_when_post_current() -> None:
     # ACT (create new post version with .post0 tag)
     sys.argv = ["bumpver_handler.py", "post"]
     bumpver_handler.main()
+    # ASSERT (sanity check)
+    assert_curr_version_number("0.0.1.post0")
 
     got_expected_exception: bool = False
     try:
@@ -259,6 +269,8 @@ def test_bump_patch_fails_when_post_current() -> None:
     # ACT (create new post version with .post0 tag)
     sys.argv = ["bumpver_handler.py", "post"]
     bumpver_handler.main()
+    # ASSERT (sanity check)
+    assert_curr_version_number("0.0.1.post0")
 
     got_expected_exception: bool = False
     try:
@@ -281,6 +293,8 @@ def test_bump_dev_fails_when_post_current() -> None:
     # ACT (create new post version with .post0 tag)
     sys.argv = ["bumpver_handler.py", "post"]
     bumpver_handler.main()
+    # ASSERT (sanity check)
+    assert_curr_version_number("0.0.1.post0")
 
     got_expected_exception: bool = False
     try:
