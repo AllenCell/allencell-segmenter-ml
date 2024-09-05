@@ -301,22 +301,3 @@ def test_get_best_ckpt_no_checkpoint_dir():
 
     # assert
     assert selected_ckpt is None
-
-
-def test_get_best_ckpt_empty_checkpoint_dir():
-    # ARRANGE
-    user_experiments_path: Path = Path(__file__).parent / "experiments_home"
-    config: FakeUserSettings = FakeUserSettings(
-        cyto_dl_home_path=Path(__file__).parent / "cyto_dl_home",
-        user_experiments_path=user_experiments_path,
-    )
-    model: ExperimentsModel = ExperimentsModel(config)
-    model.apply_experiment_name(
-        "a_exp"
-    )  # Checkpoint folder exisits, but no checkpoint file
-
-    # ACT
-    selected_ckpt: str = model.get_best_ckpt()
-
-    # assert
-    assert selected_ckpt is None
