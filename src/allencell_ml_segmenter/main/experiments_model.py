@@ -151,16 +151,10 @@ class ExperimentsModel(IExperimentsModel):
         user_exp_path: Optional[Path] = (
             self.user_settings.get_user_experiments_path()
         )
-        if user_exp_path is None:
-            raise ValueError(
-                "User experiments path cannot be None in order to get checkpoint"
-            )
         if (
-            experiment_name is None
-        ):  # need to re-check since self.get_experiment_name above can return None
-            raise ValueError(
-                "Experiment name cannot be None in order to get checkpoint"
-            )
+            experiment_name is None or user_exp_path is None
+        ):  # need to re-check experiemnt_name since self.get_experiment_name above can return None
+            return None
 
         checkpoints_path = user_exp_path / experiment_name / "checkpoints"
         if not checkpoints_path.exists():
