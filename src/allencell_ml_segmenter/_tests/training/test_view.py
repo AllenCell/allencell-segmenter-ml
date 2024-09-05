@@ -63,19 +63,28 @@ def test_set_image_dimensions(
     """
     Tests that checking the associated radio buttons properly sets the image dimensions.
     """
-    # ACT
-    with qtbot.waitSignal(training_view._radio_2d.toggled):
-        training_view._radio_2d.click()
-
-    # ASSERT
-    assert training_model.get_spatial_dims() == 2
+    # ASSERT (initial state)
+    assert not training_view.x_patch_size.isEnabled()
+    assert not training_view.y_patch_size.isEnabled()
+    assert not training_view.z_patch_size.isEnabled()
 
     # ACT
-    with qtbot.waitSignal(training_view._radio_3d.toggled):
-        training_view._radio_3d.click()
+    with qtbot.waitSignal(training_model.signals.spatial_dims_set):
+        training_model.set_spatial_dims(2)
 
     # ASSERT
-    assert training_model.get_spatial_dims() == 3
+    assert training_view.x_patch_size.isEnabled()
+    assert training_view.y_patch_size.isEnabled()
+    assert not training_view.z_patch_size.isEnabled()
+
+    # ACT
+    with qtbot.waitSignal(training_model.signals.spatial_dims_set):
+        training_model.set_spatial_dims(3)
+
+    # ASSERT
+    assert training_view.x_patch_size.isEnabled()
+    assert training_view.y_patch_size.isEnabled()
+    assert training_view.z_patch_size.isEnabled()
 
 
 def test_set_max_epoch(
