@@ -54,7 +54,7 @@ class ExperimentsModel(IExperimentsModel):
 
     # TODO: possibly refactor to get rid of exp name and checkpoint params?
     def get_model_checkpoints_path(
-        self, experiment_name: str, checkpoint: str
+        self, experiment_name: Optional[str], checkpoint: Optional[str]
     ) -> Path:
         """
         Gets checkpoints for model path
@@ -120,8 +120,13 @@ class ExperimentsModel(IExperimentsModel):
             else None
         )
 
-    def get_train_config_path(self) -> Path:
-        return self._get_exp_path() / "train_config.yaml"
+    def get_train_config_path(self, experiment_name: Optional[str] = None) -> Path:
+        if experiment_name is None:
+            # use current experiment
+            return self._get_exp_path() / "train_config.yaml"
+        else:
+            return self.get_user_experiments_path() / experiment_name / "train_config.yaml"
+
 
     def get_current_epoch(self) -> Optional[int]:
         ckpt: Optional[str] = self.get_best_ckpt()
@@ -130,7 +135,7 @@ class ExperimentsModel(IExperimentsModel):
         # assumes checkpoint format: epoch_001.ckpt
         return int(ckpt.split(".")[0].split("_")[-1])
 
-    def get_best_ckpt(self, experiment_name: str = None) -> Optional[str]:
+    def get_best_ckpt(self, experiment_name: Optional[str] = None) -> Optional[str]:
         # If no experiment name is specified, assume we want the to use the current experiment selected in this model.
         if experiment_name is None:
             if self.get_experiment_name() is None:

@@ -58,6 +58,10 @@ class CytoDLOverridesManager:
             )
 
         if not self._training_model.is_using_existing_model():
+            if self._experiments_model.get_model_size() is None:
+                raise ValueError(
+                    "Model size is required, but is not set, and get_training_overrides was called."
+                )
             # Filters/Model Size (required if starting new model)
             overrides_dict["model._aux.filters"] = (
                 self._training_model.get_model_size().value
@@ -94,6 +98,10 @@ class CytoDLOverridesManager:
             }
 
         # Training input path (required)
+        if self._training_model.get_images_directory() is None:
+            raise ValueError(
+                "Training data path was not set but get_training_overrides was called."
+            )
         overrides_dict["data.path"] = str(
             self._training_model.get_images_directory()
         )

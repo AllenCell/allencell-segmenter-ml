@@ -56,12 +56,20 @@ class PredictionService(Subscriber):
             self._experiments_model.get_train_config_path()
         )
         exp_name: Optional[str] = self._experiments_model.get_experiment_name()
-        ckpt: Optional[str] = self._experiments_model.get_checkpoint()
+        ckpt: Optional[str] = self._experiments_model.get_best_ckpt()
         if exp_name is None or ckpt is None:
             raise RuntimeError(
                 "Experiment name or checkpoint undefined. Cannot predict"
             )
         # We must override the config to set up predictions correctly
+        experiment_name: Optional[str] = self._experiments_model.get_experiment_name()
+        if experiment_name is None:
+            raise ValueError("Prediction started without an experiment selected")
+
+        chekpoint: Optional[str] = self._experiments_model.get_best_ckpt()
+        if chekpoint is None:
+            raise ValueError("Prediction started on an experiment without a valid checkpoint available.")
+
         cyto_api.override_config(
             self.build_overrides(
                 self._experiments_model.get_experiment_name(),

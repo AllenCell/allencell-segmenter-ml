@@ -76,7 +76,7 @@ class TrainingModel(Publisher):
         # the existing model to pull weights from for training
         # If existing_model_to_use is None, no model was selected to pull weights from and the user should be prompted to select one
         self._is_using_existing_model: bool = False  # No by default
-        self._existing_model_to_use: Optional[Path] = (
+        self._existing_model_to_use: Optional[str] = (
             None  # None if no existing model selected- default behavior
         )
 
