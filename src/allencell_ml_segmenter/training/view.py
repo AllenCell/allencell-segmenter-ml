@@ -102,7 +102,7 @@ class TrainingView(View, MainWindow):
             "Select a previously trained model to pull model weights from"
         )
         bottom_grid_layout.addWidget(
-            existing_model_label, 0, 0, alignment=Qt.AlignTop
+            existing_model_label, 0, 0, alignment=Qt.AlignmentFlag.AlignTop
         )
 
         # Model Size Selection
