@@ -123,15 +123,16 @@ class ExperimentsModel(IExperimentsModel):
     def get_train_config_path(
         self, experiment_name: Optional[str] = None
     ) -> Path:
-        if experiment_name is None:
-            # use current experiment
-            return self._get_exp_path() / "train_config.yaml"
-        else:
+        if experiment_name is not None:
             return (
-                self.get_user_experiments_path()
-                / experiment_name
-                / "train_config.yaml"
+                    self.get_user_experiments_path()
+                    / experiment_name
+                    / "train_config.yaml"
             )
+        else:
+            # use current experiment
+            return self._get_exp_path() / "train_config.yaml":
+
 
     def get_current_epoch(self) -> Optional[int]:
         ckpt: Optional[str] = self.get_best_ckpt()
