@@ -42,8 +42,8 @@ dependencies = [
     "watchdog",
     "cyto-dl>=0.1.8",
     "scikit-image!=0.23.0",
+    "torch==2.0.1+cu118; sys_platform != 'darwin'"
 ]
-
 [project.urls]
 Homepage = "https://github.com/AllenCell/allencell-ml-segmenter"
 "Bug Tracker" = "https://github.com/AllenCell/allencell-ml-segmenter/issues"
@@ -140,3 +140,6 @@ exclude = [
     "src/allencell_ml_segmenter/_tests/*",
     "src/debug.py",
 ]
+
+[tool.pip]
+extra-index-url = "https://download.pytorch.org/whl/cu118"
