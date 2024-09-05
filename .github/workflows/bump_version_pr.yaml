@@ -44,7 +44,7 @@ jobs:
         run: |
           git config --global user.name 'aicsgithub'
           git config --global user.email 'aicsgithub@alleninstitute.org'
-          python publish_bumpver_handler.py ${{ inputs.semver_component }}
+          python src/allencell_ml_segmenter/scripts/bumpver_handler.py ${{ inputs.semver_component }}
       
       # takes the commit from the last step, pushes to new branch, release, and creates PR
       - name: Create pull request
@@ -58,7 +58,7 @@ jobs:
       - name: Tag version
         run: |
           git checkout workflow-release
-          python tag_with_current_version.py
+          python src/allencell_ml_segmenter/scripts/tag_with_current_version.py
           git push origin --tags
 
       
