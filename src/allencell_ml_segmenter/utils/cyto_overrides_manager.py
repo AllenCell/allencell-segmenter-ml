@@ -58,14 +58,15 @@ class CytoDLOverridesManager:
             )
 
         if not self._training_model.is_using_existing_model():
-            if self._experiments_model.get_model_size() is None:
+            model_size: Optional[ModelSize] = (
+                self._training_model.get_model_size()
+            )
+            if model_size is None:
                 raise ValueError(
                     "Model size is required, but is not set, and get_training_overrides was called."
                 )
             # Filters/Model Size (required if starting new model)
-            overrides_dict["model._aux.filters"] = (
-                self._training_model.get_model_size().value
-            )
+            overrides_dict["model._aux.filters"] = model_size.value
 
         # Hardware overrides (required)
         if CUDAUtils.cuda_available():
@@ -107,7 +108,11 @@ class CytoDLOverridesManager:
         )
 
         # patch size (required)
-        patch_size: List[int] = self._training_model.get_patch_size()
+        patch_size: Optional[List[int]] = self._training_model.get_patch_size()
+        if patch_size is None:
+            raise ValueError(
+                "Patch size is required, but is not set, and get_training_overrides was called."
+            )
         overrides_dict["data._aux.patch_shape"] = patch_size
 
         # Commented out 5/23 brian.kim
