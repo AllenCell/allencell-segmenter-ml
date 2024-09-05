@@ -124,15 +124,15 @@ class ExperimentsModel(IExperimentsModel):
         self, experiment_name: Optional[str] = None
     ) -> Path:
         if experiment_name is not None:
-            return (
-                    self.get_user_experiments_path()
-                    / experiment_name
-                    / "train_config.yaml"
-            )
+            user_exp_path: Optional[Path] = self.get_user_experiments_path()
+            if user_exp_path is None:
+                raise ValueError(
+                    "User experiments path cannot be None if no experiment specified in get_train_config_path"
+                )
+            return user_exp_path / experiment_name / "train_config.yaml"
         else:
             # use current experiment
             return self._get_exp_path() / "train_config.yaml"
-
 
     def get_current_epoch(self) -> Optional[int]:
         ckpt: Optional[str] = self.get_best_ckpt()
@@ -144,18 +144,25 @@ class ExperimentsModel(IExperimentsModel):
     def get_best_ckpt(
         self, experiment_name: Optional[str] = None
     ) -> Optional[str]:
-        # If no experiment name is specified, assume we want the to use the current experiment selected in this model.
+        # If no experiment name is specified for this function, assume we want the to use the current experiment selected in this model.
         if experiment_name is None:
-            if self.get_experiment_name() is None:
-                return None
-            else:
-                experiment_name = self.get_experiment_name()
+            experiment_name = self.get_experiment_name()
 
-        checkpoints_path = (
-            Path(self.user_settings.get_user_experiments_path())
-            / experiment_name
-            / "checkpoints"
+        user_exp_path: Optional[Path] = (
+            self.user_settings.get_user_experiments_path()
         )
+        if user_exp_path is None:
+            raise ValueError(
+                "User experiments path cannot be None in order to get checkpoint"
+            )
+        if (
+            experiment_name is None
+        ):  # need to re-check since self.get_experiment_name above can return None
+            raise ValueError(
+                "Experiment name cannot be None in order to get checkpoint"
+            )
+
+        checkpoints_path = user_exp_path / experiment_name / "checkpoints"
         if not checkpoints_path.exists():
             return None
 
