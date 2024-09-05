@@ -84,6 +84,9 @@ dev = [
 [project.entry-points."napari.manifest"]
 allencell-segmenter-ml = "allencell_ml_segmenter:napari.yaml"
 
+[project.entry-points."console_scripts"]
+post_install = "post_install:install_torch"
+
 # build settings
 # https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html
 [tool.setuptools]
@@ -140,5 +143,3 @@ exclude = [
     "src/debug.py",
 ]
 
-[tool.setuptools.commands]
-post_install = "post_install:install_torch"
