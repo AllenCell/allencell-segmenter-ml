@@ -131,7 +131,7 @@ class ExperimentsModel(IExperimentsModel):
             )
         else:
             # use current experiment
-            return self._get_exp_path() / "train_config.yaml":
+            return self._get_exp_path() / "train_config.yaml"
 
 
     def get_current_epoch(self) -> Optional[int]:
