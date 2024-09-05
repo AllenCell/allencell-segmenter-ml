@@ -6,7 +6,7 @@ class PostInstallCommand(install):
     """Post-installation for installation mode."""
     def run(self):
         install.run(self)
-        subprocess.call(['python', 'post_install.py'])
+        subprocess.call([self.executable, 'post_install.py'])
 
 setup(
     cmdclass={
