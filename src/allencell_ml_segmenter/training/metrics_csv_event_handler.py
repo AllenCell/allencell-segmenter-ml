@@ -44,7 +44,7 @@ class MetricsCSVEventHandler(FileSystemEventHandler):
     # override
     def on_any_event(self, event: FileSystemEvent) -> None:
         if self._target_path.exists() and self._target_path.samefile(
-            event.src_path
+            str(event.src_path)
         ):
             epochs, loss = self._get_csv_data()
             self._progress_callback(epochs)
