@@ -1,3 +1,5 @@
+import subprocess
+import sys
 from typing import Optional, Dict
 from allencell_ml_segmenter.config.i_user_settings import IUserSettings
 
@@ -36,6 +38,7 @@ from allencell_ml_segmenter.training.view import TrainingView
 from allencell_ml_segmenter.curation.curation_model import CurationModel
 from allencell_ml_segmenter._style import Style
 from allencell_ml_segmenter.curation.curation_service import CurationService
+from torch.cuda import is_available
 
 
 class MainWidget(AicsWidget):
@@ -73,6 +76,14 @@ class MainWidget(AicsWidget):
 
         if self.user_settings.get_user_experiments_path() is None:
             self.user_settings.prompt_for_user_experiments_home(parent=self)
+
+        if sys.platform.startswith('win') or sys.platform.startswith('linux'):
+            if not is_available():
+                print("GPU Available but not detected. installing torch + gpu")
+                p1 = subprocess.Popen("pip uninstall torch torchvision")
+                p1.wait()
+                p2 = subprocess.Popen("pip install torch==2.0.1+cu118 torchvision --index-url https://download.pytorch.org/whl/cu118")
+                p2.wait()
 
         # init models
         self._experiments_model = ExperimentsModel(self.user_settings)
