@@ -186,7 +186,6 @@ class TrainingView(View, MainWindow):
         self._update_spatial_dims_boxes()
         bottom_grid_layout.addLayout(patch_size_entry_layout, 1, 1)
 
-
         model_size_label: LabelWithHint = LabelWithHint("Model size")
         model_size_label.set_hint(
             "Defines the complexity of the model - smaller models train faster, while large models train slower but may learn complex relationships better."
@@ -408,4 +407,3 @@ class TrainingView(View, MainWindow):
             self.y_patch_size, spatial_dims is not None
         )
         self._update_spatial_dim_box(self.z_patch_size, spatial_dims == 3)
-
