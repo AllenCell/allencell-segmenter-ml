@@ -35,6 +35,7 @@ class ModelSize(Enum):
 class TrainingModelSignals(QObject):
     num_channels_set: Signal = Signal()
     images_directory_set: Signal = Signal()
+    spatial_dims_set: Signal = Signal()
 
 
 class TrainingModel(Publisher):
@@ -112,6 +113,7 @@ class TrainingModel(Publisher):
         if spatial_dims != 2 and spatial_dims != 3:
             raise ValueError("No support for non 2D and 3D images.")
         self._spatial_dims = spatial_dims
+        self.signals.spatial_dims_set.emit()
 
     def get_num_epochs(self) -> Optional[int]:
         """

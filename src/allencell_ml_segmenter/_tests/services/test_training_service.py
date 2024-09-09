@@ -64,5 +64,10 @@ def test_service_reacts_to_image_dir_set(
     # Act / Assert
     # we expect the service to listen for the signal emitted when the image directory is set
     # do some async work, then set num channels, which will emit the signal we are waiting on
-    with qtbot.waitSignal(training_model.signals.num_channels_set):
+    with qtbot.waitSignals(
+        [
+            training_model.signals.num_channels_set,
+            training_model.signals.spatial_dims_set,
+        ]
+    ):
         training_model.set_images_directory(img_dir)

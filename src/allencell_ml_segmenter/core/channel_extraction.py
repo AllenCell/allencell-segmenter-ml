@@ -20,14 +20,14 @@ def extract_channels_from_image(img_path: Path) -> int:
 
 def get_img_path_from_csv(csv_path: Path, column: str = "raw") -> Path:
     """
-    Returns path of an image in the specified column of the csv or None if there is no data in that column.
+    Returns path of an image in the specified column of the csv or throws exception if there is no data in that column.
     :param csv_path: path to a csv with a 'raw' column
     """
     img_path: Optional[str] = None
     with open(csv_path) as csv_file:
         reader: csv.DictReader = csv.DictReader(csv_file)
         img_path = next(reader)[column]  # type: ignore
-    if img_path is None:
+    if not img_path:
         raise ValueError(f"No valid data at {csv_path}")
     return Path(img_path).resolve()
 

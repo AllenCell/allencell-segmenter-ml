@@ -65,3 +65,7 @@ QComboBox:disabled {
 QTabBar::tab:disabled:!selected {
     color: #868E93;
 }
+
+QLineEdit:disabled {
+    background-color: #2D323A;
+}
