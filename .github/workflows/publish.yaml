@@ -57,13 +57,13 @@ jobs:
       
       # using test pypi for testing this new workflow
       - name: Publish to PyPI
-        if: ${{ inputs.index }} == 'PyPI'
+        if: ${{ inputs.index == 'PyPI' }}
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           repository-url: https://test.pypi.org/legacy/
 
       - name: Publish to Artifactory
-        if: ${{ inputs.index }} == 'Artifactory'
+        if: ${{ inputs.index == 'Artifactory' }}
         env:
           TWINE_USERNAME: ${{ secrets.ARTIFACTORY_USER }}
           TWINE_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
