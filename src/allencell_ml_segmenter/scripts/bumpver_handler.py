@@ -4,7 +4,6 @@
 import subprocess
 import sys
 import toml  # type: ignore
-from typing import Optional
 
 
 def main() -> None:
@@ -12,7 +11,7 @@ def main() -> None:
         raise ValueError("No component specified for bumping version")
 
     component: str = sys.argv[1].lower()
-    valid_options: set[str] = {"major", "minor", "patch", "dev"}
+    valid_options: set[str] = {"major", "minor", "patch", "dev", "post"}
 
     if component not in valid_options:
         raise ValueError(f"Component must be one of {valid_options}")
@@ -21,8 +20,10 @@ def main() -> None:
     version_components: list[str] = version.split(".")
 
     update_output: subprocess.CompletedProcess
-    # 4 components means we currently have a dev version
-    if len(version_components) == 4:
+    # 4 components means we currently have a dev or post version
+    if len(version_components) == 4 and version_components[-1].startswith(
+        "dev"
+    ):
         if component == "dev":
             # increment the dev tag (e.g. 1.0.0.dev0 -> 1.0.0.dev1)
             update_output = subprocess.run(
@@ -37,12 +38,22 @@ def main() -> None:
             raise ValueError(
                 "Cannot update major or minor version while dev version is current"
             )
-
+    elif len(version_components) == 4:  # current version must be post
+        if component == "post":
+            update_output = subprocess.run(
+                ["bumpver", "update", "--tag-num", "-n"]
+            )
+        else:
+            raise ValueError("Cannot change post version to standard version")
     elif len(version_components) == 3:
         if component == "dev":
             # increment patch and begin at dev0 (e.g. 1.0.0 -> 1.0.1.dev0)
             update_output = subprocess.run(
                 ["bumpver", "update", "--patch", "--tag=dev", "-n"]
+            )
+        elif component == "post":
+            update_output = subprocess.run(
+                ["bumpver", "update", "--tag=post", "-n"]
             )
         else:
             update_output = subprocess.run(
@@ -62,42 +73,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
-"""
-TESTING:
-- add and commit any changes (keep track of this commit hash)
-- bumpver update --set-version 1.0.0
-
-- python publish_bumpver_handler.py
-  - expect: ValueError
-
-- python publish_bumpver_handler.py fake
-  - expect: ValueError
-
-- python publish_bumpver_handler.py major
-  - expect: version updated to 2.0.0
-
-- python publish_bumpver_handler.py minor
-  - expect: version updated to 2.1.0
-
-- python publish_bumpver_handler.py patch
-  - expect: version updated to 2.1.1
-
-- python publish_bumpver_handler.py dev
-  - expect: version updated to 2.1.2.dev0
-
-- python publish_bumpver_handler.py dev
-  - expect: version updated to 2.1.2.dev1
-
-- python publish_bumpver_handler.py major
-  - expect: ValueError
-
-- python publish_bumpver_handler.py minor
-  - expect: ValueError
-
-- python publish_bumpver_handler.py patch
-  - expect: version updated to 2.1.2
-
-- git reset --hard {hash of the commit made at the beginning}
-- git tag --delete 1.0.0 2.0.0 2.1.0 2.1.1 2.1.2 2.1.2.dev0 2.1.2.dev1
-"""
