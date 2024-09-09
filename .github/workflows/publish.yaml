@@ -1,19 +1,26 @@
-# Publishes to PyPI when a commit tagged with v** is pushed to main
-name: Publish to Artifactory
+name: Publish tagged version
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - version.toml
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to publish (e.g. 'v0.1.11')"
+        required: true
+        type: string
+      index:
+        description: "Target index"
+        required: true
+        type: choice
+        default: "PyPI"
+        options:
+          - PyPI
+          - Artifactory
 
 # need to grab org secrets for artifactory publish
 env:
   ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
   ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
 
-# run artifactory releases on self-hosted runner, change when using pypi
 jobs:
   publish:
     name: Publish
@@ -28,13 +35,16 @@ jobs:
         with:
           ref: main
 
+      - name: Check out tag
+        run: |
+          git fetch --tags
+          git checkout ${{ inputs.tag }}
+
       - name: Set up Python 3.10
         uses: actions/setup-python@v5
         with:
           python-version: "3.10"
 
-# We need twine as a dependency below for artifactory releases, remove when using pypi
-# importlib 8.0.0 is broken, we should be able to un-pin this once 8.0.1 is released
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -44,15 +54,16 @@ jobs:
       - name: Build Package
         run: |
           python -m build
-
-# disabling publish to pypi, replacing with artifactory for now
-# replace this when we want to publish to pypi instead
-#      - name: Publish to PyPI
-#        uses: pypa/gh-action-pypi-publish@release/v1
-#        with:
-#          repository-url: https://test.pypi.org/legacy/
+      
+      # using test pypi for testing this new workflow
+      - name: Publish to PyPI
+        if: ${{ inputs.index }} == 'PyPI'
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
 
       - name: Publish to Artifactory
+        if: ${{ inputs.index }} == 'Artifactory'
         env:
           TWINE_USERNAME: ${{ secrets.ARTIFACTORY_USER }}
           TWINE_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
