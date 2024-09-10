@@ -11,24 +11,6 @@ More useful dev tasks:
 - `make lint` [Find lint errors in source code]
 - `make format` [Format source code]
 
-## Current steps for integrating plugin with cyto-del:
-
-- clone plugin (use main - my stuff is merged)
-- git checkout bugfix/allencell-ml-segmenter
-- clone cyto-dl as sibling to plugin repo
-- cd into cyto-dl and download data: python scripts/download_test_data.py
-- copy `/cyto-dl/data` to `allencell-ml-segmenter/`.  The input image paths are references in train.csv as relative paths, and so must be resolved at PYTHON_PATH (in the plugin repo).
-- from the plugin repo, `gmake install`
-- activate new venv (happens autmatically i think)
-- `pip install .`
-- `pip install PyQt5`
-- `python -m pip install -e ../cyto-dl/`
-- `touch cyto-dl/configs/__init__.py` (necessary to reference `segmenter.yaml` in the cyto-dl repo)
-- [DEPRACATED] update hardcoded paths in TrainingService for your system
-- update the paths stored in `constants.py` to work on your system
-- `napari`
-- select training view, hit training button. It should run to completion.
-
 ## Releasing
 
 Release a new version and publishing to Pypi is based on GitHub Actions workflows.
