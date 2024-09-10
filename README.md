@@ -1,4 +1,4 @@
-# allencell-ml-segmenter
+# Allencell-ml-segmenter
 <!-- TODO generate a new badge
 [![License BSD-3](https://img.shields.io/pypi/l/allencell-ml-segmenter.svg?color=green)](https://github.com/AllenCell/allencell-ml-segmenter/raw/main/LICENSE) 
 -->
