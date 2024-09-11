@@ -260,3 +260,9 @@ class TrainingModel(Publisher):
         Set iterative training
         """
         self._is_using_existing_model = is_using
+
+    def get_existing_model_ckpt_path(self) -> Path:
+        return self.experiments_model.get_model_checkpoints_path(
+            self.get_existing_model(),
+            self.experiments_model.get_best_ckpt(self.get_existing_model()),
+        )
