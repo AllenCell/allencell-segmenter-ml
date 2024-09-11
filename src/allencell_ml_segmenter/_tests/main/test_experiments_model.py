@@ -249,6 +249,24 @@ def test_get_best_ckpt_experiment_name_specified() -> None:
     assert selected_ckpt == "1.ckpt"
 
 
+def test_get_best_ckpt_experiment_name_specified_and_experiment_selected() -> (
+    None
+):
+    # ARRANGE
+    user_experiments_path: Path = Path(__file__).parent / "experiments_home"
+    config: FakeUserSettings = FakeUserSettings(
+        cyto_dl_home_path=Path(__file__).parent / "cyto_dl_home",
+        user_experiments_path=user_experiments_path,
+    )
+    model: ExperimentsModel = ExperimentsModel(config)
+    model.apply_experiment_name("a_exp")
+
+    # ACT
+    selected_ckpt: str = model.get_best_ckpt("2_exp")
+
+    assert selected_ckpt == "1.ckpt"
+
+
 def test_get_best_ckpt_from_current_experiment() -> None:
     # ARRANGE
     user_experiments_path: Path = Path(__file__).parent / "experiments_home"
