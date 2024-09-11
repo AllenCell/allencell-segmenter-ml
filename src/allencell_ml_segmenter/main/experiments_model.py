@@ -124,14 +124,15 @@ class ExperimentsModel(IExperimentsModel):
         self, experiment_name: Optional[str] = None
     ) -> Path:
         if experiment_name is not None:
+            # user is getting a config for an existing experiment
             user_exp_path: Optional[Path] = self.get_user_experiments_path()
             if user_exp_path is None:
                 raise ValueError(
-                    "User experiments path cannot be None if no experiment specified in get_train_config_path"
+                    "user_exp_path cannot be None if experiment_name is also None in get_train_config_path"
                 )
             return user_exp_path / experiment_name / "train_config.yaml"
         else:
-            # use current experiment
+            # get config for currently selected experiment
             return self._get_exp_path() / "train_config.yaml"
 
     def get_current_epoch(self) -> Optional[int]:
