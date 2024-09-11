@@ -78,10 +78,10 @@ class TrainingService(Subscriber):
         # TODO make set_images_directory and get_images_directory less brittle.
         #  https://github.com/AllenCell/allencell-ml-segmenter/issues/156
         if self._able_to_continue_training():
-            model = CytoDLModel()
+            cyto_dl_model = CytoDLModel()
             if self._training_model.is_using_existing_model():
                 # ITERATIVE TRAINING: train starting from existing model weights
-                model.load_config_from_file(
+                cyto_dl_model.load_config_from_file(
                     str(
                         self._experiments_model.get_train_config_path(
                             self._training_model.get_existing_model()
@@ -90,7 +90,7 @@ class TrainingService(Subscriber):
                 )
             else:
                 # NEW TRAINING: load the default experiment config
-                model.load_default_experiment(
+                cyto_dl_model.load_default_experiment(
                     self._training_model.get_experiment_type(),
                     output_dir=f"{self._experiments_model.get_user_experiments_path()}/{self._experiments_model.get_experiment_name()}",
                 )
@@ -99,12 +99,12 @@ class TrainingService(Subscriber):
                     self._experiments_model, self._training_model
                 )
             )
-            model.override_config(
+            cyto_dl_model.override_config(
                 cyto_overrides_manager.get_training_overrides()
             )
-            model.print_config()
-            model.save_config(self._experiments_model.get_train_config_path())
-            model.train()
+            cyto_dl_model.print_config()
+            cyto_dl_model.save_config(self._experiments_model.get_train_config_path())
+            cyto_dl_model.train()
 
     def _able_to_continue_training(self) -> bool:
         # TODO: refactor- these checks should be in the View before we start a thread for training.
