@@ -52,7 +52,7 @@ class CytoDLOverridesManager:
                 f"{self._experiments_model.get_user_experiments_path()}/{self._training_model.get_existing_model()}"
             )
 
-        if not self._training_model.is_using_existing_model():
+        else:
             model_size: Optional[ModelSize] = (
                 self._training_model.get_model_size()
             )
