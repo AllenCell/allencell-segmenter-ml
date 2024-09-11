@@ -103,7 +103,9 @@ class TrainingService(Subscriber):
                 cyto_overrides_manager.get_training_overrides()
             )
             cyto_dl_model.print_config()
-            cyto_dl_model.save_config(self._experiments_model.get_train_config_path())
+            cyto_dl_model.save_config(
+                self._experiments_model.get_train_config_path()
+            )
             cyto_dl_model.train()
 
     def _able_to_continue_training(self) -> bool:
