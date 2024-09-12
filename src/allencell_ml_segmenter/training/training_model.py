@@ -6,6 +6,7 @@ from pathlib import Path
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel, ImageType
 from qtpy.QtCore import QObject, Signal
+from allencell_ml_segmenter.utils.experiment_utils import ExperimentUtils
 
 
 class TrainingType(Enum):
@@ -261,8 +262,13 @@ class TrainingModel(Publisher):
         """
         self._is_using_existing_model = is_using
 
-    def get_existing_model_ckpt_path(self) -> Path:
-        return self.experiments_model.get_model_checkpoints_path(
-            self.get_existing_model(),
-            self.experiments_model.get_best_ckpt(self.get_existing_model()),
+    def get_existing_model_ckpt_path(self) -> Optional[Path]:
+        model_to_use: Optional[str] = self.get_existing_model()
+        user_exp_path: Optional[Path] = (
+            self.experiments_model.get_user_experiments_path()
         )
+
+        if model_to_use is None or user_exp_path is None:
+            # shouldn't be possible to get here
+            return None
+        return ExperimentUtils.get_best_ckpt(user_exp_path, model_to_use)
