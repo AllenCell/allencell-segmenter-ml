@@ -216,14 +216,14 @@ class TrainingModel(Publisher):
     def set_model_size(self, model_size: Optional[str]) -> None:
         if model_size is None or model_size == "":
             self._model_size = None
-            return
-        # convert string to enum
-        model_size = model_size.upper()
-        if model_size not in [x.name for x in ModelSize]:
-            raise ValueError(
-                "No support for non small, medium, and large patch sizes."
-            )
-        self._model_size = ModelSize[model_size]
+        else:
+            # convert string to enum
+            model_size = model_size.upper()
+            if model_size not in [x.name for x in ModelSize]:
+                raise ValueError(
+                    "No support for non small, medium, and large patch sizes."
+                )
+            self._model_size = ModelSize[model_size]
 
     def get_model_size(self) -> Optional[ModelSize]:
         return self._model_size
