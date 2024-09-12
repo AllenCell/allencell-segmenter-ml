@@ -49,7 +49,7 @@ class CytoDLOverridesManager:
             overrides_dict["checkpoint.strict"] = False
             # ensure correct output path for these models
             overrides_dict["paths.output_dir"] = (
-                f"{self._experiments_model.get_user_experiments_path()}/{self._training_model.get_existing_model()}"
+                f"{self._experiments_model.get_user_experiments_path()}/{self._experiments_model.get_experiment_name()}"
             )
 
         else:
