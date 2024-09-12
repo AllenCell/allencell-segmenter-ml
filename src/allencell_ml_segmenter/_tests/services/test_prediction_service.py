@@ -38,7 +38,6 @@ def test_predict_model() -> None:
         )
     )
     experiments_model.apply_experiment_name("0_exp")
-    experiments_model.set_checkpoint("1.ckpt")
     prediction_service: PredictionService = PredictionService(
         prediction_model, experiments_model
     )
@@ -63,7 +62,6 @@ def test_predict_model_no_experiment_selected() -> None:
             / "experiments_home",
         )
     )
-    experiments_model.set_checkpoint("1.ckpt")
     prediction_service: PredictionService = PredictionService(
         prediction_model, experiments_model
     )
