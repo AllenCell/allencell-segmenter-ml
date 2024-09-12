@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Optional
 from allencell_ml_segmenter.config.i_user_settings import IUserSettings
+from allencell_ml_segmenter.utils.experiment_utils import ExperimentUtils
 
 import copy
 
@@ -136,41 +137,27 @@ class ExperimentsModel(IExperimentsModel):
             return self._get_exp_path() / "train_config.yaml"
 
     def get_current_epoch(self) -> Optional[int]:
-        ckpt: Optional[str] = self.get_best_ckpt()
+        ckpt: Optional[Path] = self.get_best_ckpt()
         if not ckpt:
             return None
-        # assumes checkpoint format: epoch_001.ckpt
-        return int(ckpt.split(".")[0].split("_")[-1])
+        # assumes checkpoint format: path/to/checkpoint/epoch_001.ckpt
 
-    def get_best_ckpt(
-        self, experiment_name: Optional[str] = None
-    ) -> Optional[str]:
-        # If no experiment name is specified for this function, assume we want the to use the current experiment selected in this model.
-        if experiment_name is None:
-            experiment_name = self.get_experiment_name()
+        return int(ckpt.name.split(".")[0].split("_")[-1])
 
+    def get_best_ckpt(self) -> Optional[Path]:
         user_exp_path: Optional[Path] = (
             self.user_settings.get_user_experiments_path()
         )
-        if (
-            experiment_name is None or user_exp_path is None
-        ):  # need to re-check experiemnt_name since self.get_experiment_name above can return None
+        if user_exp_path is None:
+            # need user_exp_path in order to get experiments list
             return None
 
-        checkpoints_path = user_exp_path / experiment_name / "checkpoints"
-        if not checkpoints_path.exists():
+        selected_experiment: Optional[str] = self.get_experiment_name()
+        if selected_experiment is None:
             return None
-
-        files: list[Path] = [
-            entry
-            for entry in checkpoints_path.iterdir()
-            if entry.is_file() and not "last" in entry.name.lower()
-        ]
-        if not files:
-            return None
-
-        files.sort(key=lambda file: file.stat().st_mtime)
-        return files[-1].name
+        return ExperimentUtils.get_best_ckpt(
+            user_exp_path, selected_experiment
+        )
 
     def get_channel_selection_path(self) -> Optional[Path]:
         return (
