@@ -32,9 +32,6 @@ class FakeExperimentsModel(IExperimentsModel):
     def get_best_ckpt(self) -> str:
         return self._checkpoint
 
-    def set_checkpoint(self, checkpoint: str):
-        self._checkpoint = checkpoint
-
     def get_experiments(self) -> List[str]:
         return self._experiments
 
