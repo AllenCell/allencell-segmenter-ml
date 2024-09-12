@@ -127,10 +127,7 @@ def test_build_overrides() -> None:
 
     # act
     overrides: Dict[str, Union[str, int, float, bool]] = (
-        prediction_service.build_overrides(
-            experiments_model.get_experiment_name(),
-            experiments_model.get_best_ckpt(),
-        )
+        prediction_service.build_overrides(experiments_model.get_best_ckpt())
     )
 
     # assert
@@ -158,73 +155,6 @@ def test_build_overrides() -> None:
     assert overrides["data.transforms.predict.transforms[1].reader[0].C"] == 3
     assert overrides["data.columns"] == ["raw", "split"]
     assert overrides["data.split_column"] == "split"
-
-
-def test_build_overrides_experiment_none() -> None:
-    # Arrange
-    prediction_model: PredictionModel = PredictionModel()
-    experiments_model: ExperimentsModel = ExperimentsModel(
-        FakeUserSettings(
-            cyto_dl_home_path=Path(__file__).parent / "cyto_dl_home",
-            user_experiments_path=Path(__file__).parent.parent
-            / "main"
-            / "experiments_home",
-        )
-    )
-    prediction_service: PredictionService = PredictionService(
-        prediction_model, experiments_model
-    )
-    prediction_model.set_output_directory(
-        Path(__file__).parent.parent
-        / "main"
-        / "0_exp"
-        / "prediction_output_test"
-    )
-    prediction_model.set_image_input_channel_index(3)
-
-    # act/assert
-    # Experiment name is None, so build_overrides should throw a ValueError
-    with pytest.raises(ValueError):
-        overrides: Dict[str, Union[str, int, float, bool]] = (
-            prediction_service.build_overrides(
-                experiments_model.get_experiment_name(),
-                experiments_model.get_best_ckpt(),
-            )
-        )
-
-
-def test_build_overrides_checkpoint_none() -> None:
-    # Arrange
-    prediction_model: PredictionModel = PredictionModel()
-    experiments_model: ExperimentsModel = ExperimentsModel(
-        FakeUserSettings(
-            cyto_dl_home_path=Path(__file__).parent / "cyto_dl_home",
-            user_experiments_path=Path(__file__).parent.parent
-            / "main"
-            / "experiments_home",
-        )
-    )
-    experiments_model.apply_experiment_name("0_exp")
-    prediction_service: PredictionService = PredictionService(
-        prediction_model, experiments_model
-    )
-    prediction_model.set_output_directory(
-        Path(__file__).parent.parent
-        / "main"
-        / "0_exp"
-        / "prediction_output_test"
-    )
-    prediction_model.set_image_input_channel_index(3)
-
-    # act/assert
-    # Checkpoint is None, so build_overrides should throw a ValueError
-    with pytest.raises(ValueError):
-        overrides: Dict[str, Union[str, int, float, bool]] = (
-            prediction_service.build_overrides(
-                experiments_model.get_experiment_name(),
-                experiments_model.get_best_ckpt(),
-            )
-        )
 
 
 def test_write_csv_for_inputs() -> None:

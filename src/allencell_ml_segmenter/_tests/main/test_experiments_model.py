@@ -234,40 +234,7 @@ def test_apply_experiment_name() -> None:
     assert subscriber.was_handled(Event.ACTION_EXPERIMENT_APPLIED)
 
 
-def test_get_best_ckpt_experiment_name_specified() -> None:
-    # ARRANGE
-    user_experiments_path: Path = Path(__file__).parent / "experiments_home"
-    config: FakeUserSettings = FakeUserSettings(
-        cyto_dl_home_path=Path(__file__).parent / "cyto_dl_home",
-        user_experiments_path=user_experiments_path,
-    )
-    model: ExperimentsModel = ExperimentsModel(config)
-
-    # ACT
-    selected_ckpt: str = model.get_best_ckpt("2_exp")
-
-    assert selected_ckpt == "1.ckpt"
-
-
-def test_get_best_ckpt_experiment_name_specified_and_experiment_selected() -> (
-    None
-):
-    # ARRANGE
-    user_experiments_path: Path = Path(__file__).parent / "experiments_home"
-    config: FakeUserSettings = FakeUserSettings(
-        cyto_dl_home_path=Path(__file__).parent / "cyto_dl_home",
-        user_experiments_path=user_experiments_path,
-    )
-    model: ExperimentsModel = ExperimentsModel(config)
-    model.apply_experiment_name("a_exp")
-
-    # ACT
-    selected_ckpt: str = model.get_best_ckpt("2_exp")
-
-    assert selected_ckpt == "1.ckpt"
-
-
-def test_get_best_ckpt_from_current_experiment() -> None:
+def test_get_best_ckpt_experiment_selected() -> None:
     # ARRANGE
     user_experiments_path: Path = Path(__file__).parent / "experiments_home"
     config: FakeUserSettings = FakeUserSettings(
@@ -278,11 +245,9 @@ def test_get_best_ckpt_from_current_experiment() -> None:
     model.apply_experiment_name("2_exp")
 
     # ACT
-    selected_ckpt: str = (
-        model.get_best_ckpt()
-    )  # dont specify a specific experiemnt to grab the ckpt from
+    selected_ckpt: str = model.get_best_ckpt()
 
-    assert selected_ckpt == "1.ckpt"
+    assert selected_ckpt.name == "1.ckpt"
 
 
 def test_get_best_ckpt_from_current_experiment_no_experiment_selected():

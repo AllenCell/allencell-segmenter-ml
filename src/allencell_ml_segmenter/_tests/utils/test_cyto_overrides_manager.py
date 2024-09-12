@@ -141,7 +141,7 @@ def test_get_training_overrides_iterative_training(
     )
     assert (
         training_overrides["paths.output_dir"]
-        == f"{experiments_model.get_user_experiments_path()}/2_exp"
+        == f"{experiments_model.get_user_experiments_path()}/{experiments_model.get_experiment_name()}"
     )
     assert "model._aux.filters" not in training_overrides.keys()
 
