@@ -16,7 +16,7 @@ TODO disabling while I figure out how to fix these values
 A deep learning-based segmentation Napari plugin to curate datasets, train your own model (UNET), and run inference on 2D and 3D cell data. 
 
 
-##  :star: News
+##  📰 News
 
  - **[2024.09.20]** Initial release.
 
@@ -124,6 +124,11 @@ Fri Sep 13 03:22:15 2024
 To install PyTorch, please visit the [PyTorch website](https://pytorch.org/get-started/locally/) and select the appropriate installation options for your system. An example is provided below.
 
 ---
+
+<img width="828" alt="torch-install" src="https://github.com/user-attachments/assets/1d8789c0-1f2c-4b11-841b-666f540601e6">
+
+
+
 For instance, if I am using
 
 - `Windows` workstation
