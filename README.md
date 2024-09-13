@@ -9,9 +9,33 @@ TODO disabling while I figure out how to fix these values
 -->
 [![Tests](https://github.com/AllenCell/allencell-ml-segmenter/actions/workflows/test_lint.yaml/badge.svg)](https://github.com/AllenCell/allencell-ml-segmenter/actions/workflows/test_lint.yaml)
 
-A plugin to leverage ML segmentation in napari.
 
 ---
+
+## What is Allen Cell ML Segmenter
+A deep learning-based segmentation Napari plugin to train and run inference on 2D and 3D cell structures.
+
+
+## :sparkles: News
+
+ - **[2024.09.20]** Initial release.
+
+See the [changelog](https://github.com/AllenCell/allencell-ml-segmenter/tree/main/CHANGELOG.md) for more details.
+
+## Installation
+
+Hiera requires a reasonably recent version of [torch](https://pytorch.org/get-started/locally/).
+After that, you can install hiera through [pip](https://pypi.org/project/hiera-transformer/):
+```bash
+pip install 
+```
+
+## Models
+| Model    | Model Name            | Pretrained Models<br>(IN-1K MAE) | Finetuned Models<br>(IN-1K Supervised) | IN-1K<br>Top-1 (%) | A100 fp16<br>Speed (im/s) |
+|----------|-----------------------|----------------------------------|----------------------------------------|:------------------:|:-------------------------:|
+| Hiera-T  | `hiera_tiny_224`      | [mae_in1k](https://dl.fbaipublicfiles.com/hiera/mae_hiera_tiny_224.pth)        | [mae_in1k_ft_in1k](https://dl.fbaipublicfiles.com/hiera/hiera_tiny_224.pth)       |       82.8         |            2758           |
+| Hiera-S  | `hiera_small_224`     | [mae_in1k](https://dl.fbaipublicfiles.com/hiera/mae_hiera_small_224.pth)       | [mae_in1k_ft_in1k](https://dl.fbaipublicfiles.com/hiera/hiera_small_224.pth)      |       83.8         |            2211           |
+| Hiera-B  | `hiera_base_224`      | [mae_in1k](https://dl.fbaipublicfiles.com/hiera/mae_hiera_base_224.pth)        | [mae_in1k_ft_in1k](https://dl.fbaipublicfiles.com/hiera/hiera_base_224.pth)       |       84.5         |            1556           |
 
 
 ## License
