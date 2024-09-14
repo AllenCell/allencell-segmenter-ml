@@ -170,6 +170,7 @@ napari
 
 You should see the below window pop up. To start using the plugin, click on the `Plugins` tab and select `Allen Cell ML Segmenter`:
 
+<img width="1084" alt="plugin" src="https://github.com/user-attachments/assets/7238c7a2-5741-4d1f-8a3d-b8c133e9bb27">
 
 
 ## Models
