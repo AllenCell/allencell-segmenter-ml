@@ -18,9 +18,9 @@ A deep learning-based segmentation Napari plugin to curate datasets, train your 
 
 ##  📰 News
 
- - **[2024.09.20]** Initial release.
+ - **[2024.09.20]** Initial release of the plugin and Megaseg models!
 
-See the [changelog](https://github.com/AllenCell/allencell-ml-segmenter/tree/main/CHANGELOG.md) for more details.
+
 
 ## :hammer_and_wrench: Installation
 
@@ -83,7 +83,7 @@ pip install allencell-ml-segmenter
 
 Required Package
 
-- `torch` (PyTorch) 2.0 or later
+- `torch` ([PyTorch]) 2.0 or later
 
 After installing the plugin, you need to install a PyTorch version that is compatible with your system. PyTorch is a deep learning library that is used to train and run the models in the plugin. We understand that everyone manages CUDA drivers and PyTorch versions differently depending on their system and use cases, and we want to respect those decisions because CUDA drivers can be a pain. 
 
@@ -121,13 +121,13 @@ Fri Sep 13 03:22:15 2024
 +-----------------------------------------------------------------------------+
 ```
 
-To install PyTorch, please visit the [PyTorch website](https://pytorch.org/get-started/locally/) and select the appropriate installation options for your system. An example is provided below.
+__To Install PyTorch__, please visit the [__PyTorch website__](https://pytorch.org/get-started/locally/) and select the appropriate installation options for your system. An example is provided below.
 
 ---
 
 <img width="828" alt="torch-install" src="https://github.com/user-attachments/assets/1d8789c0-1f2c-4b11-841b-666f540601e6">
 
-
+#### Example
 
 For instance, if I am using
 
@@ -155,15 +155,25 @@ You should see `True` if your GPU is detected (see below). If you see `False`, t
 True
 ```
 
----
 
 :tada: You have successfully installed the plugin and PyTorch. You are now ready to use the plugin!
 
+---
 
+## Running the Plugin
+
+To run the plugin (and verify the installation), you can use the following command in your terminal or powershell:
+
+```bash
+napari
+```
+
+You should see the below window pop up. To start using the plugin, click on the `Plugins` tab and select `Allen Cell ML Segmenter`:
 
 
 
 ## Models
+
 | Model    | Model Name            | Available in Plugin | Model Size (MB)  | Supported Magnifications| 
 |----------|-----------------------|----------------------------------|----------------------------------------|:-------------------------:|
 | Megaseg-S  | `megaseg_small`      | ✅        | 10MB      |       10X,20X         |          
@@ -187,3 +197,4 @@ If you encounter any problems, please [file an issue] along with a detailed desc
 [tox]: https://tox.readthedocs.io/en/latest/
 [pip]: https://pypi.org/project/pip/
 [PyPI]: https://pypi.org/
+[PyTorch]: https://pytorch.org/get-started/locally/
