@@ -55,19 +55,10 @@ class PredictionService(Subscriber):
         cyto_api.load_config_from_file(
             self._experiments_model.get_train_config_path()
         )
-        exp_name: Optional[str] = self._experiments_model.get_experiment_name()
-        ckpt: Optional[str] = self._experiments_model.get_checkpoint()
-        if exp_name is None or ckpt is None:
-            raise RuntimeError(
-                "Experiment name or checkpoint undefined. Cannot predict"
-            )
-        # We must override the config to set up predictions correctly
-        cyto_api.override_config(
-            self.build_overrides(
-                exp_name,
-                ckpt,
-            )
-        )
+        ckpt: Optional[Path] = self._experiments_model.get_best_ckpt()
+        if ckpt is None:
+            raise RuntimeError("No checkpoint. Cannot predict")
+        cyto_api.override_config(self.build_overrides(ckpt))
         cyto_api.predict()
 
     def _prediction_setup(self, _: Event) -> None:
@@ -94,7 +85,7 @@ class PredictionService(Subscriber):
             return False
 
         # Check to see the user has specified a ckpt to use.
-        if self._experiments_model.get_checkpoint() is None:
+        if self._experiments_model.get_best_ckpt() is None:
             show_warning(
                 f"Please select a checkpoint to run predictions with."
             )
@@ -130,9 +121,7 @@ class PredictionService(Subscriber):
                 self._setup_inputs_from_napari()
             )
 
-    def build_overrides(
-        self, experiment_name: str, checkpoint: str
-    ) -> dict[str, Any]:
+    def build_overrides(self, checkpoint: Path) -> dict[str, Any]:
         """
         Build an overrides list for the cyto-dl API containing the
         overrides requried to run predictions, formatted as cyto-dl expects.
@@ -146,14 +135,7 @@ class PredictionService(Subscriber):
         # Need these overrides to load in csv's
         overrides["data.columns"] = ["raw", "split"]
         overrides["data.split_column"] = "split"
-
-        # passing the experiment_name and checkpoint as params to this function ensures we have a model before
-        # attempting to build the overrides dict for predictions
-        overrides["ckpt_path"] = str(
-            self._experiments_model.get_model_checkpoints_path(
-                experiment_name=experiment_name, checkpoint=checkpoint
-            )
-        )
+        overrides["ckpt_path"] = str(checkpoint)
 
         input_path: Optional[Path] = (
             self._prediction_model.get_input_image_path()
