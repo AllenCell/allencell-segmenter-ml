@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Optional
 from allencell_ml_segmenter.config.i_user_settings import IUserSettings
+from allencell_ml_segmenter.utils.experiment_utils import ExperimentUtils
 
 import copy
 
@@ -15,12 +16,6 @@ class ExperimentsModel(IExperimentsModel):
         # options
         self.experiments: list[str] = []
         self.refresh_experiments()
-
-    def get_checkpoint(self) -> Optional[str]:
-        """
-        Gets checkpoint
-        """
-        return self._get_best_ckpt()
 
     def refresh_experiments(self) -> None:
         # TODO: make a FileUtils method for this?
@@ -60,7 +55,7 @@ class ExperimentsModel(IExperimentsModel):
 
     # TODO: possibly refactor to get rid of exp name and checkpoint params?
     def get_model_checkpoints_path(
-        self, experiment_name: str, checkpoint: str
+        self, experiment_name: Optional[str], checkpoint: Optional[str]
     ) -> Path:
         """
         Gets checkpoints for model path
@@ -126,36 +121,43 @@ class ExperimentsModel(IExperimentsModel):
             else None
         )
 
-    def get_train_config_path(self) -> Path:
-        return self._get_exp_path() / "train_config.yaml"
+    def get_train_config_path(
+        self, experiment_name: Optional[str] = None
+    ) -> Path:
+        if experiment_name is not None:
+            # user is getting a config for an existing experiment
+            user_exp_path: Optional[Path] = self.get_user_experiments_path()
+            if user_exp_path is None:
+                raise ValueError(
+                    "user_exp_path cannot be None if experiment_name is also None in get_train_config_path"
+                )
+            return user_exp_path / experiment_name / "train_config.yaml"
+        else:
+            # get config for currently selected experiment
+            return self._get_exp_path() / "train_config.yaml"
 
     def get_current_epoch(self) -> Optional[int]:
-        ckpt: Optional[str] = self.get_checkpoint()
+        ckpt: Optional[Path] = self.get_best_ckpt()
         if not ckpt:
             return None
-        # assumes checkpoint format: epoch_001.ckpt
-        return int(ckpt.split(".")[0].split("_")[-1])
+        # assumes checkpoint format: path/to/checkpoint/epoch_001.ckpt
 
-    def _get_best_ckpt(self) -> Optional[str]:
-        user_exp_path: Optional[Path] = self.get_user_experiments_path()
-        exp_name: Optional[str] = self.get_experiment_name()
-        if user_exp_path is None or exp_name is None:
+        return int(ckpt.name.split(".")[0].split("_")[-1])
+
+    def get_best_ckpt(self) -> Optional[Path]:
+        user_exp_path: Optional[Path] = (
+            self.user_settings.get_user_experiments_path()
+        )
+        if user_exp_path is None:
+            # need user_exp_path in order to get experiments list
             return None
 
-        checkpoints_path = user_exp_path / exp_name / "checkpoints"
-        if not checkpoints_path.exists():
+        selected_experiment: Optional[str] = self.get_experiment_name()
+        if selected_experiment is None:
             return None
-
-        files: list[Path] = [
-            entry
-            for entry in checkpoints_path.iterdir()
-            if entry.is_file() and not "last" in entry.name.lower()
-        ]
-        if not files:
-            return None
-
-        files.sort(key=lambda file: file.stat().st_mtime)
-        return files[-1].name
+        return ExperimentUtils.get_best_ckpt(
+            user_exp_path, selected_experiment
+        )
 
     def get_channel_selection_path(self) -> Optional[Path]:
         return (

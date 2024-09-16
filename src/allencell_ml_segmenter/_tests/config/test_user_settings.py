@@ -12,4 +12,4 @@ def test_set_get_user_experiments_path():
     userSettings.set_user_experiments_path("foo")
 
     # Assert
-    userSettings.get_user_experiments_path() == "fooo"
+    assert str(userSettings.get_user_experiments_path()) == "foo"

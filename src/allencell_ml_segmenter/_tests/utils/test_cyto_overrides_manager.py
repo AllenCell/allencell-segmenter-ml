@@ -100,6 +100,78 @@ def test_get_training_overrides(
     ] == training_model.get_selected_channel(ImageType.SEG2)
 
 
+def test_get_training_overrides_iterative_training(
+    experiments_model: ExperimentsModel,
+):
+    # ARRANGE
+    model: TrainingModel = TrainingModel(MainModel(), experiments_model)
+    model.set_spatial_dims(3)
+    model.set_images_directory("/path/to/images")
+    model.set_selected_channel(ImageType.RAW, 1)
+    model.set_selected_channel(ImageType.SEG1, 2)
+    model.set_selected_channel(ImageType.SEG2, 3)
+    model.set_use_max_time(False)
+    model.set_max_time(9992)
+    model.set_patch_size([4, 4, 4])
+    model.set_num_epochs(100)
+    model.set_is_using_existing_model(True)
+    model.set_existing_model("2_exp")
+
+    cyto_overrides_manager: CytoDLOverridesManager = CytoDLOverridesManager(
+        experiments_model, model
+    )
+
+    # ACT
+    training_overrides: Dict[str, Union[str, int, float, bool, Dict]] = (
+        cyto_overrides_manager.get_training_overrides()
+    )
+
+    # ASSERT
+    # Stuff related to iterative training:
+    assert training_overrides["checkpoint.weights_only"]
+    assert not training_overrides["checkpoint.strict"]
+    assert training_overrides["checkpoint.ckpt_path"] == str(
+        Path(allencell_ml_segmenter.__file__).parent
+        / "_tests"
+        / "main"
+        / "experiments_home"
+        / "2_exp"
+        / "checkpoints"
+        / "1.ckpt"
+    )
+    assert (
+        training_overrides["paths.output_dir"]
+        == f"{experiments_model.get_user_experiments_path()}/{experiments_model.get_experiment_name()}"
+    )
+    assert "model._aux.filters" not in training_overrides.keys()
+
+    # Rest of the overrides should be the same as the previous test (regular training)
+    assert training_overrides["spatial_dims"] == model.get_spatial_dims()
+
+    # the experiments model fixture is set to the experiment @ _tests/experiments_home/one_ckpt_exp,
+    # for which the last 'best' checkpoint is epoch_000.ckpt. Since we are currently at the first epoch checkpoint,
+    # in order to run training_model.get_num_epochs() more epochs, we need to increment by 1
+    assert training_overrides["trainer.max_epochs"] == model.get_num_epochs()
+
+    assert training_overrides["data.path"] == str(model.get_images_directory())
+
+    assert (
+        training_overrides["data._aux.patch_shape"] == model.get_patch_size()
+    )
+
+    assert training_overrides["input_channel"] == model.get_selected_channel(
+        ImageType.RAW
+    )
+
+    assert training_overrides[
+        "target_col1_channel"
+    ] == model.get_selected_channel(ImageType.SEG1)
+
+    assert training_overrides[
+        "target_col2_channel"
+    ] == model.get_selected_channel(ImageType.SEG2)
+
+
 def test_get_training_overrides_2d_spatial_dims(experiments_model) -> None:
     # Arrange
     model: TrainingModel = TrainingModel(MainModel(), experiments_model)
