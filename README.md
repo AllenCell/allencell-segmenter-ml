@@ -57,7 +57,7 @@ python3.10 --version
 
 
 
-__STEP 2.__ Next we will create a new `Python` environment to install the plugin. This will help avoid conflicts with other packages you may have installed and create an isolated environment for the plugin to live. In general, it is good practice to choose a name for your environment that is related to either the project you are working on or the software you are installing. In this case, we use `venv-allen-ml-segmenter` where `venv` stands for __virtual environment__.
+__STEP 2.__ Next we will create a new `Python` environment to install the plugin. This will help avoid conflicts with other packages you may have installed by creating an isolated environment for the plugin to live in. In general, it is good practice to choose a name for your environment that is related to either the project you are working on or the software you are installing. In this case, we use `venv-allen-ml-segmenter` where `venv` stands for __virtual environment__.
 
 Navigate to where you want to create a new environment (_Example._ `Documents`), run the following command in your terminal or powershell:
 
@@ -68,11 +68,34 @@ python3.10 -m venv venv-allen-ml-segmenter
 # Activate the environment
 source venv-allen-ml-segmenter/bin/activate
 ```
+#### Confirm Virtual Environment is Activated
+
+To confirm that the virtual environment has been successfully activated, you can follow these steps:
+
+
+1. Check that the prompt includes the name of your virtual environment, `venv-allen-ml-segmenter`. It should look something like this:
+
+    ```bash
+    (venv-allen-ml-segmenter) $
+
+    # Example on a Windows machine
+    (venv-allen-ml-segmenter) PS C:\Users\Administrator\Documents> 
+    ```
+
+2. Run the following command to verify `Python 3.10` is being used within the virtual environment:
+
+    ```bash
+    python --version
+    
+    # Python 3.10.11   <-- Example output
+    ```
 
 
 
 
-### Install the Plugin
+
+
+## Install the Plugin
 
 To install the latest version of the plugin:
 ```bash
@@ -80,6 +103,8 @@ pip install allencell-ml-segmenter
 ```
 
 ### :rotating_light: Post-Installation :rotating_light:
+
+> :memo: __ NOTE:__ This section is specifically for users with at least one NVIDIA GPU installed on their machine. Not sure if you have an NVIDIA GPU? You can check by running `nvidia-smi` as shown [below](#checking-cuda-version). If you __do not__ have an NVIDIA GPU system, you can skip this section.
 
 Required Package
 
@@ -170,16 +195,15 @@ napari
 
 You should see the below window pop up. To start using the plugin, click on the `Plugins` tab and select `Allen Cell ML Segmenter`:
 
-<img width="1084" alt="plugin" src="https://github.com/user-attachments/assets/7238c7a2-5741-4d1f-8a3d-b8c133e9bb27">
 
 
 ## Models
 
 | Model    | Model Name            | Available in Plugin | Model Size (MB)  | Supported Magnifications| 
 |----------|-----------------------|----------------------------------|----------------------------------------|:-------------------------:|
-| Megaseg-S  | `megaseg_small`      | ✅        | 10MB      |       10X,20X         |          
-| Megaseg-M  | `megaseg_medium`     | Coming soon!       |  50MB     |       10X,20X        |           
-| Megaseg-L  | `megaseg_large`      | ✅        | 192MB       |       10X,20X,67X        |  
+| Megaseg-S  | `megaseg_small`      | ✅        | 10MB      |       100X         |          
+| Megaseg-M  | `megaseg_medium`     | Coming soon!       |  50MB     |       100X        |           
+| Megaseg-L  | `megaseg_large`      | ✅        | 192MB       |       10X,20X,67X,100X        |  
 
 
 ## License
