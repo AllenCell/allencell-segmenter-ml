@@ -37,7 +37,9 @@ We currently support `Windows`, `MacOS`, and `Linux` operating systems. The mini
 
 ### Pre-Installation
 
-__STEP 1.__ Before installing the plugin, please make sure you have the following installed:
+##### STEP 1. Install Python
+
+Before installing the plugin, please make sure you have the following installed:
 
 - Python 3.10 or later
 
@@ -58,7 +60,9 @@ python3.10 --version
 
 
 
-__STEP 2.__ Next we will create a new `Python` environment to install the plugin. This will help avoid conflicts with other packages you may have installed by creating an isolated environment for the plugin to live in. In general, it is good practice to choose a name for your environment that is related to either the project you are working on or the software you are installing. In this case, we use `venv-allen-segmenter-ml` where `venv` stands for __virtual environment__.
+##### STEP 2. Create a Virtual Environment
+
+Next we will create a new `Python` environment to install the plugin. This will help avoid conflicts with other packages you may have installed by creating an isolated environment for the plugin to live in. In general, it is good practice to choose a name for your environment that is related to either the project you are working on or the software you are installing. In this case, we use `venv-allen-segmenter-ml` where `venv` stands for __virtual environment__.
 
 Navigate to where you want to create a new environment (_Example._ `Documents`), run the following command in your terminal or powershell:
 
