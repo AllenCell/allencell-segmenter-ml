@@ -195,22 +195,28 @@ napari
 
 You should see the below window pop up. To start using the plugin, click on the `Plugins` tab and select `Allen Cell ML Segmenter`:
 
-
+<img width="1084" alt="plugin" src="https://github.com/user-attachments/assets/7238c7a2-5741-4d1f-8a3d-b8c133e9bb27">
 
 
 ## Models
 
 | Model    | Model Name            | Available in Plugin | Model Size (MB)  | Supported Magnifications| 
 |----------|-----------------------|----------------------------------|----------------------------------------|:-------------------------:|
-| Megaseg-S  | `megaseg_small`      | ✅        | 10MB      |       100X         |          
-| Megaseg-M  | `megaseg_medium`     | Coming soon!       |  50MB     |       100X        |           
-| Megaseg-L  | `megaseg_large`      | ✅        | 192MB       |       10X,20X,67X,100X        |  
+| MegaSeg-S  | `megaseg_light`      | ✅        | 4.8MB      |       `100X`         |          
+| MegaSeg-M  | `megaseg_medium`     | Coming soon!       |  TBD     |       TBD       |           
+| MegaSeg-L  | `megaseg_large`      | ✅        | 191MB       |       `20X, 40X, 67X, 100X`        |  
 
-### Download Megaseg Models
 
+
+### Download and using the Megaseg Models
+
+To use the MegaSeg models in the plugin, you can download them from the dropdown menu shown below:
 
 ![download-model](https://github.com/user-attachments/assets/03cc500e-ff74-40c3-bf9e-c40e58d3e47c)
 
+A popup window will appear and you can select which model you would like to download. Once the download is complete, another popup will let you know the download was successful and where the model was downloaded.
+
+To use the model for inference on your images, choose `Select an existing model`, select the megaseg model you downloaded, and click `Apply`. You can now use the model to segment your images!
 
 ## License
 
