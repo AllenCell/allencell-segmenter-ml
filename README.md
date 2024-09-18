@@ -147,15 +147,19 @@ Fri Sep 13 03:22:15 2024
 +-----------------------------------------------------------------------------+
 ```
 
+---
+
+#### PyTorch Installation
+
 __To Install PyTorch__, please visit the [__PyTorch website__](https://pytorch.org/get-started/locally/) and select the appropriate installation options for your system. An example is provided below.
 
----
+
 
 <img width="828" alt="torch-install" src="https://github.com/user-attachments/assets/1d8789c0-1f2c-4b11-841b-666f540601e6">
 
 > __PyTorch Installation__ for Windows, MacOS, and Linux
 
-#### Example
+##### Example
 
 For instance, if I am using
 
