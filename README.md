@@ -196,11 +196,11 @@ To run the plugin (and verify the installation), you can use the following comma
 napari
 ```
 
-You should see the below window pop up. To start using the plugin, click on the `Plugins` tab and select `Allen Cell ML Segmenter`:
+You should see the below window pop up. To start using the plugin, click on the `Plugins` tab and select `Allen Cell Segmenter ML`:
 
 <img width="1084" alt="plugin" src="https://github.com/user-attachments/assets/7238c7a2-5741-4d1f-8a3d-b8c133e9bb27">
 
-> __Allen Cell ML Segmenter__ Launching the Plugin.
+> __Allen Cell Segmenter ML__ Launching the Plugin.
 
 ## Models
 
