@@ -1,24 +1,25 @@
-# Allencell-ml-segmenter
+# Allencell-segmenter-ml
 <!-- 
 TODO disabling while I figure out how to fix these values
-[![License BSD-3](https://img.shields.io/pypi/l/allencell-ml-segmenter.svg?color=green)](https://github.com/AllenCell/allencell-ml-segmenter/raw/main/LICENSE)
-[![PyPI](https://img.shields.io/pypi/v/allencell-ml-segmenter.svg?color=green)](https://pypi.org/project/allencell-ml-segmenter)
-[![Python Version](https://img.shields.io/pypi/pyversions/allencell-ml-segmenter.svg?color=green)](https://python.org)
+[![License BSD-3](https://img.shields.io/pypi/l/allencell-segmenter-ml.svg?color=green)](https://github.com/AllenCell/allencell-segmenter-ml/raw/main/LICENSE)
+[![PyPI](https://img.shields.io/pypi/v/allencell-segmenter-ml.svg?color=green)](https://pypi.org/project/allencell-segmenter-ml)
+[![Python Version](https://img.shields.io/pypi/pyversions/allencell-segmenter-ml.svg?color=green)](https://python.org)
 [![codecov](https://codecov.io/gh/AllenCell/allencell-ml-segmenter/branch/main/graph/badge.svg?token=E976SiYFP6)](https://codecov.io/gh/AllenCell/allencell-ml-segmenter)
 [![napari hub](https://img.shields.io/endpoint?url=https://api.napari-hub.org/shields/allencell-ml-segmenter)](https://napari-hub.org/plugins/allencell-ml-segmenter) 
 -->
-[![Tests](https://github.com/AllenCell/allencell-ml-segmenter/actions/workflows/test_lint.yaml/badge.svg)](https://github.com/AllenCell/allencell-ml-segmenter/actions/workflows/test_lint.yaml)
+
+[![Test and lint](https://github.com/AllenCell/allencell-segmenter-ml/actions/workflows/test_lint.yaml/badge.svg?branch=main&event=push)](https://github.com/AllenCell/allencell-segmenter-ml/actions/workflows/test_lint.yaml)
 
 
 
 
-## What is Allen Cell ML Segmenter
+## What is Allen Cell Segmenter ML
 A deep learning-based segmentation Napari plugin to curate datasets, train your own model (UNET), and run inference on 2D and 3D cell data. 
 
 
 ##  📰 News
 
- - **[2024.09.20]** Initial release of the plugin and Megaseg models!
+ - **[2024.09.24]** :tada: Initial release of the plugin and Megaseg models!
 
 
 
@@ -57,29 +58,29 @@ python3.10 --version
 
 
 
-__STEP 2.__ Next we will create a new `Python` environment to install the plugin. This will help avoid conflicts with other packages you may have installed by creating an isolated environment for the plugin to live in. In general, it is good practice to choose a name for your environment that is related to either the project you are working on or the software you are installing. In this case, we use `venv-allen-ml-segmenter` where `venv` stands for __virtual environment__.
+__STEP 2.__ Next we will create a new `Python` environment to install the plugin. This will help avoid conflicts with other packages you may have installed by creating an isolated environment for the plugin to live in. In general, it is good practice to choose a name for your environment that is related to either the project you are working on or the software you are installing. In this case, we use `venv-allen-segmenter-ml` where `venv` stands for __virtual environment__.
 
 Navigate to where you want to create a new environment (_Example._ `Documents`), run the following command in your terminal or powershell:
 
 ```bash
 # Create a new environment
-python3.10 -m venv venv-allen-ml-segmenter
+python3.10 -m venv venv-allen-segmenter-ml
 
 # Activate the environment
-source venv-allen-ml-segmenter/bin/activate
+source venv-allen-segmenter-ml/bin/activate
 ```
 #### Confirm Virtual Environment is Activated
 
 To confirm that the virtual environment has been successfully activated, you can follow these steps:
 
 
-1. Check that the prompt includes the name of your virtual environment, `venv-allen-ml-segmenter`. It should look something like this:
+1. Check that the prompt includes the name of your virtual environment, `venv-allen-segmenter-ml`. It should look something like this:
 
     ```bash
-    (venv-allen-ml-segmenter) $
+    (venv-allen-segmenter-ml) $
 
     # Example on a Windows machine
-    (venv-allen-ml-segmenter) PS C:\Users\Administrator\Documents> 
+    (venv-allen-segmenter-ml) PS C:\Users\Administrator\Documents> 
     ```
 
 2. Run the following command to verify `Python 3.10` is being used within the virtual environment:
@@ -99,7 +100,7 @@ To confirm that the virtual environment has been successfully activated, you can
 
 To install the latest version of the plugin:
 ```bash
-pip install allencell-ml-segmenter
+pip install allencell-segmenter-ml
 ```
 
 ### :rotating_light: Post-Installation :rotating_light:
@@ -173,10 +174,10 @@ If the installation is successful, let's test just to be sure that your GPU is d
 python -c "import torch; print(torch.cuda.is_available())"
 ```
 
-You should see `True` if your GPU is detected (see below). If you see `False`, then PyTorch is not detecting your GPU. You may need to reinstall PyTorch or check your CUDA drivers. Double check that your virtual environement is activated (`venv-allen-ml-segmenter`).
+You should see `True` if your GPU is detected (see below). If you see `False`, then PyTorch is not detecting your GPU. You may need to reinstall PyTorch or check your CUDA drivers. Double check that your virtual environement is activated (`venv-allen-segmenter-ml`).
 
 ```bash
-(venv-allen-ml-segmenter) PS C:\Users\Administrator\Documents> python -c "import torch; print(torch.cuda.is_available())"
+(venv-allen-segmenter-ml) PS C:\Users\Administrator\Documents> python -c "import torch; print(torch.cuda.is_available())"
 True
 ```
 
@@ -197,8 +198,6 @@ You should see the below window pop up. To start using the plugin, click on the 
 
 <img width="1084" alt="plugin" src="https://github.com/user-attachments/assets/7238c7a2-5741-4d1f-8a3d-b8c133e9bb27">
 
-> __Allen Cell ML Segmenter__ Launching the Plugin.
-
 
 ## Models
 
@@ -216,13 +215,7 @@ To use the MegaSeg models in the plugin, you can download them from the dropdown
 
 ![download-model](https://github.com/user-attachments/assets/03cc500e-ff74-40c3-bf9e-c40e58d3e47c)
 
-> __Download the MegaSeg Model__ for use in the Plugin
-
 A popup window will appear and you can select which model you would like to download. Once the download is complete, another popup will let you know the download was successful and where the model was downloaded.
-
-<img width="1275" alt="select-megaseg" src="https://github.com/user-attachments/assets/0a26a31a-49eb-46cf-a550-47f1fa55c9c3">
-
-> __Select the MegaSeg model__ to Run Inference
 
 To use the model for inference on your images, choose `Select an existing model`, select the megaseg model you downloaded, and click `Apply`. You can now use the model to segment your images!
 
