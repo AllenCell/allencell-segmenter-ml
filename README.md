@@ -197,6 +197,7 @@ You should see the below window pop up. To start using the plugin, click on the 
 
 
 
+
 ## Models
 
 | Model    | Model Name            | Available in Plugin | Model Size (MB)  | Supported Magnifications| 
@@ -204,6 +205,11 @@ You should see the below window pop up. To start using the plugin, click on the 
 | Megaseg-S  | `megaseg_small`      | ✅        | 10MB      |       100X         |          
 | Megaseg-M  | `megaseg_medium`     | Coming soon!       |  50MB     |       100X        |           
 | Megaseg-L  | `megaseg_large`      | ✅        | 192MB       |       10X,20X,67X,100X        |  
+
+### Download Megaseg Models
+
+
+![download-model](https://github.com/user-attachments/assets/03cc500e-ff74-40c3-bf9e-c40e58d3e47c)
 
 
 ## License
