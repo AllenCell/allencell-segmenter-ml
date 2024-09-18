@@ -197,6 +197,8 @@ You should see the below window pop up. To start using the plugin, click on the 
 
 <img width="1084" alt="plugin" src="https://github.com/user-attachments/assets/7238c7a2-5741-4d1f-8a3d-b8c133e9bb27">
 
+> __Allen Cell ML Segmenter__ Launching the Plugin.
+
 
 ## Models
 
@@ -214,7 +216,13 @@ To use the MegaSeg models in the plugin, you can download them from the dropdown
 
 ![download-model](https://github.com/user-attachments/assets/03cc500e-ff74-40c3-bf9e-c40e58d3e47c)
 
+> __Download the MegaSeg Model__ for use in the Plugin
+
 A popup window will appear and you can select which model you would like to download. Once the download is complete, another popup will let you know the download was successful and where the model was downloaded.
+
+<img width="1275" alt="select-megaseg" src="https://github.com/user-attachments/assets/0a26a31a-49eb-46cf-a550-47f1fa55c9c3">
+
+> __Select the MegaSeg model__ to Run Inference
 
 To use the model for inference on your images, choose `Select an existing model`, select the megaseg model you downloaded, and click `Apply`. You can now use the model to segment your images!
 
