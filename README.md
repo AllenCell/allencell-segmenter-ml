@@ -113,7 +113,7 @@ Required Package
 
 After installing the plugin, you need to install a PyTorch version that is compatible with your system. PyTorch is a deep learning library that is used to train and run the models in the plugin. We understand that everyone manages CUDA drivers and PyTorch versions differently depending on their system and use cases, and we want to respect those decisions because CUDA drivers can be a pain. 
 
-##### Checking CUDA Version
+##### STEP 1. Checking CUDA Version
 
 To check your CUDA version, you can run the following command in your terminal or powershell:
 
@@ -149,7 +149,7 @@ Fri Sep 13 03:22:15 2024
 
 ---
 
-#### PyTorch Installation
+##### STEP 2. PyTorch Installation
 
 __To Install PyTorch__, please visit the [__PyTorch website__](https://pytorch.org/get-started/locally/) and select the appropriate installation options for your system. An example is provided below.
 
