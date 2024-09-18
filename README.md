@@ -109,7 +109,7 @@ pip install allencell-segmenter-ml
 
 ### :rotating_light: Post-Installation :rotating_light:
 
-> :memo: __NOTE:__ This section is specifically for users with at least one NVIDIA GPU installed on their machine. Not sure if you have an NVIDIA GPU? You can check by running `nvidia-smi` as shown [below](#checking-cuda-version). If you __do not__ have an NVIDIA GPU system, you can skip this section.
+> :memo: __NOTE:__ This section is specifically for users with at least one NVIDIA GPU installed on their machine. Not sure if you have an NVIDIA GPU? You can check by running `nvidia-smi` as shown [below](#step-1-checking-cuda-version). If you __do not__ have an NVIDIA GPU system, you can skip this section.
 
 Required Package
 
