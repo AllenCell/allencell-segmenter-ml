@@ -246,7 +246,7 @@ If you encounter any problems, please [file an issue] along with a detailed desc
 
 [napari]: https://github.com/napari/napari
 [@napari]: https://github.com/napari
-[Allen Institute Software License]: /LICENSE
+[Allen Institute Software License]: https://github.com/AllenCell/allencell-segmenter-ml/blob/main/LICENSE
 [file an issue]: https://github.com/AllenCell/allencell-ml-segmenter/issues
 [napari]: https://github.com/napari/napari
 [tox]: https://tox.readthedocs.io/en/latest/
