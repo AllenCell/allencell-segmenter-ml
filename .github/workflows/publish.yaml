@@ -24,7 +24,7 @@ env:
 jobs:
   publish:
     name: Publish
-    runs-on: [self-hosted, build]
+    runs-on: [build]
     environment: release
     permissions:
       id-token: write
