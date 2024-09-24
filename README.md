@@ -1,12 +1,4 @@
 # Allencell-segmenter-ml
-<!-- 
-TODO disabling while I figure out how to fix these values
-[![License BSD-3](https://img.shields.io/pypi/l/allencell-segmenter-ml.svg?color=green)](https://github.com/AllenCell/allencell-segmenter-ml/raw/main/LICENSE)
-[![PyPI](https://img.shields.io/pypi/v/allencell-segmenter-ml.svg?color=green)](https://pypi.org/project/allencell-segmenter-ml)
-[![Python Version](https://img.shields.io/pypi/pyversions/allencell-segmenter-ml.svg?color=green)](https://python.org)
-[![codecov](https://codecov.io/gh/AllenCell/allencell-ml-segmenter/branch/main/graph/badge.svg?token=E976SiYFP6)](https://codecov.io/gh/AllenCell/allencell-ml-segmenter)
-[![napari hub](https://img.shields.io/endpoint?url=https://api.napari-hub.org/shields/allencell-ml-segmenter)](https://napari-hub.org/plugins/allencell-ml-segmenter) 
--->
 
 [![Test and lint](https://github.com/AllenCell/allencell-segmenter-ml/actions/workflows/test_lint.yaml/badge.svg?branch=main&event=push)](https://github.com/AllenCell/allencell-segmenter-ml/actions/workflows/test_lint.yaml)
 
