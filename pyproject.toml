@@ -22,7 +22,7 @@ authors = [
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
     "Framework :: napari",
-    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
     "License :: Other/Proprietary License",
     "License :: Free for non-commercial use",
     "Operating System :: OS Independent",
