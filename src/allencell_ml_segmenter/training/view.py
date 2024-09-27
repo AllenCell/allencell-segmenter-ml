@@ -298,12 +298,18 @@ class TrainingView(View, MainWindow):
 
     def showResults(self) -> None:
         # double check to see if a ckpt was generated
-        exp_path: Optional[Path] = self._experiments_model.get_user_experiments_path()
+        exp_path: Optional[Path] = (
+            self._experiments_model.get_user_experiments_path()
+        )
         if exp_path is None:
-            raise ValueError("Experiments path should not be None after training complete.")
+            raise ValueError(
+                "Experiments path should not be None after training complete."
+            )
         exp_name: Optional[str] = self._experiments_model.get_experiment_name()
         if exp_name is None:
-            raise ValueError("Experiment name should not be None after training complete.")
+            raise ValueError(
+                "Experiment name should not be None after training complete."
+            )
         ckpt_generated: Optional[Path] = ExperimentUtils.get_best_ckpt(
             exp_path,
             exp_name,
