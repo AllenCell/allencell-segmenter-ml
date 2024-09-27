@@ -298,9 +298,16 @@ class TrainingView(View, MainWindow):
 
     def showResults(self) -> None:
         # double check to see if a ckpt was generated
+        exp_path: Optional[Path] = self._experiments_model.get_user_experiments_path()
+        if exp_path is None:
+            raise ValueError("Experiments path should not be None after training complete.")
+        exp_name: Optional[str] = self._experiments_model.get_experiment_name()
+        if exp_name is None:
+            raise ValueError("Experiment name should not be None after training complete.")
         ckpt_generated: Optional[Path] = ExperimentUtils.get_best_ckpt(
-            self._experiments_model.get_user_experiments_path(),
-            self._experiments_model.get_experiment_name())
+            exp_path,
+            exp_name,
+        )
         if ckpt_generated is not None:
             # if model was successfully trained, get metrics to display
             csv_path: Optional[Path] = (
@@ -308,7 +315,9 @@ class TrainingView(View, MainWindow):
             )
             if csv_path is None:
                 raise RuntimeError("Cannot get min loss from undefined csv")
-            min_loss: Optional[float] = FileUtils.get_min_loss_from_csv(csv_path)
+            min_loss: Optional[float] = FileUtils.get_min_loss_from_csv(
+                csv_path
+            )
             if min_loss is None:
                 raise RuntimeError("Cannot compute min loss")
 
@@ -322,7 +331,6 @@ class TrainingView(View, MainWindow):
                 "Training failed- no model was saved from this run."
             )
             dialog_box.exec()
-
 
     def _num_epochs_field_handler(self, num_epochs: str) -> None:
         self._training_model.set_num_epochs(int(num_epochs))
