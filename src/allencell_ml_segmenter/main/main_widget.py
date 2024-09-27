@@ -183,8 +183,8 @@ class MainWidget(AicsWidget):
         inputs:
             is_new_model - bool
         """
-        self._window_container.setTabDisabled(0, self._model.is_new_model())
-        self._window_container.setTabDisabled(1, self._model.is_new_model())
+        self._window_container.setTabEnabled(0, False)
+        self._window_container.setTabEnabled(1, False)
 
     def _handle_change_view(self, event: Event) -> None:
         """
