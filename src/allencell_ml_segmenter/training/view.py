@@ -299,7 +299,7 @@ class TrainingView(View, MainWindow):
     def showResults(self) -> None:
         # double check to see if a ckpt was generated
         ckpt_generated: Optional[Path] = ExperimentUtils.get_best_ckpt(
-            self._experiments_model.get_user_experiments_path,
+            self._experiments_model.get_user_experiments_path(),
             self._experiments_model.get_experiment_name())
         if ckpt_generated is not None:
             # if model was successfully trained, get metrics to display
