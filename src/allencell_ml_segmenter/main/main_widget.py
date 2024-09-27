@@ -148,9 +148,7 @@ class MainWidget(AicsWidget):
 
         # events for auto window switching
         self._model.subscribe(
-            Event.PROCESS_TRAINING_COMPLETE,
-            self,
-            self._handle_existing_model
+            Event.PROCESS_TRAINING_COMPLETE, self, self._handle_existing_model
         )
 
     def _handle_experiment_applied(self, _: Event) -> None:
