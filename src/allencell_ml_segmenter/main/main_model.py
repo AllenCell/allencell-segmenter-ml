@@ -85,4 +85,3 @@ class MainModel(Publisher):
 
     def training_complete(self) -> None:
         self.dispatch(Event.PROCESS_TRAINING_COMPLETE)
-
