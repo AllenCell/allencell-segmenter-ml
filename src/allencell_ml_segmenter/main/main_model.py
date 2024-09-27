@@ -82,3 +82,7 @@ class MainModel(Publisher):
         ):
             self._selected_channels = new_channels
             self.signals.selected_channels_changed.emit()
+
+    def training_complete(self) -> None:
+        self.dispatch(Event.PROCESS_TRAINING_COMPLETE)
+
