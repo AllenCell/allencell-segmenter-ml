@@ -40,6 +40,7 @@ from allencell_ml_segmenter.training.training_progress_tracker import (
 )
 from allencell_ml_segmenter.core.info_dialog_box import InfoDialogBox
 from allencell_ml_segmenter.utils.file_utils import FileUtils
+from allencell_ml_segmenter.utils.experiment_utils import ExperimentUtils
 
 
 class TrainingView(View, MainWindow):
@@ -296,18 +297,32 @@ class TrainingView(View, MainWindow):
         return "Training"
 
     def showResults(self) -> None:
-        csv_path: Optional[Path] = (
-            self._experiments_model.get_latest_metrics_csv_path()
-        )
-        if csv_path is None:
-            raise RuntimeError("Cannot get min loss from undefined csv")
-        min_loss: Optional[float] = FileUtils.get_min_loss_from_csv(csv_path)
-        if min_loss is None:
-            raise RuntimeError("Cannot compute min loss")
-        dialog_box = InfoDialogBox(
-            "Training finished -- Final loss: {:.3f}".format(min_loss)
-        )
-        dialog_box.exec()
+        # double check to see if a ckpt was generated
+        ckpt_generated: Optional[Path] = ExperimentUtils.get_best_ckpt(
+            self._experiments_model.get_user_experiments_path,
+            self._experiments_model.get_experiment_name())
+        if ckpt_generated is not None:
+            # if model was successfully trained, get metrics to display
+            csv_path: Optional[Path] = (
+                self._experiments_model.get_latest_metrics_csv_path()
+            )
+            if csv_path is None:
+                raise RuntimeError("Cannot get min loss from undefined csv")
+            min_loss: Optional[float] = FileUtils.get_min_loss_from_csv(csv_path)
+            if min_loss is None:
+                raise RuntimeError("Cannot compute min loss")
+
+            dialog_box = InfoDialogBox(
+                "Training finished -- Final loss: {:.3f}".format(min_loss)
+            )
+            dialog_box.exec()
+            self._main_model.training_complete()
+        else:
+            dialog_box = InfoDialogBox(
+                "Training failed- no model was saved from this run."
+            )
+            dialog_box.exec()
+
 
     def _num_epochs_field_handler(self, num_epochs: str) -> None:
         self._training_model.set_num_epochs(int(num_epochs))
