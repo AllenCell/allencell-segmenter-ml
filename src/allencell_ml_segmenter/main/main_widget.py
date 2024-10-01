@@ -148,7 +148,7 @@ class MainWidget(AicsWidget):
 
         # events for auto window switching
         self._model.subscribe(
-            Event.PROCESS_TRAINING_COMPLETE, self, self._handle_existing_model
+            Event.PROCESS_TRAINING_COMPLETE, self, self._disable_non_prediction_tabs
         )
 
     def _handle_experiment_applied(self, _: Event) -> None:
@@ -174,7 +174,7 @@ class MainWidget(AicsWidget):
             else self._prediction_view
         )
 
-    def _handle_existing_model(self, _: Event) -> None:
+    def _disable_non_prediction_tabs(self, _: Event) -> None:
         """
         Handle existing model selection (disable tabs).
 
