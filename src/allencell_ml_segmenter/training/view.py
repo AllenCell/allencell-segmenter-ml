@@ -330,8 +330,8 @@ class TrainingView(View, MainWindow):
             dialog_box = InfoDialogBox(
                 "Training finished -- Final loss: {:.3f}".format(min_loss)
             )
-            dialog_box.exec() # this shows the dialog box
-            self._main_model.training_complete() # this dispatches the event that changes to prediction tab
+            dialog_box.exec()  # this shows the dialog box
+            self._main_model.training_complete()  # this dispatches the event that changes to prediction tab
         else:
             dialog_box = InfoDialogBox(
                 "Training failed- no model was saved from this run."
