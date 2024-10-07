@@ -24,7 +24,7 @@ env:
 jobs:
   publish:
     name: Publish
-    runs-on: [self-hosted, build]
+    runs-on: ubuntu-latest
     environment: release
     permissions:
       id-token: write
@@ -55,12 +55,9 @@ jobs:
         run: |
           python -m build
       
-      # using test pypi for testing this new workflow
       - name: Publish to PyPI
         if: ${{ inputs.index == 'PyPI' }}
         uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          repository-url: https://test.pypi.org/legacy/
 
       - name: Publish to Artifactory
         if: ${{ inputs.index == 'Artifactory' }}
