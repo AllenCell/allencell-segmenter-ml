@@ -29,11 +29,8 @@ class FakeExperimentsModel(IExperimentsModel):
         ] = {event: dict() for event in [e.value for e in Event]}
         self._chan_sel_path = channel_selection_path
 
-    def get_checkpoint(self) -> str:
+    def get_best_ckpt(self) -> str:
         return self._checkpoint
-
-    def set_checkpoint(self, checkpoint: str):
-        self._checkpoint = checkpoint
 
     def get_experiments(self) -> List[str]:
         return self._experiments
