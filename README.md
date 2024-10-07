@@ -148,7 +148,6 @@ Fri Sep 13 03:22:15 2024
 |  No running processes found                                                 |
 +-----------------------------------------------------------------------------+
 ```
-<<<<<<< HEAD
 
 ---
 
@@ -195,54 +194,6 @@ True
 
 ---
 
-=======
-
----
-
-##### STEP 2. PyTorch Installation
-
-__To Install PyTorch__, please visit the [__PyTorch website__](https://pytorch.org/get-started/locally/) and select the appropriate installation options for your system. An example is provided below.
-
-
-
-<img width="828" alt="torch-install" src="https://github.com/user-attachments/assets/1d8789c0-1f2c-4b11-841b-666f540601e6">
-
-> __PyTorch Installation__ for Windows, MacOS, and Linux
-
-##### Example
-
-For instance, if I am using
-
-- `Windows` workstation
-- `pip` package manager
-- `Python` (3.10)
-- `CUDA 11.8` 
-
-Then the command for me would be:
-
-```bash
-pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
-```
-
-If the installation is successful, let's test just to be sure that your GPU is detected by PyTorch. Run the following command in your terminal or powershell:
-
-```bash
-python -c "import torch; print(torch.cuda.is_available())"
-```
-
-You should see `True` if your GPU is detected (see below). If you see `False`, then PyTorch is not detecting your GPU. You may need to reinstall PyTorch or check your CUDA drivers. Double check that your virtual environement is activated (`venv-allen-segmenter-ml`).
-
-```bash
-(venv-allen-segmenter-ml) PS C:\Users\Administrator\Documents> python -c "import torch; print(torch.cuda.is_available())"
-True
-```
-
-
-:tada: You have successfully installed the plugin and PyTorch. You are now ready to use the plugin!
-
----
-
->>>>>>> 59a457344c7d4cd93f378e13aa4285587ca28848
 ## Running the Plugin
 
 To run the plugin (and verify the installation), you can use the following command in your terminal or powershell:
