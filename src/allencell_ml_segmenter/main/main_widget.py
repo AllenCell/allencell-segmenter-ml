@@ -146,6 +146,13 @@ class MainWidget(AicsWidget):
         layout.addStretch(100)
         self.setStyleSheet(Style.get_stylesheet("core.qss"))
 
+        # events for auto window switching
+        self._model.subscribe(
+            Event.PROCESS_TRAINING_COMPLETE,
+            self,
+            self._disable_non_prediction_tabs,
+        )
+
     def _handle_experiment_applied(self, _: Event) -> None:
         """
         Handle the experiment applied event.
@@ -168,6 +175,16 @@ class MainWidget(AicsWidget):
             if self._model.is_new_model()
             else self._prediction_view
         )
+
+    def _disable_non_prediction_tabs(self, _: Event) -> None:
+        """
+        Handle existing model selection (disable tabs).
+
+        inputs:
+            is_new_model - bool
+        """
+        self._window_container.setTabEnabled(0, False)
+        self._window_container.setTabEnabled(1, False)
 
     def _handle_change_view(self, event: Event) -> None:
         """
