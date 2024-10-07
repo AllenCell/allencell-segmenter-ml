@@ -301,3 +301,85 @@ def test_navigate_to_training_populates_channel_selection_no_json(
     assert (
         view.image_selection_widget._seg2_channel_combo_box.currentIndex() == 0
     )
+
+
+def test_existing_model_radio(
+    qtbot: QtBot, training_view: TrainingView, training_model: TrainingModel
+) -> None:
+    """
+    Test the slots connected to the existing model radio selection
+    """
+    # Some checks before testing
+    assert (
+        not training_view.existing_model_dropdown.isEnabled()
+    )  # model dropdown is disabled by default
+    assert (
+        training_view.existing_model_no_radio.isChecked()
+    )  # no radio is checked by default
+    assert not training_view.existing_model_yes_radio.isChecked()
+
+    # ACT (click yes radio)
+    with qtbot.waitSignal(training_view.existing_model_yes_radio.clicked):
+        training_view.existing_model_yes_radio.click()
+
+    # ASSERT
+    # radio buttons flipped
+    assert not training_view.existing_model_no_radio.isChecked()
+    assert training_view.existing_model_yes_radio.isChecked()
+    # model dropdown is enabled
+    assert training_view.existing_model_dropdown.isEnabled()
+    # training model updated
+    assert training_model.is_using_existing_model()
+
+    # ACT (click no radio again)
+    with qtbot.waitSignal(training_view.existing_model_no_radio.clicked):
+        training_view.existing_model_no_radio.click()
+
+    # ASSERT
+    # radio buttons flipped
+    assert training_view.existing_model_no_radio.isChecked()
+    assert not training_view.existing_model_yes_radio.isChecked()
+    # model dropdown is disabled
+    assert not training_view.existing_model_dropdown.isEnabled()
+    # training model updated
+    assert not training_model.is_using_existing_model()
+    assert training_model.get_existing_model() is None
+
+
+def test_model_size_combo_box(
+    qtbot: QtBot, training_model: TrainingModel, main_model: MainModel
+) -> None:
+    """
+    Test to see if radio selection enables/disabled the model size correctly
+    """
+    # ARRANGE
+    training_view: TrainingView = TrainingView(
+        main_model=main_model,
+        experiments_model=FakeExperimentsModel(),
+        training_model=training_model,
+        viewer=FakeViewer(),
+    )
+    # Fake a selection
+    training_view._model_size_combo_box.setCurrentIndex(1)
+    training_view._model_size_combo_box.setCurrentText("small")
+
+    # Some checks before testing
+    assert training_view._model_size_combo_box.isEnabled()
+    assert training_model.get_model_size() == ModelSize.SMALL
+
+    # ACT (click yes radio and disable model size selection)
+    with qtbot.waitSignal(training_view.existing_model_yes_radio.clicked):
+        training_view.existing_model_yes_radio.click()
+
+    # ASSERT
+    # model size selection now disabled and model is reset
+    assert not training_view._model_size_combo_box.isEnabled()
+    assert training_view._model_size_combo_box.currentIndex() == -1
+    assert training_model.get_model_size() is None
+
+    # ACT (click no radio again and re-enable model size selection)
+    with qtbot.waitSignal(training_view.existing_model_no_radio.clicked):
+        training_view.existing_model_no_radio.click()
+
+    # ASSERT
+    assert training_view._model_size_combo_box.isEnabled()

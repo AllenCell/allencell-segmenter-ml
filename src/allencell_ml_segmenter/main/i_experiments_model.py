@@ -33,7 +33,7 @@ class IExperimentsModel(Publisher):
         self.dispatch(Event.ACTION_EXPERIMENT_APPLIED)
 
     @abstractmethod
-    def get_checkpoint(self) -> Optional[str]:
+    def get_best_ckpt(self) -> Optional[Path]:
         pass
 
     @abstractmethod
@@ -50,7 +50,7 @@ class IExperimentsModel(Publisher):
 
     @abstractmethod
     def get_model_checkpoints_path(
-        self, experiment_name: str, checkpoint: str
+        self, experiment_name: Optional[str], checkpoint: Optional[str]
     ) -> Path:
         pass
 

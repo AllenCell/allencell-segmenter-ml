@@ -33,6 +33,7 @@ def test_refresh_experiments(experiments_model: ExperimentsModel) -> None:
     expected_sorted = [
         "1_exp",
         "2_exp",
+        "a_exp",
         "one_ckpt_exp",
         "z_exp",
     ]  # Only these directories have checkpoint sub dirs.
@@ -231,3 +232,55 @@ def test_apply_experiment_name() -> None:
     # Assert
     assert model.get_experiment_name() == expected
     assert subscriber.was_handled(Event.ACTION_EXPERIMENT_APPLIED)
+
+
+def test_get_best_ckpt_experiment_selected() -> None:
+    # ARRANGE
+    user_experiments_path: Path = Path(__file__).parent / "experiments_home"
+    config: FakeUserSettings = FakeUserSettings(
+        cyto_dl_home_path=Path(__file__).parent / "cyto_dl_home",
+        user_experiments_path=user_experiments_path,
+    )
+    model: ExperimentsModel = ExperimentsModel(config)
+    model.apply_experiment_name("2_exp")
+
+    # ACT
+    selected_ckpt: str = model.get_best_ckpt()
+
+    assert selected_ckpt.name == "1.ckpt"
+
+
+def test_get_best_ckpt_from_current_experiment_no_experiment_selected():
+    # ARRANGE
+    user_experiments_path: Path = Path(__file__).parent / "experiments_home"
+    config: FakeUserSettings = FakeUserSettings(
+        cyto_dl_home_path=Path(__file__).parent / "cyto_dl_home",
+        user_experiments_path=user_experiments_path,
+    )
+    model: ExperimentsModel = ExperimentsModel(config)
+
+    # ACT
+    selected_ckpt: str = (
+        model.get_best_ckpt()
+    )  # dont specify a specific experiemnt to grab the ckpt from
+
+    assert selected_ckpt is None
+
+
+def test_get_best_ckpt_no_checkpoint_dir():
+    # ARRANGE
+    user_experiments_path: Path = Path(__file__).parent / "experiments_home"
+    config: FakeUserSettings = FakeUserSettings(
+        cyto_dl_home_path=Path(__file__).parent / "cyto_dl_home",
+        user_experiments_path=user_experiments_path,
+    )
+    model: ExperimentsModel = ExperimentsModel(config)
+    model.apply_experiment_name(
+        "0_exp"
+    )  # No checkpoint folder in this test dir
+
+    # ACT
+    selected_ckpt: str = model.get_best_ckpt()
+
+    # assert
+    assert selected_ckpt is None

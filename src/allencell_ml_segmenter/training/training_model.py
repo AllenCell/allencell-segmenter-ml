@@ -6,6 +6,7 @@ from pathlib import Path
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel, ImageType
 from qtpy.QtCore import QObject, Signal
+from allencell_ml_segmenter.utils.experiment_utils import ExperimentUtils
 
 
 class TrainingType(Enum):
@@ -70,6 +71,16 @@ class TrainingModel(Publisher):
         self._model_size: Optional[ModelSize] = None
         # the total number of images used for training/test/validation for this model
         self._total_num_images: int = 0
+
+        # Whether to use an existing model, and the existing model to use if one is selected
+        # If is_using_existing_model is False, the existing_model_to_use will be None
+        # If is_using_existing_model is True, the existing_model_to_use will be the name of the experiment containing
+        # the existing model to pull weights from for training
+        # If existing_model_to_use is None, no model was selected to pull weights from and the user should be prompted to select one
+        self._is_using_existing_model: bool = False  # No by default
+        self._existing_model_to_use: Optional[str] = (
+            None  # None if no existing model selected- default behavior
+        )
 
     def get_experiment_type(self) -> Optional[str]:
         """
@@ -203,14 +214,17 @@ class TrainingModel(Publisher):
         """
         self._use_max_time = use_max
 
-    def set_model_size(self, model_size: str) -> None:
-        # convert string to enum
-        model_size = model_size.upper()
-        if model_size not in [x.name for x in ModelSize]:
-            raise ValueError(
-                "No support for non small, medium, and large patch sizes."
-            )
-        self._model_size = ModelSize[model_size]
+    def set_model_size(self, model_size: Optional[str]) -> None:
+        if model_size is None or model_size == "":
+            self._model_size = None
+        else:
+            # convert string to enum
+            model_size = model_size.upper()
+            if model_size not in [x.name for x in ModelSize]:
+                raise ValueError(
+                    "No support for non small, medium, and large patch sizes."
+                )
+            self._model_size = ModelSize[model_size]
 
     def get_model_size(self) -> Optional[ModelSize]:
         return self._model_size
@@ -223,3 +237,38 @@ class TrainingModel(Publisher):
 
     def get_selected_channels(self) -> dict[ImageType, Optional[int]]:
         return self._main_model.get_selected_channels()
+
+    def set_existing_model(self, model: Optional[str]) -> None:
+        """
+        Set the existing model to use for iterative training
+        """
+        self._existing_model_to_use = model
+
+    def get_existing_model(self) -> Optional[str]:
+        """
+        Existing model to be used for iterative training
+        """
+        return self._existing_model_to_use
+
+    def is_using_existing_model(self) -> bool:
+        """
+        Iterative training- will use existing model to start
+        """
+        return self._is_using_existing_model
+
+    def set_is_using_existing_model(self, is_using: bool) -> None:
+        """
+        Set iterative training
+        """
+        self._is_using_existing_model = is_using
+
+    def get_existing_model_ckpt_path(self) -> Optional[Path]:
+        model_to_use: Optional[str] = self.get_existing_model()
+        user_exp_path: Optional[Path] = (
+            self.experiments_model.get_user_experiments_path()
+        )
+
+        if model_to_use is None or user_exp_path is None:
+            # shouldn't be possible to get here
+            return None
+        return ExperimentUtils.get_best_ckpt(user_exp_path, model_to_use)

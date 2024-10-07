@@ -40,6 +40,7 @@ from allencell_ml_segmenter.training.training_progress_tracker import (
 )
 from allencell_ml_segmenter.core.info_dialog_box import InfoDialogBox
 from allencell_ml_segmenter.utils.file_utils import FileUtils
+from allencell_ml_segmenter.utils.experiment_utils import ExperimentUtils
 
 
 class TrainingView(View, MainWindow):
@@ -92,7 +93,65 @@ class TrainingView(View, MainWindow):
         layout.addWidget(top_dummy)
 
         # bottom half
-        bottom_grid_layout = QGridLayout()
+        bottom_grid_layout: QGridLayout = QGridLayout()
+
+        # Existing model label
+        existing_model_label: LabelWithHint = LabelWithHint(
+            "Start from previous model"
+        )
+        existing_model_label.set_hint(
+            "Select a previously trained model to pull model weights from"
+        )
+        bottom_grid_layout.addWidget(
+            existing_model_label, 0, 0, alignment=Qt.AlignmentFlag.AlignTop
+        )
+
+        # Model Size Selection
+        self._model_size_combo_box: QComboBox = QComboBox()
+        self._model_size_combo_box.setObjectName("modelSizeComboBox")
+        self._model_size_combo_box.setCurrentIndex(-1)
+        self._model_size_combo_box.setPlaceholderText("Select an option")
+        self._model_size_combo_box.addItems(
+            [size.name.lower() for size in ModelSize]
+        )
+        self._model_size_combo_box.currentTextChanged.connect(
+            lambda model_size: self._training_model.set_model_size(model_size)
+        )
+
+        # Existing model selection
+        self.existing_model_dropdown: QComboBox = QComboBox()
+        self.existing_model_dropdown.addItems(
+            self._experiments_model.get_experiments()
+        )
+        self.existing_model_dropdown.currentIndexChanged.connect(
+            lambda: self._training_model.set_existing_model(
+                self.existing_model_dropdown.currentText()
+            )
+        )
+        self.existing_model_dropdown.setEnabled(
+            False
+        )  # Disabled by default since no is the default
+        # Yes and no radio buttons stacked on top of each other in a VBoxLayout
+        existing_model_selection_layout: QVBoxLayout = QVBoxLayout()
+        self.existing_model_no_radio: QRadioButton = QRadioButton("No")
+        self.existing_model_no_radio.toggled.connect(
+            self._existing_model_no_radio_slot
+        )
+        self.existing_model_no_radio.setChecked(True)  # No enabled by default
+        existing_model_selection_layout.addWidget(self.existing_model_no_radio)
+        self.existing_model_yes_radio: QRadioButton = QRadioButton("Yes")
+        self.existing_model_yes_radio.toggled.connect(
+            self._existing_model_yes_radio_slot
+        )
+
+        # have model selection dropdown in-line with yes button
+        existing_model_yes_layout: QHBoxLayout = QHBoxLayout()
+        existing_model_yes_layout.addWidget(self.existing_model_yes_radio)
+        existing_model_yes_layout.addWidget(
+            self.existing_model_dropdown, stretch=1
+        )
+        existing_model_selection_layout.addLayout(existing_model_yes_layout)
+        bottom_grid_layout.addLayout(existing_model_selection_layout, 0, 1)
 
         patch_size_text_layout = QVBoxLayout()
         patch_size_text_layout.setSpacing(0)
@@ -104,7 +163,7 @@ class TrainingView(View, MainWindow):
         guide_text: QLabel = QLabel("All values must be multiples of 4")
         guide_text.setObjectName("subtext")
         patch_size_text_layout.addWidget(guide_text)
-        bottom_grid_layout.addLayout(patch_size_text_layout, 0, 0)
+        bottom_grid_layout.addLayout(patch_size_text_layout, 1, 0)
         patch_size_entry_layout: QHBoxLayout = QHBoxLayout()
 
         # allow only integers for the linedits below
@@ -126,31 +185,19 @@ class TrainingView(View, MainWindow):
         patch_size_entry_layout.addWidget(self.x_patch_size)
 
         self._update_spatial_dims_boxes()
-        bottom_grid_layout.addLayout(patch_size_entry_layout, 0, 1)
+        bottom_grid_layout.addLayout(patch_size_entry_layout, 1, 1)
 
         model_size_label: LabelWithHint = LabelWithHint("Model size")
         model_size_label.set_hint(
             "Defines the complexity of the model - smaller models train faster, while large models train slower but may learn complex relationships better."
         )
-        bottom_grid_layout.addWidget(model_size_label, 1, 0)
-
-        self._model_size_combo_box: QComboBox = QComboBox()
-        self._model_size_combo_box.setObjectName("modelSizeComboBox")
-        self._model_size_combo_box.setCurrentIndex(-1)
-        self._model_size_combo_box.setPlaceholderText("Select an option")
-        self._model_size_combo_box.addItems(
-            [size.name.lower() for size in ModelSize]
-        )
-        self._model_size_combo_box.currentTextChanged.connect(
-            lambda model_size: self._training_model.set_model_size(model_size)
-        )
-        bottom_grid_layout.addWidget(self._model_size_combo_box, 1, 1)
-
+        bottom_grid_layout.addWidget(model_size_label, 2, 0)
+        bottom_grid_layout.addWidget(self._model_size_combo_box, 2, 1)
         num_epochs_label: LabelWithHint = LabelWithHint("Number of epochs")
         num_epochs_label.set_hint(
             "Each epoch is one complete pass through the entire training dataset. More epochs yields better performance at the cost of training time."
         )
-        bottom_grid_layout.addWidget(num_epochs_label, 2, 0)
+        bottom_grid_layout.addWidget(num_epochs_label, 3, 0)
 
         self._num_epochs_input: QLineEdit = QLineEdit()
         int_validator: QIntValidator = QIntValidator()
@@ -161,7 +208,7 @@ class TrainingView(View, MainWindow):
         self._num_epochs_input.textChanged.connect(
             self._num_epochs_field_handler
         )
-        bottom_grid_layout.addWidget(self._num_epochs_input, 2, 1)
+        bottom_grid_layout.addWidget(self._num_epochs_input, 3, 1)
 
         max_time_layout: QHBoxLayout = QHBoxLayout()
         max_time_layout.setSpacing(0)
@@ -192,8 +239,7 @@ class TrainingView(View, MainWindow):
             max_time_right_text, alignment=Qt.AlignmentFlag.AlignLeft
         )
         max_time_layout.addStretch()
-
-        bottom_grid_layout.addLayout(max_time_layout, 3, 1)
+        bottom_grid_layout.addLayout(max_time_layout, 4, 1)
         bottom_grid_layout.setColumnStretch(1, 8)
         bottom_grid_layout.setColumnStretch(0, 3)
 
@@ -251,18 +297,46 @@ class TrainingView(View, MainWindow):
         return "Training"
 
     def showResults(self) -> None:
-        csv_path: Optional[Path] = (
-            self._experiments_model.get_latest_metrics_csv_path()
+        # double check to see if a ckpt was generated
+        exp_path: Optional[Path] = (
+            self._experiments_model.get_user_experiments_path()
         )
-        if csv_path is None:
-            raise RuntimeError("Cannot get min loss from undefined csv")
-        min_loss: Optional[float] = FileUtils.get_min_loss_from_csv(csv_path)
-        if min_loss is None:
-            raise RuntimeError("Cannot compute min loss")
-        dialog_box = InfoDialogBox(
-            "Training finished -- Final loss: {:.3f}".format(min_loss)
+        if exp_path is None:
+            raise ValueError(
+                "Experiments path should not be None after training complete."
+            )
+        exp_name: Optional[str] = self._experiments_model.get_experiment_name()
+        if exp_name is None:
+            raise ValueError(
+                "Experiment name should not be None after training complete."
+            )
+        ckpt_generated: Optional[Path] = ExperimentUtils.get_best_ckpt(
+            exp_path,
+            exp_name,
         )
-        dialog_box.exec()
+        if ckpt_generated is not None:
+            # if model was successfully trained, get metrics to display
+            csv_path: Optional[Path] = (
+                self._experiments_model.get_latest_metrics_csv_path()
+            )
+            if csv_path is None:
+                raise RuntimeError("Cannot get min loss from undefined csv")
+            min_loss: Optional[float] = FileUtils.get_min_loss_from_csv(
+                csv_path
+            )
+            if min_loss is None:
+                raise RuntimeError("Cannot compute min loss")
+
+            dialog_box = InfoDialogBox(
+                "Training finished -- Final loss: {:.3f}".format(min_loss)
+            )
+            dialog_box.exec()  # this shows the dialog box
+            self._main_model.training_complete()  # this dispatches the event that changes to prediction tab
+        else:
+            dialog_box = InfoDialogBox(
+                "Training failed- no model was saved from this run."
+            )
+            dialog_box.exec()
 
     def _num_epochs_field_handler(self, num_epochs: str) -> None:
         self._training_model.set_num_epochs(int(num_epochs))
@@ -318,6 +392,30 @@ class TrainingView(View, MainWindow):
     def focus_changed(self) -> None:
         self.image_selection_widget.set_inputs_csv()
         self._viewer.clear_layers()
+
+    def _disable_model_size_combo_box(self) -> None:
+        self._model_size_combo_box.setEnabled(False)
+        self._model_size_combo_box.setCurrentIndex(
+            -1
+        )  # clear any selection, if any  # clear model
+
+    def _enable_model_size_combo_box(self) -> None:
+        self._model_size_combo_box.setEnabled(True)
+
+    def _existing_model_no_radio_slot(self) -> None:
+        # disable dropdown
+        self.existing_model_dropdown.setEnabled(False)
+        # reset dropdown and selected model
+        self.existing_model_dropdown.setCurrentIndex(-1)
+        self._training_model.set_is_using_existing_model(False)
+        self._training_model.set_existing_model(None)
+        self._enable_model_size_combo_box()
+
+    def _existing_model_yes_radio_slot(self) -> None:
+        # enable dropdown
+        self._training_model.set_is_using_existing_model(True)
+        self.existing_model_dropdown.setEnabled(True)
+        self._disable_model_size_combo_box()
 
     def _update_spatial_dim_box(
         self, line_edit: QLineEdit, should_be_enabled: bool
