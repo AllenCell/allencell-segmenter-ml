@@ -14,7 +14,7 @@ from allencell_ml_segmenter.main.experiments_model import IExperimentsModel
 from allencell_ml_segmenter.utils.s3.s3_model_bucket import (
     S3ModelBucket,
 )
-from allencell_ml_segmenter.utils.s3.s3_bucket_constants import PROD_BUCKET
+from allencell_ml_segmenter.utils.s3.s3_bucket_constants import STG_BUCKET
 
 
 class ModelDownloadDialog(QDialog):
@@ -31,7 +31,7 @@ class ModelDownloadDialog(QDialog):
                 "Cannot download model when experiment dir is unknown"
             )
         self._available_models = S3ModelBucket(
-            PROD_BUCKET, exp_path
+            STG_BUCKET, exp_path
         ).get_available_models()
         layout: QVBoxLayout = QVBoxLayout()
         self.setLayout(layout)
