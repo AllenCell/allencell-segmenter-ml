@@ -89,10 +89,10 @@ To confirm that the virtual environment has been successfully activated, you can
 
 #### STEP 3. Install `pyqt5` 
 
-Lastly, we will install the GUI toolkit `pyqt5` which is a requirement for the plugin. Run the following command in your terminal or powershell:
+Lastly, we need to install `pyqt5`, a library to run the user interface (UI). Run the following command in your terminal or powershell:
 
 ```bash 
-pip install pyqt5
+pip install "napari[pyqt5]" 
 ```
 
 
