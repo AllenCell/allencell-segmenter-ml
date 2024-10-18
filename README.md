@@ -3,7 +3,7 @@
 [![Test and lint](https://github.com/AllenCell/allencell-segmenter-ml/actions/workflows/test_lint.yaml/badge.svg?branch=main&event=push)](https://github.com/AllenCell/allencell-segmenter-ml/actions/workflows/test_lint.yaml)
 
 ## This version is a release candidate currently undergoing testing and development.
-Our team is actively working on this plugin and will have an *official release* of version 0.1.16 with additional features very soon. 
+Our team is actively working on this plugin and will have an *official release* with additional features very soon. 
  
 Please keep an eye on this page for updates. 
  
