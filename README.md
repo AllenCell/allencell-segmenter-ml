@@ -2,7 +2,8 @@
 
 [![Test and lint](https://github.com/AllenCell/allencell-segmenter-ml/actions/workflows/test_lint.yaml/badge.svg?branch=main&event=push)](https://github.com/AllenCell/allencell-segmenter-ml/actions/workflows/test_lint.yaml)
 
-
+## This version is a release candidate currently undergoing testing and development.
+[Please report any bugs here](https://github.com/AllenCell/allencell-segmenter-ml/issues/new/choose)
 
 
 ## What is Allen Cell Segmenter ML
