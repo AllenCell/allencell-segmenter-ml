@@ -5,7 +5,7 @@ version = "0.0.1"
 # https://pypi.org/project/bumpver
 [tool.bumpver]
 current_version = "0.0.1"
-version_pattern = "MAJOR.MINOR.PATCH[.PYTAGNUM]"
+version_pattern = "MAJOR.MINOR.PATCH[PYTAGNUM]"
 commit          = false
 tag             = false # no longer useful to tag here, must happen in create_publish_pr.yaml
 push            = false

@@ -14,7 +14,7 @@ on:
           - major
           - minor
           - patch
-          - dev
+          - rc
 
 jobs:
   publish:
