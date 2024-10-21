@@ -3,7 +3,11 @@
 [![Test and lint](https://github.com/AllenCell/allencell-segmenter-ml/actions/workflows/test_lint.yaml/badge.svg?branch=main&event=push)](https://github.com/AllenCell/allencell-segmenter-ml/actions/workflows/test_lint.yaml)
 
 ## This version is a release candidate currently undergoing testing and development.
-[Please report any bugs here](https://github.com/AllenCell/allencell-segmenter-ml/issues/new/choose)
+Our team is actively working on this plugin and will have an *official release* with additional features very soon. 
+ 
+Please keep an eye on this page for updates. 
+ 
+In the meantime, [please report any bugs here.](https://github.com/AllenCell/allencell-segmenter-ml/issues/new/choose)
 
 
 ## What is Allen Cell Segmenter ML
@@ -12,11 +16,11 @@ A deep learning-based segmentation Napari plugin to curate datasets, train your 
 
 ##  📰 News
 
- - **[2024.09.24]** :tada: Initial release of the plugin and Megaseg models!
+ - **[2024.09.24]** 🎉 Initial dev release of the plugin and Megaseg models!
 
 
 
-## :hammer_and_wrench: Installation
+## 🛠️ Installation
 
 ### System Requirements
 
@@ -100,7 +104,7 @@ To install the latest version of the plugin:
 pip install allencell-segmenter-ml
 ```
 
-### :rotating_light: Post-Installation :rotating_light:
+### 🚨 Post-Installation 🚨
 
 > :memo: __NOTE:__ This section is specifically for users with at least one NVIDIA GPU installed on their machine. Not sure if you have an NVIDIA GPU? You can check by running `nvidia-smi` as shown [below](#step-1-checking-cuda-version). If you __do not__ have an NVIDIA GPU system, you can skip this section.
 
