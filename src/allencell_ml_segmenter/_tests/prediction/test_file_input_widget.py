@@ -12,7 +12,7 @@ from allencell_ml_segmenter.prediction.file_input_widget import (
 from allencell_ml_segmenter.prediction.model import (
     PredictionModel,
 )
-from allencell_ml_segmenter.core.FileInputModel import InputMode
+from allencell_ml_segmenter.core.file_input_model import InputMode
 
 MOCK_PATH: str = "/path/to/file"
 

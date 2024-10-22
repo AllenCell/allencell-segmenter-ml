@@ -11,7 +11,7 @@ from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 from allencell_ml_segmenter.prediction.file_input_widget import (
     PredictionFileInput,
 )
-from allencell_ml_segmenter.core.FileInputModel import FileInputModel
+from allencell_ml_segmenter.core.file_input_model import FileInputModel
 
 from qtpy.QtWidgets import (
     QLabel,
