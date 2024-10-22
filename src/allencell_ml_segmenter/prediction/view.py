@@ -149,7 +149,7 @@ class PredictionView(View, MainWindow):
 
         # Display images if prediction inputs are from Napari Layers
         if (
-            self._prediction_model.get_prediction_input_mode()
+            self._prediction_model.get_input_mode()
             == PredictionInputMode.FROM_NAPARI_LAYERS
             and output_path is not None
         ):
