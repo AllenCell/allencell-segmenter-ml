@@ -38,7 +38,7 @@ from allencell_ml_segmenter.prediction.service import ModelFileService
 from allencell_ml_segmenter.curation.stacked_spinner import StackedSpinner
 
 
-class PredictionFileInput(QWidget):
+class FileInputWidget(QWidget):
     """
     A widget containing file inputs for the input to a model prediction.
     """
@@ -96,7 +96,7 @@ class PredictionFileInput(QWidget):
         horiz_layout.addWidget(self._radio_on_screen)
 
         question_label: LabelWithHint = LabelWithHint(
-            PredictionFileInput.TOP_TEXT
+            FileInputWidget.TOP_TEXT
         )
         question_label.set_hint("Image(s) already opened in napari")
         horiz_layout.addWidget(question_label)
@@ -122,7 +122,7 @@ class PredictionFileInput(QWidget):
 
         image_dir_layout: QVBoxLayout = QVBoxLayout()
 
-        question_label = LabelWithHint(PredictionFileInput.BOTTOM_TEXT)
+        question_label = LabelWithHint(FileInputWidget.BOTTOM_TEXT)
         question_label.set_hint(
             "Whole directory of image will be used as input. Prediction results will not be displayed in napari after prediction completion."
         )
