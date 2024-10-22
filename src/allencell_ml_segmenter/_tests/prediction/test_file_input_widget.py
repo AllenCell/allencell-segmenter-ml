@@ -28,9 +28,7 @@ def file_input_widget(
     """
     Fixture that creates an instance of ModelInputWidget for testing.
     """
-    return FileInputWidget(
-        prediction_model, viewer=FakeViewer(), service=None
-    )
+    return FileInputWidget(prediction_model, viewer=FakeViewer(), service=None)
 
 
 def test_top_radio_button_slot(

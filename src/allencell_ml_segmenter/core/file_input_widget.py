@@ -95,9 +95,7 @@ class FileInputWidget(QWidget):
 
         horiz_layout.addWidget(self._radio_on_screen)
 
-        question_label: LabelWithHint = LabelWithHint(
-            FileInputWidget.TOP_TEXT
-        )
+        question_label: LabelWithHint = LabelWithHint(FileInputWidget.TOP_TEXT)
         question_label.set_hint("Image(s) already opened in napari")
         horiz_layout.addWidget(question_label)
 
