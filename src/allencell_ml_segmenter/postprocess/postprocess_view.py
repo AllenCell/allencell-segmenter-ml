@@ -1,4 +1,4 @@
-from napari.utils.notifications import show_warning  # type: ignore
+from napari.utils.notifications import show_warning
 
 from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
 from allencell_ml_segmenter.main.i_viewer import IViewer
@@ -31,7 +31,7 @@ from qtpy.QtCore import Qt
 
 class ThresholdingView(View, MainWindow):
     """
-    Holds widgets for thresholding images with methods such as specific value and autothreshold.
+    View for thresholding
     """
 
     def __init__(
@@ -59,19 +59,19 @@ class ThresholdingView(View, MainWindow):
             QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Maximum
         )
 
-        # Title
+        # title
         self._title: QLabel = QLabel("THRESHOLD", self)
         self._title.setObjectName("title")
         layout.addWidget(self._title, alignment=Qt.AlignmentFlag.AlignHCenter)
 
-        # Input Image Section
+        # selecting input image
         self._file_input_widget: FileInputWidget = FileInputWidget(
             self._thresholding_model, self._viewer, self._service
         )
         self._file_input_widget.setObjectName("fileInput")
         layout.addWidget(self._file_input_widget)
 
-        # Thresholding Section
+        # thresholding values
         self._threshold_label: LabelWithHint = LabelWithHint("Threshold")
         self._threshold_label.set_hint("Values to threshold with.")
         self._threshold_label.setObjectName("title")
@@ -80,7 +80,7 @@ class ThresholdingView(View, MainWindow):
         threshold_group_box = QGroupBox()
         threshold_group_layout = QVBoxLayout()
 
-        # Radio Button for 'None'
+        # none thresholding selection
         none_radio_layout: QHBoxLayout = QHBoxLayout()
         self._none_radio_button: QRadioButton = QRadioButton()
         none_radio_layout.addWidget(self._none_radio_button)
@@ -90,8 +90,7 @@ class ThresholdingView(View, MainWindow):
         none_radio_layout.addWidget(none_radio_label)
         threshold_group_layout.addLayout(none_radio_layout)
 
-        # Radio Button for 'Specific Value' with Slider and Spinbox
-        # Layout for slider and spinbox next to the 'Specific Value' radio button
+        # specific value thresholding selection
         specific_value_layout = QHBoxLayout()
 
         self._specific_value_radio_button: QRadioButton = QRadioButton()
@@ -107,17 +106,17 @@ class ThresholdingView(View, MainWindow):
         )
         self._threshold_value_slider.setRange(
             0, 100
-        )  # Slider values from 0 to 100 (representing 0.0 to 1.0)
+        )  # slider values from 0 to 100 (representing 0.0 to 1.0)
         self._threshold_value_slider.setValue(50)  # Default value at 0.5
 
         self._threshold_value_spinbox: QDoubleSpinBox = QDoubleSpinBox()
         self._threshold_value_spinbox.setRange(
             0.0, 1.0
-        )  # Spinbox range from 0.0 to 1.0
+        )
         self._threshold_value_spinbox.setSingleStep(0.01)
-        self._threshold_value_spinbox.setValue(0.5)  # Default value
+        self._threshold_value_spinbox.setValue(0.5)
 
-        # Connect slider and spinbox to keep them in sync
+        # sync slider and spinbox
         self._threshold_value_slider.valueChanged.connect(
             self._update_spinbox_from_slider
         )
@@ -125,15 +124,15 @@ class ThresholdingView(View, MainWindow):
             self._update_slider_from_spinbox
         )
 
-        # Add slider and spinbox to the specific value layout
+        # add slider and spinbox
         specific_value_layout.addWidget(self._specific_value_radio_button)
         specific_value_layout.addWidget(self._threshold_value_slider)
         specific_value_layout.addWidget(
             self._threshold_value_spinbox
-        )  # Spinbox stretch
+        )
         threshold_group_layout.addLayout(specific_value_layout)
 
-        # Radio Button for 'Autothreshold' with ComboBox
+        # autothresholding
         autothreshold_layout = QHBoxLayout()
         self._autothreshold_radio_button: QRadioButton = QRadioButton()
         auto_thresh_label: LabelWithHint = LabelWithHint("Autothreshold")
@@ -143,7 +142,6 @@ class ThresholdingView(View, MainWindow):
         self._autothreshold_method_combo.addItems(["Otsu"])
         self._autothreshold_method_combo.setEnabled(False)
 
-        # Add the radio button and combo box to the same horizontal layout
         autothreshold_layout.addWidget(self._autothreshold_radio_button)
         autothreshold_layout.addWidget(auto_thresh_label)
         autothreshold_layout.addWidget(self._autothreshold_method_combo)
@@ -152,20 +150,24 @@ class ThresholdingView(View, MainWindow):
         threshold_group_box.setLayout(threshold_group_layout)
         layout.addWidget(threshold_group_box)
 
-        # Apply and Save Section
+        # apply and save
         self._apply_save_button: QPushButton = QPushButton("Apply & Save")
         self._apply_save_button.setEnabled(False)
         layout.addWidget(self._apply_save_button)
 
+
+        # need styling
         self.setStyleSheet(Style.get_stylesheet("thresholding_view.qss"))
 
-        # Configure connections
+        # configure widget behavior
         self._configure_slots()
 
     def _configure_slots(self) -> None:
         """
-        Connects signal-slot connections for widget elements.
+        Connects behavior for widgets
         """
+
+        # enable selections when corresponding radio button is selected
         self._specific_value_radio_button.toggled.connect(
             lambda checked: self._enable_specific_threshold_widgets(checked)
         )
@@ -175,7 +177,7 @@ class ThresholdingView(View, MainWindow):
             )
         )
 
-        # Enable/disable the Apply & Save button when a threshold method is selected
+        # enable apply button only when thresholding method is selected
         self._none_radio_button.toggled.connect(self._enable_apply_button)
         self._specific_value_radio_button.toggled.connect(
             self._enable_apply_button
@@ -186,26 +188,26 @@ class ThresholdingView(View, MainWindow):
 
     def _update_spinbox_from_slider(self, value: int) -> None:
         """
-        Updates the spinbox value when the slider value changes.
+        Update the spinbox value when slider is changed
         """
         self._threshold_value_spinbox.setValue(value / 100.0)
 
     def _update_slider_from_spinbox(self, value: float) -> None:
         """
-        Updates the slider value when the spinbox value changes.
+        Update the slider value when spinbox is changed
         """
         self._threshold_value_slider.setValue(int(value * 100))
 
     def _enable_specific_threshold_widgets(self, enabled: bool) -> None:
         """
-        Enables or disables the slider and spinbox when the 'Specific Value' radio button is selected.
+        enable or disable specific value thresholding widgets
         """
         self._threshold_value_slider.setEnabled(enabled)
         self._threshold_value_spinbox.setEnabled(enabled)
 
     def _enable_apply_button(self) -> None:
         """
-        Enables the Apply & Save button if any thresholding method is selected.
+        enable or disable apply button
         """
         self._apply_save_button.setEnabled(
             self._none_radio_button.isChecked()
@@ -214,7 +216,9 @@ class ThresholdingView(View, MainWindow):
         )
 
     def _browse_image_directory(self) -> None:
-        """Opens a file dialog to select an image directory."""
+        """
+        open a file dialog to select image directory
+        """
         directory = QFileDialog.getExistingDirectory(
             self, "Select Image Directory"
         )
@@ -222,7 +226,9 @@ class ThresholdingView(View, MainWindow):
             self._file_input_widget.set_image_directory(directory)
 
     def _browse_output_directory(self) -> None:
-        """Opens a file dialog to select an output directory."""
+        """
+        open a file dialog to select an output directory.
+        """
         directory = QFileDialog.getExistingDirectory(
             self, "Select Output Directory"
         )
