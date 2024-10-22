@@ -69,12 +69,5 @@ class FileInputModel(Publisher, ABC):
         if max is not None:
             self.dispatch(Event.ACTION_PREDICTION_MAX_CHANNELS_SET)
 
-    def set_selected_paths(
-        self, paths: Optional[list[Path]], extract_channels: bool = False
-    ) -> None:
-        self._selected_paths = paths
-        if extract_channels and paths is not None:
-            self.dispatch(Event.ACTION_PREDICTION_EXTRACT_CHANNELS)
-
     def get_selected_paths(self) -> Optional[list[Path]]:
         return self._selected_paths

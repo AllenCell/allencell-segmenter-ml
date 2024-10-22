@@ -1,50 +1,13 @@
-from PyQt5.QtWidgets import QFileDialog
-from qtpy.QtWidgets import QGroupBox
 from napari.utils.notifications import show_warning  # type: ignore
-from pathlib import Path
-from typing import Optional
 
 from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
 from allencell_ml_segmenter.main.i_viewer import IViewer
-from qtpy.QtCore import Qt
-from qtpy.QtWidgets import (
-    QLabel,
-    QPushButton,
-    QFrame,
-    QVBoxLayout,
-    QSizePolicy,
-    QWidget,
-    QGridLayout,
-    QComboBox,
-    QHBoxLayout,
-    QRadioButton,
-    QLineEdit,
-    QCheckBox,
-)
-from magicgui.widgets import FloatSlider
 from allencell_ml_segmenter._style import Style
-from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.view import View, MainWindow
 from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.prediction.service import ModelFileService
-from allencell_ml_segmenter.training.image_selection_widget import (
-    ImageSelectionWidget,
-)
-from allencell_ml_segmenter.training.training_model import (
-    TrainingModel,
-    ModelSize,
-)
-from allencell_ml_segmenter.training.patch_size_validator import (
-    PatchSizeValidator,
-)
+
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
-from qtpy.QtGui import QIntValidator
-from allencell_ml_segmenter.training.training_progress_tracker import (
-    TrainingProgressTracker,
-)
-from allencell_ml_segmenter.core.info_dialog_box import InfoDialogBox
-from allencell_ml_segmenter.utils.file_utils import FileUtils
-from allencell_ml_segmenter.utils.experiment_utils import ExperimentUtils
 from allencell_ml_segmenter.prediction.file_input_widget import (
     PredictionFileInput,
 )
@@ -61,25 +24,7 @@ from qtpy.QtWidgets import (
     QPushButton,
     QSlider,
     QDoubleSpinBox,
-    QWidget,
-)
-from qtpy.QtCore import Qt
-
-from qtpy.QtWidgets import (
-    QLabel,
-    QVBoxLayout,
-    QHBoxLayout,
-    QSizePolicy,
-    QComboBox,
-    QGroupBox,
-    QRadioButton,
-    QPushButton,
-    QSlider,
-    QDoubleSpinBox,
-    QFrame,
-    QLineEdit,
     QFileDialog,
-    QWidget,
 )
 from qtpy.QtCore import Qt
 
@@ -121,7 +66,7 @@ class ThresholdingView(View, MainWindow):
 
         # Input Image Section
         self._file_input_widget: PredictionFileInput = PredictionFileInput(
-            self._thresholding_model, self._viewer, self._experiments_model
+            self._thresholding_model, self._viewer, self._service
         )
         self._file_input_widget.setObjectName("fileInput")
         layout.addWidget(self._file_input_widget)
@@ -181,14 +126,10 @@ class ThresholdingView(View, MainWindow):
         )
 
         # Add slider and spinbox to the specific value layout
+        specific_value_layout.addWidget(self._specific_value_radio_button)
+        specific_value_layout.addWidget(self._threshold_value_slider)
         specific_value_layout.addWidget(
-            self._specific_value_radio_button, alignment=Qt.AlignVCenter
-        )
-        specific_value_layout.addWidget(
-            self._threshold_value_slider, alignment=Qt.AlignVCenter
-        )
-        specific_value_layout.addWidget(
-            self._threshold_value_spinbox, alignment=Qt.AlignVCenter
+            self._threshold_value_spinbox
         )  # Spinbox stretch
         threshold_group_layout.addLayout(specific_value_layout)
 
@@ -289,13 +230,13 @@ class ThresholdingView(View, MainWindow):
             self._file_input_widget.set_output_directory(directory)
 
     def doWork(self) -> None:
-        pass
+        return
 
     def focus_changed(self) -> None:
-        pass
+        return
 
     def getTypeOfWork(self) -> str:
-        pass
+        return ""
 
     def showResults(self) -> None:
-        pass
+        return

@@ -23,10 +23,11 @@ from allencell_ml_segmenter.widgets.input_button_widget import (
     FileInputMode,
 )
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
-from allencell_ml_segmenter.prediction.model import (
-    PredictionModel,
+
+from allencell_ml_segmenter.core.FileInputModel import (
+    InputMode,
+    FileInputModel,
 )
-from allencell_ml_segmenter.core.FileInputModel import InputMode
 
 from allencell_ml_segmenter.widgets.check_box_list_widget import (
     CheckBoxListWidget,
@@ -47,13 +48,13 @@ class PredictionFileInput(QWidget):
 
     def __init__(
         self,
-        model: PredictionModel,
+        model: FileInputModel,
         viewer: IViewer,
         service: ModelFileService,
     ):
         super().__init__()
 
-        self._model: PredictionModel = model
+        self._model: FileInputModel = model
         self._viewer: IViewer = viewer
         self._service: ModelFileService = service
         layout: QVBoxLayout = QVBoxLayout()

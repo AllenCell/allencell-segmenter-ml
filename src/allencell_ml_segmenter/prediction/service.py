@@ -1,9 +1,9 @@
 from pathlib import Path
-from typing import List, Union, Optional, Dict
+from typing import Optional, Dict
 
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.subscriber import Subscriber
-from allencell_ml_segmenter.prediction.model import PredictionModel
+from allencell_ml_segmenter.core.FileInputModel import FileInputModel
 from allencell_ml_segmenter.core.channel_extraction import (
     ChannelExtractionThread,
     get_img_path_from_csv,
@@ -17,9 +17,9 @@ class ModelFileService(Subscriber):
     Parses the chosen model file to extract the preprocessing method.
     """
 
-    def __init__(self, model: PredictionModel):
+    def __init__(self, model: FileInputModel):
         super().__init__()
-        self._model: PredictionModel = model
+        self._model: FileInputModel = model
         self._current_thread: Optional[ChannelExtractionThread] = None
         self._running_threads: Dict[int, ChannelExtractionThread] = {}
         self._threads_created = 0
