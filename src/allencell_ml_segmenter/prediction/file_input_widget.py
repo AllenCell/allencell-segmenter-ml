@@ -65,7 +65,7 @@ class PredictionFileInput(QWidget):
 
         # set up napari event listener for layer changes
         # this keeps the layer list in our UI updated as the layers are added/deleted from napari
-        self._viewer.subscribe_layers_change_event(self._update_layer_list)
+        self._viewer.subscribe_layers_change_event(function=self._update_layer_list)
 
         frame: QFrame = QFrame()
         frame_layout: QVBoxLayout = QVBoxLayout()
@@ -203,7 +203,7 @@ class PredictionFileInput(QWidget):
         self._image_list.setEnabled(True)
         self._browse_dir_edit.setEnabled(False)
         self._update_layer_list()
-        self._model.set_prediction_input_mode(
+        self._model.set_input_mode(
             PredictionInputMode.FROM_NAPARI_LAYERS
         )
 
@@ -212,7 +212,7 @@ class PredictionFileInput(QWidget):
         self._reset_channel_combobox()
         self._image_list.setEnabled(False)
         self._browse_dir_edit.setEnabled(True)
-        self._model.set_prediction_input_mode(PredictionInputMode.FROM_PATH)
+        self._model.set_input_mode(PredictionInputMode.FROM_PATH)
 
     def _update_layer_list(self, event: Optional[NapariEvent] = None) -> None:
         self._image_list.clear()
@@ -225,7 +225,7 @@ class PredictionFileInput(QWidget):
 
     def _process_checked_signal(self, row: int, state: Qt.CheckState) -> None:
         if (
-            self._model.get_prediction_input_mode()
+            self._model.get_input_mode()
             == PredictionInputMode.FROM_NAPARI_LAYERS
         ):
             selected_indices: List[int] = self._image_list.get_checked_rows()

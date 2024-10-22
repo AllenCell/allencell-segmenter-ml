@@ -105,7 +105,7 @@ class PredictionService(Subscriber):
         """
         # Check to see if user has selected an input mode
         input_mode_selected: Optional[PredictionInputMode] = (
-            self._prediction_model.get_prediction_input_mode()
+            self._prediction_model.get_input_mode()
         )
         if not input_mode_selected:
             show_warning(
