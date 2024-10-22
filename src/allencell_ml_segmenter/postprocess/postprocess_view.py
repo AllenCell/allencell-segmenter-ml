@@ -108,9 +108,7 @@ class ThresholdingView(View, MainWindow):
         self._threshold_value_slider.setValue(50)  # Default value at 0.5
 
         self._threshold_value_spinbox: QDoubleSpinBox = QDoubleSpinBox()
-        self._threshold_value_spinbox.setRange(
-            0.0, 1.0
-        )
+        self._threshold_value_spinbox.setRange(0.0, 1.0)
         self._threshold_value_spinbox.setSingleStep(0.01)
         self._threshold_value_spinbox.setValue(0.5)
 
@@ -125,9 +123,7 @@ class ThresholdingView(View, MainWindow):
         # add slider and spinbox
         specific_value_layout.addWidget(self._specific_value_radio_button)
         specific_value_layout.addWidget(self._threshold_value_slider)
-        specific_value_layout.addWidget(
-            self._threshold_value_spinbox
-        )
+        specific_value_layout.addWidget(self._threshold_value_spinbox)
         threshold_group_layout.addLayout(specific_value_layout)
 
         # autothresholding
@@ -152,7 +148,6 @@ class ThresholdingView(View, MainWindow):
         self._apply_save_button: QPushButton = QPushButton("Apply & Save")
         self._apply_save_button.setEnabled(False)
         layout.addWidget(self._apply_save_button)
-
 
         # need styling
         self.setStyleSheet(Style.get_stylesheet("thresholding_view.qss"))
