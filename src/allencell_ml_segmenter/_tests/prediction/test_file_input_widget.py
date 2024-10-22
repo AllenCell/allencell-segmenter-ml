@@ -11,8 +11,8 @@ from allencell_ml_segmenter.prediction.file_input_widget import (
 )
 from allencell_ml_segmenter.prediction.model import (
     PredictionModel,
-    PredictionInputMode,
 )
+from allencell_ml_segmenter.core.FileInputModel import InputMode
 
 MOCK_PATH: str = "/path/to/file"
 
@@ -55,7 +55,7 @@ def test_top_radio_button_slot(
     assert not file_input_widget._browse_dir_edit.isEnabled()
     assert (
         prediction_model.get_input_mode()
-        == PredictionInputMode.FROM_NAPARI_LAYERS
+        == InputMode.FROM_NAPARI_LAYERS
     )
 
 
@@ -80,7 +80,7 @@ def test_bottom_radio_button_slot(
     assert file_input_widget._browse_dir_edit.isEnabled()
     assert (
         prediction_model.get_input_mode()
-        == PredictionInputMode.FROM_PATH
+        == InputMode.FROM_PATH
     )
 
 
