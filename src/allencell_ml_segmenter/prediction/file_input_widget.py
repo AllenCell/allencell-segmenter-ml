@@ -25,8 +25,8 @@ from allencell_ml_segmenter.widgets.input_button_widget import (
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 from allencell_ml_segmenter.prediction.model import (
     PredictionModel,
-    PredictionInputMode,
 )
+from allencell_ml_segmenter.core.FileInputModel import InputMode
 
 from allencell_ml_segmenter.widgets.check_box_list_widget import (
     CheckBoxListWidget,
@@ -204,7 +204,7 @@ class PredictionFileInput(QWidget):
         self._browse_dir_edit.setEnabled(False)
         self._update_layer_list()
         self._model.set_input_mode(
-            PredictionInputMode.FROM_NAPARI_LAYERS
+            InputMode.FROM_NAPARI_LAYERS
         )
 
     def _from_directory_slot(self) -> None:
@@ -212,7 +212,7 @@ class PredictionFileInput(QWidget):
         self._reset_channel_combobox()
         self._image_list.setEnabled(False)
         self._browse_dir_edit.setEnabled(True)
-        self._model.set_input_mode(PredictionInputMode.FROM_PATH)
+        self._model.set_input_mode(InputMode.FROM_PATH)
 
     def _update_layer_list(self, event: Optional[NapariEvent] = None) -> None:
         self._image_list.clear()
@@ -226,7 +226,7 @@ class PredictionFileInput(QWidget):
     def _process_checked_signal(self, row: int, state: Qt.CheckState) -> None:
         if (
             self._model.get_input_mode()
-            == PredictionInputMode.FROM_NAPARI_LAYERS
+            == InputMode.FROM_NAPARI_LAYERS
         ):
             selected_indices: List[int] = self._image_list.get_checked_rows()
             selected_paths: List[Path] = [
