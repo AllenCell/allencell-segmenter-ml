@@ -36,7 +36,10 @@ from allencell_ml_segmenter.training.view import TrainingView
 from allencell_ml_segmenter.curation.curation_model import CurationModel
 from allencell_ml_segmenter._style import Style
 from allencell_ml_segmenter.curation.curation_service import CurationService
-from allencell_ml_segmenter.postprocess.postprocess_view import ThresholdingView
+from allencell_ml_segmenter.postprocess.postprocess_view import (
+    ThresholdingView,
+)
+
 
 class MainWidget(AicsWidget):
     """
@@ -135,9 +138,11 @@ class MainWidget(AicsWidget):
         self._initialize_window(self._prediction_view, "Prediction")
         self._window_container.currentChanged.connect(self._tab_changed)
 
-        self._thresholding_view = ThresholdingView(main_model=self._model,
-                                                   experiments_model=self._experiments_model,
-                                                   viewer=self.viewer)
+        self._thresholding_view = ThresholdingView(
+            main_model=self._model,
+            experiments_model=self._experiments_model,
+            viewer=self.viewer,
+        )
         self._initialize_window(self._thresholding_view, "Thresholding")
 
         # Model selection which applies to all views
@@ -180,7 +185,7 @@ class MainWidget(AicsWidget):
             if self._model.is_new_model()
             else self._prediction_view
         )
-        self._window_container.setTabEnabled(3, True) # TODO remove
+        self._window_container.setTabEnabled(3, True)  # TODO remove
 
     def _disable_non_prediction_tabs(self, _: Event) -> None:
         """
