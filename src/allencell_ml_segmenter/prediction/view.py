@@ -8,7 +8,7 @@ from allencell_ml_segmenter.core.dialog_box import DialogBox
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.prediction.file_input_widget import (
-    PredictionFileInput,
+    FileInputWidget,
 )
 from allencell_ml_segmenter.prediction.model import (
     PredictionModel,
@@ -73,7 +73,7 @@ class PredictionView(View, MainWindow):
         self._title.setObjectName("title")
         layout.addWidget(self._title, alignment=Qt.AlignmentFlag.AlignHCenter)
 
-        self._file_input_widget: PredictionFileInput = PredictionFileInput(
+        self._file_input_widget: FileInputWidget = FileInputWidget(
             self._prediction_model, self._viewer, self._service
         )
         self._file_input_widget.setObjectName("fileInput")
