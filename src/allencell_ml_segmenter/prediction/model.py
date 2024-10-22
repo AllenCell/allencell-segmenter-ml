@@ -6,11 +6,6 @@ from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.publisher import Publisher
 from allencell_ml_segmenter.core.FileInputModel import FileInputModel
 
-class PredictionInputMode(Enum):
-    FROM_PATH = "from_path"
-    FROM_NAPARI_LAYERS = "from_napari_layers"
-
-
 class PredictionModel(FileInputModel):
     """
     Stores state relevant to prediction processes.
