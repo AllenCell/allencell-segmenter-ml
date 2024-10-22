@@ -7,7 +7,7 @@ from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.prediction.model import (
     PredictionModel,
 )
-from allencell_ml_segmenter.core.FileInputModel import InputMode
+from allencell_ml_segmenter.core.file_input_model import InputMode
 
 from allencell_ml_segmenter.utils.cuda_util import CUDAUtils
 from allencell_ml_segmenter.utils.file_utils import FileUtils

@@ -14,7 +14,7 @@ from allencell_ml_segmenter.prediction.model import (
     PredictionModel,
 )
 
-from allencell_ml_segmenter.core.FileInputModel import InputMode
+from allencell_ml_segmenter.core.file_input_model import InputMode
 from allencell_ml_segmenter.prediction.service import ModelFileService
 from allencell_ml_segmenter.core.view import View, MainWindow
 from allencell_ml_segmenter.prediction.model_input_widget import (

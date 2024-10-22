@@ -24,7 +24,7 @@ from allencell_ml_segmenter.widgets.input_button_widget import (
 )
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 
-from allencell_ml_segmenter.core.FileInputModel import (
+from allencell_ml_segmenter.core.file_input_model import (
     InputMode,
     FileInputModel,
 )

@@ -3,7 +3,7 @@ from typing import Optional, Dict
 
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.subscriber import Subscriber
-from allencell_ml_segmenter.core.FileInputModel import FileInputModel
+from allencell_ml_segmenter.core.file_input_model import FileInputModel
 from allencell_ml_segmenter.core.channel_extraction import (
     ChannelExtractionThread,
     get_img_path_from_csv,
