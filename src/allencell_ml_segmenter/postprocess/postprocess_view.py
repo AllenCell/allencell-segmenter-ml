@@ -1,5 +1,3 @@
-from napari.utils.notifications import show_warning
-
 from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
 from allencell_ml_segmenter.main.i_viewer import IViewer
 from allencell_ml_segmenter._style import Style
@@ -8,7 +6,7 @@ from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.prediction.service import ModelFileService
 
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
-from allencell_ml_segmenter.prediction.file_input_widget import (
+from allencell_ml_segmenter.core.file_input_widget import (
     FileInputWidget,
 )
 from allencell_ml_segmenter.core.file_input_model import FileInputModel

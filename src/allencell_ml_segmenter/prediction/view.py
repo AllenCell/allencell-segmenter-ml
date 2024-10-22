@@ -7,7 +7,7 @@ from allencell_ml_segmenter._style import Style
 from allencell_ml_segmenter.core.dialog_box import DialogBox
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.main.main_model import MainModel
-from allencell_ml_segmenter.prediction.file_input_widget import (
+from allencell_ml_segmenter.core.file_input_widget import (
     FileInputWidget,
 )
 from allencell_ml_segmenter.prediction.model import (
@@ -17,9 +17,6 @@ from allencell_ml_segmenter.prediction.model import (
 from allencell_ml_segmenter.core.file_input_model import InputMode
 from allencell_ml_segmenter.prediction.service import ModelFileService
 from allencell_ml_segmenter.core.view import View, MainWindow
-from allencell_ml_segmenter.prediction.model_input_widget import (
-    ModelInputWidget,
-)
 from allencell_ml_segmenter.prediction.prediction_folder_progress_tracker import (
     PredictionFolderProgressTracker,
 )
