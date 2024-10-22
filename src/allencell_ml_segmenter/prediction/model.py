@@ -18,12 +18,6 @@ class PredictionModel(FileInputModel):
 
     def __init__(self) -> None:
         super().__init__()
-
-        # state related to PredictionFileInput
-        self.config_name: Optional[str] = None
-        self.config_dir: Optional[Path] = None
-        self._model_path: Optional[Path] = None
-
         # state related to ModelInputWidget
         self._preprocessing_method: Optional[str] = None
         self._postprocessing_method: Optional[str] = None
@@ -44,19 +38,6 @@ class PredictionModel(FileInputModel):
             if self._output_directory is not None
             else None
         )
-
-    def get_model_path(self) -> Optional[Path]:
-        """
-        Gets path to model.
-        """
-        return self._model_path
-
-    def set_model_path(self, path: Optional[Path]) -> None:
-        """
-        Sets path to model.
-        """
-        self._model_path = path
-        self.dispatch(Event.ACTION_PREDICTION_MODEL_FILE)
 
     def get_preprocessing_method(self) -> Optional[str]:
         """
