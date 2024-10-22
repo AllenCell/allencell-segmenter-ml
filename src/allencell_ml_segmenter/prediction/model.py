@@ -6,6 +6,7 @@ from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.publisher import Publisher
 from allencell_ml_segmenter.core.FileInputModel import FileInputModel
 
+
 class PredictionModel(FileInputModel):
     """
     Stores state relevant to prediction processes.
@@ -33,62 +34,6 @@ class PredictionModel(FileInputModel):
             if self._output_directory is not None
             else None
         )
-
-    def get_preprocessing_method(self) -> Optional[str]:
-        """
-        Gets preprocessing method associated with currently-selected model.
-        """
-        return self._preprocessing_method
-
-    def set_preprocessing_method(self, method: Optional[str]) -> None:
-        """
-        Sets preprocessing method associated with model after the service parses the file.
-        """
-        self._preprocessing_method = method
-        self.dispatch(Event.ACTION_PREDICTION_PREPROCESSING_METHOD)
-
-    def get_postprocessing_method(self) -> Optional[str]:
-        """
-        Gets postprocessing method selected by user.
-        """
-        return self._postprocessing_method
-
-    def set_postprocessing_method(self, method: Optional[str]) -> None:
-        """
-        Sets postprocessing method selected by user.
-        """
-        self._postprocessing_method = method
-        self.dispatch(Event.ACTION_PREDICTION_POSTPROCESSING_METHOD)
-
-    def get_postprocessing_simple_threshold(self) -> Optional[float]:
-        """
-        Gets simple threshold selected by user.
-        """
-        return self._postprocessing_simple_threshold
-
-    def set_postprocessing_simple_threshold(
-        self, threshold: Optional[float]
-    ) -> None:
-        """
-        Sets simple threshold selected by user from the slider.
-        """
-        self._postprocessing_simple_threshold = threshold
-        self.dispatch(Event.ACTION_PREDICTION_POSTPROCESSING_SIMPLE_THRESHOLD)
-
-    def get_postprocessing_auto_threshold(self) -> Optional[str]:
-        """
-        Gets auto threshold selected by user.
-        """
-        return self._postprocessing_auto_threshold
-
-    def set_postprocessing_auto_threshold(
-        self, threshold: Optional[str]
-    ) -> None:
-        """
-        Sets auto threshold selected by user.
-        """
-        self._postprocessing_auto_threshold = threshold
-        self.dispatch(Event.ACTION_PREDICTION_POSTPROCESSING_AUTO_THRESHOLD)
 
     def dispatch_prediction(self) -> None:
         """

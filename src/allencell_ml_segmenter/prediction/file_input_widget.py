@@ -65,7 +65,9 @@ class PredictionFileInput(QWidget):
 
         # set up napari event listener for layer changes
         # this keeps the layer list in our UI updated as the layers are added/deleted from napari
-        self._viewer.subscribe_layers_change_event(function=self._update_layer_list)
+        self._viewer.subscribe_layers_change_event(
+            function=self._update_layer_list
+        )
 
         frame: QFrame = QFrame()
         frame_layout: QVBoxLayout = QVBoxLayout()
@@ -203,9 +205,7 @@ class PredictionFileInput(QWidget):
         self._image_list.setEnabled(True)
         self._browse_dir_edit.setEnabled(False)
         self._update_layer_list()
-        self._model.set_input_mode(
-            InputMode.FROM_NAPARI_LAYERS
-        )
+        self._model.set_input_mode(InputMode.FROM_NAPARI_LAYERS)
 
     def _from_directory_slot(self) -> None:
         """Prohibits usage of non-related input fields if bottom button is checked."""
@@ -224,10 +224,7 @@ class PredictionFileInput(QWidget):
                 self._image_list.add_item(layer.name)
 
     def _process_checked_signal(self, row: int, state: Qt.CheckState) -> None:
-        if (
-            self._model.get_input_mode()
-            == InputMode.FROM_NAPARI_LAYERS
-        ):
+        if self._model.get_input_mode() == InputMode.FROM_NAPARI_LAYERS:
             selected_indices: List[int] = self._image_list.get_checked_rows()
             selected_paths: List[Path] = [
                 Path(self._viewer.get_layers()[i].source.path)

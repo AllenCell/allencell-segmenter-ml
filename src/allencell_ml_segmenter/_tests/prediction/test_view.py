@@ -59,9 +59,7 @@ def test_show_results(main_model: MainModel) -> None:
         / "test_files"
         / "output_test_folder"
     )
-    prediction_model.set_input_mode(
-        InputMode.FROM_NAPARI_LAYERS
-    )
+    prediction_model.set_input_mode(InputMode.FROM_NAPARI_LAYERS)
     prediction_model.set_selected_paths(
         [Path("output_1.tiff"), Path("output_2.tiff")]
     )
@@ -99,9 +97,7 @@ def test_show_results_non_empty_folder(main_model: MainModel) -> None:
         / "test_files"
         / "output_test_folder_extra"
     )
-    prediction_model.set_input_mode(
-        InputMode.FROM_NAPARI_LAYERS
-    )
+    prediction_model.set_input_mode(InputMode.FROM_NAPARI_LAYERS)
     prediction_model.set_selected_paths(
         [Path("output_3.tiff"), Path("output_4.tiff")]
     )
