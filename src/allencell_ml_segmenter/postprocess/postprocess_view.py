@@ -45,7 +45,9 @@ from allencell_ml_segmenter.training.training_progress_tracker import (
 from allencell_ml_segmenter.core.info_dialog_box import InfoDialogBox
 from allencell_ml_segmenter.utils.file_utils import FileUtils
 from allencell_ml_segmenter.utils.experiment_utils import ExperimentUtils
-from allencell_ml_segmenter.prediction.file_input_widget import PredictionFileInput
+from allencell_ml_segmenter.prediction.file_input_widget import (
+    PredictionFileInput,
+)
 from allencell_ml_segmenter.core.FileInputModel import FileInputModel
 
 from qtpy.QtWidgets import (
@@ -138,9 +140,7 @@ class ThresholdingView(View, MainWindow):
         self._none_radio_button: QRadioButton = QRadioButton()
         none_radio_layout.addWidget(self._none_radio_button)
 
-        none_radio_label: LabelWithHint = LabelWithHint(
-            "None"
-        )
+        none_radio_label: LabelWithHint = LabelWithHint("None")
         none_radio_label.set_hint("No thresholding applied.")
         none_radio_layout.addWidget(none_radio_label)
         threshold_group_layout.addLayout(none_radio_layout)
@@ -151,37 +151,51 @@ class ThresholdingView(View, MainWindow):
 
         self._specific_value_radio_button: QRadioButton = QRadioButton()
         specific_value_layout.addWidget(self._specific_value_radio_button)
-        specific_radio_label: LabelWithHint = LabelWithHint(
-            "Specific Value"
+        specific_radio_label: LabelWithHint = LabelWithHint("Specific Value")
+        specific_radio_label.set_hint(
+            "Set thresholding value you'd like to apply."
         )
-        specific_radio_label.set_hint("Set thresholding value you'd like to apply.")
         specific_value_layout.addWidget(specific_radio_label)
 
-        self._threshold_value_slider: QSlider = QSlider(Qt.Orientation.Horizontal)
-        self._threshold_value_slider.setRange(0, 100)  # Slider values from 0 to 100 (representing 0.0 to 1.0)
+        self._threshold_value_slider: QSlider = QSlider(
+            Qt.Orientation.Horizontal
+        )
+        self._threshold_value_slider.setRange(
+            0, 100
+        )  # Slider values from 0 to 100 (representing 0.0 to 1.0)
         self._threshold_value_slider.setValue(50)  # Default value at 0.5
 
         self._threshold_value_spinbox: QDoubleSpinBox = QDoubleSpinBox()
-        self._threshold_value_spinbox.setRange(0.0, 1.0)  # Spinbox range from 0.0 to 1.0
+        self._threshold_value_spinbox.setRange(
+            0.0, 1.0
+        )  # Spinbox range from 0.0 to 1.0
         self._threshold_value_spinbox.setSingleStep(0.01)
         self._threshold_value_spinbox.setValue(0.5)  # Default value
 
         # Connect slider and spinbox to keep them in sync
-        self._threshold_value_slider.valueChanged.connect(self._update_spinbox_from_slider)
-        self._threshold_value_spinbox.valueChanged.connect(self._update_slider_from_spinbox)
+        self._threshold_value_slider.valueChanged.connect(
+            self._update_spinbox_from_slider
+        )
+        self._threshold_value_spinbox.valueChanged.connect(
+            self._update_slider_from_spinbox
+        )
 
         # Add slider and spinbox to the specific value layout
-        specific_value_layout.addWidget(self._specific_value_radio_button, alignment=Qt.AlignVCenter)
-        specific_value_layout.addWidget(self._threshold_value_slider, alignment=Qt.AlignVCenter)
-        specific_value_layout.addWidget(self._threshold_value_spinbox, alignment=Qt.AlignVCenter)  # Spinbox stretch
+        specific_value_layout.addWidget(
+            self._specific_value_radio_button, alignment=Qt.AlignVCenter
+        )
+        specific_value_layout.addWidget(
+            self._threshold_value_slider, alignment=Qt.AlignVCenter
+        )
+        specific_value_layout.addWidget(
+            self._threshold_value_spinbox, alignment=Qt.AlignVCenter
+        )  # Spinbox stretch
         threshold_group_layout.addLayout(specific_value_layout)
 
         # Radio Button for 'Autothreshold' with ComboBox
         autothreshold_layout = QHBoxLayout()
         self._autothreshold_radio_button: QRadioButton = QRadioButton()
-        auto_thresh_label: LabelWithHint = LabelWithHint(
-            "Autothreshold"
-        )
+        auto_thresh_label: LabelWithHint = LabelWithHint("Autothreshold")
         auto_thresh_label.set_hint("Apply an autothresholding method.")
 
         self._autothreshold_method_combo: QComboBox = QComboBox()
@@ -215,13 +229,19 @@ class ThresholdingView(View, MainWindow):
             lambda checked: self._enable_specific_threshold_widgets(checked)
         )
         self._autothreshold_radio_button.toggled.connect(
-            lambda checked: self._autothreshold_method_combo.setEnabled(checked)
+            lambda checked: self._autothreshold_method_combo.setEnabled(
+                checked
+            )
         )
 
         # Enable/disable the Apply & Save button when a threshold method is selected
         self._none_radio_button.toggled.connect(self._enable_apply_button)
-        self._specific_value_radio_button.toggled.connect(self._enable_apply_button)
-        self._autothreshold_radio_button.toggled.connect(self._enable_apply_button)
+        self._specific_value_radio_button.toggled.connect(
+            self._enable_apply_button
+        )
+        self._autothreshold_radio_button.toggled.connect(
+            self._enable_apply_button
+        )
 
     def _update_spinbox_from_slider(self, value: int) -> None:
         """
@@ -247,20 +267,24 @@ class ThresholdingView(View, MainWindow):
         Enables the Apply & Save button if any thresholding method is selected.
         """
         self._apply_save_button.setEnabled(
-            self._none_radio_button.isChecked() or
-            self._specific_value_radio_button.isChecked() or
-            self._autothreshold_radio_button.isChecked()
+            self._none_radio_button.isChecked()
+            or self._specific_value_radio_button.isChecked()
+            or self._autothreshold_radio_button.isChecked()
         )
 
     def _browse_image_directory(self) -> None:
         """Opens a file dialog to select an image directory."""
-        directory = QFileDialog.getExistingDirectory(self, "Select Image Directory")
+        directory = QFileDialog.getExistingDirectory(
+            self, "Select Image Directory"
+        )
         if directory:
             self._file_input_widget.set_image_directory(directory)
 
     def _browse_output_directory(self) -> None:
         """Opens a file dialog to select an output directory."""
-        directory = QFileDialog.getExistingDirectory(self, "Select Output Directory")
+        directory = QFileDialog.getExistingDirectory(
+            self, "Select Output Directory"
+        )
         if directory:
             self._file_input_widget.set_output_directory(directory)
 
@@ -275,5 +299,3 @@ class ThresholdingView(View, MainWindow):
 
     def showResults(self) -> None:
         pass
-
-

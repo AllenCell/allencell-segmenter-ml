@@ -25,12 +25,6 @@ class ModelFileService(Subscriber):
         self._threads_created = 0
 
         self._model.subscribe(
-            Event.ACTION_PREDICTION_MODEL_FILE,
-            self,
-            lambda e: self.extract_preprocessing_method(),
-        )
-
-        self._model.subscribe(
             Event.ACTION_PREDICTION_EXTRACT_CHANNELS,
             self,
             lambda e: self._initiate_channel_extraction(),
@@ -38,13 +32,6 @@ class ModelFileService(Subscriber):
 
     def handle_event(self, event: Event) -> None:
         pass
-
-    def extract_preprocessing_method(self) -> None:
-        """
-        Calls the prediction model's setter for the preprocessing method. Currently set up with a dummy value.
-        """
-        # TODO: replace dummy implementation
-        self._model.set_preprocessing_method("foo")
 
     def stop_channel_extraction(self) -> None:
         if self._current_thread and self._current_thread.isRunning():
