@@ -9,7 +9,7 @@ from allencell_ml_segmenter.prediction.service import ModelFileService
 
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 from allencell_ml_segmenter.prediction.file_input_widget import (
-    PredictionFileInput,
+    FileInputWidget,
 )
 from allencell_ml_segmenter.core.file_input_model import FileInputModel
 
@@ -65,7 +65,7 @@ class ThresholdingView(View, MainWindow):
         layout.addWidget(self._title, alignment=Qt.AlignmentFlag.AlignHCenter)
 
         # Input Image Section
-        self._file_input_widget: PredictionFileInput = PredictionFileInput(
+        self._file_input_widget: FileInputWidget = FileInputWidget(
             self._thresholding_model, self._viewer, self._service
         )
         self._file_input_widget.setObjectName("fileInput")

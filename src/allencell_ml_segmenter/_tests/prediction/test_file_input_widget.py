@@ -7,7 +7,7 @@ from pytestqt.qtbot import QtBot
 
 from allencell_ml_segmenter._tests.fakes.fake_viewer import FakeViewer
 from allencell_ml_segmenter.prediction.file_input_widget import (
-    PredictionFileInput,
+    FileInputWidget,
 )
 from allencell_ml_segmenter.prediction.model import (
     PredictionModel,
@@ -25,18 +25,18 @@ def prediction_model(qtbot: QtBot) -> PredictionModel:
 @pytest.fixture
 def file_input_widget(
     qtbot: QtBot, prediction_model: PredictionModel
-) -> PredictionFileInput:
+) -> FileInputWidget:
     """
     Fixture that creates an instance of ModelInputWidget for testing.
     """
-    return PredictionFileInput(
+    return FileInputWidget(
         prediction_model, viewer=FakeViewer(), service=None
     )
 
 
 def test_top_radio_button_slot(
     qtbot: QtBot,
-    file_input_widget: PredictionFileInput,
+    file_input_widget: FileInputWidget,
     prediction_model: PredictionModel,
 ) -> None:
     """
@@ -58,7 +58,7 @@ def test_top_radio_button_slot(
 
 def test_bottom_radio_button_slot(
     qtbot: QtBot,
-    file_input_widget: PredictionFileInput,
+    file_input_widget: FileInputWidget,
     prediction_model: PredictionModel,
 ) -> None:
     """
@@ -88,7 +88,7 @@ def test_bottom_radio_button_slot(
 def test_populate_input_channel_combobox(qtbot: QtBot) -> None:
     # Arrange
     prediction_model: PredictionModel = PredictionModel()
-    prediction_file_input: PredictionFileInput = PredictionFileInput(
+    prediction_file_input: FileInputWidget = FileInputWidget(
         prediction_model, viewer=FakeViewer(), service=None
     )
     prediction_model.set_max_channels(6)
