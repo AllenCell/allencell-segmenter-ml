@@ -13,7 +13,7 @@ from allencell_ml_segmenter.prediction.model import (
 from allencell_ml_segmenter.core.image_data_extractor import (
     FakeImageDataExtractor,
 )
-from allencell_ml_segmenter.core.FileInputModel import InputMode
+from allencell_ml_segmenter.core.file_input_model import InputMode
 from allencell_ml_segmenter.prediction.view import PredictionView
 
 
