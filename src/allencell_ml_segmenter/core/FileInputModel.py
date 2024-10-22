@@ -5,9 +5,11 @@ from enum import Enum
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.publisher import Publisher
 
+
 class InputMode(Enum):
     FROM_PATH = "from_path"
     FROM_NAPARI_LAYERS = "from_napari_layers"
+
 
 class FileInputModel(Publisher, ABC):
     """
@@ -24,7 +26,9 @@ class FileInputModel(Publisher, ABC):
         self._selected_paths: Optional[list[Path]] = None
         self._max_channels: Optional[int] = None
 
-    def set_input_image_path(self, path: Optional[Path], extract_channels: bool = False) -> None:
+    def set_input_image_path(
+        self, path: Optional[Path], extract_channels: bool = False
+    ) -> None:
         self._input_image_path = path
         if extract_channels and path is not None:
             self.dispatch(Event.ACTION_PREDICTION_EXTRACT_CHANNELS)
@@ -35,8 +39,14 @@ class FileInputModel(Publisher, ABC):
     def set_image_input_channel_index(self, idx: Optional[int]) -> None:
         self._image_input_channel_index = idx
 
+    def get_image_input_channel_index(self) -> Optional[int]:
+        return self._image_input_channel_index
+
     def set_output_directory(self, dir: Optional[Path]) -> None:
         self._output_directory = dir
+
+    def get_output_directory(self) -> Optional[Path]:
+        return self._output_directory
 
     def set_input_mode(self, mode: Optional[InputMode]) -> None:
         self._input_mode = mode
@@ -44,7 +54,9 @@ class FileInputModel(Publisher, ABC):
     def get_input_mode(self) -> Optional[InputMode]:
         return self._input_mode
 
-    def set_selected_paths(self, paths: Optional[List[Path]], extract_channels: bool = False) -> None:
+    def set_selected_paths(
+        self, paths: Optional[List[Path]], extract_channels: bool = False
+    ) -> None:
         self._selected_paths = paths
         if extract_channels and paths is not None:
             self.dispatch(Event.ACTION_PREDICTION_EXTRACT_CHANNELS)
