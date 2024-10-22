@@ -9,11 +9,11 @@ from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.prediction.model import (
     PredictionModel,
-    PredictionInputMode,
 )
 from allencell_ml_segmenter.core.image_data_extractor import (
     FakeImageDataExtractor,
 )
+from allencell_ml_segmenter.core.FileInputModel import InputMode
 from allencell_ml_segmenter.prediction.view import PredictionView
 
 
@@ -60,7 +60,7 @@ def test_show_results(main_model: MainModel) -> None:
         / "output_test_folder"
     )
     prediction_model.set_input_mode(
-        PredictionInputMode.FROM_NAPARI_LAYERS
+        InputMode.FROM_NAPARI_LAYERS
     )
     prediction_model.set_selected_paths(
         [Path("output_1.tiff"), Path("output_2.tiff")]
@@ -100,7 +100,7 @@ def test_show_results_non_empty_folder(main_model: MainModel) -> None:
         / "output_test_folder_extra"
     )
     prediction_model.set_input_mode(
-        PredictionInputMode.FROM_NAPARI_LAYERS
+        InputMode.FROM_NAPARI_LAYERS
     )
     prediction_model.set_selected_paths(
         [Path("output_3.tiff"), Path("output_4.tiff")]

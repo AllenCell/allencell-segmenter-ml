@@ -6,8 +6,8 @@ from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.prediction.model import (
     PredictionModel,
-    PredictionInputMode,
 )
+from allencell_ml_segmenter.core.FileInputModel import InputMode
 
 from allencell_ml_segmenter.utils.cuda_util import CUDAUtils
 from allencell_ml_segmenter.utils.file_utils import FileUtils
@@ -104,7 +104,7 @@ class PredictionService(Subscriber):
         If needed, write csv's for predictions, and set total number of images to be processed
         """
         # Check to see if user has selected an input mode
-        input_mode_selected: Optional[PredictionInputMode] = (
+        input_mode_selected: Optional[InputMode] = (
             self._prediction_model.get_input_mode()
         )
         if not input_mode_selected:
@@ -112,11 +112,11 @@ class PredictionService(Subscriber):
                 "Please select input images before running prediction."
             )
             # dont set state if we have an error in setup
-        elif input_mode_selected == PredictionInputMode.FROM_PATH:
+        elif input_mode_selected == InputMode.FROM_PATH:
             self._prediction_model.set_total_num_images(
                 self._setup_inputs_from_path()
             )
-        elif input_mode_selected == PredictionInputMode.FROM_NAPARI_LAYERS:
+        elif input_mode_selected == InputMode.FROM_NAPARI_LAYERS:
             self._prediction_model.set_total_num_images(
                 self._setup_inputs_from_napari()
             )

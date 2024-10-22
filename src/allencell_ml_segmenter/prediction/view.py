@@ -12,8 +12,9 @@ from allencell_ml_segmenter.prediction.file_input_widget import (
 )
 from allencell_ml_segmenter.prediction.model import (
     PredictionModel,
-    PredictionInputMode,
 )
+
+from allencell_ml_segmenter.core.FileInputModel import InputMode
 from allencell_ml_segmenter.prediction.service import ModelFileService
 from allencell_ml_segmenter.core.view import View, MainWindow
 from allencell_ml_segmenter.prediction.model_input_widget import (
@@ -150,7 +151,7 @@ class PredictionView(View, MainWindow):
         # Display images if prediction inputs are from Napari Layers
         if (
             self._prediction_model.get_input_mode()
-            == PredictionInputMode.FROM_NAPARI_LAYERS
+            == InputMode.FROM_NAPARI_LAYERS
             and output_path is not None
         ):
             raw_imgs: Optional[list[Path]] = (
