@@ -213,26 +213,6 @@ class ThresholdingView(View, MainWindow):
             or self._autothreshold_radio_button.isChecked()
         )
 
-    def _browse_image_directory(self) -> None:
-        """
-        open a file dialog to select image directory
-        """
-        directory = QFileDialog.getExistingDirectory(
-            self, "Select Image Directory"
-        )
-        if directory:
-            self._file_input_widget.set_image_directory(directory)
-
-    def _browse_output_directory(self) -> None:
-        """
-        open a file dialog to select an output directory.
-        """
-        directory = QFileDialog.getExistingDirectory(
-            self, "Select Output Directory"
-        )
-        if directory:
-            self._file_input_widget.set_output_directory(directory)
-
     def doWork(self) -> None:
         return
 
