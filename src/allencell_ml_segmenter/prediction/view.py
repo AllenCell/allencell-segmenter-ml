@@ -7,18 +7,16 @@ from allencell_ml_segmenter._style import Style
 from allencell_ml_segmenter.core.dialog_box import DialogBox
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.main.main_model import MainModel
-from allencell_ml_segmenter.prediction.file_input_widget import (
-    PredictionFileInput,
+from allencell_ml_segmenter.core.file_input_widget import (
+    FileInputWidget,
 )
 from allencell_ml_segmenter.prediction.model import (
     PredictionModel,
-    PredictionInputMode,
 )
+
+from allencell_ml_segmenter.core.file_input_model import InputMode
 from allencell_ml_segmenter.prediction.service import ModelFileService
 from allencell_ml_segmenter.core.view import View, MainWindow
-from allencell_ml_segmenter.prediction.model_input_widget import (
-    ModelInputWidget,
-)
 from allencell_ml_segmenter.prediction.prediction_folder_progress_tracker import (
     PredictionFolderProgressTracker,
 )
@@ -72,7 +70,7 @@ class PredictionView(View, MainWindow):
         self._title.setObjectName("title")
         layout.addWidget(self._title, alignment=Qt.AlignmentFlag.AlignHCenter)
 
-        self._file_input_widget: PredictionFileInput = PredictionFileInput(
+        self._file_input_widget: FileInputWidget = FileInputWidget(
             self._prediction_model, self._viewer, self._service
         )
         self._file_input_widget.setObjectName("fileInput")
@@ -149,8 +147,8 @@ class PredictionView(View, MainWindow):
 
         # Display images if prediction inputs are from Napari Layers
         if (
-            self._prediction_model.get_prediction_input_mode()
-            == PredictionInputMode.FROM_NAPARI_LAYERS
+            self._prediction_model.get_input_mode()
+            == InputMode.FROM_NAPARI_LAYERS
             and output_path is not None
         ):
             raw_imgs: Optional[list[Path]] = (

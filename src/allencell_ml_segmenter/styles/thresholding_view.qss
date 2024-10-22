@@ -1,0 +1,40 @@
+/*
+Global stylesheet
+
+Qt stylesheet reference: https://doc.qt.io/qtforpython-5/overviews/stylesheet-syntax.html
+Examples: https://doc.qt.io/qt-5/stylesheet-examples.html#customizing-specific-widgets
+*/
+
+#run {
+    margin: 5px 13px;
+}
+
+#modelInput #methodLabel {
+    margin-right: 160px;
+}
+
+#modelInput QRadioButton {
+    margin-left: 25px;
+    margin-right: 6px;
+}
+
+#modelInput #slider {
+    margin-right: 20px;
+}
+
+#modelInput #spinbox:disabled {
+    color: #868E93;
+}
+
+#modelInput #lowerBound {
+    margin-right: 57px;
+    font-size: 10px;
+}
+
+#modelInput #upperBound {
+    font-size: 10px;
+}
+
+#fileInput #onScreen, #imageList, #radioDirectory {
+    margin-left: 40px;
+}

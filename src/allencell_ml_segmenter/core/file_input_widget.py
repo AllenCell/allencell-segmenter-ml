@@ -23,9 +23,10 @@ from allencell_ml_segmenter.widgets.input_button_widget import (
     FileInputMode,
 )
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
-from allencell_ml_segmenter.prediction.model import (
-    PredictionModel,
-    PredictionInputMode,
+
+from allencell_ml_segmenter.core.file_input_model import (
+    InputMode,
+    FileInputModel,
 )
 
 from allencell_ml_segmenter.widgets.check_box_list_widget import (
@@ -37,7 +38,7 @@ from allencell_ml_segmenter.prediction.service import ModelFileService
 from allencell_ml_segmenter.curation.stacked_spinner import StackedSpinner
 
 
-class PredictionFileInput(QWidget):
+class FileInputWidget(QWidget):
     """
     A widget containing file inputs for the input to a model prediction.
     """
@@ -47,13 +48,13 @@ class PredictionFileInput(QWidget):
 
     def __init__(
         self,
-        model: PredictionModel,
+        model: FileInputModel,
         viewer: IViewer,
         service: ModelFileService,
     ):
         super().__init__()
 
-        self._model: PredictionModel = model
+        self._model: FileInputModel = model
         self._viewer: IViewer = viewer
         self._service: ModelFileService = service
         layout: QVBoxLayout = QVBoxLayout()
@@ -65,7 +66,9 @@ class PredictionFileInput(QWidget):
 
         # set up napari event listener for layer changes
         # this keeps the layer list in our UI updated as the layers are added/deleted from napari
-        self._viewer.subscribe_layers_change_event(self._update_layer_list)
+        self._viewer.subscribe_layers_change_event(
+            function=self._update_layer_list
+        )
 
         frame: QFrame = QFrame()
         frame_layout: QVBoxLayout = QVBoxLayout()
@@ -92,9 +95,7 @@ class PredictionFileInput(QWidget):
 
         horiz_layout.addWidget(self._radio_on_screen)
 
-        question_label: LabelWithHint = LabelWithHint(
-            PredictionFileInput.TOP_TEXT
-        )
+        question_label: LabelWithHint = LabelWithHint(FileInputWidget.TOP_TEXT)
         question_label.set_hint("Image(s) already opened in napari")
         horiz_layout.addWidget(question_label)
 
@@ -119,7 +120,7 @@ class PredictionFileInput(QWidget):
 
         image_dir_layout: QVBoxLayout = QVBoxLayout()
 
-        question_label = LabelWithHint(PredictionFileInput.BOTTOM_TEXT)
+        question_label = LabelWithHint(FileInputWidget.BOTTOM_TEXT)
         question_label.set_hint(
             "Whole directory of image will be used as input. Prediction results will not be displayed in napari after prediction completion."
         )
@@ -203,16 +204,14 @@ class PredictionFileInput(QWidget):
         self._image_list.setEnabled(True)
         self._browse_dir_edit.setEnabled(False)
         self._update_layer_list()
-        self._model.set_prediction_input_mode(
-            PredictionInputMode.FROM_NAPARI_LAYERS
-        )
+        self._model.set_input_mode(InputMode.FROM_NAPARI_LAYERS)
 
     def _from_directory_slot(self) -> None:
         """Prohibits usage of non-related input fields if bottom button is checked."""
         self._reset_channel_combobox()
         self._image_list.setEnabled(False)
         self._browse_dir_edit.setEnabled(True)
-        self._model.set_prediction_input_mode(PredictionInputMode.FROM_PATH)
+        self._model.set_input_mode(InputMode.FROM_PATH)
 
     def _update_layer_list(self, event: Optional[NapariEvent] = None) -> None:
         self._image_list.clear()
@@ -224,10 +223,7 @@ class PredictionFileInput(QWidget):
                 self._image_list.add_item(layer.name)
 
     def _process_checked_signal(self, row: int, state: Qt.CheckState) -> None:
-        if (
-            self._model.get_prediction_input_mode()
-            == PredictionInputMode.FROM_NAPARI_LAYERS
-        ):
+        if self._model.get_input_mode() == InputMode.FROM_NAPARI_LAYERS:
             selected_indices: List[int] = self._image_list.get_checked_rows()
             selected_paths: List[Path] = [
                 Path(self._viewer.get_layers()[i].source.path)
