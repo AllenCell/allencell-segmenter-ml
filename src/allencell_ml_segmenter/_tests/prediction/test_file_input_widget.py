@@ -54,7 +54,7 @@ def test_top_radio_button_slot(
     assert file_input_widget._image_list.isEnabled()
     assert not file_input_widget._browse_dir_edit.isEnabled()
     assert (
-        prediction_model.get_prediction_input_mode()
+        prediction_model.get_input_mode()
         == PredictionInputMode.FROM_NAPARI_LAYERS
     )
 
@@ -79,7 +79,7 @@ def test_bottom_radio_button_slot(
     assert not file_input_widget._image_list.isEnabled()
     assert file_input_widget._browse_dir_edit.isEnabled()
     assert (
-        prediction_model.get_prediction_input_mode()
+        prediction_model.get_input_mode()
         == PredictionInputMode.FROM_PATH
     )
 
