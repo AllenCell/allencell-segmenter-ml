@@ -135,7 +135,7 @@ class PredictionService(Subscriber):
         # Need these overrides to load in csv's
         overrides["data.columns"] = ["raw", "split"]
         overrides["data.split_column"] = "split"
-        overrides["ckpt_path"] = str(checkpoint)
+        overrides["checkpoint.ckpt_path"] = str(checkpoint)
 
         input_path: Optional[Path] = (
             self._prediction_model.get_input_image_path()
