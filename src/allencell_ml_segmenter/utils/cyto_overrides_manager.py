@@ -62,6 +62,8 @@ class CytoDLOverridesManager:
                 )
             # Filters/Model Size (required if starting new model)
             overrides_dict["model._aux.filters"] = model_size.value
+            overrides_dict["checkpoint.weights_only"] = True
+            overrides_dict["checkpoint.strict"] = False
 
         # Hardware overrides (required)
         if CUDAUtils.cuda_available():
