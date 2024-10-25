@@ -53,7 +53,7 @@ class ModelDownloadDialog(QDialog):
 
     def _doc_button_handler(self) -> None:
         webbrowser.open(
-                "https://github.com/AllenCell/allencell-segmenter-ml/blob/535-model-metadata/docs/models.md" # noqa TODO update link
+                "https://github.com/AllenCell/allencell-segmenter-ml/blob/main/docs/models.md"
             )
         
     def _download_button_handler(self) -> None:
