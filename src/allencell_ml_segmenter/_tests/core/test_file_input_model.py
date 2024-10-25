@@ -12,7 +12,7 @@ def test_set_selected_paths_no_extract_channels() -> None:
     file_input_model.subscribe(
         Event.ACTION_PREDICTION_EXTRACT_CHANNELS,
         dummy_subscriber,
-        dummy_subscriber.handle
+        dummy_subscriber.handle,
     )
 
     # Act
@@ -20,7 +20,9 @@ def test_set_selected_paths_no_extract_channels() -> None:
 
     # Assert nothing happened
 
-    assert len(dummy_subscriber.handled) == 0
+    assert not dummy_subscriber.was_handled(
+        Event.ACTION_PREDICTION_EXTRACT_CHANNELS
+    )
 
 
 def test_set_selected_paths_no_paths() -> None:
@@ -30,15 +32,18 @@ def test_set_selected_paths_no_paths() -> None:
     file_input_model.subscribe(
         Event.ACTION_PREDICTION_EXTRACT_CHANNELS,
         dummy_subscriber,
-        dummy_subscriber.handle
+        dummy_subscriber.handle,
     )
 
     # Act
-    file_input_model.set_selected_paths([], True)
+    file_input_model.set_selected_paths(None, True)
 
     # Assert nothing happened
 
-    assert len(dummy_subscriber.handled) == 0
+    assert not dummy_subscriber.was_handled(
+        Event.ACTION_PREDICTION_EXTRACT_CHANNELS
+    )
+
 
 def test_set_selected_paths_dispatched() -> None:
     # Arrange
@@ -47,50 +52,49 @@ def test_set_selected_paths_dispatched() -> None:
     file_input_model.subscribe(
         Event.ACTION_PREDICTION_EXTRACT_CHANNELS,
         dummy_subscriber,
-        dummy_subscriber.handle
+        dummy_subscriber.handle,
     )
 
     # Act
     file_input_model.set_selected_paths([Path()], True)
 
     # Assert dispatched
-    assert len(dummy_subscriber.handled) == 1
-    assert dummy_subscriber.handled[Event.ACTION_PREDICTION_EXTRACT_CHANNELS] = True
+    assert dummy_subscriber.was_handled(
+        Event.ACTION_PREDICTION_EXTRACT_CHANNELS
+    )
+
 
 def test_set_max_channels_no_channel() -> None:
     # Arrange
     file_input_model: FileInputModel = FileInputModel()
     dummy_subscriber: FakeSubscriber = FakeSubscriber()
     file_input_model.subscribe(
-        Event.ACTION_PREDICTION_EXTRACT_CHANNELS,
+        Event.ACTION_PREDICTION_MAX_CHANNELS_SET,
         dummy_subscriber,
-        dummy_subscriber.handle
+        dummy_subscriber.handle,
     )
 
     # Act
     file_input_model.set_max_channels(None)
 
     # Assert nothing happened
-    assert len(dummy_subscriber.handled) == 0
+    assert not dummy_subscriber.was_handled(
+        Event.ACTION_PREDICTION_MAX_CHANNELS_SET
+    )
+
 
 def test_set_max_channels_dispatch() -> None:
     # Arrange
     file_input_model: FileInputModel = FileInputModel()
     dummy_subscriber: FakeSubscriber = FakeSubscriber()
     file_input_model.subscribe(
-        Event.ACTION_PREDICTION_EXTRACT_CHANNELS,
+        Event.ACTION_PREDICTION_MAX_CHANNELS_SET,
         dummy_subscriber,
-        dummy_subscriber.handle
+        dummy_subscriber.handle,
     )
 
     # Act
     file_input_model.set_max_channels(2)
 
     # Assert nothing happened
-    assert len(dummy_subscriber.handled) == 1
-    assert dummy_subscriber.handled[Event.ACTION_PREDICTION_MAX_CHANNELS_SET] = True
-
-
-
-
-
+    dummy_subscriber.was_handled(Event.ACTION_PREDICTION_MAX_CHANNELS_SET)
