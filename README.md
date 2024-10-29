@@ -87,7 +87,13 @@ To confirm that the virtual environment has been successfully activated, you can
     # Python 3.10.11   <-- Example output
     ```
 
+#### STEP 3. Install `pyqt5` 
 
+Lastly, we need to install `pyqt5`, a library to run the user interface (UI). Run the following command in your terminal or powershell:
+
+```bash 
+pip install "napari[pyqt5]" 
+```
 
 
 
