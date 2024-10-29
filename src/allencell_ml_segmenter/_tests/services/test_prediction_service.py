@@ -134,7 +134,7 @@ def test_build_overrides() -> None:
     assert overrides["train"] == False
     assert overrides["mode"] == "predict"
     assert overrides["task_name"] == "predict_task_from_app"
-    assert overrides["ckpt_path"] == str(
+    assert overrides["checkpoint.ckpt_path"] == str(
         Path(__file__).parent.parent
         / "main"
         / "experiments_home"
