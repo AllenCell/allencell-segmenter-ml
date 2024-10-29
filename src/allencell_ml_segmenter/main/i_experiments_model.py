@@ -29,6 +29,7 @@ class IExperimentsModel(Publisher):
 
         name (str): name of cyto-dl experiment
         """
+        print(f"applying {name} experiment")
         self._experiment_name = name
         self.dispatch(Event.ACTION_EXPERIMENT_APPLIED)
 
