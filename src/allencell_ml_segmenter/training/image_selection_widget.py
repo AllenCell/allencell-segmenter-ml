@@ -134,7 +134,10 @@ class ImageSelectionWidget(QWidget):
         self._model.signals.num_channels_set.connect(self._update_channels)
 
     def set_inputs_csv(self, event: Optional[Event] = None) -> None:
-        if self._experiments_model.get_csv_path() is not None:
+        if (
+            self._experiments_model.get_user_experiments_path()
+            and self._experiments_model.get_experiment_name()
+        ):
             csv_path = self._experiments_model.get_csv_path() / "train.csv"
             if csv_path.is_file():
                 # if the csv exists
