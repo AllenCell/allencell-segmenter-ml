@@ -77,7 +77,12 @@ class ExperimentsModel(IExperimentsModel):
         return user_exp_path / experiment_name / "checkpoints" / checkpoint
 
     def _get_exp_path(self) -> Path:
-        return self.get_user_experiments_path() / self.get_experiment_name()
+        user_exp_path: Optional[Path] = self.get_user_experiments_path()
+        exp_name: Optional[str] = self.get_experiment_name()
+        if user_exp_path and exp_name:
+            return user_exp_path / exp_name
+        else:
+            raise ValueError("get_exp_path called without both defined.")
 
     def get_csv_path(self) -> Path:
         return self._get_exp_path() / "data"
