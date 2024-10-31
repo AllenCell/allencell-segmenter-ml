@@ -11,7 +11,7 @@ def main() -> None:
         raise ValueError("No component specified for bumping version")
 
     component: str = sys.argv[1].lower()
-    valid_options: set[str] = {"major", "minor", "patch", "dev", "post"}
+    valid_options: set[str] = {"major", "minor", "patch", "rc", "post"}
 
     if component not in valid_options:
         raise ValueError(f"Component must be one of {valid_options}")
@@ -20,36 +20,33 @@ def main() -> None:
     version_components: list[str] = version.split(".")
 
     update_output: subprocess.CompletedProcess
-    # 4 components means we currently have a dev or post version
-    if len(version_components) == 4 and version_components[-1].startswith(
-        "dev"
-    ):
-        if component == "dev":
-            # increment the dev tag (e.g. 1.0.0.dev0 -> 1.0.0.dev1)
+    if "rc" in version_components[-1]:
+        if component == "rc":
+            # increment the rc tag (e.g. 1.0.0rc0 -> 1.0.0rc1)
             update_output = subprocess.run(
                 ["bumpver", "update", "--tag-num", "-n"]
             )
         elif component == "patch":
-            # finalize the patch by removing dev tag (e.g. 1.0.0.dev1 -> 1.0.0)
+            # finalize the patch by removing rc tag (e.g. 1.0.0rc1 -> 1.0.0)
             update_output = subprocess.run(
                 ["bumpver", "update", "--tag=final", "-n"]
             )
         else:
             raise ValueError(
-                "Cannot update major or minor version while dev version is current"
+                "Cannot update major or minor version while rc version is current"
             )
-    elif len(version_components) == 4:  # current version must be post
+    elif "post" in version_components[-1]:
         if component == "post":
             update_output = subprocess.run(
                 ["bumpver", "update", "--tag-num", "-n"]
             )
         else:
             raise ValueError("Cannot change post version to standard version")
-    elif len(version_components) == 3:
-        if component == "dev":
-            # increment patch and begin at dev0 (e.g. 1.0.0 -> 1.0.1.dev0)
+    else:
+        if component == "rc":
+            # increment patch and begin at rc0 (e.g. 1.0.0 -> 1.0.1rc0)
             update_output = subprocess.run(
-                ["bumpver", "update", "--patch", "--tag=dev", "-n"]
+                ["bumpver", "update", "--patch", "--tag=rc", "-n"]
             )
         elif component == "post":
             update_output = subprocess.run(
@@ -59,11 +56,6 @@ def main() -> None:
             update_output = subprocess.run(
                 ["bumpver", "update", f"--{component}", "-n"]
             )
-
-    else:
-        raise ValueError(
-            f"Unknown version format: {version}. Expected MAJOR.MINOR.PATCH[.PYTAGNUM]"
-        )
 
     if update_output.returncode != 0:
         raise RuntimeError(
