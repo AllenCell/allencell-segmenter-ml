@@ -157,10 +157,8 @@ class PredictionService(Subscriber):
         channel: Optional[int] = (
             self._prediction_model.get_image_input_channel_index()
         )
-        if channel:
-            overrides["data.transforms.predict.transforms[1].reader[0].C"] = (
-                channel
-            )
+        if channel is not None:
+            overrides["input_channel"] = channel
 
         # selecting hardware- GPU if available (and correct drivers installed),
         # CPU otherwise.
