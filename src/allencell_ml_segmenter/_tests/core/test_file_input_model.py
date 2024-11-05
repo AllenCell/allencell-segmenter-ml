@@ -10,7 +10,7 @@ def test_set_selected_paths_no_extract_channels() -> None:
     file_input_model: FileInputModel = FileInputModel()
     dummy_subscriber: FakeSubscriber = FakeSubscriber()
     file_input_model.subscribe(
-        Event.ACTION_PREDICTION_EXTRACT_CHANNELS,
+        Event.ACTION_FILEINPUT_EXTRACT_CHANNELS,
         dummy_subscriber,
         dummy_subscriber.handle,
     )
@@ -21,7 +21,7 @@ def test_set_selected_paths_no_extract_channels() -> None:
     # Assert nothing happened
 
     assert not dummy_subscriber.was_handled(
-        Event.ACTION_PREDICTION_EXTRACT_CHANNELS
+        Event.ACTION_FILEINPUT_EXTRACT_CHANNELS
     )
 
 
@@ -30,7 +30,7 @@ def test_set_selected_paths_no_paths() -> None:
     file_input_model: FileInputModel = FileInputModel()
     dummy_subscriber: FakeSubscriber = FakeSubscriber()
     file_input_model.subscribe(
-        Event.ACTION_PREDICTION_EXTRACT_CHANNELS,
+        Event.ACTION_FILEINPUT_EXTRACT_CHANNELS,
         dummy_subscriber,
         dummy_subscriber.handle,
     )
@@ -41,7 +41,7 @@ def test_set_selected_paths_no_paths() -> None:
     # Assert nothing happened
 
     assert not dummy_subscriber.was_handled(
-        Event.ACTION_PREDICTION_EXTRACT_CHANNELS
+        Event.ACTION_FILEINPUT_EXTRACT_CHANNELS
     )
 
 
@@ -50,7 +50,7 @@ def test_set_selected_paths_dispatched() -> None:
     file_input_model: FileInputModel = FileInputModel()
     dummy_subscriber: FakeSubscriber = FakeSubscriber()
     file_input_model.subscribe(
-        Event.ACTION_PREDICTION_EXTRACT_CHANNELS,
+        Event.ACTION_FILEINPUT_EXTRACT_CHANNELS,
         dummy_subscriber,
         dummy_subscriber.handle,
     )
@@ -60,7 +60,7 @@ def test_set_selected_paths_dispatched() -> None:
 
     # Assert dispatched
     assert dummy_subscriber.was_handled(
-        Event.ACTION_PREDICTION_EXTRACT_CHANNELS
+        Event.ACTION_FILEINPUT_EXTRACT_CHANNELS
     )
 
 
@@ -69,7 +69,7 @@ def test_set_max_channels_no_channel() -> None:
     file_input_model: FileInputModel = FileInputModel()
     dummy_subscriber: FakeSubscriber = FakeSubscriber()
     file_input_model.subscribe(
-        Event.ACTION_PREDICTION_MAX_CHANNELS_SET,
+        Event.ACTION_FILEINPUT_MAX_CHANNELS_SET,
         dummy_subscriber,
         dummy_subscriber.handle,
     )
@@ -79,7 +79,7 @@ def test_set_max_channels_no_channel() -> None:
 
     # Assert nothing happened
     assert not dummy_subscriber.was_handled(
-        Event.ACTION_PREDICTION_MAX_CHANNELS_SET
+        Event.ACTION_FILEINPUT_MAX_CHANNELS_SET
     )
 
 
@@ -88,7 +88,7 @@ def test_set_max_channels_dispatch() -> None:
     file_input_model: FileInputModel = FileInputModel()
     dummy_subscriber: FakeSubscriber = FakeSubscriber()
     file_input_model.subscribe(
-        Event.ACTION_PREDICTION_MAX_CHANNELS_SET,
+        Event.ACTION_FILEINPUT_MAX_CHANNELS_SET,
         dummy_subscriber,
         dummy_subscriber.handle,
     )
@@ -97,4 +97,4 @@ def test_set_max_channels_dispatch() -> None:
     file_input_model.set_max_channels(2)
 
     # Assert nothing happened
-    dummy_subscriber.was_handled(Event.ACTION_PREDICTION_MAX_CHANNELS_SET)
+    dummy_subscriber.was_handled(Event.ACTION_FILEINPUT_MAX_CHANNELS_SET)
