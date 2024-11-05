@@ -13,7 +13,10 @@ from allencell_ml_segmenter.prediction.model import (
     PredictionModel,
 )
 
-from allencell_ml_segmenter.core.file_input_model import InputMode, FileInputModel
+from allencell_ml_segmenter.core.file_input_model import (
+    InputMode,
+    FileInputModel,
+)
 
 MOCK_PATH: str = "/path/to/file"
 
@@ -97,6 +100,7 @@ def test_populate_input_channel_combobox(qtbot: QtBot) -> None:
 
     # Assert
     assert prediction_file_input._channel_select_dropdown.isEnabled()
+
 
 def test_input_image_paths(prediction_model: PredictionModel) -> None:
     """

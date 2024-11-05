@@ -25,6 +25,15 @@ class FileInputModel(Publisher):
         self._selected_paths: Optional[list[Path]] = None
         self._max_channels: Optional[int] = None
 
+    def get_output_seg_directory(self) -> Optional[Path]:
+        """
+        Gets path to where segmentation predictions are stored.
+        """
+        output_dir: Optional[Path] = self.get_output_directory()
+        if output_dir is None:
+            return None
+        return output_dir / "target"
+
     def set_input_image_path(
         self, path: Optional[Path], extract_channels: bool = False
     ) -> None:
