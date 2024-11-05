@@ -39,6 +39,7 @@ from allencell_ml_segmenter.curation.curation_service import CurationService
 from allencell_ml_segmenter.postprocess.postprocess_view import (
     ThresholdingView,
 )
+from allencell_ml_segmenter.core.file_input_model import FileInputModel
 
 
 class MainWidget(AicsWidget):
@@ -83,7 +84,7 @@ class MainWidget(AicsWidget):
         self._training_model: TrainingModel = TrainingModel(
             main_model=self._model, experiments_model=self._experiments_model
         )
-
+        self._file_input_model: FileInputModel = FileInputModel()
         self._prediction_model: PredictionModel = PredictionModel()
         self._curation_model: CurationModel = CurationModel(
             self._experiments_model,
@@ -104,6 +105,7 @@ class MainWidget(AicsWidget):
         )
         self._prediction_service: PredictionService = PredictionService(
             prediction_model=self._prediction_model,
+            file_input_model=self._file_input_model,
             experiments_model=self._experiments_model,
         )
 
@@ -133,6 +135,7 @@ class MainWidget(AicsWidget):
         self._prediction_view: PredictionView = PredictionView(
             main_model=self._model,
             prediction_model=self._prediction_model,
+            file_input_model=self._file_input_model,
             viewer=self.viewer,
         )
         self._initialize_window(self._prediction_view, "Prediction")
