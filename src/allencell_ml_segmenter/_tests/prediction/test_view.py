@@ -53,17 +53,17 @@ def test_show_results(main_model: MainModel) -> None:
     """
     # ARRANGE
     prediction_model: PredictionModel = PredictionModel()
-    prediction_model.set_output_directory(
+    prediction_model.file_input_model.set_output_directory(
         Path(allencell_ml_segmenter.__file__).parent
         / "_tests"
         / "test_files"
         / "output_test_folder"
     )
-    prediction_model.set_input_mode(InputMode.FROM_NAPARI_LAYERS)
-    prediction_model.set_selected_paths(
+    prediction_model.file_input_model.set_input_mode(InputMode.FROM_NAPARI_LAYERS)
+    prediction_model.file_input_model.set_selected_paths(
         [Path("output_1.tiff"), Path("output_2.tiff")]
     )
-    prediction_model.set_image_input_channel_index(0)
+    prediction_model.file_input_model.set_image_input_channel_index(0)
     fake_viewer: FakeViewer = FakeViewer()
 
     prediction_view: PredictionView = PredictionView(
@@ -91,17 +91,17 @@ def test_show_results_non_empty_folder(main_model: MainModel) -> None:
     """
     # ARRANGE
     prediction_model: PredictionModel = PredictionModel()
-    prediction_model.set_output_directory(
+    prediction_model.file_input_model.set_output_directory(
         Path(allencell_ml_segmenter.__file__).parent
         / "_tests"
         / "test_files"
         / "output_test_folder_extra"
     )
-    prediction_model.set_input_mode(InputMode.FROM_NAPARI_LAYERS)
-    prediction_model.set_selected_paths(
+    prediction_model.file_input_model.set_input_mode(InputMode.FROM_NAPARI_LAYERS)
+    prediction_model.file_input_model.set_selected_paths(
         [Path("output_3.tiff"), Path("output_4.tiff")]
     )
-    prediction_model.set_image_input_channel_index(0)
+    prediction_model.file_input_model.set_image_input_channel_index(0)
     fake_viewer: FakeViewer = FakeViewer()
 
     prediction_view: PredictionView = PredictionView(

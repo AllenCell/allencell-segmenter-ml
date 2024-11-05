@@ -11,10 +11,9 @@ class InputMode(Enum):
     FROM_NAPARI_LAYERS = "from_napari_layers"
 
 
-class FileInputModel(Publisher, ABC):
+class FileInputModel(Publisher):
     """
-    Abstract base class for PredictionModel and PostprocessModel.
-    Defines the common methods and attributes both models should implement.
+    Model for FileInputWidget
     """
 
     def __init__(self) -> None:
