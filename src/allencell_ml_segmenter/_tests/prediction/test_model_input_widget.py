@@ -34,7 +34,7 @@ def test_top_radio_button_slot(
     with qtbot.waitSignal(model_input_widget._top_postproc_button.toggled):
         model_input_widget._top_postproc_button.click()
 
-    # ASSERT - both input UI elements should be disabled, postprocessing method should be set to TOP_TEXT
+    # ASSERT
     assert not model_input_widget._simple_thresh_slider.native.isEnabled()
     assert not model_input_widget._auto_thresh_selection.isEnabled()
 
