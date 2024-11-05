@@ -8,7 +8,8 @@ from allencell_ml_segmenter.core.dialog_box import DialogBox
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.core.file_input_widget import (
-    FileInputWidget, FileInputModel
+    FileInputWidget,
+    FileInputModel,
 )
 from allencell_ml_segmenter.prediction.model import (
     PredictionModel,
@@ -44,17 +45,19 @@ class PredictionView(View, MainWindow):
         self,
         main_model: MainModel,
         prediction_model: PredictionModel,
+        file_input_model: FileInputModel,
         viewer: IViewer,
         img_data_extractor: IImageDataExtractor = AICSImageDataExtractor.global_instance(),
     ):
         super().__init__()
         self._main_model: MainModel = main_model
         self._prediction_model: PredictionModel = prediction_model
+        self._file_input_model: FileInputModel = file_input_model
         self._viewer: IViewer = viewer
         self._img_data_extractor = img_data_extractor
 
         self._service: ModelFileService = ModelFileService(
-            self._prediction_model
+            self._file_input_model
         )
 
         layout: QVBoxLayout = QVBoxLayout()
@@ -71,7 +74,7 @@ class PredictionView(View, MainWindow):
         layout.addWidget(self._title, alignment=Qt.AlignmentFlag.AlignHCenter)
 
         self._file_input_widget: FileInputWidget = FileInputWidget(
-            self._prediction_model.file_input_model, self._viewer, self._service
+            self._file_input_model, self._viewer, self._service
         )
         self._file_input_widget.setObjectName("fileInput")
 
@@ -122,7 +125,7 @@ class PredictionView(View, MainWindow):
             self._prediction_model.get_total_num_images()
         )
         output_seg_dir: Optional[Path] = (
-            self._prediction_model.get_output_seg_directory()
+            self._file_input_model.get_output_seg_directory()
         )
         if total_num_images is not None and output_seg_dir is not None:
             progress_tracker: PredictionFolderProgressTracker = (
@@ -142,23 +145,23 @@ class PredictionView(View, MainWindow):
 
     def showResults(self) -> None:
         output_path: Optional[Path] = (
-            self._prediction_model.get_output_seg_directory()
+            self._file_input_model.get_output_seg_directory()
         )
 
         # Display images if prediction inputs are from Napari Layers
         if (
-            self._prediction_model.file_input_model.get_input_mode()
+            self._file_input_model.get_input_mode()
             == InputMode.FROM_NAPARI_LAYERS
             and output_path is not None
         ):
             raw_imgs: Optional[list[Path]] = (
-                self._prediction_model.file_input_model.get_selected_paths()
+                self._file_input_model.get_selected_paths()
             )
             segmentations: list[Path] = (
                 FileUtils.get_all_files_in_dir_ignore_hidden(output_path)
             )
             channel: Optional[int] = (
-                self._prediction_model.file_input_model.get_image_input_channel_index()
+                self._file_input_model.get_image_input_channel_index()
             )
             if raw_imgs is None or channel is None:
                 raise RuntimeError("Insufficient data to show results")

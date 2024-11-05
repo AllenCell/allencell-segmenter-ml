@@ -10,6 +10,7 @@ from allencell_ml_segmenter.prediction.model_input_widget import (
     ModelInputWidget,
 )
 from allencell_ml_segmenter.prediction.model import PredictionModel
+from allencell_ml_segmenter.core.file_input_model import FileInputModel
 
 
 @pytest.fixture
