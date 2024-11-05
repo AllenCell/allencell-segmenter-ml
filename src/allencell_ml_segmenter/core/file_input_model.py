@@ -31,7 +31,7 @@ class FileInputModel(Publisher, ABC):
     ) -> None:
         self._input_image_path = path
         if extract_channels and path is not None:
-            self.dispatch(Event.ACTION_PREDICTION_EXTRACT_CHANNELS)
+            self.dispatch(Event.ACTION_FILEINPUT_EXTRACT_CHANNELS)
 
     def get_input_image_path(self) -> Optional[Path]:
         return self._input_image_path
@@ -59,7 +59,7 @@ class FileInputModel(Publisher, ABC):
     ) -> None:
         self._selected_paths = paths
         if extract_channels and paths is not None:
-            self.dispatch(Event.ACTION_PREDICTION_EXTRACT_CHANNELS)
+            self.dispatch(Event.ACTION_FILEINPUT_EXTRACT_CHANNELS)
 
     def get_max_channels(self) -> Optional[int]:
         return self._max_channels
@@ -67,7 +67,7 @@ class FileInputModel(Publisher, ABC):
     def set_max_channels(self, max: Optional[int]) -> None:
         self._max_channels = max
         if max is not None:
-            self.dispatch(Event.ACTION_PREDICTION_MAX_CHANNELS_SET)
+            self.dispatch(Event.ACTION_FILEINPUT_MAX_CHANNELS_SET)
 
     def get_selected_paths(self) -> Optional[list[Path]]:
         return self._selected_paths
