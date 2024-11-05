@@ -33,8 +33,8 @@ class PredictionModel(Publisher):
         Gets path to where segmentation predictions are stored.
         """
         return (
-            self.file_input.get_output_directory() / "seg"
-            if self.file_input.get_output_directory() is not None
+            self.file_input_model.get_output_directory() / "target"
+            if self.file_input_model.get_output_directory() is not None
             else None
         )
 
