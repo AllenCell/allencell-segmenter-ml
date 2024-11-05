@@ -25,7 +25,7 @@ class ModelFileService(Subscriber):
         self._threads_created = 0
 
         self._model.subscribe(
-            Event.ACTION_PREDICTION_EXTRACT_CHANNELS,
+            Event.ACTION_FILEINPUT_EXTRACT_CHANNELS,
             self,
             lambda e: self._initiate_channel_extraction(),
         )

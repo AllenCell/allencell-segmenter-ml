@@ -164,13 +164,13 @@ class FileInputWidget(QWidget):
         self._channel_select_dropdown.setEnabled(False)
         # Event to trigger combobox populate when we know the number of channels
         self._model.subscribe(
-            Event.ACTION_PREDICTION_MAX_CHANNELS_SET,
+            Event.ACTION_FILEINPUT_MAX_CHANNELS_SET,
             self,
             self._populate_input_channel_combobox,
         )
         # Event to set combobox text to 'loading' when we begin extracting channels
         self._model.subscribe(
-            Event.ACTION_PREDICTION_EXTRACT_CHANNELS,
+            Event.ACTION_FILEINPUT_EXTRACT_CHANNELS,
             self,
             self._set_input_channel_combobox_to_loading,
         )
