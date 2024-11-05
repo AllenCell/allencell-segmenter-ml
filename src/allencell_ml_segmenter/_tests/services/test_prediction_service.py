@@ -114,14 +114,14 @@ def test_build_overrides() -> None:
     prediction_service: PredictionService = PredictionService(
         prediction_model, experiments_model
     )
-    prediction_model.set_output_directory(
+    prediction_model.file_input_model.set_output_directory(
         Path(__file__).parent.parent
         / "main"
         / "0_exp"
         / "prediction_output_test"
     )
-    prediction_model.set_input_image_path(Path("fake_img_path"))
-    prediction_model.set_image_input_channel_index(3)
+    prediction_model.file_input_model.set_input_image_path(Path("fake_img_path"))
+    prediction_model.file_input_model.set_image_input_channel_index(3)
 
     # act
     overrides: Dict[str, Union[str, int, float, bool]] = (

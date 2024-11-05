@@ -142,23 +142,23 @@ class PredictionView(View, MainWindow):
 
     def showResults(self) -> None:
         output_path: Optional[Path] = (
-            self._prediction_model.file_input.get_output_seg_directory()
+            self._prediction_model.get_output_seg_directory()
         )
 
         # Display images if prediction inputs are from Napari Layers
         if (
-            self._prediction_model.file_input.get_input_mode()
+            self._prediction_model.file_input_model.get_input_mode()
             == InputMode.FROM_NAPARI_LAYERS
             and output_path is not None
         ):
             raw_imgs: Optional[list[Path]] = (
-                self._prediction_model.file_input.get_selected_paths()
+                self._prediction_model.file_input_model.get_selected_paths()
             )
             segmentations: list[Path] = (
                 FileUtils.get_all_files_in_dir_ignore_hidden(output_path)
             )
             channel: Optional[int] = (
-                self._prediction_model.get_image_input_channel_index()
+                self._prediction_model.file_input_model.get_image_input_channel_index()
             )
             if raw_imgs is None or channel is None:
                 raise RuntimeError("Insufficient data to show results")
