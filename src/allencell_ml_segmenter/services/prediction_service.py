@@ -138,7 +138,7 @@ class PredictionService(Subscriber):
         overrides["ckpt_path"] = str(checkpoint)
 
         input_path: Optional[Path] = (
-            self._prediction_model.get_input_image_path()
+            self._prediction_model.file_input_model.get_input_image_path()
         )
         if input_path is None:
             raise RuntimeError("Path to prediction input undefined")
@@ -148,14 +148,14 @@ class PredictionService(Subscriber):
         # overrides from model
         # if output_dir is not set, will default to saving in the experiment folder
         output_dir: Optional[Path] = (
-            self._prediction_model.get_output_directory()
+            self._prediction_model.file_input_model.get_output_directory()
         )
         if output_dir:
             overrides["paths.output_dir"] = str(output_dir)
 
         # if channel is not set, will default to same channel used to train
         channel: Optional[int] = (
-            self._prediction_model.get_image_input_channel_index()
+            self._prediction_model.file_input_model.get_image_input_channel_index()
         )
         if channel:
             overrides["data.transforms.predict.transforms[1].reader[0].C"] = (
@@ -185,7 +185,7 @@ class PredictionService(Subscriber):
                 for i, path_of_image in enumerate(list_images):
                     writer.writerow([str(i), str(path_of_image), "test"])
 
-            self._prediction_model.set_input_image_path(csv_path)
+            self._prediction_model.file_input_model.set_input_image_path(csv_path)
 
     def _setup_inputs_from_path(self) -> int:
         """
@@ -193,7 +193,7 @@ class PredictionService(Subscriber):
         """
         # User has selected a directory or a csv as input images
         input_path: Optional[Path] = (
-            self._prediction_model.get_input_image_path()
+            self._prediction_model.file_input_model.get_input_image_path()
         )
         if input_path is not None and input_path.is_dir():
             all_files: list[Path] = (

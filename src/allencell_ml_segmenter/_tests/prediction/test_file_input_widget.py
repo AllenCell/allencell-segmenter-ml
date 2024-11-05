@@ -1,4 +1,5 @@
 from unittest.mock import patch, Mock
+from pathlib import Path
 
 import pytest
 from qtpy.QtWidgets import QFileDialog
@@ -11,14 +12,15 @@ from allencell_ml_segmenter.core.file_input_widget import (
 from allencell_ml_segmenter.prediction.model import (
     PredictionModel,
 )
-from allencell_ml_segmenter.core.file_input_model import InputMode
+
+from allencell_ml_segmenter.core.file_input_model import InputMode, FileInputModel
 
 MOCK_PATH: str = "/path/to/file"
 
 
 @pytest.fixture
-def prediction_model(qtbot: QtBot) -> PredictionModel:
-    return PredictionModel()
+def prediction_model(qtbot: QtBot) -> FileInputModel:
+    return FileInputModel()
 
 
 @pytest.fixture
@@ -84,14 +86,55 @@ def test_bottom_radio_button_slot(
 )
 def test_populate_input_channel_combobox(qtbot: QtBot) -> None:
     # Arrange
-    prediction_model: PredictionModel = PredictionModel()
+    file_input_model: FileInputModel = FileInputModel()
     prediction_file_input: FileInputWidget = FileInputWidget(
-        prediction_model, viewer=FakeViewer(), service=None
+        file_input_model, viewer=FakeViewer(), service=None
     )
-    prediction_model.set_max_channels(6)
+    file_input_model.set_max_channels(6)
 
     # Act
     prediction_file_input._populate_input_channel_combobox()
 
     # Assert
     assert prediction_file_input._channel_select_dropdown.isEnabled()
+
+def test_input_image_paths(prediction_model: PredictionModel) -> None:
+    """
+    Tests that the input image paths are set and retrieved properly.
+    """
+    # ARRANGE
+    dummy_paths: List[Path] = [
+        Path("example path " + str(i)) for i in range(10)
+    ]
+
+    # ACT
+    prediction_model.set_input_image_path(dummy_paths)
+
+    # ASSERT
+    assert prediction_model.get_input_image_path() == dummy_paths
+
+
+def test_image_input_channel_index(prediction_model: PredictionModel) -> None:
+    """
+    Tests that the channel index is set and retrieved properly.
+    """
+    for i in range(10):
+        # ACT
+        prediction_model.set_image_input_channel_index(i)
+
+        # ASSERT
+        assert prediction_model.get_image_input_channel_index() == i
+
+
+def test_output_directory(prediction_model: PredictionModel) -> None:
+    """
+    Tests that the output directory is set and retrieved properly.
+    """
+    # ARRANGE
+    dummy_path: Path = Path("example path")
+
+    # ACT
+    prediction_model.set_output_directory(dummy_path)
+
+    # ASSERT
+    assert prediction_model.get_output_directory() == dummy_path
