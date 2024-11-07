@@ -39,7 +39,7 @@ def file_input_widget(
 def test_top_radio_button_slot(
     qtbot: QtBot,
     file_input_widget: FileInputWidget,
-        file_input_model: FileInputModel,
+    file_input_model: FileInputModel,
 ) -> None:
     """
     Test the _top_radio_button_slot method of FileInputWidget.
@@ -61,7 +61,7 @@ def test_top_radio_button_slot(
 def test_bottom_radio_button_slot(
     qtbot: QtBot,
     file_input_widget: FileInputWidget,
-        file_input_model: FileInputModel,
+    file_input_model: FileInputModel,
 ) -> None:
     """
     Test the _bottom_radio_button_slot method of FileInputWidget.
