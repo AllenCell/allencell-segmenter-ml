@@ -7,7 +7,7 @@ from allencell_ml_segmenter.core.publisher import Publisher
 from allencell_ml_segmenter.core.file_input_model import FileInputModel
 
 
-class PredictionModel(FileInputModel):
+class PredictionModel(Publisher):
     """
     Stores state relevant to prediction processes.
     """
@@ -24,16 +24,6 @@ class PredictionModel(FileInputModel):
         # If it is none after Event.ACTION_PREDICTION_SETUP is dispatched, the csv for
         # prediction was not generated and prediction cannot continue.
         self.total_num_images: Optional[int] = None
-
-    def get_output_seg_directory(self) -> Optional[Path]:
-        """
-        Gets path to where segmentation predictions are stored.
-        """
-        return (
-            self._output_directory / "target"
-            if self._output_directory is not None
-            else None
-        )
 
     def dispatch_prediction(self) -> None:
         """
