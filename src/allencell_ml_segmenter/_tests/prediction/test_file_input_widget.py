@@ -22,27 +22,27 @@ MOCK_PATH: str = "/path/to/file"
 
 
 @pytest.fixture
-def prediction_model(qtbot: QtBot) -> FileInputModel:
+def file_input_model(qtbot: QtBot) -> FileInputModel:
     return FileInputModel()
 
 
 @pytest.fixture
 def file_input_widget(
-    qtbot: QtBot, prediction_model: PredictionModel
+    qtbot: QtBot, file_input_model: FileInputModel
 ) -> FileInputWidget:
     """
     Fixture that creates an instance of ModelInputWidget for testing.
     """
-    return FileInputWidget(prediction_model, viewer=FakeViewer(), service=None)
+    return FileInputWidget(file_input_model, viewer=FakeViewer(), service=None)
 
 
 def test_top_radio_button_slot(
     qtbot: QtBot,
     file_input_widget: FileInputWidget,
-    prediction_model: PredictionModel,
+        file_input_model: FileInputModel,
 ) -> None:
     """
-    Test the _top_radio_button_slot method of PredictionFileInput.
+    Test the _top_radio_button_slot method of FileInputWidget.
     """
     # ARRANGE - explicitly disable file_input_widget._image_list and enable file_input_widget._browse_dir_edit
     file_input_widget._image_list.setEnabled(False)
@@ -55,16 +55,16 @@ def test_top_radio_button_slot(
     # ASSERT - states should have flipped
     assert file_input_widget._image_list.isEnabled()
     assert not file_input_widget._browse_dir_edit.isEnabled()
-    assert prediction_model.get_input_mode() == InputMode.FROM_NAPARI_LAYERS
+    assert file_input_model.get_input_mode() == InputMode.FROM_NAPARI_LAYERS
 
 
 def test_bottom_radio_button_slot(
     qtbot: QtBot,
     file_input_widget: FileInputWidget,
-    prediction_model: PredictionModel,
+        file_input_model: FileInputModel,
 ) -> None:
     """
-    Test the _bottom_radio_button_slot method of PredictionFileInput.
+    Test the _bottom_radio_button_slot method of FileInputWidget.
     """
     # ARRANGE - explicitly enable file_input_widget._image_list and disable file_input_widget._browse_dir_edit
     file_input_widget._image_list.setEnabled(True)
@@ -77,7 +77,7 @@ def test_bottom_radio_button_slot(
     # ASSERT - states should have flipped
     assert not file_input_widget._image_list.isEnabled()
     assert file_input_widget._browse_dir_edit.isEnabled()
-    assert prediction_model.get_input_mode() == InputMode.FROM_PATH
+    assert file_input_model.get_input_mode() == InputMode.FROM_PATH
 
 
 # decorator used to stub QFileDialog and avoid nested context managers
@@ -102,7 +102,7 @@ def test_populate_input_channel_combobox(qtbot: QtBot) -> None:
     assert prediction_file_input._channel_select_dropdown.isEnabled()
 
 
-def test_input_image_paths(prediction_model: PredictionModel) -> None:
+def test_input_image_paths(file_input_model: FileInputModel) -> None:
     """
     Tests that the input image paths are set and retrieved properly.
     """
@@ -112,25 +112,25 @@ def test_input_image_paths(prediction_model: PredictionModel) -> None:
     ]
 
     # ACT
-    prediction_model.set_input_image_path(dummy_paths)
+    file_input_model.set_input_image_path(dummy_paths)
 
     # ASSERT
-    assert prediction_model.get_input_image_path() == dummy_paths
+    assert file_input_model.get_input_image_path() == dummy_paths
 
 
-def test_image_input_channel_index(prediction_model: PredictionModel) -> None:
+def test_image_input_channel_index(file_input_model: FileInputModel) -> None:
     """
     Tests that the channel index is set and retrieved properly.
     """
     for i in range(10):
         # ACT
-        prediction_model.set_image_input_channel_index(i)
+        file_input_model.set_image_input_channel_index(i)
 
         # ASSERT
-        assert prediction_model.get_image_input_channel_index() == i
+        assert file_input_model.get_image_input_channel_index() == i
 
 
-def test_output_directory(prediction_model: PredictionModel) -> None:
+def test_output_directory(file_input_model: FileInputModel) -> None:
     """
     Tests that the output directory is set and retrieved properly.
     """
@@ -138,7 +138,7 @@ def test_output_directory(prediction_model: PredictionModel) -> None:
     dummy_path: Path = Path("example path")
 
     # ACT
-    prediction_model.set_output_directory(dummy_path)
+    file_input_model.set_output_directory(dummy_path)
 
     # ASSERT
-    assert prediction_model.get_output_directory() == dummy_path
+    assert file_input_model.get_output_directory() == dummy_path
