@@ -13,7 +13,10 @@ from allencell_ml_segmenter.prediction.model import (
 from allencell_ml_segmenter.core.image_data_extractor import (
     FakeImageDataExtractor,
 )
-from allencell_ml_segmenter.core.file_input_model import InputMode
+from allencell_ml_segmenter.core.file_input_model import (
+    InputMode,
+    FileInputModel,
+)
 from allencell_ml_segmenter.prediction.view import PredictionView
 
 
@@ -31,7 +34,9 @@ def prediction_view(main_model: MainModel, qtbot: QtBot) -> PredictionView:
     Returns a PredictionView instance for testing.
     """
     prediction_model: PredictionModel = PredictionModel()
-    return PredictionView(main_model, prediction_model, FakeViewer())
+    return PredictionView(
+        main_model, prediction_model, FileInputModel(), FakeViewer()
+    )
 
 
 def test_prediction_view(
@@ -52,23 +57,25 @@ def test_show_results(main_model: MainModel) -> None:
     Testing the showresults that runs after a prediction run
     """
     # ARRANGE
+    file_input_model: FileInputModel = FileInputModel()
     prediction_model: PredictionModel = PredictionModel()
-    prediction_model.set_output_directory(
+    file_input_model.set_output_directory(
         Path(allencell_ml_segmenter.__file__).parent
         / "_tests"
         / "test_files"
         / "output_test_folder"
     )
-    prediction_model.set_input_mode(InputMode.FROM_NAPARI_LAYERS)
-    prediction_model.set_selected_paths(
+    file_input_model.set_input_mode(InputMode.FROM_NAPARI_LAYERS)
+    file_input_model.set_selected_paths(
         [Path("output_1.tiff"), Path("output_2.tiff")]
     )
-    prediction_model.set_image_input_channel_index(0)
+    file_input_model.set_image_input_channel_index(0)
     fake_viewer: FakeViewer = FakeViewer()
 
     prediction_view: PredictionView = PredictionView(
         main_model,
         prediction_model,
+        file_input_model,
         fake_viewer,
         img_data_extractor=FakeImageDataExtractor.global_instance(),
     )
@@ -90,23 +97,25 @@ def test_show_results_non_empty_folder(main_model: MainModel) -> None:
     Testing that only the new images in a folder will be shown after prediction.
     """
     # ARRANGE
+    file_input_model: FileInputModel = FileInputModel()
     prediction_model: PredictionModel = PredictionModel()
-    prediction_model.set_output_directory(
+    file_input_model.set_output_directory(
         Path(allencell_ml_segmenter.__file__).parent
         / "_tests"
         / "test_files"
         / "output_test_folder_extra"
     )
-    prediction_model.set_input_mode(InputMode.FROM_NAPARI_LAYERS)
-    prediction_model.set_selected_paths(
+    file_input_model.set_input_mode(InputMode.FROM_NAPARI_LAYERS)
+    file_input_model.set_selected_paths(
         [Path("output_3.tiff"), Path("output_4.tiff")]
     )
-    prediction_model.set_image_input_channel_index(0)
+    file_input_model.set_image_input_channel_index(0)
     fake_viewer: FakeViewer = FakeViewer()
 
     prediction_view: PredictionView = PredictionView(
         main_model,
         prediction_model,
+        file_input_model,
         fake_viewer,
         img_data_extractor=FakeImageDataExtractor.global_instance(),
     )
