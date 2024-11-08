@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Allen Cell Segmenter Support
+    url: https://github.com/AllenCell/allencell-segmenter-ml
+    about: Please see contact section.
