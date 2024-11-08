@@ -22,16 +22,24 @@ jobs:
     permissions:
       id-token: write
       contents: read
+    strategy:
+      matrix:
+        python-version: [ "3.9", "3.10" ]
 
     steps:
       - uses: actions/checkout@v4
         with:
           ref: main
 
-      - name: Set up Python 3.10
+      - name: Check out tag
+        run: |
+          git fetch --tags
+          git checkout ${{ inputs.tag }}
+
+      - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
-          python-version: "3.10"
+          python-version: ${{ matrix.python-version }}
 
 # We need twine as a dependency below for artifactory releases, remove when using pypi
 # importlib 8.0.0 is broken, we should be able to un-pin this once 8.0.1 is released
