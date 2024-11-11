@@ -11,13 +11,8 @@ name = "allencell-segmenter-ml"
 version = "0.1.16"
 description = "A plugin to leverage ML segmentation in napari"
 readme = "README.md"
-requires-python = "<3.11,>=3.9"
+requires-python = ">=3.9,<3.11"
 license = { file = "LICENSE" }
-authors = [
-    { email = "brian.kim@alleninstitute.org", name = "Brian Kim" },
-    { email = "chrishu@alleninstitute.org", name = "Chris Hughes" },
-    { email = "daniel.saelid@alleninstitute.org", name = "Daniel Saelid" },
-]
 
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
