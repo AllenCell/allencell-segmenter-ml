@@ -33,9 +33,9 @@ We currently support `Windows`, `MacOS`, and `Linux` operating systems. The mini
 
 Before installing the plugin, please make sure you have the following installed:
 
-- Python 3.10 
+- `Python >=3.9,<3.11` 
 
-__New to `Python`?__ We recommend installing `Python 3.10` through the official [`Python` website](https://www.python.org/downloads/). This will include the `pip` package manager, which is required to install the plugin.
+__New to `Python`?__ We recommend installing either `Python 3.9` or  `Python 3.10` through the official [`Python` website](https://www.python.org/downloads/). This will include the `pip` package manager, which is required to install the plugin.
 
 If you are unsure if you have Python installed or which version you may have, you can check by running the following command in your terminal or powershell:
 
@@ -107,6 +107,8 @@ To install the latest version of the plugin:
 ```bash
 pip install allencell-segmenter-ml
 ```
+
+You do not need to install `napari` separately as it is included in the plugin.
 
 ### 🚨 Post-Installation 🚨
 
