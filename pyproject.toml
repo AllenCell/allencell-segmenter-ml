@@ -30,7 +30,6 @@ classifiers = [
 ]
 
 dependencies = [
-    "napari>=0.4.18",
     "npe2>=0.6.2",
     "numpy",
     "hydra-core==1.3.2",
@@ -50,6 +49,11 @@ Documentation = "https://github.com/AllenCell/allencell-ml-segmenter#README.md"
 # extra dependencies
 # https://peps.python.org/pep-0621/#dependencies-optional-dependencies
 [project.optional-dependencies]
+napari = [
+    "napari>=0.4.18",
+    "pyqt5",
+]
+
 test_lint = [
     "pytest<8.0.0", # https://docs.pytest.org/en/latest/contents.html
     "pytest-cov",  # https://pytest-cov.readthedocs.io/en/latest/

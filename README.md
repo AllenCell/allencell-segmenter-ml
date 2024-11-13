@@ -33,7 +33,7 @@ We currently support `Windows`, `MacOS`, and `Linux` operating systems. The mini
 
 Before installing the plugin, please make sure you have the following installed:
 
-- Python 3.10 or later
+- Python 3.9 or later
 
 __New to `Python`?__ We recommend installing `Python 3.10` through the official [`Python` website](https://www.python.org/downloads/). This will include the `pip` package manager, which is required to install the plugin.
 
@@ -87,22 +87,13 @@ To confirm that the virtual environment has been successfully activated, you can
     # Python 3.10.11   <-- Example output
     ```
 
-#### STEP 3. Install `pyqt5` 
-
-Lastly, we need to install `pyqt5`, a library to run the user interface (UI). Run the following command in your terminal or powershell:
-
-```bash 
-pip install "napari[pyqt5]" 
-```
-
-
 
 
 ## Install the Plugin
 
-To install the latest version of the plugin:
+To install the latest version of the plugin, along with napari:
 ```bash
-pip install allencell-segmenter-ml
+pip install allencell-segmenter-ml[napari]
 ```
 
 ### :rotating_light: Post-Installation :rotating_light:
