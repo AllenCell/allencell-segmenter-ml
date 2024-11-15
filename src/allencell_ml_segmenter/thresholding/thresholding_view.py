@@ -4,6 +4,7 @@ from allencell_ml_segmenter._style import Style
 from allencell_ml_segmenter.core.view import View, MainWindow
 from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.prediction.service import ModelFileService
+from allencell_ml_segmenter.thresholding.thresholding_model import ThresholdingModel
 
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 from allencell_ml_segmenter.core.file_input_widget import (
@@ -35,6 +36,8 @@ class ThresholdingView(View, MainWindow):
     def __init__(
         self,
         main_model: MainModel,
+        thresholding_model: ThresholdingModel,
+        file_input_model: FileInputModel,
         experiments_model: IExperimentsModel,
         viewer: IViewer,
     ):
@@ -43,9 +46,13 @@ class ThresholdingView(View, MainWindow):
         self._main_model: MainModel = main_model
         self._experiments_model: IExperimentsModel = experiments_model
         self._viewer: IViewer = viewer
-        self._thresholding_model: FileInputModel = FileInputModel()
-        self._service: ModelFileService = ModelFileService(
-            self._thresholding_model
+        self._thresholding_model: ThresholdingModel = thresholding_model
+
+
+        # To manage input files:
+        self._file_input_model: FileInputModel = file_input_model
+        self._input_files_service: ModelFileService = ModelFileService(
+            self._file_input_model
         )
 
         layout: QVBoxLayout = QVBoxLayout()
@@ -64,7 +71,7 @@ class ThresholdingView(View, MainWindow):
 
         # selecting input image
         self._file_input_widget: FileInputWidget = FileInputWidget(
-            self._thresholding_model, self._viewer, self._service
+            self._file_input_model, self._viewer, self._input_files_service
         )
         self._file_input_widget.setObjectName("fileInput")
         layout.addWidget(self._file_input_widget)
@@ -102,10 +109,13 @@ class ThresholdingView(View, MainWindow):
         self._threshold_value_slider: QSlider = QSlider(
             Qt.Orientation.Horizontal
         )
+
+        # TODO: see if i can set range and step similarly to spinbox, to avoid conversion each time we update
         self._threshold_value_slider.setRange(
             0, 100
         )  # slider values from 0 to 100 (representing 0.0 to 1.0)
-        self._threshold_value_slider.setValue(50)  # Default value at 0.5
+        self._threshold_value_slider.setValue(self._threshold_value_to_slider(
+            self._thresholding_model.get_thresholding_value()))
 
         self._threshold_value_spinbox: QDoubleSpinBox = QDoubleSpinBox()
         self._threshold_value_spinbox.setRange(0.0, 1.0)
@@ -183,13 +193,16 @@ class ThresholdingView(View, MainWindow):
         """
         Update the spinbox value when slider is changed
         """
-        self._threshold_value_spinbox.setValue(value / 100.0)
+        thresh_value: float = self._slider_value_to_threshold(value)
+        self._threshold_value_spinbox.setValue(thresh_value)
+        self._thresholding_model.set_thresholding_value(thresh_value)
 
     def _update_slider_from_spinbox(self, value: float) -> None:
         """
         Update the slider value when spinbox is changed
         """
-        self._threshold_value_slider.setValue(int(value * 100))
+        self._threshold_value_slider.setValue(self._threshold_value_to_slider(value))
+        self._thresholding_model.set_thresholding_value(value)
 
     def _enable_specific_threshold_widgets(self, enabled: bool) -> None:
         """
@@ -207,6 +220,12 @@ class ThresholdingView(View, MainWindow):
             or self._specific_value_radio_button.isChecked()
             or self._autothreshold_radio_button.isChecked()
         )
+
+    def _slider_value_to_threshold(self, value: int) -> float:
+        return value / 100.0
+
+    def _threshold_value_to_slider(self, value: float) -> int:
+        return int(value * 100)
 
     def doWork(self) -> None:
         return

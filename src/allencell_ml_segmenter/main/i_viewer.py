@@ -72,3 +72,11 @@ class IViewer(ABC):
         self, function: Callable[[NapariEvent], None]
     ) -> None:
         pass
+
+    @abstractmethod
+    def get_seg_layers(self, layer_list: list[Layer]) -> list[Layer]:
+        pass
+
+    @abstractmethod
+    def replace_layer_image(self, layer_name: str, img: np.ndarray) -> None:
+        pass
