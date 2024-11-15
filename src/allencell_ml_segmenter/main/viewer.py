@@ -105,3 +105,11 @@ class Viewer(IViewer):
             if l.name == name:
                 return l
         return None
+
+    def get_seg_layers(self, layer_list: list[Layer]) -> list[Layer]:
+        return [layer for layer in self.get_layers() if layer.name.startswith("[seg]")]
+
+    def replace_layer_image_with_labels(self, layer_name: str, image: np.ndarray):
+        layer: Layer = self._get_layer_by_name(layer_name)
+        layer.data = image
+        layer.refresh()

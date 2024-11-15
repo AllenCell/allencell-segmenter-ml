@@ -64,6 +64,9 @@ class Event(Enum):
     ACTION_CURATION_SEG1_THREAD_ERROR = "curation_seg1_thread_error"
     ACTION_CURATION_RAW_THREAD_ERROR = "curation_raw_thread_error"
 
+    # Thresholding events
+    ACTION_THRESHOLDING_VALUE_CHANGED = "thresholding_value_changed"
+
     # View selection events. These can stem from a user action, or from a process (i.e. prediction process ends, and a new view is shown automatically).
     VIEW_SELECTION_TRAINING = "training_selected"
     VIEW_SELECTION_PREDICTION = "prediction_selected"

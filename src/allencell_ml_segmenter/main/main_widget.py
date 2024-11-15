@@ -28,6 +28,8 @@ from allencell_ml_segmenter.services.prediction_service import (
     PredictionService,
 )
 from allencell_ml_segmenter.services.training_service import TrainingService
+from allencell_ml_segmenter.thresholding.thresholding_model import ThresholdingModel
+from allencell_ml_segmenter.thresholding.thresholding_service import ThresholdingService
 from allencell_ml_segmenter.training.model_selection_widget import (
     ModelSelectionWidget,
 )
@@ -36,7 +38,7 @@ from allencell_ml_segmenter.training.view import TrainingView
 from allencell_ml_segmenter.curation.curation_model import CurationModel
 from allencell_ml_segmenter._style import Style
 from allencell_ml_segmenter.curation.curation_service import CurationService
-from allencell_ml_segmenter.postprocess.postprocess_view import (
+from allencell_ml_segmenter.thresholding.thresholding_view import (
     ThresholdingView,
 )
 from allencell_ml_segmenter.core.file_input_model import FileInputModel
@@ -84,12 +86,16 @@ class MainWidget(AicsWidget):
         self._training_model: TrainingModel = TrainingModel(
             main_model=self._model, experiments_model=self._experiments_model
         )
-        self._file_input_model: FileInputModel = FileInputModel()
+        self._prediction_file_input_model: FileInputModel = FileInputModel()
         self._prediction_model: PredictionModel = PredictionModel()
         self._curation_model: CurationModel = CurationModel(
             self._experiments_model,
             self._model,
         )
+
+        self._thresholding_file_input_model: FileInputModel = FileInputModel()
+        self._thresholding_model: ThresholdingModel = ThresholdingModel()
+
 
         # init services
         self._main_service: MainService = MainService(
@@ -105,8 +111,15 @@ class MainWidget(AicsWidget):
         )
         self._prediction_service: PredictionService = PredictionService(
             prediction_model=self._prediction_model,
-            file_input_model=self._file_input_model,
+            file_input_model=self._prediction_file_input_model,
             experiments_model=self._experiments_model,
+        )
+
+        self._thresholding_service: ThresholdingService = ThresholdingService(
+            thresholding_model=self._thresholding_model,
+            experiments_model=self._experiments_model,
+            file_input_model=self._thresholding_file_input_model,
+            viewer=self.viewer,
         )
 
         # keep track of windows
@@ -135,7 +148,7 @@ class MainWidget(AicsWidget):
         self._prediction_view: PredictionView = PredictionView(
             main_model=self._model,
             prediction_model=self._prediction_model,
-            file_input_model=self._file_input_model,
+            file_input_model=self._prediction_file_input_model,
             viewer=self.viewer,
         )
         self._initialize_window(self._prediction_view, "Prediction")
@@ -143,6 +156,8 @@ class MainWidget(AicsWidget):
 
         self._thresholding_view = ThresholdingView(
             main_model=self._model,
+            thresholding_model=self._thresholding_model,
+            file_input_model=self._thresholding_file_input_model,
             experiments_model=self._experiments_model,
             viewer=self.viewer,
         )
