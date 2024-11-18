@@ -38,6 +38,7 @@ dependencies = [
     "watchdog",
     "cyto-dl>=0.4.2",
     "scikit-image!=0.23.0",
+    "magicgui"
 ]
 
 [project.urls]
