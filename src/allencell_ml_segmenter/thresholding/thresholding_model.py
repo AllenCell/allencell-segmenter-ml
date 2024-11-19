@@ -1,3 +1,4 @@
+from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.publisher import Publisher
 
 
@@ -9,23 +10,29 @@ class ThresholdingModel(Publisher):
     def __init__(self) -> None:
         super().__init__()
 
-        # default value of .5, range from 0.0 to 1.0 inclusive
-        self._thresholding_value_selected: float = 0.5
+        # cyto-dl segmentations should have values between 0 and 255
+        self._thresholding_value_selected: int = 120
+        self._autothresholding:bool = False
 
 
-    def set_thresholding_value(self, value: float) -> None:
+    def set_thresholding_value(self, value: int) -> None:
         """
         Set the thresholding value.
         """
-        # Ensure value is within range, the UI should enforce values between 0.0 and 1.0
-        if value < 0.0 or value > 1.0:
-            raise ValueError("Thresholding value selected must be between 0.0 and 1.0.")
         self._thresholding_value_selected = value
+        self.dispatch(Event.ACTION_THRESHOLDING_VALUE_CHANGED)
 
 
-    def get_thresholding_value(self) -> float:
+    def get_thresholding_value(self) -> int:
         """
         Get the thresholding value.
         """
         return self._thresholding_value_selected
+
+    def set_autothresholding_enabled(self) -> None:
+        """
+        Set autothresholding enabled.
+        """
+        self._autothresholding = True
+        self.dispatch(Event.ACTION_THRESHOLDING_AUTOTHRESHOLDING_SELECTED)
 
