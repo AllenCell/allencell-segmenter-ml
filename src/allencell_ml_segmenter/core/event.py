@@ -66,6 +66,7 @@ class Event(Enum):
 
     # Thresholding events
     ACTION_THRESHOLDING_VALUE_CHANGED = "thresholding_value_changed"
+    ACTION_THRESHOLDING_AUTOTHRESHOLDING_SELECTED = "autothresholding_selected"
 
     # View selection events. These can stem from a user action, or from a process (i.e. prediction process ends, and a new view is shown automatically).
     VIEW_SELECTION_TRAINING = "training_selected"
