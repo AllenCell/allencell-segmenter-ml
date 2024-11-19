@@ -78,5 +78,5 @@ class IViewer(ABC):
         pass
 
     @abstractmethod
-    def replace_layer_image_with_label(self, layer_name: str, img: np.ndarray) -> None:
+    def insert_segmentation(self, layer_name: str, img: np.ndarray) -> None:
         pass
