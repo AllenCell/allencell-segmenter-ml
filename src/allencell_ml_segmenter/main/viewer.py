@@ -109,7 +109,14 @@ class Viewer(IViewer):
     def get_seg_layers(self, layer_list: list[Layer]) -> list[Layer]:
         return [layer for layer in self.get_layers() if layer.name.startswith("[seg]")]
 
-    def replace_layer_image_with_label(self, layer_name: str, image: np.ndarray):
-        layer: Layer = self._get_layer_by_name(layer_name)
-        layer.data = image
-        layer.refresh()
+    def insert_segmentation(self, layer_name: str, image: np.ndarray):
+        # No segmentation exists, so we add it to the correct place in the viewer
+        layer_to_insert = self._get_layer_by_name(f"[threshold] {layer_name}")
+        if layer_to_insert is None:
+            layerlist = self.viewer.layers
+            layerlist_pos = layerlist.index(layer_name)
+            labels_created = Labels(image, name=f"[threshold] {layer_name}")
+            layerlist.insert(layerlist_pos + 1, labels_created)
+        else:
+            layer_to_insert.data = image
+            layer_to_insert.refresh()
