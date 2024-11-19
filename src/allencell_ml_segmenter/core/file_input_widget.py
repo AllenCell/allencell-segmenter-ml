@@ -51,9 +51,10 @@ class FileInputWidget(QWidget):
         model: FileInputModel,
         viewer: IViewer,
         service: ModelFileService,
+        include_channel_selection: bool = True,
     ):
         super().__init__()
-
+        self._include_channel_selection: bool = include_channel_selection
         self._model: FileInputModel = model
         self._viewer: IViewer = viewer
         self._service: ModelFileService = service
@@ -147,33 +148,35 @@ class FileInputWidget(QWidget):
         frame_layout.addLayout(horiz_layout)
 
         grid_layout: QGridLayout = QGridLayout()
+        if include_channel_selection:
+            image_input_label: LabelWithHint = LabelWithHint(
+                "Input image's channel"
+            )
+            image_input_label.set_hint(
+                "Select which channel of the input image(s) to apply the trained model on"
+            )
 
-        image_input_label: LabelWithHint = LabelWithHint(
-            "Input image's channel"
-        )
-        image_input_label.set_hint(
-            "Select which channel of the input image(s) to apply the trained model on"
-        )
+            self._channel_select_dropdown: QComboBox = QComboBox()
 
-        self._channel_select_dropdown: QComboBox = QComboBox()
-
-        self._channel_select_dropdown.setCurrentIndex(-1)
-        self._channel_select_dropdown.currentIndexChanged.connect(
-            self._model.set_image_input_channel_index
-        )
-        self._channel_select_dropdown.setEnabled(False)
-        # Event to trigger combobox populate when we know the number of channels
-        self._model.subscribe(
-            Event.ACTION_FILEINPUT_MAX_CHANNELS_SET,
-            self,
-            self._populate_input_channel_combobox,
-        )
-        # Event to set combobox text to 'loading' when we begin extracting channels
-        self._model.subscribe(
-            Event.ACTION_FILEINPUT_EXTRACT_CHANNELS,
-            self,
-            self._set_input_channel_combobox_to_loading,
-        )
+            self._channel_select_dropdown.setCurrentIndex(-1)
+            self._channel_select_dropdown.currentIndexChanged.connect(
+                self._model.set_image_input_channel_index
+            )
+            self._channel_select_dropdown.setEnabled(False)
+            # Event to trigger combobox populate when we know the number of channels
+            self._model.subscribe(
+                Event.ACTION_FILEINPUT_MAX_CHANNELS_SET,
+                self,
+                self._populate_input_channel_combobox,
+            )
+            # Event to set combobox text to 'loading' when we begin extracting channels
+            self._model.subscribe(
+                Event.ACTION_FILEINPUT_EXTRACT_CHANNELS,
+                self,
+                self._set_input_channel_combobox_to_loading,
+            )
+            grid_layout.addWidget(image_input_label, 0, 0)
+            grid_layout.addWidget(self._channel_select_dropdown, 0, 1)
 
         output_dir_label: LabelWithHint = LabelWithHint("Output directory")
         output_dir_label.set_hint(
@@ -186,9 +189,6 @@ class FileInputWidget(QWidget):
             "Select directory...",
             FileInputMode.DIRECTORY,
         )
-
-        grid_layout.addWidget(image_input_label, 0, 0)
-        grid_layout.addWidget(self._channel_select_dropdown, 0, 1)
 
         grid_layout.addWidget(output_dir_label, 1, 0)
         grid_layout.addWidget(self._browse_output_edit, 1, 1)
@@ -261,10 +261,11 @@ class FileInputWidget(QWidget):
                 )
 
     def _reset_channel_combobox(self) -> None:
-        self._channel_select_dropdown.clear()
-        self._channel_select_dropdown.setPlaceholderText("")
-        self._channel_select_dropdown.setCurrentIndex(-1)
-        self._channel_select_dropdown.setEnabled(False)
+        if self._include_channel_selection:
+            self._channel_select_dropdown.clear()
+            self._channel_select_dropdown.setPlaceholderText("")
+            self._channel_select_dropdown.setCurrentIndex(-1)
+            self._channel_select_dropdown.setEnabled(False)
 
     def _set_input_channel_combobox_to_loading(
         self, event: Optional[Event] = None

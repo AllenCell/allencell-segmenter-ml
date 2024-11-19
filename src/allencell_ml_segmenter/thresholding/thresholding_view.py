@@ -22,6 +22,7 @@ from qtpy.QtWidgets import (
     QRadioButton,
     QPushButton,
     QSlider,
+    QSpinBox,
     QDoubleSpinBox,
     QFileDialog,
 )
@@ -71,7 +72,7 @@ class ThresholdingView(View, MainWindow):
 
         # selecting input image
         self._file_input_widget: FileInputWidget = FileInputWidget(
-            self._file_input_model, self._viewer, self._input_files_service
+            self._file_input_model, self._viewer, self._input_files_service, include_channel_selection=False
         )
         self._file_input_widget.setObjectName("fileInput")
         layout.addWidget(self._file_input_widget)
@@ -112,15 +113,12 @@ class ThresholdingView(View, MainWindow):
 
         # TODO: see if i can set range and step similarly to spinbox, to avoid conversion each time we update
         self._threshold_value_slider.setRange(
-            0, 100
+            0, 255
         )  # slider values from 0 to 100 (representing 0.0 to 1.0)
-        self._threshold_value_slider.setValue(self._threshold_value_to_slider(
-            self._thresholding_model.get_thresholding_value()))
 
-        self._threshold_value_spinbox: QDoubleSpinBox = QDoubleSpinBox()
-        self._threshold_value_spinbox.setRange(0.0, 1.0)
-        self._threshold_value_spinbox.setSingleStep(0.01)
-        self._threshold_value_spinbox.setValue(0.5)
+        self._threshold_value_spinbox: QSpinBox = QSpinBox()
+        self._threshold_value_spinbox.setRange(0, 255)
+        self._threshold_value_spinbox.setSingleStep(1)
 
         # sync slider and spinbox
         self._threshold_value_slider.valueChanged.connect(
@@ -130,8 +128,25 @@ class ThresholdingView(View, MainWindow):
             self._update_slider_from_spinbox
         )
 
+        # set default value
+        self._threshold_value_slider.setValue(self._threshold_value_to_slider(
+            self._thresholding_model.get_thresholding_value()))
+
+        # determine when user is finished selecting a value
+        self._threshold_value_slider.sliderReleased.connect(
+            lambda: self._thresholding_model.set_thresholding_value(
+                self._threshold_value_slider.value()
+            )
+        )
+
+        self._threshold_value_spinbox.editingFinished.connect(
+            lambda: self._thresholding_model.set_thresholding_value(
+                self._threshold_value_spinbox.value()
+            )
+        )
+
+
         # add slider and spinbox
-        specific_value_layout.addWidget(self._specific_value_radio_button)
         specific_value_layout.addWidget(self._threshold_value_slider)
         specific_value_layout.addWidget(self._threshold_value_spinbox)
         threshold_group_layout.addLayout(specific_value_layout)
@@ -188,21 +203,33 @@ class ThresholdingView(View, MainWindow):
         self._autothreshold_radio_button.toggled.connect(
             self._enable_apply_button
         )
+        self._autothreshold_radio_button.toggled.connect(
+            self._autothreshold_radio_selected
+        )
+
+    def _autothreshold_radio_selected(self) -> None:
+        """
+        Set autothresholding method when autothreshold radio button is selected
+        """
+        self._thresholding_model.set_autothresholding_enabled()
+
+    def _confirm_slider_value_change(self, value: int) -> None:
+        """
+        Confirm the slider value change
+        """
+        self._thresholding_model.set_thresholding_value(value)
 
     def _update_spinbox_from_slider(self, value: int) -> None:
         """
         Update the spinbox value when slider is changed
         """
-        thresh_value: float = self._slider_value_to_threshold(value)
-        self._threshold_value_spinbox.setValue(thresh_value)
-        self._thresholding_model.set_thresholding_value(thresh_value)
+        self._threshold_value_spinbox.setValue(value)
 
-    def _update_slider_from_spinbox(self, value: float) -> None:
+    def _update_slider_from_spinbox(self, value: int) -> None:
         """
         Update the slider value when spinbox is changed
         """
-        self._threshold_value_slider.setValue(self._threshold_value_to_slider(value))
-        self._thresholding_model.set_thresholding_value(value)
+        self._threshold_value_slider.setValue(value)
 
     def _enable_specific_threshold_widgets(self, enabled: bool) -> None:
         """
