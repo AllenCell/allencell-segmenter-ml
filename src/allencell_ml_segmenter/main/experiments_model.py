@@ -76,18 +76,16 @@ class ExperimentsModel(IExperimentsModel):
 
         return user_exp_path / experiment_name / "checkpoints" / checkpoint
 
-    def _get_exp_path(self) -> Path:
+    def _get_exp_path(self) -> Optional[Path]:
         user_exp_path: Optional[Path] = self.get_user_experiments_path()
         exp_name: Optional[str] = self.get_experiment_name()
-        if user_exp_path is None or exp_name is None:
-            raise ValueError("Experiment path or name undefined")
-        return user_exp_path / exp_name
+        return user_exp_path / exp_name if exp_name is not None else None
 
-    def get_csv_path(self) -> Path:
-        return self._get_exp_path() / "data"
+    def get_csv_path(self) -> Optional[Path]:
+        return self._get_exp_path() / "data" if self._get_exp_path() else None
 
-    def get_metrics_csv_path(self) -> Path:
-        return self._get_exp_path() / "csv"
+    def get_metrics_csv_path(self) -> Optional[Path]:
+        return self._get_exp_path() / "csv" if self._get_exp_path() else None
 
     def get_cache_dir(self) -> Path:
         return self._get_exp_path() / "cache"
