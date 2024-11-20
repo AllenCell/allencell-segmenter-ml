@@ -79,3 +79,11 @@ class FileInputModel(Publisher):
 
     def get_selected_paths(self) -> Optional[list[Path]]:
         return self._selected_paths
+
+    def get_input_files_as_list(self) -> List[Path]:
+        if self.get_input_mode() == InputMode.FROM_PATH:
+            return list(self.get_input_image_path().glob("*"))
+        elif self.get_input_mode() == InputMode.FROM_NAPARI_LAYERS:
+            return self.get_selected_paths()
+
+        return []
