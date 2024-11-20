@@ -1,16 +1,21 @@
+from napari import Viewer
+
+from allencell_ml_segmenter.core.dialog_box import DialogBox
 from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
 from allencell_ml_segmenter.main.i_viewer import IViewer
 from allencell_ml_segmenter._style import Style
 from allencell_ml_segmenter.core.view import View, MainWindow
 from allencell_ml_segmenter.main.main_model import MainModel
+from allencell_ml_segmenter.prediction.prediction_folder_progress_tracker import PredictionFolderProgressTracker
 from allencell_ml_segmenter.prediction.service import ModelFileService
-from allencell_ml_segmenter.thresholding.thresholding_model import ThresholdingModel
+from allencell_ml_segmenter.thresholding.thresholding_model import ThresholdingModel, AVAILABLE_AUTOTHRESHOLD_METHODS
+from allencell_ml_segmenter.utils.file_utils import FileUtils
 
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 from allencell_ml_segmenter.core.file_input_widget import (
     FileInputWidget,
 )
-from allencell_ml_segmenter.core.file_input_model import FileInputModel
+from allencell_ml_segmenter.core.file_input_model import FileInputModel, InputMode
 
 from qtpy.QtWidgets import (
     QLabel,
@@ -23,8 +28,6 @@ from qtpy.QtWidgets import (
     QPushButton,
     QSlider,
     QSpinBox,
-    QDoubleSpinBox,
-    QFileDialog,
 )
 from qtpy.QtCore import Qt
 
@@ -111,7 +114,6 @@ class ThresholdingView(View, MainWindow):
             Qt.Orientation.Horizontal
         )
 
-        # TODO: see if i can set range and step similarly to spinbox, to avoid conversion each time we update
         self._threshold_value_slider.setRange(
             0, 255
         )  # slider values from 0 to 100 (representing 0.0 to 1.0)
@@ -120,30 +122,15 @@ class ThresholdingView(View, MainWindow):
         self._threshold_value_spinbox.setRange(0, 255)
         self._threshold_value_spinbox.setSingleStep(1)
 
-        # sync slider and spinbox
-        self._threshold_value_slider.valueChanged.connect(
-            self._update_spinbox_from_slider
-        )
-        self._threshold_value_spinbox.valueChanged.connect(
-            self._update_slider_from_spinbox
-        )
+
 
         # set default value
-        self._threshold_value_slider.setValue(self._threshold_value_to_slider(
-            self._thresholding_model.get_thresholding_value()))
+        self._threshold_value_slider.setValue(self._thresholding_model.get_thresholding_value())
+        self._threshold_value_spinbox.setValue(self._thresholding_model.get_thresholding_value())
 
-        # determine when user is finished selecting a value
-        self._threshold_value_slider.sliderReleased.connect(
-            lambda: self._thresholding_model.set_thresholding_value(
-                self._threshold_value_slider.value()
-            )
-        )
-
-        self._threshold_value_spinbox.editingFinished.connect(
-            lambda: self._thresholding_model.set_thresholding_value(
-                self._threshold_value_spinbox.value()
-            )
-        )
+        self._threshold_value_slider.setEnabled(False)
+        self._threshold_value_spinbox.setEnabled(False)
+        self._specific_value_radio_button.setChecked(False)
 
 
         # add slider and spinbox
@@ -158,7 +145,7 @@ class ThresholdingView(View, MainWindow):
         auto_thresh_label.set_hint("Apply an autothresholding method.")
 
         self._autothreshold_method_combo: QComboBox = QComboBox()
-        self._autothreshold_method_combo.addItems(["Otsu"])
+        self._autothreshold_method_combo.addItems(AVAILABLE_AUTOTHRESHOLD_METHODS)
         self._autothreshold_method_combo.setEnabled(False)
 
         autothreshold_layout.addWidget(self._autothreshold_radio_button)
@@ -172,6 +159,7 @@ class ThresholdingView(View, MainWindow):
         # apply and save
         self._apply_save_button: QPushButton = QPushButton("Apply & Save")
         self._apply_save_button.setEnabled(False)
+        self._apply_save_button.clicked.connect(self._save_thresholded_images)
         layout.addWidget(self._apply_save_button)
 
         # need styling
@@ -185,6 +173,14 @@ class ThresholdingView(View, MainWindow):
         Connects behavior for widgets
         """
 
+        # sync slider and spinbox
+        self._threshold_value_slider.valueChanged.connect(
+            self._update_spinbox_from_slider
+        )
+        self._threshold_value_spinbox.valueChanged.connect(
+            self._update_slider_from_spinbox
+        )
+
         # enable selections when corresponding radio button is selected
         self._specific_value_radio_button.toggled.connect(
             lambda checked: self._enable_specific_threshold_widgets(checked)
@@ -195,29 +191,35 @@ class ThresholdingView(View, MainWindow):
             )
         )
 
-        # enable apply button only when thresholding method is selected
-        self._none_radio_button.toggled.connect(self._enable_apply_button)
+        # update state and ui based on radio button selections
+        self._none_radio_button.toggled.connect(self._update_state_from_radios)
         self._specific_value_radio_button.toggled.connect(
-            self._enable_apply_button
+            self._update_state_from_radios
         )
         self._autothreshold_radio_button.toggled.connect(
-            self._enable_apply_button
-        )
-        self._autothreshold_radio_button.toggled.connect(
-            self._autothreshold_radio_selected
+            self._update_state_from_radios
         )
 
-    def _autothreshold_radio_selected(self) -> None:
-        """
-        Set autothresholding method when autothreshold radio button is selected
-        """
-        self._thresholding_model.set_autothresholding_enabled()
+        # update autothresholding method when one is selected, and update viewer if able
+        self._autothreshold_method_combo.currentIndexChanged.connect(
+            lambda: self._thresholding_model.set_autothresholding_method(
+                self._autothreshold_method_combo.currentText()
+            )
+        )
 
-    def _confirm_slider_value_change(self, value: int) -> None:
-        """
-        Confirm the slider value change
-        """
-        self._thresholding_model.set_thresholding_value(value)
+        # update thresholding value when the user is finished making a selection
+        self._threshold_value_slider.sliderReleased.connect(
+            lambda: self._thresholding_model.set_thresholding_value(
+                self._threshold_value_slider.value()
+            )
+        )
+
+        self._threshold_value_spinbox.editingFinished.connect(
+            lambda: self._thresholding_model.set_thresholding_value(
+                self._threshold_value_spinbox.value()
+            )
+        )
+
 
     def _update_spinbox_from_slider(self, value: int) -> None:
         """
@@ -238,24 +240,58 @@ class ThresholdingView(View, MainWindow):
         self._threshold_value_slider.setEnabled(enabled)
         self._threshold_value_spinbox.setEnabled(enabled)
 
-    def _enable_apply_button(self) -> None:
+    def _update_state_from_radios(self) -> None:
         """
-        enable or disable apply button
+        update state based on thresholding radio button selection
         """
+        self._thresholding_model.set_autothresholding_enabled(self._autothreshold_radio_button.isChecked())
+        self._thresholding_model.set_threshold_enabled(self._specific_value_radio_button.isChecked())
+
         self._apply_save_button.setEnabled(
-            self._none_radio_button.isChecked()
-            or self._specific_value_radio_button.isChecked()
+            self._specific_value_radio_button.isChecked()
             or self._autothreshold_radio_button.isChecked()
         )
 
-    def _slider_value_to_threshold(self, value: int) -> float:
-        return value / 100.0
+    def _check_able_to_threshold(self) -> bool:
+        able_to_threshold: bool = True
+        # Check to see if output directory is selected
+        if self._file_input_model.get_output_directory() is None:
+            Viewer.show_info("Please select an output directory first.")
+            able_to_threshold = False
 
-    def _threshold_value_to_slider(self, value: float) -> int:
-        return int(value * 100)
+        # Check to see if input images / directory of images are selected
+        if self._file_input_model.get_input_mode() is None:
+            Viewer.show_info("Please select an input mode first.")
+            able_to_threshold = False
+        else:
+            if (self._file_input_model.get_input_mode() == InputMode.FROM_NAPARI_LAYERS
+                    and self._file_input_model.get_selected_paths() is None):
+                Viewer.show_info("Please select on screen images to threshold.")
+                able_to_threshold = False
+            elif self._file_input_model.get_input_mode() == InputMode.FROM_PATH and self._file_input_model.get_input_image_path() is None:
+                Viewer.show_info("Please select a directory to threshold.")
+                able_to_threshold = False
+
+        # check to see if thresholding method is selected
+        if not self._thresholding_model.is_threshold_enabled() and not self._thresholding_model.is_autothresholding_enabled():
+            Viewer.show_info("Please select a thresholding method first.")
+            able_to_threshold = False
+
+        return able_to_threshold
+
+    def _save_thresholded_images(self) -> None:
+        if self._check_able_to_threshold():
+            progress_tracker: PredictionFolderProgressTracker = (
+                PredictionFolderProgressTracker(
+                    self._file_input_model.get_output_directory(),
+                    len(self._file_input_model.get_input_files_as_list()),
+                )
+            )
+
+            self.startLongTaskWithProgressBar(progress_tracker)
 
     def doWork(self) -> None:
-        return
+        self._thresholding_model.dispatch_save_thresholded_images()
 
     def focus_changed(self) -> None:
         return
@@ -264,4 +300,9 @@ class ThresholdingView(View, MainWindow):
         return ""
 
     def showResults(self) -> None:
-        return
+        dialog_box = DialogBox(
+            f"Predicted images saved to {str(self._file_input_model.get_output_directory())}. \nWould you like to open this folder?"
+        )
+        dialog_box.exec()
+        if dialog_box.get_selection():
+            FileUtils.open_directory_in_window(self._file_input_model.get_output_directory())

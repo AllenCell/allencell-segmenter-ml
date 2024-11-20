@@ -26,7 +26,7 @@ class CheckBoxListWidget(QListWidget):
         idx: int = self.row(item)
         self.checkedSignal.emit(idx, item.checkState())
 
-    def add_item(self, item: Union[str, QListWidgetItem]) -> None:
+    def add_item(self, item: Union[str, QListWidgetItem], set_checked: bool =False) -> None:
         """
         Adds an item to the list.
         """
@@ -39,10 +39,13 @@ class CheckBoxListWidget(QListWidget):
             raise TypeError(
                 f"Item added to CheckBoxListWidget must be a string or QListWidgetItem, but got {type(item)} instead"
             )
-
-        # set checkable and unchecked by default
+        # set checkable
         item_add.setFlags(item_add.flags() | Qt.ItemFlag.ItemIsUserCheckable)
-        item_add.setCheckState(Qt.CheckState.Unchecked)
+        if set_checked:
+            item_add.setCheckState(Qt.CheckState.Checked)
+        else:
+            item_add.setCheckState(Qt.CheckState.Unchecked)
+
         super().addItem(item_add)
 
     def set_all_state(self, state: Qt.CheckState) -> None:
