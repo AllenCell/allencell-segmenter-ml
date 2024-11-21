@@ -181,16 +181,6 @@ class ThresholdingView(View, MainWindow):
             self._update_slider_from_spinbox
         )
 
-        # enable selections when corresponding radio button is selected
-        self._specific_value_radio_button.toggled.connect(
-            lambda checked: self._enable_specific_threshold_widgets(checked)
-        )
-        self._autothreshold_radio_button.toggled.connect(
-            lambda checked: self._autothreshold_method_combo.setEnabled(
-                checked
-            )
-        )
-
         # update state and ui based on radio button selections
         self._none_radio_button.toggled.connect(self._update_state_from_radios)
         self._specific_value_radio_button.toggled.connect(
@@ -245,7 +235,13 @@ class ThresholdingView(View, MainWindow):
         update state based on thresholding radio button selection
         """
         self._thresholding_model.set_autothresholding_enabled(self._autothreshold_radio_button.isChecked())
+        self._autothreshold_method_combo.setEnabled(
+            self._autothreshold_radio_button.isChecked())
+
         self._thresholding_model.set_threshold_enabled(self._specific_value_radio_button.isChecked())
+        self._enable_specific_threshold_widgets(self._specific_value_radio_button.isChecked())
+
+
 
         self._apply_save_button.setEnabled(
             self._specific_value_radio_button.isChecked()

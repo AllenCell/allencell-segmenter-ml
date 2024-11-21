@@ -3,13 +3,12 @@ from pathlib import Path
 
 from PyQt5.QtCore import Qt
 
+from allencell_ml_segmenter._tests.fakes.fake_experiments_model import FakeExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.thresholding.thresholding_model import ThresholdingModel
 from allencell_ml_segmenter.core.file_input_model import FileInputModel, InputMode
-from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
-from allencell_ml_segmenter.main.i_viewer import FakeViewer  # Assuming this exists
-from allencell_ml_segmenter.prediction.prediction_folder_progress_tracker import PredictionFolderProgressTracker
-from allencell_ml_segmenter.views.thresholding_view import ThresholdingView
+from allencell_ml_segmenter._tests.fakes.fake_viewer import FakeViewer
+from allencell_ml_segmenter.thresholding.thresholding_view import ThresholdingView
 
 @pytest.fixture
 def main_model() -> MainModel:
@@ -30,8 +29,8 @@ def file_input_model(tmp_path: Path) -> FileInputModel:
     return model
 
 @pytest.fixture
-def experiments_model() -> IExperimentsModel:
-    return IExperimentsModel()
+def experiments_model() -> FakeExperimentsModel:
+    return FakeExperimentsModel()
 
 @pytest.fixture
 def viewer() -> FakeViewer:
