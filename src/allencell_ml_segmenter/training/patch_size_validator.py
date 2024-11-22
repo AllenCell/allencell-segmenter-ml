@@ -3,6 +3,8 @@ from qtpy.QtGui import QValidator
 
 
 PATCH_SIZE_MULTIPLE_OF = 16
+
+
 # https://doc.qt.io/qtforpython-5/PySide2/QtGui/QValidator.html
 class PatchSizeValidator(QValidator):
     # override
