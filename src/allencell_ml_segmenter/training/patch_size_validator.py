@@ -2,6 +2,9 @@ import typing
 from qtpy.QtGui import QValidator
 
 
+PATCH_SIZE_MULTIPLE_OF = 16
+
+
 # https://doc.qt.io/qtforpython-5/PySide2/QtGui/QValidator.html
 class PatchSizeValidator(QValidator):
     # override
@@ -13,10 +16,10 @@ class PatchSizeValidator(QValidator):
         if a0 is not None and a0.isdecimal():
             as_int: int = int(a0)
             # negative and 0 patch sizes not allowed
-            if as_int < 4:
-                as_int = 4
+            if as_int < PATCH_SIZE_MULTIPLE_OF:
+                as_int = PATCH_SIZE_MULTIPLE_OF
             # round down to the nearest multiple of 4
-            return str(as_int - (as_int % 4))
+            return str(as_int - (as_int % PATCH_SIZE_MULTIPLE_OF))
         else:
             return a0 if a0 is not None else ""
 
@@ -38,7 +41,7 @@ class PatchSizeValidator(QValidator):
                 as_int: int = int(a0)
                 if as_int <= 0:
                     status = QValidator.State.Invalid
-                elif as_int % 4 == 0:
+                elif as_int % PATCH_SIZE_MULTIPLE_OF == 0:
                     status = QValidator.State.Acceptable
             else:
                 status = QValidator.State.Invalid
