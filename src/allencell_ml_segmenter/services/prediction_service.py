@@ -137,6 +137,9 @@ class PredictionService(Subscriber):
         overrides["data.split_column"] = "split"
         overrides["checkpoint.ckpt_path"] = str(checkpoint)
 
+        # This override is needed to for inference with cyto-dl, because we default to auto otherwise
+        overrides["data.batch_size"] = 1
+
         input_path: Optional[Path] = (
             self._prediction_model.get_input_image_path()
         )
