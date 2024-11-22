@@ -31,7 +31,7 @@ from allencell_ml_segmenter.training.training_model import (
     ModelSize,
 )
 from allencell_ml_segmenter.training.patch_size_validator import (
-    PatchSizeValidator,
+    PatchSizeValidator, PATCH_SIZE_MULTIPLE_OF,
 )
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 from qtpy.QtGui import QIntValidator
@@ -160,7 +160,7 @@ class TrainingView(View, MainWindow):
             "Patch size to split images into during training. Should encompass the structure of interest and all dimensions should be evenly divisble by 4. If 2D, Z can be left blank."
         )
         patch_size_text_layout.addWidget(patch_size_label)
-        guide_text: QLabel = QLabel("All values must be multiples of 4")
+        guide_text: QLabel = QLabel(f"All values must be multiples of {PATCH_SIZE_MULTIPLE_OF}")
         guide_text.setObjectName("subtext")
         patch_size_text_layout.addWidget(guide_text)
         bottom_grid_layout.addLayout(patch_size_text_layout, 1, 0)
