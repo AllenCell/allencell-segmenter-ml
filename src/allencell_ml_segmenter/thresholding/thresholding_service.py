@@ -11,7 +11,7 @@ from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.thresholding.thresholding_model import ThresholdingModel
-from allencell_ml_segmenter.core.task_executor import NapariThreadTaskExecutor
+from allencell_ml_segmenter.core.task_executor import NapariThreadTaskExecutor, ITaskExecutor
 from allencell_ml_segmenter.main.viewer import IViewer
 from napari.viewer import Viewer
 from cyto_dl.models.im2im.utils.postprocessing.auto_thresh import AutoThreshold
@@ -27,7 +27,8 @@ class ThresholdingService(Subscriber):
                  experiments_model: ExperimentsModel,
                  file_input_model: FileInputModel,
                  main_model: MainModel,
-                 viewer: IViewer):
+                 viewer: IViewer,
+                 task_executor: ITaskExecutor = NapariThreadTaskExecutor.global_instance()):
         super().__init__()
         # Models
         self._thresholding_model: ThresholdingModel = thresholding_model
@@ -39,7 +40,7 @@ class ThresholdingService(Subscriber):
         self._viewer: IViewer = viewer
 
         # Task Executor
-        self._task_executor: NapariThreadTaskExecutor = NapariThreadTaskExecutor.global_instance()
+        self._task_executor: ITaskExecutor = task_executor
 
         self._original_layers: list[Layer] = []
 
