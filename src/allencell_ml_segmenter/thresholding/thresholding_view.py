@@ -1,4 +1,5 @@
 from napari import Viewer
+from napari.utils.notifications import show_info
 
 from allencell_ml_segmenter.core.dialog_box import DialogBox
 from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
@@ -252,25 +253,25 @@ class ThresholdingView(View, MainWindow):
         able_to_threshold: bool = True
         # Check to see if output directory is selected
         if self._file_input_model.get_output_directory() is None:
-            Viewer.show_info("Please select an output directory first.")
+            show_info("Please select an output directory first.")
             able_to_threshold = False
 
         # Check to see if input images / directory of images are selected
         if self._file_input_model.get_input_mode() is None:
-            Viewer.show_info("Please select an input mode first.")
+            show_info("Please select an input mode first.")
             able_to_threshold = False
         else:
             if (self._file_input_model.get_input_mode() == InputMode.FROM_NAPARI_LAYERS
                     and self._file_input_model.get_selected_paths() is None):
-                Viewer.show_info("Please select on screen images to threshold.")
+                show_info("Please select on screen images to threshold.")
                 able_to_threshold = False
             elif self._file_input_model.get_input_mode() == InputMode.FROM_PATH and self._file_input_model.get_input_image_path() is None:
-                Viewer.show_info("Please select a directory to threshold.")
+                show_info("Please select a directory to threshold.")
                 able_to_threshold = False
 
         # check to see if thresholding method is selected
         if not self._thresholding_model.is_threshold_enabled() and not self._thresholding_model.is_autothresholding_enabled():
-            Viewer.show_info("Please select a thresholding method first.")
+            show_info("Please select a thresholding method first.")
             able_to_threshold = False
 
         return able_to_threshold
