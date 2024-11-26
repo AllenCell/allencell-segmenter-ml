@@ -41,7 +41,7 @@ dependencies = [
     "bioio",
     "tifffile>=2023.4.12",
     "watchdog",
-    "cyto-dl>=0.1.8",
+    "cyto-dl>=0.4.4",
     "scikit-image!=0.23.0",
 ]
 
