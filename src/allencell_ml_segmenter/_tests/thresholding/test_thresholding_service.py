@@ -15,14 +15,6 @@ def test_image():
     """Create a small test image for thresholding."""
     return np.array([[10, 20, 30], [40, 50, 60], [70, 80, 90]])
 
-@pytest.fixture
-def thresholding_model():
-    return ThresholdingModel()
-
-@pytest.fixture
-def viewer():
-    return FakeViewer()
-
 def test_on_threshold_changed_non_prediction(test_image):
     thresholding_model: ThresholdingModel = ThresholdingModel()
     viewer: FakeViewer = FakeViewer()
