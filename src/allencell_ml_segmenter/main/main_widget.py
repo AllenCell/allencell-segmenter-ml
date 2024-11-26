@@ -119,6 +119,7 @@ class MainWidget(AicsWidget):
             thresholding_model=self._thresholding_model,
             experiments_model=self._experiments_model,
             file_input_model=self._thresholding_file_input_model,
+            main_model=self._model,
             viewer=self.viewer,
         )
 

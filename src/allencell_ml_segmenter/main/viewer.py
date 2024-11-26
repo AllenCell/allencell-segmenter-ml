@@ -94,6 +94,9 @@ class Viewer(IViewer):
     def get_layers(self) -> list[Layer]:
         return [l for l in self.viewer.layers]
 
+    def get_layers_nonthreshold(self) -> list[Layer]:
+        return [l for l in self.viewer.layers if not l.name.startswith("[threshold]")]
+
     def subscribe_layers_change_event(
         self, function: Callable[[NapariEvent], None]
     ) -> None:
@@ -109,14 +112,27 @@ class Viewer(IViewer):
     def get_seg_layers(self, layer_list: list[Layer]) -> list[Layer]:
         return [layer for layer in self.get_layers() if layer.name.startswith("[seg]")]
 
-    def insert_segmentation(self, layer_name: str, image: np.ndarray):
-        # No segmentation exists, so we add it to the correct place in the viewer
+    def insert_segmentation(self, layer_name: str, image: np.ndarray, seg_layers: bool = False):
         layer_to_insert = self._get_layer_by_name(f"[threshold] {layer_name}")
         if layer_to_insert is None:
+            # No thresholding exists, so we add it to the correct place in the viewer
             layerlist = self.viewer.layers
+
+            # check if the original segementation layer is currently in the viewer, if so, remove later after
+            # thresholding is applied
+            seg_layer_og: Optional[Layer] = None
+            if seg_layers:
+                seg_layer_og: Layer = self._get_layer_by_name(layer_name)
+
+            # figure out where to insert the new thresholded layer (on top of the original segmentation image)
             layerlist_pos = layerlist.index(layer_name)
             labels_created = Labels(image, name=f"[threshold] {layer_name}")
             layerlist.insert(layerlist_pos + 1, labels_created)
+
+            # remove the original segmentation layer if it exists
+            if seg_layer_og:
+                layerlist.remove(seg_layer_og)
         else:
+            # Thresholding already exists so just update the existing one in the viewer.
             layer_to_insert.data = image
             layer_to_insert.refresh()
