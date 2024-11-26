@@ -178,7 +178,7 @@ class PredictionService(Subscriber):
         """
         data_folder: Optional[Path] = self._experiments_model.get_csv_path()
         if data_folder is not None:
-            data_folder.mkdir(parents=False, exist_ok=True)
+            (data_folder / "prediction_csv").mkdir(parents=True, exist_ok=True)
             csv_path: Path = data_folder / "prediction_csv" / "test_csv.csv"
             with open(csv_path, "w") as file:
                 writer = csv.writer(file)
