@@ -24,6 +24,7 @@ class FakeViewer(IViewer):
         self._shapes_layers: Dict[str, ShapesLayer] = {}
         self._labels_layers: Dict[str, LabelsLayer] = {}
         self._on_layers_change_fns: List[Callable] = []
+        self._segmentation_inserted: Dict[str, np.ndarray] = {}
 
     def add_image(self, image: np.ndarray, name: str):
         self._image_layers[name] = ImageLayer(name, None)
@@ -103,3 +104,9 @@ class FakeViewer(IViewer):
     def _on_layers_change(self):
         for fn in self._on_layers_change_fns:
             fn(FakeNapariEvent())
+
+    def get_seg_layers(self, layer_list: list[Layer]) -> list[Layer]:
+        return []
+
+    def insert_segmentation(self, layer_name: str, img: np.ndarray) -> None:
+        self._segmentation_inserted[layer_name] = img
