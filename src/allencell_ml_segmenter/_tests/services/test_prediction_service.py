@@ -120,7 +120,8 @@ def test_build_overrides() -> None:
         / "0_exp"
         / "prediction_output_test"
     )
-    prediction_model.set_input_image_path(Path("fake_img_path"))
+    fake_path: Path = Path("fake_img_path")
+    prediction_model.set_input_image_path(fake_path)
     prediction_model.set_image_input_channel_index(3)
 
     # act
@@ -134,6 +135,7 @@ def test_build_overrides() -> None:
     assert overrides["train"] == False
     assert overrides["mode"] == "predict"
     assert overrides["task_name"] == "predict_task_from_app"
+    assert overrides["data.path"] == str(fake_path)
     assert overrides["checkpoint.ckpt_path"] == str(
         Path(__file__).parent.parent
         / "main"
