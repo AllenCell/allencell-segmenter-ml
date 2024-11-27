@@ -214,13 +214,18 @@ class FileInputWidget(QWidget):
         self._model.set_input_mode(InputMode.FROM_PATH)
 
     def _update_layer_list(self, event: Optional[NapariEvent] = None) -> None:
-        existing_selection = [self._viewer.get_layers_nonthreshold()[i].name for i in self._image_list.get_checked_rows()]
+        existing_selection = [
+            self._viewer.get_layers_nonthreshold()[i].name
+            for i in self._image_list.get_checked_rows()
+        ]
         self._image_list.clear()
         self._reset_channel_combobox()
         for layer in self._viewer.get_layers():
             path_of_layer_image: str = layer.source.path
             if path_of_layer_image:
-                self._image_list.add_item(layer.name, set_checked=layer.name in existing_selection)
+                self._image_list.add_item(
+                    layer.name, set_checked=layer.name in existing_selection
+                )
 
     def _process_checked_signal(self, row: int, state: Qt.CheckState) -> None:
         if self._model.get_input_mode() == InputMode.FROM_NAPARI_LAYERS:

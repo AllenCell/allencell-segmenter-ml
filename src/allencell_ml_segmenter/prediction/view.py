@@ -197,7 +197,7 @@ class PredictionView(View, MainWindow):
                         self._viewer.add_labels(
                             seg_np_data,
                             name=f"[seg] {data['seg'].name}",
-                    )
+                        )
                     self._main_model.set_predictions_in_viewer(True)
         # Display popup with saved images path if prediction inputs are from a directory
         else:

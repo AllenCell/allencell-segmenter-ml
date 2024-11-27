@@ -26,7 +26,9 @@ class CheckBoxListWidget(QListWidget):
         idx: int = self.row(item)
         self.checkedSignal.emit(idx, item.checkState())
 
-    def add_item(self, item: Union[str, QListWidgetItem], set_checked: bool =False) -> None:
+    def add_item(
+        self, item: Union[str, QListWidgetItem], set_checked: bool = False
+    ) -> None:
         """
         Adds an item to the list.
         """

@@ -78,5 +78,11 @@ class IViewer(ABC):
         pass
 
     @abstractmethod
-    def insert_segmentation(self, layer_name: str, img: np.ndarray) -> None:
+    def insert_segmentation(
+        self, layer_name: str, img: np.ndarray, seg_layers: bool = False
+    ) -> None:
+        pass
+
+    @abstractmethod
+    def get_layers_nonthreshold(self) -> list[Layer]:
         pass
