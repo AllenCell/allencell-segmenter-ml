@@ -2,7 +2,10 @@ from typing import Optional
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.publisher import Publisher
 
+# Some thresholding constants #
 AVAILABLE_AUTOTHRESHOLD_METHODS: list[str] = ["threshold_otsu"]
+THRESHOLD_DEFAULT = 120
+THRESHOLD_RANGE = (0, 255)
 
 
 class ThresholdingModel(Publisher):
@@ -15,10 +18,9 @@ class ThresholdingModel(Publisher):
 
         # cyto-dl segmentations should have values between 0 and 255
         self._is_threshold_enabled: bool = False
-        self._thresholding_value_selected: int = 120
+        self._thresholding_value_selected: int = THRESHOLD_DEFAULT
         self._is_autothresholding_enabled: bool = False
-        self._autothresholding_method: Optional[str] = AVAILABLE_AUTOTHRESHOLD_METHODS[0]
-
+        self._autothresholding_method: str = AVAILABLE_AUTOTHRESHOLD_METHODS[0]
 
     def set_thresholding_value(self, value: int) -> None:
         """
@@ -26,7 +28,6 @@ class ThresholdingModel(Publisher):
         """
         self._thresholding_value_selected = value
         self.dispatch(Event.ACTION_THRESHOLDING_VALUE_CHANGED)
-
 
     def get_thresholding_value(self) -> int:
         """
@@ -74,4 +75,3 @@ class ThresholdingModel(Publisher):
 
     def dispatch_save_thresholded_images(self) -> None:
         self.dispatch(Event.ACTION_SAVE_THRESHOLDING_IMAGES)
-

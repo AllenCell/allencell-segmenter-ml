@@ -95,7 +95,11 @@ class Viewer(IViewer):
         return [l for l in self.viewer.layers]
 
     def get_layers_nonthreshold(self) -> list[Layer]:
-        return [l for l in self.viewer.layers if not l.name.startswith("[threshold]")]
+        return [
+            l
+            for l in self.viewer.layers
+            if not l.name.startswith("[threshold]")
+        ]
 
     def subscribe_layers_change_event(
         self, function: Callable[[NapariEvent], None]
@@ -110,9 +114,15 @@ class Viewer(IViewer):
         return None
 
     def get_seg_layers(self, layer_list: list[Layer]) -> list[Layer]:
-        return [layer for layer in self.get_layers() if layer.name.startswith("[seg]")]
+        return [
+            layer
+            for layer in self.get_layers()
+            if layer.name.startswith("[seg]")
+        ]
 
-    def insert_segmentation(self, layer_name: str, image: np.ndarray, seg_layers: bool = False):
+    def insert_segmentation(
+        self, layer_name: str, image: np.ndarray, seg_layers: bool = False
+    ) -> None:
         layer_to_insert = self._get_layer_by_name(f"[threshold] {layer_name}")
         if layer_to_insert is None:
             # No thresholding exists, so we add it to the correct place in the viewer
@@ -122,7 +132,7 @@ class Viewer(IViewer):
             # thresholding is applied
             seg_layer_og: Optional[Layer] = None
             if seg_layers:
-                seg_layer_og: Layer = self._get_layer_by_name(layer_name)
+                seg_layer_og = self._get_layer_by_name(layer_name)
 
             # figure out where to insert the new thresholded layer (on top of the original segmentation image)
             layerlist_pos = layerlist.index(layer_name)

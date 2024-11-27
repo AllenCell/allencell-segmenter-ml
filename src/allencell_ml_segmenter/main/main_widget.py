@@ -28,8 +28,12 @@ from allencell_ml_segmenter.services.prediction_service import (
     PredictionService,
 )
 from allencell_ml_segmenter.services.training_service import TrainingService
-from allencell_ml_segmenter.thresholding.thresholding_model import ThresholdingModel
-from allencell_ml_segmenter.thresholding.thresholding_service import ThresholdingService
+from allencell_ml_segmenter.thresholding.thresholding_model import (
+    ThresholdingModel,
+)
+from allencell_ml_segmenter.thresholding.thresholding_service import (
+    ThresholdingService,
+)
 from allencell_ml_segmenter.training.model_selection_widget import (
     ModelSelectionWidget,
 )
@@ -95,7 +99,6 @@ class MainWidget(AicsWidget):
 
         self._thresholding_file_input_model: FileInputModel = FileInputModel()
         self._thresholding_model: ThresholdingModel = ThresholdingModel()
-
 
         # init services
         self._main_service: MainService = MainService(

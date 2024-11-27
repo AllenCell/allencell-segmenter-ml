@@ -106,7 +106,20 @@ class FakeViewer(IViewer):
             fn(FakeNapariEvent())
 
     def get_seg_layers(self, layer_list: list[Layer]) -> list[Layer]:
-        return [layer for layer in self._image_layers.values() if layer.name.startswith("[seg]")]
+        return [
+            layer
+            for layer in self._image_layers.values()
+            if layer.name.startswith("[seg]")
+        ]
 
-    def insert_segmentation(self, layer_name: str, img: np.ndarray, seg_layers: bool = False) -> None:
+    def insert_segmentation(
+        self, layer_name: str, img: np.ndarray, seg_layers: bool = False
+    ) -> None:
         self.segmentation_inserted[f"[threshold] {layer_name}"] = img
+
+    def get_layers_nonthreshold(self) -> list[Layer]:
+        return [
+            layer
+            for layer in self._image_layers.values()
+            if not layer.name.startswith("[threshold]")
+        ]

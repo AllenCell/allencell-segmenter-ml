@@ -270,10 +270,18 @@ class TrainingView(View, MainWindow):
         if self._patch_size_ok():
             self.set_patch_size()
             num_epochs: Optional[int] = self._training_model.get_num_epochs()
+            metrics_csv_path: Optional[Path] = (
+                self._experiments_model.get_metrics_csv_path()
+            )
+            cache_dir: Optional[Path] = self._experiments_model.get_cache_dir()
+            if metrics_csv_path is None or cache_dir is None:
+                raise ValueError(
+                    "Metrics CSV path and cache_dir cannot be None after training has started!"
+                )
             progress_tracker: TrainingProgressTracker = (
                 TrainingProgressTracker(
-                    self._experiments_model.get_metrics_csv_path(),
-                    self._experiments_model.get_cache_dir(),
+                    metrics_csv_path,
+                    cache_dir,
                     num_epochs if num_epochs is not None else 0,
                     self._training_model.get_total_num_images(),
                     self._experiments_model.get_latest_metrics_csv_version()

@@ -134,8 +134,9 @@ class ImageSelectionWidget(QWidget):
         self._model.signals.num_channels_set.connect(self._update_channels)
 
     def set_inputs_csv(self, event: Optional[Event] = None) -> None:
-        if self._experiments_model.get_csv_path() is not None:
-            csv_path = self._experiments_model.get_csv_path() / "train.csv"
+        csv_path: Optional[Path] = self._experiments_model.get_csv_path()
+        if csv_path is not None:
+            csv_path = csv_path / "train.csv"
             if csv_path.is_file():
                 # if the csv exists
                 self._images_directory_input_button._text_display.setText(
