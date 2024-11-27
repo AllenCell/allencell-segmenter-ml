@@ -1,5 +1,7 @@
-from napari import Viewer
-from napari.utils.notifications import show_info
+from pathlib import Path
+from typing import Optional
+
+from napari.utils.notifications import show_info  # type: ignore
 
 from allencell_ml_segmenter.core.dialog_box import DialogBox
 from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
@@ -7,16 +9,25 @@ from allencell_ml_segmenter.main.i_viewer import IViewer
 from allencell_ml_segmenter._style import Style
 from allencell_ml_segmenter.core.view import View, MainWindow
 from allencell_ml_segmenter.main.main_model import MainModel
-from allencell_ml_segmenter.prediction.prediction_folder_progress_tracker import PredictionFolderProgressTracker
+from allencell_ml_segmenter.prediction.prediction_folder_progress_tracker import (
+    PredictionFolderProgressTracker,
+)
 from allencell_ml_segmenter.prediction.service import ModelFileService
-from allencell_ml_segmenter.thresholding.thresholding_model import ThresholdingModel, AVAILABLE_AUTOTHRESHOLD_METHODS
+from allencell_ml_segmenter.thresholding.thresholding_model import (
+    ThresholdingModel,
+    AVAILABLE_AUTOTHRESHOLD_METHODS,
+    THRESHOLD_RANGE,
+)
 from allencell_ml_segmenter.utils.file_utils import FileUtils
 
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 from allencell_ml_segmenter.core.file_input_widget import (
     FileInputWidget,
 )
-from allencell_ml_segmenter.core.file_input_model import FileInputModel, InputMode
+from allencell_ml_segmenter.core.file_input_model import (
+    FileInputModel,
+    InputMode,
+)
 
 from qtpy.QtWidgets import (
     QLabel,
@@ -53,7 +64,6 @@ class ThresholdingView(View, MainWindow):
         self._viewer: IViewer = viewer
         self._thresholding_model: ThresholdingModel = thresholding_model
 
-
         # To manage input files:
         self._file_input_model: FileInputModel = file_input_model
         self._input_files_service: ModelFileService = ModelFileService(
@@ -76,7 +86,10 @@ class ThresholdingView(View, MainWindow):
 
         # selecting input image
         self._file_input_widget: FileInputWidget = FileInputWidget(
-            self._file_input_model, self._viewer, self._input_files_service, include_channel_selection=False
+            self._file_input_model,
+            self._viewer,
+            self._input_files_service,
+            include_channel_selection=False,
         )
         self._file_input_widget.setObjectName("fileInput")
         layout.addWidget(self._file_input_widget)
@@ -116,23 +129,26 @@ class ThresholdingView(View, MainWindow):
         )
 
         self._threshold_value_slider.setRange(
-            0, 255
+            THRESHOLD_RANGE[0], THRESHOLD_RANGE[1]
         )  # slider values from 0 to 100 (representing 0.0 to 1.0)
 
         self._threshold_value_spinbox: QSpinBox = QSpinBox()
-        self._threshold_value_spinbox.setRange(0, 255)
+        self._threshold_value_spinbox.setRange(
+            THRESHOLD_RANGE[0], THRESHOLD_RANGE[1]
+        )
         self._threshold_value_spinbox.setSingleStep(1)
 
-
-
         # set default value
-        self._threshold_value_slider.setValue(self._thresholding_model.get_thresholding_value())
-        self._threshold_value_spinbox.setValue(self._thresholding_model.get_thresholding_value())
+        self._threshold_value_slider.setValue(
+            self._thresholding_model.get_thresholding_value()
+        )
+        self._threshold_value_spinbox.setValue(
+            self._thresholding_model.get_thresholding_value()
+        )
 
         self._threshold_value_slider.setEnabled(False)
         self._threshold_value_spinbox.setEnabled(False)
         self._specific_value_radio_button.setChecked(False)
-
 
         # add slider and spinbox
         specific_value_layout.addWidget(self._threshold_value_slider)
@@ -146,7 +162,9 @@ class ThresholdingView(View, MainWindow):
         auto_thresh_label.set_hint("Apply an autothresholding method.")
 
         self._autothreshold_method_combo: QComboBox = QComboBox()
-        self._autothreshold_method_combo.addItems(AVAILABLE_AUTOTHRESHOLD_METHODS)
+        self._autothreshold_method_combo.addItems(
+            AVAILABLE_AUTOTHRESHOLD_METHODS
+        )
         self._autothreshold_method_combo.setEnabled(False)
 
         autothreshold_layout.addWidget(self._autothreshold_radio_button)
@@ -211,7 +229,6 @@ class ThresholdingView(View, MainWindow):
             )
         )
 
-
     def _update_spinbox_from_slider(self, value: int) -> None:
         """
         Update the spinbox value when slider is changed
@@ -235,14 +252,19 @@ class ThresholdingView(View, MainWindow):
         """
         update state based on thresholding radio button selection
         """
-        self._thresholding_model.set_autothresholding_enabled(self._autothreshold_radio_button.isChecked())
+        self._thresholding_model.set_autothresholding_enabled(
+            self._autothreshold_radio_button.isChecked()
+        )
         self._autothreshold_method_combo.setEnabled(
-            self._autothreshold_radio_button.isChecked())
+            self._autothreshold_radio_button.isChecked()
+        )
 
-        self._thresholding_model.set_threshold_enabled(self._specific_value_radio_button.isChecked())
-        self._enable_specific_threshold_widgets(self._specific_value_radio_button.isChecked())
-
-
+        self._thresholding_model.set_threshold_enabled(
+            self._specific_value_radio_button.isChecked()
+        )
+        self._enable_specific_threshold_widgets(
+            self._specific_value_radio_button.isChecked()
+        )
 
         self._apply_save_button.setEnabled(
             self._specific_value_radio_button.isChecked()
@@ -261,26 +283,38 @@ class ThresholdingView(View, MainWindow):
             show_info("Please select an input mode first.")
             able_to_threshold = False
         else:
-            if (self._file_input_model.get_input_mode() == InputMode.FROM_NAPARI_LAYERS
-                    and self._file_input_model.get_selected_paths() is None):
+            if (
+                self._file_input_model.get_input_mode()
+                == InputMode.FROM_NAPARI_LAYERS
+                and self._file_input_model.get_selected_paths() is None
+            ):
                 show_info("Please select on screen images to threshold.")
                 able_to_threshold = False
-            elif self._file_input_model.get_input_mode() == InputMode.FROM_PATH and self._file_input_model.get_input_image_path() is None:
+            elif (
+                self._file_input_model.get_input_mode() == InputMode.FROM_PATH
+                and self._file_input_model.get_input_image_path() is None
+            ):
                 show_info("Please select a directory to threshold.")
                 able_to_threshold = False
 
         # check to see if thresholding method is selected
-        if not self._thresholding_model.is_threshold_enabled() and not self._thresholding_model.is_autothresholding_enabled():
+        if (
+            not self._thresholding_model.is_threshold_enabled()
+            and not self._thresholding_model.is_autothresholding_enabled()
+        ):
             show_info("Please select a thresholding method first.")
             able_to_threshold = False
 
         return able_to_threshold
 
     def _save_thresholded_images(self) -> None:
-        if self._check_able_to_threshold():
+        output_dir: Optional[Path] = (
+            self._file_input_model.get_output_directory()
+        )
+        if output_dir is not None and self._check_able_to_threshold():
             progress_tracker: PredictionFolderProgressTracker = (
                 PredictionFolderProgressTracker(
-                    self._file_input_model.get_output_directory(),
+                    output_dir,
                     len(self._file_input_model.get_input_files_as_list()),
                 )
             )
@@ -301,5 +335,9 @@ class ThresholdingView(View, MainWindow):
             f"Predicted images saved to {str(self._file_input_model.get_output_directory())}. \nWould you like to open this folder?"
         )
         dialog_box.exec()
-        if dialog_box.get_selection():
-            FileUtils.open_directory_in_window(self._file_input_model.get_output_directory())
+        output_dir: Optional[Path] = (
+            self._file_input_model.get_output_directory()
+        )
+
+        if output_dir and dialog_box.get_selection():
+            FileUtils.open_directory_in_window(output_dir)
