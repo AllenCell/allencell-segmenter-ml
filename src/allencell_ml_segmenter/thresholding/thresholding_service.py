@@ -90,15 +90,15 @@ class ThresholdingService(Subscriber):
         else:
             thresh_function = self._threshold_image
         for layer in layers_to_threshold:
-            # Creating helper functions for sreict typing
+            # Creating helper functions for mypy strict typing
             def thresholding_task() -> np.ndarray:
                 return thresh_function(layer.data)
 
             def on_return(
-                thresholded_image: np.ndarray, l_instance: Layer = Layer
+                thresholded_image: np.ndarray, l_instance: Layer = layer
             ) -> None:
                 self._viewer.insert_segmentation(
-                    layer.name, thresholded_image, seg_layers
+                    l_instance.name, thresholded_image, seg_layers
                 )
 
             self._task_executor.exec(
