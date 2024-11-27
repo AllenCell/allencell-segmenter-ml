@@ -1,8 +1,7 @@
 import pytest
-from pathlib import Path
 import numpy as np
 
-from allencell_ml_segmenter.core.file_input_model import FileInputModel, InputMode
+from allencell_ml_segmenter.core.file_input_model import FileInputModel
 from allencell_ml_segmenter._tests.fakes.fake_experiments_model import FakeExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.thresholding.thresholding_model import ThresholdingModel
@@ -23,19 +22,6 @@ def thresholding_model():
 @pytest.fixture
 def viewer():
     return FakeViewer()
-
-
-@pytest.fixture
-def thresholding_service(thresholding_model, viewer):
-    """Fixture to initialize the ThresholdingService with SynchroTaskExecutor and FakeViewer."""
-    return ThresholdingService(
-        thresholding_model,
-        FakeExperimentsModel(),
-        FileInputModel(),
-        MainModel(),
-        viewer,
-        task_executor=SynchroTaskExecutor.global_instance(),
-    )
 
 def test_on_threshold_changed_non_prediction(test_image):
     thresholding_model: ThresholdingModel = ThresholdingModel()
