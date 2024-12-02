@@ -98,3 +98,14 @@ def test_set_max_channels_dispatch() -> None:
 
     # Assert nothing happened
     dummy_subscriber.was_handled(Event.ACTION_FILEINPUT_MAX_CHANNELS_SET)
+
+def test_get_input_files_as_list() -> None:
+    file_input_model: FileInputModel = FileInputModel()
+    dummy_subscriber: FakeSubscriber = FakeSubscriber()
+    file_input_model.subscribe(
+        Event.ACTION_FILEINPUT_MAX_CHANNELS_SET,
+        dummy_subscriber,
+        dummy_subscriber.handle,
+    )
+
+
