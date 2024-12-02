@@ -23,6 +23,7 @@ def test_image():
 
 
 def test_on_threshold_changed_non_prediction(test_image):
+    # ARRANGE
     thresholding_model: ThresholdingModel = ThresholdingModel()
     viewer: FakeViewer = FakeViewer()
     thresholding_service: ThresholdingService = ThresholdingService(
@@ -51,6 +52,10 @@ def test_on_threshold_changed_non_prediction(test_image):
 
 
 def test_on_threshold_changed_non_prediction(test_image):
+    """
+    Test that the thresholding service does not add a threshold layer for a layer that is not a probability map
+    """
+    # ARRANGE
     thresholding_model: ThresholdingModel = ThresholdingModel()
     viewer: FakeViewer = FakeViewer()
     main_model: MainModel = MainModel()
@@ -63,6 +68,7 @@ def test_on_threshold_changed_non_prediction(test_image):
         viewer,
         task_executor=SynchroTaskExecutor.global_instance(),
     )
+    # Only the [seg] layers below should produce a threshold layer
     viewer.add_image(test_image, name="[raw] test_layer 1")
     viewer.add_image(test_image, name="[seg] test_layer 1")
     viewer.add_image(test_image, name="[raw] test_layer 2")
