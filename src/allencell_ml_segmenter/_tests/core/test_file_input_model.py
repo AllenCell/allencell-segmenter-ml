@@ -1,8 +1,9 @@
 from pathlib import Path
 
+import allencell_ml_segmenter
 from allencell_ml_segmenter._tests.fakes.fake_subscriber import FakeSubscriber
 from allencell_ml_segmenter.core.event import Event
-from allencell_ml_segmenter.core.file_input_model import FileInputModel
+from allencell_ml_segmenter.core.file_input_model import FileInputModel, InputMode
 
 
 def test_set_selected_paths_no_extract_channels() -> None:
@@ -99,7 +100,11 @@ def test_set_max_channels_dispatch() -> None:
     # Assert nothing happened
     dummy_subscriber.was_handled(Event.ACTION_FILEINPUT_MAX_CHANNELS_SET)
 
-def test_get_input_files_as_list() -> None:
+def test_get_input_files_as_list_from_path() -> None:
+    """
+    Test to see if all paths from a directory are returned as a list
+    """
+    # ARRANGE
     file_input_model: FileInputModel = FileInputModel()
     dummy_subscriber: FakeSubscriber = FakeSubscriber()
     file_input_model.subscribe(
@@ -107,5 +112,43 @@ def test_get_input_files_as_list() -> None:
         dummy_subscriber,
         dummy_subscriber.handle,
     )
+    file_input_model.set_input_mode(InputMode.FROM_PATH)
+    file_input_model.set_input_image_path(Path(allencell_ml_segmenter.__file__).parent
+        / "_tests"
+        / "test_files"
+        / "img_folder"
+    )
+
+    # Act
+    files: list[Path] = file_input_model.get_input_files_as_list()
+
+    # Assert
+    assert len(files) == 5
+
+def test_get_input_files_as_list_from_viewer() -> None:
+    """
+    Test to see if all paths from viewer displayed images are returned as a list
+    """
+    # ARRANGE
+    file_input_model: FileInputModel = FileInputModel()
+    dummy_subscriber: FakeSubscriber = FakeSubscriber()
+    file_input_model.subscribe(
+        Event.ACTION_FILEINPUT_MAX_CHANNELS_SET,
+        dummy_subscriber,
+        dummy_subscriber.handle,
+    )
+    file_input_model.set_input_mode(InputMode.FROM_NAPARI_LAYERS)
+    fake_selected_paths: list[Path] = [Path("fake_path1"), Path("fake_path2")]
+    file_input_model.set_selected_paths(fake_selected_paths)
+
+    # Act
+    files: list[Path] = file_input_model.get_input_files_as_list()
+
+    # Assert
+    assert len(files) == 2
+    assert files == fake_selected_paths
+
+
+
 
 
