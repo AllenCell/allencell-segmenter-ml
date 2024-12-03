@@ -95,6 +95,10 @@ class Viewer(IViewer):
         return [l for l in self.viewer.layers]
 
     def get_layers_nonthreshold(self) -> list[Layer]:
+        """
+        Get only layers which are not segmentation layers from the viewer.
+        These are the layers that do not start with [threshold].
+        """
         return [
             l
             for l in self.viewer.layers
@@ -114,15 +118,25 @@ class Viewer(IViewer):
         return None
 
     def get_seg_layers(self, layer_list: list[Layer]) -> list[Layer]:
+        """
+        Get only segmentation layers (which should be probability mappings) from the viewer.
+        These are the layers that start with [seg].
+        """
         return [
             layer
             for layer in self.get_layers()
             if layer.name.startswith("[seg]")
         ]
 
-    def insert_segmentation(
+    def insert_threshold(
         self, layer_name: str, image: np.ndarray, seg_layers: bool = False
     ) -> None:
+        """
+        Insert a thresholded image into the viewer.
+        If a layer for this thresholded image already exists, the new image will replace the old one and refresh the viewer.
+        If the layer does not exist, it will be added to the viewer in the correct place (on top of the original segmentation image:
+        index_of_segmentation + 1 in the LayerList)
+        """
         layer_to_insert = self._get_layer_by_name(f"[threshold] {layer_name}")
         if layer_to_insert is None:
             # No thresholding exists, so we add it to the correct place in the viewer
