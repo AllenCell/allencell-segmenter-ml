@@ -148,6 +148,70 @@ def test_get_input_files_as_list_from_viewer() -> None:
     assert len(files) == 2
     assert files == fake_selected_paths
 
+def test_get_input_files_as_list_from_no_directory_selected() -> None:
+    """
+    Test to see if an empty list is returned when no directory is selected
+    """
+    # ARRANGE
+    file_input_model: FileInputModel = FileInputModel()
+    dummy_subscriber: FakeSubscriber = FakeSubscriber()
+    file_input_model.subscribe(
+        Event.ACTION_FILEINPUT_MAX_CHANNELS_SET,
+        dummy_subscriber,
+        dummy_subscriber.handle,
+    )
+    file_input_model.set_input_mode(InputMode.FROM_PATH)
+
+
+    # Act
+    files: list[Path] = file_input_model.get_input_files_as_list()
+
+    # Assert
+    assert len(files) == 0
+
+def test_get_input_files_as_list_from_no_selected_paths() -> None:
+    """
+    Test to see if an empty list is returned when no layers were selected
+    """
+    # ARRANGE
+    file_input_model: FileInputModel = FileInputModel()
+    dummy_subscriber: FakeSubscriber = FakeSubscriber()
+    file_input_model.subscribe(
+        Event.ACTION_FILEINPUT_MAX_CHANNELS_SET,
+        dummy_subscriber,
+        dummy_subscriber.handle,
+    )
+    file_input_model.set_input_mode(InputMode.FROM_NAPARI_LAYERS)
+
+
+    # Act
+    files: list[Path] = file_input_model.get_input_files_as_list()
+
+    # Assert
+    assert len(files) == 0
+
+def test_get_input_files_as_list_from_no_selected_paths() -> None:
+    """
+    Test to see if an empty list is returned when no input mode is selected
+    """
+    # ARRANGE
+    file_input_model: FileInputModel = FileInputModel()
+    dummy_subscriber: FakeSubscriber = FakeSubscriber()
+    file_input_model.subscribe(
+        Event.ACTION_FILEINPUT_MAX_CHANNELS_SET,
+        dummy_subscriber,
+        dummy_subscriber.handle,
+    )
+
+    # Act
+    files: list[Path] = file_input_model.get_input_files_as_list()
+
+    # Assert
+    assert len(files) == 0
+
+
+
+
 
 
 
