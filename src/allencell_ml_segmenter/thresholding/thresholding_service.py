@@ -97,7 +97,7 @@ class ThresholdingService(Subscriber):
             def on_return(
                 thresholded_image: np.ndarray, l_instance: Layer = layer
             ) -> None:
-                self._viewer.insert_segmentation(
+                self._viewer.insert_threshold(
                     l_instance.name, thresholded_image, seg_layers
                 )
 

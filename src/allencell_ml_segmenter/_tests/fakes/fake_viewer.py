@@ -112,7 +112,7 @@ class FakeViewer(IViewer):
             if layer.name.startswith("[seg]")
         ]
 
-    def insert_segmentation(
+    def insert_threshold(
         self, layer_name: str, img: np.ndarray, seg_layers: bool = False
     ) -> None:
         self.segmentation_inserted[f"[threshold] {layer_name}"] = img
