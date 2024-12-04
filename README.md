@@ -15,7 +15,7 @@ A deep learning-based segmentation Napari plugin to curate datasets, train your 
 
 
 
-## :hammer_and_wrench: Installation
+## 🛠️ Installation
 
 ### System Requirements
 
@@ -33,7 +33,7 @@ We currently support `Windows`, `MacOS`, and `Linux` operating systems. The mini
 
 Before installing the plugin, please make sure you have the following installed:
 
-- Python 3.10 or later
+- `Python >=3.9,<3.11` 
 
 __New to `Python`?__ We recommend installing `Python 3.10` through the official [`Python` website](https://www.python.org/downloads/). This will include the `pip` package manager, which is required to install the plugin.
 
@@ -62,7 +62,10 @@ Navigate to where you want to create a new environment (_Example._ `Documents`),
 # Create a new environment
 python3.10 -m venv venv-allen-segmenter-ml
 
-# Activate the environment
+# (Windows) Activate the environment 
+.\venv-allen-segmenter-ml\Scripts\activate
+
+# (Mac/Linux) Activate the environment 
 source venv-allen-segmenter-ml/bin/activate
 ```
 #### Confirm Virtual Environment is Activated
@@ -89,19 +92,19 @@ To confirm that the virtual environment has been successfully activated, you can
 
 
 
-
-
-
 ## Install the Plugin
 
-To install the latest version of the plugin:
+To install the latest version of the plugin, along with napari:
 ```bash
-pip install allencell-segmenter-ml
+pip install allencell-segmenter-ml[napari]
 ```
 
-### :rotating_light: Post-Installation :rotating_light:
+You do not need to install `napari` separately as it is included in the plugin.
 
-> :memo: __NOTE:__ This section is specifically for users with at least one NVIDIA GPU installed on their machine. Not sure if you have an NVIDIA GPU? You can check by running `nvidia-smi` as shown [below](#step-1-checking-cuda-version). If you __do not__ have an NVIDIA GPU system, you can skip this section.
+### 🚨 Post-Installation 🚨
+
+>[!IMPORTANT] 
+⚠️ __NOTE:__ This section is specifically for users with at least one NVIDIA GPU installed on their machine. Not sure if you have an NVIDIA GPU? You can check by running `nvidia-smi` as shown [below](#step-1-checking-cuda-version). If you __do not__ have an NVIDIA GPU system, you can skip this section.
 
 Required Package
 
