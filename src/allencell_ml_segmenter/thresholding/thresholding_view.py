@@ -312,6 +312,7 @@ class ThresholdingView(View, MainWindow):
             self._file_input_model.get_output_directory()
         )
         if output_dir is not None and self._check_able_to_threshold():
+            # progress tracker is tracking number of images saved to the thresholding folder
             progress_tracker: PredictionFolderProgressTracker = (
                 PredictionFolderProgressTracker(
                     output_dir,
