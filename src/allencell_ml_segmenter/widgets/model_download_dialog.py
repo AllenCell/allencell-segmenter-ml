@@ -1,5 +1,6 @@
 from typing import Optional
 from pathlib import Path
+import webbrowser
 
 from qtpy.QtWidgets import (
     QDialog,
@@ -39,11 +40,21 @@ class ModelDownloadDialog(QDialog):
         self._model_select_dropdown: QComboBox = QComboBox()
         self._model_select_dropdown.setCurrentIndex(-1)
         self._model_select_dropdown.addItems(self._available_models.keys())
-        layout.addWidget(self._model_select_dropdown)
 
         self._download_button: QPushButton = QPushButton("Download")
+        self._doc_button: QPushButton = QPushButton("Documentation")
+
         self._download_button.clicked.connect(self._download_button_handler)
+        self._doc_button.clicked.connect(self._doc_button_handler)
+
+        layout.addWidget(self._doc_button)
+        layout.addWidget(self._model_select_dropdown)
         layout.addWidget(self._download_button)
+
+    def _doc_button_handler(self) -> None:
+        webbrowser.open(
+            "https://github.com/AllenCell/allencell-segmenter-ml/blob/main/docs/models.md"
+        )
 
     def _download_button_handler(self) -> None:
         selected_model_name: str = str(
