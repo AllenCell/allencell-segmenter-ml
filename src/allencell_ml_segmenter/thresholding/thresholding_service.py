@@ -46,8 +46,6 @@ class ThresholdingService(Subscriber):
         # Task Executor
         self._task_executor: ITaskExecutor = task_executor
 
-        self._original_layers: list[Layer] = []
-
         self._thresholding_model.subscribe(
             Event.ACTION_THRESHOLDING_VALUE_CHANGED,
             self,
