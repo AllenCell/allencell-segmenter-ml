@@ -129,13 +129,17 @@ class Viewer(IViewer):
         ]
 
     def insert_threshold(
-        self, layer_name: str, image: np.ndarray, seg_layers: bool = False
+        self, layer_name: str, image: np.ndarray, remove_seg_layers: bool = False
     ) -> None:
         """
         Insert a thresholded image into the viewer.
         If a layer for this thresholded image already exists, the new image will replace the old one and refresh the viewer.
         If the layer does not exist, it will be added to the viewer in the correct place (on top of the original segmentation image:
         index_of_segmentation + 1 in the LayerList)
+
+        :param layer_name: name of layer to insert. Will replace if one exists, will create one in a new position if needed.
+        :param image: image to insert
+        :param remove_seg_layers: boolean indicating if the layer that is being thresholded is a segmentation layer, and should be removed from the layer once it is updated with the threshold.
         """
         layer_to_insert = self._get_layer_by_name(f"[threshold] {layer_name}")
         if layer_to_insert is None:
@@ -145,7 +149,7 @@ class Viewer(IViewer):
             # check if the original segementation layer is currently in the viewer, if so, remove later after
             # thresholding is applied
             seg_layer_og: Optional[Layer] = None
-            if seg_layers:
+            if remove_seg_layers:
                 seg_layer_og = self._get_layer_by_name(layer_name)
 
             # figure out where to insert the new thresholded layer (on top of the original segmentation image)
