@@ -40,14 +40,14 @@ def test_on_threshold_changed_non_prediction(test_image):
     thresholding_model.set_thresholding_value(50)
 
     # Verify a segmentation layer is added
-    assert "[threshold] test_layer" in viewer.segmentation_inserted
-    seg_data = viewer.segmentation_inserted["[threshold] test_layer"]
+    assert "[threshold] test_layer" in viewer.threshold_inserted
+    seg_data = viewer.threshold_inserted["[threshold] test_layer"]
     assert np.array_equal(seg_data, (test_image > 50).astype(int))
 
     # check if existing thresholds get updated
     thresholding_model.set_thresholding_value(100)
     assert len(viewer.get_layers()) == 1
-    seg_data = viewer.segmentation_inserted["[threshold] test_layer"]
+    seg_data = viewer.threshold_inserted["[threshold] test_layer"]
     assert np.array_equal(seg_data, (test_image > 100).astype(int))
 
 
@@ -79,23 +79,23 @@ def test_on_threshold_changed_non_prediction(test_image):
     thresholding_model.set_thresholding_value(50)
 
     # Verify a threshold layer is added for each seg layer
-    assert "[threshold] [seg] test_layer 1" in viewer.segmentation_inserted
-    seg_data = viewer.segmentation_inserted["[threshold] [seg] test_layer 1"]
+    assert "[threshold] [seg] test_layer 1" in viewer.threshold_inserted
+    seg_data = viewer.threshold_inserted["[threshold] [seg] test_layer 1"]
     assert np.array_equal(seg_data, (test_image > 50).astype(int))
-    assert "[threshold] [seg] test_layer 2" in viewer.segmentation_inserted
-    seg_data = viewer.segmentation_inserted["[threshold] [seg] test_layer 2"]
+    assert "[threshold] [seg] test_layer 2" in viewer.threshold_inserted
+    seg_data = viewer.threshold_inserted["[threshold] [seg] test_layer 2"]
     assert np.array_equal(seg_data, (test_image > 50).astype(int))
     # verify that raw layers do not get thresholded
-    assert len(viewer.segmentation_inserted) == 2
+    assert len(viewer.threshold_inserted) == 2
 
     # verify existing threshold layers get updated correctly
     thresholding_model.set_thresholding_value(100)
     # Verify a threshold layer is added for each seg layer
-    assert "[threshold] [seg] test_layer 1" in viewer.segmentation_inserted
-    seg_data = viewer.segmentation_inserted["[threshold] [seg] test_layer 1"]
+    assert "[threshold] [seg] test_layer 1" in viewer.threshold_inserted
+    seg_data = viewer.threshold_inserted["[threshold] [seg] test_layer 1"]
     assert np.array_equal(seg_data, (test_image > 100).astype(int))
-    assert "[threshold] [seg] test_layer 2" in viewer.segmentation_inserted
-    seg_data = viewer.segmentation_inserted["[threshold] [seg] test_layer 2"]
+    assert "[threshold] [seg] test_layer 2" in viewer.threshold_inserted
+    seg_data = viewer.threshold_inserted["[threshold] [seg] test_layer 2"]
     assert np.array_equal(seg_data, (test_image > 100).astype(int))
     # verify that raw layers do not get thresholded
-    assert len(viewer.segmentation_inserted) == 2
+    assert len(viewer.threshold_inserted) == 2
