@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from pathlib import Path
 from typing import Callable, Optional
 from bioio import BioImage
@@ -70,15 +71,24 @@ class ThresholdingService(Subscriber):
 
     def _on_threshold_changed(self, _: Event) -> None:
         # if we havent thresholded yet, keep track of original layers.
-        if not self._original_layers:
-            self._original_layers = self._viewer.get_layers()
+        # need to check this on first threshold change, since user can add images
+        # between finishing prediction and starting thresholding
+        # if they are using images from a directory.
+        original_layers: Optional[OrderedDict[str, np.ndarray]] = (
+            self._thresholding_model.get_original_layers()
+        )
+        if original_layers is None:
+            self._thresholding_model.set_original_layers(
+                self._viewer.get_layers()
+            )
 
-        layers_to_threshold: list[Layer] = self._original_layers
-        seg_layers: bool = False
-        if self._main_model.are_predictions_in_viewer():
-            #  predictions are displayed already in viewer, only threshold [seg] layers
-            layers_to_threshold = self._viewer.get_seg_layers()
-            seg_layers = True
+        # Get layers to threshold.
+        # if there are segmentations displayed in the viewer, only threshold those images.
+        layers_to_threshold: OrderedDict[str, np.ndarray] = (
+            self._thresholding_model.get_layers_to_threshold(
+                self._main_model.are_predictions_in_viewer()
+            )
+        )
 
         # determine thresholding function to use
         if self._thresholding_model.is_autothresholding_enabled():
@@ -87,16 +97,19 @@ class ThresholdingService(Subscriber):
             )
         else:
             thresh_function = self._threshold_image
-        for layer in layers_to_threshold:
+        for layer_name, image in layers_to_threshold.items():
             # Creating helper functions for mypy strict typing
             def thresholding_task() -> np.ndarray:
-                return thresh_function(layer.data)
+                return thresh_function(image)
 
             def on_return(
-                thresholded_image: np.ndarray, l_instance: Layer = layer
+                thresholded_image: np.ndarray,
+                layer_name_instance: str = layer_name,
             ) -> None:
                 self._viewer.insert_threshold(
-                    l_instance.name, thresholded_image, seg_layers
+                    layer_name_instance,
+                    thresholded_image,
+                    self._main_model.are_predictions_in_viewer(),
                 )
 
             self._task_executor.exec(
