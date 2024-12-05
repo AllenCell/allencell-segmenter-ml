@@ -77,9 +77,7 @@ class ThresholdingService(Subscriber):
         seg_layers: bool = False
         if self._main_model.are_predictions_in_viewer():
             #  predictions are displayed already in viewer, only threshold [seg] layers
-            layers_to_threshold = self._viewer.get_seg_layers(
-                layers_to_threshold
-            )
+            layers_to_threshold = self._viewer.get_seg_layers()
             seg_layers = True
 
         # determine thresholding function to use
