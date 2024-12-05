@@ -40,7 +40,8 @@ class ThresholdingModel(Publisher):
         Set autothresholding enabled.
         """
         self._is_autothresholding_enabled = enable
-        self.dispatch(Event.ACTION_THRESHOLDING_AUTOTHRESHOLDING_SELECTED)
+        if enable:
+            self.dispatch(Event.ACTION_THRESHOLDING_AUTOTHRESHOLDING_SELECTED)
 
     def is_autothresholding_enabled(self) -> bool:
         """
