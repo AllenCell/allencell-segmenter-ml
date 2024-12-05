@@ -110,12 +110,6 @@ def test_get_input_files_as_list_from_path() -> None:
     """
     # ARRANGE
     file_input_model: FileInputModel = FileInputModel()
-    dummy_subscriber: FakeSubscriber = FakeSubscriber()
-    file_input_model.subscribe(
-        Event.ACTION_FILEINPUT_MAX_CHANNELS_SET,
-        dummy_subscriber,
-        dummy_subscriber.handle,
-    )
     file_input_model.set_input_mode(InputMode.FROM_PATH)
     file_input_model.set_input_image_path(
         Path(allencell_ml_segmenter.__file__).parent
@@ -137,12 +131,6 @@ def test_get_input_files_as_list_from_viewer() -> None:
     """
     # ARRANGE
     file_input_model: FileInputModel = FileInputModel()
-    dummy_subscriber: FakeSubscriber = FakeSubscriber()
-    file_input_model.subscribe(
-        Event.ACTION_FILEINPUT_MAX_CHANNELS_SET,
-        dummy_subscriber,
-        dummy_subscriber.handle,
-    )
     file_input_model.set_input_mode(InputMode.FROM_NAPARI_LAYERS)
     fake_selected_paths: list[Path] = [Path("fake_path1"), Path("fake_path2")]
     file_input_model.set_selected_paths(fake_selected_paths)
@@ -161,13 +149,6 @@ def test_get_input_files_as_list_from_no_directory_selected() -> None:
     """
     # ARRANGE
     file_input_model: FileInputModel = FileInputModel()
-    dummy_subscriber: FakeSubscriber = FakeSubscriber()
-    file_input_model.subscribe(
-        Event.ACTION_FILEINPUT_MAX_CHANNELS_SET,
-        dummy_subscriber,
-        dummy_subscriber.handle,
-    )
-    file_input_model.set_input_mode(InputMode.FROM_PATH)
 
     # Act
     files: list[Path] = file_input_model.get_input_files_as_list()
@@ -182,13 +163,6 @@ def test_get_input_files_as_list_from_no_selected_paths() -> None:
     """
     # ARRANGE
     file_input_model: FileInputModel = FileInputModel()
-    dummy_subscriber: FakeSubscriber = FakeSubscriber()
-    file_input_model.subscribe(
-        Event.ACTION_FILEINPUT_MAX_CHANNELS_SET,
-        dummy_subscriber,
-        dummy_subscriber.handle,
-    )
-    file_input_model.set_input_mode(InputMode.FROM_NAPARI_LAYERS)
 
     # Act
     files: list[Path] = file_input_model.get_input_files_as_list()
@@ -203,12 +177,6 @@ def test_get_input_files_as_list_from_no_selected_paths() -> None:
     """
     # ARRANGE
     file_input_model: FileInputModel = FileInputModel()
-    dummy_subscriber: FakeSubscriber = FakeSubscriber()
-    file_input_model.subscribe(
-        Event.ACTION_FILEINPUT_MAX_CHANNELS_SET,
-        dummy_subscriber,
-        dummy_subscriber.handle,
-    )
 
     # Act
     files: list[Path] = file_input_model.get_input_files_as_list()
