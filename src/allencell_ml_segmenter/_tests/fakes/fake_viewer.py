@@ -24,7 +24,7 @@ class FakeViewer(IViewer):
         self._shapes_layers: Dict[str, ShapesLayer] = {}
         self._labels_layers: Dict[str, LabelsLayer] = {}
         self._on_layers_change_fns: List[Callable] = []
-        self.segmentation_inserted: Dict[str, np.ndarray] = {}
+        self.threshold_inserted: Dict[str, np.ndarray] = {}
 
     def add_image(self, image: np.ndarray, name: str):
         self._image_layers[name] = ImageLayer(name, path=None, data=image)
@@ -115,7 +115,7 @@ class FakeViewer(IViewer):
     def insert_threshold(
         self, layer_name: str, img: np.ndarray, seg_layers: bool = False
     ) -> None:
-        self.segmentation_inserted[f"[threshold] {layer_name}"] = img
+        self.threshold_inserted[f"[threshold] {layer_name}"] = img
 
     def get_layers_nonthreshold(self) -> list[Layer]:
         return [
