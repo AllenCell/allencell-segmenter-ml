@@ -129,7 +129,10 @@ class Viewer(IViewer):
         ]
 
     def insert_threshold(
-        self, layer_name: str, image: np.ndarray, remove_seg_layers: bool = False
+        self,
+        layer_name: str,
+        image: np.ndarray,
+        remove_seg_layers: bool = False,
     ) -> None:
         """
         Insert a thresholded image into the viewer.
