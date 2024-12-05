@@ -32,7 +32,9 @@ class MainModel(Publisher):
         self._current_view: Optional[MainWindow] = None
         self._is_new_model: bool = False
         self.signals: MainModelSignals = MainModelSignals()
-        self._predictions_in_viewer: bool = False # Tracks whether predictions are displayed in the viewer
+        self._predictions_in_viewer: bool = (
+            False  # Tracks whether predictions are displayed in the viewer
+        )
 
         self._selected_channels: dict[ImageType, Optional[int]] = {
             ImageType.RAW: None,
