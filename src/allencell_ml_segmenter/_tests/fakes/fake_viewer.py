@@ -105,7 +105,7 @@ class FakeViewer(IViewer):
         for fn in self._on_layers_change_fns:
             fn(FakeNapariEvent())
 
-    def get_seg_layers(self, layer_list: list[Layer]) -> list[Layer]:
+    def get_seg_layers(self) -> list[Layer]:
         return [
             layer
             for layer in self._image_layers.values()

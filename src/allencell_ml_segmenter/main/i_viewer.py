@@ -74,7 +74,7 @@ class IViewer(ABC):
         pass
 
     @abstractmethod
-    def get_seg_layers(self, layer_list: list[Layer]) -> list[Layer]:
+    def get_seg_layers(self) -> list[Layer]:
         """
         Get only segmentation layers (which should be probability mappings) from the viewer.
         These are the layers that start with [seg].
