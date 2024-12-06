@@ -72,3 +72,31 @@ class IViewer(ABC):
         self, function: Callable[[NapariEvent], None]
     ) -> None:
         pass
+
+    @abstractmethod
+    def get_seg_layers(self) -> list[Layer]:
+        """
+        Get only segmentation layers (which should be probability mappings) from the viewer.
+        These are the layers that start with [seg].
+        """
+        pass
+
+    @abstractmethod
+    def insert_threshold(
+        self, layer_name: str, img: np.ndarray, seg_layers: bool = False
+    ) -> None:
+        """
+        Insert a thresholded image into the viewer.
+        If a layer for this thresholded image already exists, the new image will replace the old one and refresh the viewer.
+        If the layer does not exist, it will be added to the viewer in the correct place (on top of the original segmentation image:
+        index_of_segmentation + 1 in the LayerList)
+        """
+        pass
+
+    @abstractmethod
+    def get_layers_nonthreshold(self) -> list[Layer]:
+        """
+        Get only layers which are not segmentation layers from the viewer.
+        These are the layers that do not start with [threshold].
+        """
+        pass
