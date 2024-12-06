@@ -8,16 +8,11 @@ build-backend = "setuptools.build_meta"
 # https://peps.python.org/pep-0621/
 [project]
 name = "allencell-segmenter-ml"
-version = "0.1.16"
+version = "1.0.0rc0"
 description = "A plugin to leverage ML segmentation in napari"
 readme = "README.md"
-requires-python = "<3.11,>=3.10"
+requires-python = ">=3.9,<3.11"
 license = { file = "LICENSE" }
-authors = [
-    { email = "brian.kim@alleninstitute.org", name = "Brian Kim" },
-    { email = "chrishu@alleninstitute.org", name = "Chris Hughes" },
-    { email = "daniel.saelid@alleninstitute.org", name = "Daniel Saelid" },
-]
 
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
@@ -29,12 +24,12 @@ classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Topic :: Scientific/Engineering :: Image Processing",
 ]
 
 dependencies = [
-    "napari>=0.4.18",
     "npe2>=0.6.2",
     "numpy",
     "hydra-core==1.3.2",
@@ -54,6 +49,11 @@ Documentation = "https://github.com/AllenCell/allencell-ml-segmenter#README.md"
 # extra dependencies
 # https://peps.python.org/pep-0621/#dependencies-optional-dependencies
 [project.optional-dependencies]
+napari = [
+    "napari>=0.4.18",
+    "pyqt5",
+]
+
 test_lint = [
     "pytest<8.0.0", # https://docs.pytest.org/en/latest/contents.html
     "pytest-cov",  # https://pytest-cov.readthedocs.io/en/latest/
@@ -66,6 +66,8 @@ test_lint = [
     "mypy",
     "toml",
     "bumpver",
+    "napari>=0.4.18",
+    "magicgui"
 ]
 
 dev = [
@@ -103,8 +105,8 @@ where = ["src"]
 
 # https://pypi.org/project/bumpver
 [tool.bumpver]
-current_version = "0.1.16"
-version_pattern = "MAJOR.MINOR.PATCH[.PYTAGNUM]"
+current_version = "1.0.0rc0"
+version_pattern = "MAJOR.MINOR.PATCH[PYTAGNUM]"
 commit_message  = "Bump version {old_version} -> {new_version}"
 commit          = true
 tag             = false # no longer useful to tag here, must happen in create_publish_pr.yaml

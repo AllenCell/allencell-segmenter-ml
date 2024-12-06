@@ -122,8 +122,9 @@ def test_build_overrides() -> None:
         / "0_exp"
         / "prediction_output_test"
     )
-    file_input_model.set_input_image_path(Path("fake_img_path"))
-    file_input_model.set_image_input_channel_index(3)
+    fake_path: Path = Path("fake_img_path")
+    prediction_model.set_input_image_path(fake_path)
+    prediction_model.set_image_input_channel_index(3)
 
     # act
     overrides: Dict[str, Union[str, int, float, bool]] = (
@@ -136,6 +137,7 @@ def test_build_overrides() -> None:
     assert overrides["train"] == False
     assert overrides["mode"] == "predict"
     assert overrides["task_name"] == "predict_task_from_app"
+    assert overrides["data.path"] == str(fake_path)
     assert overrides["checkpoint.ckpt_path"] == str(
         Path(__file__).parent.parent
         / "main"
@@ -152,7 +154,7 @@ def test_build_overrides() -> None:
         / "0_exp"
         / "prediction_output_test"
     )
-    assert overrides["data.transforms.predict.transforms[1].reader[0].C"] == 3
+    assert overrides["input_channel"] == 3
     assert overrides["data.columns"] == ["raw", "split"]
     assert overrides["data.split_column"] == "split"
 
