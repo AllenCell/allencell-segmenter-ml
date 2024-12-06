@@ -2,7 +2,7 @@ from typing import Optional
 from collections import OrderedDict
 
 import numpy as np
-from napari.layers import Layer # type: ignore
+from napari.layers import Layer  # type: ignore
 
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.publisher import Publisher
