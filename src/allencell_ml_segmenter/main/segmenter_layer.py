@@ -15,8 +15,15 @@ class ShapesLayer(SegmenterLayer):
 
 
 @dataclass
+class Source(SegmenterLayer):
+    path: Optional[Path] = None
+
+
+@dataclass
 class ImageLayer(SegmenterLayer):
-    path: Optional[Path]
+    path: Optional[Path] = None
+    data: Optional[np.ndarray] = None
+    source: Source = Source(name="sourcename")
 
 
 @dataclass

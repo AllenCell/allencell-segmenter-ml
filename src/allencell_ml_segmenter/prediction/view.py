@@ -170,33 +170,35 @@ class PredictionView(View, MainWindow):
             stem_to_data: dict[str, dict[str, Path]] = {
                 raw_img.stem: {"raw": raw_img} for raw_img in raw_imgs
             }
-            for seg in segmentations:
-                # ignore files in the folder that aren't from most recent predictions
-                if seg.stem in stem_to_data:
-                    stem_to_data[seg.stem]["seg"] = seg
+            if segmentations:
+                for seg in segmentations:
+                    # ignore files in the folder that aren't from most recent predictions
+                    if seg.stem in stem_to_data:
+                        stem_to_data[seg.stem]["seg"] = seg
 
-            self._viewer.clear_layers()
-            for data in stem_to_data.values():
-                raw_np_data: Optional[np.ndarray] = (
-                    self._img_data_extractor.extract_image_data(
-                        data["raw"], channel=channel
-                    ).np_data
-                )
-                seg_np_data: Optional[np.ndarray] = (
-                    self._img_data_extractor.extract_image_data(
-                        data["seg"], seg=1
-                    ).np_data
-                )
-                if raw_np_data is not None:
-                    self._viewer.add_image(
-                        raw_np_data,
-                        f"[raw] {data['raw'].name}",
+                self._viewer.clear_layers()
+                for data in stem_to_data.values():
+                    raw_np_data: Optional[np.ndarray] = (
+                        self._img_data_extractor.extract_image_data(
+                            data["raw"], channel=channel
+                        ).np_data
                     )
-                if seg_np_data is not None:
-                    self._viewer.add_labels(
-                        seg_np_data,
-                        name=f"[seg] {data['seg'].name}",
+                    seg_np_data: Optional[np.ndarray] = (
+                        self._img_data_extractor.extract_image_data(
+                            data["seg"], seg=1
+                        ).np_data
                     )
+                    if raw_np_data is not None:
+                        self._viewer.add_image(
+                            raw_np_data,
+                            f"[raw] {data['raw'].name}",
+                        )
+                    if seg_np_data is not None:
+                        self._viewer.add_labels(
+                            seg_np_data,
+                            name=f"[seg] {data['seg'].name}",
+                        )
+                    self._main_model.set_predictions_in_viewer(True)
         # Display popup with saved images path if prediction inputs are from a directory
         else:
             dialog_box = DialogBox(
