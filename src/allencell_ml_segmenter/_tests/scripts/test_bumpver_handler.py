@@ -103,20 +103,20 @@ def test_bump_major() -> None:
     navigate_back_to_root_dir()
 
 
-def test_bump_dev() -> None:
+def test_bump_rc() -> None:
     navigate_to_test_dir_and_reset_version()
     # ASSERT (sanity check)
     assert_curr_version_number(DEFAULT_START_VERSION)
-    # ACT (create new patch version with .dev0 tag)
-    sys.argv = ["bumpver_handler.py", "dev"]
+    # ACT (create new patch version with .rc0 tag)
+    sys.argv = ["bumpver_handler.py", "rc"]
     bumpver_handler.main()
     # ASSERT
-    assert_curr_version_number("0.0.2.dev0")
+    assert_curr_version_number("0.0.2rc0")
     # ACT
-    sys.argv = ["bumpver_handler.py", "dev"]
+    sys.argv = ["bumpver_handler.py", "rc"]
     bumpver_handler.main()
     # ASSERT
-    assert_curr_version_number("0.0.2.dev1")
+    assert_curr_version_number("0.0.2rc1")
     # ACT (finalize the new patch version)
     sys.argv = ["bumpver_handler.py", "patch"]
     bumpver_handler.main()
@@ -133,24 +133,24 @@ def test_bump_post() -> None:
     sys.argv = ["bumpver_handler.py", "post"]
     bumpver_handler.main()
     # ASSERT
-    assert_curr_version_number("0.0.1.post0")
+    assert_curr_version_number("0.0.1post0")
     # ACT
     sys.argv = ["bumpver_handler.py", "post"]
     bumpver_handler.main()
     # ASSERT
-    assert_curr_version_number("0.0.1.post1")
+    assert_curr_version_number("0.0.1post1")
     navigate_back_to_root_dir()
 
 
-def test_bump_minor_fails_when_dev_current() -> None:
+def test_bump_minor_fails_when_rc_current() -> None:
     navigate_to_test_dir_and_reset_version()
     # ASSERT (sanity check)
     assert_curr_version_number(DEFAULT_START_VERSION)
-    # ACT (create new dev version with .dev0 tag)
-    sys.argv = ["bumpver_handler.py", "dev"]
+    # ACT (create new rc version with .rc0 tag)
+    sys.argv = ["bumpver_handler.py", "rc"]
     bumpver_handler.main()
     # ASSERT (sanity check)
-    assert_curr_version_number("0.0.2.dev0")
+    assert_curr_version_number("0.0.2rc0")
 
     got_expected_exception: bool = False
     try:
@@ -166,15 +166,15 @@ def test_bump_minor_fails_when_dev_current() -> None:
     navigate_back_to_root_dir()
 
 
-def test_bump_major_fails_when_dev_current() -> None:
+def test_bump_major_fails_when_rc_current() -> None:
     navigate_to_test_dir_and_reset_version()
     # ASSERT (sanity check)
     assert_curr_version_number(DEFAULT_START_VERSION)
-    # ACT (create new dev version with .dev0 tag)
-    sys.argv = ["bumpver_handler.py", "dev"]
+    # ACT (create new rc version with .rc0 tag)
+    sys.argv = ["bumpver_handler.py", "rc"]
     bumpver_handler.main()
     # ASSERT (sanity check)
-    assert_curr_version_number("0.0.2.dev0")
+    assert_curr_version_number("0.0.2rc0")
 
     got_expected_exception: bool = False
     try:
@@ -190,15 +190,15 @@ def test_bump_major_fails_when_dev_current() -> None:
     navigate_back_to_root_dir()
 
 
-def test_bump_post_fails_when_dev_current() -> None:
+def test_bump_post_fails_when_rc_current() -> None:
     navigate_to_test_dir_and_reset_version()
     # ASSERT (sanity check)
     assert_curr_version_number(DEFAULT_START_VERSION)
-    # ACT (create new dev version with .dev0 tag)
-    sys.argv = ["bumpver_handler.py", "dev"]
+    # ACT (create new rc version with .rc0 tag)
+    sys.argv = ["bumpver_handler.py", "rc"]
     bumpver_handler.main()
     # ASSERT (sanity check)
-    assert_curr_version_number("0.0.2.dev0")
+    assert_curr_version_number("0.0.2rc0")
 
     got_expected_exception: bool = False
     try:
@@ -222,7 +222,7 @@ def test_bump_minor_fails_when_post_current() -> None:
     sys.argv = ["bumpver_handler.py", "post"]
     bumpver_handler.main()
     # ASSERT (sanity check)
-    assert_curr_version_number("0.0.1.post0")
+    assert_curr_version_number("0.0.1post0")
 
     got_expected_exception: bool = False
     try:
@@ -246,7 +246,7 @@ def test_bump_major_fails_when_post_current() -> None:
     sys.argv = ["bumpver_handler.py", "post"]
     bumpver_handler.main()
     # ASSERT (sanity check)
-    assert_curr_version_number("0.0.1.post0")
+    assert_curr_version_number("0.0.1post0")
 
     got_expected_exception: bool = False
     try:
@@ -270,7 +270,7 @@ def test_bump_patch_fails_when_post_current() -> None:
     sys.argv = ["bumpver_handler.py", "post"]
     bumpver_handler.main()
     # ASSERT (sanity check)
-    assert_curr_version_number("0.0.1.post0")
+    assert_curr_version_number("0.0.1post0")
 
     got_expected_exception: bool = False
     try:
@@ -286,7 +286,7 @@ def test_bump_patch_fails_when_post_current() -> None:
     navigate_back_to_root_dir()
 
 
-def test_bump_dev_fails_when_post_current() -> None:
+def test_bump_rc_fails_when_post_current() -> None:
     navigate_to_test_dir_and_reset_version()
     # ASSERT (sanity check)
     assert_curr_version_number(DEFAULT_START_VERSION)
@@ -294,11 +294,11 @@ def test_bump_dev_fails_when_post_current() -> None:
     sys.argv = ["bumpver_handler.py", "post"]
     bumpver_handler.main()
     # ASSERT (sanity check)
-    assert_curr_version_number("0.0.1.post0")
+    assert_curr_version_number("0.0.1post0")
 
     got_expected_exception: bool = False
     try:
-        sys.argv = ["bumpver_handler.py", "dev"]
+        sys.argv = ["bumpver_handler.py", "rc"]
         bumpver_handler.main()
     except ValueError as e:
         got_expected_exception = True
