@@ -142,6 +142,9 @@ class PredictionService(Subscriber):
         overrides["checkpoint.ckpt_path"] = str(checkpoint)
         overrides["checkpoint.strict"] = False
         overrides["checkpoint.weights_only"] = True
+        # This override is needed to for inference with cyto-dl, because we default to auto otherwise
+        overrides["data.batch_size"] = 1
+
 
         input_path: Optional[Path] = (
             self._file_input_model.get_input_image_path()
@@ -163,10 +166,8 @@ class PredictionService(Subscriber):
         channel: Optional[int] = (
             self._file_input_model.get_image_input_channel_index()
         )
-        if channel:
-            overrides["data.transforms.predict.transforms[1].reader[0].C"] = (
-                channel
-            )
+        if channel is not None:
+            overrides["input_channel"] = channel
 
         # selecting hardware- GPU if available (and correct drivers installed),
         # CPU otherwise.
@@ -183,8 +184,8 @@ class PredictionService(Subscriber):
         """
         data_folder: Optional[Path] = self._experiments_model.get_csv_path()
         if data_folder is not None:
-            data_folder.mkdir(parents=False, exist_ok=True)
-            csv_path: Path = data_folder / "test_csv.csv"
+            (data_folder / "prediction_csv").mkdir(parents=True, exist_ok=True)
+            csv_path: Path = data_folder / "prediction_csv" / "test_csv.csv"
             with open(csv_path, "w") as file:
                 writer = csv.writer(file)
                 writer.writerow(["", "raw", "split"])
