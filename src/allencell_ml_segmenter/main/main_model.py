@@ -32,6 +32,9 @@ class MainModel(Publisher):
         self._current_view: Optional[MainWindow] = None
         self._is_new_model: bool = False
         self.signals: MainModelSignals = MainModelSignals()
+        self._predictions_in_viewer: bool = (
+            False  # Tracks whether predictions are displayed in the viewer
+        )
 
         self._selected_channels: dict[ImageType, Optional[int]] = {
             ImageType.RAW: None,
@@ -85,3 +88,15 @@ class MainModel(Publisher):
 
     def training_complete(self) -> None:
         self.dispatch(Event.PROCESS_TRAINING_COMPLETE)
+
+    def set_predictions_in_viewer(self, predictions_in_viewer: bool) -> None:
+        """
+        Set if predicted images (probability mappings) are displayed in the viewer.
+        """
+        self._predictions_in_viewer = predictions_in_viewer
+
+    def are_predictions_in_viewer(self) -> bool:
+        """
+        Check if predicted images (probability mappings) are displayed in the viewer.
+        """
+        return self._predictions_in_viewer

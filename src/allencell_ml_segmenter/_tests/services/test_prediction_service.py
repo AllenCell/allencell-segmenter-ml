@@ -15,6 +15,7 @@ from unittest.mock import patch, MagicMock, mock_open, call
 from allencell_ml_segmenter.services.prediction_service import (
     PredictionService,
 )
+from allencell_ml_segmenter.core.file_input_model import FileInputModel
 
 
 @pytest.fixture
@@ -101,6 +102,7 @@ def test_predict_model_no_checkpoint_selected() -> None:
 
 def test_build_overrides() -> None:
     # Arrange
+    file_input_model: FileInputModel = FileInputModel()
     prediction_model: PredictionModel = PredictionModel()
     experiments_model: ExperimentsModel = ExperimentsModel(
         FakeUserSettings(
@@ -112,9 +114,9 @@ def test_build_overrides() -> None:
     )
     experiments_model.apply_experiment_name("one_ckpt_exp")
     prediction_service: PredictionService = PredictionService(
-        prediction_model, experiments_model
+        prediction_model, file_input_model, experiments_model
     )
-    prediction_model.set_output_directory(
+    file_input_model.set_output_directory(
         Path(__file__).parent.parent
         / "main"
         / "0_exp"
@@ -170,7 +172,7 @@ def test_write_csv_for_inputs() -> None:
     experiments_model.apply_experiment_name("0_exp")
     prediction_model: PredictionModel = PredictionModel()
     prediction_service: PredictionService = PredictionService(
-        prediction_model, experiments_model
+        prediction_model, FileInputModel(), experiments_model
     )
     mock_csv_write = MagicMock(spec=csv.writer)
 
