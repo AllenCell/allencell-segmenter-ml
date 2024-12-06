@@ -2,7 +2,7 @@ from typing import Optional
 from collections import OrderedDict
 
 import numpy as np
-from napari.layers import Layer
+from napari.layers import Layer # type: ignore
 
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.publisher import Publisher
@@ -86,9 +86,10 @@ class ThresholdingModel(Publisher):
         self.dispatch(Event.ACTION_SAVE_THRESHOLDING_IMAGES)
 
     def set_original_layers(self, layer_list: list[Layer]) -> None:
-        self._original_layers_in_viewer = {}
+        ordered_layers: OrderedDict[str, np.ndarray] = OrderedDict()
         for layer in layer_list:
-            self._original_layers_in_viewer[layer.name] = layer.data
+            ordered_layers[layer.name] = layer.data
+        self._original_layers_in_viewer = ordered_layers
 
     def get_original_layers(self) -> Optional[OrderedDict[str, np.ndarray]]:
         return self._original_layers_in_viewer
