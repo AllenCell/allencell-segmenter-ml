@@ -38,3 +38,13 @@ Examples: https://doc.qt.io/qt-5/stylesheet-examples.html#customizing-specific-w
 #fileInput #onScreen, #imageList, #radioDirectory {
     margin-left: 40px;
 }
+
+/* Styling for disabled sliders */
+QSlider:disabled {
+    color: #868E93;
+}
+
+/* Styling for disabled spinboxes */
+QSpinBox:disabled {
+    color: #868E93;
+}
