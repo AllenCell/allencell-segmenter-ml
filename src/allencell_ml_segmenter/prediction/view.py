@@ -191,13 +191,16 @@ class PredictionView(View, MainWindow):
                     if raw_np_data is not None:
                         self._viewer.add_image(
                             raw_np_data,
-                            f"[raw] {data['raw'].name}",
+                            name= f"[raw] {data['raw'].name}",
+                            metadata={"source_path": data["raw"]},
                         )
                     if seg_np_data is not None:
                         self._viewer.add_labels(
                             seg_np_data,
                             name=f"[seg] {data['seg'].name}",
+                            metadata={"source_path": data["seg"]},
                         )
+
                     self._main_model.set_predictions_in_viewer(True)
         # Display popup with saved images path if prediction inputs are from a directory
         else:

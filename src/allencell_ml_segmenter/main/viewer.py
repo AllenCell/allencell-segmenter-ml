@@ -23,8 +23,8 @@ class Viewer(IViewer):
         super().__init__()
         self.viewer: napari.Viewer = viewer
 
-    def add_image(self, image: np.ndarray, name: str) -> None:
-        self.viewer.add_image(image, name=name)
+    def add_image(self, image: np.ndarray, **kwargs) -> None:
+        self.viewer.add_image(image, **kwargs)
 
     def get_image(self, name: str) -> Optional[ImageLayer]:
         for img in self.get_all_images():
@@ -35,8 +35,9 @@ class Viewer(IViewer):
     def get_all_images(self) -> list[ImageLayer]:
         imgs: list[ImageLayer] = []
         for l in self.viewer.layers:
-            if isinstance(l, Image) and l.source.path:
-                imgs.append(ImageLayer(l.name, Path(l.source.path)))
+            source_path: Optional[Path] = self.viewer.get_source_path(l)
+            if isinstance(l, Image) and source_path is not None:
+                imgs.append(ImageLayer(l.name, source_path))
             elif isinstance(l, Image):
                 imgs.append(ImageLayer(l.name, None))
         return imgs
@@ -60,8 +61,8 @@ class Viewer(IViewer):
             if isinstance(l, Shapes)
         ]
 
-    def add_labels(self, data: np.ndarray, name: str) -> None:
-        self.viewer.add_labels(data, name=name)
+    def add_labels(self, data: np.ndarray, **kwargs) -> None:
+        self.viewer.add_labels(data, **kwargs)
 
     def get_labels(self, name: str) -> Optional[LabelsLayer]:
         for labels in self.get_all_labels():
@@ -167,3 +168,11 @@ class Viewer(IViewer):
             # Thresholding already exists so just update the existing one in the viewer.
             layer_to_insert.data = image
             layer_to_insert.refresh()
+
+    def get_source_path(self, layer: Layer) -> Optional[Path]:
+        if layer.source.path is not None:
+            return Path(layer.source.path)
+        if layer.metadata is not None and "source_path" in layer.metadata:
+            return Path(layer.metadata["source_path"])
+
+        return None
