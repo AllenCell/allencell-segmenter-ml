@@ -11,7 +11,7 @@ from allencell_ml_segmenter.main.segmenter_layer import (
     LabelsLayer,
 )
 import napari  # type: ignore
-from typing import Callable, Optional
+from typing import Callable, Optional, Any
 import numpy as np
 
 
@@ -23,7 +23,7 @@ class Viewer(IViewer):
         super().__init__()
         self.viewer: napari.Viewer = viewer
 
-    def add_image(self, image: np.ndarray, **kwargs) -> None:
+    def add_image(self, image: np.ndarray, **kwargs: Any) -> None:
         self.viewer.add_image(image, **kwargs)
 
     def get_image(self, name: str) -> Optional[ImageLayer]:
@@ -61,7 +61,7 @@ class Viewer(IViewer):
             if isinstance(l, Shapes)
         ]
 
-    def add_labels(self, data: np.ndarray, **kwargs) -> None:
+    def add_labels(self, data: np.ndarray, **kwargs: Any) -> None:
         self.viewer.add_labels(data, **kwargs)
 
     def get_labels(self, name: str) -> Optional[LabelsLayer]:

@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Optional, Callable
+from typing import Optional, Callable, Any
 from allencell_ml_segmenter.main.segmenter_layer import (
     ShapesLayer,
     ImageLayer,
@@ -16,7 +16,7 @@ class IViewer(ABC):
         super().__init__()
 
     @abstractmethod
-    def add_image(self, image: np.ndarray, **kwargs) -> None:
+    def add_image(self, image: np.ndarray, **kwargs: Any) -> None:
         pass
 
     @abstractmethod
@@ -40,7 +40,7 @@ class IViewer(ABC):
         pass
 
     @abstractmethod
-    def add_labels(self, data: np.ndarray, **kwargs) -> None:
+    def add_labels(self, data: np.ndarray, **kwargs: Any) -> None:
         pass
 
     @abstractmethod
