@@ -56,7 +56,7 @@ class IExperimentsModel(Publisher):
         pass
 
     @abstractmethod
-    def get_metrics_csv_path(self) -> Path:
+    def get_metrics_csv_path(self) -> Optional[Path]:
         pass
 
     @abstractmethod
@@ -68,11 +68,11 @@ class IExperimentsModel(Publisher):
         pass
 
     @abstractmethod
-    def get_csv_path(self) -> Path:
+    def get_csv_path(self) -> Optional[Path]:
         pass
 
     @abstractmethod
-    def get_cache_dir(self) -> Path:
+    def get_cache_dir(self) -> Optional[Path]:
         pass
 
     @abstractmethod

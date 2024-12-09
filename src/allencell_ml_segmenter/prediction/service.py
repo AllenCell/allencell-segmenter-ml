@@ -1,9 +1,9 @@
 from pathlib import Path
-from typing import List, Union, Optional, Dict
+from typing import Optional, Dict
 
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.subscriber import Subscriber
-from allencell_ml_segmenter.prediction.model import PredictionModel
+from allencell_ml_segmenter.core.file_input_model import FileInputModel
 from allencell_ml_segmenter.core.channel_extraction import (
     ChannelExtractionThread,
     get_img_path_from_csv,
@@ -17,34 +17,21 @@ class ModelFileService(Subscriber):
     Parses the chosen model file to extract the preprocessing method.
     """
 
-    def __init__(self, model: PredictionModel):
+    def __init__(self, model: FileInputModel):
         super().__init__()
-        self._model: PredictionModel = model
+        self._model: FileInputModel = model
         self._current_thread: Optional[ChannelExtractionThread] = None
         self._running_threads: Dict[int, ChannelExtractionThread] = {}
         self._threads_created = 0
 
         self._model.subscribe(
-            Event.ACTION_PREDICTION_MODEL_FILE,
-            self,
-            lambda e: self.extract_preprocessing_method(),
-        )
-
-        self._model.subscribe(
-            Event.ACTION_PREDICTION_EXTRACT_CHANNELS,
+            Event.ACTION_FILEINPUT_EXTRACT_CHANNELS,
             self,
             lambda e: self._initiate_channel_extraction(),
         )
 
     def handle_event(self, event: Event) -> None:
         pass
-
-    def extract_preprocessing_method(self) -> None:
-        """
-        Calls the prediction model's setter for the preprocessing method. Currently set up with a dummy value.
-        """
-        # TODO: replace dummy implementation
-        self._model.set_preprocessing_method("foo")
 
     def stop_channel_extraction(self) -> None:
         if self._current_thread and self._current_thread.isRunning():
