@@ -214,14 +214,18 @@ class FileInputWidget(QWidget):
         self._model.set_input_mode(InputMode.FROM_PATH)
 
     def _update_layer_list(self, event: Optional[NapariEvent] = None) -> None:
-        existing_selection = [
-            self._image_list.item(i).text()
-            for i in self._image_list.get_checked_rows()
-        ]
+        existing_selection: List[str] = []
+        for i in self._image_list.get_checked_rows():
+            item: Optional[QListWidgetItem] = self._image_list.item(i)
+            if item is not None:
+                existing_selection.append(item.text())
+
         self._image_list.clear()
         self._reset_channel_combobox()
         for layer in self._viewer.get_layers():
-            path_of_layer_image: str = self._viewer.get_source_path(layer)
+            path_of_layer_image: Optional[Path] = self._viewer.get_source_path(
+                layer
+            )
             if path_of_layer_image:
                 self._image_list.add_item(
                     layer.name, set_checked=layer.name in existing_selection
@@ -230,12 +234,13 @@ class FileInputWidget(QWidget):
     def _process_checked_signal(self, row: int, state: Qt.CheckState) -> None:
         if self._model.get_input_mode() == InputMode.FROM_NAPARI_LAYERS:
             selected_indices: List[int] = self._image_list.get_checked_rows()
-            selected_paths: List[Path] = [
-                self._viewer.get_source_path(
+            selected_paths: List[Path] = []
+            for i in selected_indices:
+                source_path: Optional[Path] = self._viewer.get_source_path(
                     self._viewer.get_layers_nonthreshold()[i]
                 )
-                for i in selected_indices
-            ]
+                if source_path is not None:
+                    selected_paths.append(source_path)
 
             # this will preserve the invariant: the options in the dropdown will be equal
             # to the number of channels in at least one of the selected images (or empty if no images selected)
