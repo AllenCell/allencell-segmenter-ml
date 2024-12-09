@@ -123,8 +123,8 @@ def test_build_overrides() -> None:
         / "prediction_output_test"
     )
     fake_path: Path = Path("fake_img_path")
-    prediction_model.set_input_image_path(fake_path)
-    prediction_model.set_image_input_channel_index(3)
+    file_input_model.set_input_image_path(fake_path)
+    file_input_model.set_image_input_channel_index(3)
 
     # act
     overrides: Dict[str, Union[str, int, float, bool]] = (
