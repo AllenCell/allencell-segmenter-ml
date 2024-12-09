@@ -24,8 +24,9 @@ class ImageLayer(SegmenterLayer):
     path: Optional[Path] = None
     data: Optional[np.ndarray] = None
     source: Source = Source(name="sourcename")
+    metadata: Optional[dict] = None
 
 
 @dataclass
 class LabelsLayer(SegmenterLayer):
-    pass
+    metadata: Optional[dict] = None

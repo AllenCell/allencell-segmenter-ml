@@ -325,6 +325,7 @@ class ThresholdingView(View, MainWindow):
     def doWork(self) -> None:
         self._thresholding_model.dispatch_save_thresholded_images()
 
+
     def focus_changed(self) -> None:
         self._file_input_widget._update_layer_list()
 

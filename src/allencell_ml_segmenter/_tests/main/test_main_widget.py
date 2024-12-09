@@ -11,7 +11,7 @@ from allencell_ml_segmenter.config.i_user_settings import IUserSettings
 
 from allencell_ml_segmenter.core.aics_widget import AicsWidget
 from allencell_ml_segmenter.main.main_widget import MainWidget
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 import napari
 
 # IMPORTANT NOTE: MainWidget is different from the other widgets since we do not directly
@@ -113,17 +113,28 @@ def test_handle_action_change_view_event(
     Tests that the main widget handles the action change view event correctly.
     """
     # ARRANGE
-    views: Set[AicsWidget] = main_widget._window_to_index.keys()
-    main_widget._experiments_model.apply_experiment_name("test_exp")
-    for view in views:
-        # ACT: have the model dispatch the action change view event
-        main_widget._model.set_current_view(view)
-
-        # ASSERT: check that the main widget's current view (after setting) is same as the model's current view
-        assert (
-            main_widget._window_container.currentIndex()
-            == main_widget._window_to_index[view]
+    # using a mock here as we're not testing anything related to the actual viewer here
+    mocked_viewer: Mock = Mock()
+    with patch("allencell_ml_segmenter.main.viewer.Viewer.get_layers", return_value=[]):
+        settings: IUserSettings = FakeUserSettings(
+            user_experiments_path=Path("fake_home")
         )
+        settings.set_cyto_dl_home_path(Path())
+        settings.set_user_experiments_path(Path())
+        main_widget: MainWidget = MainWidget(viewer=mocked_viewer, settings=settings)
+        views: Set[AicsWidget] = main_widget._window_to_index.keys()
+        main_widget._experiments_model.apply_experiment_name("test_exp")
+
+
+        for view in views:
+            # ACT: have the model dispatch the action change view event
+            main_widget._model.set_current_view(view)
+
+            # ASSERT: check that the main widget's current view (after setting) is same as the model's current view
+            assert (
+                main_widget._window_container.currentIndex()
+                == main_widget._window_to_index[view]
+            )
 
 
 def test_experiments_home_initialized(qtbot: QtBot) -> None:
