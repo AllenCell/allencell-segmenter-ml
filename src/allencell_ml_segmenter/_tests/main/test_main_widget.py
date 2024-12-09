@@ -115,16 +115,19 @@ def test_handle_action_change_view_event(
     # ARRANGE
     # using a mock here as we're not testing anything related to the actual viewer here
     mocked_viewer: Mock = Mock()
-    with patch("allencell_ml_segmenter.main.viewer.Viewer.get_layers", return_value=[]):
+    with patch(
+        "allencell_ml_segmenter.main.viewer.Viewer.get_layers", return_value=[]
+    ):
         settings: IUserSettings = FakeUserSettings(
             user_experiments_path=Path("fake_home")
         )
         settings.set_cyto_dl_home_path(Path())
         settings.set_user_experiments_path(Path())
-        main_widget: MainWidget = MainWidget(viewer=mocked_viewer, settings=settings)
+        main_widget: MainWidget = MainWidget(
+            viewer=mocked_viewer, settings=settings
+        )
         views: Set[AicsWidget] = main_widget._window_to_index.keys()
         main_widget._experiments_model.apply_experiment_name("test_exp")
-
 
         for view in views:
             # ACT: have the model dispatch the action change view event
