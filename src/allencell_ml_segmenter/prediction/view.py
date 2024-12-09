@@ -191,7 +191,7 @@ class PredictionView(View, MainWindow):
                     if raw_np_data is not None:
                         self._viewer.add_image(
                             raw_np_data,
-                            name= f"[raw] {data['raw'].name}",
+                            name=f"[raw] {data['raw'].name}",
                             metadata={"source_path": data["raw"]},
                         )
                     if seg_np_data is not None:
