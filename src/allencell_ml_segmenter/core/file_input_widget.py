@@ -231,7 +231,9 @@ class FileInputWidget(QWidget):
         if self._model.get_input_mode() == InputMode.FROM_NAPARI_LAYERS:
             selected_indices: List[int] = self._image_list.get_checked_rows()
             selected_paths: List[Path] = [
-                self._viewer.get_source_path(self._viewer.get_layers_nonthreshold()[i])
+                self._viewer.get_source_path(
+                    self._viewer.get_layers_nonthreshold()[i]
+                )
                 for i in selected_indices
             ]
 
@@ -243,7 +245,8 @@ class FileInputWidget(QWidget):
                     # otherwise we assume they are checking images with same number of channels
                     self._model.set_selected_paths(
                         selected_paths,
-                        extract_channels=len(selected_paths) == 1 and self._include_channel_selection,
+                        extract_channels=len(selected_paths) == 1
+                        and self._include_channel_selection,
                     )
                 else:
                     show_warning(
@@ -257,12 +260,17 @@ class FileInputWidget(QWidget):
             elif state == Qt.CheckState.Unchecked:
                 # could have unselected the img we got channels from originally, so need to re-extract
                 # as long as there are still some images selected
-                if len(selected_indices) == 0 and self._include_channel_selection:
+                if (
+                    len(selected_indices) == 0
+                    and self._include_channel_selection
+                ):
                     self._service.stop_channel_extraction()  # stop so combobox doesn't reset after thread is finished
                     self._reset_channel_combobox()
 
                 self._model.set_selected_paths(
-                    selected_paths, extract_channels=len(selected_paths) > 0 and self._include_channel_selection
+                    selected_paths,
+                    extract_channels=len(selected_paths) > 0
+                    and self._include_channel_selection,
                 )
 
     def _reset_channel_combobox(self) -> None:
@@ -278,7 +286,9 @@ class FileInputWidget(QWidget):
         if self._include_channel_selection:
             self.input_image_spinner.start()
             self._channel_select_dropdown.clear()
-            self._channel_select_dropdown.setPlaceholderText("loading channels...")
+            self._channel_select_dropdown.setPlaceholderText(
+                "loading channels..."
+            )
             self._channel_select_dropdown.setCurrentIndex(-1)
             self._channel_select_dropdown.setEnabled(False)
 
