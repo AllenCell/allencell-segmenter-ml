@@ -192,7 +192,6 @@ class PredictionView(View, MainWindow):
                         self._viewer.add_image(
                             raw_np_data,
                             f"[raw] {data['raw'].name}",
-                            path=data["raw"],
                         )
                     if seg_np_data is not None:
                         self._viewer.add_labels(
