@@ -29,7 +29,9 @@ class FakeViewer(IViewer):
         self.threshold_inserted: Dict[str, np.ndarray] = {}
 
     def add_image(self, image: np.ndarray, name: str, metadata: dict = None):
-        self._image_layers[name] = ImageLayer(name, path=None, data=image, metadata=metadata)
+        self._image_layers[name] = ImageLayer(
+            name, path=None, data=image, metadata=metadata
+        )
         self._on_layers_change()
 
     def get_image(self, name: str) -> Optional[ImageLayer]:
@@ -59,7 +61,9 @@ class FakeViewer(IViewer):
         if name in self._shapes_layers:
             self._shapes_layers[name] = ShapesLayer(name, new_shapes)
 
-    def add_labels(self, data: np.ndarray, name: str, metadata: dict = None) -> None:
+    def add_labels(
+        self, data: np.ndarray, name: str, metadata: dict = None
+    ) -> None:
         self._labels_layers[name] = LabelsLayer(name, metadata=metadata)
         self._on_layers_change()
 
@@ -133,4 +137,3 @@ class FakeViewer(IViewer):
             return Path(layer.metadata["source_path"])
 
         return None
-
