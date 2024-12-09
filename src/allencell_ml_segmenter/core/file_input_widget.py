@@ -215,13 +215,13 @@ class FileInputWidget(QWidget):
 
     def _update_layer_list(self, event: Optional[NapariEvent] = None) -> None:
         existing_selection = [
-            self._viewer.get_layers_nonthreshold()[i].name
+            self._image_list.item(i).text()
             for i in self._image_list.get_checked_rows()
         ]
         self._image_list.clear()
         self._reset_channel_combobox()
         for layer in self._viewer.get_layers():
-            path_of_layer_image: str = layer.source.path
+            path_of_layer_image: str = self._viewer.get_source_path(layer)
             if path_of_layer_image:
                 self._image_list.add_item(
                     layer.name, set_checked=layer.name in existing_selection
@@ -231,7 +231,7 @@ class FileInputWidget(QWidget):
         if self._model.get_input_mode() == InputMode.FROM_NAPARI_LAYERS:
             selected_indices: List[int] = self._image_list.get_checked_rows()
             selected_paths: List[Path] = [
-                Path(self._viewer.get_layers_nonthreshold()[i].source.path)
+                self._viewer.get_source_path(self._viewer.get_layers_nonthreshold()[i])
                 for i in selected_indices
             ]
 

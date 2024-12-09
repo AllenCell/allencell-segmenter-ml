@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from pathlib import Path
 from typing import Optional, Callable
 from allencell_ml_segmenter.main.segmenter_layer import (
     ShapesLayer,
@@ -15,7 +16,7 @@ class IViewer(ABC):
         super().__init__()
 
     @abstractmethod
-    def add_image(self, image: np.ndarray, name: str) -> None:
+    def add_image(self, image: np.ndarray, **kwargs) -> None:
         pass
 
     @abstractmethod
@@ -39,7 +40,7 @@ class IViewer(ABC):
         pass
 
     @abstractmethod
-    def add_labels(self, data: np.ndarray, name: str) -> None:
+    def add_labels(self, data: np.ndarray, **kwargs) -> None:
         pass
 
     @abstractmethod
@@ -99,4 +100,8 @@ class IViewer(ABC):
         Get only layers which are not segmentation layers from the viewer.
         These are the layers that do not start with [threshold].
         """
+        pass
+
+    @abstractmethod
+    def get_source_path(self, layer: Layer) -> Optional[Path]:
         pass
