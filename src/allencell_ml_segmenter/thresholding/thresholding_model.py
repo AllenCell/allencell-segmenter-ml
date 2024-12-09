@@ -110,3 +110,4 @@ class ThresholdingModel(Publisher):
             )
 
         return self._original_layers_in_viewer
+

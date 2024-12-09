@@ -32,7 +32,7 @@ class FileInputModel(Publisher):
         output_dir: Optional[Path] = self.get_output_directory()
         if output_dir is None:
             return None
-        return output_dir / "target"
+        return output_dir / "seg"
 
     def set_input_image_path(
         self, path: Optional[Path], extract_channels: bool = False
