@@ -167,11 +167,10 @@ class ThresholdingService(Subscriber):
         )
         new_layers_added: list[Layer] = current_layers
         if original_layers is not None:
-            new_layers_added: list[Layer] = [
+            new_layers_added = [
                 layer
                 for layer in current_layers
-                if layer.name
-                not in self._thresholding_model.get_original_layers()
+                if layer.name not in original_layers
             ]
 
         # refresh layers only if the new layers are not threshold layers (we dont want to track this in original layers state)

@@ -192,13 +192,13 @@ class PredictionView(View, MainWindow):
                         self._viewer.add_image(
                             raw_np_data,
                             name=f"[raw] {data['raw'].name}",
-                            metadata={"source_path": data["raw"]},
+                            metadata={"source_path": str(data["raw"])},
                         )
                     if seg_np_data is not None:
                         self._viewer.add_labels(
                             seg_np_data,
                             name=f"[seg] {data['seg'].name}",
-                            metadata={"source_path": data["seg"]},
+                            metadata={"source_path": str(data["seg"])},
                         )
 
                     self._main_model.set_predictions_in_viewer(True)
