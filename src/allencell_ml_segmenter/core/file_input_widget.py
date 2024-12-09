@@ -243,7 +243,7 @@ class FileInputWidget(QWidget):
                     # otherwise we assume they are checking images with same number of channels
                     self._model.set_selected_paths(
                         selected_paths,
-                        extract_channels=len(selected_paths) == 1,
+                        extract_channels=len(selected_paths) == 1 and self._include_channel_selection,
                     )
                 else:
                     show_warning(
@@ -257,12 +257,12 @@ class FileInputWidget(QWidget):
             elif state == Qt.CheckState.Unchecked:
                 # could have unselected the img we got channels from originally, so need to re-extract
                 # as long as there are still some images selected
-                if len(selected_indices) == 0:
+                if len(selected_indices) == 0 and self._include_channel_selection:
                     self._service.stop_channel_extraction()  # stop so combobox doesn't reset after thread is finished
                     self._reset_channel_combobox()
 
                 self._model.set_selected_paths(
-                    selected_paths, extract_channels=len(selected_paths) > 0
+                    selected_paths, extract_channels=len(selected_paths) > 0 and self._include_channel_selection
                 )
 
     def _reset_channel_combobox(self) -> None:
@@ -275,32 +275,34 @@ class FileInputWidget(QWidget):
     def _set_input_channel_combobox_to_loading(
         self, event: Optional[Event] = None
     ) -> None:
-        self.input_image_spinner.start()
-        self._channel_select_dropdown.clear()
-        self._channel_select_dropdown.setPlaceholderText("loading channels...")
-        self._channel_select_dropdown.setCurrentIndex(-1)
-        self._channel_select_dropdown.setEnabled(False)
+        if self._include_channel_selection:
+            self.input_image_spinner.start()
+            self._channel_select_dropdown.clear()
+            self._channel_select_dropdown.setPlaceholderText("loading channels...")
+            self._channel_select_dropdown.setCurrentIndex(-1)
+            self._channel_select_dropdown.setEnabled(False)
 
     def _populate_input_channel_combobox(
         self, event: Optional[Event] = None
     ) -> None:
-        self.input_image_spinner.stop()
-        channels_in_image: Optional[int] = self._model.get_max_channels()
-        max_channels: Optional[int] = self._model.get_max_channels()
-        self._reset_channel_combobox()
-        if (
-            channels_in_image is not None
-            and channels_in_image > 0
-            and max_channels is not None
-        ):
-            values_range: List[str] = [str(i) for i in range(max_channels)]
-            self._channel_select_dropdown.setPlaceholderText(
-                "select a channel index"
-            )
+        if self._include_channel_selection:
+            self.input_image_spinner.stop()
+            channels_in_image: Optional[int] = self._model.get_max_channels()
+            max_channels: Optional[int] = self._model.get_max_channels()
+            self._reset_channel_combobox()
+            if (
+                channels_in_image is not None
+                and channels_in_image > 0
+                and max_channels is not None
+            ):
+                values_range: List[str] = [str(i) for i in range(max_channels)]
+                self._channel_select_dropdown.setPlaceholderText(
+                    "select a channel index"
+                )
 
-            self._channel_select_dropdown.addItems(values_range)
-            self._channel_select_dropdown.setEnabled(True)
-        else:
-            self._channel_select_dropdown.setPlaceholderText(
-                "no channels to select"
-            )
+                self._channel_select_dropdown.addItems(values_range)
+                self._channel_select_dropdown.setEnabled(True)
+            else:
+                self._channel_select_dropdown.setPlaceholderText(
+                    "no channels to select"
+                )
