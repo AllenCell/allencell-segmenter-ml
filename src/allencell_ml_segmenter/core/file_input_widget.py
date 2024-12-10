@@ -216,9 +216,9 @@ class FileInputWidget(QWidget):
     def _update_layer_list(self, event: Optional[NapariEvent] = None) -> None:
         existing_selection: List[str] = []
         for i in self._image_list.get_checked_rows():
-            item: Optional[QListWidgetItem] = self._image_list.item(i)
-            if item is not None:
-                existing_selection.append(item.text())
+            q_list_widget_item: Optional[QListWidgetItem] = self._image_list.item(i)
+            if q_list_widget_item is not None:
+                existing_selection.append(q_list_widget_item.text())
 
         self._image_list.clear()
         self._reset_channel_combobox()
