@@ -182,9 +182,13 @@ class Viewer(IViewer):
             layer_to_insert.refresh()
 
     def get_source_path(self, layer: Layer) -> Optional[Path]:
+        """
+        Given a layer, gets that layer's source path- the path to the image on the filesystem.
+        """
+        # If the image was dragged into napari, we expect a layer.source.path
         if layer.source.path is not None:
             return Path(layer.source.path)
+        # if the image was added by the plugin, we expect source_path to be set instead
         if layer.metadata is not None and "source_path" in layer.metadata:
             return Path(layer.metadata["source_path"])
-
         return None
