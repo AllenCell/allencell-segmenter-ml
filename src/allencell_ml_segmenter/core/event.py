@@ -38,9 +38,12 @@ class Event(Enum):
     ACTION_PREDICTION_GET_IMAGE_PATHS_FROM_NAPARI = (
         "prediction_get_image_paths_from_napari"
     )
-    ACTION_PREDICTION_MAX_CHANNELS_SET = "prediction_max_channels_set"
+
     ACTION_PREDICTION_SETUP = "prediction_setup"
-    ACTION_PREDICTION_EXTRACT_CHANNELS = "prediction_extract_channels"
+
+    # FILEINPUT
+    ACTION_FILEINPUT_MAX_CHANNELS_SET = "fileinput_max_channels_set"
+    ACTION_FILEINPUT_EXTRACT_CHANNELS = "fileinput_extract_channels"
 
     # Curation
     ACTION_CURATION_RAW_CHANNELS_SET = "curation_raw_channels_set"
@@ -60,6 +63,11 @@ class Event(Enum):
     ACTION_CURATION_SEG2_THREAD_ERROR = "curation_seg2_thread_error"
     ACTION_CURATION_SEG1_THREAD_ERROR = "curation_seg1_thread_error"
     ACTION_CURATION_RAW_THREAD_ERROR = "curation_raw_thread_error"
+
+    # Thresholding events
+    ACTION_THRESHOLDING_VALUE_CHANGED = "thresholding_value_changed"
+    ACTION_THRESHOLDING_AUTOTHRESHOLDING_SELECTED = "autothresholding_selected"
+    ACTION_SAVE_THRESHOLDING_IMAGES = "save_thresholding_images"
 
     # View selection events. These can stem from a user action, or from a process (i.e. prediction process ends, and a new view is shown automatically).
     VIEW_SELECTION_TRAINING = "training_selected"
