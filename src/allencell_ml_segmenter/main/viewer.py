@@ -24,6 +24,12 @@ class Viewer(IViewer):
         self.viewer: napari.Viewer = viewer
 
     def add_image(self, image: np.ndarray, **kwargs: Any) -> None:
+        """
+        image: image as a numpy array to add to viewer
+        **kwargs: dictionary of kwargs that napari.Viewer.add_image() supports.
+        Our plugin uses the `name` and `metadata` kwargs.
+        Supports any kwargs defined in https://napari.org/dev/api/napari.Viewer.html#napari.Viewer.add_image
+        """
         self.viewer.add_image(image, **kwargs)
 
     def get_image(self, name: str) -> Optional[ImageLayer]:
@@ -62,6 +68,12 @@ class Viewer(IViewer):
         ]
 
     def add_labels(self, data: np.ndarray, **kwargs: Any) -> None:
+        """
+        data: labels layer as a numpy array to add to viewer
+        **kwargs: dictionary of kwargs that napari.Viewer.add_image() supports.
+        Our plugin uses the `name` and `metadata` kwargs.
+        Supports any kwargs defined in https://napari.org/dev/api/napari.Viewer.html#napari.Viewer.add_image
+        """
         self.viewer.add_labels(data, **kwargs)
 
     def get_labels(self, name: str) -> Optional[LabelsLayer]:
