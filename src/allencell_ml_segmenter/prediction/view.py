@@ -198,9 +198,12 @@ class PredictionView(View, MainWindow):
                         self._viewer.add_labels(
                             seg_np_data,
                             name=f"[seg] {data['seg'].name}",
-                            metadata={"source_path": data["seg"],
-                                      "prob_map": self._img_data_extractor.extract_image_data(
-                            data["seg"]).np_data},
+                            metadata={
+                                "source_path": data["seg"],
+                                "prob_map": self._img_data_extractor.extract_image_data(
+                                    data["seg"]
+                                ).np_data,
+                            },
                         )
 
                     self._main_model.set_predictions_in_viewer(True)
