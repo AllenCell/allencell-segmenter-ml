@@ -88,7 +88,7 @@ class ThresholdingModel(Publisher):
     def set_original_layers(self, layer_list: list[Layer]) -> None:
         ordered_layers: OrderedDict[str, np.ndarray] = OrderedDict()
         for layer in layer_list:
-            if "prob_map" in layer.metadata:
+            if layer.metadata is not None and "prob_map" in layer.metadata:
                 ordered_layers[layer.name] = layer.metadata["prob_map"]
             else:
                 ordered_layers[layer.name] = layer.data
