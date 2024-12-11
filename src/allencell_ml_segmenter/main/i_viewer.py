@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
-from typing import Optional, Callable
+from pathlib import Path
+from typing import Optional, Callable, Any
 from allencell_ml_segmenter.main.segmenter_layer import (
     ShapesLayer,
     ImageLayer,
@@ -15,7 +16,7 @@ class IViewer(ABC):
         super().__init__()
 
     @abstractmethod
-    def add_image(self, image: np.ndarray, name: str) -> None:
+    def add_image(self, image: np.ndarray, **kwargs: Any) -> None:
         pass
 
     @abstractmethod
@@ -39,7 +40,7 @@ class IViewer(ABC):
         pass
 
     @abstractmethod
-    def add_labels(self, data: np.ndarray, name: str) -> None:
+    def add_labels(self, data: np.ndarray, **kwargs: Any) -> None:
         pass
 
     @abstractmethod
@@ -71,4 +72,36 @@ class IViewer(ABC):
     def subscribe_layers_change_event(
         self, function: Callable[[NapariEvent], None]
     ) -> None:
+        pass
+
+    @abstractmethod
+    def get_seg_layers(self) -> list[Layer]:
+        """
+        Get only segmentation layers (which should be probability mappings) from the viewer.
+        These are the layers that start with [seg].
+        """
+        pass
+
+    @abstractmethod
+    def insert_threshold(
+        self, layer_name: str, img: np.ndarray, seg_layers: bool = False
+    ) -> None:
+        """
+        Insert a thresholded image into the viewer.
+        If a layer for this thresholded image already exists, the new image will replace the old one and refresh the viewer.
+        If the layer does not exist, it will be added to the viewer in the correct place (on top of the original segmentation image:
+        index_of_segmentation + 1 in the LayerList)
+        """
+        pass
+
+    @abstractmethod
+    def get_layers_nonthreshold(self) -> list[Layer]:
+        """
+        Get only layers which are not segmentation layers from the viewer.
+        These are the layers that do not start with [threshold].
+        """
+        pass
+
+    @abstractmethod
+    def get_source_path(self, layer: Layer) -> Optional[Path]:
         pass

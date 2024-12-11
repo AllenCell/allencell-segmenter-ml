@@ -2,11 +2,13 @@ import csv
 
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.event import Event
-
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.prediction.model import (
     PredictionModel,
-    PredictionInputMode,
+)
+from allencell_ml_segmenter.core.file_input_model import (
+    InputMode,
+    FileInputModel,
 )
 
 from allencell_ml_segmenter.utils.cuda_util import CUDAUtils
@@ -29,10 +31,12 @@ class PredictionService(Subscriber):
     def __init__(
         self,
         prediction_model: PredictionModel,
+        file_input_model: FileInputModel,
         experiments_model: ExperimentsModel,
     ):
         super().__init__()
         self._prediction_model: PredictionModel = prediction_model
+        self._file_input_model: FileInputModel = file_input_model
         self._experiments_model: ExperimentsModel = experiments_model
 
         self._prediction_model.subscribe(
@@ -92,7 +96,7 @@ class PredictionService(Subscriber):
             return False
 
         # Check to see the user has specified an output folder to use.
-        if self._prediction_model.get_output_directory() is None:
+        if self._file_input_model.get_output_directory() is None:
             show_warning(
                 f"Please select an output folder to save predictions to."
             )
@@ -104,19 +108,19 @@ class PredictionService(Subscriber):
         If needed, write csv's for predictions, and set total number of images to be processed
         """
         # Check to see if user has selected an input mode
-        input_mode_selected: Optional[PredictionInputMode] = (
-            self._prediction_model.get_prediction_input_mode()
+        input_mode_selected: Optional[InputMode] = (
+            self._file_input_model.get_input_mode()
         )
         if not input_mode_selected:
             show_warning(
                 "Please select input images before running prediction."
             )
             # dont set state if we have an error in setup
-        elif input_mode_selected == PredictionInputMode.FROM_PATH:
+        elif input_mode_selected == InputMode.FROM_PATH:
             self._prediction_model.set_total_num_images(
                 self._setup_inputs_from_path()
             )
-        elif input_mode_selected == PredictionInputMode.FROM_NAPARI_LAYERS:
+        elif input_mode_selected == InputMode.FROM_NAPARI_LAYERS:
             self._prediction_model.set_total_num_images(
                 self._setup_inputs_from_napari()
             )
@@ -136,12 +140,13 @@ class PredictionService(Subscriber):
         overrides["data.columns"] = ["raw", "split"]
         overrides["data.split_column"] = "split"
         overrides["checkpoint.ckpt_path"] = str(checkpoint)
-
+        overrides["checkpoint.strict"] = False
+        overrides["checkpoint.weights_only"] = True
         # This override is needed to for inference with cyto-dl, because we default to auto otherwise
         overrides["data.batch_size"] = 1
 
         input_path: Optional[Path] = (
-            self._prediction_model.get_input_image_path()
+            self._file_input_model.get_input_image_path()
         )
         if input_path is None:
             raise RuntimeError("Path to prediction input undefined")
@@ -151,14 +156,14 @@ class PredictionService(Subscriber):
         # overrides from model
         # if output_dir is not set, will default to saving in the experiment folder
         output_dir: Optional[Path] = (
-            self._prediction_model.get_output_directory()
+            self._file_input_model.get_output_directory()
         )
         if output_dir:
             overrides["paths.output_dir"] = str(output_dir)
 
         # if channel is not set, will default to same channel used to train
         channel: Optional[int] = (
-            self._prediction_model.get_image_input_channel_index()
+            self._file_input_model.get_image_input_channel_index()
         )
         if channel is not None:
             overrides["input_channel"] = channel
@@ -186,7 +191,7 @@ class PredictionService(Subscriber):
                 for i, path_of_image in enumerate(list_images):
                     writer.writerow([str(i), str(path_of_image), "test"])
 
-            self._prediction_model.set_input_image_path(csv_path)
+            self._file_input_model.set_input_image_path(csv_path)
 
     def _setup_inputs_from_path(self) -> int:
         """
@@ -194,7 +199,7 @@ class PredictionService(Subscriber):
         """
         # User has selected a directory or a csv as input images
         input_path: Optional[Path] = (
-            self._prediction_model.get_input_image_path()
+            self._file_input_model.get_input_image_path()
         )
         if input_path is not None and input_path.is_dir():
             all_files: list[Path] = (
@@ -223,7 +228,7 @@ class PredictionService(Subscriber):
         """
         # User has selected napari image layers as input images
         selected_paths_from_napari: Optional[list[Path]] = (
-            self._prediction_model.get_selected_paths()
+            self._file_input_model.get_selected_paths()
         )
         if (
             selected_paths_from_napari is None

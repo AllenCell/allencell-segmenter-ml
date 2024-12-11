@@ -15,10 +15,18 @@ class ShapesLayer(SegmenterLayer):
 
 
 @dataclass
+class Source:
+    path: Optional[Path] = None
+
+
+@dataclass
 class ImageLayer(SegmenterLayer):
-    path: Optional[Path]
+    path: Optional[Path] = None
+    data: Optional[np.ndarray] = None
+    source: Source = Source()
+    metadata: Optional[dict] = None
 
 
 @dataclass
 class LabelsLayer(SegmenterLayer):
-    pass
+    metadata: Optional[dict] = None

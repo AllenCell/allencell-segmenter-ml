@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import numpy as np
 
 from allencell_ml_segmenter.main.i_viewer import IViewer
@@ -24,9 +26,12 @@ class FakeViewer(IViewer):
         self._shapes_layers: Dict[str, ShapesLayer] = {}
         self._labels_layers: Dict[str, LabelsLayer] = {}
         self._on_layers_change_fns: List[Callable] = []
+        self.threshold_inserted: Dict[str, np.ndarray] = {}
 
-    def add_image(self, image: np.ndarray, name: str):
-        self._image_layers[name] = ImageLayer(name, None)
+    def add_image(self, image: np.ndarray, name: str, metadata: dict = None):
+        self._image_layers[name] = ImageLayer(
+            name, path=None, data=image, metadata=metadata
+        )
         self._on_layers_change()
 
     def get_image(self, name: str) -> Optional[ImageLayer]:
@@ -56,8 +61,10 @@ class FakeViewer(IViewer):
         if name in self._shapes_layers:
             self._shapes_layers[name] = ShapesLayer(name, new_shapes)
 
-    def add_labels(self, data: np.ndarray, name: str) -> None:
-        self._labels_layers[name] = LabelsLayer(name)
+    def add_labels(
+        self, data: np.ndarray, name: str, metadata: dict = None
+    ) -> None:
+        self._labels_layers[name] = LabelsLayer(name, metadata=metadata)
         self._on_layers_change()
 
     def get_labels(self, name: str) -> Optional[LabelsLayer]:
@@ -93,7 +100,7 @@ class FakeViewer(IViewer):
 
     # not supporting in the fake because we will move away from this fn in the near future
     def get_layers(self) -> List[Layer]:
-        return []
+        return list(self._image_layers.values())
 
     def subscribe_layers_change_event(
         self, function: Callable[[NapariEvent], None]
@@ -103,3 +110,30 @@ class FakeViewer(IViewer):
     def _on_layers_change(self):
         for fn in self._on_layers_change_fns:
             fn(FakeNapariEvent())
+
+    def get_seg_layers(self) -> list[Layer]:
+        return [
+            layer
+            for layer in self._image_layers.values()
+            if layer.name.startswith("[seg]")
+        ]
+
+    def insert_threshold(
+        self, layer_name: str, img: np.ndarray, seg_layers: bool = False
+    ) -> None:
+        self.threshold_inserted[f"[threshold] {layer_name}"] = img
+
+    def get_layers_nonthreshold(self) -> list[Layer]:
+        return [
+            layer
+            for layer in self._image_layers.values()
+            if not layer.name.startswith("[threshold]")
+        ]
+
+    def get_source_path(self, layer: Layer) -> Optional[Path]:
+        if layer.source.path is not None:
+            return Path(layer.source.path)
+        if layer.metadata is not None and "source_path" in layer.metadata:
+            return Path(layer.metadata["source_path"])
+
+        return None

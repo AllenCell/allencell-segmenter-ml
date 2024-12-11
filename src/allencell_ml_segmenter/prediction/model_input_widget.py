@@ -96,14 +96,6 @@ class ModelInputWidget(AicsWidget):
             self._auto_thresh_selection,
         ]
 
-        self._model.subscribe(
-            Event.ACTION_PREDICTION_PREPROCESSING_METHOD,
-            self,
-            lambda e: self._method_label.setText(
-                self._model.get_preprocessing_method()
-            ),
-        )
-
         # finish default set-up
         self._call_setters()
         self._build_layouts()
@@ -122,16 +114,12 @@ class ModelInputWidget(AicsWidget):
         # disable bottom
         self._auto_thresh_selection.setEnabled(False)
 
-        # set postprocessing method
-        self._model.set_postprocessing_method(ModelInputWidget.TOP_TEXT)
-
     def _mid_postproc_button_slot(self) -> None:
         """
         Prohibits usage of non-related input fields if top button is checked.
         """
         self._simple_thresh_slider.native.setEnabled(True)
         self._auto_thresh_selection.setEnabled(False)
-        self._model.set_postprocessing_method(ModelInputWidget.MID_TEXT)
 
     def _bottom_postproc_button_slot(self) -> None:
         """
@@ -139,7 +127,6 @@ class ModelInputWidget(AicsWidget):
         """
         self._simple_thresh_slider.native.setEnabled(False)
         self._auto_thresh_selection.setEnabled(True)
-        self._model.set_postprocessing_method(ModelInputWidget.BOTTOM_TEXT)
 
     def _call_setters(self) -> None:
         """
@@ -308,14 +295,4 @@ class ModelInputWidget(AicsWidget):
         )
         self._bottom_postproc_button.toggled.connect(
             self._bottom_postproc_button_slot
-        )
-
-        # connect postprocessing simple threshold slider to slot
-        self._simple_thresh_slider.changed.connect(
-            lambda v: self._model.set_postprocessing_simple_threshold(v)
-        )
-
-        # connect auto threshold selection to slot
-        self._auto_thresh_selection.currentTextChanged.connect(
-            lambda s: self._model.set_postprocessing_auto_threshold(s)
         )

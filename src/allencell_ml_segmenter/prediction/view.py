@@ -7,18 +7,17 @@ from allencell_ml_segmenter._style import Style
 from allencell_ml_segmenter.core.dialog_box import DialogBox
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.main.main_model import MainModel
-from allencell_ml_segmenter.prediction.file_input_widget import (
-    PredictionFileInput,
+from allencell_ml_segmenter.core.file_input_widget import (
+    FileInputWidget,
+    FileInputModel,
 )
 from allencell_ml_segmenter.prediction.model import (
     PredictionModel,
-    PredictionInputMode,
 )
+
+from allencell_ml_segmenter.core.file_input_model import InputMode
 from allencell_ml_segmenter.prediction.service import ModelFileService
 from allencell_ml_segmenter.core.view import View, MainWindow
-from allencell_ml_segmenter.prediction.model_input_widget import (
-    ModelInputWidget,
-)
 from allencell_ml_segmenter.prediction.prediction_folder_progress_tracker import (
     PredictionFolderProgressTracker,
 )
@@ -46,17 +45,19 @@ class PredictionView(View, MainWindow):
         self,
         main_model: MainModel,
         prediction_model: PredictionModel,
+        file_input_model: FileInputModel,
         viewer: IViewer,
         img_data_extractor: IImageDataExtractor = AICSImageDataExtractor.global_instance(),
     ):
         super().__init__()
         self._main_model: MainModel = main_model
         self._prediction_model: PredictionModel = prediction_model
+        self._file_input_model: FileInputModel = file_input_model
         self._viewer: IViewer = viewer
         self._img_data_extractor = img_data_extractor
 
         self._service: ModelFileService = ModelFileService(
-            self._prediction_model
+            self._file_input_model
         )
 
         layout: QVBoxLayout = QVBoxLayout()
@@ -72,8 +73,8 @@ class PredictionView(View, MainWindow):
         self._title.setObjectName("title")
         layout.addWidget(self._title, alignment=Qt.AlignmentFlag.AlignHCenter)
 
-        self._file_input_widget: PredictionFileInput = PredictionFileInput(
-            self._prediction_model, self._viewer, self._service
+        self._file_input_widget: FileInputWidget = FileInputWidget(
+            self._file_input_model, self._viewer, self._service
         )
         self._file_input_widget.setObjectName("fileInput")
 
@@ -124,7 +125,7 @@ class PredictionView(View, MainWindow):
             self._prediction_model.get_total_num_images()
         )
         output_seg_dir: Optional[Path] = (
-            self._prediction_model.get_output_seg_directory()
+            self._file_input_model.get_output_seg_directory()
         )
         if total_num_images is not None and output_seg_dir is not None:
             progress_tracker: PredictionFolderProgressTracker = (
@@ -144,23 +145,23 @@ class PredictionView(View, MainWindow):
 
     def showResults(self) -> None:
         output_path: Optional[Path] = (
-            self._prediction_model.get_output_seg_directory()
+            self._file_input_model.get_output_seg_directory()
         )
 
         # Display images if prediction inputs are from Napari Layers
         if (
-            self._prediction_model.get_prediction_input_mode()
-            == PredictionInputMode.FROM_NAPARI_LAYERS
+            self._file_input_model.get_input_mode()
+            == InputMode.FROM_NAPARI_LAYERS
             and output_path is not None
         ):
             raw_imgs: Optional[list[Path]] = (
-                self._prediction_model.get_selected_paths()
+                self._file_input_model.get_selected_paths()
             )
             segmentations: list[Path] = (
                 FileUtils.get_all_files_in_dir_ignore_hidden(output_path)
             )
             channel: Optional[int] = (
-                self._prediction_model.get_image_input_channel_index()
+                self._file_input_model.get_image_input_channel_index()
             )
             if raw_imgs is None or channel is None:
                 raise RuntimeError("Insufficient data to show results")
@@ -169,33 +170,43 @@ class PredictionView(View, MainWindow):
             stem_to_data: dict[str, dict[str, Path]] = {
                 raw_img.stem: {"raw": raw_img} for raw_img in raw_imgs
             }
-            for seg in segmentations:
-                # ignore files in the folder that aren't from most recent predictions
-                if seg.stem in stem_to_data:
-                    stem_to_data[seg.stem]["seg"] = seg
+            if segmentations:
+                for seg in segmentations:
+                    # ignore files in the folder that aren't from most recent predictions
+                    if seg.stem in stem_to_data:
+                        stem_to_data[seg.stem]["seg"] = seg
 
-            self._viewer.clear_layers()
-            for data in stem_to_data.values():
-                raw_np_data: Optional[np.ndarray] = (
-                    self._img_data_extractor.extract_image_data(
-                        data["raw"], channel=channel
-                    ).np_data
-                )
-                seg_np_data: Optional[np.ndarray] = (
-                    self._img_data_extractor.extract_image_data(
-                        data["seg"], seg=1
-                    ).np_data
-                )
-                if raw_np_data is not None:
-                    self._viewer.add_image(
-                        raw_np_data,
-                        f"[raw] {data['raw'].name}",
+                self._viewer.clear_layers()
+                for data in stem_to_data.values():
+                    raw_np_data: Optional[np.ndarray] = (
+                        self._img_data_extractor.extract_image_data(
+                            data["raw"], channel=channel
+                        ).np_data
                     )
-                if seg_np_data is not None:
-                    self._viewer.add_labels(
-                        seg_np_data,
-                        name=f"[seg] {data['seg'].name}",
+                    seg_np_data: Optional[np.ndarray] = (
+                        self._img_data_extractor.extract_image_data(
+                            data["seg"], seg=1
+                        ).np_data
                     )
+                    if raw_np_data is not None:
+                        self._viewer.add_image(
+                            raw_np_data,
+                            name=f"[raw] {data['raw'].name}",
+                            metadata={"source_path": str(data["raw"])},
+                        )
+                    if seg_np_data is not None:
+                        self._viewer.add_labels(
+                            seg_np_data,
+                            name=f"[seg] {data['seg'].name}",
+                            metadata={
+                                "source_path": data["seg"],
+                                "prob_map": self._img_data_extractor.extract_image_data(
+                                    data["seg"]
+                                ).np_data,
+                            },
+                        )
+
+                    self._main_model.set_predictions_in_viewer(True)
         # Display popup with saved images path if prediction inputs are from a directory
         else:
             dialog_box = DialogBox(
