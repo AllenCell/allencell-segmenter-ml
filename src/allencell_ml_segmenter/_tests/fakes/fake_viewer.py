@@ -13,7 +13,7 @@ from allencell_ml_segmenter.main.segmenter_layer import (
 from napari.utils.events import Event as NapariEvent
 import napari
 from typing import List, Dict, Callable, Optional
-from napari.layers import Layer
+from napari.layers import Layer, Labels
 
 
 class FakeNapariEvent:
@@ -137,3 +137,10 @@ class FakeViewer(IViewer):
             return Path(layer.metadata["source_path"])
 
         return None
+
+    # TODO: add these fakes for testing methods that rely on this
+    def add_segmentation_labels(self, masked_data: np.ndarray, name: str, prob_map: np.ndarray) -> None:
+        pass
+
+    def get_all_segmentation_labels(self) -> list[Labels]:
+        pass
