@@ -65,10 +65,6 @@ class ThresholdingService(Subscriber):
             self._save_thresholded_images,
         )
 
-        self._viewer.subscribe_layers_change_event(
-            function=self._update_original_layers
-        )
-
     def _handle_thresholding_error(self, error: Exception) -> None:
         show_info("Thresholding failed: " + str(error))
 
