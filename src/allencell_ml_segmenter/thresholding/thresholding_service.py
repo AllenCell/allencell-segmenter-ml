@@ -158,28 +158,3 @@ class ThresholdingService(Subscriber):
             self._thresholding_model.get_thresholding_value()
         )
         return (image > threshold_value).astype(int)
-
-    def _update_original_layers(self, _: Event) -> None:
-        current_layers: list[Layer] = (
-            self._viewer.get_layers()
-        )  # all layers in viewer
-
-        # get layers that were added since last thresholding
-        original_layers: Optional[OrderedDict[str, np.ndarray]] = (
-            self._thresholding_model.get_original_layers()
-        )
-        new_layers_added: list[Layer] = current_layers
-        if original_layers is not None:
-            new_layers_added = [
-                layer
-                for layer in current_layers
-                if layer.name not in original_layers
-            ]
-
-        # refresh layers only if the new layers are not threshold layers (we dont want to track this in original layers state)
-        for new_layer in new_layers_added:
-            if not new_layer.name.startswith("[threshold]"):
-                self._thresholding_model.set_original_layers(
-                    self._viewer.get_layers()
-                )
-                return
