@@ -205,7 +205,7 @@ class Viewer(IViewer):
             },
         )
 
-    def get_all_segmentation_labels(self) -> list[Labels]:
+    def get_all_segmentation_labels(self) -> list[LabelsLayer]:
         """
         Get all segmentation labels layers that currently exist in the viewer.
         """
