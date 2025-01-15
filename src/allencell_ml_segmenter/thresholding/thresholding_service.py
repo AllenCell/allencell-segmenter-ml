@@ -102,6 +102,7 @@ class ThresholdingService(Subscriber):
             # Creating helper functions for mypy strict typing
             def thresholding_task() -> np.ndarray:
                 # INVARIANT: a segmentation layer must have prob_map in its metadata if it came from our plugin
+                # so we are only supporting thresholding images that are from the plugin itself.
                 return thresh_function(layer.metadata["prob_map"])
 
             layer_instance: LabelsLayer = layer
