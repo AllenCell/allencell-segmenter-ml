@@ -69,7 +69,9 @@ class ThresholdingService(Subscriber):
         show_info("Thresholding failed: " + str(error))
 
     def _on_threshold_changed(self, _: Event) -> None:
-        segmentation_labels: list[LabelsLayer] = self._viewer.get_all_segmentation_labels()
+        segmentation_labels: list[LabelsLayer] = (
+            self._viewer.get_all_segmentation_labels()
+        )
         # # if we havent thresholded yet, keep track of original layers.
         # # need to check this on first threshold change, since user can add images
         # # between finishing prediction and starting thresholding
@@ -103,9 +105,18 @@ class ThresholdingService(Subscriber):
             def thresholding_task() -> np.ndarray:
                 # INVARIANT: a segmentation layer must have prob_map in its metadata if it came from our plugin
                 # so we are only supporting thresholding images that are from the plugin itself.
+                if (
+                    not isinstance(layer.metadata, dict)
+                    or "prob_map" not in layer.metadata
+                ):
+                    raise ValueError(
+                        "Layer metadata must be a dictionary containing the 'prob_map' key in order to threshold."
+                    )
+
                 return thresh_function(layer.metadata["prob_map"])
 
             layer_instance: LabelsLayer = layer
+
             def on_return(
                 threshold_output: np.ndarray,
             ) -> None:
