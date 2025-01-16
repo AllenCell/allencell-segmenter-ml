@@ -110,8 +110,9 @@ class ThresholdingService(Subscriber):
                 threshold_output: np.ndarray,
             ) -> None:
                 self._viewer.insert_threshold(
-                    layer_instance,
+                    layer_instance.name,
                     threshold_output,
+                    True,
                 )
 
             self._task_executor.exec(
