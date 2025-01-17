@@ -72,26 +72,6 @@ class ThresholdingService(Subscriber):
         segmentation_labels: list[LabelsLayer] = (
             self._viewer.get_all_segmentation_labels()
         )
-        # # if we havent thresholded yet, keep track of original layers.
-        # # need to check this on first threshold change, since user can add images
-        # # between finishing prediction and starting thresholding
-        # # if they are using images from a directory.
-        # original_layers: Optional[OrderedDict[str, np.ndarray]] = (
-        #     self._thresholding_model.get_original_layers()
-        # )
-        # if original_layers is None:
-        #     self._thresholding_model.set_original_layers(
-        #         self._viewer.get_layers()
-        #     )
-        #
-        # # Get layers to threshold.
-        # # if there are segmentations displayed in the viewer, only threshold those images.
-        # layers_to_threshold: OrderedDict[str, np.ndarray] = (
-        #     self._thresholding_model.get_layers_to_threshold(
-        #         self._main_model.are_predictions_in_viewer()
-        #     )
-        # )
-        #
 
         # determine thresholding function to use
         if self._thresholding_model.is_autothresholding_enabled():
