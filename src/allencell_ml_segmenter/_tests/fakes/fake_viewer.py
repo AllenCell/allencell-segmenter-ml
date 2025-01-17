@@ -138,12 +138,6 @@ class FakeViewer(IViewer):
 
         return None
 
-    # TODO: add these fakes for testing methods that rely on this
-    def add_segmentation_labels(
-        self, masked_data: np.ndarray, name: str, prob_map: np.ndarray
-    ) -> None:
-        pass
-
     def get_all_segmentation_labels(self) -> list[Labels]:
         return [
             layer

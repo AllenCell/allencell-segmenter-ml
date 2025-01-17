@@ -107,11 +107,5 @@ class IViewer(ABC):
         pass
 
     @abstractmethod
-    def add_segmentation_labels(
-        self, masked_data: np.ndarray, name: str, prob_map: np.ndarray
-    ) -> None:
-        pass
-
-    @abstractmethod
     def get_all_segmentation_labels(self) -> list[LabelsLayer]:
         pass
