@@ -103,7 +103,7 @@ class ThresholdingService(Subscriber):
                 self._viewer.insert_threshold(
                     layer_instance.name,
                     threshold_output,
-                    True,
+                    self._main_model.are_predictions_in_viewer(),
                 )
 
             self._task_executor.exec(
