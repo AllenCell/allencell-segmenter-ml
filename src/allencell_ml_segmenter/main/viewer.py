@@ -193,18 +193,6 @@ class Viewer(IViewer):
             return Path(layer.metadata["source_path"])
         return None
 
-    def add_segmentation_labels(
-        self, masked_data: np.ndarray, name: str, prob_map: np.ndarray
-    ) -> None:
-        """
-        Add a segmentation labels layer and save probability mapping in the layer metadata.
-        """
-        self.add_labels(
-            masked_data,
-            name=name,
-            metadata={"prob_map": prob_map},
-        )
-
     def get_all_segmentation_labels(self) -> list[LabelsLayer]:
         """
         Get all segmentation labels layers that currently exist in the viewer.
