@@ -171,8 +171,6 @@ class PredictionView(View, MainWindow):
                 raw_img.stem: {"raw": raw_img} for raw_img in raw_imgs
             }
 
-            # stem -> seg: path, raw: path
-
             if segmentations:
                 for seg in segmentations:
                     # ignore files in the folder that aren't from most recent predictions
