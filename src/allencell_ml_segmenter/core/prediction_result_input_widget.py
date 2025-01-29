@@ -27,7 +27,6 @@ class PredictionResultListWidget(FileInputWidget):
 
     def _update_layer_list(self) -> None:
         self._image_list.clear()
-        self._reset_channel_combobox()
         self._prediction_layers = self._viewer.get_all_segmentation_labels()
         for prediction_output_layer in self._prediction_layers:
             self._image_list.add_item(
