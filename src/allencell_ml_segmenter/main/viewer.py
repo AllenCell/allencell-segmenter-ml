@@ -157,8 +157,11 @@ class Viewer(IViewer):
         :param image: image to insert
         :param remove_seg_layers: boolean indicating if the layer that is being thresholded is a segmentation layer, and should be removed from the layer once it is updated with the threshold.
         """
-        layer.name = f"[threshold] {layer.name}"
+        # if threshold has not been previously applied, update name
+        if not layer.metadata["threshold_applied"]:
+            layer.name = f"[threshold] {layer.name}"
         layer.data = image
+        layer.metadata["threshold_applied"] = True
         layer.refresh()
 
     def get_source_path(self, layer: Layer) -> Optional[Path]:
