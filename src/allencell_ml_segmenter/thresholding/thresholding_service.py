@@ -69,7 +69,7 @@ class ThresholdingService(Subscriber):
         show_info("Thresholding failed: " + str(error))
 
     def _on_threshold_changed(self, _: Event) -> None:
-        segmentation_labels: list[LabelsLayer] = (
+        segmentation_labels: list[Layer] = (
             self._viewer.get_all_segmentation_labels()
         )
 
@@ -93,7 +93,7 @@ class ThresholdingService(Subscriber):
                         "Layer metadata must be a dictionary containing the 'prob_map' key in order to threshold."
                     )
 
-                return thresh_function(layer.metadata["prob_map"].np_data)
+                return thresh_function(layer.metadata["prob_map"])
 
             layer_instance: LabelsLayer = layer
 
