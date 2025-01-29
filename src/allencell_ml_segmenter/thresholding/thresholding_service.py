@@ -93,7 +93,7 @@ class ThresholdingService(Subscriber):
                         "Layer metadata must be a dictionary containing the 'prob_map' key in order to threshold."
                     )
 
-                return thresh_function(layer.metadata["prob_map"])
+                return thresh_function(layer.metadata["prob_map"].data)
 
             layer_instance: LabelsLayer = layer
 
