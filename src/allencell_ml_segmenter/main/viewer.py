@@ -158,7 +158,7 @@ class Viewer(IViewer):
         :param remove_seg_layers: boolean indicating if the layer that is being thresholded is a segmentation layer, and should be removed from the layer once it is updated with the threshold.
         """
         # if threshold has not been previously applied, update name
-        if "threshold_applied" in layer.metadata and not layer.metadata["threshold_applied"]:
+        if "threshold_applied" not in layer.metadata:
             layer.name = f"[threshold] {layer.name}"
         layer.data = image
         layer.metadata["threshold_applied"] = True
