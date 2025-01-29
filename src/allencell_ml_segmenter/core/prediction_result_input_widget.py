@@ -21,9 +21,7 @@ class PredictionResultListWidget(FileInputWidget):
         super().__init__(
             model, viewer, service, include_channel_selection=False
         )
-        self._prediction_layers: list[LabelsLayer] = (
-            self._viewer.get_all_segmentation_labels()
-        )
+        self._prediction_layers: list[LabelsLayer] = []
 
     def _update_layer_list(self) -> None:
         self._image_list.clear()
