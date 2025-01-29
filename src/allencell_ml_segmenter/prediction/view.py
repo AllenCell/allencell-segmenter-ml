@@ -202,8 +202,8 @@ class PredictionView(View, MainWindow):
                             metadata={
                                 "source_path": data["seg"],
                                 "prob_map": self._img_data_extractor.extract_image_data(
-                                    data["seg"], dims=True
-                                ),
+                                    data["seg"]
+                                ).np_data,
                             },
                         )
 

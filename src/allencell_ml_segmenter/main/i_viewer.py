@@ -107,5 +107,5 @@ class IViewer(ABC):
         pass
 
     @abstractmethod
-    def get_all_segmentation_labels(self) -> list[LabelsLayer]:
+    def get_all_segmentation_labels(self) -> list[Layer]:
         pass
