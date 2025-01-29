@@ -44,8 +44,6 @@ from qtpy.QtWidgets import (
 from qtpy.QtCore import Qt
 
 
-
-
 class ThresholdingView(View, MainWindow):
     """
     View for thresholding
@@ -87,10 +85,12 @@ class ThresholdingView(View, MainWindow):
         layout.addWidget(self._title, alignment=Qt.AlignmentFlag.AlignHCenter)
 
         # selecting input image
-        self._prediction_result_input_widget: PredictionResultListWidget = PredictionResultListWidget(
-            self._file_input_model,
-            self._viewer,
-            self._input_files_service,
+        self._prediction_result_input_widget: PredictionResultListWidget = (
+            PredictionResultListWidget(
+                self._file_input_model,
+                self._viewer,
+                self._input_files_service,
+            )
         )
         self._prediction_result_input_widget.setObjectName("fileInput")
         layout.addWidget(self._prediction_result_input_widget)
