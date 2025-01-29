@@ -101,7 +101,7 @@ class ThresholdingService(Subscriber):
                 threshold_output: np.ndarray,
             ) -> None:
                 self._viewer.insert_threshold(
-                    layer_instance.name,
+                    layer_instance,
                     threshold_output,
                     self._main_model.are_predictions_in_viewer(),
                 )
