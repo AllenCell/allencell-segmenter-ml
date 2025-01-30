@@ -34,6 +34,6 @@ class PredictionResultListWidget(FileInputWidget):
             )
 
 
-    def process_checked_signal(self, row: int, state: Qt.CheckState) -> None:
+    def _process_checked_signal(self, row: int, state: Qt.CheckState) -> None:
         if self._model.get_input_mode() == InputMode.FROM_NAPARI_LAYERS:
             self._model.set_selected_idx(self._image_list.get_checked_rows())
