@@ -83,25 +83,27 @@ class ThresholdingService(Subscriber):
         for idx, layer in enumerate(segmentation_labels):
             if idx in self._file_input_model.get_selected_idx():
                 # Creating helper functions for mypy strict typing
-                def thresholding_task() -> np.ndarray:
+                def thresholding_task(
+                    layer_instance: Layer = layer,
+                ) -> np.ndarray:
                     # INVARIANT: a segmentation layer must have prob_map in its metadata if it came from our plugin
                     # so we are only supporting thresholding images that are from the plugin itself.
                     if (
-                        not isinstance(layer.metadata, dict)
-                        or "prob_map" not in layer.metadata
+                        not isinstance(layer_instance.metadata, dict)
+                        or "prob_map" not in layer_instance.metadata
                     ):
                         raise ValueError(
                             "Layer metadata must be a dictionary containing the 'prob_map' key in order to threshold."
                         )
 
-                    return thresh_function(layer.metadata["prob_map"])
+                    return thresh_function(layer_instance.metadata["prob_map"])
 
                 def on_return(
                     threshold_output: np.ndarray,
-                    layer_to_change: LabelsLayer = layer,
+                    layer_instance: Layer = layer,
                 ) -> None:
                     self._viewer.insert_threshold(
-                        layer_to_change,
+                        layer_instance,
                         threshold_output,
                         self._main_model.are_predictions_in_viewer(),
                     )
