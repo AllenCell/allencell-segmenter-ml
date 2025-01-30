@@ -36,10 +36,4 @@ class PredictionResultListWidget(FileInputWidget):
 
     def process_checked_signal(self, row: int, state: Qt.CheckState) -> None:
         if self._model.get_input_mode() == InputMode.FROM_NAPARI_LAYERS:
-            selected_indices: list[int] = self._image_list.get_checked_rows()
-            if state == Qt.CheckState.Checked:
-                # paths of images to be segmented, which will not be opened again because already in memory
-                # but satisfies file_input_model state which determines if we have anything selected
-                self._model.set_selected_paths(
-                    [x.path for x in self._prediction_layers]
-                )
+            self._model.set_selected_idx(self._image_list.get_checked_rows())
