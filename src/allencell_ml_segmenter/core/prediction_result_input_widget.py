@@ -30,7 +30,9 @@ class PredictionResultListWidget(FileInputWidget):
     def _update_layer_list(self, event: Optional[NapariEvent] = None) -> None:
         previous_selections: list[int] = self._image_list.get_checked_rows()
         self._image_list.clear()
-        self._prediction_layers = self._viewer.get_all_segmentation_labels()
+        self._prediction_layers = (
+            self._viewer.get_all_layers_containing_prob_map()
+        )
         for idx, prediction_output_layer in enumerate(self._prediction_layers):
             self._image_list.add_item(
                 prediction_output_layer.name,
