@@ -30,9 +30,8 @@ class PredictionResultListWidget(FileInputWidget):
         for idx, prediction_output_layer in enumerate(self._prediction_layers):
             self._image_list.add_item(
                 prediction_output_layer.name,
-                set_checked=idx in previous_selections
+                set_checked=idx in previous_selections,
             )
-
 
     def _process_checked_signal(self, row: int, state: Qt.CheckState) -> None:
         if self._model.get_input_mode() == InputMode.FROM_NAPARI_LAYERS:
