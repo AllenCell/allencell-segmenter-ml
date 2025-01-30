@@ -69,8 +69,8 @@ class ThresholdingService(Subscriber):
         show_info("Thresholding failed: " + str(error))
 
     def _on_threshold_changed(self, _: Event) -> None:
-        segmentation_labels: list[Layer] = (
-            self._viewer.get_all_segmentation_labels()
+        layers_containing_prob_map: list[Layer] = (
+            self._viewer.get_all_layers_containing_prob_map()
         )
 
         # determine thresholding function to use
@@ -80,11 +80,15 @@ class ThresholdingService(Subscriber):
             )
         else:
             thresh_function = self._threshold_image
-        for idx, layer in enumerate(segmentation_labels):
-            selected_idx: Optional[list[int]] = (
-                self._file_input_model.get_selected_idx()
-            )
-            if selected_idx is not None and idx in selected_idx:
+
+        selected_idx: Optional[list[int]] = (
+            self._file_input_model.get_selected_idx()
+        )
+
+        if selected_idx is not None:
+            for idx in selected_idx:
+                layer: Layer = layers_containing_prob_map[idx]
+
                 # Creating helper functions for mypy strict typing
                 def thresholding_task(
                     layer_instance: Layer = layer,
@@ -98,16 +102,16 @@ class ThresholdingService(Subscriber):
                         raise ValueError(
                             "Layer metadata must be a dictionary containing the 'prob_map' key in order to threshold."
                         )
-
+                    # This thresholding task returns a binary map
                     return thresh_function(layer_instance.metadata["prob_map"])
 
                 def on_return(
-                    threshold_output: np.ndarray,
+                    resulting_binary_map: np.ndarray,
                     layer_instance: Layer = layer,
                 ) -> None:
-                    self._viewer.insert_threshold(
+                    self._viewer.insert_binary_map_into_layer(
                         layer_instance,
-                        threshold_output,
+                        resulting_binary_map,
                         self._main_model.are_predictions_in_viewer(),
                     )
 

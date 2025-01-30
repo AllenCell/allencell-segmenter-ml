@@ -141,7 +141,7 @@ class Viewer(IViewer):
             if layer.name.startswith("[seg]")
         ]
 
-    def insert_threshold(
+    def insert_binary_map_into_layer(
         self,
         layer: Layer,
         image: np.ndarray,
@@ -176,7 +176,7 @@ class Viewer(IViewer):
             return Path(layer.metadata["source_path"])
         return None
 
-    def get_all_segmentation_labels(self) -> list[Layer]:
+    def get_all_layers_containing_prob_map(self) -> list[Layer]:
         """
         Get all segmentation labels layers that currently exist in the viewer.
         """
