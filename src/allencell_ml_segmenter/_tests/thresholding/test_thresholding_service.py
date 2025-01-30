@@ -60,10 +60,11 @@ def test_on_threshold_changed_non_prediction(test_image):
     viewer: FakeViewer = FakeViewer()
     main_model: MainModel = MainModel()
     main_model.set_predictions_in_viewer(True)
+    file_input_model: FileInputModel = FileInputModel()
     thresholding_service: ThresholdingService = ThresholdingService(
         thresholding_model,
         FakeExperimentsModel(),
-        FileInputModel(),
+        file_input_model,
         main_model,
         viewer,
         task_executor=SynchroTaskExecutor.global_instance(),
@@ -83,6 +84,7 @@ def test_on_threshold_changed_non_prediction(test_image):
         metadata={"prob_map": test_image},
     )
     viewer.add_image(test_image, name="donotthreshold")
+    file_input_model.set_selected_idx([0, 1])
 
     # ACT set a threshold to trigger
     thresholding_model.set_thresholding_value(50)
