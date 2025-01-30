@@ -1,3 +1,5 @@
+from typing import Any
+
 from allencell_ml_segmenter.core.file_input_model import (
     InputMode,
     FileInputModel,
@@ -8,6 +10,8 @@ from allencell_ml_segmenter.main.segmenter_layer import LabelsLayer
 from qtpy.QtCore import Qt
 
 from allencell_ml_segmenter.prediction.service import ModelFileService
+
+from napari.utils.events import Event as NapariEvent  # type: ignore
 
 
 class PredictionResultListWidget(FileInputWidget):
@@ -23,7 +27,7 @@ class PredictionResultListWidget(FileInputWidget):
         )
         self._prediction_layers: list[LabelsLayer] = []
 
-    def _update_layer_list(self) -> None:
+    def _update_layer_list(self, event: NapariEvent | None = None) -> None:
         previous_selections: list[int] = self._image_list.get_checked_rows()
         self._image_list.clear()
         self._prediction_layers = self._viewer.get_all_segmentation_labels()
