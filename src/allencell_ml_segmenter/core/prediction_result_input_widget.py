@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Optional
 
 from allencell_ml_segmenter.core.file_input_model import (
     InputMode,
@@ -27,7 +27,7 @@ class PredictionResultListWidget(FileInputWidget):
         )
         self._prediction_layers: list[LabelsLayer] = []
 
-    def _update_layer_list(self, event: NapariEvent | None = None) -> None:
+    def _update_layer_list(self, event: Optional[NapariEvent] = None) -> None:
         previous_selections: list[int] = self._image_list.get_checked_rows()
         self._image_list.clear()
         self._prediction_layers = self._viewer.get_all_segmentation_labels()
