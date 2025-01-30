@@ -99,9 +99,10 @@ class ThresholdingService(Subscriber):
 
             def on_return(
                 threshold_output: np.ndarray,
+                layer_to_change: LabelsLayer = layer_instance,
             ) -> None:
                 self._viewer.insert_threshold(
-                    layer_instance,
+                    layer_to_change,
                     threshold_output,
                     self._main_model.are_predictions_in_viewer(),
                 )
