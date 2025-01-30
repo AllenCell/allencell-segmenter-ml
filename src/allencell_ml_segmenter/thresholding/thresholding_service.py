@@ -81,7 +81,7 @@ class ThresholdingService(Subscriber):
         else:
             thresh_function = self._threshold_image
         for idx, layer in enumerate(segmentation_labels):
-            selected_idx: list[int] | None = (
+            selected_idx: Optional[list[int]] = (
                 self._file_input_model.get_selected_idx()
             )
             if selected_idx is not None and idx in selected_idx:
