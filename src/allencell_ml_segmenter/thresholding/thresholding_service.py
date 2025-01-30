@@ -80,7 +80,8 @@ class ThresholdingService(Subscriber):
             )
         else:
             thresh_function = self._threshold_image
-        for layer in segmentation_labels:
+        for path_layer_to_threshold in self._file_input_model.get_selected_paths():
+            layer: Layer = [x for x in segmentation_labels if x.metadata["source_path"] == path_layer_to_threshold][0]
             # Creating helper functions for mypy strict typing
             def thresholding_task() -> np.ndarray:
                 # INVARIANT: a segmentation layer must have prob_map in its metadata if it came from our plugin
