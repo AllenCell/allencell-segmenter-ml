@@ -83,7 +83,7 @@ class IViewer(ABC):
         pass
 
     @abstractmethod
-    def insert_threshold(
+    def insert_binary_map_into_layer(
         self, layer_name: str, img: np.ndarray, seg_layers: bool = False
     ) -> None:
         """
@@ -107,5 +107,5 @@ class IViewer(ABC):
         pass
 
     @abstractmethod
-    def get_all_segmentation_labels(self) -> list[Layer]:
+    def get_all_layers_containing_prob_map(self) -> list[Layer]:
         pass
