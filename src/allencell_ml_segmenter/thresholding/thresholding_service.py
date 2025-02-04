@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Callable, Optional
 from bioio import BioImage
 from bioio.writers import OmeTiffWriter
-from napari.layers import Layer  # type: ignore
+from napari.layers import Layer, Labels  # type: ignore
 import numpy as np
 from napari.utils.notifications import show_info  # type: ignore
 
@@ -12,6 +12,7 @@ from allencell_ml_segmenter.core.file_input_model import FileInputModel
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
+from allencell_ml_segmenter.main.segmenter_layer import LabelsLayer
 from allencell_ml_segmenter.thresholding.thresholding_model import (
     ThresholdingModel,
 )
@@ -64,32 +65,12 @@ class ThresholdingService(Subscriber):
             self._save_thresholded_images,
         )
 
-        self._viewer.subscribe_layers_change_event(
-            function=self._update_original_layers
-        )
-
     def _handle_thresholding_error(self, error: Exception) -> None:
         show_info("Thresholding failed: " + str(error))
 
     def _on_threshold_changed(self, _: Event) -> None:
-        # if we havent thresholded yet, keep track of original layers.
-        # need to check this on first threshold change, since user can add images
-        # between finishing prediction and starting thresholding
-        # if they are using images from a directory.
-        original_layers: Optional[OrderedDict[str, np.ndarray]] = (
-            self._thresholding_model.get_original_layers()
-        )
-        if original_layers is None:
-            self._thresholding_model.set_original_layers(
-                self._viewer.get_layers()
-            )
-
-        # Get layers to threshold.
-        # if there are segmentations displayed in the viewer, only threshold those images.
-        layers_to_threshold: OrderedDict[str, np.ndarray] = (
-            self._thresholding_model.get_layers_to_threshold(
-                self._main_model.are_predictions_in_viewer()
-            )
+        segmentation_labels: list[LabelsLayer] = (
+            self._viewer.get_all_segmentation_labels()
         )
 
         # determine thresholding function to use
@@ -99,18 +80,29 @@ class ThresholdingService(Subscriber):
             )
         else:
             thresh_function = self._threshold_image
-        for layer_name, image in layers_to_threshold.items():
+        for layer in segmentation_labels:
             # Creating helper functions for mypy strict typing
             def thresholding_task() -> np.ndarray:
-                return thresh_function(image)
+                # INVARIANT: a segmentation layer must have prob_map in its metadata if it came from our plugin
+                # so we are only supporting thresholding images that are from the plugin itself.
+                if (
+                    not isinstance(layer.metadata, dict)
+                    or "prob_map" not in layer.metadata
+                ):
+                    raise ValueError(
+                        "Layer metadata must be a dictionary containing the 'prob_map' key in order to threshold."
+                    )
+
+                return thresh_function(layer.metadata["prob_map"])
+
+            layer_instance: LabelsLayer = layer
 
             def on_return(
-                thresholded_image: np.ndarray,
-                layer_name_instance: str = layer_name,
+                threshold_output: np.ndarray,
             ) -> None:
                 self._viewer.insert_threshold(
-                    layer_name_instance,
-                    thresholded_image,
+                    layer_instance.name,
+                    threshold_output,
                     self._main_model.are_predictions_in_viewer(),
                 )
 
@@ -155,28 +147,3 @@ class ThresholdingService(Subscriber):
             self._thresholding_model.get_thresholding_value()
         )
         return (image > threshold_value).astype(int)
-
-    def _update_original_layers(self, _: Event) -> None:
-        current_layers: list[Layer] = (
-            self._viewer.get_layers()
-        )  # all layers in viewer
-
-        # get layers that were added since last thresholding
-        original_layers: Optional[OrderedDict[str, np.ndarray]] = (
-            self._thresholding_model.get_original_layers()
-        )
-        new_layers_added: list[Layer] = current_layers
-        if original_layers is not None:
-            new_layers_added = [
-                layer
-                for layer in current_layers
-                if layer.name not in original_layers
-            ]
-
-        # refresh layers only if the new layers are not threshold layers (we dont want to track this in original layers state)
-        for new_layer in new_layers_added:
-            if not new_layer.name.startswith("[threshold]"):
-                self._thresholding_model.set_original_layers(
-                    self._viewer.get_layers()
-                )
-                return
