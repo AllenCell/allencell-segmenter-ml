@@ -26,9 +26,6 @@ class ThresholdingModel(Publisher):
         self._thresholding_value_selected: int = THRESHOLD_DEFAULT
         self._is_autothresholding_enabled: bool = False
         self._autothresholding_method: str = AVAILABLE_AUTOTHRESHOLD_METHODS[0]
-        self._original_layers_in_viewer: Optional[
-            OrderedDict[str, np.ndarray]
-        ] = None  # Orderedict of layers when thresholding starts, in original order.
 
     def set_thresholding_value(self, value: int) -> None:
         """
@@ -84,32 +81,3 @@ class ThresholdingModel(Publisher):
 
     def dispatch_save_thresholded_images(self) -> None:
         self.dispatch(Event.ACTION_SAVE_THRESHOLDING_IMAGES)
-
-    def set_original_layers(self, layer_list: list[Layer]) -> None:
-        ordered_layers: OrderedDict[str, np.ndarray] = OrderedDict()
-        for layer in layer_list:
-            if layer.metadata is not None and "prob_map" in layer.metadata:
-                ordered_layers[layer.name] = layer.metadata["prob_map"]
-            else:
-                ordered_layers[layer.name] = layer.data
-        self._original_layers_in_viewer = ordered_layers
-
-    def get_original_layers(self) -> Optional[OrderedDict[str, np.ndarray]]:
-        return self._original_layers_in_viewer
-
-    def get_layers_to_threshold(
-        self, only_seg_layers: bool
-    ) -> OrderedDict[str, np.ndarray]:
-        if self._original_layers_in_viewer is None:
-            raise ValueError(
-                "Check original layers in model for None before calling get_layers_to_threshold"
-            )
-
-        if only_seg_layers:
-            return OrderedDict(
-                (key, value)
-                for key, value in self._original_layers_in_viewer.items()
-                if key.startswith("[seg]")
-            )
-
-        return self._original_layers_in_viewer

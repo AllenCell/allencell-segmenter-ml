@@ -7,7 +7,7 @@ from allencell_ml_segmenter.main.segmenter_layer import (
     LabelsLayer,
 )
 import numpy as np
-from napari.layers import Layer  # type: ignore
+from napari.layers import Layer, Labels  # type: ignore
 from napari.utils.events import Event as NapariEvent  # type: ignore
 
 
@@ -104,4 +104,8 @@ class IViewer(ABC):
 
     @abstractmethod
     def get_source_path(self, layer: Layer) -> Optional[Path]:
+        pass
+
+    @abstractmethod
+    def get_all_segmentation_labels(self) -> list[LabelsLayer]:
         pass

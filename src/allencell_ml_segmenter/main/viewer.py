@@ -192,3 +192,13 @@ class Viewer(IViewer):
         if layer.metadata is not None and "source_path" in layer.metadata:
             return Path(layer.metadata["source_path"])
         return None
+
+    def get_all_segmentation_labels(self) -> list[LabelsLayer]:
+        """
+        Get all segmentation labels layers that currently exist in the viewer.
+        """
+        return [
+            layer
+            for layer in self.get_layers()
+            if "prob_map" in layer.metadata
+        ]

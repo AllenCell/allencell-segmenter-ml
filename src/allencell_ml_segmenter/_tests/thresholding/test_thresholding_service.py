@@ -68,11 +68,20 @@ def test_on_threshold_changed_non_prediction(test_image):
         viewer,
         task_executor=SynchroTaskExecutor.global_instance(),
     )
-    # Only the [seg] layers below should produce a threshold layer
+
+    # Only the [seg] layers below should produce a threshold layer since they have prob map metadata
     viewer.add_image(test_image, name="[raw] test_layer 1")
-    viewer.add_image(test_image, name="[seg] test_layer 1")
+    viewer.add_image(
+        test_image,
+        name="[seg] test_layer 1",
+        metadata={"prob_map": test_image},
+    )
     viewer.add_image(test_image, name="[raw] test_layer 2")
-    viewer.add_image(test_image, name="[seg] test_layer 2")
+    viewer.add_image(
+        test_image,
+        name="[seg] test_layer 2",
+        metadata={"prob_map": test_image},
+    )
     viewer.add_image(test_image, name="donotthreshold")
 
     # ACT set a threshold to trigger
