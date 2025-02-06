@@ -1,11 +1,8 @@
 from typing import Optional
-from collections import OrderedDict
-
-import numpy as np
 from napari.layers import Layer  # type: ignore
 
 from allencell_ml_segmenter.core.event import Event
-from allencell_ml_segmenter.core.publisher import Publisher
+from allencell_ml_segmenter.core.file_input_model import FileInputModel
 
 # Some thresholding constants #
 AVAILABLE_AUTOTHRESHOLD_METHODS: list[str] = ["threshold_otsu"]
@@ -13,7 +10,7 @@ THRESHOLD_DEFAULT = 120
 THRESHOLD_RANGE = (0, 255)
 
 
-class ThresholdingModel(Publisher):
+class ThresholdingModel(FileInputModel):
     """
     Stores state relevant to thresholding processes.
     """
@@ -26,13 +23,19 @@ class ThresholdingModel(Publisher):
         self._thresholding_value_selected: int = THRESHOLD_DEFAULT
         self._is_autothresholding_enabled: bool = False
         self._autothresholding_method: str = AVAILABLE_AUTOTHRESHOLD_METHODS[0]
+        self._thresholding_layers: list[Layer] = (
+            []
+        )  # Layers show binary map as data, but contain a metadata
+        # key prob_map which contains the probability map that we need to threshold to generate a binary map with
+        # the set threshold value.
+        self._selected_idx: list[int] = []
 
     def set_thresholding_value(self, value: int) -> None:
         """
         Set the thresholding value.
         """
         self._thresholding_value_selected = value
-        self.dispatch(Event.ACTION_THRESHOLDING_VALUE_CHANGED)
+        self.dispatch(Event.ACTION_EXECUTE_THRESHOLDING)
 
     def get_thresholding_value(self) -> int:
         """
@@ -46,7 +49,7 @@ class ThresholdingModel(Publisher):
         """
         self._is_autothresholding_enabled = enable
         if enable:
-            self.dispatch(Event.ACTION_THRESHOLDING_AUTOTHRESHOLDING_SELECTED)
+            self.dispatch(Event.ACTION_EXECUTE_THRESHOLDING)
 
     def is_autothresholding_enabled(self) -> bool:
         """
@@ -59,7 +62,7 @@ class ThresholdingModel(Publisher):
         Set autothresholding method.
         """
         self._autothresholding_method = method
-        self.dispatch(Event.ACTION_THRESHOLDING_AUTOTHRESHOLDING_SELECTED)
+        self.dispatch(Event.ACTION_EXECUTE_THRESHOLDING)
 
     def get_autothresholding_method(self) -> str:
         """
@@ -81,3 +84,16 @@ class ThresholdingModel(Publisher):
 
     def dispatch_save_thresholded_images(self) -> None:
         self.dispatch(Event.ACTION_SAVE_THRESHOLDING_IMAGES)
+
+    def set_thresholding_layers(self, layers: list[Layer]) -> None:
+        self._thresholding_layers = layers
+
+    def get_thresholding_layers(self) -> list[Layer]:
+        return self._thresholding_layers
+
+    def set_selected_idx(self, selected_idx: list[int]) -> None:
+        self._selected_idx = selected_idx
+        self.dispatch(Event.ACTION_EXECUTE_THRESHOLDING)
+
+    def get_selected_idx(self) -> Optional[list[int]]:
+        return self._selected_idx
