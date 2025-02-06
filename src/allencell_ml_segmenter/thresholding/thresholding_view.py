@@ -303,14 +303,14 @@ class ThresholdingView(View, MainWindow):
 
     def _save_thresholded_images(self) -> None:
         output_dir: Optional[Path] = (
-            self._file_input_model.get_output_directory()
+            self._thresholding_model.get_output_directory()
         )
         if output_dir is not None and self._check_able_to_threshold():
             # progress tracker is tracking number of images saved to the thresholding folder
             progress_tracker: PredictionFolderProgressTracker = (
                 PredictionFolderProgressTracker(
                     output_dir,
-                    len(self._file_input_model.get_input_files_as_list()),
+                    len(self._thresholding_model.get_input_files_as_list()),
                 )
             )
 
@@ -327,11 +327,11 @@ class ThresholdingView(View, MainWindow):
 
     def showResults(self) -> None:
         dialog_box = DialogBox(
-            f"Predicted images saved to {str(self._file_input_model.get_output_directory())}. \nWould you like to open this folder?"
+            f"Predicted images saved to {str(self._thresholding_model.get_output_directory())}. \nWould you like to open this folder?"
         )
         dialog_box.exec()
         output_dir: Optional[Path] = (
-            self._file_input_model.get_output_directory()
+            self._thresholding_model.get_output_directory()
         )
 
         if output_dir and dialog_box.get_selection():

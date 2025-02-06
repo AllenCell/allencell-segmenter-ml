@@ -82,10 +82,10 @@ def test_on_threshold_changed_non_prediction(test_image):
         metadata={"prob_map": test_image},
     )
     viewer.add_image(test_image, name="donotthreshold")
-    thresholding_model.set_selected_idx([0, 1])
     thresholding_model.set_thresholding_layers(
         viewer.get_all_layers_containing_prob_map()
     )
+    thresholding_model.set_selected_idx([0, 1])
 
     # ACT set a threshold to trigger
     thresholding_model.set_thresholding_value(50)
