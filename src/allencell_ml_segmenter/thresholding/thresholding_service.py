@@ -8,11 +8,9 @@ import numpy as np
 from napari.utils.notifications import show_info  # type: ignore
 
 from allencell_ml_segmenter.core.event import Event
-from allencell_ml_segmenter.core.file_input_model import FileInputModel
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
-from allencell_ml_segmenter.main.segmenter_layer import LabelsLayer
 from allencell_ml_segmenter.thresholding.thresholding_model import (
     ThresholdingModel,
 )
