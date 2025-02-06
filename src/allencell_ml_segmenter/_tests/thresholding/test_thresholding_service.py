@@ -1,7 +1,6 @@
 import pytest
 import numpy as np
 
-from allencell_ml_segmenter.core.file_input_model import FileInputModel
 from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
     FakeExperimentsModel,
 )
@@ -29,7 +28,6 @@ def test_on_threshold_changed_non_prediction(test_image):
     thresholding_service: ThresholdingService = ThresholdingService(
         thresholding_model,
         FakeExperimentsModel(),
-        FileInputModel(),
         MainModel(),
         viewer,
         task_executor=SynchroTaskExecutor.global_instance(),

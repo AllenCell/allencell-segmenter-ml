@@ -1,17 +1,12 @@
-from typing import Any, Optional
+from typing import Optional
 
-from napari.layers import Layer
 
 from allencell_ml_segmenter.core.file_input_model import (
     InputMode,
-    FileInputModel,
 )
 from allencell_ml_segmenter.core.file_input_widget import FileInputWidget
 from allencell_ml_segmenter.main.i_viewer import IViewer
-from allencell_ml_segmenter.main.segmenter_layer import LabelsLayer
 from qtpy.QtCore import Qt
-
-from allencell_ml_segmenter.prediction.service import ModelFileService
 
 from napari.utils.events import Event as NapariEvent  # type: ignore
 

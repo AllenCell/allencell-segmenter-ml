@@ -25,7 +25,6 @@ from allencell_ml_segmenter.core.thresholding_file_input_widget import (
     ThresholdingFileInputWidget,
 )
 from allencell_ml_segmenter.core.file_input_model import (
-    FileInputModel,
     InputMode,
 )
 
