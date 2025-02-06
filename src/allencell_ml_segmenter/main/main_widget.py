@@ -97,7 +97,6 @@ class MainWidget(AicsWidget):
             self._model,
         )
 
-        self._thresholding_file_input_model: FileInputModel = FileInputModel()
         self._thresholding_model: ThresholdingModel = ThresholdingModel()
 
         # init services
@@ -121,7 +120,6 @@ class MainWidget(AicsWidget):
         self._thresholding_service: ThresholdingService = ThresholdingService(
             thresholding_model=self._thresholding_model,
             experiments_model=self._experiments_model,
-            file_input_model=self._thresholding_file_input_model,
             main_model=self._model,
             viewer=self.viewer,
         )
@@ -161,7 +159,6 @@ class MainWidget(AicsWidget):
         self._thresholding_view = ThresholdingView(
             main_model=self._model,
             thresholding_model=self._thresholding_model,
-            file_input_model=self._thresholding_file_input_model,
             experiments_model=self._experiments_model,
             viewer=self.viewer,
         )

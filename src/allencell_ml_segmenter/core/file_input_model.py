@@ -93,9 +93,3 @@ class FileInputModel(Publisher):
             if selected_paths is not None:
                 return selected_paths
         return []
-
-    def set_selected_idx(self, selected_idx: list[int]) -> None:
-        self._selected_idx = selected_idx
-
-    def get_selected_idx(self) -> Optional[list[int]]:
-        return self._selected_idx

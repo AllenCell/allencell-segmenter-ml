@@ -65,8 +65,7 @@ class Event(Enum):
     ACTION_CURATION_RAW_THREAD_ERROR = "curation_raw_thread_error"
 
     # Thresholding events
-    ACTION_THRESHOLDING_VALUE_CHANGED = "thresholding_value_changed"
-    ACTION_THRESHOLDING_AUTOTHRESHOLDING_SELECTED = "autothresholding_selected"
+    ACTION_EXECUTE_THRESHOLDING = "execute_thresholding"
     ACTION_SAVE_THRESHOLDING_IMAGES = "save_thresholding_images"
 
     # View selection events. These can stem from a user action, or from a process (i.e. prediction process ends, and a new view is shown automatically).
