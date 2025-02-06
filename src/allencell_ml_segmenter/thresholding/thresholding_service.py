@@ -29,7 +29,6 @@ class ThresholdingService(Subscriber):
         self,
         thresholding_model: ThresholdingModel,
         experiments_model: ExperimentsModel,
-        file_input_model: FileInputModel,
         main_model: MainModel,
         viewer: IViewer,
         task_executor: ITaskExecutor = NapariThreadTaskExecutor.global_instance(),
@@ -38,7 +37,6 @@ class ThresholdingService(Subscriber):
         # Models
         self._thresholding_model: ThresholdingModel = thresholding_model
         self._experiments_model: ExperimentsModel = experiments_model
-        self._file_input_model: FileInputModel = file_input_model
         self._main_model: MainModel = main_model
 
         # napari viewer
@@ -48,13 +46,7 @@ class ThresholdingService(Subscriber):
         self._task_executor: ITaskExecutor = task_executor
 
         self._thresholding_model.subscribe(
-            Event.ACTION_THRESHOLDING_VALUE_CHANGED,
-            self,
-            self._on_threshold_changed,
-        )
-
-        self._thresholding_model.subscribe(
-            Event.ACTION_THRESHOLDING_AUTOTHRESHOLDING_SELECTED,
+            Event.ACTION_EXECUTE_THRESHOLDING,
             self,
             self._on_threshold_changed,
         )
@@ -70,7 +62,7 @@ class ThresholdingService(Subscriber):
 
     def _on_threshold_changed(self, _: Event) -> None:
         layers_containing_prob_map: list[Layer] = (
-            self._viewer.get_all_layers_containing_prob_map()
+            self._thresholding_model.get_thresholding_layers()
         )
 
         # determine thresholding function to use
@@ -82,7 +74,7 @@ class ThresholdingService(Subscriber):
             thresh_function = self._threshold_image
 
         selected_idx: Optional[list[int]] = (
-            self._file_input_model.get_selected_idx()
+            self._thresholding_model.get_selected_idx()
         )
 
         if selected_idx is not None:
@@ -124,7 +116,7 @@ class ThresholdingService(Subscriber):
 
     def _save_thresholded_images(self, _: Event) -> None:
         images_to_threshold: list[Path] = (
-            self._file_input_model.get_input_files_as_list()
+            self._file_input_model.get_input_files_as_list()  # TODO implement
         )
         if self._thresholding_model.is_autothresholding_enabled():
             thresh_function: Callable = AutoThreshold(
@@ -143,7 +135,7 @@ class ThresholdingService(Subscriber):
         self, image: np.ndarray, original_image_name: str
     ) -> None:
         output_directory: Optional[Path] = (
-            self._file_input_model.get_output_directory()
+            self._file_input_model.get_output_directory()  # TODO implement
         )
         if output_directory is not None:
             new_image_path: Path = (

@@ -28,9 +28,12 @@ def main_model() -> MainModel:
 
 
 @pytest.fixture
-def thresholding_model() -> ThresholdingModel:
+def thresholding_model(tmp_path: Path) -> ThresholdingModel:
     model = ThresholdingModel()
     model.set_thresholding_value(128)
+    model.set_output_directory(tmp_path / "output")
+    model.set_input_image_path(tmp_path / "input")
+    model.set_input_mode(InputMode.FROM_PATH)
     return model
 
 
@@ -66,7 +69,6 @@ def thresholding_view(
     view = ThresholdingView(
         main_model,
         thresholding_model,
-        file_input_model,
         experiments_model,
         viewer,
     )
@@ -176,15 +178,18 @@ def test_update_state_from_radios(thresholding_view, thresholding_model):
 
 
 def test_check_able_to_threshold_valid(
-    main_model, file_input_model, experiments_model, viewer
+    main_model, experiments_model, viewer, tmp_path
 ):
     thresholding_model: ThresholdingModel = ThresholdingModel()
     thresholding_model.set_threshold_enabled(True)
     thresholding_model.set_thresholding_value(100)
+    thresholding_model.set_output_directory(tmp_path / "output")
+    thresholding_model.set_input_image_path(tmp_path / "input")
+    thresholding_model.set_input_mode(InputMode.FROM_PATH)
+
     thresholding_view: ThresholdingView = ThresholdingView(
         main_model,
         thresholding_model,
-        file_input_model,
         experiments_model,
         viewer,
     )
@@ -198,13 +203,11 @@ def test_check_able_to_threshold_no_output_dir(
     thresholding_model: ThresholdingModel = ThresholdingModel()
     thresholding_model.set_threshold_enabled(True)
     thresholding_model.set_thresholding_value(100)
-    file_input_model: FileInputModel = FileInputModel()
-    file_input_model.set_input_mode(InputMode.FROM_PATH)
-    file_input_model.set_input_image_path(Path("fake_path"))
+    thresholding_model.set_input_mode(InputMode.FROM_PATH)
+    thresholding_model.set_input_image_path(Path("fake_path"))
     thresholding_view: ThresholdingView = ThresholdingView(
         main_model,
         thresholding_model,
-        file_input_model,
         experiments_model,
         viewer,
     )
@@ -218,13 +221,11 @@ def test_check_able_to_threshold_no_input_dir(
     thresholding_model: ThresholdingModel = ThresholdingModel()
     thresholding_model.set_threshold_enabled(True)
     thresholding_model.set_thresholding_value(100)
-    file_input_model: FileInputModel = FileInputModel()
-    file_input_model.set_input_mode(InputMode.FROM_PATH)
-    file_input_model.set_output_directory(Path("fake_path"))
+    thresholding_model.set_input_mode(InputMode.FROM_PATH)
+    thresholding_model.set_output_directory(Path("fake_path"))
     thresholding_view: ThresholdingView = ThresholdingView(
         main_model,
         thresholding_model,
-        file_input_model,
         experiments_model,
         viewer,
     )
@@ -238,13 +239,11 @@ def test_check_able_to_threshold_no_input_method(
     thresholding_model: ThresholdingModel = ThresholdingModel()
     thresholding_model.set_threshold_enabled(True)
     thresholding_model.set_thresholding_value(100)
-    file_input_model: FileInputModel = FileInputModel()
-    file_input_model.set_input_image_path(Path("fake_path"))
-    file_input_model.set_output_directory(Path("fake_path"))
+    thresholding_model.set_input_image_path(Path("fake_path"))
+    thresholding_model.set_output_directory(Path("fake_path"))
     thresholding_view: ThresholdingView = ThresholdingView(
         main_model,
         thresholding_model,
-        file_input_model,
         experiments_model,
         viewer,
     )

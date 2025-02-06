@@ -50,14 +50,14 @@ class FileInputWidget(QWidget):
         self,
         model: FileInputModel,
         viewer: IViewer,
-        service: ModelFileService,
+        service: Optional[ModelFileService],
         include_channel_selection: bool = True,
     ):
         super().__init__()
         self._include_channel_selection: bool = include_channel_selection
         self._model: FileInputModel = model
         self._viewer: IViewer = viewer
-        self._service: ModelFileService = service
+        self._service: Optional[ModelFileService] = service
         layout: QVBoxLayout = QVBoxLayout()
         self.setLayout(layout)
         layout.setContentsMargins(0, 0, 0, 0)
