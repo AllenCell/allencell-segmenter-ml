@@ -13,7 +13,6 @@ from allencell_ml_segmenter.thresholding.thresholding_model import (
     ThresholdingModel,
 )
 from allencell_ml_segmenter.core.file_input_model import (
-    FileInputModel,
     InputMode,
 )
 from allencell_ml_segmenter._tests.fakes.fake_viewer import FakeViewer
@@ -38,16 +37,6 @@ def thresholding_model(tmp_path: Path) -> ThresholdingModel:
 
 
 @pytest.fixture
-# tmp_path is a builtin pytest fixture for a faked path
-def file_input_model(tmp_path: Path) -> FileInputModel:
-    model = FileInputModel()
-    model.set_output_directory(tmp_path / "output")
-    model.set_input_image_path(tmp_path / "input")
-    model.set_input_mode(InputMode.FROM_PATH)
-    return model
-
-
-@pytest.fixture
 def experiments_model() -> FakeExperimentsModel:
     return FakeExperimentsModel()
 
@@ -61,7 +50,6 @@ def viewer() -> FakeViewer:
 def thresholding_view(
     main_model,
     thresholding_model,
-    file_input_model,
     experiments_model,
     viewer,
     qtbot,
