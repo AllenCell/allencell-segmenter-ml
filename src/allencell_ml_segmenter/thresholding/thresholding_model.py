@@ -75,6 +75,8 @@ class ThresholdingModel(FileInputModel):
         Set threshold specific value.
         """
         self._is_threshold_enabled = enabled
+        if enabled:
+            self.dispatch(Event.ACTION_EXECUTE_THRESHOLDING)
 
     def is_threshold_enabled(self) -> bool:
         """
