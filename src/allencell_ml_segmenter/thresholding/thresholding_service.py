@@ -55,6 +55,12 @@ class ThresholdingService(Subscriber):
             self._save_thresholded_images,
         )
 
+        self._thresholding_model.subscribe(
+            Event.ACTION_THRESHOLDING_DISABLED,
+            self,
+            self._remove_all_prob_maps,
+        )
+
     def _handle_thresholding_error(self, error: Exception) -> None:
         show_info("Thresholding failed: " + str(error))
 
@@ -75,9 +81,8 @@ class ThresholdingService(Subscriber):
             self._thresholding_model.get_selected_idx()
         )
 
-        if selected_idx is not None:
-            for idx in selected_idx:
-                layer: Layer = layers_containing_prob_map[idx]
+        for idx, layer in enumerate(layers_containing_prob_map):
+            if idx in selected_idx:
 
                 # Creating helper functions for mypy strict typing
                 def thresholding_task(
@@ -110,6 +115,10 @@ class ThresholdingService(Subscriber):
                     # lambda functions capture variables by reference so need to pass layer as a default argument
                     on_return=on_return,
                     on_error=self._handle_thresholding_error,
+                )
+            else:
+                self._viewer.clear_binary_map_from_layer(
+                    layer
                 )
 
     def _save_thresholded_images(self, _: Event) -> None:
@@ -146,3 +155,7 @@ class ThresholdingService(Subscriber):
             self._thresholding_model.get_thresholding_value()
         )
         return (image > threshold_value).astype(int)
+
+    def _remove_all_prob_maps(self) -> None:
+        for layer in self._thresholding_model.get_thresholding_layers():
+            self._viewer.clear_binary_map_from_layer(layer)
