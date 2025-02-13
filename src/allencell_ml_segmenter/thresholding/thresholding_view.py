@@ -21,8 +21,8 @@ from allencell_ml_segmenter.thresholding.thresholding_model import (
 from allencell_ml_segmenter.utils.file_utils import FileUtils
 
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
-from allencell_ml_segmenter.core.file_input_widget import (
-    FileInputWidget,
+from allencell_ml_segmenter.core.prediction_result_input_widget import (
+    PredictionResultListWidget,
 )
 from allencell_ml_segmenter.core.file_input_model import (
     FileInputModel,
@@ -85,14 +85,15 @@ class ThresholdingView(View, MainWindow):
         layout.addWidget(self._title, alignment=Qt.AlignmentFlag.AlignHCenter)
 
         # selecting input image
-        self._file_input_widget: FileInputWidget = FileInputWidget(
-            self._file_input_model,
-            self._viewer,
-            self._input_files_service,
-            include_channel_selection=False,
+        self._prediction_result_input_widget: PredictionResultListWidget = (
+            PredictionResultListWidget(
+                self._file_input_model,
+                self._viewer,
+                self._input_files_service,
+            )
         )
-        self._file_input_widget.setObjectName("fileInput")
-        layout.addWidget(self._file_input_widget)
+        self._prediction_result_input_widget.setObjectName("fileInput")
+        layout.addWidget(self._prediction_result_input_widget)
 
         # thresholding values
         self._threshold_label: LabelWithHint = LabelWithHint("Threshold")
@@ -326,7 +327,7 @@ class ThresholdingView(View, MainWindow):
         self._thresholding_model.dispatch_save_thresholded_images()
 
     def focus_changed(self) -> None:
-        self._file_input_widget._update_layer_list()
+        self._prediction_result_input_widget._update_layer_list()
 
     def getTypeOfWork(self) -> str:
         return ""

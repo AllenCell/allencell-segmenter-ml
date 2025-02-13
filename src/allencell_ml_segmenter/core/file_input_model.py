@@ -24,6 +24,7 @@ class FileInputModel(Publisher):
         self._input_mode: Optional[InputMode] = None
         self._selected_paths: Optional[list[Path]] = None
         self._max_channels: Optional[int] = None
+        self._selected_idx: Optional[list[int]] = None
 
     def get_output_seg_directory(self) -> Optional[Path]:
         """
@@ -92,3 +93,9 @@ class FileInputModel(Publisher):
             if selected_paths is not None:
                 return selected_paths
         return []
+
+    def set_selected_idx(self, selected_idx: list[int]) -> None:
+        self._selected_idx = selected_idx
+
+    def get_selected_idx(self) -> Optional[list[int]]:
+        return self._selected_idx

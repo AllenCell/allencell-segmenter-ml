@@ -118,10 +118,10 @@ class FakeViewer(IViewer):
             if layer.name.startswith("[seg]")
         ]
 
-    def insert_threshold(
-        self, layer_name: str, img: np.ndarray, seg_layers: bool = False
+    def insert_binary_map_into_layer(
+        self, layer: ImageLayer, img: np.ndarray, seg_layers: bool = False
     ) -> None:
-        self.threshold_inserted[f"[threshold] {layer_name}"] = img
+        self.threshold_inserted[f"[threshold] {layer.name}"] = img
 
     def get_layers_nonthreshold(self) -> list[Layer]:
         return [
@@ -138,7 +138,7 @@ class FakeViewer(IViewer):
 
         return None
 
-    def get_all_segmentation_labels(self) -> list[Labels]:
+    def get_all_layers_containing_prob_map(self) -> list[Layer]:
         return [
             layer
             for layer in self.get_all_images()
