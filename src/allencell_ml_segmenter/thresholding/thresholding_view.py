@@ -193,7 +193,7 @@ class ThresholdingView(View, MainWindow):
         )
 
         # update state and ui based on radio button selections
-        self._none_radio_button.toggled.connect(self._update_state_from_radios)
+        self._none_radio_button.toggled.connect(self._disable_all_thresholding)
         self._specific_value_radio_button.toggled.connect(
             self._update_state_from_radios
         )
@@ -262,6 +262,9 @@ class ThresholdingView(View, MainWindow):
             self._specific_value_radio_button.isChecked()
             or self._autothreshold_radio_button.isChecked()
         )
+
+    def _disable_all_thresholding(self) -> None:
+        self._thresholding_model.disable_all()
 
     def _check_able_to_threshold(self) -> bool:
         able_to_threshold: bool = True

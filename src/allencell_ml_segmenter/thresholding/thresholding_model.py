@@ -82,6 +82,11 @@ class ThresholdingModel(FileInputModel):
         """
         return self._is_threshold_enabled
 
+    def disable_all(self) -> None:
+        self.set_threshold_enabled(False)
+        self.set_autothresholding_enabled(False)
+        self.dispatch(Event.ACTION_THRESHOLDING_DISABLED)
+
     def dispatch_save_thresholded_images(self) -> None:
         self.dispatch(Event.ACTION_SAVE_THRESHOLDING_IMAGES)
 

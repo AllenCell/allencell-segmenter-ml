@@ -185,3 +185,10 @@ class Viewer(IViewer):
             for layer in self.get_layers()
             if "prob_map" in layer.metadata
         ]
+
+    def clear_binary_map_from_layer(self, layer: Layer) -> None:
+        if "threshold_applied" in layer.metadata:
+            layer.metadata["threshold_applied"] = False # so that we know a threshold has no longer been applied to this image
+            layer.name = layer.name.replace("[threshold] ", "") # remove threshold tag from layer name displayed on viewer
+        layer.data = np.zeros(layer.data.shape)
+        layer.refresh()
