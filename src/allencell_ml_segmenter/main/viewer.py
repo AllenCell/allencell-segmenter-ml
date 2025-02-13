@@ -148,9 +148,9 @@ class Viewer(IViewer):
         remove_seg_layers: bool = False,
     ) -> None:
         """
-        Insert a thresholded image into the viewer.
-        If a layer for this thresholded image already exists, the new image will replace the old one and refresh the viewer.
-        If the layer does not exist, it will be added to the viewer in the correct place (on top of the original segmentation image:
+        Insert a binary mpa image into the viewer.
+        If a layer for this binary map image already exists, the new image will replace the old one and refresh the viewer.
+        If the layer does not exist, it will be added to the viewer in the correct place (on top of the original raw image:
         index_of_segmentation + 1 in the LayerList)
 
         :param layer: layer to replace.
