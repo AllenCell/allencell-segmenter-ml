@@ -69,8 +69,8 @@ class ThresholdingService(Subscriber):
         show_info("Thresholding failed: " + str(error))
 
     def _on_threshold_changed(self, _: Event) -> None:
-        segmentation_labels: list[LabelsLayer] = (
-            self._viewer.get_all_segmentation_labels()
+        layers_containing_prob_map: list[Layer] = (
+            self._viewer.get_all_layers_containing_prob_map()
         )
 
         # determine thresholding function to use
@@ -80,38 +80,47 @@ class ThresholdingService(Subscriber):
             )
         else:
             thresh_function = self._threshold_image
-        for layer in segmentation_labels:
-            # Creating helper functions for mypy strict typing
-            def thresholding_task() -> np.ndarray:
-                # INVARIANT: a segmentation layer must have prob_map in its metadata if it came from our plugin
-                # so we are only supporting thresholding images that are from the plugin itself.
-                if (
-                    not isinstance(layer.metadata, dict)
-                    or "prob_map" not in layer.metadata
-                ):
-                    raise ValueError(
-                        "Layer metadata must be a dictionary containing the 'prob_map' key in order to threshold."
+
+        selected_idx: Optional[list[int]] = (
+            self._file_input_model.get_selected_idx()
+        )
+
+        if selected_idx is not None:
+            for idx in selected_idx:
+                layer: Layer = layers_containing_prob_map[idx]
+
+                # Creating helper functions for mypy strict typing
+                def thresholding_task(
+                    layer_instance: Layer = layer,
+                ) -> np.ndarray:
+                    # INVARIANT: a segmentation layer must have prob_map in its metadata if it came from our plugin
+                    # so we are only supporting thresholding images that are from the plugin itself.
+                    if (
+                        not isinstance(layer_instance.metadata, dict)
+                        or "prob_map" not in layer_instance.metadata
+                    ):
+                        raise ValueError(
+                            "Layer metadata must be a dictionary containing the 'prob_map' key in order to threshold."
+                        )
+                    # This thresholding task returns a binary map
+                    return thresh_function(layer_instance.metadata["prob_map"])
+
+                def on_return(
+                    resulting_binary_map: np.ndarray,
+                    layer_instance: Layer = layer,
+                ) -> None:
+                    self._viewer.insert_binary_map_into_layer(
+                        layer_instance,
+                        resulting_binary_map,
+                        self._main_model.are_predictions_in_viewer(),
                     )
 
-                return thresh_function(layer.metadata["prob_map"])
-
-            layer_instance: LabelsLayer = layer
-
-            def on_return(
-                threshold_output: np.ndarray,
-            ) -> None:
-                self._viewer.insert_threshold(
-                    layer_instance.name,
-                    threshold_output,
-                    self._main_model.are_predictions_in_viewer(),
+                self._task_executor.exec(
+                    task=thresholding_task,
+                    # lambda functions capture variables by reference so need to pass layer as a default argument
+                    on_return=on_return,
+                    on_error=self._handle_thresholding_error,
                 )
-
-            self._task_executor.exec(
-                task=thresholding_task,
-                # lambda functions capture variables by reference so need to pass layer as a default argument
-                on_return=on_return,
-                on_error=self._handle_thresholding_error,
-            )
 
     def _save_thresholded_images(self, _: Event) -> None:
         images_to_threshold: list[Path] = (
