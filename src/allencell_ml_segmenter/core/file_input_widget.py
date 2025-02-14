@@ -271,7 +271,8 @@ class FileInputWidget(QWidget):
                     len(selected_indices) == 0
                     and self._include_channel_selection
                 ):
-                    self._service.stop_channel_extraction()  # stop so combobox doesn't reset after thread is finished
+                    if self._service:
+                        self._service.stop_channel_extraction()  # stop so combobox doesn't reset after thread is finished
                     self._reset_channel_combobox()
 
                 self._model.set_selected_paths(
