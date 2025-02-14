@@ -65,12 +65,14 @@ class ThresholdingService(Subscriber):
         show_info("Thresholding failed: " + str(error))
 
     def _on_threshold_changed(self, _: Event) -> None:
+        # Check to see if user has selected a thresholding method
         if self._thresholding_model.is_threshold_enabled() or self._thresholding_model.is_autothresholding_enabled():
+            # get all layers with a prob map
             layers_containing_prob_map: list[Layer] = (
                 self._thresholding_model.get_thresholding_layers()
             )
 
-            # determine thresholding function to use
+            # determine thresholding function to use based on user selection
             if self._thresholding_model.is_autothresholding_enabled():
                 thresh_function: Callable = AutoThreshold(
                     self._thresholding_model.get_autothresholding_method()
@@ -78,14 +80,16 @@ class ThresholdingService(Subscriber):
             elif self._thresholding_model.is_threshold_enabled():
                 thresh_function = self._threshold_image
 
-            selected_idx: Optional[list[int]] = (
+            # selected layers in the ui
+            selected_idx: list[int] = (
                 self._thresholding_model.get_selected_idx()
             )
 
             for idx, layer in enumerate(layers_containing_prob_map):
+                # for selected layers, perform thresholding and display the result in the viewer
                 if idx in selected_idx:
-
                     # Creating helper functions for mypy strict typing
+                    # Thresholding function
                     def thresholding_task(
                         layer_instance: Layer = layer,
                     ) -> np.ndarray:
@@ -101,6 +105,7 @@ class ThresholdingService(Subscriber):
                         # This thresholding task returns a binary map
                         return thresh_function(layer_instance.metadata["prob_map"])
 
+                    # On return, display the binary map that was produced from thresholding
                     def on_return(
                         resulting_binary_map: np.ndarray,
                         layer_instance: Layer = layer,
@@ -111,6 +116,7 @@ class ThresholdingService(Subscriber):
                             self._main_model.are_predictions_in_viewer(),
                         )
 
+                    # Task executor to handle this thresholding task
                     self._task_executor.exec(
                         task=thresholding_task,
                         # lambda functions capture variables by reference so need to pass layer as a default argument
@@ -118,6 +124,7 @@ class ThresholdingService(Subscriber):
                         on_error=self._handle_thresholding_error,
                     )
                 else:
+                    # If not selected (or unselected)- clear the binary map from the napari viewer.
                     self._viewer.clear_binary_map_from_layer(
                         layer
                     )
