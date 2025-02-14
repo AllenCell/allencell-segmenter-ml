@@ -134,7 +134,7 @@ class ThresholdingService(Subscriber):
 
     def _save_thresholded_images(self, _: Event) -> None:
         images_to_threshold: list[Path] = (
-            self._thresholding_model.get_input_files_as_list()  # TODO implement
+            self._thresholding_model.get_input_files_as_list()
         )
         if self._thresholding_model.is_autothresholding_enabled():
             thresh_function: Callable = AutoThreshold(
@@ -153,7 +153,7 @@ class ThresholdingService(Subscriber):
         self, image: np.ndarray, original_image_name: str
     ) -> None:
         output_directory: Optional[Path] = (
-            self._thresholding_model.get_output_directory()  # TODO implement
+            self._thresholding_model.get_output_directory()
         )
         if output_directory is not None:
             new_image_path: Path = (
