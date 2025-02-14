@@ -66,7 +66,10 @@ class ThresholdingService(Subscriber):
 
     def _on_threshold_changed(self, _: Event) -> None:
         # Check to see if user has selected a thresholding method
-        if self._thresholding_model.is_threshold_enabled() or self._thresholding_model.is_autothresholding_enabled():
+        if (
+            self._thresholding_model.is_threshold_enabled()
+            or self._thresholding_model.is_autothresholding_enabled()
+        ):
             # get all layers with a prob map
             layers_containing_prob_map: list[Layer] = (
                 self._thresholding_model.get_thresholding_layers()
@@ -103,7 +106,9 @@ class ThresholdingService(Subscriber):
                                 "Layer metadata must be a dictionary containing the 'prob_map' key in order to threshold."
                             )
                         # This thresholding task returns a binary map
-                        return thresh_function(layer_instance.metadata["prob_map"])
+                        return thresh_function(
+                            layer_instance.metadata["prob_map"]
+                        )
 
                     # On return, display the binary map that was produced from thresholding
                     def on_return(
@@ -125,9 +130,7 @@ class ThresholdingService(Subscriber):
                     )
                 else:
                     # If not selected (or unselected)- clear the binary map from the napari viewer.
-                    self._viewer.clear_binary_map_from_layer(
-                        layer
-                    )
+                    self._viewer.clear_binary_map_from_layer(layer)
 
     def _save_thresholded_images(self, _: Event) -> None:
         images_to_threshold: list[Path] = (

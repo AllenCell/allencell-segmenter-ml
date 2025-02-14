@@ -158,7 +158,10 @@ class Viewer(IViewer):
         :param remove_seg_layers: boolean indicating if the layer that is being thresholded is a segmentation layer, and should be removed from the layer once it is updated with the threshold.
         """
         # if threshold has not been previously applied, update name
-        if "threshold_applied" not in layer.metadata or not layer.metadata["threshold_applied"]:
+        if (
+            "threshold_applied" not in layer.metadata
+            or not layer.metadata["threshold_applied"]
+        ):
             layer.name = f"[threshold] {layer.name}"
         layer.data = image
         layer.metadata["threshold_applied"] = True
@@ -188,7 +191,13 @@ class Viewer(IViewer):
 
     def clear_binary_map_from_layer(self, layer: Layer) -> None:
         if "threshold_applied" in layer.metadata:
-            layer.metadata["threshold_applied"] = False # so that we know a threshold has no longer been applied to this image
-            layer.name = layer.name.replace("[threshold] ", "") # remove threshold tag from layer name displayed on viewer
-        layer.data = np.zeros(layer.data.shape, dtype=np.uint8) #0-255 is a uint8 image
+            layer.metadata["threshold_applied"] = (
+                False  # so that we know a threshold has no longer been applied to this image
+            )
+            layer.name = layer.name.replace(
+                "[threshold] ", ""
+            )  # remove threshold tag from layer name displayed on viewer
+        layer.data = np.zeros(
+            layer.data.shape, dtype=np.uint8
+        )  # 0-255 is a uint8 image
         layer.refresh()
