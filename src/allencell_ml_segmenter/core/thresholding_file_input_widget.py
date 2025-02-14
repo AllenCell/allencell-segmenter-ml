@@ -1,6 +1,5 @@
 from typing import Optional
 
-
 from allencell_ml_segmenter.core.file_input_model import (
     InputMode,
 )
@@ -26,16 +25,16 @@ class ThresholdingFileInputWidget(FileInputWidget):
         viewer: IViewer,
     ):
         super().__init__(model, viewer, None)
-        self._thresholding_model = model
+        self._model: ThresholdingModel = model
 
     def _update_layer_list(self, event: Optional[NapariEvent] = None) -> None:
         previous_selections: list[int] = self._image_list.get_checked_rows()
         self._image_list.clear()
-        self._thresholding_model.set_thresholding_layers(
+        self._model.set_thresholding_layers(
             self._viewer.get_all_layers_containing_prob_map()
         )
         for idx, prediction_output_layer in enumerate(
-            self._thresholding_model.get_thresholding_layers()
+            self._model.get_thresholding_layers()
         ):
             self._image_list.add_item(
                 prediction_output_layer.name,
