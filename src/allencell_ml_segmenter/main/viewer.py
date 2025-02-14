@@ -198,6 +198,6 @@ class Viewer(IViewer):
                 "[threshold] ", ""
             )  # remove threshold tag from layer name displayed on viewer
         layer.data = np.zeros(
-            layer.data.shape, dtype=np.uint8
+            layer.data.shape, dtype=bool
         )  # 0-255 is a uint8 image
         layer.refresh()
