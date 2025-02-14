@@ -102,5 +102,5 @@ class ThresholdingModel(FileInputModel):
         self._selected_idx = selected_idx
         self.dispatch(Event.ACTION_EXECUTE_THRESHOLDING)
 
-    def get_selected_idx(self) -> Optional[list[int]]:
+    def get_selected_idx(self) -> list[int]:
         return self._selected_idx

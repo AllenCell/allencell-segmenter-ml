@@ -87,6 +87,7 @@ def test_on_threshold_changed_non_prediction(test_image):
 
     # ACT set a threshold to trigger
     thresholding_model.set_thresholding_value(50)
+    thresholding_model.set_threshold_enabled(True)
 
     # Verify a threshold layer is added for each seg layer
     assert "[threshold] [seg] test_layer 1" in viewer.threshold_inserted
