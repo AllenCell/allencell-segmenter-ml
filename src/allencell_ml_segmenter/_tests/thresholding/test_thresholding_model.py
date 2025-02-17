@@ -16,29 +16,27 @@ def thresholding_model() -> ThresholdingModel:
 def test_set_thresholding_value_dispatches_event(thresholding_model):
     fake_subscriber: FakeSubscriber = FakeSubscriber()
     thresholding_model.subscribe(
-        Event.ACTION_THRESHOLDING_VALUE_CHANGED,
+        Event.ACTION_EXECUTE_THRESHOLDING,
         fake_subscriber,
         fake_subscriber.handle,
     )
 
     thresholding_model.set_thresholding_value(2)
 
-    assert fake_subscriber.was_handled(Event.ACTION_THRESHOLDING_VALUE_CHANGED)
+    assert fake_subscriber.was_handled(Event.ACTION_EXECUTE_THRESHOLDING)
 
 
 def test_set_autothresholding_enabled_dispatches_event(thresholding_model):
     fake_subscriber: FakeSubscriber = FakeSubscriber()
     thresholding_model.subscribe(
-        Event.ACTION_THRESHOLDING_AUTOTHRESHOLDING_SELECTED,
+        Event.ACTION_EXECUTE_THRESHOLDING,
         fake_subscriber,
         fake_subscriber.handle,
     )
 
     thresholding_model.set_autothresholding_enabled(True)
 
-    assert fake_subscriber.was_handled(
-        Event.ACTION_THRESHOLDING_AUTOTHRESHOLDING_SELECTED
-    )
+    assert fake_subscriber.was_handled(Event.ACTION_EXECUTE_THRESHOLDING)
 
 
 def test_dispatch_save_thresholded_images(thresholding_model):

@@ -145,3 +145,6 @@ class FakeViewer(IViewer):
             if getattr(layer, "metadata", None)
             and "prob_map" in layer.metadata
         ]
+
+    def clear_binary_map_from_layer(self, layer: Layer) -> None:
+        self.threshold_inserted.pop(f"[threshold] {layer.name}")
