@@ -21,11 +21,10 @@ from allencell_ml_segmenter.thresholding.thresholding_model import (
 from allencell_ml_segmenter.utils.file_utils import FileUtils
 
 from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
-from allencell_ml_segmenter.core.prediction_result_input_widget import (
-    PredictionResultListWidget,
+from allencell_ml_segmenter.core.thresholding_file_input_widget import (
+    ThresholdingFileInputWidget,
 )
 from allencell_ml_segmenter.core.file_input_model import (
-    FileInputModel,
     InputMode,
 )
 
@@ -53,7 +52,6 @@ class ThresholdingView(View, MainWindow):
         self,
         main_model: MainModel,
         thresholding_model: ThresholdingModel,
-        file_input_model: FileInputModel,
         experiments_model: IExperimentsModel,
         viewer: IViewer,
     ):
@@ -63,12 +61,6 @@ class ThresholdingView(View, MainWindow):
         self._experiments_model: IExperimentsModel = experiments_model
         self._viewer: IViewer = viewer
         self._thresholding_model: ThresholdingModel = thresholding_model
-
-        # To manage input files:
-        self._file_input_model: FileInputModel = file_input_model
-        self._input_files_service: ModelFileService = ModelFileService(
-            self._file_input_model
-        )
 
         layout: QVBoxLayout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
@@ -85,11 +77,10 @@ class ThresholdingView(View, MainWindow):
         layout.addWidget(self._title, alignment=Qt.AlignmentFlag.AlignHCenter)
 
         # selecting input image
-        self._prediction_result_input_widget: PredictionResultListWidget = (
-            PredictionResultListWidget(
-                self._file_input_model,
+        self._prediction_result_input_widget: ThresholdingFileInputWidget = (
+            ThresholdingFileInputWidget(
+                self._thresholding_model,
                 self._viewer,
-                self._input_files_service,
             )
         )
         self._prediction_result_input_widget.setObjectName("fileInput")
@@ -202,7 +193,7 @@ class ThresholdingView(View, MainWindow):
         )
 
         # update state and ui based on radio button selections
-        self._none_radio_button.toggled.connect(self._update_state_from_radios)
+        self._none_radio_button.toggled.connect(self._disable_all_thresholding)
         self._specific_value_radio_button.toggled.connect(
             self._update_state_from_radios
         )
@@ -256,12 +247,12 @@ class ThresholdingView(View, MainWindow):
         self._thresholding_model.set_autothresholding_enabled(
             self._autothreshold_radio_button.isChecked()
         )
-        self._autothreshold_method_combo.setEnabled(
-            self._autothreshold_radio_button.isChecked()
-        )
-
         self._thresholding_model.set_threshold_enabled(
             self._specific_value_radio_button.isChecked()
+        )
+
+        self._autothreshold_method_combo.setEnabled(
+            self._autothreshold_radio_button.isChecked()
         )
         self._enable_specific_threshold_widgets(
             self._specific_value_radio_button.isChecked()
@@ -272,28 +263,33 @@ class ThresholdingView(View, MainWindow):
             or self._autothreshold_radio_button.isChecked()
         )
 
+    def _disable_all_thresholding(self) -> None:
+        # TODO handle disabling ui for thresh autothresh
+        self._thresholding_model.disable_all()
+
     def _check_able_to_threshold(self) -> bool:
         able_to_threshold: bool = True
         # Check to see if output directory is selected
-        if self._file_input_model.get_output_directory() is None:
+        if self._thresholding_model.get_output_directory() is None:
             show_info("Please select an output directory first.")
             able_to_threshold = False
 
         # Check to see if input images / directory of images are selected
-        if self._file_input_model.get_input_mode() is None:
+        if self._thresholding_model.get_input_mode() is None:
             show_info("Please select an input mode first.")
             able_to_threshold = False
         else:
             if (
-                self._file_input_model.get_input_mode()
+                self._thresholding_model.get_input_mode()
                 == InputMode.FROM_NAPARI_LAYERS
-                and self._file_input_model.get_selected_paths() is None
+                and len(self._thresholding_model.get_selected_idx()) == 0
             ):
                 show_info("Please select on screen images to threshold.")
                 able_to_threshold = False
             elif (
-                self._file_input_model.get_input_mode() == InputMode.FROM_PATH
-                and self._file_input_model.get_input_image_path() is None
+                self._thresholding_model.get_input_mode()
+                == InputMode.FROM_PATH
+                and self._thresholding_model.get_input_image_path() is None
             ):
                 show_info("Please select a directory to threshold.")
                 able_to_threshold = False
@@ -310,14 +306,22 @@ class ThresholdingView(View, MainWindow):
 
     def _save_thresholded_images(self) -> None:
         output_dir: Optional[Path] = (
-            self._file_input_model.get_output_directory()
+            self._thresholding_model.get_output_directory()
         )
+        selected_images_viewer: list[Path] = []
+        for idx, layer in enumerate(
+            self._viewer.get_all_layers_containing_prob_map()
+        ):
+            if idx in self._thresholding_model.get_selected_idx():
+                selected_images_viewer.append(layer.metadata["source_path"])
+        self._thresholding_model.set_selected_paths(selected_images_viewer)
+
         if output_dir is not None and self._check_able_to_threshold():
             # progress tracker is tracking number of images saved to the thresholding folder
             progress_tracker: PredictionFolderProgressTracker = (
                 PredictionFolderProgressTracker(
                     output_dir,
-                    len(self._file_input_model.get_input_files_as_list()),
+                    len(self._thresholding_model.get_input_files_as_list()),
                 )
             )
 
@@ -334,11 +338,11 @@ class ThresholdingView(View, MainWindow):
 
     def showResults(self) -> None:
         dialog_box = DialogBox(
-            f"Predicted images saved to {str(self._file_input_model.get_output_directory())}. \nWould you like to open this folder?"
+            f"Predicted images saved to {str(self._thresholding_model.get_output_directory())}. \nWould you like to open this folder?"
         )
         dialog_box.exec()
         output_dir: Optional[Path] = (
-            self._file_input_model.get_output_directory()
+            self._thresholding_model.get_output_directory()
         )
 
         if output_dir and dialog_box.get_selection():

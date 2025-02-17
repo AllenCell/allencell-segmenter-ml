@@ -158,7 +158,10 @@ class Viewer(IViewer):
         :param remove_seg_layers: boolean indicating if the layer that is being thresholded is a segmentation layer, and should be removed from the layer once it is updated with the threshold.
         """
         # if threshold has not been previously applied, update name
-        if "threshold_applied" not in layer.metadata:
+        if (
+            "threshold_applied" not in layer.metadata
+            or not layer.metadata["threshold_applied"]
+        ):
             layer.name = f"[threshold] {layer.name}"
         layer.data = image
         layer.metadata["threshold_applied"] = True
@@ -185,3 +188,20 @@ class Viewer(IViewer):
             for layer in self.get_layers()
             if "prob_map" in layer.metadata
         ]
+
+    def clear_binary_map_from_layer(self, layer: Layer) -> None:
+        """
+        We need to keep the layer because it contains the segmentation's probability map.
+        So, clear out the binary map by setting it to all zeros
+        """
+        if "threshold_applied" in layer.metadata:
+            layer.metadata["threshold_applied"] = (
+                False  # so that we know a threshold has no longer been applied to this image
+            )
+            layer.name = layer.name.replace(
+                "[threshold] ", ""
+            )  # remove threshold tag from layer name displayed on viewer
+        layer.data = np.zeros(
+            layer.data.shape, dtype=bool
+        )  # image of type bool
+        layer.refresh()
