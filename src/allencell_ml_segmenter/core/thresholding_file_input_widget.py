@@ -24,7 +24,7 @@ class ThresholdingFileInputWidget(FileInputWidget):
         model: ThresholdingModel,
         viewer: IViewer,
     ):
-        super().__init__(model, viewer, None)
+        super().__init__(model, viewer, None, False)
         self._model: ThresholdingModel = model
 
     def _update_layer_list(self, event: Optional[NapariEvent] = None) -> None:
