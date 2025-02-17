@@ -264,7 +264,7 @@ class ThresholdingView(View, MainWindow):
         )
 
     def _disable_all_thresholding(self) -> None:
-        #TODO handle disabling ui for thresh autothresh
+        # TODO handle disabling ui for thresh autothresh
         self._thresholding_model.disable_all()
 
     def _check_able_to_threshold(self) -> bool:
@@ -309,7 +309,9 @@ class ThresholdingView(View, MainWindow):
             self._thresholding_model.get_output_directory()
         )
         selected_images_viewer: list[Path] = []
-        for idx, layer in enumerate(self._viewer.get_all_layers_containing_prob_map()):
+        for idx, layer in enumerate(
+            self._viewer.get_all_layers_containing_prob_map()
+        ):
             if idx in self._thresholding_model.get_selected_idx():
                 selected_images_viewer.append(layer.metadata["source_path"])
         self._thresholding_model.set_selected_paths(selected_images_viewer)

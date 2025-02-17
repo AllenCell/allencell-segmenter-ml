@@ -190,6 +190,10 @@ class Viewer(IViewer):
         ]
 
     def clear_binary_map_from_layer(self, layer: Layer) -> None:
+        """
+        We need to keep the layer because it contains the segmentation's probability map.
+        So, clear out the binary map by setting it to all zeros
+        """
         if "threshold_applied" in layer.metadata:
             layer.metadata["threshold_applied"] = (
                 False  # so that we know a threshold has no longer been applied to this image
@@ -199,5 +203,5 @@ class Viewer(IViewer):
             )  # remove threshold tag from layer name displayed on viewer
         layer.data = np.zeros(
             layer.data.shape, dtype=bool
-        )  # 0-255 is a uint8 image
+        )  # image of type bool
         layer.refresh()
