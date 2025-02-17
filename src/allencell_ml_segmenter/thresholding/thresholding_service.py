@@ -58,7 +58,7 @@ class ThresholdingService(Subscriber):
         self._thresholding_model.subscribe(
             Event.ACTION_THRESHOLDING_DISABLED,
             self,
-            self._remove_all_prob_maps,
+            self._remove_all_binary_maps,
         )
 
     def _handle_thresholding_error(self, error: Exception) -> None:
@@ -167,6 +167,6 @@ class ThresholdingService(Subscriber):
         )
         return (image > threshold_value).astype(int)
 
-    def _remove_all_prob_maps(self, _: Event) -> None:
+    def _remove_all_binary_maps(self, _: Event) -> None:
         for layer in self._thresholding_model.get_thresholding_layers():
             self._viewer.clear_binary_map_from_layer(layer)
