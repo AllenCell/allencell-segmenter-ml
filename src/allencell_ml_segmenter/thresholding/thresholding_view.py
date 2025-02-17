@@ -247,12 +247,12 @@ class ThresholdingView(View, MainWindow):
         self._thresholding_model.set_autothresholding_enabled(
             self._autothreshold_radio_button.isChecked()
         )
-        self._autothreshold_method_combo.setEnabled(
-            self._autothreshold_radio_button.isChecked()
-        )
-
         self._thresholding_model.set_threshold_enabled(
             self._specific_value_radio_button.isChecked()
+        )
+
+        self._autothreshold_method_combo.setEnabled(
+            self._autothreshold_radio_button.isChecked()
         )
         self._enable_specific_threshold_widgets(
             self._specific_value_radio_button.isChecked()
@@ -264,6 +264,7 @@ class ThresholdingView(View, MainWindow):
         )
 
     def _disable_all_thresholding(self) -> None:
+        #TODO handle disabling ui for thresh autothresh
         self._thresholding_model.disable_all()
 
     def _check_able_to_threshold(self) -> bool:
@@ -281,7 +282,7 @@ class ThresholdingView(View, MainWindow):
             if (
                 self._thresholding_model.get_input_mode()
                 == InputMode.FROM_NAPARI_LAYERS
-                and self._thresholding_model.get_selected_paths() is None
+                and len(self._thresholding_model.get_selected_idx()) == 0
             ):
                 show_info("Please select on screen images to threshold.")
                 able_to_threshold = False
