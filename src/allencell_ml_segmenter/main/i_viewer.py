@@ -109,3 +109,7 @@ class IViewer(ABC):
     @abstractmethod
     def get_all_layers_containing_prob_map(self) -> list[Layer]:
         pass
+
+    @abstractmethod
+    def clear_binary_map_from_layer(self, layer: Layer) -> None:
+        pass

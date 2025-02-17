@@ -50,14 +50,14 @@ class FileInputWidget(QWidget):
         self,
         model: FileInputModel,
         viewer: IViewer,
-        service: ModelFileService,
+        service: Optional[ModelFileService],
         include_channel_selection: bool = True,
     ):
         super().__init__()
         self._include_channel_selection: bool = include_channel_selection
         self._model: FileInputModel = model
         self._viewer: IViewer = viewer
-        self._service: ModelFileService = service
+        self._service: Optional[ModelFileService] = service
         layout: QVBoxLayout = QVBoxLayout()
         self.setLayout(layout)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -271,7 +271,8 @@ class FileInputWidget(QWidget):
                     len(selected_indices) == 0
                     and self._include_channel_selection
                 ):
-                    self._service.stop_channel_extraction()  # stop so combobox doesn't reset after thread is finished
+                    if self._service:
+                        self._service.stop_channel_extraction()  # stop so combobox doesn't reset after thread is finished
                     self._reset_channel_combobox()
 
                 self._model.set_selected_paths(
