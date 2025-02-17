@@ -308,12 +308,18 @@ class ThresholdingView(View, MainWindow):
         output_dir: Optional[Path] = (
             self._thresholding_model.get_output_directory()
         )
+        selected_images_viewer: list[Path] = []
+        for idx, layer in enumerate(self._viewer.get_all_layers_containing_prob_map()):
+            if idx in self._thresholding_model.get_selected_idx():
+                selected_images_viewer.append(layer.metadata["source_path"])
+        self._thresholding_model.set_selected_paths(selected_images_viewer)
+
         if output_dir is not None and self._check_able_to_threshold():
             # progress tracker is tracking number of images saved to the thresholding folder
             progress_tracker: PredictionFolderProgressTracker = (
                 PredictionFolderProgressTracker(
                     output_dir,
-                    len(self._thresholding_model.get_selected_idx()),
+                    len(self._thresholding_model.get_selected_paths()),
                 )
             )
 
