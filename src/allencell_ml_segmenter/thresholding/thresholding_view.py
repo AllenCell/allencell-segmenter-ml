@@ -313,7 +313,7 @@ class ThresholdingView(View, MainWindow):
             progress_tracker: PredictionFolderProgressTracker = (
                 PredictionFolderProgressTracker(
                     output_dir,
-                    len(self._thresholding_model.get_input_files_as_list()),
+                    len(self._thresholding_model.get_selected_idx()),
                 )
             )
 
