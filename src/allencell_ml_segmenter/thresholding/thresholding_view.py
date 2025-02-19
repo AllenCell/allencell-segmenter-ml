@@ -4,6 +4,7 @@ from typing import Optional
 from napari.utils.notifications import show_info  # type: ignore
 
 from allencell_ml_segmenter.core.dialog_box import DialogBox
+from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
 from allencell_ml_segmenter.main.i_viewer import IViewer
 from allencell_ml_segmenter._style import Style
@@ -179,6 +180,12 @@ class ThresholdingView(View, MainWindow):
         # configure widget behavior
         self._configure_slots()
 
+        self._thresholding_model.subscribe(
+            Event.ACTION_THRESHOLDING_REFRESH_SAVE_BUTTON,
+            self,
+            self._refresh_save_button()
+        )
+
     def _configure_slots(self) -> None:
         """
         Connects behavior for widgets
@@ -258,11 +265,6 @@ class ThresholdingView(View, MainWindow):
             self._specific_value_radio_button.isChecked()
         )
 
-        self._apply_save_button.setEnabled(
-            self._specific_value_radio_button.isChecked()
-            or self._autothreshold_radio_button.isChecked()
-        )
-
     def _disable_all_thresholding(self) -> None:
         # TODO handle disabling ui for thresh autothresh
         self._thresholding_model.disable_all()
@@ -303,6 +305,12 @@ class ThresholdingView(View, MainWindow):
             able_to_threshold = False
 
         return able_to_threshold
+
+    def _refresh_save_button(self) -> None:
+        self._apply_save_button.setEnabled(
+            (self._thresholding_model.set_threshold_enabled()
+            or self._thresholding_model.set_autothresholding_enabled()) and self._thresholding_model.get_output_directory() is not None
+        )
 
     def _save_thresholded_images(self) -> None:
         output_dir: Optional[Path] = (

@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Optional
 from napari.layers import Layer  # type: ignore
 
@@ -48,6 +49,7 @@ class ThresholdingModel(FileInputModel):
         Set autothresholding enabled.
         """
         self._is_autothresholding_enabled = enable
+        self.dispatch(Event.ACTION_THRESHOLDING_REFRESH_SAVE_BUTTON)
         if enable:
             self.dispatch(Event.ACTION_EXECUTE_THRESHOLDING)
 
@@ -75,6 +77,7 @@ class ThresholdingModel(FileInputModel):
         Set threshold specific value.
         """
         self._is_threshold_enabled = enabled
+        self.dispatch(Event.ACTION_THRESHOLDING_REFRESH_SAVE_BUTTON)
         if enabled:
             self.dispatch(Event.ACTION_EXECUTE_THRESHOLDING)
 
@@ -104,3 +107,7 @@ class ThresholdingModel(FileInputModel):
 
     def get_selected_idx(self) -> list[int]:
         return self._selected_idx
+    
+    def set_output_directory(self, dir: Optional[Path]) -> None:
+        self.dispatch(Event.ACTION_THRESHOLDING_REFRESH_SAVE_BUTTON)
+        super().set_output_directory(dir)

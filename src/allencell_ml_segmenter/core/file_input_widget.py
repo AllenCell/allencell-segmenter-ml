@@ -324,3 +324,4 @@ class FileInputWidget(QWidget):
                 self._channel_select_dropdown.setPlaceholderText(
                     "no channels to select"
                 )
+

@@ -68,6 +68,7 @@ class Event(Enum):
     ACTION_EXECUTE_THRESHOLDING = "execute_thresholding"
     ACTION_SAVE_THRESHOLDING_IMAGES = "save_thresholding_images"
     ACTION_THRESHOLDING_DISABLED = "disable_thresholding"
+    ACTION_THRESHOLDING_REFRESH_SAVE_BUTTON = "refresh_save_button"
 
     # View selection events. These can stem from a user action, or from a process (i.e. prediction process ends, and a new view is shown automatically).
     VIEW_SELECTION_TRAINING = "training_selected"
