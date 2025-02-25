@@ -18,7 +18,7 @@ from allencell_ml_segmenter.prediction.model import (
 from allencell_ml_segmenter.core.file_input_model import InputMode
 from allencell_ml_segmenter.prediction.service import ModelFileService
 from allencell_ml_segmenter.core.view import View, MainWindow
-from allencell_ml_segmenter.prediction.prediction_folder_progress_tracker import (
+from allencell_ml_segmenter.prediction.file_write_progress_tracker import (
     PredictionFolderProgressTracker,
 )
 from allencell_ml_segmenter.utils.file_utils import FileUtils

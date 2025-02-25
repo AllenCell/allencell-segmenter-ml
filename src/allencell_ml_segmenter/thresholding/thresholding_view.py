@@ -9,7 +9,7 @@ from allencell_ml_segmenter.main.i_viewer import IViewer
 from allencell_ml_segmenter._style import Style
 from allencell_ml_segmenter.core.view import View, MainWindow
 from allencell_ml_segmenter.main.main_model import MainModel
-from allencell_ml_segmenter.prediction.prediction_folder_progress_tracker import (
+from allencell_ml_segmenter.prediction.file_write_progress_tracker import (
     PredictionFolderProgressTracker,
 )
 from allencell_ml_segmenter.prediction.service import ModelFileService
