@@ -36,8 +36,8 @@ class FileWriteProgressTracker(ProgressTracker):
     def start_tracker(self) -> None:
         self.stop_tracker()
         self._observer = Observer()
-        event_handler: FileWriteEventHandler = (
-            FileWriteEventHandler(self.set_progress)
+        event_handler: FileWriteEventHandler = FileWriteEventHandler(
+            self.set_progress
         )
         self._observer.schedule(
             event_handler,
