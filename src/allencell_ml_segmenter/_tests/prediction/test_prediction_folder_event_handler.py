@@ -1,5 +1,5 @@
-from allencell_ml_segmenter.prediction.prediction_folder_event_handler import (
-    PredictionFolderEventHandler,
+from allencell_ml_segmenter.prediction.file_write_event_handler import (
+    FileWriteEventHandler,
 )
 from unittest.mock import Mock
 
@@ -9,7 +9,7 @@ def test_file_creation_omesegpredtif():
     fake_file_path: str = "/path/to/some.ome_seg_pred.tif"
     progress_callback_mock: Mock = Mock()
     fs_file_created_event_mock: Mock = Mock(src_path=fake_file_path)
-    handler: PredictionFolderEventHandler = PredictionFolderEventHandler(
+    handler: FileWriteEventHandler = FileWriteEventHandler(
         progress_callback_mock
     )
 
@@ -29,7 +29,7 @@ def test_file_creation_omesegpredtiff():
     fake_file_path: str = "/path/to/some.ome_seg_pred.tiff"
     progress_callback_mock: Mock = Mock()
     fs_file_created_event_mock: Mock = Mock(src_path=fake_file_path)
-    handler: PredictionFolderEventHandler = PredictionFolderEventHandler(
+    handler: FileWriteEventHandler = FileWriteEventHandler(
         progress_callback_mock
     )
 
@@ -47,7 +47,7 @@ def test_file_creation_omesegpredtiff():
 def test_file_creation_bad_ext():
     # ARRANGE
     progress_callback_mock: Mock = Mock()
-    handler: PredictionFolderEventHandler = PredictionFolderEventHandler(
+    handler: FileWriteEventHandler = FileWriteEventHandler(
         progress_callback_mock
     )
 
