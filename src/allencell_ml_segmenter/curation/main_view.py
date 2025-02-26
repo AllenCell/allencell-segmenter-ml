@@ -295,14 +295,14 @@ class CurationMainView(QWidget):
         )
         if raw_img_data is not None and raw_img_data.np_data is not None:
             self._viewer.add_image(
-                raw_img_data.np_data, f"[raw] {raw_img_data.path.name}"
+                raw_img_data.np_data, name=f"[raw] {raw_img_data.path.name}"
             )
         seg1_img_data: Optional[ImageData] = (
             self._curation_model.get_curr_image_data(ImageType.SEG1)
         )
         if seg1_img_data is not None and seg1_img_data.np_data is not None:
             self._viewer.add_labels(
-                seg1_img_data.np_data, f"[seg1] {seg1_img_data.path.name}"
+                seg1_img_data.np_data, name=f"[seg1] {seg1_img_data.path.name}"
             )
         if self._curation_model.has_seg2_data():
             seg2_img_data: Optional[ImageData] = (
@@ -310,7 +310,8 @@ class CurationMainView(QWidget):
             )
             if seg2_img_data is not None and seg2_img_data.np_data is not None:
                 self._viewer.add_labels(
-                    seg2_img_data.np_data, f"[seg2] {seg2_img_data.path.name}"
+                    seg2_img_data.np_data,
+                    name=f"[seg2] {seg2_img_data.path.name}",
                 )
 
         self.enable_valid_masks()
