@@ -19,7 +19,7 @@ from allencell_ml_segmenter.core.file_input_model import InputMode
 from allencell_ml_segmenter.prediction.service import ModelFileService
 from allencell_ml_segmenter.core.view import View, MainWindow
 from allencell_ml_segmenter.prediction.file_write_progress_tracker import (
-    PredictionFolderProgressTracker,
+    FileWriteProgressTracker,
 )
 from allencell_ml_segmenter.utils.file_utils import FileUtils
 from qtpy.QtWidgets import (
@@ -128,8 +128,8 @@ class PredictionView(View, MainWindow):
             self._file_input_model.get_output_seg_directory()
         )
         if total_num_images is not None and output_seg_dir is not None:
-            progress_tracker: PredictionFolderProgressTracker = (
-                PredictionFolderProgressTracker(
+            progress_tracker: FileWriteProgressTracker = (
+                FileWriteProgressTracker(
                     output_seg_dir,
                     total_num_images,
                 )
