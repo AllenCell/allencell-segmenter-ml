@@ -2,7 +2,7 @@ from watchdog.events import FileSystemEvent, FileSystemEventHandler
 from typing import Callable, Set
 
 
-class PredictionFolderEventHandler(FileSystemEventHandler):
+class FileWriteEventHandler(FileSystemEventHandler):
     """
     A PredictionFolderEventHandler calls progress_callback upon creation of a file
     with an extension contained in PRED_FILE_EXTS. The argument to progress_callback
