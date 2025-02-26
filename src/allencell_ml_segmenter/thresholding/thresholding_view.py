@@ -10,7 +10,7 @@ from allencell_ml_segmenter._style import Style
 from allencell_ml_segmenter.core.view import View, MainWindow
 from allencell_ml_segmenter.main.main_model import MainModel
 from allencell_ml_segmenter.prediction.file_write_progress_tracker import (
-    PredictionFolderProgressTracker,
+    FileWriteProgressTracker,
 )
 from allencell_ml_segmenter.prediction.service import ModelFileService
 from allencell_ml_segmenter.thresholding.thresholding_model import (
@@ -318,8 +318,8 @@ class ThresholdingView(View, MainWindow):
 
         if output_dir is not None and self._check_able_to_threshold():
             # progress tracker is tracking number of images saved to the thresholding folder
-            progress_tracker: PredictionFolderProgressTracker = (
-                PredictionFolderProgressTracker(
+            progress_tracker: FileWriteProgressTracker = (
+                FileWriteProgressTracker(
                     output_dir,
                     len(self._thresholding_model.get_input_files_as_list()),
                 )
