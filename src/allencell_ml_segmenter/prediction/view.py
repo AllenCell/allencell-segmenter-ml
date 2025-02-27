@@ -217,5 +217,7 @@ class PredictionView(View, MainWindow):
             if dialog_box.get_selection() and output_path is not None:
                 FileUtils.open_directory_in_window(output_path)
 
+        self._main_model.dispatch_prediction_complete()
+
     def focus_changed(self) -> None:
         self._viewer.clear_layers()
