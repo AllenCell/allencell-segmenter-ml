@@ -4,6 +4,7 @@ from typing import Optional
 from napari.utils.notifications import show_info  # type: ignore
 
 from allencell_ml_segmenter.core.dialog_box import DialogBox
+from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
 from allencell_ml_segmenter.main.i_viewer import IViewer
 from allencell_ml_segmenter._style import Style
@@ -168,7 +169,7 @@ class ThresholdingView(View, MainWindow):
         layout.addWidget(threshold_group_box)
 
         # apply and save
-        self._apply_save_button: QPushButton = QPushButton("Apply & Save")
+        self._apply_save_button: QPushButton = QPushButton("Apply and Save")
         self._apply_save_button.setEnabled(False)
         self._apply_save_button.clicked.connect(self._save_thresholded_images)
         layout.addWidget(self._apply_save_button)
@@ -178,6 +179,13 @@ class ThresholdingView(View, MainWindow):
 
         # configure widget behavior
         self._configure_slots()
+
+        self._main_model.subscribe(
+            Event.PROCESS_PREDICTION_COMPLETE,
+            self,
+            lambda e: self._main_model.set_current_view(self),
+        )
+
 
     def _configure_slots(self) -> None:
         """
@@ -220,6 +228,8 @@ class ThresholdingView(View, MainWindow):
                 self._threshold_value_spinbox.value()
             )
         )
+
+
 
     def _update_spinbox_from_slider(self, value: int) -> None:
         """
