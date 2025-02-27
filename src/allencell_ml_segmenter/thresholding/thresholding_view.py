@@ -186,7 +186,6 @@ class ThresholdingView(View, MainWindow):
             lambda e: self._main_model.set_current_view(self),
         )
 
-
     def _configure_slots(self) -> None:
         """
         Connects behavior for widgets
@@ -228,8 +227,6 @@ class ThresholdingView(View, MainWindow):
                 self._threshold_value_spinbox.value()
             )
         )
-
-
 
     def _update_spinbox_from_slider(self, value: int) -> None:
         """
