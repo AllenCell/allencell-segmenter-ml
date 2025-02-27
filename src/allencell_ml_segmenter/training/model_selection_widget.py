@@ -147,7 +147,7 @@ class ModelSelectionWidget(QWidget):
 
         label_new_model: LabelWithHint = LabelWithHint("Start a new model")
         label_new_model.set_hint(
-            "Use your own data to train a model from scratch or by using weights of a trained model."
+            "Use your own data to train a model from scratch or from weights of a trained model."
         )
         top_grid_layout.addWidget(label_new_model, 0, 1)
         top_grid_layout.addWidget(self._experiment_name_input, 0, 2)
