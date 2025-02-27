@@ -100,3 +100,6 @@ class MainModel(Publisher):
         Check if predicted images (probability mappings) are displayed in the viewer.
         """
         return self._predictions_in_viewer
+
+    def dispatch_prediction_complete(self) -> None:
+        self.dispatch(Event.PROCESS_PREDICTION_COMPLETE)
