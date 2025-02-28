@@ -112,9 +112,7 @@ class ThresholdingView(View, MainWindow):
         self._specific_value_radio_button: QRadioButton = QRadioButton()
         specific_value_layout.addWidget(self._specific_value_radio_button)
         specific_radio_label: LabelWithHint = LabelWithHint("Specific Value")
-        specific_radio_label.set_hint(
-            "Select a thresholding value"
-        )
+        specific_radio_label.set_hint("Select a thresholding value")
         specific_value_layout.addWidget(specific_radio_label)
 
         self._threshold_value_slider: QSlider = QSlider(
