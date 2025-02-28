@@ -26,7 +26,8 @@ from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 
 from allencell_ml_segmenter.core.file_input_model import (
     InputMode,
-    FileInputModel, WidgetMode,
+    FileInputModel,
+    WidgetMode,
 )
 
 from allencell_ml_segmenter.widgets.check_box_list_widget import (
