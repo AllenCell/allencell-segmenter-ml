@@ -26,7 +26,7 @@ from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 
 from allencell_ml_segmenter.core.file_input_model import (
     InputMode,
-    FileInputModel,
+    FileInputModel, WidgetMode,
 )
 
 from allencell_ml_segmenter.widgets.check_box_list_widget import (
@@ -54,7 +54,7 @@ class FileInputWidget(QWidget):
         include_channel_selection: bool = True,
     ):
         super().__init__()
-        self._mode: str = "prediction"
+        self._mode: WidgetMode = WidgetMode.PREDICTION
         self._include_channel_selection: bool = include_channel_selection
         self._model: FileInputModel = model
         self._viewer: IViewer = viewer
@@ -80,7 +80,7 @@ class FileInputWidget(QWidget):
 
         title: LabelWithHint = LabelWithHint("Input image(s)")
         title.set_hint("Image(s) to apply the trained model on")
-        if self._mode == "threshold":
+        if self._mode == WidgetMode.THRESHOLDING:
             title.set_hint(
                 "Image(s) for thresholding. Only eligible image(s) are shown."
             )
@@ -129,7 +129,7 @@ class FileInputWidget(QWidget):
         question_label.set_hint(
             "All images in the selected directory will be used as input. Prediction results will be saved to the output folder and will not be displayed in napari after prediction is complete."
         )
-        if self._mode == "threshold":
+        if self._mode == WidgetMode.THRESHOLDING:
             question_label.set_hint(
                 "All images in the selected directory will be used as input. Threshold results will be saved to the output folder and will not be displayed in napari after threshold is applied."
             )
