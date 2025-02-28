@@ -81,7 +81,9 @@ class FileInputWidget(QWidget):
         title: LabelWithHint = LabelWithHint("Input image(s)")
         title.set_hint("Image(s) to apply the trained model on")
         if self._mode == "threshold":
-            title.set_hint("Image(s) for thresholding. Only eligible image(s) are shown.")
+            title.set_hint(
+                "Image(s) for thresholding. Only eligible image(s) are shown."
+            )
         title.setObjectName("title")
 
         layout.addWidget(title)
@@ -125,11 +127,11 @@ class FileInputWidget(QWidget):
 
         question_label = LabelWithHint(FileInputWidget.BOTTOM_TEXT)
         question_label.set_hint(
-            "Whole directory of image will be used as input. Prediction results will not be displayed in napari after prediction completion."
+            "All images in the selected directory will be used as input. Prediction results will be saved to the output folder and will not be displayed in napari after prediction is complete."
         )
         if self._mode == "threshold":
             question_label.set_hint(
-                "All images in the selected directory will be used as input. Thresholded results will be saved to the output folder and will not be displayed in napari after threshold is applied."
+                "All images in the selected directory will be used as input. Threshold results will be saved to the output folder and will not be displayed in napari after threshold is applied."
             )
 
         question_label.add_right_space(10)
@@ -186,9 +188,7 @@ class FileInputWidget(QWidget):
             grid_layout.addWidget(self._channel_select_dropdown, 0, 1)
 
         output_dir_label: LabelWithHint = LabelWithHint("Output directory")
-        output_dir_label.set_hint(
-            "Directory to save result(s) to"
-        )
+        output_dir_label.set_hint("Directory to save result(s) to")
 
         self._browse_output_edit: InputButton = InputButton(
             self._model,
