@@ -54,6 +54,7 @@ class FileInputWidget(QWidget):
         include_channel_selection: bool = True,
     ):
         super().__init__()
+        self._mode: str = "prediction"
         self._include_channel_selection: bool = include_channel_selection
         self._model: FileInputModel = model
         self._viewer: IViewer = viewer
@@ -83,7 +84,6 @@ class FileInputWidget(QWidget):
 
         layout.addWidget(title)
         layout.addWidget(frame)
-
         frame_layout.addWidget(QLabel("Select input image(s):"))
 
         # radiobox for images from napari

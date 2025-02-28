@@ -159,7 +159,7 @@ class ModelSelectionWidget(QWidget):
         top_grid_layout.addWidget(
             LabelWithHint(
                 label_text="Select an existing model",
-                hint="Use trained model to generate segmentation prediction.",
+                hint="Use trained models to generate segmentation predictions.",
             ),
             1,
             1,
