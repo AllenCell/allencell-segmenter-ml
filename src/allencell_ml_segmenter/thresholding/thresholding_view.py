@@ -89,7 +89,7 @@ class ThresholdingView(View, MainWindow):
 
         # thresholding values
         self._threshold_label: LabelWithHint = LabelWithHint("Threshold")
-        self._threshold_label.set_hint("Value to threshold with.")
+        self._threshold_label.set_hint("Value to threshold with")
         self._threshold_label.setObjectName("title")
         layout.addWidget(self._threshold_label)
 
@@ -102,7 +102,7 @@ class ThresholdingView(View, MainWindow):
         none_radio_layout.addWidget(self._none_radio_button)
 
         none_radio_label: LabelWithHint = LabelWithHint("None")
-        none_radio_label.set_hint("No thresholding applied.")
+        none_radio_label.set_hint("No thresholding applied")
         none_radio_layout.addWidget(none_radio_label)
         threshold_group_layout.addLayout(none_radio_layout)
 
@@ -113,7 +113,7 @@ class ThresholdingView(View, MainWindow):
         specific_value_layout.addWidget(self._specific_value_radio_button)
         specific_radio_label: LabelWithHint = LabelWithHint("Specific Value")
         specific_radio_label.set_hint(
-            "Select a thresholding value."
+            "Select a thresholding value"
         )
         specific_value_layout.addWidget(specific_radio_label)
 
@@ -152,7 +152,7 @@ class ThresholdingView(View, MainWindow):
         autothreshold_layout = QHBoxLayout()
         self._autothreshold_radio_button: QRadioButton = QRadioButton()
         auto_thresh_label: LabelWithHint = LabelWithHint("Autothreshold")
-        auto_thresh_label.set_hint("Select an autothresholding method.")
+        auto_thresh_label.set_hint("Select an autothresholding method")
 
         self._autothreshold_method_combo: QComboBox = QComboBox()
         self._autothreshold_method_combo.addItems(
