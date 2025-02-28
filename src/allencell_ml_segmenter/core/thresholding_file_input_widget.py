@@ -1,7 +1,8 @@
 from typing import Optional
 
 from allencell_ml_segmenter.core.file_input_model import (
-    InputMode, WidgetMode,
+    InputMode,
+    WidgetMode,
 )
 from allencell_ml_segmenter.core.file_input_widget import FileInputWidget
 from allencell_ml_segmenter.main.i_viewer import IViewer
