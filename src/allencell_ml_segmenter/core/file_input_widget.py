@@ -27,6 +27,7 @@ from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 from allencell_ml_segmenter.core.file_input_model import (
     InputMode,
     FileInputModel,
+    WidgetMode,
 )
 
 from allencell_ml_segmenter.widgets.check_box_list_widget import (
@@ -52,8 +53,10 @@ class FileInputWidget(QWidget):
         viewer: IViewer,
         service: Optional[ModelFileService],
         include_channel_selection: bool = True,
+        mode: WidgetMode = WidgetMode.PREDICTION,
     ):
         super().__init__()
+        self._mode: WidgetMode = mode
         self._include_channel_selection: bool = include_channel_selection
         self._model: FileInputModel = model
         self._viewer: IViewer = viewer
@@ -79,11 +82,12 @@ class FileInputWidget(QWidget):
 
         title: LabelWithHint = LabelWithHint("Input image(s)")
         title.set_hint("Image(s) to apply the trained model on")
+        if self._mode == WidgetMode.THRESHOLDING:
+            title.set_hint("Image(s) for thresholding.")
         title.setObjectName("title")
 
         layout.addWidget(title)
         layout.addWidget(frame)
-
         frame_layout.addWidget(QLabel("Select input image(s):"))
 
         # radiobox for images from napari
@@ -123,8 +127,9 @@ class FileInputWidget(QWidget):
 
         question_label = LabelWithHint(FileInputWidget.BOTTOM_TEXT)
         question_label.set_hint(
-            "Whole directory of image will be used as input. Prediction results will not be displayed in napari after prediction completion."
+            "All images in the selected directory will be used as input."
         )
+
         question_label.add_right_space(10)
         image_dir_layout.addWidget(question_label)
 
@@ -179,9 +184,7 @@ class FileInputWidget(QWidget):
             grid_layout.addWidget(self._channel_select_dropdown, 0, 1)
 
         output_dir_label: LabelWithHint = LabelWithHint("Output directory")
-        output_dir_label.set_hint(
-            "Directory to store the prediction result(s)"
-        )
+        output_dir_label.set_hint("Directory to save result(s) to")
 
         self._browse_output_edit: InputButton = InputButton(
             self._model,
