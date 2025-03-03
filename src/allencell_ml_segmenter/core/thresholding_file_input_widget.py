@@ -2,6 +2,7 @@ from typing import Optional
 
 from allencell_ml_segmenter.core.file_input_model import (
     InputMode,
+    WidgetMode,
 )
 from allencell_ml_segmenter.core.file_input_widget import FileInputWidget
 from allencell_ml_segmenter.main.i_viewer import IViewer
@@ -24,7 +25,7 @@ class ThresholdingFileInputWidget(FileInputWidget):
         model: ThresholdingModel,
         viewer: IViewer,
     ):
-        super().__init__(model, viewer, None, False)
+        super().__init__(model, viewer, None, False, WidgetMode.THRESHOLDING)
         self._model: ThresholdingModel = model
 
     def _update_layer_list(self, event: Optional[NapariEvent] = None) -> None:
