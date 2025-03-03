@@ -53,9 +53,10 @@ class FileInputWidget(QWidget):
         viewer: IViewer,
         service: Optional[ModelFileService],
         include_channel_selection: bool = True,
+        mode: WidgetMode = WidgetMode.PREDICTION,
     ):
         super().__init__()
-        self._mode: WidgetMode = WidgetMode.PREDICTION
+        self._mode: WidgetMode = mode
         self._include_channel_selection: bool = include_channel_selection
         self._model: FileInputModel = model
         self._viewer: IViewer = viewer
