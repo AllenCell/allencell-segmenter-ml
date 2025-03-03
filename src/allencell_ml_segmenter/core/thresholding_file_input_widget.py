@@ -25,9 +25,8 @@ class ThresholdingFileInputWidget(FileInputWidget):
         model: ThresholdingModel,
         viewer: IViewer,
     ):
-        super().__init__(model, viewer, None, False)
+        super().__init__(model, viewer, None, False, WidgetMode.THRESHOLDING)
         self._model: ThresholdingModel = model
-        self._mode: WidgetMode = WidgetMode.THRESHOLDING
 
     def _update_layer_list(self, event: Optional[NapariEvent] = None) -> None:
         previous_selections: list[int] = self._image_list.get_checked_rows()
