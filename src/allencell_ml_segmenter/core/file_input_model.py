@@ -11,6 +11,11 @@ class InputMode(Enum):
     FROM_NAPARI_LAYERS = "from_napari_layers"
 
 
+class WidgetMode(Enum):
+    PREDICTION = "prediction"
+    THRESHOLDING = "thresholding"
+
+
 class FileInputModel(Publisher):
     """
     Model for FileInputWidget
