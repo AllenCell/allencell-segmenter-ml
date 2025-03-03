@@ -147,7 +147,7 @@ class ModelSelectionWidget(QWidget):
 
         label_new_model: LabelWithHint = LabelWithHint("Start a new model")
         label_new_model.set_hint(
-            "Use your own data to train a model from scratch or from weights of a trained model."
+            "Train a segmentation model from scratch or start from a previously trained model"
         )
         top_grid_layout.addWidget(label_new_model, 0, 1)
         top_grid_layout.addWidget(self._experiment_name_input, 0, 2)
@@ -159,7 +159,7 @@ class ModelSelectionWidget(QWidget):
         top_grid_layout.addWidget(
             LabelWithHint(
                 label_text="Select an existing model",
-                hint="Use trained models to generate segmentation predictions.",
+                hint="Choose a previously trained model to segment to your data",
             ),
             1,
             1,
