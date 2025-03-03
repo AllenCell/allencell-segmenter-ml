@@ -82,9 +82,7 @@ class FileInputWidget(QWidget):
         title: LabelWithHint = LabelWithHint("Input image(s)")
         title.set_hint("Image(s) to apply the trained model on")
         if self._mode == WidgetMode.THRESHOLDING:
-            title.set_hint(
-                "Image(s) for thresholding."
-            )
+            title.set_hint("Image(s) for thresholding.")
         title.setObjectName("title")
 
         layout.addWidget(title)
