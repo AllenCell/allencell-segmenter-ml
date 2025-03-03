@@ -83,7 +83,7 @@ class FileInputWidget(QWidget):
         title.set_hint("Image(s) to apply the trained model on")
         if self._mode == WidgetMode.THRESHOLDING:
             title.set_hint(
-                "Image(s) for thresholding. Only eligible image(s) are shown."
+                "Image(s) for thresholding."
             )
         title.setObjectName("title")
 
@@ -128,12 +128,8 @@ class FileInputWidget(QWidget):
 
         question_label = LabelWithHint(FileInputWidget.BOTTOM_TEXT)
         question_label.set_hint(
-            "All images in the selected directory will be used as input. Prediction results will be saved to the output folder and will not be displayed in napari after prediction is complete."
+            "All images in the selected directory will be used as input."
         )
-        if self._mode == WidgetMode.THRESHOLDING:
-            question_label.set_hint(
-                "All images in the selected directory will be used as input. Threshold results will be saved to the output folder and will not be displayed in napari after threshold is applied."
-            )
 
         question_label.add_right_space(10)
         image_dir_layout.addWidget(question_label)
