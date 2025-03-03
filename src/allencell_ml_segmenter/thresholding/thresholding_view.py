@@ -4,6 +4,7 @@ from typing import Optional
 from napari.utils.notifications import show_info  # type: ignore
 
 from allencell_ml_segmenter.core.dialog_box import DialogBox
+from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
 from allencell_ml_segmenter.main.i_viewer import IViewer
 from allencell_ml_segmenter._style import Style
@@ -88,7 +89,7 @@ class ThresholdingView(View, MainWindow):
 
         # thresholding values
         self._threshold_label: LabelWithHint = LabelWithHint("Threshold")
-        self._threshold_label.set_hint("Values to threshold with.")
+        self._threshold_label.set_hint("Value to threshold with")
         self._threshold_label.setObjectName("title")
         layout.addWidget(self._threshold_label)
 
@@ -101,7 +102,7 @@ class ThresholdingView(View, MainWindow):
         none_radio_layout.addWidget(self._none_radio_button)
 
         none_radio_label: LabelWithHint = LabelWithHint("None")
-        none_radio_label.set_hint("No thresholding applied.")
+        none_radio_label.set_hint("No thresholding applied")
         none_radio_layout.addWidget(none_radio_label)
         threshold_group_layout.addLayout(none_radio_layout)
 
@@ -111,9 +112,7 @@ class ThresholdingView(View, MainWindow):
         self._specific_value_radio_button: QRadioButton = QRadioButton()
         specific_value_layout.addWidget(self._specific_value_radio_button)
         specific_radio_label: LabelWithHint = LabelWithHint("Specific Value")
-        specific_radio_label.set_hint(
-            "Set thresholding value you'd like to apply."
-        )
+        specific_radio_label.set_hint("Select a thresholding value")
         specific_value_layout.addWidget(specific_radio_label)
 
         self._threshold_value_slider: QSlider = QSlider(
@@ -151,7 +150,7 @@ class ThresholdingView(View, MainWindow):
         autothreshold_layout = QHBoxLayout()
         self._autothreshold_radio_button: QRadioButton = QRadioButton()
         auto_thresh_label: LabelWithHint = LabelWithHint("Autothreshold")
-        auto_thresh_label.set_hint("Apply an autothresholding method.")
+        auto_thresh_label.set_hint("Select an autothresholding method")
 
         self._autothreshold_method_combo: QComboBox = QComboBox()
         self._autothreshold_method_combo.addItems(
@@ -168,7 +167,7 @@ class ThresholdingView(View, MainWindow):
         layout.addWidget(threshold_group_box)
 
         # apply and save
-        self._apply_save_button: QPushButton = QPushButton("Apply & Save")
+        self._apply_save_button: QPushButton = QPushButton("Apply and Save")
         self._apply_save_button.setEnabled(False)
         self._apply_save_button.clicked.connect(self._save_thresholded_images)
         layout.addWidget(self._apply_save_button)
@@ -178,6 +177,12 @@ class ThresholdingView(View, MainWindow):
 
         # configure widget behavior
         self._configure_slots()
+
+        self._main_model.subscribe(
+            Event.PROCESS_PREDICTION_COMPLETE,
+            self,
+            lambda e: self._main_model.set_current_view(self),
+        )
 
     def _configure_slots(self) -> None:
         """
