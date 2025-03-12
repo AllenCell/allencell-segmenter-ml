@@ -12,8 +12,7 @@ jobs:
         if: |
           !contains(github.event.issue.labels.*.name, 'Requests') &&
           !contains(github.event.issue.labels.*.name, 'Bug Reports')
-        uses: actions/add-to-project@v1
+        uses: actions/add-to-project@v1.0.2
         with:
           project-url: https://github.com/orgs/AllenCell/projects/7
-          content-id: ${{ github.event.issue.node_id }}
-          column-name: Backlog
+          github-token: ${{ secrets.PROJECT_AUTOMATION_PAT }}
