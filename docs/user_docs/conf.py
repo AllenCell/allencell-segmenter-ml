@@ -10,7 +10,7 @@
 project = "Segmenter ML Plugin for napari"
 copyright = "2024, Allen Institute for Cell Science"
 author = "Segmenter ML plugin team"
-release = "1.0.0rc4"
+release = "1.0.0rc5"
 
 
 # -- General configuration ---------------------------------------------------
