@@ -24,7 +24,7 @@ jobs:
 
       - name: Build Documentation
         run: |
-          make build-sphinx
+          make build-docs
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4 # this will deploy the html file built to gh-pages
