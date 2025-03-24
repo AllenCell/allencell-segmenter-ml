@@ -26,6 +26,10 @@ jobs:
         run: |
           make build-docs
 
+      - name: Add .nojekyll file # this makes github pages not use Jekyll to build, otherwise .css files will be ignored
+        run: |
+          touch docs/user_docs/_build/html/.nojekyll
+
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4 # this will deploy the html file built to gh-pages
         with:
