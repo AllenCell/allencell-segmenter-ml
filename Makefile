@@ -96,3 +96,13 @@ bumpversion-dev: venv
 version: venv
 > $(PYTHON) setup.py --version
 .PHONY: version
+
+# SPHINX DOCS
+# default sphinx build options and directory locations
+SPHINXOPTS    ?=
+SPHINXBUILD   ?= sphinx-build
+SOURCEDIR     = docs/user_docs
+BUILDDIR      = docs/user_docs/_build
+
+build-docs:
+> @$(SPHINXBUILD) -b html "$(SOURCEDIR)" "$(BUILDDIR)/html" $(SPHINXOPTS)

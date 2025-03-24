@@ -57,3 +57,6 @@ src/allencell_ml_segmenter/.DS_Store
 # IDE files
 .idea/
 .vscode
+
+# ignore sphinx build
+docs/user_docs/_build/
