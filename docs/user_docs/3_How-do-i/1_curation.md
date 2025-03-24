@@ -41,7 +41,7 @@ ______________________________________________________________________
 
 ## 2. Select input data
 
-:::{figure} images/curation_main-screen.png
+:::{figure} _static/images/curation_main-screen.png
 :width: 50%
 :align: left
 :::
@@ -57,7 +57,7 @@ ______________________________________________________________________
 
 ## 3. Start curation
 
-:::{figure} images/Tab_curation.png
+:::{figure} _static/images/Tab_curation.png
 :::
 
 :::{warning}
@@ -67,7 +67,7 @@ ______________________________________________________________________
 
 ### a. Sorting
 
-:::{figure} images/Curation_sorting.png
+:::{figure} _static/images/Curation_sorting.png
 :::
 
 Review existing pool of raw images and corresponding segmentations, then select only the high-quality images to be used as training data

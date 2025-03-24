@@ -8,7 +8,7 @@ A [napari](http://napari.org) plugin for deep-learning based segmentation of cel
 
 <br>
 
-:::{figure} images/SegmenterML-plugin_fig1_output.png
+:::{figure} _static/images/SegmenterML-plugin_fig1_output.png
 :align: center
 :width: 80%
 :alt: schematic of the input & output of Segmenter ML plugin
@@ -23,7 +23,7 @@ A [napari](http://napari.org) plugin for deep-learning based segmentation of cel
 
 <br>
 
-:::{figure} images/napari_anatomy.png
+:::{figure} _static/images/napari_anatomy.png
 :alt: screenshot of napari with the Segmenter ML plugin
 **Segmenter ML plugin** in *napari* viewer
 ::: 

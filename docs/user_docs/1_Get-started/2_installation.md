@@ -163,7 +163,7 @@ Fri Sep 13 03:22:15 2024
 
 To Install PyTorch, please visit the [PyTorch website](https://pytorch.org/get-started/locally/) and select the appropriate installation options for your system.
 
-:::{figure} images/PyTorch_installation_guide.png
+:::{figure} _static/images/PyTorch_installation_guide.png
 PyTorch Installation for Windows, MacOS, and Linux
 :::
 

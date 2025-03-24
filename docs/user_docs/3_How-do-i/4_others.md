@@ -7,7 +7,7 @@
   - Navigate to the `Help` menu and find the `Experiment Home` option
   - Follow the prompt to change your home directory
 
-  :::{figure} images/help_exp-home.png
+  :::{figure} _static/images/help_exp-home.png
   :::
 
 :::

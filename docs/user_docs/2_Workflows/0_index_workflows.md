@@ -1,6 +1,6 @@
 # Follow complete workflows
 
-:::{figure} images/select-options-2.png
+:::{figure} _static/images/select-options-2.png
 Model options to select
 :::
 

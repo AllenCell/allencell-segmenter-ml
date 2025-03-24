@@ -14,7 +14,7 @@ You can start training as soon as you have a {ref}`curation progress CSV saved<c
 
 **STEPS**
 
-:::{figure} images/Tab_training_1.png
+:::{figure} _static/images/Tab_training_1.png
 :::
 
 1. `Curated image data source`: if you have completed curation using the plugin, this input field will be auto-populated

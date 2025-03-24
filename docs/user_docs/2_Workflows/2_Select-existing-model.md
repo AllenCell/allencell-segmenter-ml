@@ -10,7 +10,7 @@ Any model that was previously created or downloaded by the plugin will be availa
 2. Click `Apply`
 3. Follow {ref}`"Prediction & Thresholding" step-by-step guide<Use Prediction & Thresholding Modules>`
 
-:::{figure} images/Prediction.png
+:::{figure} _static/images/Prediction.png
 :::
 
 :::{tip} 

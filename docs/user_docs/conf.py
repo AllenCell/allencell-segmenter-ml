@@ -57,8 +57,8 @@ html_theme = "furo"
 html_title = "Segmenter ML - User Guide"
 html_static_path = ["_static"]
 html_theme_options = {
-    "light_logo": "images/thumb_segmenterML_2_onLight.png",
-    "dark_logo": "images/thumb_segmenterML_2_onDark.png",
+    "light_logo": "_static/images/thumb_segmenterML_2_onLight.png",
+    "dark_logo": "_static/images/thumb_segmenterML_2_onDark.png",
 }
 
 

@@ -5,13 +5,13 @@
 - Tooltips
   : We provide tooltips for terms throughout the plugin, simply hover over the question-mark icon next to any term to read a brief description
 
-    ```{image} images/tooltip.png
+    ```{image} _static/images/tooltip.png
     :width: 90%
     ```
 
 - `Help` menu dropdown:
 
-  : :::{figure} images/help.png
+  : :::{figure} _static/images/help.png
   ::: 
   
     - **User Guide**: links to this online [User Guide](http://githubpage.io), which we'll strive to keep up-to-date

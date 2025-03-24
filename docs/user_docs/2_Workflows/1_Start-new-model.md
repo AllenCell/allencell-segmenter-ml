@@ -6,7 +6,7 @@ In this workflow, you have access to all three modules: {bdg-dark-line}`Curation
 - train a model from scratch or using the weight of an existing trained model (fine-tuning or iterative training)
 - make segmentation prediction from the model trained in this workflow.
 
-:::{figure} images/Workflow_new-model.png
+:::{figure} _static/images/Workflow_new-model.png
 :::
 
 ## STEPS

@@ -16,7 +16,7 @@ The Allen Cell Segmenter ML plugin has 3 main modules: **Curation**, **Training*
 - Data curation step is important as a model's performance is directly tied to the training data's quality
 
 :::{card} 
-:img-bottom: images/Curation_sorting.png
+:img-bottom: _static/images/Curation_sorting.png
 
 ### a. Sorting
 ^^^
@@ -25,7 +25,7 @@ The Allen Cell Segmenter ML plugin has 3 main modules: **Curation**, **Training*
 :::
 
 :::{card}
-:img-bottom: images/Curation_excluding.png
+:img-bottom: _static/images/Curation_excluding.png
 
 ### b. Excluding
 ^^^
@@ -35,7 +35,7 @@ The Allen Cell Segmenter ML plugin has 3 main modules: **Curation**, **Training*
 
 
 :::{card}
-:img-bottom: images/Curation_merging.png
+:img-bottom: _static/images/Curation_merging.png
 
 ### c. Merging (overwriting)
 ^^^
@@ -50,7 +50,7 @@ If a raw image has two segmentations of the same cellular structure produced by 
 
 ## 2. Training
 
-:::{figure} images/training.png
+:::{figure} _static/images/training.png
 ::: 
 
 This module allows users to train an ML 2D or 3D segmentation model **from scratch** or **fine-tune (iteratively)** an existing 2D or 3D segmentation model**--whether their own or a {ref}`pre-trained model provided by us<Pre-trained models>`--using their own data.
@@ -59,7 +59,7 @@ This module allows users to train an ML 2D or 3D segmentation model **from scrat
 
 ## 3. Prediction
 
-:::{figure} images/prediction.png
+:::{figure} _static/images/prediction.png
 ::: 
 
 This module allows users to apply the trained ML model from the previous step, or a pre-trained model, to generate segmentation predictions on raw images that the model has not previously seen.

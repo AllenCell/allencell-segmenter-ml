@@ -12,14 +12,14 @@ napari
 
 You should see the below window pop up.
 
-:::{figure} images/napari.png
+:::{figure} _static/images/napari.png
 :::
 
 ______________________________________________________________________
 
 ## 2. Start the Segmenter ML plugin
 
-:::{figure} images/plugin-menu.png
+:::{figure} _static/images/plugin-menu.png
 :width: 500px
 :align: left
 :::
@@ -51,7 +51,7 @@ The **pre-trained model download** option can be accessed through the `Help` dro
 
 > Visit {ref}`Pre-trained models` to read more about the models we provided
 
-:::{figure} images/download-models.png
+:::{figure} _static/images/download-models.png
 :width: 500px
 
 Download Models option from `Help` menu
@@ -61,7 +61,7 @@ A popup window will appear and you can select which model you would like to down
 
 ## 4. Select a model option to start
 
-:::{figure} images/select-options.png
+:::{figure} _static/images/select-options.png
 :width: 500px
 
 Model options to select

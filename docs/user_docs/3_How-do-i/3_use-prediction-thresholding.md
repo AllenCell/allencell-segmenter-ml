@@ -4,7 +4,7 @@ This module will generate both a {term}`probability map<Probability map image>` 
 
 ## A. Run prediction
 
-:::{figure} images/Tab_prediction_1.png
+:::{figure} _static/images/Tab_prediction_1.png
 {bdg-danger}`need updated version`
 :::
 
