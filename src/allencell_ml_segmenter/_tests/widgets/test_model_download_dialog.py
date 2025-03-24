@@ -9,7 +9,6 @@ from allencell_ml_segmenter._tests.fakes.fake_user_settings import (
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.utils.s3.s3_bucket_constants import (
     PROD_BUCKET,
-    STG_BUCKET,
 )
 from allencell_ml_segmenter.widgets.model_download_dialog import (
     ModelDownloadDialog,
@@ -48,7 +47,7 @@ def model_download_dialog(
     responses.add(
         **{
             "method": responses.GET,
-            "url": f"{STG_BUCKET}?list-type=2",
+            "url": f"{PROD_BUCKET}?list-type=2",
             "body": s3_response_listobjectv2_contents_two_models,
             "status": 200,
             "content_type": "application/xml",
