@@ -78,7 +78,6 @@ class ModelSelectionWidget(QWidget):
         self.help_combo_box.setFixedWidth(100)
         # Add placeholder "Help" text idx 0
         self.help_combo_box.addItem("Help")
-        self.help_combo_box.setItemData(0, 0, 0)  # Make it unselectable
         self.help_combo_box.setCurrentIndex(0)
         self.help_combo_box.addItems(
             [
