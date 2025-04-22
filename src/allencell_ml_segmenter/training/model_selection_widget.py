@@ -76,7 +76,12 @@ class ModelSelectionWidget(QWidget):
         # Help menu, implemented using a combo box to conform to mockup
         self.help_combo_box: QComboBox = QComboBox()
         self.help_combo_box.setFixedWidth(100)
-        self.help_combo_box.setPlaceholderText("Help")
+        # Add placeholder "Help" text idx 0
+        self.help_combo_box.addItem("Help")
+        self.help_combo_box.model().item(0).setEnabled(
+            False
+        )  # Make it unselectable
+        self.help_combo_box.setCurrentIndex(0)
         self.help_combo_box.addItems(
             [
                 ModelSelectionWidget.TUTORIAL_TEXT,
@@ -243,7 +248,7 @@ class ModelSelectionWidget(QWidget):
             self._refresh_experiment_options()
 
         # reset the combo box, so that it bahaves more like a menu
-        self.help_combo_box.setCurrentIndex(-1)
+        self.help_combo_box.setCurrentIndex(0)
 
     def _model_radio_handler(self) -> None:
         self._main_model.set_new_model(self._radio_new_model.isChecked())
