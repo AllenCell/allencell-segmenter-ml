@@ -17,7 +17,6 @@ from qtpy.QtCore import Qt
 @pytest.fixture
 def dialog(qtbot: QtBot):
     dialog = DialogBox("Test Message")
-    qtbot.addWidget(dialog)
     yield dialog
 
 
