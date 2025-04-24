@@ -26,7 +26,13 @@ jobs:
         run: |
           sudo apt-get install -y libdbus-1-3 libxkbcommon-x11-0 libxcb-icccm4 \
             libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 \
-            libxcb-xinerama0 libxcb-xinput0 libxcb-xfixes0 x11-utils
+            libxcb-xinerama0 libxcb-xinput0 libxcb-xfixes0 x11-utils xvfb libgl1
+      # As of 4.24.25- needed for pyqt unit testing on linux
+      - name: Start Xvfb
+        if: runner.os == 'Linux'
+        run: |
+          Xvfb :99 -screen 0 1920x1080x24 > /dev/null 2>&1 &
+          echo "DISPLAY=:99" >> $GITHUB_ENV
       # strategy borrowed from vispy for installing opengl libs on windows
       - name: Install Windows OpenGL
         if: runner.os == 'Windows'
@@ -46,6 +52,8 @@ jobs:
       - name: Test with pytest
         run: |
           pytest -v --color=yes --cov=allencell_ml_segmenter --cov-report=xml
+        env:
+          DISPLAY: ${{ env.DISPLAY }}
       # - name: Upload coverage reports to Codecov
       #   uses: codecov/codecov-action@v3
       #   env:
