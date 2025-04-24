@@ -55,6 +55,11 @@ jobs:
         run: |
           pip install pipdeptree
           pipdeptree --reverse --warn silence | grep -A2 opencv-python || echo "opencv-python not found"
+
+      - name: Force opencv-python-headless
+        run: |
+          pip uninstall -y opencv-python
+          pip install opencv-python-headless
       - name: Test with pytest
         run: |
           pytest -v -s --color=yes --cov=allencell_ml_segmenter --cov-report=xml
