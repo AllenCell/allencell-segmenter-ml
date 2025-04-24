@@ -43,6 +43,13 @@ jobs:
       - name: Type check with mypy
         run: |
           mypy src/allencell_ml_segmenter
+      - name: Debug Qt platform plugin dependencies
+        if: runner.os == 'Linux'
+        run: |
+          find / -name "libqxcb.so" 2>/dev/null | while read path; do
+            echo "Checking dependencies for: $path"
+            ldd "$path"
+          done
       - name: Test with pytest
         run: |
           pytest -v -s --color=yes --cov=allencell_ml_segmenter --cov-report=xml
