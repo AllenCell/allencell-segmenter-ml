@@ -51,6 +51,7 @@ jobs:
           mypy src/allencell_ml_segmenter
       - name: Test with pytest
         run: |
+          echo "DISPLAY at pytest: $DISPLAY"
           pytest -v --color=yes --cov=allencell_ml_segmenter --cov-report=xml
         env:
           DISPLAY: ${{ env.DISPLAY }}
