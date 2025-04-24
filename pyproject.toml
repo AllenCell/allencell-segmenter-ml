@@ -68,7 +68,7 @@ test_lint = [
     "toml",
     "bumpver",
     "napari>=0.4.18",
-    "magicgui",
+    "magicgui"
 ]
 
 dev = [

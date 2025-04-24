@@ -49,7 +49,7 @@ jobs:
           pip install opencv-python-headless
       - name: Test with pytest
         run: |
-          pytest -v -s --color=yes --cov=allencell_ml_segmenter --cov-report=xml
+          pytest -v --color=yes --cov=allencell_ml_segmenter --cov-report=xml
       # - name: Upload coverage reports to Codecov
       #   uses: codecov/codecov-action@v3
       #   env:
