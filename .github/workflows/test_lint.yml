@@ -43,19 +43,6 @@ jobs:
       - name: Type check with mypy
         run: |
           mypy src/allencell_ml_segmenter
-      - name: Debug Qt platform plugin dependencies
-        if: runner.os == 'Linux'
-        run: |
-          find / -name "libqxcb.so" 2>/dev/null | while read path; do
-            echo "Checking dependencies for: $path"
-            ldd "$path"
-          done
-
-      - name: Check who depends on opencv-python
-        run: |
-          pip install pipdeptree
-          pipdeptree --reverse --warn silence | grep -A2 opencv-python || echo "opencv-python not found"
-
       - name: Force opencv-python-headless
         run: |
           pip uninstall -y opencv-python
