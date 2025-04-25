@@ -35,7 +35,7 @@ class ModelSelectionWidget(QWidget):
     """
 
     TITLE_TEXT: str = "Segmentation model"
-    TUTORIAL_TEXT: str = "Tutorial"
+    USER_GUIDE_TEXT: str = "User Guide"
     GITHUB_TEXT: str = "GitHub"
     FORUM_TEXT: str = "Forum"
     WEBSITE_TEXT: str = "Website"
@@ -81,7 +81,7 @@ class ModelSelectionWidget(QWidget):
         self.help_combo_box.setCurrentIndex(0)
         self.help_combo_box.addItems(
             [
-                ModelSelectionWidget.TUTORIAL_TEXT,
+                ModelSelectionWidget.USER_GUIDE_TEXT,
                 ModelSelectionWidget.GITHUB_TEXT,
                 ModelSelectionWidget.FORUM_TEXT,
                 ModelSelectionWidget.WEBSITE_TEXT,
@@ -218,9 +218,9 @@ class ModelSelectionWidget(QWidget):
         Triggered when the user selects an option from the help combo box.
         Opens the selected help page.
         """
-        if text == ModelSelectionWidget.TUTORIAL_TEXT:
+        if text == ModelSelectionWidget.USER_GUIDE_TEXT:
             webbrowser.open(
-                "https://www.allencell.org/allencell-segmenter-ml-tutorials.html"
+                "https://allencell.github.io/allencell-segmenter-ml/index.html"
             )
         elif text == ModelSelectionWidget.GITHUB_TEXT:
             webbrowser.open(
