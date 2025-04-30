@@ -32,7 +32,14 @@ ______________________________________________________________________
 
 ## B. Thresholding
 
-This action converts the segmentation probability map to a binary image output
+This action converts the segmentation probability map to a binary image output. 
+
+Threshold usage:
+We have validated our own models (e.g. MegaSeg) using a 50% threshold i.e., pixels for which the model output is lower than 128 will be classified as background.
+
+This is because model prediction can be seen as a probability map where each pixel has an associated probability of it being foreground or background. A probability threshold of 50% represents, any pixel with higher associated probability will be part of the foreground or the target structure. Pixels with less than 50% associated probability will be part of the background.
+
+However, we encourage users to explore different threshold values using the threshold functionality of the plugin as for some applications it will be more appropriate to only segment the bright – higher probability regions. While in some cases a lower threshold will be much more meaningful to include the dim regions also at the cost of maybe over segmenting bright regions.
 
 ### a. Using on-screen image
 
