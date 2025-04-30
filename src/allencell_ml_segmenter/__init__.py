@@ -1,4 +1,4 @@
-__version__ = "1.0.0rc5"
+__version__ = "1.0.0rc6"
 
 from allencell_ml_segmenter.napari.napari_reader import napari_get_reader
 from allencell_ml_segmenter.napari.sample_data import make_sample_data
