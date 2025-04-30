@@ -42,7 +42,9 @@ class ModelDownloadDialog(QDialog):
         self._model_select_dropdown.addItems(self._available_models.keys())
 
         self._download_button: QPushButton = QPushButton("Download")
-        self._doc_button: QPushButton = QPushButton("Documentation")
+        self._doc_button: QPushButton = QPushButton(
+            "Citation and Documentation"
+        )
 
         self._download_button.clicked.connect(self._download_button_handler)
         self._doc_button.clicked.connect(self._doc_button_handler)
@@ -53,7 +55,7 @@ class ModelDownloadDialog(QDialog):
 
     def _doc_button_handler(self) -> None:
         webbrowser.open(
-            "https://github.com/AllenCell/allencell-segmenter-ml/blob/main/docs/models.md"
+            "https://allencell.github.io/allencell-segmenter-ml/1_Get-started/4_pretrained-models.html"
         )
 
     def _download_button_handler(self) -> None:
