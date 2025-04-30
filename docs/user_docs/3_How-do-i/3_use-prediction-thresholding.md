@@ -34,7 +34,8 @@ ______________________________________________________________________
 
 This action converts the segmentation probability map to a binary image output. 
 
-Threshold usage:
+**Threshold usage**
+
 We have validated our own models (e.g. MegaSeg) using a 50% threshold i.e., pixels for which the model output is lower than 128 will be classified as background.
 
 This is because model prediction can be seen as a probability map where each pixel has an associated probability of it being foreground or background. A probability threshold of 50% represents, any pixel with higher associated probability will be part of the foreground or the target structure. Pixels with less than 50% associated probability will be part of the background.
