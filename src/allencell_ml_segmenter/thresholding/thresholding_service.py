@@ -162,10 +162,10 @@ class ThresholdingService(Subscriber):
             OmeTiffWriter.save(image, str(new_image_path))
 
     def _threshold_image(self, image: np.ndarray) -> np.ndarray:
-        threshold_value: float = (
+        threshold_value: int = (
             self._thresholding_model.get_thresholding_value()
         )
-        return (image > threshold_value).astype(int)
+        return (image > threshold_value).astype(np.uint8)
 
     def _remove_all_binary_maps(self, _: Event) -> None:
         for layer in self._thresholding_model.get_thresholding_layers():
