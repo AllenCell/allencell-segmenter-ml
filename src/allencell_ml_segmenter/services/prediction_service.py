@@ -1,5 +1,5 @@
 import csv
-from sys import platform
+import platform
 
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.event import Event

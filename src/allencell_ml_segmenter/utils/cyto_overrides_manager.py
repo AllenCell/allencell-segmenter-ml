@@ -1,4 +1,4 @@
-from sys import platform
+import platform
 from typing import Dict, Union, Optional, List
 
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
