@@ -1,3 +1,4 @@
+from sys import platform
 from typing import Dict, Union, Optional, List
 
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
@@ -69,6 +70,11 @@ class CytoDLOverridesManager:
         else:
             overrides_dict["trainer.accelerator"] = "cpu"
         overrides_dict["data.num_workers"] = CUDAUtils.get_num_workers()
+
+        # pytorch needs num_workers = 0 for mac osx
+        # keeps prediction on main thread
+        if platform.system() == "Darwin":
+            overrides_dict["data.num_workers"] = 0
 
         # Spatial Dims (required)
         dims: Optional[int] = self._training_model.get_spatial_dims()
