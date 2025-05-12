@@ -1,4 +1,5 @@
 import csv
+import platform
 
 from allencell_ml_segmenter.core.subscriber import Subscriber
 from allencell_ml_segmenter.core.event import Event
@@ -174,6 +175,11 @@ class PredictionService(Subscriber):
             overrides["trainer.accelerator"] = "gpu"
         else:
             overrides["trainer.accelerator"] = "cpu"
+
+        # pytorch needs num_workers = 0 for mac osx
+        # keeps prediction on main thread
+        if platform.system() == "Darwin":
+            overrides["data.num_workers"] = 0
 
         return overrides
 
