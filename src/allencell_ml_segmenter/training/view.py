@@ -213,36 +213,6 @@ class TrainingView(View, MainWindow):
         )
         bottom_grid_layout.addWidget(self._num_epochs_input, 3, 1)
 
-        max_time_layout: QHBoxLayout = QHBoxLayout()
-        max_time_layout.setSpacing(0)
-
-        self._max_time_checkbox: QCheckBox = QCheckBox()
-        self._max_time_checkbox.setObjectName("timeoutCheckbox")
-        self._max_time_checkbox.stateChanged.connect(
-            self._max_time_checkbox_slot
-        )
-        max_time_layout.addWidget(self._max_time_checkbox)
-
-        max_time_left_text: QLabel = QLabel("Time out after")
-        max_time_layout.addWidget(max_time_left_text)
-
-        self._max_time_in_minutes_input: QLineEdit = QLineEdit()
-        self._max_time_in_minutes_input.setObjectName("timeoutMinuteInput")
-        self._max_time_in_minutes_input.setEnabled(False)
-        self._max_time_in_minutes_input.setMaximumWidth(30)
-        self._max_time_in_minutes_input.setPlaceholderText("30")
-        self._max_time_in_minutes_input.textChanged.connect(
-            lambda text: self._training_model.set_max_time(int(text))
-        )
-        max_time_layout.addWidget(self._max_time_in_minutes_input)
-
-        max_time_right_text: LabelWithHint = LabelWithHint("minutes")
-        max_time_right_text.set_hint("(Optional) Maximum time to train model")
-        max_time_layout.addWidget(
-            max_time_right_text, alignment=Qt.AlignmentFlag.AlignLeft
-        )
-        max_time_layout.addStretch()
-        bottom_grid_layout.addLayout(max_time_layout, 4, 1)
         bottom_grid_layout.setColumnStretch(1, 8)
         bottom_grid_layout.setColumnStretch(0, 3)
 

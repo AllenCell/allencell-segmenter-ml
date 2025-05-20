@@ -100,46 +100,6 @@ def test_set_max_epoch(
     assert training_model.get_num_epochs() == 100
 
 
-def test_set_max_time(
-    qtbot: QtBot, training_view: TrainingView, training_model: TrainingModel
-) -> None:
-    """
-    Tests that the max time field is properly set by the associated QLineEdit.
-    """
-    # ACT
-    with qtbot.waitSignal(training_view._max_time_checkbox.toggled):
-        training_view._max_time_checkbox.click()  # enables the QLineEdit
-
-    qtbot.keyClicks(training_view._max_time_in_minutes_input, "30")
-
-    # ASSERT
-    assert training_model.get_max_time() == 30
-
-
-def test_checkbox_slot(
-    qtbot: QtBot, training_view: TrainingView, training_model: TrainingModel
-) -> None:
-    """
-    Test the slot connected to the timeout checkbox.
-    """
-    # ASSERT (QLineEdit related to timeout limit is disabled by default)
-    assert not training_view._max_time_in_minutes_input.isEnabled()
-
-    # ACT (enable QLineEdit related to timeout limit)
-    with qtbot.waitSignal(training_view._max_time_checkbox.stateChanged):
-        training_view._max_time_checkbox.click()
-
-    # ASSERT
-    assert training_view._max_time_in_minutes_input.isEnabled()
-
-    # ACT (disabled QLineEdit related to timeout limit)
-    with qtbot.waitSignal(training_view._max_time_checkbox.stateChanged):
-        training_view._max_time_checkbox.click()
-
-    # ASSERT
-    assert not training_view._max_time_in_minutes_input.isEnabled()
-
-
 def test_set_model_size(
     training_view: TrainingView, training_model: TrainingModel
 ) -> None:

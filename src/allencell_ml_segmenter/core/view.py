@@ -41,7 +41,7 @@ class View(QWidget, Subscriber, metaclass=ViewMeta):
 
         self.progressDialog = QProgressDialog(
             f"{self.getTypeOfWork()} in Progress",
-            "Cancel",
+            None,
             progress_tracker.get_progress_minimum(),
             progress_tracker.get_progress_maximum(),
             self,
@@ -51,9 +51,11 @@ class View(QWidget, Subscriber, metaclass=ViewMeta):
         self.progressDialog.setWindowModality(
             Qt.WindowModality.ApplicationModal
         )
-        self.progressDialog.canceled.connect(self.longTaskThread.terminate)
-        # stop the watchdog thread for file watching inside of the progress tracker
-        self.progressDialog.canceled.connect(progress_tracker.stop_tracker)
+
+        # Cancel functionality removed for now- freezes app on some occasions
+        # TODO: reimplement this using a process within the thread in the future.
+        # self.progressDialog.canceled.connect(self.longTaskThread.terminate)
+        # self.progressDialog.canceled.connect(progress_tracker.stop_tracker)
 
         self.progressDialog.show()
 
