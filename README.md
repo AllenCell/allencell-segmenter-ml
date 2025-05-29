@@ -8,12 +8,12 @@ A napari plugin for deep-learning based segmentation of cellular structures.
 
 ![SegmenterML-plugin_fig1_output.png](docs%2Fuser_docs%2Fimages%2FSegmenterML-plugin_fig1_output.png)
 
-- Available at no cost — available on PyPI
-- User-friendly — leverage napari as a fast 3D viewer with interactive plugin interface
-- Beginner-friendly — new to machine learning? This plugin simplifies the application of machine learning in the segmentation process through the 3 main modules:
-- Curation: curate training datasets
-- Training: iteratively train custom segmentation model(s) (UNET) to target cellular structure with wide morphological variability
-- Prediction & Thresholding: generate segmentation prediction on 2D and 3D cell image data
+- **Available at no cost** — available on PyPI
+- **User-friendly** — leverage napari as a fast 3D viewer with interactive plugin interface
+- **Beginner-friendly** — new to machine learning? This plugin simplifies the application of machine learning in the segmentation process through the 3 main modules:
+  - **Curation**: curate training datasets
+  - **Training**: iteratively train custom segmentation model(s) (UNET) to target cellular structure with wide morphological variability
+  - **Prediction & Thresholding**: generate segmentation prediction on 2D and 3D cell image data
 
 
 ##  📰 News
