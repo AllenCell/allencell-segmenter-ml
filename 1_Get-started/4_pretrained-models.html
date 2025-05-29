@@ -7,12 +7,12 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="1_Get-started/4_pretrained-models.html" />
 <meta property="og:site_name" content="Segmenter ML Plugin for napari" />
-<meta property="og:description" content="Users can jump start the process by applying one of the pre-trained models we provide to their data using the plugin, evaluate the segmentation results, and then further train these models to bette..." />
+<meta property="og:description" content="Users can jump start the process of creating a deep-learning model by: applying one of the provided pre-trained models to their data using the plugin, evaluating the segmentation results, fine-tuni..." />
 <meta property="og:image:width" content="1146" />
 <meta property="og:image:height" content="600" />
-<meta property="og:image" content="_images/social_previews/summary_1_Get-started_4_pretrained-models_18c72350.png" />
-<meta property="og:image:alt" content="Users can jump start the process by applying one of the pre-trained models we provide to their data using the plugin, evaluate the segmentation results, and then further train these models to bette..." />
-<meta name="description" content="Users can jump start the process by applying one of the pre-trained models we provide to their data using the plugin, evaluate the segmentation results, and then further train these models to bette..." />
+<meta property="og:image" content="_images/social_previews/summary_1_Get-started_4_pretrained-models_1122b7a0.png" />
+<meta property="og:image:alt" content="Users can jump start the process of creating a deep-learning model by: applying one of the provided pre-trained models to their data using the plugin, evaluating the segmentation results, fine-tuni..." />
+<meta name="description" content="Users can jump start the process of creating a deep-learning model by: applying one of the provided pre-trained models to their data using the plugin, evaluating the segmentation results, fine-tuni..." />
 <meta name="twitter:card" content="summary_large_image" />
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Follow complete workflows" href="../2_Workflows/0_index_workflows.html" /><link rel="prev" title="Setup" href="3_setup.html" />
 
@@ -294,115 +294,103 @@
         <article role="main" id="furo-main-content">
           <section class="tex2jax_ignore mathjax_ignore" id="pre-trained-models">
 <h1>Pre-trained models<a class="headerlink" href="#pre-trained-models" title="Link to this heading">¶</a></h1>
-<p>Users can jump start the process by applying one of the pre-trained models we provide to their data using the plugin, evaluate the segmentation results, and then further train these models to better suit their specific datasets.</p>
-<p>Below is a table listing available pre-trained deep-learning models provided by the Allen Institute for Cell Science available for download from the plugin through the <code class="docutils literal notranslate"><span class="pre">Download</span></code> dialog</p>
+<p>Users can jump start the process of creating a deep-learning model by:</p>
+<ul class="simple">
+<li><p>applying one of the provided pre-trained models to their data using the plugin</p></li>
+<li><p>evaluating the segmentation results</p></li>
+<li><p>fine-tuning these models to better suit their specific datasets</p></li>
+</ul>
+<p>Below is a table listing available pre-trained models available for download from the plugin through the <span class="sd-sphinx-override sd-badge sd-outline-dark sd-text-dark">Download</span> dialog under the <span class="sd-sphinx-override sd-badge sd-bg-dark sd-bg-text-dark">Help</span> button. If you use our pre-trained models in your own research, please cite us; citation info included in the table. Thank you!</p>
 <div class="table-wrapper colwidths-given docutils container" id="id1">
 <table class="docutils align-default" id="id1">
 <caption><span class="caption-text"><strong>Available pre-trained models by the Allen Institute for Cell Science</strong></span><a class="headerlink" href="#id1" title="Link to this table">¶</a></caption>
 <colgroup>
 <col style="width: 8.3%" />
-<col style="width: 8.3%" />
-<col style="width: 41.7%" />
-<col style="width: 41.7%" />
+<col style="width: 25.0%" />
+<col style="width: 66.7%" />
 </colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p><strong>Category</strong></p></th>
 <th class="head"><p>Name</p></th>
 <th class="head"><p>MegaSeg_v1</p></th>
-<th class="head"><p>MegaSeg_light</p></th>
 </tr>
 </thead>
 <tbody>
 <tr class="row-even"><td><p><strong>Model Properties</strong></p></td>
 <td><p>Description</p></td>
 <td><p>CNN-based structure-agnostic 3D segmentation model, trained on 2600 open 3D fluorescent microscopy images of cellular structures in human hiPSCs</p></td>
-<td><p>Lighter version of MegaSeg which compromises accuracy for speed</p></td>
 </tr>
 <tr class="row-odd"><td></td>
 <td><p>Architecture</p></td>
 <td><p>nnUNet</p></td>
-<td><p>small nnUNet with fewer kernels</p></td>
 </tr>
 <tr class="row-even"><td></td>
 <td><p>Loss function</p></td>
-<td><p>Generalized dice focal loss</p></td>
 <td><p>Generalized dice focal loss</p></td>
 </tr>
 <tr class="row-odd"><td></td>
 <td><p>Optimization</p></td>
 <td><p>Adam</p></td>
-<td><p>Adam</p></td>
 </tr>
 <tr class="row-even"><td></td>
 <td><p># of Epochs</p></td>
-<td><p>1000</p></td>
 <td><p>1000</p></td>
 </tr>
 <tr class="row-odd"><td></td>
 <td><p>Stopping Criteria</p></td>
 <td><p>Validation loss not improving for 100 epochs</p></td>
-<td><p>Validation loss not improving for 100 epochs</p></td>
 </tr>
 <tr class="row-even"><td></td>
 <td><p>System Trained On</p></td>
 <td><p>Nvidia A100</p></td>
-<td><p>Nvidia A100</p></td>
 </tr>
-<tr class="row-odd"><td></td>
-<td><p>Validation Step</p></td>
-<td><ul class="simple">
-<li></li>
-</ul>
-</td>
-<td><ul class="simple">
-<li></li>
-</ul>
-</td>
-</tr>
-<tr class="row-even"><td><p><strong>Dependencies</strong></p></td>
+<tr class="row-odd"><td><p><strong>Dependencies</strong></p></td>
 <td><p>CytoDL Version</p></td>
 <td><p>1.7.1</p></td>
-<td><p>1.7.1</p></td>
 </tr>
-<tr class="row-odd"><td></td>
+<tr class="row-even"><td></td>
 <td><p>PyTorch Version</p></td>
 <td><p>2.4.0+cu118</p></td>
-<td><p>2.4.0+cu118</p></td>
 </tr>
-<tr class="row-even"><td><p><strong>Training Data</strong></p></td>
+<tr class="row-odd"><td><p><strong>Training Data</strong></p></td>
 <td><p>Image Resolution</p></td>
 <td><p>55x624x924; 60x624x924; 65x600x900; 65x624x924; 70x624x924; 75x624x924; 75x600x900</p></td>
-<td><p>55x624x924; 60x624x924; 65x600x900; 65x624x924; 70x624x924; 75x624x924; 75x600x900</p></td>
 </tr>
-<tr class="row-odd"><td></td>
+<tr class="row-even"><td></td>
 <td><p>Microscope Objective</p></td>
 <td><p>100x</p></td>
-<td><p>100x</p></td>
 </tr>
-<tr class="row-even"><td></td>
+<tr class="row-odd"><td></td>
 <td><p>Microscopy Technique</p></td>
 <td><p>Spinning disk confocal</p></td>
-<td><p>Spinning disk confocal</p></td>
-</tr>
-<tr class="row-odd"><td></td>
-<td><p>Public Data Link</p></td>
-<td><p><a class="reference external" href="https://open.quiltdata.com/b/allencell/tree/aics/hipsc_single_cell_image_dataset/">Dataset Link</a></p></td>
-<td><p><a class="reference external" href="https://open.quiltdata.com/b/allencell/tree/aics/hipsc_single_cell_image_dataset/">Dataset Link</a></p></td>
 </tr>
 <tr class="row-even"><td></td>
-<td><p>Expected Performance</p></td>
-<td><p>On NVIDIA-A100, 80GB, Inference &#64; 6.01 Secs for an Input image of size 924x624x65</p></td>
-<td><p>On NVIDIA-A100, 80GB, Inference &#64; 2.32 Secs for an Input image of size 924x624x65</p></td>
+<td><p>Public Data Link</p></td>
+<td><p><a class="reference external" href="https://open.quiltdata.com/b/allencell/tree/aics/hipsc_single_cell_image_dataset/">Dataset Link</a></p></td>
 </tr>
 <tr class="row-odd"><td></td>
+<td><p>Expected Performance</p></td>
+<td><p>On NVIDIA-A100, 80GB, Inference &#64; 6.01 Secs for an Input image of size 924x624x65</p></td>
+</tr>
+<tr class="row-even"><td></td>
 <td><p>Structures Trained On</p></td>
 <td><p>Actin bundles, ER(SERCA2), Adherens junctions, Desmosomes, Gap junctions, Myosin, Nuclear pores, Endosomes, ER (SEC61 Beta), Nuclear speckles, Golgi, Tight junctions, Mitochondria</p></td>
-<td><p>Actin bundles, ER(SERCA2), Adherens junctions, Desmosomes, Gap junctions, Myosin, Nuclear pores, Endosomes, ER (SEC61 Beta), Nuclear speckles, Golgi, Tight junctions, Mitochondria</p></td>
 </tr>
-<tr class="row-even"><td><p><strong>Inference Data</strong></p></td>
+<tr class="row-odd"><td><p><strong>Inference Data</strong></p></td>
 <td><p>Minimum Image Dimension</p></td>
 <td><p>16x16x16</p></td>
-<td><p>16x16x16</p></td>
+</tr>
+<tr class="row-even"><td></td>
+<td><p>Threshold value</p></td>
+<td><p>We have validated MegaSeg using a 50% threshold or the threshold value of 128 i.e., pixels for which the model output is lower than 128 will be classified as background.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Disclosure</strong></p></td>
+<td><p>Info</p></td>
+<td><p>Model will not be able to segment the tops and bottoms of nuclear(Lamin) and plasma(CAAX) membrane. Model will also face issue in segmenting dataset specific attributes (e.g., filled vesciles on lysosomes) in contrast to general attributes.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Citation</strong></p></td>
+<td><p>Info</p></td>
+<td><p>The MegaSeg preprint is in preparation, if you use MegaSeg model in your own research, in the meantime you can cite <a class="reference external" href="https://www.napari-hub.org/plugins/allencell-segmenter-ml">Segmenter ML Plugin</a>. Thank you!</p></td>
 </tr>
 </tbody>
 </table>

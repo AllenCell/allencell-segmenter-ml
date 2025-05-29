@@ -12,11 +12,11 @@ The Allen Cell Segmenter ML plugin has 3 main modules: **Curation**, **Training*
 
 ## 1. Curation
 
-- This module assists user in curating training dataset through sorting, excluding, & merging image data
+- This module assists user in curating training dataset through manual sorting, excluding, & merging image data
 - Data curation step is important as a model's performance is directly tied to the training data's quality
 
 :::{card} 
-:img-bottom: images/Curation_sorting.png
+:img-bottom: images/Curation_sorting_2.png
 
 ### a. Sorting
 ^^^
@@ -35,7 +35,7 @@ The Allen Cell Segmenter ML plugin has 3 main modules: **Curation**, **Training*
 
 
 :::{card}
-:img-bottom: images/Curation_merging.png
+:img-bottom: images/Curation_merging_2.png
 
 ### c. Merging (overwriting)
 ^^^
