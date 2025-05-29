@@ -19,6 +19,8 @@ A napari plugin for deep-learning based segmentation of cellular structures.
 ##  📰 News
 
  - **[2024.09.24]** :tada: Initial release of the plugin and Megaseg models!
+ - **[2024.05.29]** :tada: v1.0.0 Released on PyPi
+
 
 ## User Documentation
 [See our full user documentation on our github pages site.](https://allencell.github.io/allencell-segmenter-ml/index.html)
