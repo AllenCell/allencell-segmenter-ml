@@ -36,7 +36,7 @@ A napari plugin for deep-learning based segmentation of cellular structures.
 
 
 ## Models
-[More information about the pre-trained models we provide with our plguin, and citation information, can be found here.](https://allencell.github.io/allencell-segmenter-ml/1_Get-started/4_pretrained-models.html)
+[More information about the pre-trained models we provide with our plugin, and citation information, can be found here.](https://allencell.github.io/allencell-segmenter-ml/1_Get-started/4_pretrained-models.html)
 
 ## License
 
