@@ -3,9 +3,9 @@
 Users can jump start the process of creating a deep-learning model by:
 - applying one of the provided pre-trained models to their data using the plugin
 - evaluating the segmentation results
-- finetuning these models to better suit their specific datasets
+- fine-tuning these models to better suit their specific datasets
 
-Below is a table listing available pre-trained models available for download from the plugin through the {bdg-dark-line}`Download` dialog under the {bdg-dark}`Help` button. If you use our pre-trained models in your own research, please cite us - citation info included in the table. Thank you!
+Below is a table listing available pre-trained models available for download from the plugin through the {bdg-dark-line}`Download` dialog under the {bdg-dark}`Help` button. If you use our pre-trained models in your own research, please cite us; citation info included in the table. Thank you!
 
 ```{eval-rst}
 .. list-table:: **Available pre-trained models by the Allen Institute for Cell Science**
