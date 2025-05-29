@@ -40,7 +40,7 @@ A napari plugin for deep-learning based segmentation of cellular structures.
 
 ## License
 
-Distributed under the terms of the [Allen Institute Software License] license.
+Distributed under the terms of the [Allen Institute Software License].
 
 ## Issues
 
