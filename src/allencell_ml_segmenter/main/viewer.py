@@ -121,7 +121,7 @@ class Viewer(IViewer):
     def subscribe_layers_change_event(
         self, function: Callable[[NapariEvent], None]
     ) -> None:
-        self.viewer.events.layers_change.connect(function)
+        self.viewer.layers.events.changed.connect(function)
 
     def _get_layer_by_name(self, name: str) -> Optional[Layer]:
         layers: list[Layer] = self.get_layers()
