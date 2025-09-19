@@ -43,6 +43,12 @@ jobs:
       - name: Type check with mypy
         run: |
           mypy src/allencell_ml_segmenter
+      # This step ensures that opencv does not install libraries
+      # that may conflict with what is needed to run pyqt unit tests
+      - name: Force opencv-python-headless
+        run: |
+          pip uninstall -y opencv-python
+          pip install "numpy<2.0" opencv-python-headless
       - name: Test with pytest
         run: |
           pytest -v --color=yes --cov=allencell_ml_segmenter --cov-report=xml
