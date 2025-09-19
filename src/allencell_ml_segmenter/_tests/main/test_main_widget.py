@@ -34,7 +34,7 @@ class FakeLayers:
             moving=None,
             moved=None,
             changed=None,
-        ) # all napari layer events
+        )  # all napari layer events
 
 
 @pytest.fixture
