@@ -121,7 +121,13 @@ class Viewer(IViewer):
     def subscribe_layers_change_event(
         self, function: Callable[[NapariEvent], None]
     ) -> None:
+        # keeps layer list synced with the layer checkboxes in our plugin when
+        # items are added, removed, moved, or changed
         self.viewer.layers.events.changed.connect(function)
+        self.viewer.layers.events.inserted.connect(function)
+        self.viewer.layers.events.removed.connect(function)
+        self.viewer.layers.events.moved.connect(function)
+
 
     def _get_layer_by_name(self, name: str) -> Optional[Layer]:
         layers: list[Layer] = self.get_layers()
