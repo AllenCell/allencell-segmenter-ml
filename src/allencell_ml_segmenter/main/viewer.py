@@ -128,7 +128,6 @@ class Viewer(IViewer):
         self.viewer.layers.events.removed.connect(function)
         self.viewer.layers.events.moved.connect(function)
 
-
     def _get_layer_by_name(self, name: str) -> Optional[Layer]:
         layers: list[Layer] = self.get_layers()
         for l in layers:
