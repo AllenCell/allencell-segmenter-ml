@@ -25,7 +25,16 @@ from napari.utils.events import EmitterGroup
 
 class FakeLayers:
     def __init__(self):
-        self.events = EmitterGroup(source=self, changed=None)
+        self.events = EmitterGroup(
+            source=self,
+            inserting=None,
+            inserted=None,
+            removing=None,
+            removed=None,
+            moving=None,
+            moved=None,
+            changed=None,
+        ) # all napari layer events
 
 
 @pytest.fixture
