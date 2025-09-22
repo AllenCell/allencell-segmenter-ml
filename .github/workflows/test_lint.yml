@@ -48,7 +48,7 @@ jobs:
       - name: Force opencv-python-headless
         run: |
           pip uninstall -y opencv-python
-          pip install opencv-python-headless
+          pip install "numpy<2.0" opencv-python-headless
       - name: Test with pytest
         run: |
           pytest -v --color=yes --cov=allencell_ml_segmenter --cov-report=xml

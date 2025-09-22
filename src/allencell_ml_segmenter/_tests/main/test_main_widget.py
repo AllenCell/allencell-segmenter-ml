@@ -13,12 +13,28 @@ from allencell_ml_segmenter.core.aics_widget import AicsWidget
 from allencell_ml_segmenter.main.main_widget import MainWidget
 from unittest.mock import Mock, patch
 import napari
+from napari.utils.events import EmitterGroup
+
 
 # IMPORTANT NOTE: MainWidget is different from the other widgets since we do not directly
 # instantiate it in our code. So, it will always receive a napari.Viewer object in
 # production. We cannot initialize with our FakeViewer because our 'Viewer' is created during
 # initialization of MainWidget. We could supply a "viewer factory" to the MainWidget,
 # but for now I'm just mocking it here.
+
+
+class FakeLayers:
+    def __init__(self):
+        self.events = EmitterGroup(
+            source=self,
+            inserting=None,
+            inserted=None,
+            removing=None,
+            removed=None,
+            moving=None,
+            moved=None,
+            changed=None,
+        )  # all napari layer events
 
 
 @pytest.fixture
@@ -155,10 +171,14 @@ def test_experiments_home_initialized(qtbot: QtBot) -> None:
     settings.set_user_experiments_path(
         None
     )  # Simulates state where users has not yet chosen an experiments home.
+    viewer = Mock(
+        spec="napari.Viewer"
+    )  # set up fake viewer with layers that can emit events
+    viewer.layers = FakeLayers()
 
     # ACT
     MainWidget(
-        Mock(spec=napari.Viewer), settings
+        viewer, settings
     )  # If the users settings does not find an experiments home path, it will prompt the user for one and persist it.
 
     # ASSERT
