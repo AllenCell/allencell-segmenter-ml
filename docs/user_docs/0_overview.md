@@ -50,7 +50,7 @@ If a raw image has two segmentations of the same cellular structure produced by 
 
 ## 2. Training
 
-:::{figure} images/training.png
+:::{figure} images/Training-2.png
 ::: 
 
 This module allows users to train an ML 2D or 3D segmentation model **from scratch** or **fine-tune (iteratively)** an existing 2D or 3D segmentation model**--whether their own or a {ref}`pre-trained model provided by us<Pre-trained models>`--using their own data.
@@ -59,7 +59,7 @@ This module allows users to train an ML 2D or 3D segmentation model **from scrat
 
 ## 3. Prediction
 
-:::{figure} images/prediction.png
+:::{figure} images/Prediction.png
 ::: 
 
 This module allows users to apply the trained ML model from the previous step, or a pre-trained model, to generate segmentation predictions on raw images that the model has not previously seen.

@@ -27,16 +27,14 @@ You can start training as soon as you have a {ref}`curation progress CSV saved<c
 
 4. `Patch size`: input the approximated dimension of your structure of interest
 
-   - The input values must be multiples of 4 -- the fields will auto-correct to the closest value
+   - The input values must be multiples of 16 -- the fields will auto-correct to the closest value
 
 5. `Model size`: this reflects the complexity of the model -- smaller model train faster while larger models train slower but may learn complex relationships better
 
 6. `Number of epoch`: can start with a small value such as 10 to evaluate how quickly your computer can process each epoch
 
-7. `Time out` (OPTIONAL): set up the model to stop training by a certain amount of time
-
-8. Click `Start training`
+7. Click `Start training`
       - A progress dialog will pop up to display the current progress and the current loss value
       - If a high value of epoch was entered, training may automatically stopped before it reaches the last epoch if the model can no long be improved
 
-9. The plugin will notify you when the training is finished, together with the final loss value
+8. The plugin will notify you when the training is finished, together with the final loss value

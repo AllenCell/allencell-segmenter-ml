@@ -61,7 +61,7 @@ A popup window will appear and you can select which model you would like to down
 
 ## 4. Select a model option to start
 
-:::{figure} images/select-options.png
+:::{figure} images/select-options-2.png
 :width: 500px
 
 Model options to select
