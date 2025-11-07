@@ -1,0 +1,4 @@
+,raw,seg1,seg2,split
+0,./src/allencell_ml_segmenter/_tests/test_files/images/fake4.tiff,./src/allencell_ml_segmenter/_tests/test_files/images/fake4.tiff,./src/allencell_ml_segmenter/_tests/test_files/images/fake4.tiff,test
+1,./src/allencell_ml_segmenter/_tests/test_files/images/fake5.tiff,./src/allencell_ml_segmenter/_tests/test_files/images/fake5.tiff,./src/allencell_ml_segmenter/_tests/test_files/images/fake5.tiff,test
+2,./src/allencell_ml_segmenter/_tests/test_files/images/fake6.tiff,./src/allencell_ml_segmenter/_tests/test_files/images/fake6.tiff,./src/allencell_ml_segmenter/_tests/test_files/images/fake6.tiff,test

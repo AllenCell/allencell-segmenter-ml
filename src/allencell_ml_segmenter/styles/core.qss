@@ -1,0 +1,71 @@
+* {
+    color: #F0F1F2;
+}
+
+a {
+    color: #007ACC;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+a:active {
+    color: #41B3FF;
+    text-decoration: underline;
+}
+
+QRadioButton:disabled {
+    color: #414851;
+}
+
+QPushButton {
+    margin-left: 2px;
+    margin-right: 2px;
+}
+
+QPushButton:enabled {
+    background-color: #007ACC;
+    color: #F0F1F2;
+}
+
+QPushButton:enabled:hover {
+    border: 1px solid #41B3FF;
+}
+
+QPushButton:disabled {
+    background-color: #414851;
+    color: #6A7380;
+}
+
+QPushButton:pressed {
+    background-color: #00489D;
+}
+
+QComboBox:disabled {
+    color: #868E93;
+}
+
+#subtext {
+    font-size: 10px;
+    color: #868E93;
+}
+
+#frame {
+    border: 1px solid #414851;
+    border-radius: 5px;
+}
+
+#title {
+    font-weight: bold;
+    margin: 10px 0px;
+}
+
+QTabBar::tab:disabled:!selected {
+    color: #868E93;
+}
+
+QLineEdit:disabled {
+    background-color: #2D323A;
+}

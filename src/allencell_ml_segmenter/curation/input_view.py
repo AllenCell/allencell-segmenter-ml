@@ -1,4 +1,3 @@
-from allencell_ml_segmenter.core.view import View
 from allencell_ml_segmenter.curation.stacked_spinner import StackedSpinner
 from allencell_ml_segmenter.widgets.input_button_widget import (
     InputButton,
@@ -8,6 +7,7 @@ from allencell_ml_segmenter.widgets.label_with_hint_widget import LabelWithHint
 from allencell_ml_segmenter.curation.curation_model import (
     CurationModel,
     CurationView,
+    ImageType,
 )
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
@@ -18,12 +18,14 @@ from qtpy.QtWidgets import (
     QVBoxLayout,
     QComboBox,
     QPushButton,
+    QWidget,
 )
 from pathlib import Path
-from napari.utils.notifications import show_info
+from napari.utils.notifications import show_info  # type: ignore
+from typing import Optional
 
 
-class CurationInputView(View):
+class CurationInputView(QWidget):
     """
     View for Curation UI
     """
@@ -31,37 +33,45 @@ class CurationInputView(View):
     def __init__(self, curation_model: CurationModel) -> None:
         super().__init__()
         self._curation_model: CurationModel = curation_model
-
-        self.setLayout(QVBoxLayout())
-        self.layout().setContentsMargins(0, 0, 0, 0)
-        self.layout().setSpacing(0)
-        self.layout().setAlignment(Qt.AlignTop)
-        self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
+        layout: QVBoxLayout = QVBoxLayout()
+        self.setLayout(layout)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(0)
+        layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+        self.setSizePolicy(
+            QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Maximum
+        )
 
         self._title: QLabel = QLabel("CURATION UI", self)
         self._title.setObjectName("title")
-        self.layout().addWidget(
-            self._title, alignment=Qt.AlignHCenter | Qt.AlignTop
+        layout.addWidget(
+            self._title, alignment=Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignTop  # type: ignore
         )
 
         frame: QFrame = QFrame()
-        frame.setLayout(QVBoxLayout())
-        frame.setObjectName("frame")
-        self.layout().addWidget(frame)
+        frame_layout: QVBoxLayout = QVBoxLayout()
+        frame.setLayout(frame_layout)
+        # uncomment to make frame visible
+        # frame.setObjectName("frame")
+        layout.addWidget(frame)
 
         input_images_label: QLabel = QLabel("Input images")
-        frame.layout().addWidget(input_images_label)
+        frame_layout.addWidget(input_images_label)
+        frame_layout.setSpacing(30)
 
         raw_grid_layout: QGridLayout = QGridLayout()
+        raw_grid_layout.setVerticalSpacing(10)
 
         # First Row in Gridlayout
         raw_image_label: LabelWithHint = LabelWithHint("Raw")
-        # TODO set hint
-        raw_grid_layout.addWidget(
-            raw_image_label, 0, 0, alignment=Qt.AlignLeft
+        raw_image_label.set_hint(
+            "Original microscopy images (.czi, .ome.tiff, .tiff)"
         )
         raw_grid_layout.addWidget(
-            QLabel("Directory"), 0, 1, alignment=Qt.AlignRight
+            raw_image_label, 0, 0, alignment=Qt.AlignmentFlag.AlignLeft
+        )
+        raw_grid_layout.addWidget(
+            QLabel("Directory"), 0, 1, alignment=Qt.AlignmentFlag.AlignRight
         )
         self.raw_directory_select: InputButton = InputButton(
             self._curation_model,
@@ -73,33 +83,46 @@ class CurationInputView(View):
             self.raw_directory_select
         )
         raw_grid_layout.addWidget(
-            self.raw_dir_stacked_spinner, 0, 2, alignment=Qt.AlignRight
+            self.raw_dir_stacked_spinner,
+            0,
+            2,
+            alignment=Qt.AlignmentFlag.AlignRight,
         )
 
         # Second Row in Gridlayout
         raw_grid_layout.addWidget(
-            QLabel("Image channel"), 1, 1, alignment=Qt.AlignRight
+            QLabel("Image channel"),
+            1,
+            1,
+            alignment=Qt.AlignmentFlag.AlignRight,
         )
         self.raw_image_channel_combo: QComboBox = QComboBox()
         self.raw_image_channel_combo.currentIndexChanged.connect(
             self.raw_channel_selected
         )
         raw_grid_layout.addWidget(
-            self.raw_image_channel_combo, 1, 2, alignment=Qt.AlignLeft
+            self.raw_image_channel_combo,
+            1,
+            2,
+            alignment=Qt.AlignmentFlag.AlignLeft,
         )
 
         # add grid to frame
-        frame.layout().addLayout(raw_grid_layout)
+        frame_layout.addLayout(raw_grid_layout)
 
         seg1_grid_layout: QGridLayout = QGridLayout()
+        seg1_grid_layout.setVerticalSpacing(10)
+
         # First Row in Gridlayout
         seg1_image_label: LabelWithHint = LabelWithHint("Seg 1")
-        # TODO set hint
-        seg1_grid_layout.addWidget(
-            seg1_image_label, 0, 0, alignment=Qt.AlignLeft
+        seg1_image_label.set_hint(
+            "Segmentation of the structure of interest (.czi, .ome.tiff, .tiff)"
         )
         seg1_grid_layout.addWidget(
-            QLabel("Directory"), 0, 1, alignment=Qt.AlignRight
+            seg1_image_label, 0, 0, alignment=Qt.AlignmentFlag.AlignLeft
+        )
+        seg1_grid_layout.addWidget(
+            QLabel("Directory"), 0, 1, alignment=Qt.AlignmentFlag.AlignRight
         )
         # TODO update model accordingly
         self.seg1_directory_select: InputButton = InputButton(
@@ -112,33 +135,46 @@ class CurationInputView(View):
             self.seg1_directory_select
         )
         seg1_grid_layout.addWidget(
-            self.seg1_dir_stacked_spinner, 0, 2, alignment=Qt.AlignRight
+            self.seg1_dir_stacked_spinner,
+            0,
+            2,
+            alignment=Qt.AlignmentFlag.AlignRight,
         )
 
         # Second Row in Gridlayout
         seg1_grid_layout.addWidget(
-            QLabel("Image channel"), 1, 1, alignment=Qt.AlignRight
+            QLabel("Image channel"),
+            1,
+            1,
+            alignment=Qt.AlignmentFlag.AlignRight,
         )
         self.seg1_image_channel_combo: QComboBox = QComboBox()
         self.seg1_image_channel_combo.currentIndexChanged.connect(
             self.seg1_channel_selected
         )
         seg1_grid_layout.addWidget(
-            self.seg1_image_channel_combo, 1, 2, alignment=Qt.AlignLeft
+            self.seg1_image_channel_combo,
+            1,
+            2,
+            alignment=Qt.AlignmentFlag.AlignLeft,
         )
 
         # add grid to frame
-        frame.layout().addLayout(seg1_grid_layout)
+        frame_layout.addLayout(seg1_grid_layout)
 
         seg2_grid_layout: QGridLayout = QGridLayout()
+        seg2_grid_layout.setVerticalSpacing(10)
+
         # First Row in Gridlayout
-        seg2_image_label: LabelWithHint = LabelWithHint("Seg 2")
-        # TODO set hint
-        seg2_grid_layout.addWidget(
-            seg2_image_label, 0, 0, alignment=Qt.AlignLeft
+        seg2_image_label: LabelWithHint = LabelWithHint("Seg 2 (OPTIONAL)")
+        seg2_image_label.set_hint(
+            "(Optional) Complementary segmentation, useful if Seg 1 fails predictably (e.g. a segmentation that works during mitosis to supplement an interphase segmentation)"
         )
         seg2_grid_layout.addWidget(
-            QLabel("Directory"), 0, 1, alignment=Qt.AlignRight
+            seg2_image_label, 0, 0, alignment=Qt.AlignmentFlag.AlignLeft
+        )
+        seg2_grid_layout.addWidget(
+            QLabel("Directory"), 0, 1, alignment=Qt.AlignmentFlag.AlignRight
         )
         # TODO update model accordingly
         self.seg2_directory_select: InputButton = InputButton(
@@ -151,48 +187,49 @@ class CurationInputView(View):
             self.seg2_directory_select
         )
         seg2_grid_layout.addWidget(
-            self.seg2_dir_stacked_spinner, 0, 2, alignment=Qt.AlignRight
+            self.seg2_dir_stacked_spinner,
+            0,
+            2,
+            alignment=Qt.AlignmentFlag.AlignRight,
         )
 
         # Second Row in Gridlayout
         seg2_grid_layout.addWidget(
-            QLabel("Image channel"), 1, 1, alignment=Qt.AlignRight
+            QLabel("Image channel"),
+            1,
+            1,
+            alignment=Qt.AlignmentFlag.AlignRight,
         )
         self.seg2_image_channel_combo: QComboBox = QComboBox()
         self.seg2_image_channel_combo.currentIndexChanged.connect(
             self.seg2_channel_selected
         )
         seg2_grid_layout.addWidget(
-            self.seg2_image_channel_combo, 1, 2, alignment=Qt.AlignLeft
+            self.seg2_image_channel_combo,
+            1,
+            2,
+            alignment=Qt.AlignmentFlag.AlignLeft,
         )
 
         # add grid to frame
-        frame.layout().addLayout(seg2_grid_layout)
+        frame_layout.addLayout(seg2_grid_layout)
 
         self.start_btn: QPushButton = QPushButton("Start")
         self.start_btn.clicked.connect(self._on_start)
-        frame.layout().addWidget(self.start_btn)
+        frame_layout.addWidget(self.start_btn)
 
         # subscribers
-        self._curation_model.raw_image_channel_count_set.connect(
-            self.update_raw_channels
-        )
-        self._curation_model.seg1_image_channel_count_set.connect(
-            self.update_seg1_channels
-        )
-        self._curation_model.seg2_image_channel_count_set.connect(
-            self.update_seg2_channels
-        )
+        self._curation_model.channel_count_set.connect(self.update_channels)
 
     def _on_start(self) -> None:
         if any(
             [
                 value is None
                 for value in [
-                    self._curation_model.get_raw_directory(),
-                    self._curation_model.get_raw_channel(),
-                    self._curation_model.get_seg1_directory(),
-                    self._curation_model.get_seg1_channel(),
+                    self._curation_model.get_image_directory(ImageType.RAW),
+                    self._curation_model.get_selected_channel(ImageType.RAW),
+                    self._curation_model.get_image_directory(ImageType.SEG1),
+                    self._curation_model.get_selected_channel(ImageType.SEG1),
                 ]
             ]
         ):
@@ -202,8 +239,10 @@ class CurationInputView(View):
             return
 
         if (
-            self._curation_model.get_seg2_directory() is not None
-            and self._curation_model.get_seg2_channel() is None
+            self._curation_model.get_image_directory(ImageType.SEG2)
+            is not None
+            and self._curation_model.get_selected_channel(ImageType.SEG2)
+            is None
         ):
             show_info("Please select a channel for seg2.")
             return
@@ -237,32 +276,23 @@ class CurationInputView(View):
         self._set_to_loading(
             self.raw_image_channel_combo, self.raw_dir_stacked_spinner
         )
-        self._curation_model.set_raw_directory(dir)
+        self._curation_model.set_image_directory(ImageType.RAW, dir)
 
     def _on_seg1_dir_select(self, dir: Path) -> None:
         self._set_to_loading(
             self.seg1_image_channel_combo, self.seg1_dir_stacked_spinner
         )
-        self._curation_model.set_seg1_directory(dir)
+        self._curation_model.set_image_directory(ImageType.SEG1, dir)
 
     def _on_seg2_dir_select(self, dir: Path) -> None:
         self._set_to_loading(
             self.seg2_image_channel_combo, self.seg2_dir_stacked_spinner
         )
-        self._curation_model.set_seg2_directory(dir)
-
-    def doWork(self) -> None:
-        print("work")
-
-    def getTypeOfWork(self) -> None:
-        print("getwork")
-
-    def showResults(self) -> None:
-        print("show result")
+        self._curation_model.set_image_directory(ImageType.SEG2, dir)
 
     def _populate_channel_combo(
         self, channel_combo: QComboBox, num_channels: int
-    ):
+    ) -> None:
         channel_combo.clear()
         if num_channels > 0:
             channel_combo.addItems([str(x) for x in range(num_channels)])
@@ -272,17 +302,30 @@ class CurationInputView(View):
             channel_combo.setPlaceholderText("")
             channel_combo.setEnabled(False)
 
+    def update_channels(self, img_type: ImageType) -> None:
+        if img_type == ImageType.RAW:
+            self.update_raw_channels()
+        elif img_type == ImageType.SEG1:
+            self.update_seg1_channels()
+        elif img_type == ImageType.SEG2:
+            self.update_seg2_channels()
+        else:
+            raise RuntimeError("Unrecognized curation image type")
+
     def update_raw_channels(self) -> None:
         """
         Event handler when raw image directory is selected. Updates combobox to the correct number of channels in the
         images from the raw directory.
         """
         self.raw_dir_stacked_spinner.stop()
+        channel_count: Optional[int] = self._curation_model.get_channel_count(
+            ImageType.RAW
+        )
         self._populate_channel_combo(
             self.raw_image_channel_combo,
-            self._curation_model.get_raw_image_channel_count(),
+            channel_count if channel_count is not None else 0,
         )
-        self._curation_model.set_raw_channel(0)
+        self._curation_model.set_selected_channel(ImageType.RAW, 0)
 
     def update_seg1_channels(self) -> None:
         """
@@ -290,11 +333,14 @@ class CurationInputView(View):
         images from the seg1 directory.
         """
         self.seg1_dir_stacked_spinner.stop()
+        channel_count: Optional[int] = self._curation_model.get_channel_count(
+            ImageType.SEG1
+        )
         self._populate_channel_combo(
             self.seg1_image_channel_combo,
-            self._curation_model.get_seg1_image_channel_count(),
+            channel_count if channel_count is not None else 0,
         )
-        self._curation_model.set_seg1_channel(0)
+        self._curation_model.set_selected_channel(ImageType.SEG1, 0)
 
     def update_seg2_channels(self) -> None:
         """
@@ -302,26 +348,29 @@ class CurationInputView(View):
         images from the seg2 directory.
         """
         self.seg2_dir_stacked_spinner.stop()
+        channel_count: Optional[int] = self._curation_model.get_channel_count(
+            ImageType.SEG2
+        )
         self._populate_channel_combo(
             self.seg2_image_channel_combo,
-            self._curation_model.get_seg2_image_channel_count(),
+            channel_count if channel_count is not None else 0,
         )
-        self._curation_model.set_seg2_channel(0)
+        self._curation_model.set_selected_channel(ImageType.SEG2, 0)
 
-    def raw_channel_selected(self, index) -> None:
+    def raw_channel_selected(self, index: int) -> None:
         """
         Event handler when combobox channel selection is made. Sets the raw channel index in the model.
         """
-        self._curation_model.set_raw_channel(index)
+        self._curation_model.set_selected_channel(ImageType.RAW, index)
 
-    def seg1_channel_selected(self, index) -> None:
+    def seg1_channel_selected(self, index: int) -> None:
         """
         Event handler when combobox channel selection is made. Sets the seg1 channel index in the model.
         """
-        self._curation_model.set_seg1_channel(index)
+        self._curation_model.set_selected_channel(ImageType.SEG1, index)
 
-    def seg2_channel_selected(self, index) -> None:
+    def seg2_channel_selected(self, index: int) -> None:
         """
         Event handler when combobox channel selection is made. Sets the seg2 channel index in the model.
         """
-        self._curation_model.set_seg2_channel(index)
+        self._curation_model.set_selected_channel(ImageType.SEG2, index)

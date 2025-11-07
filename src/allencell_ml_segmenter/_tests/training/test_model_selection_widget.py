@@ -3,6 +3,9 @@ from pytestqt.qtbot import QtBot
 from allencell_ml_segmenter._tests.fakes.fake_experiments_model import (
     FakeExperimentsModel,
 )
+from allencell_ml_segmenter._tests.fakes.fake_user_settings import (
+    FakeUserSettings,
+)
 from allencell_ml_segmenter.main.i_experiments_model import IExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
 
@@ -46,7 +49,9 @@ def model_selection_widget(
     Fixture that creates an instance of ModelSelectionWidget for testing.
     """
     return ModelSelectionWidget(
-        main_model=main_model, experiments_model=experiment_model
+        main_model=main_model,
+        experiments_model=experiment_model,
+        user_settings=FakeUserSettings(),
     )
 
 
@@ -83,6 +88,7 @@ def test_radio_existing_slot_has_no_existing_experiments(qtbot: QtBot) -> None:
     model_selection_widget: ModelSelectionWidget = ModelSelectionWidget(
         main_model=MainModel(),
         experiments_model=experiment_model_has_no_experiments,
+        user_settings=FakeUserSettings(),
     )
     setup_radio_existing_slot(qtbot, model_selection_widget)
 
@@ -121,12 +127,15 @@ def test_select_existing_model_option(
         model_selection_widget._radio_existing_model.click()  # enables the combo box
 
     for i, experiment in enumerate(experiment_model.get_experiments()):
-        # ACT
+        # ACT - This is a compound action, consisting of selecting an option in the combo box and clicking the apply button
+        # In prod, this could only be done for one option since the UI would then change.
+        # As an isolated unit, we can test all options.
         # Invariant: options in existing_models combo were added in the order the appear in the model.
         model_selection_widget._combo_box_existing_models.setCurrentIndex(i)
+        model_selection_widget._apply_btn.click()
 
         # ASSERT
-        assert experiment == experiment_model.get_experiment_name_selection()
+        assert experiment_model.get_experiment_name() == experiment
 
 
 def test_apply_button_enabled(
@@ -143,7 +152,7 @@ def test_apply_button_enabled(
     assert not model_selection_widget._apply_btn.isEnabled()
 
     # ACT
-    experiment_model.select_experiment_name("dummy_experiment")
+    model_selection_widget.select_experiment_name("dummy_experiment")
 
     # ASSERT
     assert model_selection_widget._apply_btn.isEnabled()
@@ -163,6 +172,24 @@ def test_text_input_enables_apply_button(
 
     # ASSERT
     assert model_selection_widget._apply_btn.isEnabled()
+
+
+def test_text_input_cleared_disables_apply_button(
+    model_selection_widget: ModelSelectionWidget,
+) -> None:
+    """
+    Test that the apply button is disabled when a typed model name is cleared.
+    """
+    # SANITY CHECK start in a state as if the user had endtered a new experiment name
+    assert not model_selection_widget._apply_btn.isEnabled()
+    model_selection_widget._experiment_name_input.setText("dummy_experiment")
+    assert model_selection_widget._apply_btn.isEnabled()
+
+    # ACT simulate clearing the text input
+    model_selection_widget._experiment_name_input.setText("")
+
+    # ASSERT UI behavior should revery to being as if the text input was never filled
+    assert not model_selection_widget._apply_btn.isEnabled()
 
 
 def test_combo_input_enables_apply_button_new_radio_disables(
@@ -229,7 +256,7 @@ def test_click_apply_btn(
     Test that the apply button updates model.
     """
     # ARRANGE
-    experiment_model.select_experiment_name("dummy_experiment")
+    model_selection_widget.select_experiment_name("dummy_experiment")
 
     # Sanity check
     assert experiment_model.get_experiment_name() is None
@@ -276,9 +303,6 @@ def test_new_experiment_apply(
     model_selection_widget._experiment_name_input.setText("dummy_experiment")
 
     # ASSERT note that the model name is selected but not applied until the apply button is clicked
-    assert (
-        experiment_model.get_experiment_name_selection() == "dummy_experiment"
-    )
     assert experiment_model.get_experiment_name() is None
 
     # ACT

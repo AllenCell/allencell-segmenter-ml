@@ -1,10 +1,9 @@
 from pathlib import Path
-from typing import Generator
+from typing import Optional
 import csv
 
-from aicsimageio.exceptions import UnsupportedFileFormatError
 from qtpy.QtCore import QObject, QThread, Signal
-from aicsimageio import AICSImage
+from bioio import BioImage
 
 
 def extract_channels_from_image(img_path: Path) -> int:
@@ -12,17 +11,24 @@ def extract_channels_from_image(img_path: Path) -> int:
     Returns number of channels in the given img_path.
     :param img_path: image to extract channels from
     """
-    return AICSImage(str(img_path)).dims.C
+    img_data: BioImage = BioImage(str(img_path))
+    if img_data.dims.T > 1:
+        raise RuntimeError("Cannot load timeseries images")
+
+    return img_data.dims.C
 
 
-def get_img_path_from_csv(csv_path: Path) -> Path:
+def get_img_path_from_csv(csv_path: Path, column: str = "raw") -> Path:
     """
-    Returns path of an image in the 'raw' column of the csv.
+    Returns path of an image in the specified column of the csv or throws exception if there is no data in that column.
     :param csv_path: path to a csv with a 'raw' column
     """
+    img_path: Optional[str] = None
     with open(csv_path) as csv_file:
-        reader: csv.reader = csv.DictReader(csv_file)
-        img_path: str = next(reader)["raw"]
+        reader: csv.DictReader = csv.DictReader(csv_file)
+        img_path = next(reader)[column]  # type: ignore
+    if not img_path:
+        raise ValueError(f"No valid data at {csv_path}")
     return Path(img_path).resolve()
 
 
@@ -38,7 +44,7 @@ class ChannelExtractionThread(QThread):
     channels_ready: Signal = Signal(int)  # num_channels
     task_failed: Signal = Signal(Exception)
 
-    def __init__(self, img_path: Path, parent: QObject = None):
+    def __init__(self, img_path: Path, parent: Optional[QObject] = None):
         """
         :param img_path: path to image (must exist, otherwise ValueError)
         :param id: id for this thread instance, provided by parent thread
@@ -47,19 +53,20 @@ class ChannelExtractionThread(QThread):
         self._img_path: Path = img_path
 
     # override
-    def run(self):
+    def run(self) -> None:
         # will show up as a pop-up in the UI, does not force napari to quit
         if not self._img_path.exists():
             raise ValueError(f"{self._img_path} does not exist")
 
         try:
             channels: int = extract_channels_from_image(self._img_path)
-        except UnsupportedFileFormatError as ex:
+        except Exception as ex:
             self.task_failed.emit(ex)
             return  # return instead of reraise to surprss error message in napari console
-        except FileNotFoundError as ex:
-            self.task_failed.emit(ex)
-            return
 
-        if not QThread.currentThread().isInterruptionRequested():
+        curr_thread: Optional[QThread] = QThread.currentThread()
+        if (
+            curr_thread is not None
+            and not curr_thread.isInterruptionRequested()
+        ):
             self.channels_ready.emit(channels)

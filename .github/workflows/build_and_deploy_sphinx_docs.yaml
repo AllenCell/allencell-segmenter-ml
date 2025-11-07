@@ -1,0 +1,38 @@
+name: Deploy Sphinx Docs to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install required sphinx deps
+        run: |
+          pip install .[sphinx_docs]
+
+      - name: Build Documentation
+        run: |
+          make build-docs
+
+      - name: Add .nojekyll file # this makes github pages not use Jekyll to build, otherwise .css files will be ignored
+        run: |
+          touch docs/user_docs/_build/html/.nojekyll
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4 # this will deploy the html file built to gh-pages
+        with:
+          branch: gh-pages # using a separate branch here to avoid building sphinx files onto main
+          folder: docs/user_docs/_build/html
+          clean: true # clean all previous built sphinx files on gh-pages before deploy

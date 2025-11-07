@@ -1,0 +1,16 @@
+name: Auto-add feature requests and bug reports to project board
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  add_to_project:
+    runs-on: ubuntu-latest
+    if: contains(github.event.issue.labels.*.name, 'Requests')
+    steps:
+      - name: Add issue to project
+        uses: actions/add-to-project@v1.0.2
+        with:
+          project-url: https://github.com/orgs/AllenCell/projects/9
+          github-token: ${{ secrets.PROJECT_AUTOMATION_PAT }}

@@ -1,6 +1,6 @@
 from abc import abstractmethod
 from pathlib import Path
-from typing import List, Optional
+from typing import Optional
 
 from allencell_ml_segmenter.core.event import Event
 from allencell_ml_segmenter.core.publisher import Publisher
@@ -11,24 +11,11 @@ class IExperimentsModel(Publisher):
     Interface for implementing and testing ExperimentsModel
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
         # state
         self._experiment_name: Optional[str] = None
-
-    def select_experiment_name(self, name: Optional[str]) -> None:
-        """
-        Sets experiment name
-        """
-        self._experiment_name_selection = name
-        self.dispatch(Event.ACTION_EXPERIMENT_SELECTED)
-
-    def get_experiment_name_selection(self) -> Optional[str]:
-        """
-        Gets experiment name
-        """
-        return self._experiment_name_selection
 
     def get_experiment_name(self) -> Optional[str]:
         """
@@ -42,33 +29,34 @@ class IExperimentsModel(Publisher):
 
         name (str): name of cyto-dl experiment
         """
+        print(f"applying {name} experiment")
         self._experiment_name = name
         self.dispatch(Event.ACTION_EXPERIMENT_APPLIED)
 
     @abstractmethod
-    def get_checkpoint(self) -> str:
+    def get_best_ckpt(self) -> Optional[Path]:
         pass
 
     @abstractmethod
-    def get_experiments(self) -> List[str]:
+    def get_experiments(self) -> list[str]:
         pass
 
     @abstractmethod
-    def refresh_experiments(self):
+    def refresh_experiments(self) -> None:
         pass
 
     @abstractmethod
-    def get_user_experiments_path(self):
+    def get_user_experiments_path(self) -> Optional[Path]:
         pass
 
     @abstractmethod
     def get_model_checkpoints_path(
-        self, experiment_name: str, checkpoint: str
+        self, experiment_name: Optional[str], checkpoint: Optional[str]
     ) -> Path:
         pass
 
     @abstractmethod
-    def get_metrics_csv_path(self) -> Path:
+    def get_metrics_csv_path(self) -> Optional[Path]:
         pass
 
     @abstractmethod
@@ -76,5 +64,17 @@ class IExperimentsModel(Publisher):
         pass
 
     @abstractmethod
-    def get_csv_path(self) -> Path:
+    def get_latest_metrics_csv_path(self) -> Optional[Path]:
+        pass
+
+    @abstractmethod
+    def get_csv_path(self) -> Optional[Path]:
+        pass
+
+    @abstractmethod
+    def get_cache_dir(self) -> Optional[Path]:
+        pass
+
+    @abstractmethod
+    def get_channel_selection_path(self) -> Optional[Path]:
         pass

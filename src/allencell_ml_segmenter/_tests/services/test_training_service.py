@@ -1,9 +1,13 @@
 from pathlib import Path
 import pytest
+from pytestqt.qtbot import QtBot
+
 from allencell_ml_segmenter._tests.fakes.fake_user_settings import (
     FakeUserSettings,
 )
-from allencell_ml_segmenter.core.extractor_factory import FakeExtractorFactory
+from allencell_ml_segmenter.core.image_data_extractor import (
+    FakeImageDataExtractor,
+)
 from allencell_ml_segmenter.main.experiments_model import ExperimentsModel
 from allencell_ml_segmenter.main.main_model import MainModel
 
@@ -12,6 +16,7 @@ from allencell_ml_segmenter.services.training_service import (
 )
 from allencell_ml_segmenter.training.training_model import (
     TrainingModel,
+    ImageType,
 )
 import allencell_ml_segmenter
 
@@ -29,44 +34,40 @@ def experiments_model() -> ExperimentsModel:
             cyto_dl_home_path=Path(), user_experiments_path=exp_path
         )
     )
-    experiments_model.apply_experiment_name("2_exp")
     return experiments_model
 
 
 @pytest.fixture
 def training_model(experiments_model: ExperimentsModel) -> TrainingModel:
     model: TrainingModel = TrainingModel(MainModel(), experiments_model)
-    model.set_experiment_type("segmentation")
-    model.set_spatial_dims(2)
-    model.set_images_directory("/path/to/images")
-    model.set_channel_index(9)
-    model.set_use_max_time(True)
-    model.set_max_time(9992)
-    model.set_config_dir("/path/to/configs")
-    model.set_patch_size([4, 8])
-    model.set_num_epochs(100)
     return model
 
 
-@pytest.fixture
-def training_service(
-    training_model: TrainingModel, experiments_model: ExperimentsModel
-) -> TrainingService:
-    """
-    Returns a TrainingService object with arbitrary-set fields in the model for testing.
-    """
-    return TrainingService(
-        training_model=training_model,
-        experiments_model=experiments_model,
-        extractor_factory=FakeExtractorFactory(0),
+def test_service_reacts_to_image_dir_set(
+    qtbot: QtBot,
+    training_model: TrainingModel,
+    experiments_model: ExperimentsModel,
+) -> None:
+    # Arrange
+    service: TrainingService = TrainingService(
+        training_model,
+        experiments_model,
+        img_data_extractor=FakeImageDataExtractor.global_instance(),
+    )
+    img_dir: Path = (
+        Path(allencell_ml_segmenter.__file__).parent
+        / "_tests"
+        / "test_files"
+        / "multiple_csv"
     )
 
-
-def test_init(training_service: TrainingService) -> None:
-    """
-    Tests the initialization of the TrainingService object.
-    """
-    # ASSERT - check if training model is set properly
-    assert training_service._training_model._events_to_subscriber_handlers[
-        "training"
-    ] == {training_service: training_service._train_model_handler}
+    # Act / Assert
+    # we expect the service to listen for the signal emitted when the image directory is set
+    # do some async work, then set num channels, which will emit the signal we are waiting on
+    with qtbot.waitSignals(
+        [
+            training_model.signals.num_channels_set,
+            training_model.signals.spatial_dims_set,
+        ]
+    ):
+        training_model.set_images_directory(img_dir)

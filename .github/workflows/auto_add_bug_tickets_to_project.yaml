@@ -1,0 +1,16 @@
+name: Auto add bug tickets to project board
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  add_to_project:
+    runs-on: ubuntu-latest
+    if: contains(github.event.issue.labels.*.name, 'Bug Reports')
+    steps:
+      - name: Add bug issue to project
+        uses: actions/add-to-project@v1.0.2
+        with:
+          project-url: https://github.com/orgs/AllenCell/projects/10
+          github-token: ${{ secrets.PROJECT_AUTOMATION_PAT }}

@@ -1,4 +1,6 @@
 from pathlib import Path
+from typing import Optional
+
 import numpy as np
 from allencell_ml_segmenter.core.image_data_extractor import (
     IImageDataExtractor,
@@ -14,7 +16,12 @@ class FakeImageDataExtractor(IImageDataExtractor):
     _instance = None
 
     def extract_image_data(
-        self, img_path: Path, dims: bool = True, np_data: bool = True
+        self,
+        img_path: Path,
+        channel: int = 0,
+        dims: bool = True,
+        np_data: bool = True,
+        seg: Optional[int] = None,
     ) -> ImageData:
         return ImageData(
             1 if dims else None,
@@ -26,7 +33,7 @@ class FakeImageDataExtractor(IImageDataExtractor):
         )
 
     @classmethod
-    def global_instance(cls):
+    def global_instance(cls) -> IImageDataExtractor:
         if cls._instance is None:
             cls._instance = super().__new__(cls)
         return cls._instance

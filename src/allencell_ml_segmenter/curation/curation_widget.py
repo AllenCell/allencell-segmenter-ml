@@ -7,19 +7,17 @@ from qtpy.QtWidgets import (
 )
 
 from allencell_ml_segmenter.core.subscriber import Subscriber
-from allencell_ml_segmenter.core.view import View
+from allencell_ml_segmenter.core.view import View, MainWindow
 from allencell_ml_segmenter.curation.curation_model import (
     CurationModel,
     CurationView,
 )
 from allencell_ml_segmenter.curation.input_view import CurationInputView
 from allencell_ml_segmenter.curation.main_view import CurationMainView
-from allencell_ml_segmenter.curation.curation_service import CurationService
-
-import napari
+import napari  # type: ignore
 
 
-class CurationUiMeta(type(QStackedWidget), type(Subscriber)):
+class CurationUiMeta(type(QStackedWidget), type(Subscriber)):  # type: ignore
     """
     Metaclass for MainWidget
 
@@ -28,7 +26,9 @@ class CurationUiMeta(type(QStackedWidget), type(Subscriber)):
     pass
 
 
-class CurationWidget(QStackedWidget, Subscriber, metaclass=CurationUiMeta):
+class CurationWidget(
+    MainWindow, QStackedWidget, Subscriber, metaclass=CurationUiMeta
+):
     def __init__(
         self,
         viewer: napari.Viewer,
@@ -38,14 +38,13 @@ class CurationWidget(QStackedWidget, Subscriber, metaclass=CurationUiMeta):
         self.viewer: napari.Viewer = viewer
         self.view_to_index: Dict[View, int] = dict()
         self.curation_model: CurationModel = curation_model
-        self.curation_service: CurationService = CurationService(
-            self.curation_model
-        )
-
         # basic styling
-        self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
-        self.setLayout(QVBoxLayout())
-        self.layout().setContentsMargins(0, 0, 0, 0)
+        self.setSizePolicy(
+            QSizePolicy.Policy.Preferred, QSizePolicy.Policy.MinimumExpanding
+        )
+        layout: QVBoxLayout = QVBoxLayout()
+        self.setLayout(layout)
+        layout.setContentsMargins(0, 0, 0, 0)
 
         self.curation_input_view: CurationInputView = CurationInputView(
             self.curation_model
@@ -86,3 +85,11 @@ class CurationWidget(QStackedWidget, Subscriber, metaclass=CurationUiMeta):
         # QStackedWidget count method keeps track of how many child widgets have been added
         self.view_to_index[view] = self.count()
         self.addWidget(view)
+
+    def focus_changed(self) -> None:
+        # if we haven't finished curation, then reload current images
+        if (
+            self.currentWidget() == self.curation_main_view
+            and not self.curation_model.get_image_loading_stopped()
+        ):
+            self.curation_main_view.add_curr_images_to_widget()

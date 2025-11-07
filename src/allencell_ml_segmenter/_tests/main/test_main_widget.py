@@ -11,8 +11,10 @@ from allencell_ml_segmenter.config.i_user_settings import IUserSettings
 
 from allencell_ml_segmenter.core.aics_widget import AicsWidget
 from allencell_ml_segmenter.main.main_widget import MainWidget
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 import napari
+from napari.utils.events import EmitterGroup
+
 
 # IMPORTANT NOTE: MainWidget is different from the other widgets since we do not directly
 # instantiate it in our code. So, it will always receive a napari.Viewer object in
@@ -21,15 +23,23 @@ import napari
 # but for now I'm just mocking it here.
 
 
+class FakeLayers:
+    def __init__(self):
+        self.events = EmitterGroup(source=self, changed=None)
+
+
 @pytest.fixture
 def main_widget(qtbot: QtBot) -> MainWidget:
     """
     Returns a MainWidget instance for testing.
     """
-    settings: IUserSettings = FakeUserSettings()
+    settings: IUserSettings = FakeUserSettings(
+        user_experiments_path=Path("fake_home")
+    )
     settings.set_cyto_dl_home_path(Path())
     settings.set_user_experiments_path(Path())
-    return MainWidget(viewer=Mock(spec=napari.Viewer), settings=settings)
+    main_widget: MainWidget = MainWidget(viewer=Mock(), settings=settings)
+    return main_widget
 
 
 def test_tabs_react_to_new_model_event(
@@ -38,31 +48,30 @@ def test_tabs_react_to_new_model_event(
     """
     Tests that the main widget handles the action new model event correctly.
     """
-
     # ACT: have the model dispatch the action new model event
     main_widget._model.set_new_model(True)
 
     # ASSERT: check that the main widget's current view (after setting) is curation
     assert (
-        main_widget._view_container.currentIndex()
-        == main_widget._view_to_index[main_widget._curation_view]
+        main_widget._window_container.currentIndex()
+        == main_widget._window_to_index[main_widget._curation_view]
     )
     # ASSERT: check that the correct tabs are enabled
     assert (
-        main_widget._view_container.isTabEnabled(
-            main_widget._view_to_index[main_widget._prediction_view]
+        main_widget._window_container.isTabEnabled(
+            main_widget._window_to_index[main_widget._prediction_view]
         )
         == True
     )
     assert (
-        main_widget._view_container.isTabEnabled(
-            main_widget._view_to_index[main_widget._curation_view]
+        main_widget._window_container.isTabEnabled(
+            main_widget._window_to_index[main_widget._curation_view]
         )
         == True
     )
     assert (
-        main_widget._view_container.isTabEnabled(
-            main_widget._view_to_index[main_widget._training_view]
+        main_widget._window_container.isTabEnabled(
+            main_widget._window_to_index[main_widget._training_view]
         )
         == True
     )
@@ -74,31 +83,31 @@ def test_tabs_react_to_existing_model_event(
     """
     Tests that the main widget handles the action new model event correctly.
     """
-
+    main_widget._experiments_model.apply_experiment_name("test_exp")
     # ACT: have the model dispatch the action new model event
     main_widget._model.set_new_model(False)
 
     # ASSERT: check that the main widget's current view (after setting) is prediction
     assert (
-        main_widget._view_container.currentIndex()
-        == main_widget._view_to_index[main_widget._prediction_view]
+        main_widget._window_container.currentIndex()
+        == main_widget._window_to_index[main_widget._prediction_view]
     )
     # ASSERT: check that the correct tabs are enabled
     assert (
-        main_widget._view_container.isTabEnabled(
-            main_widget._view_to_index[main_widget._prediction_view]
+        main_widget._window_container.isTabEnabled(
+            main_widget._window_to_index[main_widget._prediction_view]
         )
         == True
     )
     assert (
-        main_widget._view_container.isTabEnabled(
-            main_widget._view_to_index[main_widget._curation_view]
+        main_widget._window_container.isTabEnabled(
+            main_widget._window_to_index[main_widget._curation_view]
         )
         == False
     )
     assert (
-        main_widget._view_container.isTabEnabled(
-            main_widget._view_to_index[main_widget._training_view]
+        main_widget._window_container.isTabEnabled(
+            main_widget._window_to_index[main_widget._training_view]
         )
         == False
     )
@@ -111,17 +120,31 @@ def test_handle_action_change_view_event(
     Tests that the main widget handles the action change view event correctly.
     """
     # ARRANGE
-    views: Set[AicsWidget] = main_widget._view_to_index.keys()
-
-    for view in views:
-        # ACT: have the model dispatch the action change view event
-        main_widget._model.set_current_view(view)
-
-        # ASSERT: check that the main widget's current view (after setting) is same as the model's current view
-        assert (
-            main_widget._view_container.currentIndex()
-            == main_widget._view_to_index[view]
+    # using a mock here as we're not testing anything related to the actual viewer here
+    mocked_viewer: Mock = Mock()
+    with patch(
+        "allencell_ml_segmenter.main.viewer.Viewer.get_layers", return_value=[]
+    ):
+        settings: IUserSettings = FakeUserSettings(
+            user_experiments_path=Path("fake_home")
         )
+        settings.set_cyto_dl_home_path(Path())
+        settings.set_user_experiments_path(Path())
+        main_widget: MainWidget = MainWidget(
+            viewer=mocked_viewer, settings=settings
+        )
+        views: Set[AicsWidget] = main_widget._window_to_index.keys()
+        main_widget._experiments_model.apply_experiment_name("test_exp")
+
+        for view in views:
+            # ACT: have the model dispatch the action change view event
+            main_widget._model.set_current_view(view)
+
+            # ASSERT: check that the main widget's current view (after setting) is same as the model's current view
+            assert (
+                main_widget._window_container.currentIndex()
+                == main_widget._window_to_index[view]
+            )
 
 
 def test_experiments_home_initialized(qtbot: QtBot) -> None:
@@ -133,16 +156,20 @@ def test_experiments_home_initialized(qtbot: QtBot) -> None:
         __file__
     ).parent  # simulates (in the fake settings) the location chosed by user
     settings = FakeUserSettings(
-        prompt_response=EXPECTED_EXPERIMENTS_HOME,
+        init_prompt_response=EXPECTED_EXPERIMENTS_HOME,
         cyto_dl_home_path=Path("foo/cyto/path"),
     )
     settings.set_user_experiments_path(
         None
     )  # Simulates state where users has not yet chosen an experiments home.
+    viewer = Mock(
+        spec="napari.Viewer"
+    )  # set up fake viewer with layers that can emit events
+    viewer.layers = FakeLayers()
 
     # ACT
     MainWidget(
-        Mock(spec=napari.Viewer), settings
+        viewer, settings
     )  # If the users settings does not find an experiments home path, it will prompt the user for one and persist it.
 
     # ASSERT
@@ -151,25 +178,15 @@ def test_experiments_home_initialized(qtbot: QtBot) -> None:
     )  # The path chosen by the user should have been persisted in settings.
 
 
-def test_tab_enabled(main_widget) -> None:
+def test_tab_enabled(main_widget: MainWidget) -> None:
     """
     Tests that the main widget enables the correct tabs when the experiment is applied.
     """
+    # ASSERT
+    assert main_widget._window_container.isEnabled() == False
 
     # ARRANGE
     main_widget._experiments_model.apply_experiment_name("foo")
 
     # Sanity check
-    assert main_widget._view_container.isEnabled() == True
-
-    # ACT
-    main_widget._experiments_model.apply_experiment_name(None)
-
-    # ASSERT
-    assert main_widget._view_container.isEnabled() == False
-
-    # ACT
-    main_widget._experiments_model.apply_experiment_name("foo")
-
-    # Sanity check
-    assert main_widget._view_container.isEnabled() == True
+    assert main_widget._window_container.isEnabled() == True

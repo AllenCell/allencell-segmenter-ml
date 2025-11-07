@@ -7,41 +7,38 @@ build-backend = "setuptools.build_meta"
 # package basics
 # https://peps.python.org/pep-0621/
 [project]
-name = "allencell-ml-segmenter"
-version = "0.0.10"
+name = "allencell-segmenter-ml"
+version = "1.0.0"
 description = "A plugin to leverage ML segmentation in napari"
 readme = "README.md"
-requires-python = "~=3.10"
+requires-python = ">=3.9,<3.11"
 license = { file = "LICENSE" }
-authors = [
-    { email = "brian.kim@alleninstitute.org", name = "Brian Kim" },
-    { email = "chrishu@alleninstitute.org", name = "Chris Hughes" },
-    { email = "daniel.saelid@alleninstitute.org", name = "Daniel Saelid" },
-]
 
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
     "Framework :: napari",
-    "Intended Audience :: Developers",
-    "License :: OSI Approved :: BSD License",
+    "Intended Audience :: Science/Research",
+    "License :: Other/Proprietary License",
+    "License :: Free for non-commercial use",
     "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Topic :: Scientific/Engineering :: Image Processing",
 ]
 
 dependencies = [
-    "napari>=0.4.18",
     "npe2>=0.6.2",
     "numpy",
     "hydra-core==1.3.2",
-    "aicsimageio",
-    "tifffile>=2023.4.12",
+    "bioio==1.1.0",
+    "bioio-base==1.0.4",
+    "tifffile>=2023.4.12,<2025.2.18",
     "watchdog",
-    "cyto-dl>=0.1.7",
-    "pyqtspinner==2.0.0",
+    "cyto-dl>=0.4.5",
+    "scikit-image!=0.23.0",
 ]
 
 [project.urls]
@@ -53,6 +50,11 @@ Documentation = "https://github.com/AllenCell/allencell-ml-segmenter#README.md"
 # extra dependencies
 # https://peps.python.org/pep-0621/#dependencies-optional-dependencies
 [project.optional-dependencies]
+napari = [
+    "napari>=0.4.18",
+    "pyqt5",
+]
+
 test_lint = [
     "pytest<8.0.0", # https://docs.pytest.org/en/latest/contents.html
     "pytest-cov",  # https://pytest-cov.readthedocs.io/en/latest/
@@ -61,6 +63,12 @@ test_lint = [
     "pyqt5",
     "black>=24.2.0",
     'pytest-xvfb; sys_platform == "linux"',
+    "responses",
+    "mypy",
+    "toml",
+    "bumpver",
+    "napari>=0.4.18",
+    "magicgui"
 ]
 
 dev = [
@@ -74,12 +82,26 @@ dev = [
     "bumpver>=2023.1129",
     "build>=1.0.3",
     "twine>=5.0.0",
+    "responses",
+    "mypy",
+]
+
+sphinx_docs = [
+    "linkify-it-py",
+    "sphinx",
+    "furo",
+    "sphinxext-opengraph",
+    "sphinx_inline_tabs",
+    "sphinx_copybutton",
+    "myst_parser",
+    "sphinx_togglebutton",
+    "sphinx_design",
 ]
 
 # entry points
 # https://peps.python.org/pep-0621/#entry-points
 [project.entry-points."napari.manifest"]
-allencell-ml-segmenter = "allencell_ml_segmenter:napari.yaml"
+allencell-segmenter-ml = "allencell_ml_segmenter:napari.yaml"
 
 # build settings
 # https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html
@@ -96,12 +118,16 @@ where = ["src"]
 
 # https://pypi.org/project/bumpver
 [tool.bumpver]
+<<<<<<< HEAD
 current_version = "0.0.10"
 version_pattern = "MAJOR.MINOR.PATCH[.PYTAGNUM]"
+=======
+current_version = "1.0.0"
+version_pattern = "MAJOR.MINOR.PATCH[PYTAGNUM]"
+>>>>>>> main
 commit_message  = "Bump version {old_version} -> {new_version}"
-tag_message = "v{new_version}"
 commit          = true
-tag             = true
+tag             = false # no longer useful to tag here, must happen in create_publish_pr.yaml
 push            = false
 
 [tool.bumpver.file_patterns]
@@ -128,3 +154,11 @@ select = "B,C,E,F,W,T4"
 # allow pytest testing on pyqt5
 [tool.pytest]
 qt_api="pyqt5"
+
+[tool.mypy]
+check_untyped_defs = true
+disallow_untyped_defs = true
+exclude = [
+    "src/allencell_ml_segmenter/_tests/*",
+    "src/debug.py",
+]

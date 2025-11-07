@@ -15,6 +15,7 @@ from unittest.mock import patch, MagicMock, mock_open, call
 from allencell_ml_segmenter.services.prediction_service import (
     PredictionService,
 )
+from allencell_ml_segmenter.core.file_input_model import FileInputModel
 
 
 @pytest.fixture
@@ -38,7 +39,6 @@ def test_predict_model() -> None:
         )
     )
     experiments_model.apply_experiment_name("0_exp")
-    experiments_model.set_checkpoint("1.ckpt")
     prediction_service: PredictionService = PredictionService(
         prediction_model, experiments_model
     )
@@ -63,7 +63,6 @@ def test_predict_model_no_experiment_selected() -> None:
             / "experiments_home",
         )
     )
-    experiments_model.set_checkpoint("1.ckpt")
     prediction_service: PredictionService = PredictionService(
         prediction_model, experiments_model
     )
@@ -103,6 +102,7 @@ def test_predict_model_no_checkpoint_selected() -> None:
 
 def test_build_overrides() -> None:
     # Arrange
+    file_input_model: FileInputModel = FileInputModel()
     prediction_model: PredictionModel = PredictionModel()
     experiments_model: ExperimentsModel = ExperimentsModel(
         FakeUserSettings(
@@ -114,22 +114,21 @@ def test_build_overrides() -> None:
     )
     experiments_model.apply_experiment_name("one_ckpt_exp")
     prediction_service: PredictionService = PredictionService(
-        prediction_model, experiments_model
+        prediction_model, file_input_model, experiments_model
     )
-    prediction_model.set_output_directory(
+    file_input_model.set_output_directory(
         Path(__file__).parent.parent
         / "main"
         / "0_exp"
         / "prediction_output_test"
     )
-    prediction_model.set_image_input_channel_index(3)
+    fake_path: Path = Path("fake_img_path")
+    file_input_model.set_input_image_path(fake_path)
+    file_input_model.set_image_input_channel_index(3)
 
     # act
     overrides: Dict[str, Union[str, int, float, bool]] = (
-        prediction_service.build_overrides(
-            experiments_model.get_experiment_name(),
-            experiments_model.get_checkpoint(),
-        )
+        prediction_service.build_overrides(experiments_model.get_best_ckpt())
     )
 
     # assert
@@ -138,7 +137,8 @@ def test_build_overrides() -> None:
     assert overrides["train"] == False
     assert overrides["mode"] == "predict"
     assert overrides["task_name"] == "predict_task_from_app"
-    assert overrides["ckpt_path"] == str(
+    assert overrides["data.path"] == str(fake_path)
+    assert overrides["checkpoint.ckpt_path"] == str(
         Path(__file__).parent.parent
         / "main"
         / "experiments_home"
@@ -154,76 +154,9 @@ def test_build_overrides() -> None:
         / "0_exp"
         / "prediction_output_test"
     )
-    assert overrides["data.transforms.predict.transforms[0].reader[0].C"] == 3
+    assert overrides["input_channel"] == 3
     assert overrides["data.columns"] == ["raw", "split"]
     assert overrides["data.split_column"] == "split"
-
-
-def test_build_overrides_experiment_none() -> None:
-    # Arrange
-    prediction_model: PredictionModel = PredictionModel()
-    experiments_model: ExperimentsModel = ExperimentsModel(
-        FakeUserSettings(
-            cyto_dl_home_path=Path(__file__).parent / "cyto_dl_home",
-            user_experiments_path=Path(__file__).parent.parent
-            / "main"
-            / "experiments_home",
-        )
-    )
-    prediction_service: PredictionService = PredictionService(
-        prediction_model, experiments_model
-    )
-    prediction_model.set_output_directory(
-        Path(__file__).parent.parent
-        / "main"
-        / "0_exp"
-        / "prediction_output_test"
-    )
-    prediction_model.set_image_input_channel_index(3)
-
-    # act/assert
-    # Experiment name is None, so build_overrides should throw a ValueError
-    with pytest.raises(ValueError):
-        overrides: Dict[str, Union[str, int, float, bool]] = (
-            prediction_service.build_overrides(
-                experiments_model.get_experiment_name(),
-                experiments_model.get_checkpoint(),
-            )
-        )
-
-
-def test_build_overrides_checkpoint_none() -> None:
-    # Arrange
-    prediction_model: PredictionModel = PredictionModel()
-    experiments_model: ExperimentsModel = ExperimentsModel(
-        FakeUserSettings(
-            cyto_dl_home_path=Path(__file__).parent / "cyto_dl_home",
-            user_experiments_path=Path(__file__).parent.parent
-            / "main"
-            / "experiments_home",
-        )
-    )
-    experiments_model.apply_experiment_name("0_exp")
-    prediction_service: PredictionService = PredictionService(
-        prediction_model, experiments_model
-    )
-    prediction_model.set_output_directory(
-        Path(__file__).parent.parent
-        / "main"
-        / "0_exp"
-        / "prediction_output_test"
-    )
-    prediction_model.set_image_input_channel_index(3)
-
-    # act/assert
-    # Checkpoint is None, so build_overrides should throw a ValueError
-    with pytest.raises(ValueError):
-        overrides: Dict[str, Union[str, int, float, bool]] = (
-            prediction_service.build_overrides(
-                experiments_model.get_experiment_name(),
-                experiments_model.get_checkpoint(),
-            )
-        )
 
 
 def test_write_csv_for_inputs() -> None:
@@ -239,7 +172,7 @@ def test_write_csv_for_inputs() -> None:
     experiments_model.apply_experiment_name("0_exp")
     prediction_model: PredictionModel = PredictionModel()
     prediction_service: PredictionService = PredictionService(
-        prediction_model, experiments_model
+        prediction_model, FileInputModel(), experiments_model
     )
     mock_csv_write = MagicMock(spec=csv.writer)
 
